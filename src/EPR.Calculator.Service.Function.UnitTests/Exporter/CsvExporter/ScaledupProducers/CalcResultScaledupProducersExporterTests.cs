@@ -161,50 +161,67 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
                     DaysInSubmissionPeriod = 91,
                     DaysInWholePeriod = 91,
                     ScaleupFactor = 2,
-                    ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterial()
+                    PomData = new List<ScaledupPomEntry>
+                    {
+                        new ScaledupPomEntry(1, PackagingTypes.Household, 1000, 2000),
+                        new ScaledupPomEntry(1, PackagingTypes.PublicBin, 100, 200),
+                        new ScaledupPomEntry(1, PackagingTypes.ConsumerWaste, 500, 1000),
+                        new ScaledupPomEntry(2, PackagingTypes.Household, 1000, 2000),
+                        new ScaledupPomEntry(2, PackagingTypes.PublicBin, 100, 200),
+                        new ScaledupPomEntry(2, PackagingTypes.HouseholdDrinksContainers, 120, 240),
+                        new ScaledupPomEntry(2, PackagingTypes.ConsumerWaste, 500, 1000),
+                    },
                 }
             ];
         }
 
-        private Dictionary<string, CalcResultScaledupProducerTonnage> GetScaledupProducerTonnageByMaterial()
+        [TestMethod]
+        public void GetTonnagesTest()
         {
-            return new Dictionary<string, CalcResultScaledupProducerTonnage>
+            var alId = 1;
+            var materials = new List<Material>();
+            materials.Add(new Material { Id = alId, Code = "AL", Name = "Aluminium" });
+            var materialDetails = MaterialMapper.Map(materials);
+            var pomData = new List<ScaledupPomEntry>
             {
-                {
-                    "AL",
-                    new CalcResultScaledupProducerTonnage
-                    {
-                        ReportedHouseholdPackagingWasteTonnage = 1000,
-                        ReportedPublicBinTonnage = 100,
-                        TotalReportedTonnage = 1100,
-                        ReportedSelfManagedConsumerWasteTonnage = 500,
-                        NetReportedTonnage = 1100,
-                        ScaledupReportedHouseholdPackagingWasteTonnage = 2000,
-                        ScaledupReportedPublicBinTonnage = 200,
-                        ScaledupTotalReportedTonnage = 2200,
-                        ScaledupReportedSelfManagedConsumerWasteTonnage = 1000,
-                        ScaledupNetReportedTonnage = 2200,
-                    }
-                },
-                {
-                    "GL",
-                    new CalcResultScaledupProducerTonnage
-                    {
-                        ReportedHouseholdPackagingWasteTonnage = 1000,
-                        ReportedPublicBinTonnage = 100,
-                        HouseholdDrinksContainersTonnageGlass = 120,
-                        TotalReportedTonnage = 1100,
-                        ReportedSelfManagedConsumerWasteTonnage = 500,
-                        NetReportedTonnage = 1100,
-                        ScaledupReportedHouseholdPackagingWasteTonnage = 2000,
-                        ScaledupReportedPublicBinTonnage = 200,
-                        ScaledupHouseholdDrinksContainersTonnageGlass = 240,
-                        ScaledupTotalReportedTonnage = 2200,
-                        ScaledupReportedSelfManagedConsumerWasteTonnage = 1000,
-                        ScaledupNetReportedTonnage = 2200,
-                    }
-                },
+                new ScaledupPomEntry(alId, PackagingTypes.Household, 0.1m, 0.2m),
             };
+            var tonnage = CalcResultScaledupProducersExporter.GetTonnages(pomData, materialDetails);
+            Assert.IsNotNull(tonnage);
+            var aluminium = tonnage["AL"];
+            Assert.AreEqual(0.1m, aluminium.ReportedHouseholdPackagingWasteTonnage);
+            Assert.AreEqual(0.2m, aluminium.ScaledupReportedHouseholdPackagingWasteTonnage);
+        }
+
+        [TestMethod]
+        public void GetTonnages_ShouldCalculateCorrectlyForGlass()
+        {
+            var glassId = 1;
+            var materials = new List<MaterialDetail>
+            {
+                new MaterialDetail { Id = glassId, Code = MaterialCodes.Glass, Name = "Glass", Description = "" },
+            };
+            var pomData = new List<ScaledupPomEntry>
+            {
+                new ScaledupPomEntry(glassId, PackagingTypes.Household, 0.1m, 0.1m),
+                new ScaledupPomEntry(glassId, PackagingTypes.HouseholdDrinksContainers, 0.03m, 0.03m),
+            };
+
+            var result = CalcResultScaledupProducersExporter.GetTonnages(pomData, materials);
+
+            Assert.IsTrue(result.ContainsKey(MaterialCodes.Glass));
+            var glassTonnage = result[MaterialCodes.Glass];
+
+            Assert.AreEqual(0.1m, glassTonnage.ReportedHouseholdPackagingWasteTonnage);
+            Assert.AreEqual(0, glassTonnage.ReportedPublicBinTonnage);
+            Assert.AreEqual(0.03m, glassTonnage.HouseholdDrinksContainersTonnageGlass);
+            Assert.AreEqual(0.13m, glassTonnage.TotalReportedTonnage);
+            Assert.AreEqual(0.13m, glassTonnage.NetReportedTonnage);
+            Assert.AreEqual(0.1m, glassTonnage.ScaledupReportedHouseholdPackagingWasteTonnage);
+            Assert.AreEqual(0, glassTonnage.ScaledupReportedPublicBinTonnage);
+            Assert.AreEqual(0.03m, glassTonnage.ScaledupHouseholdDrinksContainersTonnageGlass);
+            Assert.AreEqual(0.13m, glassTonnage.ScaledupTotalReportedTonnage);
+            Assert.AreEqual(0.13m, glassTonnage.ScaledupNetReportedTonnage);
         }
 
         [TestMethod]

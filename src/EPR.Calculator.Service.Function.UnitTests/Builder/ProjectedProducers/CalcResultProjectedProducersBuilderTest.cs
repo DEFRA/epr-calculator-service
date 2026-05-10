@@ -20,9 +20,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         public CalcResultProjectedProducersBuilderTest()
         {
             var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
-            .UseInMemoryDatabase(databaseName: "PayCal")
-            .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-            .Options;
+                .UseInMemoryDatabase(databaseName: "PayCal")
+                .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
+                .Options;
 
             dbContext = new ApplicationDBContext(dbContextOptions);
             dbContext.Database.EnsureCreated();

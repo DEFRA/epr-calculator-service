@@ -33,9 +33,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public CalcResultScaledupProducersBuilderTest()
         {
             var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
-            .UseInMemoryDatabase(databaseName: "PayCal")
-            .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-            .Options;
+                .UseInMemoryDatabase(databaseName: "PayCal")
+                .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
+                .Options;
 
             this.dbContext = new ApplicationDBContext(dbContextOptions);
             dbContext.Database.EnsureCreated();
@@ -323,9 +323,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             // Assert
             Assert.AreEqual(1, result.ScaledupProducers!.Count());
-            var tonnage = result.ScaledupProducers!.First(x => x.ProducerId == 12 && !x.IsSubtotalRow).ScaledupProducerTonnageByMaterial["PC"];
-            Assert.AreEqual(1, tonnage.TotalReportedTonnage);
-            Assert.AreEqual(2.999m, tonnage.ScaledupTotalReportedTonnage);
+            var producer = result.ScaledupProducers!.First(x => x.ProducerId == 12 && !x.IsSubtotalRow);
+            var pomEntry = producer.PomData.Single(e => e.PackagingType == PackagingTypes.Household);
+            Assert.AreEqual(1m, pomEntry.Tonnage);
+            Assert.AreEqual(2.999m, pomEntry.ScaledTonnage);
+            Assert.AreEqual(pcId, pomEntry.MaterialId);
         }
 
         [TestMethod]
@@ -501,207 +503,5 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual(0, result.Count);
         }
 
-        [TestMethod]
-        public void GetTonnagesTest()
-        {
-            var alId = 1;
-            var materials = new List<Material>();
-            materials.Add(new Material { Id = alId, Code = "AL", Name = "Aluminium" });
-            var materialDetails = MaterialMapper.Map(materials);
-            var reportedMaterials = new List<ProducerReportedMaterial>{
-                new ProducerReportedMaterial
-                {
-                    SubmissionPeriod = "2024-P2",
-                    PackagingType = "HH",
-                    MaterialId = alId,
-                    PackagingTonnage = 0.1m
-                }
-            };
-            var tonnage = CalcResultScaledupProducersBuilder.GetTonnages(reportedMaterials, materialDetails, 2);
-            Assert.IsNotNull(tonnage);
-            var aluminium = tonnage["AL"];
-            Assert.AreEqual(0.1m, aluminium.ReportedHouseholdPackagingWasteTonnage);
-            Assert.AreEqual(0.2m, aluminium.ScaledupReportedHouseholdPackagingWasteTonnage);
-        }
-
-        [TestMethod]
-        public void CalculateScaledupTonnageTest()
-        {
-            var producerId = 2;
-            var subsidiaryId = "Sub3";
-            var submissionPeriod = "2024-P1";
-
-            var scaledUpProducer = new CalcResultScaledupProducer
-            {
-                ProducerId = producerId,
-                SubsidiaryId = subsidiaryId,
-                SubmissionPeriodCode = submissionPeriod,
-                ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>(),
-            };
-
-            List<MaterialDetail> materials = new List<MaterialDetail>();
-            var alId = 1;
-            var glassMaterial = new MaterialDetail { Id = alId, Code = MaterialCodes.Aluminium, Name = "Aluminium", Description = ""};
-            materials.Add(glassMaterial);
-
-            var producer = new ProducerDetail {
-                ProducerId = producerId,
-                SubsidiaryId = subsidiaryId
-            };
-            producer.ProducerReportedMaterials.Add(
-                new ProducerReportedMaterial
-                {
-                    MaterialId = alId,
-                    PackagingType = "HH",
-                    PackagingTonnage = 1.2m,
-                    SubmissionPeriod = submissionPeriod
-                }
-            );
-            producer.ProducerReportedMaterials.Add(
-                new ProducerReportedMaterial
-                {
-                    MaterialId = alId,
-                    PackagingType = "PB",
-                    PackagingTonnage = 0.4m,
-                    SubmissionPeriod = submissionPeriod
-                }
-            );
-            var producerData = new List<ProducerDetail>
-            {
-                producer
-            };
-
-            builder = new CalcResultScaledupProducersBuilder(dbContext);
-            CalcResultScaledupProducersBuilder.CalculateScaledupTonnage([scaledUpProducer], producerData, materials);
-
-            Assert.IsNotNull(scaledUpProducer.ScaledupProducerTonnageByMaterial);
-            var scaledUpTonnage = scaledUpProducer.ScaledupProducerTonnageByMaterial["AL"];
-            Assert.IsNotNull(scaledUpTonnage);
-            Assert.AreEqual(1.2m, scaledUpTonnage.ReportedHouseholdPackagingWasteTonnage);
-            Assert.AreEqual(0.4m, scaledUpTonnage.ReportedPublicBinTonnage);
-            Assert.AreEqual(1.6m, scaledUpTonnage.TotalReportedTonnage);
-            Assert.AreEqual(0.0m, scaledUpTonnage.ReportedSelfManagedConsumerWasteTonnage);
-            Assert.AreEqual(1.6m, scaledUpTonnage.NetReportedTonnage);
-            Assert.AreEqual(0.0m, scaledUpTonnage.ScaledupReportedHouseholdPackagingWasteTonnage);
-            Assert.AreEqual(0.0m, scaledUpTonnage.ScaledupReportedPublicBinTonnage);
-            Assert.AreEqual(0.0m, scaledUpTonnage.ScaledupTotalReportedTonnage);
-            Assert.AreEqual(0.0m, scaledUpTonnage.ScaledupReportedSelfManagedConsumerWasteTonnage);
-            Assert.AreEqual(0.0m, scaledUpTonnage.ScaledupNetReportedTonnage);
-            Assert.AreEqual(0.0m, scaledUpTonnage.HouseholdDrinksContainersTonnageGlass);
-            Assert.AreEqual(0.0m, scaledUpTonnage.ScaledupHouseholdDrinksContainersTonnageGlass);
-        }
-
-        [TestMethod]
-        public void CalculateScaledupTonnageTestForGlass()
-        {
-            var producerId = 2;
-            var subsidiaryId = "Sub3";
-            var submissionPeriod = "2024-P1";
-
-            var scaledUpProducer = new CalcResultScaledupProducer
-            {
-                ProducerId = producerId,
-                SubsidiaryId = subsidiaryId,
-                SubmissionPeriodCode = submissionPeriod,
-                ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>()
-            };
-
-            List<MaterialDetail> materials = new List<MaterialDetail>();
-            var glassId = 1;
-            var glassMaterial = new MaterialDetail { Id = glassId, Code = MaterialCodes.Glass, Name = "Glass", Description = ""};
-            materials.Add(glassMaterial);
-
-            var producer = new ProducerDetail{
-                ProducerId = producerId,
-                SubsidiaryId = subsidiaryId
-            };
-            producer.ProducerReportedMaterials.Add(
-                new ProducerReportedMaterial
-                {
-                    MaterialId = glassId,
-                    PackagingType = "HH",
-                    PackagingTonnage = 0.1m,
-                    SubmissionPeriod = submissionPeriod
-                }
-            );
-            producer.ProducerReportedMaterials.Add(
-                new ProducerReportedMaterial
-                {
-                    MaterialId = glassId,
-                    PackagingType = "HDC",
-                    PackagingTonnage = 0.03m,
-                    SubmissionPeriod = submissionPeriod
-                }
-            );
-
-            var producerData = new List<ProducerDetail>
-            {
-                producer
-            };
-
-            builder = new CalcResultScaledupProducersBuilder(dbContext);
-            CalcResultScaledupProducersBuilder.CalculateScaledupTonnage([scaledUpProducer], producerData, materials);
-
-            var scaledUpTonnage = scaledUpProducer.ScaledupProducerTonnageByMaterial["GL"];
-            Assert.IsNotNull(scaledUpTonnage);
-            Assert.AreEqual(0.1m, scaledUpTonnage.ReportedHouseholdPackagingWasteTonnage);
-            Assert.AreEqual(0.0m, scaledUpTonnage.ReportedPublicBinTonnage);
-            Assert.AreEqual(0.13m, scaledUpTonnage.TotalReportedTonnage);
-            Assert.AreEqual(0.0m, scaledUpTonnage.ReportedSelfManagedConsumerWasteTonnage);
-            Assert.AreEqual(0.13m, scaledUpTonnage.NetReportedTonnage);
-            Assert.AreEqual(0.0m, scaledUpTonnage.ScaledupReportedHouseholdPackagingWasteTonnage);
-            Assert.AreEqual(0.0m, scaledUpTonnage.ScaledupReportedPublicBinTonnage);
-            Assert.AreEqual(0.0m, scaledUpTonnage.ScaledupTotalReportedTonnage);
-            Assert.AreEqual(0.0m, scaledUpTonnage.ScaledupReportedSelfManagedConsumerWasteTonnage);
-            Assert.AreEqual(0.0m, scaledUpTonnage.ScaledupNetReportedTonnage);
-            Assert.AreEqual(0.03m, scaledUpTonnage.HouseholdDrinksContainersTonnageGlass);
-            Assert.AreEqual(0.0m, scaledUpTonnage.ScaledupHouseholdDrinksContainersTonnageGlass);
-        }
-
-        [TestMethod]
-        public void GetTonnages_ShouldCalculateCorrectlyForGlass()
-        {
-            List<CalculatorRunPomDataDetail> pomData = new List<CalculatorRunPomDataDetail>();
-
-            List<MaterialDetail> materials = new List<MaterialDetail>();
-            var glassId = 1;
-            var glassMaterial = new MaterialDetail { Id = glassId, Code = MaterialCodes.Glass, Name = "Glass", Description = ""};
-            materials.Add(glassMaterial);
-
-            var reportedMaterials = new List<ProducerReportedMaterial>{
-                new ProducerReportedMaterial
-                {
-                    MaterialId = glassId,
-                    PackagingType = "HH",
-                    PackagingTonnage = 0.1m,
-                    SubmissionPeriod = "2024-P1"
-                },
-                new ProducerReportedMaterial
-                {
-                    MaterialId = glassId,
-                    PackagingType = "HDC",
-                    PackagingTonnage = 0.03m,
-                    SubmissionPeriod = "2024-P1"
-                }
-            };
-
-            // Act
-            var result = CalcResultScaledupProducersBuilder.GetTonnages(reportedMaterials, materials, 1);
-
-            // Assert
-            Assert.IsTrue(result.ContainsKey(MaterialCodes.Glass));
-            var glassTonnage = result[MaterialCodes.Glass];
-
-            Assert.AreEqual(0.1m, glassTonnage.ReportedHouseholdPackagingWasteTonnage);
-            Assert.AreEqual(0, glassTonnage.ReportedPublicBinTonnage);
-            Assert.AreEqual(0.03m, glassTonnage.HouseholdDrinksContainersTonnageGlass);
-            Assert.AreEqual(0.13m, glassTonnage.TotalReportedTonnage);
-            Assert.AreEqual(0.13m, glassTonnage.NetReportedTonnage);
-            Assert.AreEqual(0.1m, glassTonnage.ScaledupReportedHouseholdPackagingWasteTonnage);
-            Assert.AreEqual(0, glassTonnage.ScaledupReportedPublicBinTonnage);
-            Assert.AreEqual(0.03m, glassTonnage.ScaledupHouseholdDrinksContainersTonnageGlass);
-            Assert.AreEqual(0.13m, glassTonnage.ScaledupTotalReportedTonnage);
-            Assert.AreEqual(0.13m, glassTonnage.ScaledupNetReportedTonnage);
-        }
     }
 }

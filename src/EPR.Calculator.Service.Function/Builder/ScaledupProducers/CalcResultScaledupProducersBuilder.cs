@@ -30,35 +30,6 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
             this.dbContext = dbContext;
         }
 
-        public static void CalculateScaledupTonnage(
-            IEnumerable<CalcResultScaledupProducer> runScaledUpProducers,
-            List<ProducerDetail> producerDetails,
-            IEnumerable<MaterialDetail> materials
-        )
-        {
-            var byProducerAndSubsidiary = producerDetails
-                .GroupBy(pd => (pd.ProducerId, pd.SubsidiaryId))
-                .ToDictionary(g => g.Key, g => g.ToList());
-
-            var byProducer = producerDetails
-                .GroupBy(pd => pd.ProducerId)
-                .ToDictionary(g => g.Key, g => g.ToList());
-
-            foreach (var item in runScaledUpProducers)
-            {
-                var scaledProducerDetails = item.IsSubtotalRow
-                    ? byProducer.GetValueOrDefault(item.ProducerId, [])
-                    : byProducerAndSubsidiary.GetValueOrDefault((item.ProducerId, item.SubsidiaryId), []);
-
-                var pomData = scaledProducerDetails
-                    .SelectMany(pd => pd.ProducerReportedMaterials)
-                    .Where(rm => rm.SubmissionPeriod == item.SubmissionPeriodCode)
-                    .ToList();
-
-                item.ScaledupProducerTonnageByMaterial = GetTonnages(pomData, materials, item.ScaleupFactor);
-            }
-        }
-
         public static void AddExtraRows(List<CalcResultScaledupProducer> runScaledUpProducers, IEnumerable<Organisation> scaledupOrganisations)
         {
             var level2Rows = runScaledUpProducers
@@ -159,7 +130,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                 .ToDictionary(s => (s.ProducerId, s.SubmissionPeriodCode ?? "N/A"));
 
             // Aggregates original (pre-scale) POM data per (ProducerId, Period) for subtotal rows
-            var subtotalAccumulator = new Dictionary<(int, string), List<ProducerReportedMaterial>>();
+            var subtotalAccumulator = new Dictionary<(int, string), List<ScaledupPomEntry>>();
             var updatedProducers = new List<ProducerDetail>(producerDetails.Count);
 
             foreach (var pd in producerDetails)
@@ -170,35 +141,42 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                     continue;
                 }
 
-                // Populate this producer's display rows using original tonnages (before scaling)
+                // Scale each material once: the scaled result feeds both the pipeline and the display entry
+                var scaledWithEntries = pd.ProducerReportedMaterials
+                    .Select(rm =>
+                    {
+                        var scaledRm = factorByPeriod.TryGetValue(rm.SubmissionPeriod, out var factor) ? Scale(rm, factor) : rm;
+                        return (scaledRm, entry: new ScaledupPomEntry(rm.MaterialId, rm.PackagingType, rm.PackagingTonnage, scaledRm.PackagingTonnage));
+                    })
+                    .ToList();
+
                 if (displayRowLookup.TryGetValue((pd.ProducerId, pd.SubsidiaryId), out var periodToRow))
                 {
                     foreach (var (period, row) in periodToRow)
                     {
-                        var pomData = pd.ProducerReportedMaterials
-                            .Where(rm => rm.SubmissionPeriod == period)
+                        var entries = scaledWithEntries
+                            .Where(x => x.scaledRm.SubmissionPeriod == period)
+                            .Select(x => x.entry)
                             .ToList();
-                        row.ScaledupProducerTonnageByMaterial = GetTonnages(pomData, materialDetails, row.ScaleupFactor);
+                        row.PomData = entries;
 
                         var key = (pd.ProducerId, period);
                         if (!subtotalAccumulator.ContainsKey(key))
                             subtotalAccumulator[key] = [];
-                        subtotalAccumulator[key].AddRange(pomData);
+                        subtotalAccumulator[key].AddRange(entries);
                     }
                 }
 
                 updatedProducers.Add(CalcResultPartialObligationBuilder.UpdateReportedMaterials(
                     pd,
-                    reportedMaterials => reportedMaterials.Select(rm =>
-                        factorByPeriod.TryGetValue(rm.SubmissionPeriod, out var factor) ? scale(rm, factor) : rm
-                    ).ToList()
+                    _ => scaledWithEntries.Select(x => x.scaledRm).ToList()
                 ));
             }
 
             foreach (var (key, subtotalRow) in subtotalLookup)
             {
                 if (subtotalAccumulator.TryGetValue(key, out var pomData))
-                    subtotalRow.ScaledupProducerTonnageByMaterial = GetTonnages(pomData, materialDetails, subtotalRow.ScaleupFactor);
+                    subtotalRow.PomData = pomData;
             }
 
             var orderedRows = scaledUpProducers
@@ -212,7 +190,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
             return (updatedProducers, scaledupProducersSummary);
         }
 
-        private ProducerReportedMaterial scale(ProducerReportedMaterial reportedMaterial, decimal scaleupFactor)
+        private ProducerReportedMaterial Scale(ProducerReportedMaterial reportedMaterial, decimal scaleupFactor)
         {
             // only scale total - Ram doesn't apply to 2025 relative year (2024 pom)
             var tonnage  = Math.Round(scaleupFactor * reportedMaterial.PackagingTonnage, 3);
@@ -287,66 +265,6 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                 ).AsNoTracking().Distinct().ToListAsync();
 
             return scaledupOrganisations;
-        }
-
-        public static Dictionary<string, CalcResultScaledupProducerTonnage> GetTonnages(
-            List<ProducerReportedMaterial> pomData,
-            IEnumerable<MaterialDetail> materials,
-            decimal scaleUpFactor
-        )
-        {
-            var scaledupProducerTonnages = new Dictionary<string, CalcResultScaledupProducerTonnage>();
-
-            foreach (var material in materials)
-            {
-                var scaledupProducerTonnage = new CalcResultScaledupProducerTonnage();
-
-                var materialPomData =
-                   pomData.Where(rm => rm.MaterialId == material.Id);
-
-                scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage = materialPomData
-                    .Where(pom => pom.PackagingType == PackagingTypes.Household)
-                    .Sum(pom => pom.PackagingTonnage);
-
-                scaledupProducerTonnage.ReportedPublicBinTonnage = materialPomData
-                    .Where(pom => pom.PackagingType == PackagingTypes.PublicBin)
-                    .Sum(pom => pom.PackagingTonnage);
-
-                var hdc = materialPomData
-                    .Where(pom => pom.PackagingType == PackagingTypes.HouseholdDrinksContainers)
-                    .Sum(pom => pom.PackagingTonnage);
-
-                if (material.Code == MaterialCodes.Glass)
-                {
-                    scaledupProducerTonnage.HouseholdDrinksContainersTonnageGlass = hdc;
-                    scaledupProducerTonnage.TotalReportedTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage +
-                                            scaledupProducerTonnage.ReportedPublicBinTonnage + scaledupProducerTonnage.HouseholdDrinksContainersTonnageGlass;
-                }
-                else
-                {
-                    scaledupProducerTonnage.TotalReportedTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage +
-                    scaledupProducerTonnage.ReportedPublicBinTonnage;
-                }
-
-                scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage = materialPomData
-                    .Where(pom => pom.PackagingType == PackagingTypes.ConsumerWaste)
-                    .Sum(pom => pom.PackagingTonnage);
-
-                scaledupProducerTonnage.NetReportedTonnage = scaledupProducerTonnage.TotalReportedTonnage - scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage;
-                scaledupProducerTonnage.ScaledupReportedHouseholdPackagingWasteTonnage = Math.Round(scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage * scaleUpFactor, 3);
-                scaledupProducerTonnage.ScaledupReportedPublicBinTonnage = Math.Round(scaledupProducerTonnage.ReportedPublicBinTonnage * scaleUpFactor, 3);
-                if (material.Code == MaterialCodes.Glass)
-                {
-                    scaledupProducerTonnage.ScaledupHouseholdDrinksContainersTonnageGlass = scaledupProducerTonnage.HouseholdDrinksContainersTonnageGlass * scaleUpFactor;
-                }
-
-                scaledupProducerTonnage.ScaledupTotalReportedTonnage = Math.Round(scaledupProducerTonnage.TotalReportedTonnage * scaleUpFactor, 3);
-                scaledupProducerTonnage.ScaledupReportedSelfManagedConsumerWasteTonnage = Math.Round(scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage * scaleUpFactor, 3);
-                scaledupProducerTonnage.ScaledupNetReportedTonnage = Math.Round(scaledupProducerTonnage.NetReportedTonnage * scaleUpFactor, 3);
-                scaledupProducerTonnages.Add(material.Code, scaledupProducerTonnage);
-            }
-
-            return scaledupProducerTonnages;
         }
     }
 }
