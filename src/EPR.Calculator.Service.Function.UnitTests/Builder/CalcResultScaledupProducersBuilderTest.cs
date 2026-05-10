@@ -380,17 +380,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         }
 
         [TestMethod]
-        public async Task GetScaledUpOrganisations_Test()
-        {
-            PrepareScaledUpProducer();
-            var result = await builder.GetScaledUpOrganisationsAsync(runId);
-
-            Assert.IsNotNull(result);
-            Assert.AreEqual(1, result.Count());
-            Assert.IsNotNull(result.First(p => p.OrganisationId == 12));
-        }
-
-        [TestMethod]
         public void Should_Set_And_Get_PackagingType()
         {
             // Arrange
@@ -491,16 +480,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual(2, extraRows.Count());
             Assert.IsTrue(extraRows.All(x => x.IsSubtotalRow));
             Assert.AreEqual(2, runProducerMaterialDetails.Count(x => x.IsSubtotalRow));
-        }
-
-        [TestMethod]
-        public async Task GetScaledUpProducersAsyncTest()
-        {
-            builder = new CalcResultScaledupProducersBuilder(dbContext!);
-            var result = await builder.GetScaledUpProducersAsync(1, new List<int> { 1, 2 });
-
-            Assert.IsNotNull(result);
-            Assert.AreEqual(0, result.Count);
         }
 
     }
