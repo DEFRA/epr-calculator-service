@@ -46,7 +46,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligation
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.DaysInSubmissionYear));
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.JoiningDate));
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.DaysObligated));
-                csvContent.Append(CsvSanitiser.SanitiseData(producer.ObligatedPercentage));
+                csvContent.Append(CsvSanitiser.SanitiseData((producer.ObligatedFactor * 100).ToString("F2") + "%"));
 
                 AppendPartialObligationTonnageByMaterial(csvContent, producer.PartialObligationTonnageByMaterial, showModulation);
 

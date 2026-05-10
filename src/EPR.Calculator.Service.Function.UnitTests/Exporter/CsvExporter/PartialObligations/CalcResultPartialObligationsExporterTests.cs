@@ -295,8 +295,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
                     DaysInSubmissionYear = 366,
                     Level = "1",
                     JoiningDate = "15/07/2024",
-                    ObligatedPercentage = "50.00%",
-                    SubmissionYear = "2024",
+                    ObligatedFactor = 0.5m,
+                    SubmissionYear = 2024,
                     SubsidiaryId = null,
                     PartialObligationTonnageByMaterial = new Dictionary<string, CalcResultPartialObligationTonnage>
                     {
@@ -362,15 +362,41 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
                                 PartialSelfManagedConsumerWasteTonnage = 30
                             }
                         },
-                    },
-                },
+                        {
+                            "OT",
+                            new CalcResultPartialObligationTonnage
+                            {
+                                HouseholdTonnage = 50,
+                                HouseholdRAMTonnage = new RAMTonnage(){
+                                    RedTonnage = 1, AmberTonnage = 2, GreenTonnage = 3, RedMedicalTonnage = 4, AmberMedicalTonnage = 5, GreenMedicalTonnage = 6
+                                },
+                                PublicBinTonnage = 10,
+                                PublicBinRAMTonnage = new RAMTonnage(){
+                                    RedTonnage = 1, AmberTonnage = 2, GreenTonnage = 3, RedMedicalTonnage = 4, AmberMedicalTonnage = 5, GreenMedicalTonnage = 6
+                                },
+                                TotalTonnage = 60,
+                                SelfManagedConsumerWasteTonnage = 20,
+                                PartialHouseholdTonnage = 25,
+                                PartialHouseholdRAMTonnage = new RAMTonnage(){
+                                    RedTonnage = 1, AmberTonnage = 2, GreenTonnage = 3, RedMedicalTonnage = 4, AmberMedicalTonnage = 5, GreenMedicalTonnage = 6
+                                },
+                                PartialPublicBinTonnage = 5,
+                                PartialPublicBinRAMTonnage = new RAMTonnage(){
+                                    RedTonnage = 1, AmberTonnage = 2, GreenTonnage = 3, RedMedicalTonnage = 4, AmberMedicalTonnage = 5, GreenMedicalTonnage = 6
+                                },
+                                PartialTotalTonnage = 30,
+                                PartialSelfManagedConsumerWasteTonnage = 10
+                            }
+                        }
+                    }
+                }
             ];
         }
 
         private ImmutableList<CalcResultPartialObligation> GetCalcResultPartialObligationsList()
         {
-            return
-            [
+            return new List<CalcResultPartialObligation>
+            {
                 new CalcResultPartialObligation
                 {
                     ProducerId = 101001,
@@ -379,8 +405,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
                     DaysInSubmissionYear = 366,
                     Level = "1",
                     JoiningDate = "15/07/2024",
-                    ObligatedPercentage = "50.00%",
-                    SubmissionYear = "2024",
+                    ObligatedFactor = 0.5m,
+                    SubmissionYear = 2024,
                     SubsidiaryId = null,
                     PartialObligationTonnageByMaterial = new Dictionary<string, CalcResultPartialObligationTonnage>
                     {
@@ -413,10 +439,24 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
                                 PartialTotalTonnage = 95,
                                 PartialSelfManagedConsumerWasteTonnage = 30
                             }
+                        },
+                        {
+                            "OT",
+                            new CalcResultPartialObligationTonnage
+                            {
+                                HouseholdTonnage = 50,
+                                PublicBinTonnage = 10,
+                                TotalTonnage = 60,
+                                SelfManagedConsumerWasteTonnage = 20,
+                                PartialHouseholdTonnage = 25,
+                                PartialPublicBinTonnage = 5,
+                                PartialTotalTonnage = 30,
+                                PartialSelfManagedConsumerWasteTonnage = 10
+                            }
                         }
                     }
                 }
-            ];
+            }.ToImmutableList();
         }
 
         private ImmutableList<MaterialDetail> GetMaterials()

@@ -10,19 +10,17 @@
 
         public string? TradingName { get; set; }
 
-        public string? Level { get; set; }
+        public required string Level { get; set; }
 
-        public string? SubmissionYear { get; set; }
+        public required int SubmissionYear { get; set; }
 
-        public int DaysInSubmissionYear { get; set; }
+        public required int DaysInSubmissionYear { get; set; }
 
         public string? JoiningDate { get; set; }
 
         public int? DaysObligated { get; set; }
 
-        public decimal? ObligatedFactor { get; set; }
-
-        public string? ObligatedPercentage { get; set; }
+        public required decimal ObligatedFactor { get; set; }
 
         public Dictionary<string, CalcResultPartialObligationTonnage> PartialObligationTonnageByMaterial { get; set; } = new Dictionary<string, CalcResultPartialObligationTonnage>();
     }

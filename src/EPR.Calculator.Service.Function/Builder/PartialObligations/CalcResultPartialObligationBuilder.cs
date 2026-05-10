@@ -37,8 +37,8 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
                     Id = reportedMaterial.Id,
                     MaterialId = reportedMaterial.MaterialId,
                     ProducerDetailId = reportedMaterial.ProducerDetailId,
-                    PackagingType = reportedMaterial.PackagingType,
-                    PackagingTonnage = Math.Round(p * reportedMaterial.PackagingTonnage ?? 0m, 3),
+                    PackagingType    = reportedMaterial.PackagingType,
+                    PackagingTonnage = Math.Round(p * reportedMaterial.PackagingTonnage, 3),
                     SubmissionPeriod = reportedMaterial.SubmissionPeriod,
                     ProducerDetail = reportedMaterial.ProducerDetail,
                     Material = reportedMaterial.Material
@@ -54,20 +54,20 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
                 var gm = Math.Round(p * reportedMaterial.PackagingTonnageGreenMedical ?? 0m, 3);
                 return new ProducerReportedMaterial
                 {
-                    Id = reportedMaterial.Id,
-                    MaterialId = reportedMaterial.MaterialId,
-                    ProducerDetailId = reportedMaterial.ProducerDetailId,
-                    PackagingType = reportedMaterial.PackagingType,
-                    PackagingTonnage =  r + a + g + rm + am + gm,
-                    PackagingTonnageRed = r,
-                    PackagingTonnageAmber = a,
-                    PackagingTonnageGreen = g,
-                    PackagingTonnageRedMedical = rm,
+                    Id                           = reportedMaterial.Id,
+                    MaterialId                   = reportedMaterial.MaterialId,
+                    ProducerDetailId             = reportedMaterial.ProducerDetailId,
+                    PackagingType                = reportedMaterial.PackagingType,
+                    PackagingTonnage             = r + a + g + rm + am + gm,
+                    PackagingTonnageRed          = r,
+                    PackagingTonnageAmber        = a,
+                    PackagingTonnageGreen        = g,
+                    PackagingTonnageRedMedical   = rm,
                     PackagingTonnageAmberMedical = am,
                     PackagingTonnageGreenMedical = gm,
-                    SubmissionPeriod = reportedMaterial.SubmissionPeriod,
-                    ProducerDetail = reportedMaterial.ProducerDetail,
-                    Material = reportedMaterial.Material
+                    SubmissionPeriod             = reportedMaterial.SubmissionPeriod,
+                    ProducerDetail               = reportedMaterial.ProducerDetail,
+                    Material                     = reportedMaterial.Material
                 };
             }
         }
@@ -102,7 +102,7 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
                     return pd;
 
                 obligation.PartialObligationTonnageByMaterial =
-                    ComputeTonnageByMaterial(pd.ProducerReportedMaterials, materialDetails, obligation.ObligatedFactor ?? 1m, applyModulation);
+                    ComputeTonnageByMaterial(pd.ProducerReportedMaterials, materialDetails, obligation.ObligatedFactor, applyModulation);
 
                 return UpdateReportedMaterials(
                     pd,
@@ -135,17 +135,16 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
                 let partialAmount = crodd.DaysObligated != null ? (decimal)crodd.DaysObligated! / daysInYear : 1
                 select new CalcResultPartialObligation
                 {
-                    ProducerId = pd.ProducerId,
-                    SubsidiaryId = pd.SubsidiaryId,
-                    ProducerName = pd.ProducerName,
-                    TradingName = pd.TradingName,
-                    Level = pd.SubsidiaryId != null ? CommonConstants.LevelTwo.ToString() : CommonConstants.LevelOne.ToString(),
-                    SubmissionYear = crodm.RelativeYear.Value.ToString(),
+                    ProducerId           = pd.ProducerId,
+                    SubsidiaryId         = pd.SubsidiaryId,
+                    ProducerName         = pd.ProducerName,
+                    TradingName          = pd.TradingName,
+                    Level                = pd.SubsidiaryId != null ? CommonConstants.LevelTwo.ToString() : CommonConstants.LevelOne.ToString(),
+                    SubmissionYear       = crodm.RelativeYear.Value,
                     DaysInSubmissionYear = daysInYear,
-                    JoiningDate = crodd.JoinerDate,
-                    DaysObligated = crodd.DaysObligated,
-                    ObligatedFactor = partialAmount,
-                    ObligatedPercentage = (partialAmount * 100).ToString("F2") + "%",
+                    JoiningDate          = crodd.JoinerDate,
+                    DaysObligated        = crodd.DaysObligated,
+                    ObligatedFactor      = partialAmount
                 }
             ).ToListAsync();
         }
@@ -199,22 +198,22 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
 
                 return new CalcResultPartialObligationTonnage
                 {
-                    HouseholdTonnage = hh,
-                    HouseholdRAMTonnage = hhRam,
-                    PublicBinTonnage = pb,
-                    PublicBinRAMTonnage = pbRam,
-                    HouseholdDrinksContainersTonnage = hdc,
-                    HouseholdDrinksContainersRAMTonnage = hdcRam,
-                    TotalTonnage = hh + pb + (hdc ?? 0),
-                    SelfManagedConsumerWasteTonnage = smcw,
-                    PartialHouseholdTonnage = scaledHh,
-                    PartialHouseholdRAMTonnage = scaledHhRam,
-                    PartialPublicBinTonnage = scaledPb,
-                    PartialPublicBinRAMTonnage = scaledPbRam,
-                    PartialHouseholdDrinksContainersTonnage = scaledHdc,
+                    HouseholdTonnage                           = hh,
+                    HouseholdRAMTonnage                        = hhRam,
+                    PublicBinTonnage                           = pb,
+                    PublicBinRAMTonnage                        = pbRam,
+                    HouseholdDrinksContainersTonnage           = hdc,
+                    HouseholdDrinksContainersRAMTonnage        = hdcRam,
+                    TotalTonnage                               = hh + pb + (hdc ?? 0),
+                    SelfManagedConsumerWasteTonnage            = smcw,
+                    PartialHouseholdTonnage                    = scaledHh,
+                    PartialHouseholdRAMTonnage                 = scaledHhRam,
+                    PartialPublicBinTonnage                    = scaledPb,
+                    PartialPublicBinRAMTonnage                 = scaledPbRam,
+                    PartialHouseholdDrinksContainersTonnage    = scaledHdc,
                     PartialHouseholdDrinksContainersRAMTonnage = scaledHdcRam,
-                    PartialTotalTonnage = scaledHh + scaledPb + (scaledHdc ?? 0),
-                    PartialSelfManagedConsumerWasteTonnage = scaledSmcw
+                    PartialTotalTonnage                        = scaledHh + scaledPb + (scaledHdc ?? 0),
+                    PartialSelfManagedConsumerWasteTonnage     = scaledSmcw
                 };
             }
 

@@ -1528,8 +1528,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         DaysInSubmissionYear = 366,
                         Level = "1",
                         JoiningDate = "15/07/2024",
-                        ObligatedPercentage = "50.00%",
-                        SubmissionYear = "2024",
+                        ObligatedFactor = 0.5m,
+                        SubmissionYear = 2024,
                         SubsidiaryId = null,
                         PartialObligationTonnageByMaterial = new Dictionary<string, CalcResultPartialObligationTonnage>
                         {
