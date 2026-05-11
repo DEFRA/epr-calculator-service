@@ -13,7 +13,7 @@ namespace EPR.Calculator.Service.Function.Services
     public class CalculatorRunService(
         IConfigurationService configuration,
         IDataLoader dataLoader,
-        ITransposePomAndOrgDataService transposePomAndOrgDataService,
+        IProducerDataTransposer producerDataTransposer,
         IPrepareCalcService prepareCalcService,
         IRpdStatusService statusService,
         ICalculatorTelemetryLogger telemetryLogger)
@@ -73,18 +73,7 @@ namespace EPR.Calculator.Service.Function.Services
 
             if (statusUpdateResponse == RunClassification.RUNNING)
             {
-                var isTransposeSuccess = await transposePomAndOrgDataService.TransposeBeforeResultsFileAsync(
-                    new CalcResultsRequestDto { RunId = calculatorRunParameter.Id, RelativeYear = calculatorRunParameter.RelativeYear, CreatedBy = calculatorRunParameter.User },
-                    runName,
-                    new CancellationTokenSource(configuration.TransposeTimeout).Token);
-
-                LogInformation(calculatorRunParameter.Id, runName,
-                    $"UpdateStatusAndPrepareResult - transposeResultResponse: {isTransposeSuccess}");
-
-                if (!isTransposeSuccess)
-                {
-                    return false;
-                }
+                await producerDataTransposer.Transpose(calculatorRunParameter.Id, CancellationToken.None);
 
                 isSuccess = await prepareCalcService.PrepareCalcResultsAsync(
                     new CalcResultsRequestDto { RunId = calculatorRunParameter.Id, RelativeYear = calculatorRunParameter.RelativeYear },

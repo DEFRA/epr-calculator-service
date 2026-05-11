@@ -28,7 +28,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         private Mock<IOrgAndPomWrapper> _wrapper;
         private Mock<ICalcResultBuilder> _builder;
         private Mock<ICalcResultsExporter<CalcResult>> _exporter;
-        private Mock<ITransposePomAndOrgDataService> _transposePomAndOrgDataService;
+        private Mock<IProducerDataTransposer> _transposePomAndOrgDataService;
         private Mock<IStorageService> _storageService;
         private CalculatorRunValidator _validationRules;
         private Mock<ICommandTimeoutService> _commandTimeoutService;
@@ -97,7 +97,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             _builder.Setup(b => b.BuildAsync(It.IsAny<CalcResultsRequestDto>())).ReturnsAsync(calcResult);
             _exporter = new Mock<ICalcResultsExporter<CalcResult>>();
             _exporter.Setup(x => x.Export(It.IsAny<CalcResult>())).Returns("Some value");
-            _transposePomAndOrgDataService = new Mock<ITransposePomAndOrgDataService>();
+            _transposePomAndOrgDataService = new Mock<IProducerDataTransposer>();
             _storageService = new Mock<IStorageService>();
             _validationRules = fixture.Create<CalculatorRunValidator>();
             _commandTimeoutService = new Mock<ICommandTimeoutService>();
