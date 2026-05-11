@@ -17,9 +17,9 @@ using EPR.Calculator.Service.Function.Builder.Modulation;
 using EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment;
 using EPR.Calculator.Service.Function.Builder.ParametersOther;
 using EPR.Calculator.Service.Function.Builder.PartialObligations;
+using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
 using EPR.Calculator.Service.Function.Builder.RejectedProducers;
 using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
-using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
 using EPR.Calculator.Service.Function.Builder.Summary;
 using EPR.Calculator.Service.Function.Exporter;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter;
@@ -32,9 +32,9 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.RejectedProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
-using EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Mapper;
@@ -50,184 +50,178 @@ using Microsoft.Extensions.DependencyInjection;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
-namespace EPR.Calculator.Service.Function
+namespace EPR.Calculator.Service.Function;
+
+/// <summary>
+///     Configures the startup for the Azure Functions.
+/// </summary>
+public class Startup : FunctionsStartup
 {
     /// <summary>
-    /// Configures the startup for the Azure Functions.
+    ///     Configures the services for the Azure Functions application.
     /// </summary>
-    public class Startup : FunctionsStartup
+    /// <param name="builder">The functions host builder.</param>
+    public override void Configure(IFunctionsHostBuilder builder)
     {
-        /// <summary>
-        /// Configures the services for the Azure Functions application.
-        /// </summary>
-        /// <param name="builder">The functions host builder.</param>
-        public override void Configure(IFunctionsHostBuilder builder)
+        RegisterDatabase(builder.Services);
+        RegisterDependencies(builder.Services);
+
+        // Register CustomTelemetryLogger
+        builder.Services.AddSingleton<ICalculatorTelemetryLogger, CalculatorTelemetryLogger>(sp =>
         {
-            RegisterDependencies(builder.Services);
+            var key = Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY");
+            var fallbackToConsole =
+                string.IsNullOrWhiteSpace(key) ||
+                key == "00000000-0000-0000-0000-000000000000";
+            return ActivatorUtilities.CreateInstance<CalculatorTelemetryLogger>(sp, fallbackToConsole);
+        });
+    }
 
-            // Configure the database context.
-            builder.Services.AddDbContextFactory<ApplicationDBContext>(options =>
-            {
-                var config = builder.Services.BuildServiceProvider().GetRequiredService<IConfigurationService>();
-                options.UseSqlServer(
-                    config.DbConnectionString);
-            });
-
-            // Register CustomTelemetryLogger
-            builder.Services.AddSingleton<ICalculatorTelemetryLogger, CalculatorTelemetryLogger>(sp =>
-            {
-                var key = Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY");
-                var fallbackToConsole =
-                    string.IsNullOrWhiteSpace(key) ||
-                    key == "00000000-0000-0000-0000-000000000000";
-                return ActivatorUtilities.CreateInstance<CalculatorTelemetryLogger>(sp, fallbackToConsole);
-            });
-        }
-
-        private static void SetupBlobStorage(IServiceCollection services)
+    private static void RegisterDatabase(IServiceCollection services)
+    {
+        services.AddDbContextFactory<ApplicationDBContext>(options =>
         {
-            services.AddSingleton<IStorageService>(provider =>
-            {
-                var configuration = provider.GetRequiredService<IConfigurationService>();
-                var logger = provider.GetRequiredService<ICalculatorTelemetryLogger>();
-                var connectionString = configuration.BlobConnectionString;
-                if (string.IsNullOrEmpty(connectionString))
-                {
-                    throw new ConfigurationErrorsException("Blob Storage connection string is not configured.");
-                }
+            var config = services.BuildServiceProvider().GetRequiredService<IConfigurationService>();
+            options.UseSqlServer(config.DbConnectionString);
+        });
 
-                return new BlobStorageService(new BlobServiceClient(connectionString), logger);
-            });
-        }
+        services.AddSingleton<IBulkOperations, BulkOperationsWrapper>();
+    }
 
-        /// <summary>
-        /// Registers the dependencies for the application.
-        /// </summary>
-        /// <param name="services">The service collection.</param>
-        private static void RegisterDependencies(IServiceCollection services)
+    private static void SetupBlobStorage(IServiceCollection services)
+    {
+        services.AddSingleton<IStorageService>(provider =>
         {
-            services.AddTransient<ICalculatorRunService, CalculatorRunService>();
-            services.AddTransient<ICalculatorRunParameterMapper, CalculatorRunParameterMapper>();
-            services.AddTransient<ITransposePomAndOrgDataService, TransposePomAndOrgDataService>();
-            services.AddTransient<IRpdStatusDataValidator, RpdStatusDataValidator>();
-            services.AddTransient<IOrgAndPomWrapper, OrgAndPomWrapper>();
-            services.AddTransient<ICalcResultBuilder, CalcResultBuilder>();
-            services.AddTransient<ICalcResultsExporter<CalcResult>, CalcResultsExporter>();
-            services.AddTransient<CalculatorRunValidator, CalculatorRunValidator>();
-            services.AddTransient<ICommandTimeoutService, CommandTimeoutService>();
-            services.AddTransient<IPrepareCalcService, PrepareCalcService>();
-            services.AddTransient<IParameterService, ParameterService>();
-            services.AddTransient<ICalcResultDetailBuilder, CalcResultDetailBuilder>();
-            services.AddTransient<ICalcResultLapcapDataBuilder, CalcResultLapcapDataBuilder>();
-            services.AddTransient<ICalcResultParameterOtherCostBuilder, CalcResultParameterOtherCostBuilder>();
-            services.AddTransient<ICalcResultOnePlusFourApportionmentBuilder, CalcResultOnePlusFourApportionmentBuilder>();
-            services.AddTransient<ICalcResultCommsCostBuilder, CalcResultCommsCostBuilder>();
-            services.AddTransient<ICalcResultLateReportingBuilder, CalcResultLateReportingBuilder>();
-            services.AddTransient<ICalcRunLaDisposalCostBuilder, CalcRunLaDisposalCostBuilder>();
-            services.AddTransient<ICalcResultScaledupProducersBuilder, CalcResultScaledupProducersBuilder>();
-            services.AddTransient<ICalcResultPartialObligationBuilder, CalcResultPartialObligationBuilder>();
-            services.AddTransient<ICalcResultProjectedProducersBuilder, CalcResultProjectedProducersBuilder>();
-            services.AddTransient<ICalcResultRejectedProducersBuilder, CalcResultRejectedProducersBuilder>();
-            services.AddTransient<ICalcResultModulationBuilder, CalcResultModulationBuilder>();
-            services.AddTransient<ICalcResultSummaryBuilder, CalcResultSummaryBuilder>();
-            services.AddTransient<IBillingInstructionService, BillingInstructionService>();
-            services.AddTransient<IOnePlusFourApportionmentExporter, OnePlusFourApportionmentExporter>();
-            services.AddTransient<IRpdStatusService, RpdStatusService>();
-            services.AddTransient<ICalculatorRunOrgData, CalculatorRunOrgData>();
-            services.AddTransient<ICalculatorRunPomData, CalculatorRunPomData>();
-            services.AddTransient<ILapcaptDetailExporter, LapcaptDetailExporter>();
-            services.AddTransient<ICalcResultDetailExporter, CalcResultDetailexporter>();
-            services.AddTransient<ICalcResultLaDisposalCostExporter, CalcResultLaDisposalCostExporter>();
-            services.AddTransient<ICalcResultScaledupProducersExporter, CalcResultScaledupProducersExporter>();
-            services.AddTransient<ICalcResultPartialObligationsExporter, CalcResultPartialObligationsExporter>();
-            services.AddTransient<ICalcResultRejectedProducersExporter, CalcResultRejectedProducersExporter>();
-            services.AddTransient<ICalcResultProjectedProducersExporter, CalcResultProjectedProducersExporter>();
-            services.AddTransient<LateReportingExporter, LateReportingExporter>();
-            services.AddTransient<ICalcResultParameterOtherCostExporter, CalcResultParameterOtherCostExporter>();
-            services.AddTransient<ICalcResultModulationExporter, CalcResultModulationExporter>();
-            services.AddTransient<ICommsCostExporter, CommsCostExporter>();
-            services.AddTransient<IDbLoadingChunkerService<ProducerDetail>, DbLoadingChunkerService<ProducerDetail>>();
-            services.AddTransient<IDbLoadingChunkerService<ProducerReportedMaterial>, DbLoadingChunkerService<ProducerReportedMaterial>>();
-            services.AddTransient<IDbLoadingChunkerService<ProducerReportedMaterialProjected>, DbLoadingChunkerService<ProducerReportedMaterialProjected>>();
-            services.AddTransient<IDbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction>, DbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction>>();
-            services.AddTransient<IDbLoadingChunkerService<ErrorReport>, DbLoadingChunkerService<ErrorReport>>();
-            services.AddTransient<ICalcResultSummaryExporter, CalcResultSummaryExporter>();
-            services.AddTransient<ICalcBillingJsonExporter<CalcResult>, CalcResultsJsonExporter>();
-            services.AddTransient<ILateReportingExporter, LateReportingExporter>();
-            services.AddTransient<IRunNameService, RunNameService>();
-            services.AddTransient<IClassificationService, ClassificationService>();
-            services.AddTransient<IMaterialService, MaterialService>();
-            services.AddTransient<ITelemetryClientWrapper, TelemetryClientWrapper>();
-            services.AddTransient<IMessageTypeService, MessageTypeService>();
-            services.AddTransient<IPrepareBillingFileService, PrepareBillingFileService>();
-            services.AddTransient<ICalcCountryApportionmentService, CalcCountryApportionmentService>();
-            services.AddTransient<IProducerDetailService, ProducerDetailService>();
-            services.AddTransient<ICalcResultCancelledProducersBuilder, CalcResultCancelledProducersBuilder>();
-            services.AddTransient<ICalcResultCancelledProducersExporter, CalcResultCancelledProducersExporter>();
-            services.AddTransient<IBillingFileExporter<CalcResult>, BillingFileExporter>();
-            services.AddTransient<IProducerInvoiceNetTonnageService, ProducerInvoiceNetTonnageService>();
-            services.AddTransient<IDbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage>, DbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage>>();
-            services.AddTransient<IProducerInvoiceTonnageMapper, ProducerInvoiceTonnageMapper>();
-            services.AddTransient<IPrepareProducerDataInsertService, PrepareProducerDataInsertService>();
-            services.AddTransient<ICalcResultErrorReportBuilder, CalcResultErrorReportBuilder>();
-            services.AddTransient<ICalcResultErrorReportExporter, CalcResultErrorReportExporter>();
-            services.AddTransient<IErrorReportService, ErrorReportService>();
-            services.AddTransient<IProjectedProducersService, ProjectedProducersService>();
-            services.AddTransient<ISelfManagedConsumerWasteService, SelfManagedConsumerWasteService>();
-            services.AddTransient<IReportedProducerService, ReportedProducerService>();
+            var configuration = provider.GetRequiredService<IConfigurationService>();
+            var logger = provider.GetRequiredService<ICalculatorTelemetryLogger>();
+            var connectionString = configuration.BlobConnectionString;
+            if (string.IsNullOrEmpty(connectionString))
+                throw new ConfigurationErrorsException("Blob Storage connection string is not configured.");
 
-            services.AddScoped<PrepareCalcServiceDependencies>(provider => new PrepareCalcServiceDependencies
-            {
-                Context = provider.GetRequiredService<ApplicationDBContext>(),
-                Builder = provider.GetRequiredService<ICalcResultBuilder>(),
-                Exporter = provider.GetRequiredService<ICalcResultsExporter<CalcResult>>(),
-                StorageService = provider.GetRequiredService<IStorageService>(),
-                ValidationRules = provider.GetRequiredService<CalculatorRunValidator>(),
-                CommandTimeoutService = provider.GetRequiredService<ICommandTimeoutService>(),
-                TelemetryLogger = provider.GetRequiredService<ICalculatorTelemetryLogger>(),
-                JsonExporter = provider.GetRequiredService<ICalcBillingJsonExporter<CalcResult>>(),
-                ConfigService = provider.GetRequiredService<IConfigurationService>(),
-                BillingFileExporter = provider.GetRequiredService<IBillingFileExporter<CalcResult>>(),
-                producerDataInsertService = provider.GetRequiredService<IPrepareProducerDataInsertService>(),
-            });
+            return new BlobStorageService(new BlobServiceClient(connectionString), logger);
+        });
+    }
 
-            services
-                .AddOptions<CommonDataApiHttpClientOptions>()
-                .Configure<IConfiguration>((options, config) =>
-                {
-                    config.GetSection(CommonDataApiHttpClientOptions.SectionKey).Bind(options);
-                })
-                .ValidateDataAnnotations()
-                .ValidateOnStart();
+    /// <summary>
+    ///     Registers the dependencies for the application.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    private static void RegisterDependencies(IServiceCollection services)
+    {
+        services.AddTransient<ICalculatorRunService, CalculatorRunService>();
+        services.AddTransient<ICalculatorRunParameterMapper, CalculatorRunParameterMapper>();
+        services.AddTransient<IProducerDataTransposer, ProducerDataTransposer>();
+        services.AddTransient<IRpdStatusDataValidator, RpdStatusDataValidator>();
+        services.AddTransient<IOrgAndPomWrapper, OrgAndPomWrapper>();
+        services.AddTransient<ICalcResultBuilder, CalcResultBuilder>();
+        services.AddTransient<ICalcResultsExporter<CalcResult>, CalcResultsExporter>();
+        services.AddTransient<CalculatorRunValidator, CalculatorRunValidator>();
+        services.AddTransient<ICommandTimeoutService, CommandTimeoutService>();
+        services.AddTransient<IPrepareCalcService, PrepareCalcService>();
+        services.AddTransient<IParameterService, ParameterService>();
+        services.AddTransient<ICalcResultDetailBuilder, CalcResultDetailBuilder>();
+        services.AddTransient<ICalcResultLapcapDataBuilder, CalcResultLapcapDataBuilder>();
+        services.AddTransient<ICalcResultParameterOtherCostBuilder, CalcResultParameterOtherCostBuilder>();
+        services.AddTransient<ICalcResultOnePlusFourApportionmentBuilder, CalcResultOnePlusFourApportionmentBuilder>();
+        services.AddTransient<ICalcResultCommsCostBuilder, CalcResultCommsCostBuilder>();
+        services.AddTransient<ICalcResultLateReportingBuilder, CalcResultLateReportingBuilder>();
+        services.AddTransient<ICalcRunLaDisposalCostBuilder, CalcRunLaDisposalCostBuilder>();
+        services.AddTransient<ICalcResultScaledupProducersBuilder, CalcResultScaledupProducersBuilder>();
+        services.AddTransient<ICalcResultPartialObligationBuilder, CalcResultPartialObligationBuilder>();
+        services.AddTransient<ICalcResultProjectedProducersBuilder, CalcResultProjectedProducersBuilder>();
+        services.AddTransient<ICalcResultRejectedProducersBuilder, CalcResultRejectedProducersBuilder>();
+        services.AddTransient<ICalcResultModulationBuilder, CalcResultModulationBuilder>();
+        services.AddTransient<ICalcResultSummaryBuilder, CalcResultSummaryBuilder>();
+        services.AddTransient<IBillingInstructionService, BillingInstructionService>();
+        services.AddTransient<IOnePlusFourApportionmentExporter, OnePlusFourApportionmentExporter>();
+        services.AddTransient<IRpdStatusService, RpdStatusService>();
+        services.AddTransient<ICalculatorRunOrgData, CalculatorRunOrgData>();
+        services.AddTransient<ICalculatorRunPomData, CalculatorRunPomData>();
+        services.AddTransient<ILapcaptDetailExporter, LapcaptDetailExporter>();
+        services.AddTransient<ICalcResultDetailExporter, CalcResultDetailexporter>();
+        services.AddTransient<ICalcResultLaDisposalCostExporter, CalcResultLaDisposalCostExporter>();
+        services.AddTransient<ICalcResultScaledupProducersExporter, CalcResultScaledupProducersExporter>();
+        services.AddTransient<ICalcResultPartialObligationsExporter, CalcResultPartialObligationsExporter>();
+        services.AddTransient<ICalcResultRejectedProducersExporter, CalcResultRejectedProducersExporter>();
+        services.AddTransient<ICalcResultProjectedProducersExporter, CalcResultProjectedProducersExporter>();
+        services.AddTransient<LateReportingExporter, LateReportingExporter>();
+        services.AddTransient<ICalcResultParameterOtherCostExporter, CalcResultParameterOtherCostExporter>();
+        services.AddTransient<ICalcResultModulationExporter, CalcResultModulationExporter>();
+        services.AddTransient<ICommsCostExporter, CommsCostExporter>();
+        services.AddTransient<IDbLoadingChunkerService<ProducerDetail>, DbLoadingChunkerService<ProducerDetail>>();
+        services.AddTransient<IDbLoadingChunkerService<ProducerReportedMaterial>, DbLoadingChunkerService<ProducerReportedMaterial>>();
+        services.AddTransient<IDbLoadingChunkerService<ProducerReportedMaterialProjected>, DbLoadingChunkerService<ProducerReportedMaterialProjected>>();
+        services.AddTransient<IDbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction>, DbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction>>();
+        services.AddTransient<IDbLoadingChunkerService<ErrorReport>, DbLoadingChunkerService<ErrorReport>>();
+        services.AddTransient<ICalcResultSummaryExporter, CalcResultSummaryExporter>();
+        services.AddTransient<ICalcBillingJsonExporter<CalcResult>, CalcResultsJsonExporter>();
+        services.AddTransient<ILateReportingExporter, LateReportingExporter>();
+        services.AddTransient<IRunNameService, RunNameService>();
+        services.AddTransient<IClassificationService, ClassificationService>();
+        services.AddTransient<IMaterialService, MaterialService>();
+        services.AddTransient<ITelemetryClientWrapper, TelemetryClientWrapper>();
+        services.AddTransient<IMessageTypeService, MessageTypeService>();
+        services.AddTransient<IPrepareBillingFileService, PrepareBillingFileService>();
+        services.AddTransient<ICalcCountryApportionmentService, CalcCountryApportionmentService>();
+        services.AddTransient<IProducerDetailService, ProducerDetailService>();
+        services.AddTransient<ICalcResultCancelledProducersBuilder, CalcResultCancelledProducersBuilder>();
+        services.AddTransient<ICalcResultCancelledProducersExporter, CalcResultCancelledProducersExporter>();
+        services.AddTransient<IBillingFileExporter<CalcResult>, BillingFileExporter>();
+        services.AddTransient<IProducerInvoiceNetTonnageService, ProducerInvoiceNetTonnageService>();
+        services.AddTransient<IDbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage>, DbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage>>();
+        services.AddTransient<IProducerInvoiceTonnageMapper, ProducerInvoiceTonnageMapper>();
+        services.AddTransient<IPrepareProducerDataInsertService, PrepareProducerDataInsertService>();
+        services.AddTransient<ICalcResultErrorReportBuilder, CalcResultErrorReportBuilder>();
+        services.AddTransient<ICalcResultErrorReportExporter, CalcResultErrorReportExporter>();
+        services.AddTransient<IErrorReportService, ErrorReportService>();
+        services.AddTransient<IProjectedProducersService, ProjectedProducersService>();
+        services.AddTransient<ISelfManagedConsumerWasteService, SelfManagedConsumerWasteService>();
+        services.AddTransient<IReportedProducerService, ReportedProducerService>();
 
-            services.AddHttpClient<CommonDataApiHttpClient>();
-
-            services
-                .AddOptions<CommonDataApiLoaderOptions>()
-                .Configure<IConfiguration>((options, config) =>
-                {
-                    config.GetSection(CommonDataApiLoaderOptions.SectionKey).Bind(options);
-                })
-                .ValidateDataAnnotations()
-                .ValidateOnStart();
-
-            services.AddSingleton<TimeProvider>(_ => TimeProvider.System);
-            services.AddTransient<IDataLoader, CommonDataApiLoader>();
-
-            SetupBlobStorage(services);
-            services.AddTransient<IConfigurationService, Configuration>();
-        }
-
-        public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
+        services.AddScoped<PrepareCalcServiceDependencies>(provider => new PrepareCalcServiceDependencies
         {
-            builder.ConfigurationBuilder.Build();
+            Context = provider.GetRequiredService<ApplicationDBContext>(),
+            Builder = provider.GetRequiredService<ICalcResultBuilder>(),
+            Exporter = provider.GetRequiredService<ICalcResultsExporter<CalcResult>>(),
+            StorageService = provider.GetRequiredService<IStorageService>(),
+            ValidationRules = provider.GetRequiredService<CalculatorRunValidator>(),
+            CommandTimeoutService = provider.GetRequiredService<ICommandTimeoutService>(),
+            TelemetryLogger = provider.GetRequiredService<ICalculatorTelemetryLogger>(),
+            JsonExporter = provider.GetRequiredService<ICalcBillingJsonExporter<CalcResult>>(),
+            ConfigService = provider.GetRequiredService<IConfigurationService>(),
+            BillingFileExporter = provider.GetRequiredService<IBillingFileExporter<CalcResult>>(),
+            producerDataInsertService = provider.GetRequiredService<IPrepareProducerDataInsertService>()
+        });
 
-            builder.ConfigurationBuilder
-               .SetBasePath(Environment.CurrentDirectory)
-               .AddUserSecrets(Assembly.GetExecutingAssembly(), true)
-               .AddEnvironmentVariables()
-               .Build();
+        services
+            .AddOptions<CommonDataApiHttpClientOptions>()
+            .Configure<IConfiguration>((options, config) => { config.GetSection(CommonDataApiHttpClientOptions.SectionKey).Bind(options); })
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
 
-        }
+        services.AddHttpClient<CommonDataApiHttpClient>();
+
+        services
+            .AddOptions<CommonDataApiLoaderOptions>()
+            .Configure<IConfiguration>((options, config) => { config.GetSection(CommonDataApiLoaderOptions.SectionKey).Bind(options); })
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        services.AddSingleton<TimeProvider>(_ => TimeProvider.System);
+        services.AddTransient<IDataLoader, CommonDataApiLoader>();
+
+        SetupBlobStorage(services);
+        services.AddTransient<IConfigurationService, Configuration>();
+    }
+
+    public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
+    {
+        builder.ConfigurationBuilder.Build();
+
+        builder.ConfigurationBuilder
+            .SetBasePath(Environment.CurrentDirectory)
+            .AddUserSecrets(Assembly.GetExecutingAssembly(), true)
+            .AddEnvironmentVariables()
+            .Build();
     }
 }

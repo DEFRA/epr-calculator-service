@@ -13,9 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Exporter\Summary\**"/>
-    <EmbeddedResource Remove="Exporter\Summary\**"/>
-    <None Remove="Exporter\Summary\**"/>
+    <Using Include="JetBrains.Annotations"/>
+    <Using Include="Microsoft.Extensions.Logging"/>
+    <Using Include="System.Collections.Immutable"/>
   </ItemGroup>
 
   <ItemGroup>

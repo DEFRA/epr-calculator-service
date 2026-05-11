@@ -28,7 +28,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Fixture = new Fixture();
             MockLogger = new Mock<ICalculatorTelemetryLogger>();
             DataLoader = new Mock<IDataLoader>();
-            TransposeService = new Mock<ITransposePomAndOrgDataService>();
+            TransposeService = new Mock<IProducerDataTransposer>();
 
             PrepareCalcService = new Mock<IPrepareCalcService>();
             PrepareCalcService.Setup(s => s.PrepareCalcResultsAsync(
@@ -60,12 +60,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 PrepareCalcService.Object,
                 StatusService.Object,
                 MockLogger.Object);
-
-            TransposeService.Setup(t => t.TransposeBeforeResultsFileAsync(
-                    It.IsAny<CalcResultsRequestDto>(),
-                    It.IsAny<string>(),
-                    It.IsAny<CancellationToken>()))
-                .ReturnsAsync(true);
         }
 
         private CalculatorRunService CalculatorRunService { get; }
@@ -76,7 +70,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         private Mock<IDataLoader> DataLoader { get; }
 
-        private Mock<ITransposePomAndOrgDataService> TransposeService { get; }
+        private Mock<IProducerDataTransposer> TransposeService { get; }
 
         private Mock<IPrepareCalcService> PrepareCalcService { get; }
 
@@ -118,8 +112,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 { Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = MessageTypes.Result };
             var runName = "TestRun";
 
-            TransposeService.Setup(t => t.TransposeBeforeResultsFileAsync(It.IsAny<CalcResultsRequestDto>(),
-                    It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            TransposeService.Setup(t => t.Transpose(It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .ThrowsAsync(new TaskCanceledException());
 
             // Act
@@ -137,8 +130,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 { Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = MessageTypes.Result };
             var runName = "TestRun";
 
-            TransposeService.Setup(t => t.TransposeBeforeResultsFileAsync(It.IsAny<CalcResultsRequestDto>(),
-                    It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            TransposeService.Setup(t => t.Transpose(It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .ThrowsAsync(new Exception("Test Exception"));
 
             // Act
@@ -190,35 +182,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Assert
             Assert.IsFalse(result);
             TransposeService.Verify(
-                t => t.TransposeBeforeResultsFileAsync(
-                    It.IsAny<CalcResultsRequestDto>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
-                Times.Never);
-        }
-
-        /// <summary>
-        ///     Verifies that when transpose fails, prepare is not called and the result is false.
-        /// </summary>
-        [TestMethod]
-        public async Task PrepareResultsFileAsync_WhenTransposeFails_ReturnsFalse()
-        {
-            // Arrange
-            TransposeService.Setup(t => t.TransposeBeforeResultsFileAsync(
-                    It.IsAny<CalcResultsRequestDto>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(false);
-
-            var runParams = new CalculatorRunParameter
-            {
-                Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = MessageTypes.Result
-            };
-
-            // Act
-            var result = await CalculatorRunService.PrepareResultsFileAsync(runParams, "TestRun");
-
-            // Assert
-            Assert.IsFalse(result);
-            PrepareCalcService.Verify(
-                p => p.PrepareCalcResultsAsync(
-                    It.IsAny<CalcResultsRequestDto>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
+                t => t.Transpose(It.IsAny<int>(),  It.IsAny<CancellationToken>()),
                 Times.Never);
         }
 
