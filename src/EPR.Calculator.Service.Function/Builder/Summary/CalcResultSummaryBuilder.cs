@@ -38,10 +38,11 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         );
     }
 
-    public class CalcResultSummaryBuilder : ICalcResultSummaryBuilder
+    public class CalcResultSummaryBuilder(
+        ApplicationDBContext context,
+        IInvoicedProducerService invoicedProducerService)
+        : ICalcResultSummaryBuilder
     {
-        private readonly ApplicationDBContext context;
-
         public IEnumerable<CalcResultScaledupProducer> ScaledupProducers { get; set; } = [];
 
         public  IEnumerable<CalcResultPartialObligation> PartialObligations { get; set; } = [];
@@ -49,11 +50,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         public  IEnumerable<Organisation> Organisations { get; set; } = [];
 
         public  IEnumerable<Organisation> ParentOrganisations { get; set; } = [];
-
-        public CalcResultSummaryBuilder(ApplicationDBContext dbContext)
-        {
-            context = dbContext;
-        }
 
         public async Task<CalcResultSummary> ConstructAsync(
             List<MaterialDetail> materialDetails,
@@ -89,7 +85,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             var orderedProducerDetails = GetOrderedListOfProducersAssociatedRunId(
                 runId, producerDetails);
 
-            var producerInvoicedMaterialNetTonnage = GetPreviousInvoicedTonnageFromDb(relativeYear);
+            var producerInvoicedMaterialNetTonnage = await invoicedProducerService.GetLatestAcceptedInvoicedProducers(relativeYear);
 
             var defaultParams = await GetDefaultParamsAsync(runId);
 
@@ -160,7 +156,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             IEnumerable<MaterialDetail> materials,
             CalcResult calcResult,
             IEnumerable<TotalPackagingTonnagePerRun> totalPackagingTonnage,
-            IEnumerable<ProducerInvoicedDto> producerInvoicedMaterialNetTonnage,
+            IEnumerable<InvoicedProducer> producerInvoicedMaterialNetTonnage,
             IEnumerable<DefaultParamResultsClass> defaultParams,
             SelfManagedConsumerWaste smcw
         )
@@ -245,7 +241,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
             bool isOverAllTotalRow,
             IEnumerable<TotalPackagingTonnagePerRun> totalPackagingTonnage,
-            IEnumerable<ProducerInvoicedDto> producerInvoicedMaterialNetTonnage,
+            IEnumerable<InvoicedProducer> producerInvoicedMaterialNetTonnage,
             SelfManagedConsumerWaste smcw
         )
         {
@@ -338,7 +334,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             IEnumerable<MaterialDetail> materials,
             CalcResult calcResult,
             IEnumerable<TotalPackagingTonnagePerRun> totalPackagingTonnage,
-            IEnumerable<ProducerInvoicedDto> producerInvoicedMaterialNetTonnage,
+            IEnumerable<InvoicedProducer> producerInvoicedMaterialNetTonnage,
             SelfManagedConsumerWaste smcw
         )
         {
@@ -472,13 +468,13 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             ProducerDetail producer,
             MaterialDetail material,
             CalcResult calcResult,
-            IEnumerable<ProducerInvoicedDto> producerInvoicedMaterialNetTonnage,
+            IEnumerable<InvoicedProducer> producerInvoicedMaterialNetTonnage,
             SelfManagedConsumerWaste smcw,
             int level)
         {
             var previousInvoicedNetTonnage = producerInvoicedMaterialNetTonnage
-                                                .Where(x => x.InvoicedTonnage?.MaterialId == material.Id && x.InvoicedTonnage.ProducerId == producer.ProducerId)
-                                                .Select(x => x.InvoicedTonnage?.InvoicedNetTonnage)
+                                                .Where(x => x.MaterialId == material.Id && x.ProducerId == producer.ProducerId)
+                                                .Select(x => x.InvoicedNetTonnage)
                                                 .FirstOrDefault();
 
             var totalReportedTonnage = CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, producer, material);
@@ -571,61 +567,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             };
         }
 
-        public IEnumerable<ProducerInvoicedDto> GetPreviousInvoicedTonnageFromDb(RelativeYear relativeYear)
-        {
-            var validClassificationStatuses = new[]
-            {
-                RunClassificationStatusIds.INITIALRUNCOMPLETEDID,
-                RunClassificationStatusIds.INTERMRECALCULATIONRUNCOMPID,
-                RunClassificationStatusIds.FINALRECALCULATIONRUNCOMPID,
-                RunClassificationStatusIds.FINALRUNCOMPLETEDID
-            };
-
-            var previousInvoicedNetTonnage =
-                (from calc in context.CalculatorRuns.AsNoTracking()
-                 join b in context.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
-                     on calc.Id equals b.CalculatorRunId
-                 join p in context.ProducerDesignatedRunInvoiceInstruction.AsNoTracking()
-                     on new { b.CalculatorRunId, b.ProducerId }
-                     equals new { p.CalculatorRunId, p.ProducerId }
-                 join t in context.ProducerInvoicedMaterialNetTonnage.AsNoTracking()
-                     on new { calc.Id, p.ProducerId } equals new { Id = t.CalculatorRunId, t.ProducerId }
-                 where validClassificationStatuses.Contains(calc.CalculatorRunClassificationId)
-                       && calc.RelativeYearValue == relativeYear.Value
-                       && b.BillingInstructionAcceptReject == PrepareBillingFileConstants.BillingInstructionAccepted
-                       && b.SuggestedBillingInstruction != PrepareBillingFileConstants.SuggestedBillingInstructionCancelBill
-                       //not exists clause -- to exclude previous "net tonnage" and "current year invoice total to date" values if cancel bill has been accepted since.
-                       && !(from calc2 in context.CalculatorRuns.AsNoTracking()
-                            join b2 in context.ProducerResultFileSuggestedBillingInstruction.AsNoTracking()
-                                on calc2.Id equals b2.CalculatorRunId
-                            where b2.ProducerId == p.ProducerId
-                                  && b2.BillingInstructionAcceptReject == PrepareBillingFileConstants.BillingInstructionAccepted
-                                  && b2.SuggestedBillingInstruction == PrepareBillingFileConstants.SuggestedBillingInstructionCancelBill
-                                  && calc2.RelativeYearValue == relativeYear.Value
-                                  && validClassificationStatuses.Contains(calc2.CalculatorRunClassificationId)
-                                  && calc2.Id > calc.Id
-                            select 1).Any()
-                 select new { calc, p, t })
-                .AsEnumerable()
-                .GroupBy(x => new { x.p.ProducerId, x.t.MaterialId })
-                .Select(g =>
-                {
-                    var latest = g.OrderByDescending(x => x.calc.Id).First();
-                    return new ProducerInvoicedDto
-                    {
-                        InvoicedTonnage = latest.t,
-                        CalculatorRunId = latest.calc.Id,
-                        InvoiceInstruction = latest.p
-                    };
-                })
-                .OrderBy(x => x.InvoicedTonnage?.ProducerId)
-                .ThenBy(x => x.InvoicedTonnage?.MaterialId)
-                .ToList();
-
-
-            return previousInvoicedNetTonnage;
-        }
-
         public static IEnumerable<TotalPackagingTonnagePerRun> GetTotalPackagingTonnagePerRun(
             IEnumerable<CalcResultProducerAndReportMaterialDetail> allResults,
             IEnumerable<MaterialDetail> materials,
@@ -676,7 +617,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             IEnumerable<MaterialDetail> materials,
             CalcResult calcResult,
             bool isOverAllTotalRow,
-            IEnumerable<ProducerInvoicedDto> producerInvoicedMaterialNetTonnage,
+            IEnumerable<InvoicedProducer> producerInvoicedMaterialNetTonnage,
             SelfManagedConsumerWaste smcw)
         {
             var materialCosts = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>();
@@ -686,9 +627,9 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 var householdPackagingWasteTonnage = CalcResultSummaryUtil.GetTonnageTotal(projectedMaterialsLookup, producersAndSubsidiaries, material, PackagingTypes.Household);
                 var publicBinTonnage = CalcResultSummaryUtil.GetTonnageTotal(projectedMaterialsLookup, producersAndSubsidiaries, material, PackagingTypes.PublicBin);
                 var previousInvoicedNetTonnage = producerInvoicedMaterialNetTonnage
-                    .Where(x => x.InvoicedTonnage?.MaterialId == material.Id
-                             && x.InvoicedTonnage?.ProducerId == producersAndSubsidiaries.FirstOrDefault()?.ProducerId)
-                    .Select(x => x.InvoicedTonnage?.InvoicedNetTonnage)
+                    .Where(x => x.MaterialId == material.Id
+                             && x.ProducerId == producersAndSubsidiaries.FirstOrDefault()?.ProducerId)
+                    .Select(x => x.InvoicedNetTonnage)
                     .FirstOrDefault();
 
                 var selfManagedConsumerWasteData = CalcResultSummaryUtil.SumSelfManagedConsumerWasteData(producersAndSubsidiaries, material, isOverAllTotalRow, smcw);

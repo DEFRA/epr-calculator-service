@@ -143,7 +143,7 @@ namespace EPR.Calculator.Service.Function.Builder
             telemetryClient.TrackTrace("lapcapplusFourApportionmentBuilder end...");
 
             telemetryClient.TrackTrace("calcResultCancelledProducersBuilder started...");
-            result.CalcResultCancelledProducers = await calcResultCancelledProducersBuilder.ConstructAsync(materialDetails, resultsRequestDto);
+            result.CalcResultCancelledProducers = await calcResultCancelledProducersBuilder.ConstructAsync(resultsRequestDto, materialDetails);
             telemetryClient.TrackTrace("calcResultCancelledProducersBuilder end...");
 
             List<ProducerDetail> producers1 = await reportedProducerService.GetProducers(resultsRequestDto.RunId);
