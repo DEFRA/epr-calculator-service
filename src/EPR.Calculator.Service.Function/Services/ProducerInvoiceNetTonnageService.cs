@@ -1,35 +1,21 @@
-﻿using EPR.Calculator.API.Data.DataModels;
+﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Services
 {
-    public class ProducerInvoiceNetTonnageService : IProducerInvoiceNetTonnageService
-    {
-        private IDbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage> producerInvoiceMaterialChunker { get; init; }
-
-        private readonly ICalculatorTelemetryLogger telemetryLogger;
-
-        private readonly IMaterialService materialService;
-
-        private readonly IProducerInvoiceTonnageMapper producerInvoiceTonnageMapper;
-
-        public ProducerInvoiceNetTonnageService(IDbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage> producerInvoiceMaterialChunker,
-            ICalculatorTelemetryLogger telemetryLogger,
+    public class ProducerInvoiceNetTonnageService(
+            ApplicationDBContext dbContext,
+            IBulkOperations bulkOps,
             IMaterialService materialService,
-            IProducerInvoiceTonnageMapper producerInvoiceTonnageMapper)
-        {
-            this.producerInvoiceMaterialChunker = producerInvoiceMaterialChunker;
-            this.materialService = materialService;
-            this.telemetryLogger = telemetryLogger;
-            this.producerInvoiceTonnageMapper = producerInvoiceTonnageMapper;
-        }
-
-
-        public async Task<bool> CreateProducerInvoiceNetTonnage(CalcResult calcResult)
+            IProducerInvoiceTonnageMapper producerInvoiceTonnageMapper,
+            ICalculatorTelemetryLogger telemetryLogger)
+        : IProducerInvoiceNetTonnageService
+    {
+       public async Task<bool> CreateProducerInvoiceNetTonnage(CalcResult calcResult)
         {
             try
             {
@@ -66,7 +52,7 @@ namespace EPR.Calculator.Service.Function.Services
 
                 if (producerInvoiceNetTonnage.Exists(t => t.CalculatorRunId > 0))
                 {
-                    await producerInvoiceMaterialChunker.InsertRecords(producerInvoiceNetTonnage);
+                    await bulkOps.BulkInsertAsync(dbContext, producerInvoiceNetTonnage);
 
                     var endTime = DateTime.UtcNow;
                     var timeDiff = startTime - endTime;
@@ -76,11 +62,9 @@ namespace EPR.Calculator.Service.Function.Services
                         RunName = calcResult.CalcResultDetail.RunName,
                         Message = $"Inserting records {producerInvoiceNetTonnage.Count} into producer invoice net tonnage table for {calcResult.CalcResultDetail.RunId} completed in {timeDiff.TotalSeconds} seconds",
                     });
-
                 }
                 else
                 {
-
                     telemetryLogger.LogInformation(new TrackMessage
                     {
                         RunId = calcResult.CalcResultDetail.RunId,

@@ -1,60 +1,37 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Common;
-using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
-using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Interface;
-using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.UnitTests.Builder;
-using Microsoft.EntityFrameworkCore;
-using Moq;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
+using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
     [TestClass]
     public class ProjectedProducersServiceTest
     {
-        private readonly ApplicationDBContext context;
+        private IFixture _fixture = null!;
+        private ApplicationDBContext _dbContext = null!;
+        private ProjectedProducersService _sut = null!;
 
-        public ProjectedProducersServiceTest()
+        [TestInitialize]
+        public void Init()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDBContext>()
-                .UseInMemoryDatabase(databaseName: "PayCal")
-                .Options;
-            context = new ApplicationDBContext(options);
+            _fixture = TestFixtures.New();
+            _dbContext = _fixture.Freeze<ApplicationDBContext>();
+            _sut = _fixture.Create<ProjectedProducersService>();
         }
 
         [TestCleanup]
         public void TearDown()
         {
-            context?.Database.EnsureDeleted();
+            _dbContext.Database.EnsureDeleted();
         }
 
         [TestMethod]
         public async Task StoreProjectedProducers_WorksAsExpected()
         {
-            TestDataHelper.SeedDatabaseForInitialRun(context);
-
-            var producerReportedMaterialProjectedChunker = new Mock<IDbLoadingChunkerService<ProducerReportedMaterialProjected>>();
-            List<ProducerReportedMaterialProjected> savedProducers = new List<ProducerReportedMaterialProjected>();
-
-            producerReportedMaterialProjectedChunker
-                .Setup(c => c.InsertRecords(It.IsAny<IEnumerable<ProducerReportedMaterialProjected>>()))
-                .Returns((IEnumerable<ProducerReportedMaterialProjected> arg) =>
-                {
-                    savedProducers = arg.ToList();
-                    return Task.FromResult(arg);
-                });
-
-            var service = new ProjectedProducersService(producerReportedMaterialProjectedChunker.Object);
+            TestDataHelper.SeedDatabaseForInitialRun(_dbContext);
 
             ProducerReportedMaterial mkProducerReportedMaterial(string submissionPeriod, string material, string packagingType, decimal total, decimal? r, decimal? a)
             {
@@ -95,13 +72,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 producer1, producer2
             };
 
-            var runId = 1;
-            await service.StoreProjectedProducers(runId, producers);
+            await _sut.StoreProjectedProducers(1, producers);
 
-            // TODO this is checking what went through the Chunker mock - not what was stored in db
-            Assert.AreEqual(6, savedProducers.Count());
-
-            // TODO assert entries
+            var stored = await _dbContext.ProducerReportedMaterialProjected.ToImmutableListAsync();
+            stored.Count.ShouldBe(6);
         }
     }
 }

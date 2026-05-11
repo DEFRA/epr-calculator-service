@@ -1,29 +1,27 @@
-using AutoFixture;
-using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.UnitTests.Builder;
-using Moq;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
     [TestClass]
     public class BillingInstructionServiceTests
     {
-        private BillingInstructionService _testClass = null!;
-        private Mock<IDbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction>> _billingInstructionChunker = null!;
+        private BillingInstructionService _sut = null!;
         private Mock<ICalculatorTelemetryLogger> _telemetryLogger = null!;
+        private IFixture _fixture = null!;
 
         [TestInitialize]
         public void SetUp()
         {
-            _billingInstructionChunker = new Mock<IDbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction>>();
-            _telemetryLogger = new Mock<ICalculatorTelemetryLogger>();
-            _testClass = new BillingInstructionService(_billingInstructionChunker.Object, _telemetryLogger.Object);
+            _fixture = TestFixtures.New();
+            _telemetryLogger = _fixture.Freeze<Mock<ICalculatorTelemetryLogger>>();
+
+            _sut = _fixture.Create<BillingInstructionService>();
         }
 
         [TestMethod]
@@ -36,7 +34,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             _telemetryLogger.Setup(mock => mock.LogError(It.IsAny<ErrorMessage>())).Verifiable();
 
             // Act
-            var result = await _testClass.CreateBillingInstructions(calcResult);
+            var result = await _sut.CreateBillingInstructions(calcResult);
 
             // Assert
             _telemetryLogger.Verify(mock => mock.LogInformation(It.IsAny<TrackMessage>()));
@@ -119,7 +117,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             _telemetryLogger.Setup(mock => mock.LogError(It.IsAny<ErrorMessage>())).Verifiable();
 
             // Act
-            var result = await _testClass.CreateBillingInstructions(calcResult);
+            var result = await _sut.CreateBillingInstructions(calcResult);
 
             // Assert
             _telemetryLogger.Verify(mock => mock.LogInformation(It.IsAny<TrackMessage>()));
@@ -173,7 +171,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             _telemetryLogger.Setup(mock => mock.LogError(It.IsAny<ErrorMessage>())).Verifiable();
 
             // Act
-            var result = await _testClass.CreateBillingInstructions(calcResult);
+            var result = await _sut.CreateBillingInstructions(calcResult);
 
             // Assert
             _telemetryLogger.Verify(mock => mock.LogError(It.IsAny<ErrorMessage>()));
@@ -185,7 +183,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task CanCallCreateBillingInstructionsWithCancelledProducers()
         {
             // Arrange
-            var fixture = new Fixture();
             var calcResult = new CalcResult
             {
                 ApplyModulation = true,
@@ -221,7 +218,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 },
                 CalcResultSummary = new()
                 {
-                    ProducerDisposalFees = fixture.Create<List<CalcResultSummaryProducerDisposalFees>>()
+                    ProducerDisposalFees = _fixture.Create<List<CalcResultSummaryProducerDisposalFees>>()
                 },
                 CalcResultCancelledProducers = new CalcResultCancelledProducersResponse
                 {
@@ -250,7 +247,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             _telemetryLogger.Setup(mock => mock.LogError(It.IsAny<ErrorMessage>())).Verifiable();
 
             // Act
-            var result = await _testClass.CreateBillingInstructions(calcResult);
+            var result = await _sut.CreateBillingInstructions(calcResult);
 
 
             Assert.IsTrue(result);

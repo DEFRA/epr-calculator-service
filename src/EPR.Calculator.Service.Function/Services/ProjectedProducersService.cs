@@ -1,6 +1,5 @@
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.Service.Function.Interface;
 
 namespace EPR.Calculator.Service.Function.Services
 {
@@ -10,15 +9,11 @@ namespace EPR.Calculator.Service.Function.Services
         Task StoreProjectedProducers(int runId, List<ProducerDetail> producerDetails);
     }
 
-    public class ProjectedProducersService : IProjectedProducersService
+    public class ProjectedProducersService(
+        ApplicationDBContext dbContext,
+        IBulkOperations bulkOps)
+        : IProjectedProducersService
     {
-        private IDbLoadingChunkerService<ProducerReportedMaterialProjected> chunker { get; init; }
-
-        public ProjectedProducersService(IDbLoadingChunkerService<ProducerReportedMaterialProjected> chunker)
-        {
-            this.chunker = chunker;
-        }
-
         public async Task StoreProjectedProducers(int runId, List<ProducerDetail> producerDetails)
         {
             var producerProjected =
@@ -40,7 +35,8 @@ namespace EPR.Calculator.Service.Function.Services
                         }
                     )
                 ).ToList();
-            await chunker.InsertRecords(producerProjected);
+
+            await bulkOps.BulkInsertAsync(dbContext, producerProjected);
         }
     }
 }
