@@ -1,26 +1,18 @@
-﻿using EPR.Calculator.API.Data.DataModels;
+﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Services
 {
-    public class BillingInstructionService : IBillingInstructionService
+    public class BillingInstructionService(
+        ApplicationDBContext dbContext,
+        IBulkOperations bulkOps,
+        ICalculatorTelemetryLogger telemetryLogger)
+        : IBillingInstructionService
     {
-        private IDbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction> billingInstructionChunker { get; init; }
-
-        private readonly ICalculatorTelemetryLogger _telemetryLogger;
-
-        public BillingInstructionService(
-            IDbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction> billingInstructionChunker,
-            ICalculatorTelemetryLogger telemetryLogger)
-        {
-            this.billingInstructionChunker = billingInstructionChunker;
-            _telemetryLogger = telemetryLogger;
-        }
-
         public async Task<bool> CreateBillingInstructions(CalcResult calcResult)
         {
             try
@@ -84,11 +76,11 @@ namespace EPR.Calculator.Service.Function.Services
 
                 if (billingInstructions.Count > 0)
                 {
-                    await billingInstructionChunker.InsertRecords(billingInstructions);
+                    await bulkOps.BulkInsertAsync(dbContext, billingInstructions);
                 }
                 else
                 {
-                    _telemetryLogger.LogInformation(new TrackMessage
+                    telemetryLogger.LogInformation(new TrackMessage
                     {
                         RunId = calcResult.CalcResultDetail.RunId,
                         RunName = calcResult.CalcResultDetail.RunName,
@@ -99,7 +91,7 @@ namespace EPR.Calculator.Service.Function.Services
 
                 var endTime = DateTime.UtcNow;
                 var timeDiff = startTime - endTime;
-                _telemetryLogger.LogInformation(new TrackMessage
+                telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = calcResult.CalcResultDetail.RunId,
                     RunName = calcResult.CalcResultDetail.RunName,
@@ -111,7 +103,7 @@ namespace EPR.Calculator.Service.Function.Services
             }
             catch (Exception exception)
             {
-                _telemetryLogger.LogError(new ErrorMessage
+                telemetryLogger.LogError(new ErrorMessage
                 {
                     RunId = calcResult.CalcResultDetail.RunId,
                     RunName = calcResult.CalcResultDetail.RunName,

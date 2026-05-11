@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Text;
-using AutoFixture;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
@@ -14,10 +11,8 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers;
 using EPR.Calculator.Service.Function.Models;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using EPR.Calculator.Service.Function.Builder.Modulation;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 {

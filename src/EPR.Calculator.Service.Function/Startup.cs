@@ -2,7 +2,6 @@
 using System.Reflection;
 using Azure.Storage.Blobs;
 using EPR.Calculator.API.Data;
-using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function;
 using EPR.Calculator.Service.Function.Builder;
@@ -148,11 +147,6 @@ public class Startup : FunctionsStartup
         services.AddTransient<ICalcResultParameterOtherCostExporter, CalcResultParameterOtherCostExporter>();
         services.AddTransient<ICalcResultModulationExporter, CalcResultModulationExporter>();
         services.AddTransient<ICommsCostExporter, CommsCostExporter>();
-        services.AddTransient<IDbLoadingChunkerService<ProducerDetail>, DbLoadingChunkerService<ProducerDetail>>();
-        services.AddTransient<IDbLoadingChunkerService<ProducerReportedMaterial>, DbLoadingChunkerService<ProducerReportedMaterial>>();
-        services.AddTransient<IDbLoadingChunkerService<ProducerReportedMaterialProjected>, DbLoadingChunkerService<ProducerReportedMaterialProjected>>();
-        services.AddTransient<IDbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction>, DbLoadingChunkerService<ProducerResultFileSuggestedBillingInstruction>>();
-        services.AddTransient<IDbLoadingChunkerService<ErrorReport>, DbLoadingChunkerService<ErrorReport>>();
         services.AddTransient<ICalcResultSummaryExporter, CalcResultSummaryExporter>();
         services.AddTransient<ICalcBillingJsonExporter<CalcResult>, CalcResultsJsonExporter>();
         services.AddTransient<ILateReportingExporter, LateReportingExporter>();
@@ -168,7 +162,6 @@ public class Startup : FunctionsStartup
         services.AddTransient<ICalcResultCancelledProducersExporter, CalcResultCancelledProducersExporter>();
         services.AddTransient<IBillingFileExporter<CalcResult>, BillingFileExporter>();
         services.AddTransient<IProducerInvoiceNetTonnageService, ProducerInvoiceNetTonnageService>();
-        services.AddTransient<IDbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage>, DbLoadingChunkerService<ProducerInvoicedMaterialNetTonnage>>();
         services.AddTransient<IProducerInvoiceTonnageMapper, ProducerInvoiceTonnageMapper>();
         services.AddTransient<IPrepareProducerDataInsertService, PrepareProducerDataInsertService>();
         services.AddTransient<ICalcResultErrorReportBuilder, CalcResultErrorReportBuilder>();

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -10,7 +10,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Using Include="AutoFixture"/>
+    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting"/>
+    <Using Include="Moq"/>
+    <Using Include="Shouldly"/>
+    <Using Include="System.Collections.Immutable"/>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoFixture" Version="4.18.1"/>
+    <PackageReference Include="AutoFixture.AutoMoq" Version="4.18.1"/>
+    <PackageReference Include="AutoFixture.Community.ImmutableCollections" Version="1.0.0"/>
     <PackageReference Include="coverlet.collector" Version="6.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -27,6 +37,7 @@
     <PackageReference Include="Moq.EntityFrameworkCore" Version="8.0.1.7"/>
     <PackageReference Include="MSTest.TestAdapter" Version="3.1.1"/>
     <PackageReference Include="MSTest.TestFramework" Version="3.1.1"/>
+    <PackageReference Include="Shouldly" Version="4.3.0"/>
   </ItemGroup>
 
   <ItemGroup>

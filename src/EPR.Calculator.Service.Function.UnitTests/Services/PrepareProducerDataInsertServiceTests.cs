@@ -1,8 +1,7 @@
-using AutoFixture;
 using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
-using Moq;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {

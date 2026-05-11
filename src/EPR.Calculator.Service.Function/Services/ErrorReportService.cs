@@ -1,21 +1,17 @@
-﻿using EPR.Calculator.API.Data.DataModels;
+﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Interface;
 
 namespace EPR.Calculator.Service.Function.Services
 {
-    public class ErrorReportService : IErrorReportService
+    public class ErrorReportService(
+        ApplicationDBContext dbContext,
+        IBulkOperations bulkOps,
+        IProducerDetailService producerDetailService)
+        : IErrorReportService
     {
-        private IDbLoadingChunkerService<ErrorReport> ErrorReportChunker { get; init; }
-        private IProducerDetailService ProducerDetailService { get; init; }
-
-        public ErrorReportService(IDbLoadingChunkerService<ErrorReport> errorReportChunker, IProducerDetailService producerDetailService)
-        {
-            ErrorReportChunker = errorReportChunker ?? throw new ArgumentNullException(nameof(errorReportChunker));
-            ProducerDetailService = producerDetailService ?? throw new ArgumentNullException(nameof(producerDetailService));
-        }
-
         public List<ErrorReport> HandleMissingRegistrationData(
                                 IEnumerable<CalculatorRunPomDataDetail> pomDetails,
                                 IEnumerable<CalculatorRunOrganisationDataDetail> orgDetails,
@@ -85,7 +81,7 @@ namespace EPR.Calculator.Service.Function.Services
                                 RelativeYear relativeYear,
                                 CancellationToken cancellationToken)
         {
-            var invoiceInstructionsFY = (await ProducerDetailService.GetProducerDetails(relativeYear)).Select(p => p.InvoiceInstruction);
+            var invoiceInstructionsFY = (await producerDetailService.GetProducerDetails(relativeYear)).Select(p => p.InvoiceInstruction);
 
             var obligatedErrors = HandleObligatedErrors(pomDetails, orgDetails, invoiceInstructionsFY!, calculatorRunId, createdBy);
             var obligatedWarnings = HandleObligatedWarnings(pomDetails, orgDetails, invoiceInstructionsFY!, calculatorRunId, createdBy);
@@ -100,7 +96,7 @@ namespace EPR.Calculator.Service.Function.Services
                                     .Select(x => CreateError(x.Key, null, calculatorRunId, createdBy, ErrorCodes.Empty, leaverCode: null));
 
             var allErrors = calcErrors.Concat(holdingRegErrors);
-            await ErrorReportChunker.InsertRecords(allErrors);
+            await bulkOps.BulkInsertAsync(dbContext, allErrors, cancellationToken);
 
             return calcErrors
                     .Where(e => !obligatedWarnings.Contains(e)) // Filter out warnings so they are kept in calculator results.
