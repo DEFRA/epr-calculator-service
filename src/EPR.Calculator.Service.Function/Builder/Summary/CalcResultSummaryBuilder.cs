@@ -691,7 +691,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     .Select(x => x.InvoicedTonnage?.InvoicedNetTonnage)
                     .FirstOrDefault();
 
-                var producers = context.ProducerDetail.ToList();
                 var selfManagedConsumerWasteData = CalcResultSummaryUtil.SumSelfManagedConsumerWasteData(producersAndSubsidiaries, material, isOverAllTotalRow, smcw);
                 var producerDisposalFee = CalcResultSummaryUtil.GetProducerDisposalFee(material, calcResult, selfManagedConsumerWasteData);
 
