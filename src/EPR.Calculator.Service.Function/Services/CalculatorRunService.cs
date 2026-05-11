@@ -96,8 +96,6 @@ namespace EPR.Calculator.Service.Function.Services
             }
 
             LogInformation(calculatorRunParameter.Id, runName,
-                $"UpdateStatusAndPrepareResult - StatusEndPoint: {configuration.PrepareCalcResultEndPoint}");
-            LogInformation(calculatorRunParameter.Id, runName,
                 $"UpdateStatusAndPrepareResult - CalculatorRunParameter ID: {calculatorRunParameter.Id}");
             LogInformation(calculatorRunParameter.Id, runName,
                 $"UpdateStatusAndPrepareResult - GetPrepareCalcResultMessage: {GetCalcResultMessage(calculatorRunParameter.Id)}");
@@ -109,7 +107,7 @@ namespace EPR.Calculator.Service.Function.Services
             string runName)
         {
             LogInformation(calculatorRunParameter.Id, runName,
-                $"UpdateStatusAndPrepareResult - StatusEndPoint: {configuration.StatusEndpoint}");
+                $"UpdateStatusAndPrepareResult");
             var statusUpdateResponse = await statusService.UpdateRpdStatus(
                 calculatorRunParameter.Id,
                 runName,
