@@ -46,12 +46,18 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
             decimal? param_TONT_PI = dpList.FirstOrDefault(p => p.ParameterUniqueReference == CommonConstants.TonnagePercentageIncrease)?.ParameterValue;
             decimal? param_TONT_PD = dpList.FirstOrDefault(p => p.ParameterUniqueReference == CommonConstants.TonnagePercentageDecrease)?.ParameterValue;
 
+            // PERF: Pre-index the invoiced records by ProducerId (as string) once.
+            // Replaces O(fees * invoiced records) scan that previously ran inside the loop.
+            var currentYearInvoicedByProducerId = new Dictionary<string, decimal?>();
+            foreach (var record in ProducerInvoicedMaterialNetTonnage)
+            {
+                // Preserves the original semantics of choosing the first encountered record per producerId.
+                currentYearInvoicedByProducerId.TryAdd(record.ProducerId.ToString(), record.CurrentYearInvoicedTotalAfterThisRun);
+            }
+
             foreach (var fee in result.ProducerDisposalFees)
             {
-                var currentYearInvoicedTotalTonnage = ProducerInvoicedMaterialNetTonnage
-                                                    .Where(x => x.ProducerId.ToString() == fee.ProducerId)
-                                                    .Select(y => y.CurrentYearInvoicedTotalAfterThisRun)
-                                                    .FirstOrDefault();
+                currentYearInvoicedByProducerId.TryGetValue(fee.ProducerId, out var currentYearInvoicedTotalTonnage);
 
                 totalTonnage += currentYearInvoicedTotalTonnage.GetValueOrDefault();
 
