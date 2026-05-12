@@ -96,10 +96,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         public void CanCallExport()
         {
             // Arrange
-            var fixture = new Fixture();
+            var fixture = new Fixture().Customize(new ImmutableCollectionsCustomization());
             var results = fixture.Create<CalcResult>();
             results.ApplyModulation = false;
-            var acceptedProducerIds = results.CalcResultScaledupProducers?.ScaledupProducers?.Select(t => t.ProducerId).Take(1).ToList() ?? fixture.Create<List<int>>();
+            var acceptedProducerIds = results.CalcResultScaledupProducers.ScaledupProducers!.Select(t => t.ProducerId).Take(1).ToImmutableHashSet() ?? [];
 
             _resultDetailexporter.Setup(mock => mock.Export(It.IsAny<CalcResultDetail>(), It.IsAny<StringBuilder>())).Verifiable();
             _onePlusFourApportionmentExporter.Setup(mock => mock.Export(It.IsAny<CalcResultOnePlusFourApportionment>(), It.IsAny<StringBuilder>())).Verifiable();
@@ -137,10 +137,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         public void CanCallExport_Modulation()
         {
             // Arrange
-            var fixture = new Fixture();
+            var fixture = new Fixture().Customize(new ImmutableCollectionsCustomization());
             var results = fixture.Create<CalcResult>();
             results.ApplyModulation = true;
-            var acceptedProducerIds = results.CalcResultProjectedProducers?.H2ProjectedProducers?.Select(t => t.ProducerId).Take(1).ToList() ?? fixture.Create<List<int>>();
+            var acceptedProducerIds = results.CalcResultProjectedProducers.H2ProjectedProducers!.Select(t => t.ProducerId).Take(1).ToImmutableHashSet();
 
             _resultDetailexporter.Setup(mock => mock.Export(It.IsAny<CalcResultDetail>(), It.IsAny<StringBuilder>())).Verifiable();
             _onePlusFourApportionmentExporter.Setup(mock => mock.Export(It.IsAny<CalcResultOnePlusFourApportionment>(), It.IsAny<StringBuilder>())).Verifiable();
@@ -180,9 +180,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         public void CanCallGetScaledUpProducersForExport()
         {
             // Arrange
-            var fixture = new Fixture();
+            var fixture = new Fixture().Customize(new ImmutableCollectionsCustomization());
             var producers = fixture.Create<CalcResultScaledupProducers>();
-            var acceptedProducerIds = producers.ScaledupProducers?.Select(t => t.ProducerId).Take(2).ToList() ?? fixture.Create<List<int>>();
+            var acceptedProducerIds = producers.ScaledupProducers!.Select(t => t.ProducerId).Take(2).ToImmutableHashSet();
 
             // Act
             var result = testClass.GetScaledUpProducersForExport(producers, acceptedProducerIds);

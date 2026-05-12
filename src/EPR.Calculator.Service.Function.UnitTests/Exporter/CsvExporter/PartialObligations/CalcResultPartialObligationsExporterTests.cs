@@ -37,7 +37,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
             var csvContent = new StringBuilder();
 
             exporter.Export(projectedProducers, csvContent, showModulation);
-            var rows = CsvTestUtils.GetRows(csvContent); 
+            var rows = CsvTestUtils.GetRows(csvContent);
 
             Assert.IsTrue(rows[2][0].Contains(CalcResultPartialObligationHeaders.PartialObligations));
 
@@ -77,17 +77,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
             Assert.AreEqual("9.000", data[CalcResultPartialObligationHeaders.PublicBinGreenTonnage][0]);
             Assert.AreEqual("10.000", data[CalcResultPartialObligationHeaders.PublicBinRedMedicalTonnage][0]);
             Assert.AreEqual("11.000", data[CalcResultPartialObligationHeaders.PublicBinAmberMedicalTonnage][0]);
-            Assert.AreEqual("12.000", data[CalcResultPartialObligationHeaders.PublicBinGreenMedicalTonnage][0]);            
+            Assert.AreEqual("12.000", data[CalcResultPartialObligationHeaders.PublicBinGreenMedicalTonnage][0]);
             Assert.AreEqual("120.000", data[CalcResultPartialObligationHeaders.TotalTonnage][0]);
             Assert.AreEqual("60.000", data[CalcResultPartialObligationHeaders.SelfManagedConsumerWasteTonnage][0]);
-            Assert.AreEqual("50.000", data[CalcResultPartialObligationHeaders.PartialHouseholdPackagingWasteTonnage][0]);            
+            Assert.AreEqual("50.000", data[CalcResultPartialObligationHeaders.PartialHouseholdPackagingWasteTonnage][0]);
             Assert.AreEqual("13.000", data[CalcResultPartialObligationHeaders.PartialHouseholdRedTonnage][0]);
             Assert.AreEqual("14.000", data[CalcResultPartialObligationHeaders.PartialHouseholdAmberTonnage][0]);
             Assert.AreEqual("15.000", data[CalcResultPartialObligationHeaders.PartialHouseholdGreenTonnage][0]);
             Assert.AreEqual("16.000", data[CalcResultPartialObligationHeaders.PartialHouseholdRedMedicalTonnage][0]);
             Assert.AreEqual("17.000", data[CalcResultPartialObligationHeaders.PartialHouseholdAmberMedicalTonnage][0]);
             Assert.AreEqual("18.000", data[CalcResultPartialObligationHeaders.PartialHouseholdGreenMedicalTonnage][0]);
-            Assert.AreEqual("10.000", data[CalcResultPartialObligationHeaders.PartialPublicBinTonnage][0]);        
+            Assert.AreEqual("10.000", data[CalcResultPartialObligationHeaders.PartialPublicBinTonnage][0]);
             Assert.AreEqual("19.000", data[CalcResultPartialObligationHeaders.PartialPublicBinRedTonnage][0]);
             Assert.AreEqual("20.000", data[CalcResultPartialObligationHeaders.PartialPublicBinAmberTonnage][0]);
             Assert.AreEqual("21.000", data[CalcResultPartialObligationHeaders.PartialPublicBinGreenTonnage][0]);
@@ -117,17 +117,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
             Assert.AreEqual("15.000", data[CalcResultPartialObligationHeaders.HouseholdDrinksContainersGreenTonnage][0]);
             Assert.AreEqual("16.000", data[CalcResultPartialObligationHeaders.HouseholdDrinksContainersRedMedicalTonnage][0]);
             Assert.AreEqual("17.000", data[CalcResultPartialObligationHeaders.HouseholdDrinksContainersAmberMedicalTonnage][0]);
-            Assert.AreEqual("18.000", data[CalcResultPartialObligationHeaders.HouseholdDrinksContainersGreenMedicalTonnage][0]);            
+            Assert.AreEqual("18.000", data[CalcResultPartialObligationHeaders.HouseholdDrinksContainersGreenMedicalTonnage][0]);
             Assert.AreEqual("190.000", data[CalcResultPartialObligationHeaders.TotalTonnage][1]);
             Assert.AreEqual("60.000", data[CalcResultPartialObligationHeaders.SelfManagedConsumerWasteTonnage][1]);
-            Assert.AreEqual("50.000", data[CalcResultPartialObligationHeaders.PartialHouseholdPackagingWasteTonnage][1]);            
+            Assert.AreEqual("50.000", data[CalcResultPartialObligationHeaders.PartialHouseholdPackagingWasteTonnage][1]);
             Assert.AreEqual("19.000", data[CalcResultPartialObligationHeaders.PartialHouseholdRedTonnage][1]);
             Assert.AreEqual("20.000", data[CalcResultPartialObligationHeaders.PartialHouseholdAmberTonnage][1]);
             Assert.AreEqual("21.000", data[CalcResultPartialObligationHeaders.PartialHouseholdGreenTonnage][1]);
             Assert.AreEqual("22.000", data[CalcResultPartialObligationHeaders.PartialHouseholdRedMedicalTonnage][1]);
             Assert.AreEqual("23.000", data[CalcResultPartialObligationHeaders.PartialHouseholdAmberMedicalTonnage][1]);
             Assert.AreEqual("24.000", data[CalcResultPartialObligationHeaders.PartialHouseholdGreenMedicalTonnage][1]);
-            Assert.AreEqual("10.000", data[CalcResultPartialObligationHeaders.PartialPublicBinTonnage][1]);        
+            Assert.AreEqual("10.000", data[CalcResultPartialObligationHeaders.PartialPublicBinTonnage][1]);
             Assert.AreEqual("25.000", data[CalcResultPartialObligationHeaders.PartialPublicBinRedTonnage][1]);
             Assert.AreEqual("26.000", data[CalcResultPartialObligationHeaders.PartialPublicBinAmberTonnage][1]);
             Assert.AreEqual("27.000", data[CalcResultPartialObligationHeaders.PartialPublicBinGreenTonnage][1]);
@@ -160,7 +160,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
             var csvContent = new StringBuilder();
 
             exporter.Export(projectedProducers, csvContent, showModulation);
-            var rows = CsvTestUtils.GetRows(csvContent); 
+            var rows = CsvTestUtils.GetRows(csvContent);
 
             Assert.IsTrue(rows[2][0].Contains(CalcResultPartialObligationHeaders.PartialObligations));
 
@@ -200,17 +200,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PublicBinGreenTonnage][0]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PublicBinRedMedicalTonnage][0]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PublicBinAmberMedicalTonnage][0]);
-            Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PublicBinGreenMedicalTonnage][0]);            
+            Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PublicBinGreenMedicalTonnage][0]);
             Assert.AreEqual("120.000", data[CalcResultPartialObligationHeaders.TotalTonnage][0]);
             Assert.AreEqual("60.000", data[CalcResultPartialObligationHeaders.SelfManagedConsumerWasteTonnage][0]);
-            Assert.AreEqual("50.000", data[CalcResultPartialObligationHeaders.PartialHouseholdPackagingWasteTonnage][0]);            
+            Assert.AreEqual("50.000", data[CalcResultPartialObligationHeaders.PartialHouseholdPackagingWasteTonnage][0]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialHouseholdRedTonnage][0]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialHouseholdAmberTonnage][0]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialHouseholdGreenTonnage][0]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialHouseholdRedMedicalTonnage][0]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialHouseholdAmberMedicalTonnage][0]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialHouseholdGreenMedicalTonnage][0]);
-            Assert.AreEqual("10.000", data[CalcResultPartialObligationHeaders.PartialPublicBinTonnage][0]);        
+            Assert.AreEqual("10.000", data[CalcResultPartialObligationHeaders.PartialPublicBinTonnage][0]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialPublicBinRedTonnage][0]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialPublicBinAmberTonnage][0]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialPublicBinGreenTonnage][0]);
@@ -240,17 +240,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.HouseholdDrinksContainersGreenTonnage][0]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.HouseholdDrinksContainersRedMedicalTonnage][0]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.HouseholdDrinksContainersAmberMedicalTonnage][0]);
-            Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.HouseholdDrinksContainersGreenMedicalTonnage][0]);            
+            Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.HouseholdDrinksContainersGreenMedicalTonnage][0]);
             Assert.AreEqual("190.000", data[CalcResultPartialObligationHeaders.TotalTonnage][1]);
             Assert.AreEqual("60.000", data[CalcResultPartialObligationHeaders.SelfManagedConsumerWasteTonnage][1]);
-            Assert.AreEqual("50.000", data[CalcResultPartialObligationHeaders.PartialHouseholdPackagingWasteTonnage][1]);            
+            Assert.AreEqual("50.000", data[CalcResultPartialObligationHeaders.PartialHouseholdPackagingWasteTonnage][1]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialHouseholdRedTonnage][1]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialHouseholdAmberTonnage][1]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialHouseholdGreenTonnage][1]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialHouseholdRedMedicalTonnage][1]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialHouseholdAmberMedicalTonnage][1]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialHouseholdGreenMedicalTonnage][1]);
-            Assert.AreEqual("10.000", data[CalcResultPartialObligationHeaders.PartialPublicBinTonnage][1]);        
+            Assert.AreEqual("10.000", data[CalcResultPartialObligationHeaders.PartialPublicBinTonnage][1]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialPublicBinRedTonnage][1]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialPublicBinAmberTonnage][1]);
             Assert.ThrowsException<KeyNotFoundException>(() => data[CalcResultPartialObligationHeaders.PartialPublicBinGreenTonnage][1]);
@@ -277,153 +277,152 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
                 TitleHeader = new CalcResultPartialObligationHeader() { Name = CalcResultPartialObligationHeaders.PartialObligations },
                 MaterialBreakdownHeaders = CalcResultPartialObligationBuilder.GetMaterialsBreakdownHeader(materials, showModulation),
                 ColumnHeaders = CalcResultPartialObligationBuilder.GetColumnHeaders(materials, showModulation),
-                PartialObligations = new List<CalcResultPartialObligation>()
+                PartialObligations = []
             };
 
             var csvContent = new StringBuilder();
 
             exporter.Export(projectedProducers, csvContent, showModulation);
-            var rows = CsvTestUtils.GetRows(csvContent); 
+            var rows = CsvTestUtils.GetRows(csvContent);
 
             Assert.IsTrue(rows[2][0].Contains(CalcResultPartialObligationHeaders.PartialObligations));
             Assert.IsTrue(rows[6][0].Contains(CalcResultPartialObligationHeaders.NoPartialObligations));
         }
 
-        private List<CalcResultPartialObligation> GetCalcResultPartialObligationsListWithRam()
+        private ImmutableList<CalcResultPartialObligation> GetCalcResultPartialObligationsListWithRam()
         {
-            return new List<CalcResultPartialObligation>
-            {
-                    new CalcResultPartialObligation
+            return
+            [
+                new CalcResultPartialObligation
+                {
+                    ProducerId = 101001,
+                    ProducerName = "Allied Packaging",
+                    DaysObligated = 183,
+                    DaysInSubmissionYear = 366,
+                    Level = "1",
+                    JoiningDate = "15/07/2024",
+                    ObligatedPercentage = "50.00%",
+                    SubmissionYear = "2024",
+                    SubsidiaryId = null,
+                    PartialObligationTonnageByMaterial = new Dictionary<string, CalcResultPartialObligationTonnage>
                     {
-                        ProducerId = 101001,
-                        ProducerName = "Allied Packaging",
-                        DaysObligated = 183,
-                        DaysInSubmissionYear = 366,
-                        Level = "1",
-                        JoiningDate = "15/07/2024",
-                        ObligatedPercentage = "50.00%",
-                        SubmissionYear = "2024",
-                        SubsidiaryId = null,
-                        PartialObligationTonnageByMaterial = new Dictionary<string, CalcResultPartialObligationTonnage>
                         {
+                            "AL",
+                            new CalcResultPartialObligationTonnage
                             {
-                                "AL",
-                                new CalcResultPartialObligationTonnage
+                                HouseholdTonnage = 100,
+                                HouseholdRAMTonnage = new RAMTonnage()
                                 {
-                                    HouseholdTonnage = 100,
-                                    HouseholdRAMTonnage = new RAMTonnage()
-                                    {
-                                        RedTonnage = 1, AmberTonnage = 2, GreenTonnage = 3, RedMedicalTonnage = 4, AmberMedicalTonnage = 5, GreenMedicalTonnage = 6
-                                    },
-                                    PublicBinTonnage = 20,
-                                    PublicBinRAMTonnage = new RAMTonnage()
-                                    {
-                                        RedTonnage = 7, AmberTonnage = 8, GreenTonnage = 9, RedMedicalTonnage = 10, AmberMedicalTonnage = 11, GreenMedicalTonnage = 12
-                                    },
-                                    TotalTonnage = 120,
-                                    SelfManagedConsumerWasteTonnage = 60,
-                                    PartialHouseholdTonnage = 50,
-                                    PartialHouseholdRAMTonnage = new RAMTonnage(){
-                                        RedTonnage = 13, AmberTonnage = 14, GreenTonnage = 15, RedMedicalTonnage = 16, AmberMedicalTonnage = 17, GreenMedicalTonnage = 18
-                                    },
-                                    PartialPublicBinTonnage = 10,
-                                    PartialPublicBinRAMTonnage = new RAMTonnage(){
-                                        RedTonnage = 19, AmberTonnage = 20, GreenTonnage = 21, RedMedicalTonnage = 22, AmberMedicalTonnage = 23, GreenMedicalTonnage = 24
-                                    },
-                                    PartialTotalTonnage = 60,
-                                    PartialSelfManagedConsumerWasteTonnage = 30
-                                }
-                            },
+                                    RedTonnage = 1, AmberTonnage = 2, GreenTonnage = 3, RedMedicalTonnage = 4, AmberMedicalTonnage = 5, GreenMedicalTonnage = 6
+                                },
+                                PublicBinTonnage = 20,
+                                PublicBinRAMTonnage = new RAMTonnage()
+                                {
+                                    RedTonnage = 7, AmberTonnage = 8, GreenTonnage = 9, RedMedicalTonnage = 10, AmberMedicalTonnage = 11, GreenMedicalTonnage = 12
+                                },
+                                TotalTonnage = 120,
+                                SelfManagedConsumerWasteTonnage = 60,
+                                PartialHouseholdTonnage = 50,
+                                PartialHouseholdRAMTonnage = new RAMTonnage(){
+                                    RedTonnage = 13, AmberTonnage = 14, GreenTonnage = 15, RedMedicalTonnage = 16, AmberMedicalTonnage = 17, GreenMedicalTonnage = 18
+                                },
+                                PartialPublicBinTonnage = 10,
+                                PartialPublicBinRAMTonnage = new RAMTonnage(){
+                                    RedTonnage = 19, AmberTonnage = 20, GreenTonnage = 21, RedMedicalTonnage = 22, AmberMedicalTonnage = 23, GreenMedicalTonnage = 24
+                                },
+                                PartialTotalTonnage = 60,
+                                PartialSelfManagedConsumerWasteTonnage = 30
+                            }
+                        },
+                        {
+                            "GL",
+                            new CalcResultPartialObligationTonnage
                             {
-                                "GL",
-                                new CalcResultPartialObligationTonnage
-                                {
-                                    HouseholdTonnage = 100,
-                                    HouseholdRAMTonnage = new RAMTonnage(){
-                                        RedTonnage = 1, AmberTonnage = 2, GreenTonnage = 3, RedMedicalTonnage = 4, AmberMedicalTonnage = 5, GreenMedicalTonnage = 6
-                                    },
-                                    PublicBinTonnage = 20,
-                                    PublicBinRAMTonnage = new RAMTonnage(){
-                                        RedTonnage = 7, AmberTonnage = 8, GreenTonnage = 9, RedMedicalTonnage = 10, AmberMedicalTonnage = 11, GreenMedicalTonnage = 12
-                                    },
-                                    HouseholdDrinksContainersTonnage = 70,
-                                    HouseholdDrinksContainersRAMTonnage = new RAMTonnage(){
-                                        RedTonnage = 13, AmberTonnage = 14, GreenTonnage = 15, RedMedicalTonnage = 16, AmberMedicalTonnage = 17, GreenMedicalTonnage = 18
-                                    },
-                                    TotalTonnage = 190,
-                                    SelfManagedConsumerWasteTonnage = 60,
-                                    PartialHouseholdTonnage = 50,
-                                    PartialHouseholdRAMTonnage = new RAMTonnage(){
-                                        RedTonnage = 19, AmberTonnage = 20, GreenTonnage = 21, RedMedicalTonnage = 22, AmberMedicalTonnage = 23, GreenMedicalTonnage = 24
-                                    },
-                                    PartialPublicBinTonnage = 10,
-                                    PartialPublicBinRAMTonnage = new RAMTonnage(){
-                                        RedTonnage = 25, AmberTonnage = 26, GreenTonnage = 27, RedMedicalTonnage = 28, AmberMedicalTonnage = 29, GreenMedicalTonnage = 30
-                                    },
-                                    PartialHouseholdDrinksContainersTonnage = 35,
-                                    PartialHouseholdDrinksContainersRAMTonnage = new RAMTonnage(){
-                                        RedTonnage = 31, AmberTonnage = 32, GreenTonnage = 33, RedMedicalTonnage = 34, AmberMedicalTonnage = 35, GreenMedicalTonnage = 36
-                                    },
-                                    PartialTotalTonnage = 95,
-                                    PartialSelfManagedConsumerWasteTonnage = 30
-                                }
-                            },
+                                HouseholdTonnage = 100,
+                                HouseholdRAMTonnage = new RAMTonnage(){
+                                    RedTonnage = 1, AmberTonnage = 2, GreenTonnage = 3, RedMedicalTonnage = 4, AmberMedicalTonnage = 5, GreenMedicalTonnage = 6
+                                },
+                                PublicBinTonnage = 20,
+                                PublicBinRAMTonnage = new RAMTonnage(){
+                                    RedTonnage = 7, AmberTonnage = 8, GreenTonnage = 9, RedMedicalTonnage = 10, AmberMedicalTonnage = 11, GreenMedicalTonnage = 12
+                                },
+                                HouseholdDrinksContainersTonnage = 70,
+                                HouseholdDrinksContainersRAMTonnage = new RAMTonnage(){
+                                    RedTonnage = 13, AmberTonnage = 14, GreenTonnage = 15, RedMedicalTonnage = 16, AmberMedicalTonnage = 17, GreenMedicalTonnage = 18
+                                },
+                                TotalTonnage = 190,
+                                SelfManagedConsumerWasteTonnage = 60,
+                                PartialHouseholdTonnage = 50,
+                                PartialHouseholdRAMTonnage = new RAMTonnage(){
+                                    RedTonnage = 19, AmberTonnage = 20, GreenTonnage = 21, RedMedicalTonnage = 22, AmberMedicalTonnage = 23, GreenMedicalTonnage = 24
+                                },
+                                PartialPublicBinTonnage = 10,
+                                PartialPublicBinRAMTonnage = new RAMTonnage(){
+                                    RedTonnage = 25, AmberTonnage = 26, GreenTonnage = 27, RedMedicalTonnage = 28, AmberMedicalTonnage = 29, GreenMedicalTonnage = 30
+                                },
+                                PartialHouseholdDrinksContainersTonnage = 35,
+                                PartialHouseholdDrinksContainersRAMTonnage = new RAMTonnage(){
+                                    RedTonnage = 31, AmberTonnage = 32, GreenTonnage = 33, RedMedicalTonnage = 34, AmberMedicalTonnage = 35, GreenMedicalTonnage = 36
+                                },
+                                PartialTotalTonnage = 95,
+                                PartialSelfManagedConsumerWasteTonnage = 30
+                            }
                         },
                     },
-                };
+                },
+            ];
         }
 
-        private List<CalcResultPartialObligation> GetCalcResultPartialObligationsList()
+        private ImmutableList<CalcResultPartialObligation> GetCalcResultPartialObligationsList()
         {
-            return new List<CalcResultPartialObligation>
-            {
-                    new CalcResultPartialObligation
+            return
+            [
+                new CalcResultPartialObligation
+                {
+                    ProducerId = 101001,
+                    ProducerName = "Allied Packaging",
+                    DaysObligated = 183,
+                    DaysInSubmissionYear = 366,
+                    Level = "1",
+                    JoiningDate = "15/07/2024",
+                    ObligatedPercentage = "50.00%",
+                    SubmissionYear = "2024",
+                    SubsidiaryId = null,
+                    PartialObligationTonnageByMaterial = new Dictionary<string, CalcResultPartialObligationTonnage>
                     {
-                        ProducerId = 101001,
-                        ProducerName = "Allied Packaging",
-                        DaysObligated = 183,
-                        DaysInSubmissionYear = 366,
-                        Level = "1",
-                        JoiningDate = "15/07/2024",
-                        ObligatedPercentage = "50.00%",
-                        SubmissionYear = "2024",
-                        SubsidiaryId = null,
-                        PartialObligationTonnageByMaterial = new Dictionary<string, CalcResultPartialObligationTonnage>
                         {
+                            "AL",
+                            new CalcResultPartialObligationTonnage
                             {
-                                "AL",
-                                new CalcResultPartialObligationTonnage
-                                {
-                                    HouseholdTonnage = 100,
-                                    PublicBinTonnage = 20,
-                                    TotalTonnage = 120,
-                                    SelfManagedConsumerWasteTonnage = 60,
-                                    PartialHouseholdTonnage = 50,
-                                    PartialPublicBinTonnage = 10,
-                                    PartialTotalTonnage = 60,
-                                    PartialSelfManagedConsumerWasteTonnage = 30
-                                }
-                            },
-                            {
-                                "GL",
-                                new CalcResultPartialObligationTonnage
-                                {
-                                    HouseholdTonnage = 100,
-                                    PublicBinTonnage = 20,
-                                    HouseholdDrinksContainersTonnage = 70,
-                                    TotalTonnage = 190,
-                                    SelfManagedConsumerWasteTonnage = 60,
-                                    PartialHouseholdTonnage = 50,
-                                    PartialPublicBinTonnage = 10,
-                                    PartialHouseholdDrinksContainersTonnage = 35,
-                                    PartialTotalTonnage = 95,
-                                    PartialSelfManagedConsumerWasteTonnage = 30
-                                }
-                            },
+                                HouseholdTonnage = 100,
+                                PublicBinTonnage = 20,
+                                TotalTonnage = 120,
+                                SelfManagedConsumerWasteTonnage = 60,
+                                PartialHouseholdTonnage = 50,
+                                PartialPublicBinTonnage = 10,
+                                PartialTotalTonnage = 60,
+                                PartialSelfManagedConsumerWasteTonnage = 30
+                            }
                         },
-                    },
-                };
+                        {
+                            "GL",
+                            new CalcResultPartialObligationTonnage
+                            {
+                                HouseholdTonnage = 100,
+                                PublicBinTonnage = 20,
+                                HouseholdDrinksContainersTonnage = 70,
+                                TotalTonnage = 190,
+                                SelfManagedConsumerWasteTonnage = 60,
+                                PartialHouseholdTonnage = 50,
+                                PartialPublicBinTonnage = 10,
+                                PartialHouseholdDrinksContainersTonnage = 35,
+                                PartialTotalTonnage = 95,
+                                PartialSelfManagedConsumerWasteTonnage = 30
+                            }
+                        }
+                    }
+                }
+            ];
         }
     }
 }
-

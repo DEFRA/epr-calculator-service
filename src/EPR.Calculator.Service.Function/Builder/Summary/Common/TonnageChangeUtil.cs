@@ -24,7 +24,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
         }
 
         public static decimal? GetOverallChangeTotal(
-            IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
+            IReadOnlyList<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
             string materialCode)
         {
             if (producerDisposalFees == null || string.IsNullOrWhiteSpace(materialCode))

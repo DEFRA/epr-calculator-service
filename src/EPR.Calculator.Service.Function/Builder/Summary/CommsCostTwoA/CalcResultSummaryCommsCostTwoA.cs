@@ -10,7 +10,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
     {
         public static decimal GetEnglandWithBadDebtProvisionForCommsTotal(
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-            IEnumerable<ProducerDetail> producers,
+            IReadOnlyList<ProducerDetail> producers,
             MaterialDetail material,
             CalcResult calcResult
         )
@@ -22,7 +22,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
 
         public static decimal GetWalesWithBadDebtProvisionForCommsTotal(
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-            IEnumerable<ProducerDetail> producers,
+            IReadOnlyList<ProducerDetail> producers,
             MaterialDetail material,
             CalcResult calcResult
         )
@@ -32,7 +32,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
 
         public static decimal GetScotlandWithBadDebtProvisionForCommsTotal(
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-            IEnumerable<ProducerDetail> producers,
+            IReadOnlyList<ProducerDetail> producers,
             MaterialDetail material,
             CalcResult calcResult
         )
@@ -42,7 +42,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
 
         public static decimal GetNorthernIrelandWithBadDebtProvisionForCommsTotal(
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-            IEnumerable<ProducerDetail> producers,
+            IReadOnlyList<ProducerDetail> producers,
             MaterialDetail material,
             CalcResult calcResult
         )
@@ -52,7 +52,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
 
         public static decimal GetProducerTotalCostWithoutBadDebtProvisionTotal(
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-            IEnumerable<ProducerDetail> producers,
+            IReadOnlyList<ProducerDetail> producers,
             MaterialDetail material,
             CalcResult calcResult
         )
@@ -62,7 +62,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
 
         public static decimal GetBadDebtProvisionForCommsCostTotal(
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-            IEnumerable<ProducerDetail> producers,
+            IReadOnlyList<ProducerDetail> producers,
             MaterialDetail material,
             CalcResult calcResult
         )
@@ -185,7 +185,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
 
         public static decimal GetProducerTotalCostwithBadDebtProvisionTotal(
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-            IEnumerable<ProducerDetail> producers,
+            IReadOnlyList<ProducerDetail> producers,
             MaterialDetail material,
             CalcResult calcResult
         )
@@ -195,7 +195,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
 
         public static decimal GetTotalReportedTonnageTotal(
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-            IEnumerable<ProducerDetail> producers,
+            IReadOnlyList<ProducerDetail> producers,
             MaterialDetail material
         )
         {

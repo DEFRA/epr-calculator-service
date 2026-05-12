@@ -5,37 +5,37 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.OneAndTwoA
 {
     public static class CalcResultOneAndTwoAUtil
     {
-        public static decimal GetTotalDisposalCostswoBadDebtprovision1(IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees)
+        public static decimal GetTotalDisposalCostswoBadDebtprovision1(IReadOnlyList<CalcResultSummaryProducerDisposalFees> producerDisposalFees)
         {
             return GetTotalFee(producerDisposalFees, fee => fee.TotalProducerDisposalFee);
         }
 
-        public static decimal GetTotalBadDebtprovision1(IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees)
+        public static decimal GetTotalBadDebtprovision1(IReadOnlyList<CalcResultSummaryProducerDisposalFees> producerDisposalFees)
         {
             return GetTotalFee(producerDisposalFees, fee => fee.LocalAuthorityDisposalCostsSectionOne?.BadDebtProvision ?? 0);
         }
 
-        public static decimal GetTotalDisposalCostswithBadDebtprovision1(IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees)
+        public static decimal GetTotalDisposalCostswithBadDebtprovision1(IReadOnlyList<CalcResultSummaryProducerDisposalFees> producerDisposalFees)
         {
             return GetTotalFee(producerDisposalFees, fee => fee.TotalProducerDisposalFeeWithBadDebtProvision);
         }
 
-        public static decimal GetTotalCommsCostswoBadDebtprovision2A(IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees)
+        public static decimal GetTotalCommsCostswoBadDebtprovision2A(IReadOnlyList<CalcResultSummaryProducerDisposalFees> producerDisposalFees)
         {
             return GetTotalFee(producerDisposalFees, fee => fee.TotalProducerCommsFee);
         }
 
-        public static decimal GetTotalBadDebtprovision2A(IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees)
+        public static decimal GetTotalBadDebtprovision2A(IReadOnlyList<CalcResultSummaryProducerDisposalFees> producerDisposalFees)
         {
             return GetTotalFee(producerDisposalFees, fee => fee.CommunicationCostsSectionTwoA?.BadDebtProvision ?? 0);
         }
 
-        public static decimal GetTotalCommsCostswithBadDebtprovision2A(IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees)
+        public static decimal GetTotalCommsCostswithBadDebtprovision2A(IReadOnlyList<CalcResultSummaryProducerDisposalFees> producerDisposalFees)
         {
             return GetTotalFee(producerDisposalFees, fee => fee.TotalProducerCommsFeeWithBadDebtProvision);
         }
 
-        public static decimal GetTotalFee(IEnumerable<CalcResultSummaryProducerDisposalFees>? producerDisposalFees, Func<CalcResultSummaryProducerDisposalFees, decimal> selector)
+        public static decimal GetTotalFee(IReadOnlyList<CalcResultSummaryProducerDisposalFees>? producerDisposalFees, Func<CalcResultSummaryProducerDisposalFees, decimal> selector)
         {
             if (producerDisposalFees == null)
             {

@@ -414,11 +414,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var calcResult = TestDataHelper.GetCalcResult();
             calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers
             {
-                ScaledupProducers = new List<CalcResultScaledupProducer>
-                {
+                ScaledupProducers =
+                [
                     new CalcResultScaledupProducer { ProducerId = 1 },
-                    new CalcResultScaledupProducer { ProducerId = 3 },
-                },
+                    new CalcResultScaledupProducer { ProducerId = 3 }
+                ],
             };
 
             // Act
@@ -619,7 +619,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             var producers = new CalcResultScaledupProducers
             {
-                ScaledupProducers = new List<CalcResultScaledupProducer>(),
+                ScaledupProducers = []
             };
             var materials = new List<Material>();
             materials.Add(new Material { Code = "AL", Name = "Aluminium" });

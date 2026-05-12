@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
@@ -22,6 +22,7 @@ using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Mappers;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.Summary
@@ -43,13 +44,13 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         IInvoicedProducerService invoicedProducerService)
         : ICalcResultSummaryBuilder
     {
-        public IEnumerable<CalcResultScaledupProducer> ScaledupProducers { get; set; } = [];
+        public ImmutableList<CalcResultScaledupProducer> ScaledupProducers { get; set; } = [];
 
-        public  IEnumerable<CalcResultPartialObligation> PartialObligations { get; set; } = [];
+        public ImmutableList<CalcResultPartialObligation> PartialObligations { get; set; } = [];
 
-        public  IEnumerable<Organisation> Organisations { get; set; } = [];
+        public ImmutableList<Organisation> Organisations { get; set; } = [];
 
-        public  IEnumerable<Organisation> ParentOrganisations { get; set; } = [];
+        public ImmutableList<Organisation> ParentOrganisations { get; set; } = [];
 
         public async Task<CalcResultSummary> ConstructAsync(
             List<MaterialDetail> materialDetails,
@@ -107,10 +108,11 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     StatusCode = crodd.StatusCode,
                     JoinerDate = crodd.JoinerDate,
                     LeaverDate = crodd.LeaverDate
-                }
-            ).Distinct().ToListAsync();
+                })
+                .Distinct()
+                .ToImmutableListAsync();
 
-            ParentOrganisations = Organisations.Where(o => o.SubsidiaryId == null);
+            ParentOrganisations = Organisations.Where(o => o.SubsidiaryId == null).ToImmutableList();
 
             var result = GetCalcResultSummary(
                 projectedMaterialsLookup,
@@ -152,12 +154,12 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         public CalcResultSummary GetCalcResultSummary(
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-            IEnumerable<ProducerDetail> orderedProducerDetails,
-            IEnumerable<MaterialDetail> materials,
+            IReadOnlyList<ProducerDetail> orderedProducerDetails,
+            IReadOnlyList<MaterialDetail> materials,
             CalcResult calcResult,
-            IEnumerable<TotalPackagingTonnagePerRun> totalPackagingTonnage,
-            IEnumerable<InvoicedProducer> producerInvoicedMaterialNetTonnage,
-            IEnumerable<DefaultParamResultsClass> defaultParams,
+            IReadOnlyList<TotalPackagingTonnagePerRun> totalPackagingTonnage,
+            IReadOnlyList<InvoicedProducer> producerInvoicedMaterialNetTonnage,
+            IReadOnlyList<DefaultParamResultsClass> defaultParams,
             SelfManagedConsumerWaste smcw
         )
         {
@@ -225,23 +227,23 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             return result;
         }
 
-        public static IEnumerable<ProducerDetail> GetOrderedListOfProducersAssociatedRunId(
+        public static ImmutableList<ProducerDetail> GetOrderedListOfProducersAssociatedRunId(
             int runId,
-            IEnumerable<ProducerDetail> producerDetails)
+            IReadOnlyList<ProducerDetail> producerDetails)
         {
-            return producerDetails.Where(pd => pd.CalculatorRunId == runId).OrderBy(pd => pd.ProducerId).ThenBy(pd => pd.SubsidiaryId).ToList();
+            return producerDetails.Where(pd => pd.CalculatorRunId == runId).OrderBy(pd => pd.ProducerId).ThenBy(pd => pd.SubsidiaryId).ToImmutableList();
         }
 
         [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         public CalcResultSummaryProducerDisposalFees GetProducerTotalRow(
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             List<ProducerDetail> producersAndSubsidiaries,
-            IEnumerable<MaterialDetail> materials,
+            IReadOnlyList<MaterialDetail> materials,
             CalcResult calcResult,
-            IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
+            IReadOnlyList<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
             bool isOverAllTotalRow,
-            IEnumerable<TotalPackagingTonnagePerRun> totalPackagingTonnage,
-            IEnumerable<InvoicedProducer> producerInvoicedMaterialNetTonnage,
+            IReadOnlyList<TotalPackagingTonnagePerRun> totalPackagingTonnage,
+            IReadOnlyList<InvoicedProducer> producerInvoicedMaterialNetTonnage,
             SelfManagedConsumerWaste smcw
         )
         {
@@ -328,13 +330,13 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         public CalcResultSummaryProducerDisposalFees GetProducerRow(
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-            List<CalcResultSummaryProducerDisposalFees> producerDisposalFeesLookup,
-            List<ProducerDetail> producerAndSubsidiaries,
+            IReadOnlyList<CalcResultSummaryProducerDisposalFees> producerDisposalFeesLookup,
+            IReadOnlyList<ProducerDetail> producerAndSubsidiaries,
             ProducerDetail producer,
-            IEnumerable<MaterialDetail> materials,
+            IReadOnlyList<MaterialDetail> materials,
             CalcResult calcResult,
-            IEnumerable<TotalPackagingTonnagePerRun> totalPackagingTonnage,
-            IEnumerable<InvoicedProducer> producerInvoicedMaterialNetTonnage,
+            IReadOnlyList<TotalPackagingTonnagePerRun> totalPackagingTonnage,
+            IReadOnlyList<InvoicedProducer> producerInvoicedMaterialNetTonnage,
             SelfManagedConsumerWaste smcw
         )
         {
@@ -464,11 +466,11 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         private CalcResultSummaryProducerDisposalFeesByMaterial BuildProducerDisposalFeesByMaterial(
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-            List<ProducerDetail> producerAndSubsidiaries,
+            IReadOnlyList<ProducerDetail> producerAndSubsidiaries,
             ProducerDetail producer,
             MaterialDetail material,
             CalcResult calcResult,
-            IEnumerable<InvoicedProducer> producerInvoicedMaterialNetTonnage,
+            IReadOnlyList<InvoicedProducer> producerInvoicedMaterialNetTonnage,
             SelfManagedConsumerWaste smcw,
             int level)
         {
@@ -567,9 +569,9 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             };
         }
 
-        public static IEnumerable<TotalPackagingTonnagePerRun> GetTotalPackagingTonnagePerRun(
-            IEnumerable<CalcResultProducerAndReportMaterialDetail> allResults,
-            IEnumerable<MaterialDetail> materials,
+        public static ImmutableList<TotalPackagingTonnagePerRun> GetTotalPackagingTonnagePerRun(
+            IReadOnlyList<CalcResultProducerAndReportMaterialDetail> allResults,
+            IReadOnlyList<MaterialDetail> materials,
             int runId
         )
         {
@@ -593,7 +595,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                      SubsidiaryId = g.Key.SubsidiaryId,
                      TotalPackagingTonnage = g.Sum(x => x.m.PackagingTonnage),
                  }
-                ).ToList();
+                ).ToImmutableList();
 
             return result;
         }
@@ -612,12 +614,12 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         private Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> GetMaterialCosts(
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-            IEnumerable<ProducerDetail> producersAndSubsidiaries,
-            IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
-            IEnumerable<MaterialDetail> materials,
+            IReadOnlyList<ProducerDetail> producersAndSubsidiaries,
+            IReadOnlyList<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
+            IReadOnlyList<MaterialDetail> materials,
             CalcResult calcResult,
             bool isOverAllTotalRow,
-            IEnumerable<InvoicedProducer> producerInvoicedMaterialNetTonnage,
+            IReadOnlyList<InvoicedProducer> producerInvoicedMaterialNetTonnage,
             SelfManagedConsumerWaste smcw)
         {
             var materialCosts = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>();
@@ -699,8 +701,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
         private Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> GetCommunicationCosts(
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-            IEnumerable<ProducerDetail> producersAndSubsidiaries,
-            IEnumerable<MaterialDetail> materials,
+            IReadOnlyList<ProducerDetail> producersAndSubsidiaries,
+            IReadOnlyList<MaterialDetail> materials,
             CalcResult calcResult
         )
         {
@@ -763,7 +765,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         }
 
         private CalcResultSummaryBadDebtProvision GetCommunicationCostsSectionTwoB(
-            CalcResult calcResult, IEnumerable<ProducerDetail> producersAndSubsidiaries, IEnumerable<TotalPackagingTonnagePerRun> totalPackagingTonnage)
+            CalcResult calcResult, IReadOnlyList<ProducerDetail> producersAndSubsidiaries, IReadOnlyList<TotalPackagingTonnagePerRun> totalPackagingTonnage)
         {
             return new CalcResultSummaryBadDebtProvision
             {

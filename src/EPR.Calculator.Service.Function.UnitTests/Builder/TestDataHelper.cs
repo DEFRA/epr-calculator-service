@@ -1458,15 +1458,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             return new CalcResultScaledupProducers
             {
-                ColumnHeaders = new List<CalcResultScaledupProducerHeader>(),
-                MaterialBreakdownHeaders = new List<CalcResultScaledupProducerHeader>(),
+                ColumnHeaders = [],
+                MaterialBreakdownHeaders = [],
                 TitleHeader = new CalcResultScaledupProducerHeader
                 {
                     Name = "Scaled-up Producers",
                     ColumnIndex = 1,
                 },
-                ScaledupProducers = new List<CalcResultScaledupProducer>
-                {
+                ScaledupProducers =
+                [
                     new CalcResultScaledupProducer
                     {
                         ProducerId = 1,
@@ -1517,22 +1517,22 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             },
                         },
                     },
-                },
+                ],
             };
         }
         public static CalcResultPartialObligations GetPartialObligations()
         {
             return new CalcResultPartialObligations
             {
-                ColumnHeaders = new List<CalcResultPartialObligationHeader>(),
-                MaterialBreakdownHeaders = new List<CalcResultPartialObligationHeader>(),
+                ColumnHeaders = [],
+                MaterialBreakdownHeaders = [],
                 TitleHeader = new CalcResultPartialObligationHeader
                 {
                     Name = "Partial Obligation Calculation",
                     ColumnIndex = 1,
                 },
-                PartialObligations = new List<CalcResultPartialObligation>
-                {
+                PartialObligations =
+                [
                     new CalcResultPartialObligation
                     {
                         ProducerId = 1,
@@ -1588,7 +1588,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             },
                         },
                     },
-                },
+                ],
             };
         }
 

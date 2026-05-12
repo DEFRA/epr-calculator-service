@@ -6,7 +6,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown
     {
         public static readonly int ColumnIndex = 385;
 
-        public static IEnumerable<CalcResultSummaryHeader> GetHeaders()
+        public static ImmutableList<CalcResultSummaryHeader> GetHeaders()
         {
             return [
                 new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.TotalProducerBillWithoutBadDebtProvision },
@@ -19,7 +19,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown
             ];
         }
 
-        public static IEnumerable<CalcResultSummaryHeader> GetSummaryHeaders(int columnIndex)
+        public static ImmutableList<CalcResultSummaryHeader> GetSummaryHeaders(int columnIndex)
         {
             return [
                 new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.TotalProducerBillBreakdown, ColumnIndex = columnIndex }

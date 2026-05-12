@@ -23,7 +23,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
             {
                 TitleHeader = GetTitleHeader(),
                 MaterialBreakdownHeaders = GetMaterialBreakdownHeaders(),
-                ColumnHeaders = GetCoulmnHeaders(),
+                ColumnHeaders = GetColumnHeaders(),
                 ScaledupProducers = GetCalcResultScaledupProducerList(),
             };
 
@@ -45,7 +45,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
             Assert.IsTrue(result.Contains(CalcResultScaledupProducerHeaders.ScaledupPublicBinTonnage));
             Assert.IsTrue(result.Contains(CalcResultScaledupProducerHeaders.ScaledupTotalTonnage));
             Assert.IsTrue(result.Contains(CalcResultScaledupProducerHeaders.ScaledupSelfManagedConsumerWasteTonnage));
-            Assert.IsTrue(result.Contains(CalcResultScaledupProducerHeaders.ScaledupTotalTonnage));            
+            Assert.IsTrue(result.Contains(CalcResultScaledupProducerHeaders.ScaledupTotalTonnage));
         }
 
         [TestMethod]
@@ -56,7 +56,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
             {
                 TitleHeader = GetTitleHeader(),
                 MaterialBreakdownHeaders = GetMaterialBreakdownHeaders(),
-                ColumnHeaders = GetCoulmnHeaders(),
+                ColumnHeaders = GetColumnHeaders(),
                 ScaledupProducers = null!,
             };
 
@@ -83,7 +83,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
             {
                 TitleHeader = GetTitleHeader(),
                 MaterialBreakdownHeaders = GetMaterialBreakdownHeaders(),
-                ColumnHeaders = GetCoulmnHeaders(),
+                ColumnHeaders = GetColumnHeaders(),
                 ScaledupProducers = GetCalcResultScaledupProducerList(),
             };
 
@@ -99,11 +99,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
             Assert.IsTrue(result.Contains("Scaled-up Household Drinks Containers Tonnage - Glass"));
         }
 
-        private List<CalcResultScaledupProducer> GetCalcResultScaledupProducerList()
+        private ImmutableList<CalcResultScaledupProducer> GetCalcResultScaledupProducerList()
         {
-            var scaledupProducerList = new List<CalcResultScaledupProducer>();
-
-            scaledupProducerList.AddRange([
+            return [
                 new CalcResultScaledupProducer
                 {
                     ProducerId = 101001,
@@ -128,10 +126,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
                     ScaleupFactor = 2,
                     ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterial(),
                     IsTotalRow = true,
-                },
-            ]);
-
-            return scaledupProducerList;
+                }
+            ];
         }
 
         private CalcResultScaledupProducerHeader GetTitleHeader()
@@ -143,10 +139,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
             };
         }
 
-        private IEnumerable<CalcResultScaledupProducerHeader> GetMaterialBreakdownHeaders()
+        private ImmutableList<CalcResultScaledupProducerHeader> GetMaterialBreakdownHeaders()
         {
-            return new List<CalcResultScaledupProducerHeader>
-            {
+            return [
                 new CalcResultScaledupProducerHeader
                 {
                     Name = "Each submission for the year",
@@ -156,14 +151,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
                 {
                     Name = "Aluminium Breakdown",
                     ColumnIndex = 2,
-                },
-            };
+                }
+            ];
         }
 
-        private IEnumerable<CalcResultScaledupProducerHeader> GetCoulmnHeaders()
+        private ImmutableList<CalcResultScaledupProducerHeader> GetColumnHeaders()
         {
-            return new List<CalcResultScaledupProducerHeader>
-            {
+            return [
                 new CalcResultScaledupProducerHeader { Name = "Producer Id" },
                 new CalcResultScaledupProducerHeader { Name = "Subsidiary Id" },
                 new CalcResultScaledupProducerHeader { Name = "Producer / Subsidiary Name" },
@@ -185,7 +179,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
                 new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupTotalTonnage },
                 new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupSelfManagedConsumerWasteTonnage },
                 new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupTotalTonnage },
-            };
+            ];
         }
 
         private Dictionary<string, CalcResultScaledupProducerTonnage> GetScaledupProducerTonnageByMaterial()
