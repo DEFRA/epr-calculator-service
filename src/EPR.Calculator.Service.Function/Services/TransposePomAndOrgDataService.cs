@@ -196,7 +196,6 @@ namespace EPR.Calculator.Service.Function.Services
 
                 var OrganisationsList = GetAllOrganisationsBasedonRunId(calculatorRunOrgDataDetails);
 
-
                 var organisationDataDetails = calculatorRunOrgDataDetails
                     .Where(odd => odd.CalculatorRunOrganisationDataMasterId == organisationDataMaster.Id && odd.OrganisationName != null && odd.OrganisationName != "" && ObligationStates.IsObligated(odd.ObligationStatus))
                     .OrderBy(odd => odd.OrganisationName)
@@ -216,88 +215,76 @@ namespace EPR.Calculator.Service.Function.Services
                     // Get the calculator run pom data details related to the calculator run pom data master
                     var runPomDataDetailsForSubsidaryId = calculatorRunPomDataDetails.Where
                         (
-                            pdd => pdd.CalculatorRunPomDataMasterId == pomDataMaster.Id &&
-                            pdd.OrganisationId == organisation.OrganisationId &&
-                            pdd.SubsidiaryId == organisation.SubsidiaryId  &&
-                            pdd.SubmitterId == organisation.SubmitterId
+                            pdd => pdd.CalculatorRunPomDataMasterId == pomDataMaster.Id
+                                && pdd.OrganisationId == organisation.OrganisationId
+                                && pdd.SubsidiaryId == organisation.SubsidiaryId
+                                && pdd.SubmitterId == organisation.SubmitterId
                         ).ToList();
 
                     // Proceed further only if there is any pom data based on the pom data master id and organisation id
                     // TO DO: We have to record if there is no pom data in a separate table post Dec 2024
                     if (IsRunPomDataDetailsExistsForSubsidaryId(runPomDataDetailsForSubsidaryId))
                     {
-                        var organisations = organisationDataDetails.Where(odd => odd.OrganisationName == organisation.OrganisationName && odd.SubsidiaryId == organisation.SubsidiaryId);
-
-                        // Get the producer based on the latest submission period
-                        var producer = organisations.FirstOrDefault();
-
-                        // Proceed further only if the organisation is not null and organisation id not null
-                        // TO DO: We have to record if the organisation name is null in a separate table post Dec 2024
-                        if (producer != null)
+                        var producerDetail = new ProducerDetail
                         {
-                            var producerDetail = new ProducerDetail
+                            CalculatorRunId = resultsRequestDto.RunId,
+                            ProducerId      = organisation.OrganisationId,
+                            TradingName     = organisation.TradingName,
+                            SubsidiaryId    = organisation.SubsidiaryId,
+                            ProducerName    = GetLatestproducerName(organisation.OrganisationId, organisation.SubsidiaryId, OrganisationsList),
+                            CalculatorRun   = calculatorRun,
+                        };
+
+                        // Add producer detail record to the database context
+                        newProducerDetails.Add(producerDetail);
+
+                        foreach (var material in materials)
+                        {
+                            var pomDataDetailsByMaterial = runPomDataDetailsForSubsidaryId.Where(pdd => pdd.PackagingMaterial == material.Code).GroupBy(pdd => new { pdd.SubmissionPeriod, pdd.PackagingType });
+
+                            foreach (var pomData in pomDataDetailsByMaterial)
                             {
-                                CalculatorRunId = resultsRequestDto.RunId,
-                                ProducerId = producer.OrganisationId,
-                                TradingName = organisation.TradingName,
-                                SubsidiaryId = producer.SubsidiaryId,
-                                ProducerName = GetLatestproducerName(producer.OrganisationId, producer.SubsidiaryId, OrganisationsList),
-                                CalculatorRun = calculatorRun,
-                            };
+                                var pom = pomData.ToList();
+                                var packagingType = pom[0].PackagingType;
+                                var submissionPeriod = pom[0].SubmissionPeriod;
+                                var totalPackagingMaterialWeight = pom.Sum(x => x.PackagingMaterialWeight) ?? 0;
 
-                            // Add producer detail record to the database context
-                            newProducerDetails.Add(producerDetail);
-
-                            foreach (var material in materials)
-                            {
-                                var pomDataDetailsByMaterial = runPomDataDetailsForSubsidaryId.Where(pdd => pdd.PackagingMaterial == material.Code).GroupBy(pdd => new { pdd.SubmissionPeriod, pdd.PackagingType });
-
-                                foreach (var pomData in pomDataDetailsByMaterial)
+                                // Proceed further only if the packaging type and packaging material weight is not null
+                                // TO DO: We have to record if the packaging type or packaging material weight is null in a separate table post Dec 2024
+                                if (IsPackagingTypeAndPackagingMaterialWeightExists(packagingType, totalPackagingMaterialWeight))
                                 {
-                                    var pom = pomData.ToList();
-                                    var packagingType = pom[0].PackagingType;
-                                    var submissionPeriod = pom[0].SubmissionPeriod;
-                                    var totalPackagingMaterialWeight = pom.Sum(x => x.PackagingMaterialWeight) ?? 0;
-
-                                    // Proceed further only if the packaging type and packaging material weight is not null
-                                    // TO DO: We have to record if the packaging type or packaging material weight is null in a separate table post Dec 2024
-                                    if (IsPackagingTypeAndPackagingMaterialWeightExists(packagingType, totalPackagingMaterialWeight))
+                                    var producerReportedMaterial = new ProducerReportedMaterial
                                     {
-                                        var producerReportedMaterial = new ProducerReportedMaterial
-                                        {
-                                            MaterialId = material.Id,
-                                            Material = material,
-                                            ProducerDetail = producerDetail,
-                                            PackagingType = packagingType!,
-                                            SubmissionPeriod = submissionPeriod!,
-                                            PackagingTonnage = Math.Round((decimal)(totalPackagingMaterialWeight) / 1000, 3),
-                                            PackagingTonnageRed = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.Red).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
-                                            PackagingTonnageAmber = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.Amber).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
-                                            PackagingTonnageGreen = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.Green).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
-                                            PackagingTonnageRedMedical = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.RedMedical).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
-                                            PackagingTonnageAmberMedical = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.AmberMedical).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
-                                            PackagingTonnageGreenMedical = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.GreenMedical).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
-                                        };
+                                        MaterialId = material.Id,
+                                        Material = material,
+                                        ProducerDetail = producerDetail,
+                                        PackagingType = packagingType!,
+                                        SubmissionPeriod = submissionPeriod!,
+                                        PackagingTonnage             = Math.Round((decimal)(totalPackagingMaterialWeight) / 1000, 3),
+                                        PackagingTonnageRed          = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.Red         ).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
+                                        PackagingTonnageAmber        = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.Amber       ).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
+                                        PackagingTonnageGreen        = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.Green       ).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
+                                        PackagingTonnageRedMedical   = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.RedMedical  ).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
+                                        PackagingTonnageAmberMedical = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.AmberMedical).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
+                                        PackagingTonnageGreenMedical = Math.Round((decimal)(pom.Where(x => x.RamRagRating == RagRating.GreenMedical).Sum(x => x.PackagingMaterialWeight) ?? 0) / 1000, 3),
+                                    };
 
-                                        // Populate the producer reported material list
-                                        producerReportedMaterials.Add(producerReportedMaterial);
-                                    }
+                                    // Populate the producer reported material list
+                                    producerReportedMaterials.Add(producerReportedMaterial);
                                 }
                             }
-
-                            // Add the list of producer reported materials to the database context
-                            newProducerReportedMaterials.AddRange(producerReportedMaterials);
                         }
+
+                        // Add the list of producer reported materials to the database context
+                        newProducerReportedMaterials.AddRange(producerReportedMaterials);
                     }
                 }
 
                 await ProducerDetailChunker.InsertRecords(newProducerDetails);
                 await ProducerReportedMaterialChunker.InsertRecords(newProducerReportedMaterials);
-
             }
 
             return true;
-
         }
 
         private static bool IsPackagingTypeAndPackagingMaterialWeightExists(string? packagingType, double? totalPackagingMaterialWeight)
@@ -338,7 +325,6 @@ namespace EPR.Calculator.Service.Function.Services
 
         public string? GetLatestproducerName(int orgId, string? subsidaryId, IEnumerable<OrganisationDetails> organisationsList)
         {
-
             var organisation = subsidaryId is null ? organisationsList.FirstOrDefault(t => t.OrganisationId == orgId && t.SubsidaryId == null) :
                 organisationsList.FirstOrDefault(t => t.OrganisationId == orgId && t.SubsidaryId == subsidaryId);
 
