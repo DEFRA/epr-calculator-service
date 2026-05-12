@@ -6,7 +6,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.SaSetupCosts
 {
     public static class SaSetupCostsProducer
     {
-        public static IEnumerable<CalcResultSummaryHeader> GetHeaders()
+        public static ImmutableList<CalcResultSummaryHeader> GetHeaders()
         {
             return [
                 new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.ProducerOneOffFeeWithoutBadDebtProvision },
@@ -18,7 +18,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.SaSetupCosts
                 new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.NorthernIrelandTotalWithBadDebtProvision }
             ];
         }
-        public static IEnumerable<CalcResultSummaryHeader> GetSummaryHeaders(int columnIndex)
+        public static ImmutableList<CalcResultSummaryHeader> GetSummaryHeaders(int columnIndex)
         {
             return [
                 new CalcResultSummaryHeader { Name = $"{SaSetupCostsHeaders.OneOffFeeSetupCostsWithoutBadDebtProvisionTitle}", ColumnIndex = columnIndex },

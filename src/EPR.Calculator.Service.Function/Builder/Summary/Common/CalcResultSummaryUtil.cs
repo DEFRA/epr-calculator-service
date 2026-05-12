@@ -1,10 +1,10 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.Service.Function.Builder.CommsCost;
 using EPR.Calculator.Service.Function.Builder.ParametersOther;
 using EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions;
-using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA;
 using EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts;
 using EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C;
 using EPR.Calculator.Service.Function.Builder.Summary.SaSetupCosts;
@@ -18,22 +18,23 @@ using EPR.Calculator.Service.Function.Services;
 
 namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 {
+    [ExcludeFromCodeCoverage]
     public static class CalcResultSummaryUtil
     {
         private const int decimalRoundUp = 2;
 
         public static int GetLevelIndex(
-            List<CalcResultSummaryProducerDisposalFees> producerDisposalFeesLookup,
+            IReadOnlyList<CalcResultSummaryProducerDisposalFees> producerDisposalFeesLookup,
             ProducerDetail producer)
         {
-            var totalRow = producerDisposalFeesLookup.Find(pdf => pdf.ProducerId == producer.ProducerId.ToString() && pdf.isTotalRow);
+            var totalRow = producerDisposalFeesLookup.FirstOrDefault(pdf => pdf.ProducerId == producer.ProducerId.ToString() && pdf.isTotalRow);
 
             return totalRow == null ? (int)CalcResultSummaryLevelIndex.One : (int)CalcResultSummaryLevelIndex.Two;
         }
 
         public static bool IsProducerScaledup(
             ProducerDetail producer,
-            IEnumerable<CalcResultScaledupProducer> scaledupProducers)
+            IReadOnlyList<CalcResultScaledupProducer> scaledupProducers)
         {
             var scaledupProducer = scaledupProducers.FirstOrDefault(p => p.ProducerId == producer.ProducerId);
             return scaledupProducer != null;
@@ -41,7 +42,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         public static bool IsProducerPartiallyObligated(
             ProducerDetail producer,
-            IEnumerable<CalcResultPartialObligation> partialObligations,
+            IReadOnlyList<CalcResultPartialObligation> partialObligations,
             bool isTotalRow)
         {
             var partialObligation = isTotalRow ? partialObligations.FirstOrDefault(p => p.ProducerId == producer.ProducerId) : partialObligations.FirstOrDefault(p => p.ProducerId == producer.ProducerId && p.SubsidiaryId == producer.SubsidiaryId);
@@ -73,7 +74,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         public static decimal GetTonnageTotal(
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-            IEnumerable<ProducerDetail> producers,
+            IReadOnlyList<ProducerDetail> producers,
             MaterialDetail material,
             string packagingType,
             RagRating? ragRating = null)
@@ -98,7 +99,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         public static decimal GetReportedTonnageTotal(
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-            IEnumerable<ProducerDetail> producers,
+            IReadOnlyList<ProducerDetail> producers,
             MaterialDetail material,
             RagRating? ragRating = null)
         {
@@ -106,7 +107,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
         }
 
         public static SelfManagedConsumerWasteData SumSelfManagedConsumerWasteData(
-            IEnumerable<ProducerDetail> producersAndSubsidiaries,
+            IReadOnlyList<ProducerDetail> producersAndSubsidiaries,
             MaterialDetail material,
             bool isOverAllTotalRow,
             SelfManagedConsumerWaste smcw)
@@ -120,10 +121,10 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
         }
 
         public static decimal? GetPreviousInvoicedTonnage(
-            IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
-            IEnumerable<ProducerDetail> producersAndSubsidiaries,
-            IEnumerable<CalcResultScaledupProducer> scaledUpProducers,
-            IEnumerable<CalcResultPartialObligation> partialObligations,
+            IReadOnlyList<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
+            IReadOnlyList<ProducerDetail> producersAndSubsidiaries,
+            IReadOnlyList<CalcResultScaledupProducer> scaledUpProducers,
+            IReadOnlyList<CalcResultPartialObligation> partialObligations,
             MaterialDetail material,
             bool isOverAllTotalRow,
             decimal? previousInvoicedNetTonnage)
@@ -146,7 +147,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
         }
 
         public static decimal? GetActionedSelfManagedConsumerWasteTonnageOverallTotal(
-            IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
+            IReadOnlyList<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
             MaterialDetail material)
         {
             return producerDisposalFees
@@ -264,7 +265,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             return calcResult.CalcResultLapcapData.CalcResultLapcapDataDetails?.FirstOrDefault(la => la.Name == CalcResultSummaryHeaders.OneCountryApportionment);
         }
 
-        public static void SetHeaders(CalcResultSummary result, IEnumerable<MaterialDetail> materials, bool applyModulation)
+        public static void SetHeaders(CalcResultSummary result, IReadOnlyList<MaterialDetail> materials, bool applyModulation)
         {
             result.ResultSummaryHeader = new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.CalculationResult, ColumnIndex = 1 };
             result.NotesHeader         = new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.Notes, ColumnIndex = 1 };
@@ -279,11 +280,11 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             int commsCost2bIdx                 = commsCost2aPercentageIdx      + commsCost2b().Count();
             int commsCost2cIdx                 = commsCost2bIdx                + commsCost2c().Count();
             int onePlus2A2B2CProducerIdx       = commsCost2cIdx                + commsCost2c().Count();
-            int threeSaCostsSummaryIdx         = onePlus2A2B2CProducerIdx      + OnePlus2A2B2CProducer.GetHeaders().Count();
-            int laDataPrepCostsProducerIdx     = threeSaCostsSummaryIdx        + ThreeSaCostsProducer.GetHeaders().Count();
-            int saSetupCostsSummaryIdx         = laDataPrepCostsProducerIdx    + LaDataPrepCostsProducer.GetHeaders().Count();
-            int totalBillBreakdownProducerIdx  = saSetupCostsSummaryIdx        + SaSetupCostsProducer.GetHeaders().Count();
-            int billingInstructionsProducerIdx = totalBillBreakdownProducerIdx + TotalBillBreakdownProducer.GetHeaders().Count();
+            int threeSaCostsSummaryIdx         = onePlus2A2B2CProducerIdx      + OnePlus2A2B2CProducer.GetHeaders().Count;
+            int laDataPrepCostsProducerIdx     = threeSaCostsSummaryIdx        + ThreeSaCostsProducer.GetHeaders().Count;
+            int saSetupCostsSummaryIdx         = laDataPrepCostsProducerIdx    + LaDataPrepCostsProducer.GetHeaders().Count;
+            int totalBillBreakdownProducerIdx  = saSetupCostsSummaryIdx        + SaSetupCostsProducer.GetHeaders().Count;
+            int billingInstructionsProducerIdx = totalBillBreakdownProducerIdx + TotalBillBreakdownProducer.GetHeaders().Count;
 
             var resultSummaryHeaders = new List<CalcResultSummaryHeader>();
             resultSummaryHeaders.AddRange([
@@ -381,7 +382,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
                 CalcResultSummaryHeaders.LeaversDate);
         }
 
-        private static IEnumerable<CalcResultSummaryHeader> section1Materials(IEnumerable<MaterialDetail> materials, bool applyModulation)
+        private static IEnumerable<CalcResultSummaryHeader> section1Materials(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
         {
             return materials.SelectMany(material =>
             {
@@ -489,7 +490,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
                 CalcResultSummaryHeaders.TonnageChangeAdvice);
         }
 
-        private static IEnumerable<CalcResultSummaryHeader> section2aMaterials(IEnumerable<MaterialDetail> materials)
+        private static IEnumerable<CalcResultSummaryHeader> section2aMaterials(IReadOnlyList<MaterialDetail> materials)
         {
             return materials.SelectMany(material =>
             {

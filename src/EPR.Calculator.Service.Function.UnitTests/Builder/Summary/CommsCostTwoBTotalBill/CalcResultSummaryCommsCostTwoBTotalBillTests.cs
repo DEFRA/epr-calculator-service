@@ -10,7 +10,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
     [TestClass]
     public class CalcResultSummaryCommsCostTwoBTotalBillTests
     {
-        public required IEnumerable<TotalPackagingTonnagePerRun> TotalPackagingTonnage;
+        public required IReadOnlyList<TotalPackagingTonnagePerRun> TotalPackagingTonnage;
         private CalcResult _calcResult;
         private List<ProducerDetail> _producers;
         private List<CalcResultProducerAndReportMaterialDetail> _allResults;

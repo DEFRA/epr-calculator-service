@@ -67,7 +67,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             calcResultRejectedProducersExporterCsv = calcResultRejectedProducersExporter;
         }
 
-        public string Export(CalcResult calcResult, IEnumerable<int> acceptedProducerIds)
+        public string Export(CalcResult calcResult, ImmutableHashSet<int> acceptedProducerIds)
         {
             var csvContent = new StringBuilder();
             resultDetailexporterCsv.Export(calcResult.CalcResultDetail, csvContent);
@@ -112,7 +112,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             return csvContent.ToString();
         }
 
-        private CalcResultSummary GetAcceptedProducersCalcResults(CalcResultSummary calcResultSummary, IEnumerable<int> acceptedProducerIds)
+        private CalcResultSummary GetAcceptedProducersCalcResults(CalcResultSummary calcResultSummary, ImmutableHashSet<int> acceptedProducerIds)
         {
             return new CalcResultSummary
             {
@@ -149,7 +149,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 
         private IEnumerable<CalcResultSummaryProducerDisposalFees> GetAcceptedProducerDisposalFees(
             IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
-            IEnumerable<int> acceptedProducerIds)
+            ImmutableHashSet<int> acceptedProducerIds)
         {
             var acceptedProducerFees = producerDisposalFees.Where(
                 x => acceptedProducerIds.Contains(x.ProducerIdInt)
@@ -169,28 +169,24 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 
         public CalcResultScaledupProducers GetScaledUpProducersForExport(
             CalcResultScaledupProducers producers,
-            IEnumerable<int> acceptedProducerIds)
+            ImmutableHashSet<int> acceptedProducerIds)
         {
             return new CalcResultScaledupProducers
             {
                 ColumnHeaders = producers.ColumnHeaders,
                 MaterialBreakdownHeaders = producers.MaterialBreakdownHeaders,
-                ScaledupProducers = producers.ScaledupProducers != null
-                    ?
-                    GetScaledupProducers(producers.ScaledupProducers, acceptedProducerIds)
-                    :
-                    new List<CalcResultScaledupProducer>(),
+                ScaledupProducers = GetScaledupProducers(producers.ScaledupProducers, acceptedProducerIds),
                 TitleHeader = producers.TitleHeader,
             };
         }
 
-        private IEnumerable<CalcResultScaledupProducer> GetScaledupProducers(
-            IEnumerable<CalcResultScaledupProducer> scaledupProducers,
-            IEnumerable<int> acceptedProducerIds)
+        private static ImmutableList<CalcResultScaledupProducer> GetScaledupProducers(
+            IReadOnlyList<CalcResultScaledupProducer>? scaledupProducers,
+            ImmutableHashSet<int> acceptedProducerIds)
         {
-            var acceptedProducers = scaledupProducers.Where(
-                x => acceptedProducerIds.Contains(x.ProducerId)
-                || x.ProducerId == 0).ToList();
+            var acceptedProducers = scaledupProducers?
+                .Where(x => acceptedProducerIds.Contains(x.ProducerId) || x.ProducerId == 0)
+                .ToImmutableList() ?? [];
 
             acceptedProducers.ForEach(x =>
             {
@@ -206,11 +202,11 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 
         public CalcResultPartialObligations GetPartialObligationsForExport(
             CalcResultPartialObligations producers,
-            IEnumerable<int> acceptedProducerIds)
+            ImmutableHashSet<int> acceptedProducerIds)
         {
-            var acceptedProducers = producers.PartialObligations?.Where(
-                x => acceptedProducerIds.Contains(x.ProducerId) || x.ProducerId == 0
-            ).ToList() ?? new List<CalcResultPartialObligation>();
+            var acceptedProducers = producers.PartialObligations?
+                .Where(x => acceptedProducerIds.Contains(x.ProducerId) || x.ProducerId == 0)
+                .ToImmutableList() ?? [];
 
             return new CalcResultPartialObligations
             {
@@ -223,7 +219,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 
         private CalcResultProjectedProducers GetProjectedProducerForExport(
             CalcResultProjectedProducers producers,
-            IEnumerable<int> acceptedProducerIds)
+            ImmutableHashSet<int> acceptedProducerIds)
         {
             var isAccepted = (int producerId) => acceptedProducerIds.Contains(producerId) || producerId == 0;
             var acceptedH2Producers = producers.H2ProjectedProducers?.Where(x => isAccepted(x.ProducerId)).ToList() ?? new List<CalcResultH2ProjectedProducer>();

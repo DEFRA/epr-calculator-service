@@ -2,6 +2,6 @@
 {
     public interface IBillingFileExporter<T>
     {
-        string Export(T results, IEnumerable<int> acceptedProducerIds);
+        string Export(T results, ImmutableHashSet<int> acceptedProducerIds);
     }
 }

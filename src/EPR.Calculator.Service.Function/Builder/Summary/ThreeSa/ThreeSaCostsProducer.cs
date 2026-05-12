@@ -6,7 +6,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.ThreeSa
 {
     public static class ThreeSaCostsProducer
     {
-        public static IEnumerable<CalcResultSummaryHeader> GetHeaders()
+        public static ImmutableList<CalcResultSummaryHeader> GetHeaders()
         {
             return [
                 new CalcResultSummaryHeader { Name = ThreeSaCostHeader.TotalSaOperatingCostsWoTitleSection3 },
@@ -19,7 +19,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.ThreeSa
             ];
         }
 
-        public static IEnumerable<CalcResultSummaryHeader> GetSummaryHeaders(int columnIndex)
+        public static ImmutableList<CalcResultSummaryHeader> GetSummaryHeaders(int columnIndex)
         {
             return [
                 new CalcResultSummaryHeader { Name = $"{ThreeSaCostHeader.SaOperatingCostsWithoutBadDebtProvisionTitleSection3}", ColumnIndex = columnIndex },

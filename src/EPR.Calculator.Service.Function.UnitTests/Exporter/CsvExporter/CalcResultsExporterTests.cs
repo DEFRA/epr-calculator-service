@@ -372,19 +372,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                     {
                         Name = "Scaled-up Producers",
                     },
-                    MaterialBreakdownHeaders = new List<CalcResultScaledupProducerHeader>
-                    {
+                    MaterialBreakdownHeaders =
+                    [
                         new CalcResultScaledupProducerHeader { Name = "Each submission for the year", ColumnIndex = 1 },
                         new CalcResultScaledupProducerHeader { Name = "Aluminium Breakdown", ColumnIndex = 2 },
                         new CalcResultScaledupProducerHeader { Name = "Glass Breakdown", ColumnIndex = 3 },
-                    },
-                    ColumnHeaders = new List<CalcResultScaledupProducerHeader>
-                    {
+                    ],
+                    ColumnHeaders =
+                    [
                         new CalcResultScaledupProducerHeader { Name = "Producer ID" },
                         new CalcResultScaledupProducerHeader { Name = "Subsidiary ID" },
                         new CalcResultScaledupProducerHeader { Name = "HouseholdDrinksContainersTonnageGlass" },
                         new CalcResultScaledupProducerHeader { Name = "ScaledupHouseholdDrinksContainersTonnageGlass" },
-                    },
+                    ],
                     ScaledupProducers = GetCalcResultScaledupProducerList(),
                 },
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
@@ -469,11 +469,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             return tonnageByMaterial;
         }
 
-        private static List<CalcResultScaledupProducer> GetCalcResultScaledupProducerList()
+        private static ImmutableList<CalcResultScaledupProducer> GetCalcResultScaledupProducerList()
         {
-            var scaledupProducerList = new List<CalcResultScaledupProducer>();
-
-            scaledupProducerList.AddRange([
+            return [
                 new CalcResultScaledupProducer
                 {
                     ProducerId = 101001,
@@ -498,10 +496,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                     ScaleupFactor = 2,
                     ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterial(),
                     IsTotalRow = true,
-                },
-            ]);
-
-            return scaledupProducerList;
+                }
+            ];
         }
     }
 }

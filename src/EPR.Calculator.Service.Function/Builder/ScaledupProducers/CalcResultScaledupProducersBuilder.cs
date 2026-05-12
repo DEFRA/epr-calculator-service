@@ -256,7 +256,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
 
             orderedRows.Add(GetOverallTotalRow(orderedRows, materialDetails));
 
-            var scaledupProducersSummary = new CalcResultScaledupProducers { ScaledupProducers = orderedRows };
+            var scaledupProducersSummary = new CalcResultScaledupProducers { ScaledupProducers = orderedRows.ToImmutableList() };
             SetHeaders(scaledupProducersSummary, materialDetails);
             return (updatedProducers, scaledupProducersSummary);
         }
@@ -411,9 +411,9 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
             producers.ColumnHeaders = GetColumnHeaders(materials);
         }
 
-        public static List<CalcResultScaledupProducerHeader> GetMaterialsBreakdownHeader(IEnumerable<MaterialDetail> materials)
+        public static ImmutableList<CalcResultScaledupProducerHeader> GetMaterialsBreakdownHeader(IEnumerable<MaterialDetail> materials)
         {
-            var materialsBreakdownHeaders = new List<CalcResultScaledupProducerHeader>();
+            var materialsBreakdownHeaders = ImmutableList.CreateBuilder<CalcResultScaledupProducerHeader>();
             var columnIndex = MaterialsBreakdownHeaderInitialColumnIndex;
 
             materialsBreakdownHeaders.Add(new CalcResultScaledupProducerHeader
@@ -435,12 +435,12 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                     : columnIndex + MaterialsBreakdownHeaderIncrementalColumnIndex;
             }
 
-            return materialsBreakdownHeaders;
+            return materialsBreakdownHeaders.ToImmutable();
         }
 
-        public static List<CalcResultScaledupProducerHeader> GetColumnHeaders(IEnumerable<MaterialDetail> materials)
+        public static ImmutableList<CalcResultScaledupProducerHeader> GetColumnHeaders(IEnumerable<MaterialDetail> materials)
         {
-            var columnHeaders = new List<CalcResultScaledupProducerHeader>();
+            var columnHeaders = ImmutableList.CreateBuilder<CalcResultScaledupProducerHeader>();
 
             columnHeaders.AddRange([
                 new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ProducerId },
@@ -479,7 +479,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                 columnHeaders.AddRange(columnHeadersList);
             }
 
-            return columnHeaders;
+            return columnHeaders.ToImmutable();
         }
     }
 }

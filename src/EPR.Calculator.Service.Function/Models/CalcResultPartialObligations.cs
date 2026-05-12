@@ -4,10 +4,10 @@
     {
         public CalcResultPartialObligationHeader? TitleHeader { get; set; }
 
-        public IEnumerable<CalcResultPartialObligationHeader>? MaterialBreakdownHeaders { get; set; }
+        public ImmutableList<CalcResultPartialObligationHeader>? MaterialBreakdownHeaders { get; set; }
 
-        public IEnumerable<CalcResultPartialObligationHeader>? ColumnHeaders { get; set; }
+        public ImmutableList<CalcResultPartialObligationHeader>? ColumnHeaders { get; set; }
 
-        public IEnumerable<CalcResultPartialObligation>? PartialObligations { get; set; }
+        public ImmutableList<CalcResultPartialObligation>? PartialObligations { get; set; }
     }
 }

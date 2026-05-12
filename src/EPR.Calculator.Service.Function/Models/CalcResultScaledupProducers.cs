@@ -4,10 +4,10 @@
     {
         public CalcResultScaledupProducerHeader? TitleHeader { get; set; }
 
-        public IEnumerable<CalcResultScaledupProducerHeader>? MaterialBreakdownHeaders { get; set; }
+        public ImmutableList<CalcResultScaledupProducerHeader>? MaterialBreakdownHeaders { get; set; }
 
-        public IEnumerable<CalcResultScaledupProducerHeader>? ColumnHeaders { get; set; }
+        public ImmutableList<CalcResultScaledupProducerHeader>? ColumnHeaders { get; set; }
 
-        public IEnumerable<CalcResultScaledupProducer>? ScaledupProducers { get; set; }
+        public ImmutableList<CalcResultScaledupProducer>? ScaledupProducers { get; set; }
     }
 }

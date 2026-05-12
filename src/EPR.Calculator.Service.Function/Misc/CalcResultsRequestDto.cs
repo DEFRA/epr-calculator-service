@@ -8,7 +8,7 @@ namespace EPR.Calculator.Service.Function.Misc
 
         public required RelativeYear RelativeYear { get; set; }
 
-        public IEnumerable<int> AcceptedProducerIds { get; set; } = new List<int>();
+        public ImmutableHashSet<int> AcceptedProducerIds { get; set; } = [];
 
         public bool IsBillingFile { get; set; }
 

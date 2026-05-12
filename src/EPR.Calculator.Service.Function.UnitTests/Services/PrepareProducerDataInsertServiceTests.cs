@@ -8,9 +8,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     [TestClass]
     public class PrepareProducerDataInsertServiceTests
     {
-     
 
-        
+
+
         public PrepareProducerDataInsertServiceTests()
         {
             _billingInstructionService = new Mock<IBillingInstructionService>();
@@ -39,7 +39,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task CanCallInsertProducerDataToDatabase()
         {
             // Arrange
-            var fixture = new Fixture();
+            var fixture = new Fixture().Customize(new ImmutableCollectionsCustomization());
             var calcResult = fixture.Create<CalcResult>();
 
             _telemetryLogger.Setup(mock => mock.LogInformation(It.IsAny<TrackMessage>())).Verifiable();
@@ -57,7 +57,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task CanCallInsertProducerDataToDatabaseWith()
         {
             // Arrange
-            var fixture = new Fixture();
+            var fixture = new Fixture().Customize(new ImmutableCollectionsCustomization());
             var calcResult = fixture.Create<CalcResult>();
 
             _telemetryLogger.Setup(mock => mock.LogInformation(It.IsAny<TrackMessage>())).Verifiable();
@@ -73,13 +73,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.IsTrue(result);
         }
 
-       
+
         [TestMethod]
         public async Task CannotCallInsertProducerDataToDatabaseWithNullCalcResult()
 
         {
             // Arrange
-            var fixture = new Fixture();
+            var fixture = new Fixture().Customize(new ImmutableCollectionsCustomization());
             var calcResult = fixture.Create<CalcResult>();
 
             _telemetryLogger.Setup(mock => mock.LogInformation(It.IsAny<TrackMessage>())).Verifiable();

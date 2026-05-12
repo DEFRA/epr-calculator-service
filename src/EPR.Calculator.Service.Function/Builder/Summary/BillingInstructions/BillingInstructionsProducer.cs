@@ -1,4 +1,4 @@
-﻿using EPR.Calculator.Service.Function.Builder.ParametersOther;
+using EPR.Calculator.Service.Function.Builder.ParametersOther;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
 
@@ -6,7 +6,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
 {
     public static class BillingInstructionsProducer
     {
-        public static IEnumerable<CalcResultSummaryHeader> GetHeaders()
+        public static ImmutableList<CalcResultSummaryHeader> GetHeaders()
         {
             return [
                 new CalcResultSummaryHeader { Name = BillingInstructionsHeader.CurrentYearInvoicedTotalToDate },
@@ -22,14 +22,14 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
             ];
         }
 
-        public static IEnumerable<CalcResultSummaryHeader> GetSummaryHeaders(int columnIndex)
+        public static ImmutableList<CalcResultSummaryHeader> GetSummaryHeaders(int columnIndex)
         {
             return [
                 new CalcResultSummaryHeader { Name = BillingInstructionsHeader.Title, ColumnIndex = columnIndex }
             ];
         }
 
-        public static void SetValues(CalcResultSummary result, IEnumerable<InvoicedProducer> ProducerInvoicedMaterialNetTonnage, IEnumerable<DefaultParamResultsClass> defaultParams)
+        public static void SetValues(CalcResultSummary result, IReadOnlyList<InvoicedProducer> ProducerInvoicedMaterialNetTonnage, IReadOnlyList<DefaultParamResultsClass> defaultParams)
         {
             decimal totalTonnage = 0;
             decimal liabilityDifferenceRunningTotal = 0m;

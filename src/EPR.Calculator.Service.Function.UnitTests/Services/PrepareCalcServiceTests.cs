@@ -248,7 +248,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             await _context.SaveChangesAsync();
 
             _jsonExporter.Setup(t => t.Export(It.IsAny<CalcResult>(), It.IsAny<List<int>>())).Returns(fixture.Create<string>());
-            _billingFileExporter.Setup(t => t.Export(It.IsAny<CalcResult>(), It.IsAny<List<int>>())).Returns(fixture.Create<string>());
+            _billingFileExporter.Setup(t => t.Export(It.IsAny<CalcResult>(), It.IsAny<ImmutableHashSet<int>>())).Returns(fixture.Create<string>());
             _storageService.Setup(x => x.UploadFileContentAsync(
                It.IsAny<(string, string, string, string, bool)>()))
                .ReturnsAsync("fileName");
@@ -258,7 +258,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 RunId = 1,
                 RelativeYear = new RelativeYear(2025),
                 IsBillingFile = true,
-                AcceptedProducerIds = new List<int> { 1, 2 },
+                AcceptedProducerIds = [1,2],
                 ApprovedBy = "Test User 234",
             };
             var billingResult = await _testClass.PrepareBillingResultsAsync(calcResultsRequestDto, "TestRun", CancellationToken.None);

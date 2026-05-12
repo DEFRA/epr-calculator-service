@@ -7,7 +7,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts
 {
     public static class LaDataPrepCostsProducer
     {
-        public static IEnumerable<CalcResultSummaryHeader> GetHeaders()
+        public static ImmutableList<CalcResultSummaryHeader> GetHeaders()
         {
             return [
                 new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.TotalProducerFeeWithoutBadDebtProvision },
@@ -20,7 +20,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts
             ];
         }
 
-        public static IEnumerable<CalcResultSummaryHeader> GetSummaryHeaders(int columnIndex)
+        public static ImmutableList<CalcResultSummaryHeader> GetSummaryHeaders(int columnIndex)
         {
             return [
                 new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.LaDataPrepCostsWithoutBadDebtProvisionTitle, ColumnIndex = columnIndex },
