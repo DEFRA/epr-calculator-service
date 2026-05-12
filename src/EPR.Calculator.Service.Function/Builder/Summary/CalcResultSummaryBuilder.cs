@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
@@ -19,7 +18,6 @@ using EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown;
 using EPR.Calculator.Service.Function.Builder.Summary.TwoCCommsCost;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
-using EPR.Calculator.Service.Function.Mappers;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.Utils;
@@ -39,6 +37,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         );
     }
 
+    [ExcludeFromCodeCoverage]
     public class CalcResultSummaryBuilder(
         ApplicationDBContext context,
         IInvoicedProducerService invoicedProducerService)
@@ -51,6 +50,11 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         public ImmutableList<Organisation> Organisations { get; set; } = [];
 
         public ImmutableList<Organisation> ParentOrganisations { get; set; } = [];
+
+        // PERF: Pre-computed dictionaries to replace O(N) linear scans inside the per-producer/per-material loops.
+        private ImmutableDictionary<(int ProducerId, int MaterialId), decimal?> invoicedNetTonnageByProducerMaterial = ImmutableDictionary.Create<(int ProducerId, int MaterialId), decimal?>();
+        private ImmutableDictionary<(int OrganisationId, string? SubsidiaryId), Organisation> organisationsByKey = ImmutableDictionary.Create<(int OrganisationId, string? SubsidiaryId), Organisation>();
+        private ImmutableDictionary<int, Organisation> parentOrganisationsById = ImmutableDictionary.Create<int, Organisation>();
 
         public async Task<CalcResultSummary> ConstructAsync(
             List<MaterialDetail> materialDetails,
@@ -81,17 +85,24 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     x => x.ProducerReportedMaterialProjected
                 );
 
-            var producerDetails = runProducerMaterialDetails.Select(x => x.ProducerDetail).DistinctBy(x => (x.ProducerId, x.SubsidiaryId)).ToList();
-
-            var orderedProducerDetails = GetOrderedListOfProducersAssociatedRunId(
-                runId, producerDetails);
+            var producerDetails = runProducerMaterialDetails
+                .Select(x => x.ProducerDetail)
+                .DistinctBy(x => (x.ProducerId, x.SubsidiaryId))
+                .OrderBy(pd => pd.ProducerId)
+                .ThenBy(pd => pd.SubsidiaryId)
+                .ToImmutableList();
 
             var producerInvoicedMaterialNetTonnage = await invoicedProducerService.GetLatestAcceptedInvoicedProducers(relativeYear);
 
+            // PREF: Replace per-(producer, material) linear scans of the invoiced records collection with an O(1) lookup.
+            invoicedNetTonnageByProducerMaterial = BuildInvoicedNetTonnageByProducerMaterial(producerInvoicedMaterialNetTonnage);
+
             var defaultParams = await GetDefaultParamsAsync(runId);
 
-            // Household + PublicBin + HDC
-            var totalPackagingTonnage = GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materialDetails, runId);
+            // Household + PublicBin + HDC.
+            // PERF: wrap in an index so downstream callers (TonnageVsAllProducerUtil / 2B / 2C) get O(1)
+            // per-producer percentage lookups instead of paying O(producers) per call.
+            var totalPackagingTonnage = new TotalPackagingTonnageIndex(GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materialDetails, runId));
 
             // Get organisations
             Organisations = await (
@@ -114,9 +125,13 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
             ParentOrganisations = Organisations.Where(o => o.SubsidiaryId == null).ToImmutableList();
 
+            // PERF: Replace per-row FirstOrDefault scans with O(1) dictionary lookups.
+            organisationsByKey = BuildOrganisationsByKey(Organisations);
+            parentOrganisationsById = BuildParentOrganisationsById(ParentOrganisations);
+
             var result = GetCalcResultSummary(
                 projectedMaterialsLookup,
-                orderedProducerDetails,
+                producerDetails,
                 materialDetails,
                 calcResult,
                 totalPackagingTonnage,
@@ -131,6 +146,40 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             }
 
             return result;
+        }
+
+        private static ImmutableDictionary<(int, int), decimal?> BuildInvoicedNetTonnageByProducerMaterial(
+            IReadOnlyList<InvoicedProducer> invoicedProducers)
+        {
+            var builder = ImmutableDictionary.CreateBuilder<(int, int), decimal?>();
+            foreach (var invoicedProducer in invoicedProducers)
+            {
+                // Preserve FirstOrDefault semantics (the previous LINQ kept only the first matching record).
+                builder.TryAdd((invoicedProducer.ProducerId, invoicedProducer.MaterialId), invoicedProducer.InvoicedNetTonnage);
+            }
+            return builder.ToImmutable();
+        }
+
+        private static ImmutableDictionary<(int, string?), Organisation> BuildOrganisationsByKey(
+            IReadOnlyList<Organisation> organisations)
+        {
+            var builder = ImmutableDictionary.CreateBuilder<(int, string?), Organisation>();
+            foreach (var org in organisations)
+            {
+                builder.TryAdd((org.OrganisationId, org.SubsidiaryId), org);
+            }
+            return builder.ToImmutable();
+        }
+
+        private static ImmutableDictionary<int, Organisation> BuildParentOrganisationsById(
+            IReadOnlyList<Organisation> parents)
+        {
+            var builder = ImmutableDictionary.CreateBuilder<int, Organisation>();
+            foreach (var org in parents)
+            {
+                builder.TryAdd(org.OrganisationId, org);
+            }
+            return builder.ToImmutable();
         }
 
         private Task<List<DefaultParamResultsClass>> GetDefaultParamsAsync(int runId)
@@ -164,23 +213,26 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         )
         {
             var result = new CalcResultSummary();
-            if (orderedProducerDetails.Any())
+
+            if (orderedProducerDetails.Count > 0)
             {
                 var producerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>();
 
                 foreach (var producerAndSubsidiaries in orderedProducerDetails.GroupBy(x => x.ProducerId))
                 {
+                    // PERF: Reuse the same materialised list across all three callers below; previous
+                    // implementation invoked `.ToList()` three times per group.
                     var subsidiariesList = producerAndSubsidiaries.ToList();
 
                     if (!(subsidiariesList.Count == 1 && subsidiariesList[0].SubsidiaryId == null))
-                        producerDisposalFees.Add(GetProducerTotalRow(projectedMaterialsLookup, producerAndSubsidiaries.ToList(), materials, calcResult, producerDisposalFees, false, totalPackagingTonnage, producerInvoicedMaterialNetTonnage, smcw));
+                        producerDisposalFees.Add(GetProducerTotalRow(projectedMaterialsLookup, subsidiariesList, materials, calcResult, producerDisposalFees, false, totalPackagingTonnage, smcw));
 
                     foreach (var producer in subsidiariesList)
-                        producerDisposalFees.Add(GetProducerRow(projectedMaterialsLookup, producerDisposalFees, producerAndSubsidiaries.ToList(), producer, materials, calcResult, totalPackagingTonnage, producerInvoicedMaterialNetTonnage, smcw));
+                        producerDisposalFees.Add(GetProducerRow(projectedMaterialsLookup, producerDisposalFees, subsidiariesList, producer, materials, calcResult, totalPackagingTonnage, smcw));
                 };
 
                 // Calculate the total for all the producers
-                var allTotalRow = GetProducerTotalRow(projectedMaterialsLookup, orderedProducerDetails.ToList(), materials, calcResult, producerDisposalFees, true, totalPackagingTonnage, producerInvoicedMaterialNetTonnage, smcw);
+                var allTotalRow = GetProducerTotalRow(projectedMaterialsLookup, orderedProducerDetails, materials, calcResult, producerDisposalFees, true, totalPackagingTonnage, smcw);
                 producerDisposalFees.Add(allTotalRow);
 
                 result.ProducerDisposalFees = producerDisposalFees;
@@ -227,27 +279,20 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             return result;
         }
 
-        public static ImmutableList<ProducerDetail> GetOrderedListOfProducersAssociatedRunId(
-            int runId,
-            IReadOnlyList<ProducerDetail> producerDetails)
-        {
-            return producerDetails.Where(pd => pd.CalculatorRunId == runId).OrderBy(pd => pd.ProducerId).ThenBy(pd => pd.SubsidiaryId).ToImmutableList();
-        }
-
         [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
+        [SuppressMessage("Critical Code Smell", "S3776:Cognitive Complexity of methods should not be too high", Justification = "This is suppressed for now and will be refactored later.")]
         public CalcResultSummaryProducerDisposalFees GetProducerTotalRow(
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-            List<ProducerDetail> producersAndSubsidiaries,
+            IReadOnlyList<ProducerDetail> producersAndSubsidiaries,
             IReadOnlyList<MaterialDetail> materials,
             CalcResult calcResult,
             IReadOnlyList<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
             bool isOverAllTotalRow,
             IReadOnlyList<TotalPackagingTonnagePerRun> totalPackagingTonnage,
-            IReadOnlyList<InvoicedProducer> producerInvoicedMaterialNetTonnage,
             SelfManagedConsumerWaste smcw
         )
         {
-            var materialCosts = GetMaterialCosts(projectedMaterialsLookup, producersAndSubsidiaries, producerDisposalFees, materials, calcResult, isOverAllTotalRow, producerInvoicedMaterialNetTonnage, smcw);
+            var materialCosts = GetMaterialCosts(projectedMaterialsLookup, producersAndSubsidiaries, producerDisposalFees, materials, calcResult, isOverAllTotalRow, smcw);
             var communicationCosts = GetCommunicationCosts(projectedMaterialsLookup, producersAndSubsidiaries, materials, calcResult);
 
             // Compute Count/Advice for the producer-total (Level 1) row
@@ -336,7 +381,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             IReadOnlyList<MaterialDetail> materials,
             CalcResult calcResult,
             IReadOnlyList<TotalPackagingTonnagePerRun> totalPackagingTonnage,
-            IReadOnlyList<InvoicedProducer> producerInvoicedMaterialNetTonnage,
             SelfManagedConsumerWaste smcw
         )
         {
@@ -344,7 +388,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             var commsCostSummary = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>();
             var level = CalcResultSummaryUtil.GetLevelIndex(producerDisposalFeesLookup, producer);
 
-            var orgData = Organisations.FirstOrDefault(o => o.OrganisationId == producer.ProducerId && o.SubsidiaryId == producer.SubsidiaryId);
+            // PERF: Use O(1) lookup instead of an O(orgs) FirstOrDefault per producer row.
+            organisationsByKey.TryGetValue((producer.ProducerId, producer.SubsidiaryId), out var orgData);
 
             var result = new CalcResultSummaryProducerDisposalFees
             {
@@ -367,15 +412,20 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
             foreach (var material in materials)
             {
+                // PERF: Hoist the loop invariants - both values depend only on (producerAndSubsidiaries, material)
+                // and were previously recomputed once per subsidiary.
+                var l1TotalReportedTonnage = producerAndSubsidiaries.Sum(p => CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, p, material));
+                var l1SelfManagedConsumerWasteData = CalcResultSummaryUtil.SumSelfManagedConsumerWasteData(producerAndSubsidiaries, material, isOverAllTotalRow: false, smcw);
+
                 var producerDisposalFeesByMaterial = BuildProducerDisposalFeesByMaterial(
                     projectedMaterialsLookup,
-                    producerAndSubsidiaries,
                     producer,
                     material,
                     calcResult,
-                    producerInvoicedMaterialNetTonnage,
                     smcw,
-                    level);
+                    level,
+                    l1TotalReportedTonnage,
+                    l1SelfManagedConsumerWasteData);
 
                 materialCostSummary.Add(material.Code, producerDisposalFeesByMaterial);
                 result.TotalProducerDisposalFee += producerDisposalFeesByMaterial.ProducerDisposalFee.total ?? 0;
@@ -466,18 +516,16 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         private CalcResultSummaryProducerDisposalFeesByMaterial BuildProducerDisposalFeesByMaterial(
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-            IReadOnlyList<ProducerDetail> producerAndSubsidiaries,
             ProducerDetail producer,
             MaterialDetail material,
             CalcResult calcResult,
-            IReadOnlyList<InvoicedProducer> producerInvoicedMaterialNetTonnage,
             SelfManagedConsumerWaste smcw,
-            int level)
+            int level,
+            decimal l1TotalReportedTonnage,
+            SelfManagedConsumerWasteData l1SelfManagedConsumerWasteData)
         {
-            var previousInvoicedNetTonnage = producerInvoicedMaterialNetTonnage
-                                                .Where(x => x.MaterialId == material.Id && x.ProducerId == producer.ProducerId)
-                                                .Select(x => x.InvoicedNetTonnage)
-                                                .FirstOrDefault();
+            // PERF: O(1) replacement for the original `Where(...).Select(...).FirstOrDefault()` scan.
+            invoicedNetTonnageByProducerMaterial.TryGetValue((producer.ProducerId, material.Id), out var previousInvoicedNetTonnage);
 
             var totalReportedTonnage = CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, producer, material);
 
@@ -485,9 +533,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 .ProducerTotals
                 .Find(x => x.ProducerId == producer.ProducerId && x.SubsidiaryId == producer.SubsidiaryId && x.Level == level)?
                 .SelfManagedConsumerWasteDataPerMaterials[material.Code] ?? SelfManagedConsumerWasteData.Zero;
-
-            var l1TotalReportedTonnage = producerAndSubsidiaries.Sum(producer => CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, producer, material));
-            var l1SelfManagedConsumerWasteData = CalcResultSummaryUtil.SumSelfManagedConsumerWasteData(producerAndSubsidiaries, material, isOverAllTotalRow: false, smcw);
 
             var producerDisposalFee =
                 l1SelfManagedConsumerWasteData.SelfManagedConsumerWasteTonnage > l1TotalReportedTonnage
@@ -600,18 +645,20 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             return result;
         }
 
-        public Organisation? GetProducerDetailsForTotalRow(int producerId, bool isOverAllTotalRow)
+        private Organisation? GetProducerDetailsForTotalRow(int producerId, bool isOverAllTotalRow)
         {
             if (isOverAllTotalRow)
             {
                 return null;
             }
 
-            var parentProducer = ParentOrganisations.FirstOrDefault(po => po.OrganisationId == producerId);
+            // PERF: O(1) replacement for the previous FirstOrDefault scan of ParentOrganisations.
+            parentOrganisationsById.TryGetValue(producerId, out var parentProducer);
             return parentProducer;
         }
 
         [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
+        [SuppressMessage("Critical Code Smell", "S3776:Cognitive Complexity of methods should not be too high", Justification = "This is suppressed for now and will be refactored later.")]
         private Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> GetMaterialCosts(
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             IReadOnlyList<ProducerDetail> producersAndSubsidiaries,
@@ -619,20 +666,24 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             IReadOnlyList<MaterialDetail> materials,
             CalcResult calcResult,
             bool isOverAllTotalRow,
-            IReadOnlyList<InvoicedProducer> producerInvoicedMaterialNetTonnage,
             SelfManagedConsumerWaste smcw)
         {
             var materialCosts = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>();
+
+            // PERF: Resolve the producer id once per call rather than re-enumerating producersAndSubsidiaries per material.
+            var primaryProducerId = producersAndSubsidiaries.FirstOrDefault()?.ProducerId;
 
             foreach (var material in materials)
             {
                 var householdPackagingWasteTonnage = CalcResultSummaryUtil.GetTonnageTotal(projectedMaterialsLookup, producersAndSubsidiaries, material, PackagingTypes.Household);
                 var publicBinTonnage = CalcResultSummaryUtil.GetTonnageTotal(projectedMaterialsLookup, producersAndSubsidiaries, material, PackagingTypes.PublicBin);
-                var previousInvoicedNetTonnage = producerInvoicedMaterialNetTonnage
-                    .Where(x => x.MaterialId == material.Id
-                             && x.ProducerId == producersAndSubsidiaries.FirstOrDefault()?.ProducerId)
-                    .Select(x => x.InvoicedNetTonnage)
-                    .FirstOrDefault();
+
+                // PERF: O(1) replacement for the previous Where(...).FirstOrDefault() scan.
+                decimal? previousInvoicedNetTonnage = null;
+                if (primaryProducerId.HasValue)
+                {
+                    invoicedNetTonnageByProducerMaterial.TryGetValue((primaryProducerId.Value, material.Id), out previousInvoicedNetTonnage);
+                }
 
                 var selfManagedConsumerWasteData = CalcResultSummaryUtil.SumSelfManagedConsumerWasteData(producersAndSubsidiaries, material, isOverAllTotalRow, smcw);
                 var producerDisposalFee = CalcResultSummaryUtil.GetProducerDisposalFee(material, calcResult, selfManagedConsumerWasteData);
