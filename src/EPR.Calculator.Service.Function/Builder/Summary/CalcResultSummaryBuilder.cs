@@ -84,7 +84,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     x => x.ProducerReportedMaterialProjected
                 );
 
-            var producerDetails = runProducerMaterialDetails.Select(x => x.ProducerDetail).Distinct().ToList();
+            var producerDetails = runProducerMaterialDetails.Select(x => x.ProducerDetail).DistinctBy(x => (x.ProducerId, x.SubsidiaryId)).ToList();
 
             var orderedProducerDetails = GetOrderedListOfProducersAssociatedRunId(
                 runId, producerDetails);
@@ -632,7 +632,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             int runId
         )
         {
-            var allProducerDetails = allResults.Select(x => x.ProducerDetail).Distinct();
+            var allProducerDetails = allResults.Select(x => x.ProducerDetail).DistinctBy(x => (x.ProducerId, x.SubsidiaryId));
             var allProducerReportedMaterials = allResults.Select(x => x.ProducerReportedMaterialProjected);
 
             var result =

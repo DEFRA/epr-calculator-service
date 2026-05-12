@@ -8,7 +8,7 @@
 
         public static bool IsObligated(string status)
         {
-            return string.IsNullOrWhiteSpace(status) || status == Obligated;
+            return status == Obligated;
         }
     }
 }

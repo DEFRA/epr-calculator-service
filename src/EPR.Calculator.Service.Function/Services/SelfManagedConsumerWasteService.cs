@@ -58,7 +58,10 @@ namespace EPR.Calculator.Service.Function.Services
                     x => x.ProducerReportedMaterialProjected
                 );
 
-            var producerDetails = producerMaterialDetails.Select(x => x.ProducerDetail).Distinct().ToList();
+            var producerDetails = producerMaterialDetails
+               .Select(x => x.ProducerDetail)
+               .DistinctBy(x => (x.ProducerId, x.SubsidiaryId))
+               .ToList();
 
             var producerTotals = producerDetails
                 .GroupBy(x => x.ProducerId)
