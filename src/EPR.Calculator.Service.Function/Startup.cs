@@ -1,4 +1,3 @@
-using System.Configuration;
 using System.Reflection;
 using Azure.Storage.Blobs;
 using EPR.Calculator.API.Data;
@@ -38,6 +37,7 @@ using EPR.Calculator.Service.Function.Mappers;
 using EPR.Calculator.Service.Function.Messaging;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Options;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.Services.CommonDataApi;
 using EPR.Calculator.Service.Function.Services.DataLoading;
@@ -46,6 +46,7 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -85,7 +86,6 @@ internal static class ServiceRegistration
     private static void RegisterCoreDependencies(IServiceCollection services)
     {
         services.AddSingleton<TimeProvider>(_ => TimeProvider.System);
-        services.AddTransient<IConfigurationService, Configuration>();
     }
 
     private static void RegisterTelemetry(IServiceCollection services)
@@ -102,10 +102,18 @@ internal static class ServiceRegistration
 
     private static void RegisterDatabase(IServiceCollection services)
     {
-        services.AddDbContextFactory<ApplicationDBContext>(options =>
+        services
+            .AddOptions<DatabaseOptions>()
+            .Configure<IConfiguration>((options, config) => { config.GetSection(DatabaseOptions.SectionKey).Bind(options); })
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        services.AddDbContextFactory<ApplicationDBContext>((provider, builder) =>
         {
-            var config = services.BuildServiceProvider().GetRequiredService<IConfigurationService>();
-            options.UseSqlServer(config.DbConnectionString);
+            var options = provider.GetRequiredService<IOptions<DatabaseOptions>>().Value;
+            builder.UseSqlServer(
+                options.ConnectionString,
+                sqlOptions => { sqlOptions.CommandTimeout((int)options.CommandTimeout.TotalSeconds); });
         });
 
         services.AddSingleton<IBulkOperations, BulkOperationsWrapper>();
@@ -113,16 +121,19 @@ internal static class ServiceRegistration
 
     private static void RegisterBlobStorage(IServiceCollection services)
     {
-        services.AddSingleton<IStorageService>(provider =>
-        {
-            var configuration = provider.GetRequiredService<IConfigurationService>();
-            var logger = provider.GetRequiredService<ICalculatorTelemetryLogger>();
-            var connectionString = configuration.BlobConnectionString;
-            if (string.IsNullOrEmpty(connectionString))
-                throw new ConfigurationErrorsException("Blob Storage connection string is not configured.");
+        services
+            .AddOptions<BlobStorageOptions>()
+            .Configure<IConfiguration>((options, config) => { config.GetSection(BlobStorageOptions.SectionKey).Bind(options); })
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
 
-            return new BlobStorageService(new BlobServiceClient(connectionString), logger);
+        services.AddSingleton<BlobServiceClient>(provider =>
+        {
+            var options = provider.GetRequiredService<IOptions<BlobStorageOptions>>().Value;
+            return new BlobServiceClient(options.ConnectionString);
         });
+
+        services.AddSingleton<IStorageService, BlobStorageService>();
     }
 
     private static void RegisterCalculatorRunDependencies(IServiceCollection services)
@@ -157,7 +168,6 @@ internal static class ServiceRegistration
         services.AddTransient<ICalcResultBuilder, CalcResultBuilder>();
         services.AddTransient<ICalcResultsExporter<CalcResult>, CalcResultsExporter>();
         services.AddTransient<CalculatorRunValidator, CalculatorRunValidator>();
-        services.AddTransient<ICommandTimeoutService, CommandTimeoutService>();
         services.AddTransient<IPrepareCalcService, PrepareCalcService>();
         services.AddTransient<IParameterService, ParameterService>();
         services.AddTransient<ICalcResultDetailBuilder, CalcResultDetailBuilder>();

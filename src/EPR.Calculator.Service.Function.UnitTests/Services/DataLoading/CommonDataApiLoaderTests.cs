@@ -4,6 +4,7 @@ using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Messaging;
+using EPR.Calculator.Service.Function.Options;
 using EPR.Calculator.Service.Function.Services.CommonDataApi;
 using EPR.Calculator.Service.Function.Services.DataLoading;
 using Microsoft.EntityFrameworkCore;
@@ -236,14 +237,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
 
         private CommonDataApiLoader CreateLoader(bool enabled, HttpMessageHandler httpHandler)
         {
-            var loaderOptions = Options.Create(new CommonDataApiLoaderOptions
+            var loaderOptions = new OptionsWrapper<CommonDataApiLoaderOptions>(new CommonDataApiLoaderOptions
             {
                 Enabled = enabled,
                 PomBatchSize = 100,
                 OrganisationBatchSize = 100,
             });
 
-            var httpClientOptions = Options.Create(new CommonDataApiHttpClientOptions
+            var httpClientOptions = new OptionsWrapper<CommonDataApiHttpClientOptions>(new CommonDataApiHttpClientOptions
             {
                 BaseUrl = "https://test-api.example.com",
                 CompressionEnabled = false,

@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder;
@@ -7,9 +7,11 @@ using EPR.Calculator.Service.Function.Exporter;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Options;
 using EPR.Calculator.Service.Function.Telemetry;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace EPR.Calculator.Service.Function.Services
 {
@@ -30,12 +32,11 @@ namespace EPR.Calculator.Service.Function.Services
         ICalcResultsExporter<CalcResult> exporter,
         IStorageService storageService,
         CalculatorRunValidator validator,
-        ICommandTimeoutService commandTimeoutService,
         ICalculatorTelemetryLogger telemetryLogger,
         ICalcBillingJsonExporter<CalcResult> jsonExporter,
-        IConfigurationService configService,
         IBillingFileExporter<CalcResult> billingFileExporter,
-        IPrepareProducerDataInsertService producerDataInsertService)
+        IPrepareProducerDataInsertService producerDataInsertService,
+        IOptions<BlobStorageOptions> blobStorageOptions)
         : IPrepareCalcService
     {
         private const bool OverwriteJsonFile = true;
@@ -47,8 +48,6 @@ namespace EPR.Calculator.Service.Function.Services
             string? runName,
             CancellationToken cancellationToken)
         {
-            commandTimeoutService.SetCommandTimeout(dbContext.Database);
-
             CalculatorRun? calculatorRun = null;
             try
             {
@@ -123,7 +122,7 @@ namespace EPR.Calculator.Service.Function.Services
                     results.CalcResultDetail.RunName,
                     results.CalcResultDetail.RunDate);
 
-                string containerName = configService.ResultFileCSVContainerName;
+                string containerName = blobStorageOptions.Value.ResultFileCsvContainer;
 
                 var blobUri = await storageService.UploadFileContentAsync(
                     (FileName: fileName,
@@ -269,7 +268,7 @@ namespace EPR.Calculator.Service.Function.Services
                  FileName: billingFileCsvName,
                  Content: exportedResults,
                  RunName: runName,
-                 ContainerName: configService.BillingFileCSVBlobContainerName,
+                 ContainerName: blobStorageOptions.Value.BillingFileCsvContainer,
                  Overwrite: OverwriteCsvFile));
 
             telemetryLogger.LogInformation(new TrackMessage
@@ -292,7 +291,7 @@ namespace EPR.Calculator.Service.Function.Services
                 FileName: billingFileJsonName,
                 Content: jsonResponse,
                 RunName: runName,
-                ContainerName: configService.BillingFileJsonBlobContainerName,
+                ContainerName: blobStorageOptions.Value.BillingFileJsonContainer,
                 Overwrite: OverwriteJsonFile));
 
             telemetryLogger.LogInformation(new TrackMessage

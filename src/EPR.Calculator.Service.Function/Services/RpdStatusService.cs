@@ -21,17 +21,13 @@ namespace EPR.Calculator.Service.Function.Services
         /// Initializes a new instance of the <see cref="RpdStatusService"/> class.
         /// </summary>
         public RpdStatusService(
-            IConfigurationService config,
             IDbContextFactory<ApplicationDBContext> context,
-            ICommandTimeoutService commandTimeoutService,
             IRpdStatusDataValidator validator,
             ICalculatorTelemetryLogger telemetryLogger,
             ICalculatorRunOrgData calculatorRunOrgData,
             ICalculatorRunPomData calculatorRunPomData)
         {
-            Config = config;
             Context = context.CreateDbContext();
-            CommandTimeoutService = commandTimeoutService;
             Validator = validator;
             TelemetryLogger = telemetryLogger;
             CalculatorRunOrgData = calculatorRunOrgData;
@@ -39,10 +35,6 @@ namespace EPR.Calculator.Service.Function.Services
         }
 
         private ICalculatorTelemetryLogger TelemetryLogger { get; init; }
-
-        private ICommandTimeoutService CommandTimeoutService { get; init; }
-
-        private IConfigurationService Config { get; init; }
 
         private ApplicationDBContext Context { get; init; }
 
@@ -65,8 +57,6 @@ namespace EPR.Calculator.Service.Function.Services
                 RunName = runName,
                 Message = "Updating RPD status...",
             });
-
-            CommandTimeoutService.SetCommandTimeout(Context.Database);
 
             var calcRun = await Context.CalculatorRuns.SingleOrDefaultAsync(
                 run => run.Id == runId,
