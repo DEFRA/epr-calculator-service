@@ -53,7 +53,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Environment.SetEnvironmentVariable(EnvironmentVariableKeys.RpdStatusTimeout, "0");
 
             CalculatorRunService = new CalculatorRunService(
-                new Configuration(),
                 DataLoader.Object,
                 TransposeService.Object,
                 PrepareCalcService.Object,

@@ -1,5 +1,6 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Options;
 using EPR.Calculator.Service.Function.Services.CommonDataApi;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
 using Microsoft.ApplicationInsights;
@@ -20,12 +21,15 @@ public class StartupTests
         var services = new ServiceCollection();
 
         // Manually wire up a few things since we're not calling from a real Functions Host
-        Environment.SetEnvironmentVariable(EnvironmentVariableKeys.BlobConnectionString, "UseDevelopmentStorage=true");
-
         services
             .AddTransient<IConfiguration>(_ => new ConfigurationBuilder()
                 .AddInMemoryCollection(new Dictionary<string, string?>
                 {
+                    [$"{DatabaseOptions.SectionKey}:{nameof(DatabaseOptions.ConnectionString)}"] = "ignored",
+                    [$"{BlobStorageOptions.SectionKey}:{nameof(BlobStorageOptions.ConnectionString)}"] = "UseDevelopmentStorage=true",
+                    [$"{BlobStorageOptions.SectionKey}:{nameof(BlobStorageOptions.ResultFileCsvContainer)}"] = "ignored",
+                    [$"{BlobStorageOptions.SectionKey}:{nameof(BlobStorageOptions.BillingFileCsvContainer)}"] = "ignored",
+                    [$"{BlobStorageOptions.SectionKey}:{nameof(BlobStorageOptions.BillingFileJsonContainer)}"] = "ignored",
                     [$"{CommonDataApiHttpClientOptions.SectionKey}:{nameof(CommonDataApiHttpClientOptions.BaseUrl)}"] = "https://ignored"
                 })
                 .Build())

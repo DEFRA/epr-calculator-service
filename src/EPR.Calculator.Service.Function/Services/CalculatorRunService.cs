@@ -23,7 +23,6 @@ namespace EPR.Calculator.Service.Function.Services
     }
 
     public class CalculatorRunService(
-        IConfigurationService configuration,
         IDataLoader dataLoader,
         IProducerDataTransposer producerDataTransposer,
         IPrepareCalcService prepareCalcService,
@@ -90,7 +89,7 @@ namespace EPR.Calculator.Service.Function.Services
                 isSuccess = await prepareCalcService.PrepareCalcResultsAsync(
                     new CalcResultsRequestDto { RunId = calculatorRunParameter.Id, RelativeYear = calculatorRunParameter.RelativeYear },
                     runName,
-                    new CancellationTokenSource(configuration.PrepareCalcResultsTimeout).Token);
+                    CancellationToken.None);
 
                 LogInformation(calculatorRunParameter.Id, runName,
                     $"UpdateStatusAndPrepareResult - prepareCalcResultResponse: {isSuccess}");
@@ -113,7 +112,7 @@ namespace EPR.Calculator.Service.Function.Services
                 calculatorRunParameter.Id,
                 runName,
                 calculatorRunParameter.User,
-                new CancellationTokenSource(configuration.RpdStatusTimeout).Token);
+                CancellationToken.None);
             LogInformation(calculatorRunParameter.Id, runName,
                 $"UpdateStatusAndPrepareResult - Status Response: {statusUpdateResponse}");
             return statusUpdateResponse;

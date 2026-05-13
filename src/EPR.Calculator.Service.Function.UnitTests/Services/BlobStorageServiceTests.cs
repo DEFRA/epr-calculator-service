@@ -23,10 +23,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             MockBlobContainerClient = new Mock<BlobContainerClient>();
             MockBlobClient = new Mock<BlobClient>();
 
-            ConfigurationService = new Mock<IConfigurationService>();
-            ConfigurationService.Setup(s => s.ResultFileCSVContainerName)
-                .Returns(Fixture.Create<string>());
-
             MockBlobServiceClient.Setup(x => x.GetBlobContainerClient(It.IsAny<string>()))
                 .Returns(MockBlobContainerClient.Object);
 
@@ -49,8 +45,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         private Mock<BlobClient> MockBlobClient { get; init; }
 
         private BlobStorageService BlobStorageService { get; init; }
-
-        private Mock<IConfigurationService> ConfigurationService { get; init; }
 
         private Mock<ICalculatorTelemetryLogger> TelemetryLogger { get; init; }
 

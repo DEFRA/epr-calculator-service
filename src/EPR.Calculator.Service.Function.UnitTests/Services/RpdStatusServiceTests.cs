@@ -44,11 +44,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 It.IsAny<IEnumerable<CalculatorRunClassification>>()))
                 .Returns(new RpdStatusValidation { isValid = true });
 
-            CommandTimeoutService = new Mock<ICommandTimeoutService>();
-
-            Configuration = new Mock<IConfigurationService>();
-            Configuration.Setup(s => s.ResultFileCSVContainerName)
-                .Returns(Fixture.Create<string>());
             TelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
 
             CalculatorRunOrgData = new Mock<ICalculatorRunOrgData>();
@@ -56,9 +51,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             CalculatorRunPomData = new Mock<ICalculatorRunPomData>();
 
             TestClass = new RpdStatusService(
-                Configuration.Object,
                 contextFactory.Object,
-                CommandTimeoutService.Object,
                 Validator.Object,
                 TelemetryLogger.Object,
                 CalculatorRunOrgData.Object,
@@ -71,11 +64,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         private ApplicationDBContext Context { get; init; }
 
-        private Mock<IConfigurationService> Configuration { get; init; }
-
         private Mock<IRpdStatusDataValidator> Validator { get; init; }
-
-        private Mock<ICommandTimeoutService> CommandTimeoutService { get; set; }
 
         private Mock<ICalculatorTelemetryLogger> TelemetryLogger { get; init; }
 

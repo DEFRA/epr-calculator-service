@@ -8,10 +8,12 @@ using EPR.Calculator.Service.Function.Exporter;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Options;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.Telemetry;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Options;
 using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
@@ -29,10 +31,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         private Mock<IProducerDataTransposer> _transposePomAndOrgDataService;
         private Mock<IStorageService> _storageService;
         private CalculatorRunValidator _validationRules;
-        private Mock<ICommandTimeoutService> _commandTimeoutService;
         private Mock<ICalculatorTelemetryLogger> _telemetryLogger;
         private Mock<ICalcBillingJsonExporter<CalcResult>> _jsonExporter;
-        private Mock<IConfigurationService> _configService;
         private Mock<IBillingFileExporter<CalcResult>> _billingFileExporter;
         private Mock<IPrepareProducerDataInsertService> _prepareProducerDataInsertService;
 
@@ -95,9 +95,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             _transposePomAndOrgDataService = new Mock<IProducerDataTransposer>();
             _storageService = new Mock<IStorageService>();
             _validationRules = fixture.Create<CalculatorRunValidator>();
-            _commandTimeoutService = new Mock<ICommandTimeoutService>();
             _jsonExporter = new Mock<ICalcBillingJsonExporter<CalcResult>>();
-            _configService = new Mock<IConfigurationService>();
             _billingFileExporter = new Mock<IBillingFileExporter<CalcResult>>();
             _prepareProducerDataInsertService = new Mock<IPrepareProducerDataInsertService>();
 
@@ -107,12 +105,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 _exporter.Object,
                 _storageService.Object,
                 _validationRules,
-                _commandTimeoutService.Object,
                 new Mock<ICalculatorTelemetryLogger>().Object,
                 _jsonExporter.Object,
-                _configService.Object,
                 _billingFileExporter.Object,
-                _prepareProducerDataInsertService.Object
+                _prepareProducerDataInsertService.Object,
+                new OptionsWrapper<BlobStorageOptions>(new BlobStorageOptions())
             );
         }
 
