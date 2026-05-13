@@ -1,4 +1,4 @@
-﻿using System.Configuration;
+using System.Configuration;
 using System.Reflection;
 using Azure.Storage.Blobs;
 using EPR.Calculator.API.Data;
@@ -170,21 +170,6 @@ public class Startup : FunctionsStartup
         services.AddTransient<IProjectedProducersService, ProjectedProducersService>();
         services.AddTransient<ISelfManagedConsumerWasteService, SelfManagedConsumerWasteService>();
         services.AddTransient<IReportedProducerService, ReportedProducerService>();
-
-        services.AddScoped<PrepareCalcServiceDependencies>(provider => new PrepareCalcServiceDependencies
-        {
-            Context = provider.GetRequiredService<ApplicationDBContext>(),
-            Builder = provider.GetRequiredService<ICalcResultBuilder>(),
-            Exporter = provider.GetRequiredService<ICalcResultsExporter<CalcResult>>(),
-            StorageService = provider.GetRequiredService<IStorageService>(),
-            ValidationRules = provider.GetRequiredService<CalculatorRunValidator>(),
-            CommandTimeoutService = provider.GetRequiredService<ICommandTimeoutService>(),
-            TelemetryLogger = provider.GetRequiredService<ICalculatorTelemetryLogger>(),
-            JsonExporter = provider.GetRequiredService<ICalcBillingJsonExporter<CalcResult>>(),
-            ConfigService = provider.GetRequiredService<IConfigurationService>(),
-            BillingFileExporter = provider.GetRequiredService<IBillingFileExporter<CalcResult>>(),
-            producerDataInsertService = provider.GetRequiredService<IPrepareProducerDataInsertService>()
-        });
 
         services
             .AddOptions<CommonDataApiHttpClientOptions>()

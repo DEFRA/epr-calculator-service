@@ -36,8 +36,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         private Mock<IBillingFileExporter<CalcResult>> _billingFileExporter;
         private Mock<IPrepareProducerDataInsertService> _prepareProducerDataInsertService;
 
-        private PrepareCalcServiceDependencies _prepareCalcServiceDependencies;
-
         public PrepareCalcServiceTests()
         {
             _dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
@@ -103,23 +101,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             _billingFileExporter = new Mock<IBillingFileExporter<CalcResult>>();
             _prepareProducerDataInsertService = new Mock<IPrepareProducerDataInsertService>();
 
-            _prepareCalcServiceDependencies = new PrepareCalcServiceDependencies
-            {
-                Context = _context,
-                Builder = _builder.Object,
-                Exporter = _exporter.Object,
-                StorageService = _storageService.Object,
-                ValidationRules = new Mock<CalculatorRunValidator>().Object,
-                CommandTimeoutService = _commandTimeoutService.Object,
-                TelemetryLogger = new Mock<ICalculatorTelemetryLogger>().Object,
-                JsonExporter = _jsonExporter.Object,
-                ConfigService = _configService.Object,
-                BillingFileExporter = _billingFileExporter.Object,
-                producerDataInsertService = _prepareProducerDataInsertService.Object,
-
-            };
-
-            _testClass = new PrepareCalcService(_prepareCalcServiceDependencies);
+            _testClass = new PrepareCalcService(
+                _context,
+                _builder.Object,
+                _exporter.Object,
+                _storageService.Object,
+                _validationRules,
+                _commandTimeoutService.Object,
+                new Mock<ICalculatorTelemetryLogger>().Object,
+                _jsonExporter.Object,
+                _configService.Object,
+                _billingFileExporter.Object,
+                _prepareProducerDataInsertService.Object
+            );
         }
 
         [TestCleanup]
@@ -127,16 +121,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             _context.Database.EnsureDeleted();
             _context.Dispose();
-        }
-
-        [TestMethod]
-        public void CanConstruct()
-        {
-            // Act
-            var instance = new PrepareCalcService(_prepareCalcServiceDependencies);
-
-            // Assert
-            Assert.IsNotNull(instance);
         }
 
         [TestMethod]

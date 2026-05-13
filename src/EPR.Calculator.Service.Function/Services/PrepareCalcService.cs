@@ -1,4 +1,5 @@
-﻿using EPR.Calculator.API.Data;
+﻿using System.Diagnostics.CodeAnalysis;
+using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder;
 using EPR.Calculator.Service.Function.Enums;
@@ -22,59 +23,36 @@ namespace EPR.Calculator.Service.Function.Services
     /// <summary>
     /// Service for preparing calculation results.
     /// </summary>
-    public class PrepareCalcService : IPrepareCalcService
+    [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
+    public class PrepareCalcService(
+        ApplicationDBContext dbContext,
+        ICalcResultBuilder builder,
+        ICalcResultsExporter<CalcResult> exporter,
+        IStorageService storageService,
+        CalculatorRunValidator validator,
+        ICommandTimeoutService commandTimeoutService,
+        ICalculatorTelemetryLogger telemetryLogger,
+        ICalcBillingJsonExporter<CalcResult> jsonExporter,
+        IConfigurationService configService,
+        IBillingFileExporter<CalcResult> billingFileExporter,
+        IPrepareProducerDataInsertService producerDataInsertService)
+        : IPrepareCalcService
     {
-        public PrepareCalcService(PrepareCalcServiceDependencies deps)
-        {
-            Context = deps.Context;
-            Builder = deps.Builder;
-            Exporter = deps.Exporter;
-            storageService = deps.StorageService;
-            validatior = deps.ValidationRules;
-            commandTimeoutService = deps.CommandTimeoutService;
-            telemetryLogger = deps.TelemetryLogger;
-            ConfigService = deps.ConfigService;
-            JsonExporter = deps.JsonExporter;
-            BillingFileExporter = deps.BillingFileExporter;
-            producerDataInsertService = deps.producerDataInsertService;
-        }
-
         private const bool OverwriteJsonFile = true;
 
         private const bool OverwriteCsvFile = false;
-
-        private readonly ICalculatorTelemetryLogger telemetryLogger;
-
-        private ApplicationDBContext Context { get; init; }
-
-        private ICalcResultBuilder Builder { get; init; }
-
-        private ICalcBillingJsonExporter<CalcResult> JsonExporter { get; init; }
-
-        private ICalcResultsExporter<CalcResult> Exporter { get; init; }
-
-        private IStorageService storageService { get; init; }
-
-        private CalculatorRunValidator validatior { get; init; }
-
-        private ICommandTimeoutService commandTimeoutService { get; init; }
-
-        private IConfigurationService ConfigService { get; init; }
-
-        private IBillingFileExporter<CalcResult> BillingFileExporter { get; init; }
-        private IPrepareProducerDataInsertService producerDataInsertService { get; init; }
 
         public async Task<bool> PrepareCalcResultsAsync(
             [FromBody] CalcResultsRequestDto resultsRequestDto,
             string? runName,
             CancellationToken cancellationToken)
         {
-            commandTimeoutService.SetCommandTimeout(Context.Database);
+            commandTimeoutService.SetCommandTimeout(dbContext.Database);
 
             CalculatorRun? calculatorRun = null;
             try
             {
-                calculatorRun = await Context.CalculatorRuns.SingleOrDefaultAsync(
+                calculatorRun = await dbContext.CalculatorRuns.SingleOrDefaultAsync(
                     run => run.Id == resultsRequestDto.RunId,
                     cancellationToken);
                 if (calculatorRun == null)
@@ -83,7 +61,7 @@ namespace EPR.Calculator.Service.Function.Services
                 }
 
                 // Validate the result for all the required IDs
-                var validationResult = validatior.ValidateCalculatorRunIds(calculatorRun);
+                var validationResult = validator.ValidateCalculatorRunIds(calculatorRun);
                 if (!validationResult.IsValid)
                 {
                     return false;
@@ -96,7 +74,7 @@ namespace EPR.Calculator.Service.Function.Services
                     Message = "Builder started...",
                 });
 
-                var results = await Builder.BuildAsync(resultsRequestDto);
+                var results = await builder.BuildAsync(resultsRequestDto);
                 telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = resultsRequestDto.RunId,
@@ -126,7 +104,7 @@ namespace EPR.Calculator.Service.Function.Services
                     Message = "Exporter started...",
                 });
 
-                var exportedResults = Exporter.Export(results);
+                var exportedResults = exporter.Export(results);
                 telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = resultsRequestDto.RunId,
@@ -145,7 +123,7 @@ namespace EPR.Calculator.Service.Function.Services
                     results.CalcResultDetail.RunName,
                     results.CalcResultDetail.RunDate);
 
-                string containerName = ConfigService.ResultFileCSVContainerName;
+                string containerName = configService.ResultFileCSVContainerName;
 
                 var blobUri = await storageService.UploadFileContentAsync(
                     (FileName: fileName,
@@ -171,12 +149,12 @@ namespace EPR.Calculator.Service.Function.Services
                 {
                     await SaveCsvFileMetadataAsync(results.CalcResultDetail.RunId, fileName.ToString(), blobUri);
                     // To fix the operation cancelled issue while updating the context
-                    calculatorRun = await Context.CalculatorRuns.SingleOrDefaultAsync(
+                    calculatorRun = await dbContext.CalculatorRuns.SingleOrDefaultAsync(
                             run => run.Id == resultsRequestDto.RunId,
                             cancellationToken);
                     calculatorRun!.CalculatorRunClassificationId = (int)RunClassification.UNCLASSIFIED;
-                    Context.CalculatorRuns.Update(calculatorRun);
-                    await Context.SaveChangesAsync(cancellationToken);
+                    dbContext.CalculatorRuns.Update(calculatorRun);
+                    await dbContext.SaveChangesAsync(cancellationToken);
                     return true;
                 }
 
@@ -234,7 +212,7 @@ namespace EPR.Calculator.Service.Function.Services
                 Message = "Billing Builder started...",
             });
 
-            var calcResults = await Builder.BuildAsync(resultsRequestDto);
+            var calcResults = await builder.BuildAsync(resultsRequestDto);
 
             telemetryLogger.LogInformation(new TrackMessage
             {
@@ -266,7 +244,7 @@ namespace EPR.Calculator.Service.Function.Services
                 Message = $"Billing file JSON file name only is created {billingFileJsonName}",
             });
 
-            var jsonResponse = JsonExporter.Export(calcResults, resultsRequestDto.AcceptedProducerIds);
+            var jsonResponse = jsonExporter.Export(calcResults, resultsRequestDto.AcceptedProducerIds);
 
             telemetryLogger.LogInformation(new TrackMessage
             {
@@ -277,7 +255,7 @@ namespace EPR.Calculator.Service.Function.Services
 
             // call csv Exporter
 
-            var exportedResults = BillingFileExporter.Export(calcResults, resultsRequestDto.AcceptedProducerIds);
+            var exportedResults = billingFileExporter.Export(calcResults, resultsRequestDto.AcceptedProducerIds);
 
             telemetryLogger.LogInformation(new TrackMessage
             {
@@ -291,7 +269,7 @@ namespace EPR.Calculator.Service.Function.Services
                  FileName: billingFileCsvName,
                  Content: exportedResults,
                  RunName: runName,
-                 ContainerName: ConfigService.BillingFileCSVBlobContainerName,
+                 ContainerName: configService.BillingFileCSVBlobContainerName,
                  Overwrite: OverwriteCsvFile));
 
             telemetryLogger.LogInformation(new TrackMessage
@@ -314,7 +292,7 @@ namespace EPR.Calculator.Service.Function.Services
                 FileName: billingFileJsonName,
                 Content: jsonResponse,
                 RunName: runName,
-                ContainerName: ConfigService.BillingFileJsonBlobContainerName,
+                ContainerName: configService.BillingFileJsonBlobContainerName,
                 Overwrite: OverwriteJsonFile));
 
             telemetryLogger.LogInformation(new TrackMessage
@@ -324,7 +302,7 @@ namespace EPR.Calculator.Service.Function.Services
                 Message = $"Billing file JSON file after upload {billingFileJsonName}",
             });
 
-            var calcRun = await Context.CalculatorRuns.SingleAsync(run => run.Id == resultsRequestDto.RunId);
+            var calcRun = await dbContext.CalculatorRuns.SingleAsync(run => run.Id == resultsRequestDto.RunId);
             calcRun.IsBillingFileGenerating = false;
 
 
@@ -337,14 +315,14 @@ namespace EPR.Calculator.Service.Function.Services
                 BillingJsonFileName = billingFileJsonName.ToString(),
             };
 
-            Context.CalculatorRunBillingFileMetadata.Add(billingFileMetadata);
+            dbContext.CalculatorRunBillingFileMetadata.Add(billingFileMetadata);
 
             var csvFileMetaData = new CalculatorRunCsvFileMetadata
             { BlobUri = csvBlobUri, CalculatorRunId = resultsRequestDto.RunId, FileName = billingFileCsvName };
 
-            Context.CalculatorRunCsvFileMetadata.Add(csvFileMetaData);
+            dbContext.CalculatorRunCsvFileMetadata.Add(csvFileMetaData);
 
-            await Context.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
 
             telemetryLogger.LogInformation(new TrackMessage
             {
@@ -361,8 +339,8 @@ namespace EPR.Calculator.Service.Function.Services
             if (calculatorRun != null)
             {
                 calculatorRun.CalculatorRunClassificationId = (int)classification;
-                Context.CalculatorRuns.Update(calculatorRun);
-                await Context.SaveChangesAsync();
+                dbContext.CalculatorRuns.Update(calculatorRun);
+                await dbContext.SaveChangesAsync();
             }
         }
 
@@ -374,7 +352,7 @@ namespace EPR.Calculator.Service.Function.Services
                 BlobUri = blobUri,
                 CalculatorRunId = runId,
             };
-            await Context.CalculatorRunCsvFileMetadata.AddAsync(csvFileMetadata);
+            await dbContext.CalculatorRunCsvFileMetadata.AddAsync(csvFileMetadata);
         }
     }
 }
