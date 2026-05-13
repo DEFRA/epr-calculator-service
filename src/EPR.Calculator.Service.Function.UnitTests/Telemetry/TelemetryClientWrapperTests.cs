@@ -1,10 +1,9 @@
-﻿using EPR.Calculator.Service.Common.Logging;
+﻿using EPR.Calculator.Service.Function.Telemetry;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
-using Moq;
 
-namespace EPR.Calculator.Service.Common.UnitTests.Logging
+namespace EPR.Calculator.Service.Function.UnitTests.Telemetry
 {
     [TestClass]
     public class TelemetryClientWrapperTests

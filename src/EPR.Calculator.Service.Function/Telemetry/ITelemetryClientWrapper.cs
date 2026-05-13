@@ -1,6 +1,6 @@
 ﻿using Microsoft.ApplicationInsights.DataContracts;
 
-namespace EPR.Calculator.Service.Common.Logging
+namespace EPR.Calculator.Service.Function.Telemetry
 {
     /// <summary>
     /// Interface for wrapping telemetry client operations.

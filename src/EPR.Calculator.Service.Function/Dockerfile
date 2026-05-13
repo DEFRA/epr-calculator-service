@@ -1,9 +1,10 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS installer-env
 
-COPY EPR.Calculator.Service.Common/. ./EPR.Calculator.Service.Common/.
+COPY NuGet.Config ./
+COPY Package/. ./Package/.
 COPY EPR.Calculator.Service.Function/. ./EPR.Calculator.Service.Function/.
 
-# Publish 
+# Publish
 RUN dotnet publish EPR.Calculator.Service.Function/*.csproj --output /home/site/wwwroot
 
 # Use the Azure Functions image as the final image

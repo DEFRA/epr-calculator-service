@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
-namespace EPR.Calculator.Service.Common.Utils
+namespace EPR.Calculator.Service.Function.Utils
 {
     public static class ResetObjectUtil
     {

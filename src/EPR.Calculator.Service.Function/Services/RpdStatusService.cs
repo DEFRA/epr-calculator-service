@@ -1,7 +1,7 @@
 ﻿using EPR.Calculator.API.Data;
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Interface;
+using EPR.Calculator.Service.Function.Telemetry;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 

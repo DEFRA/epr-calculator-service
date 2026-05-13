@@ -25,7 +25,7 @@ variables:
   - name: projectFolder
     value: 'EPR.Calculator.Service.Function'
   - name: testProjectFolder
-    value: 'EPR.Calculator.Service.Common.UnitTests'
+    value: 'EPR.Calculator.Service.Function.UnitTests'
   - name: sonarQubeProjectKey
     value: epr-calculator-service
   - name: sonarQubeProjectName

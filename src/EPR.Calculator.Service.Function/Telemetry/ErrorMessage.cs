@@ -1,4 +1,4 @@
-﻿namespace EPR.Calculator.Service.Common.Logging
+﻿namespace EPR.Calculator.Service.Function.Telemetry
 {
     /// <summary>
     /// Represents an error message to be logged.

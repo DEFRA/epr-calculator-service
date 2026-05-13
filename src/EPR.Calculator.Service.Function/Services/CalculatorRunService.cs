@@ -1,12 +1,11 @@
 using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
-using EPR.Calculator.Service.Common;
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Services.DataLoading;
+using EPR.Calculator.Service.Function.Telemetry;
 
 namespace EPR.Calculator.Service.Function.Services
 {

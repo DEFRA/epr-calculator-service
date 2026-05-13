@@ -1,7 +1,7 @@
 ﻿using System.Configuration;
 using Azure.Storage.Blobs;
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Interface;
+using EPR.Calculator.Service.Function.Telemetry;
 
 namespace EPR.Calculator.Service.Function.Services
 {

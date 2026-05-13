@@ -2,7 +2,6 @@
 using System.Reflection;
 using Azure.Storage.Blobs;
 using EPR.Calculator.API.Data;
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function;
 using EPR.Calculator.Service.Function.Builder;
 using EPR.Calculator.Service.Function.Builder.CancelledProducers;
@@ -42,6 +41,7 @@ using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.Services.CommonDataApi;
 using EPR.Calculator.Service.Function.Services.DataLoading;
+using EPR.Calculator.Service.Function.Telemetry;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

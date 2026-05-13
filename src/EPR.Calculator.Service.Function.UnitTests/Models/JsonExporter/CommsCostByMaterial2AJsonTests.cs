@@ -1,7 +1,7 @@
-using EPR.Calculator.Service.Common.Utils;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
 using EPR.Calculator.Service.Function.UnitTests.Builder;
+using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
 {

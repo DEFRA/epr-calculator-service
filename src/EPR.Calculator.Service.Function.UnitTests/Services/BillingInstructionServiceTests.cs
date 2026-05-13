@@ -1,8 +1,8 @@
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.Telemetry;
 using EPR.Calculator.Service.Function.UnitTests.Builder;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 

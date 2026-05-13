@@ -1,4 +1,4 @@
-﻿namespace EPR.Calculator.Service.Common.Logging
+﻿namespace EPR.Calculator.Service.Function.Telemetry
 {
     /// <summary>
     /// Interface for logging telemetry data for calculator operations.

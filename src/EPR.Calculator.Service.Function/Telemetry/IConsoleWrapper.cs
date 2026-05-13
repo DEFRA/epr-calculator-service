@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace EPR.Calculator.Service.Common.Logging
+namespace EPR.Calculator.Service.Function.Telemetry
 {
     public interface IConsoleWrapper
     {
