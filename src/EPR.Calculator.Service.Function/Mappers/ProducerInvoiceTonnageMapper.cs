@@ -1,8 +1,13 @@
 ﻿using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Models;
 
-namespace EPR.Calculator.Service.Function.Mapper
+namespace EPR.Calculator.Service.Function.Mappers
 {
+    public interface IProducerInvoiceTonnageMapper
+    {
+        public ProducerInvoicedMaterialNetTonnage Map(ProducerInvoiceTonnage producerInvoiceTonnage);
+    }
+
     public class ProducerInvoiceTonnageMapper : IProducerInvoiceTonnageMapper
     {
         public ProducerInvoicedMaterialNetTonnage Map(ProducerInvoiceTonnage producerInvoiceTonnage)

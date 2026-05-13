@@ -1,8 +1,7 @@
-using AutoFixture;
-using EPR.Calculator.Service.Function.Mapper;
+using EPR.Calculator.Service.Function.Mappers;
 using EPR.Calculator.Service.Function.Models;
 
-namespace EPR.Calculator.Service.Function.UnitTests.Mapper
+namespace EPR.Calculator.Service.Function.UnitTests.Mappers
 {
     [TestClass]
     public class ProducerInvoiceTonnageMapperTests

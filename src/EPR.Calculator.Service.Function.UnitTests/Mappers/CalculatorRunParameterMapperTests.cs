@@ -1,8 +1,7 @@
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Mapper;
+using EPR.Calculator.Service.Function.Mappers;
 
-namespace EPR.Calculator.Service.Function.UnitTests.Mapper
+namespace EPR.Calculator.Service.Function.UnitTests.Mappers
 {
     /// <summary>
     /// Contains unit tests for the CalculatorRunParameterMapper class.

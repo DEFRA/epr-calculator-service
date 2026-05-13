@@ -1,6 +1,6 @@
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Function.Mapper;
+using EPR.Calculator.Service.Function.Mappers;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.Telemetry;
