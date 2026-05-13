@@ -1,4 +1,4 @@
-﻿namespace EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer.cs
+﻿namespace EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer
 {
     public record TotalPackagingTonnagePerRun
     {
