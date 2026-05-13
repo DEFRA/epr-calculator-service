@@ -55,7 +55,7 @@
 
   <ItemGroup>
     <SonarQubeSetting Include="sonar.exclusions">
-      <Value>Constants/*.cs,Models/*.cs,Startup.cs</Value>
+      <Value>Constants/*.cs,Models/*.cs</Value>
     </SonarQubeSetting>
 
     <SonarQubeSetting Include="sonar.cpd.exclusions">

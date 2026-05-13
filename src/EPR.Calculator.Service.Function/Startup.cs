@@ -56,17 +56,41 @@ namespace EPR.Calculator.Service.Function;
 /// </summary>
 public class Startup : FunctionsStartup
 {
-    /// <summary>
-    ///     Configures the services for the Azure Functions application.
-    /// </summary>
-    /// <param name="builder">The functions host builder.</param>
-    public override void Configure(IFunctionsHostBuilder builder)
+    public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
     {
-        RegisterDatabase(builder.Services);
-        RegisterDependencies(builder.Services);
+        builder.ConfigurationBuilder
+            .SetBasePath(Environment.CurrentDirectory)
+            .AddUserSecrets(Assembly.GetExecutingAssembly(), true)
+            .AddEnvironmentVariables()
+            .Build();
+    }
 
-        // Register CustomTelemetryLogger
-        builder.Services.AddSingleton<ICalculatorTelemetryLogger, CalculatorTelemetryLogger>(sp =>
+    public override void Configure(IFunctionsHostBuilder builder) => builder.Services.AddAppDependencies();
+}
+
+internal static class ServiceRegistration
+{
+    public static IServiceCollection AddAppDependencies(this IServiceCollection services)
+    {
+        RegisterCoreDependencies(services);
+        RegisterTelemetry(services);
+        RegisterDatabase(services);
+        RegisterBlobStorage(services);
+        RegisterCalculatorRunDependencies(services);
+        RegisterCommonDependencies(services);
+
+        return services;
+    }
+
+    private static void RegisterCoreDependencies(IServiceCollection services)
+    {
+        services.AddSingleton<TimeProvider>(_ => TimeProvider.System);
+        services.AddTransient<IConfigurationService, Configuration>();
+    }
+
+    private static void RegisterTelemetry(IServiceCollection services)
+    {
+        services.AddSingleton<ICalculatorTelemetryLogger, CalculatorTelemetryLogger>(sp =>
         {
             var key = Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY");
             var fallbackToConsole =
@@ -87,7 +111,7 @@ public class Startup : FunctionsStartup
         services.AddSingleton<IBulkOperations, BulkOperationsWrapper>();
     }
 
-    private static void SetupBlobStorage(IServiceCollection services)
+    private static void RegisterBlobStorage(IServiceCollection services)
     {
         services.AddSingleton<IStorageService>(provider =>
         {
@@ -101,15 +125,33 @@ public class Startup : FunctionsStartup
         });
     }
 
-    /// <summary>
-    ///     Registers the dependencies for the application.
-    /// </summary>
-    /// <param name="services">The service collection.</param>
-    private static void RegisterDependencies(IServiceCollection services)
+    private static void RegisterCalculatorRunDependencies(IServiceCollection services)
+    {
+        services
+            .AddOptions<CommonDataApiHttpClientOptions>()
+            .Configure<IConfiguration>((options, config) => { config.GetSection(CommonDataApiHttpClientOptions.SectionKey).Bind(options); })
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        services.AddHttpClient<CommonDataApiHttpClient>();
+
+        services
+            .AddOptions<CommonDataApiLoaderOptions>()
+            .Configure<IConfiguration>((options, config) => { config.GetSection(CommonDataApiLoaderOptions.SectionKey).Bind(options); })
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        services.AddTransient<IDataLoader, CommonDataApiLoader>();
+
+        services.AddTransient<ICalculatorRunOrgData, CalculatorRunOrgData>();
+        services.AddTransient<ICalculatorRunPomData, CalculatorRunPomData>();
+        services.AddTransient<IProducerDataTransposer, ProducerDataTransposer>();
+    }
+
+    private static void RegisterCommonDependencies(IServiceCollection services)
     {
         services.AddTransient<ICalculatorRunService, CalculatorRunService>();
         services.AddTransient<ICalculatorRunParameterMapper, CalculatorRunParameterMapper>();
-        services.AddTransient<IProducerDataTransposer, ProducerDataTransposer>();
         services.AddTransient<IRpdStatusDataValidator, RpdStatusDataValidator>();
         services.AddTransient<IOrgAndPomWrapper, OrgAndPomWrapper>();
         services.AddTransient<ICalcResultBuilder, CalcResultBuilder>();
@@ -134,8 +176,6 @@ public class Startup : FunctionsStartup
         services.AddTransient<IBillingInstructionService, BillingInstructionService>();
         services.AddTransient<IOnePlusFourApportionmentExporter, OnePlusFourApportionmentExporter>();
         services.AddTransient<IRpdStatusService, RpdStatusService>();
-        services.AddTransient<ICalculatorRunOrgData, CalculatorRunOrgData>();
-        services.AddTransient<ICalculatorRunPomData, CalculatorRunPomData>();
         services.AddTransient<ILapcaptDetailExporter, LapcaptDetailExporter>();
         services.AddTransient<ICalcResultDetailExporter, CalcResultDetailexporter>();
         services.AddTransient<ICalcResultLaDisposalCostExporter, CalcResultLaDisposalCostExporter>();
@@ -170,36 +210,5 @@ public class Startup : FunctionsStartup
         services.AddTransient<IProjectedProducersService, ProjectedProducersService>();
         services.AddTransient<ISelfManagedConsumerWasteService, SelfManagedConsumerWasteService>();
         services.AddTransient<IReportedProducerService, ReportedProducerService>();
-
-        services
-            .AddOptions<CommonDataApiHttpClientOptions>()
-            .Configure<IConfiguration>((options, config) => { config.GetSection(CommonDataApiHttpClientOptions.SectionKey).Bind(options); })
-            .ValidateDataAnnotations()
-            .ValidateOnStart();
-
-        services.AddHttpClient<CommonDataApiHttpClient>();
-
-        services
-            .AddOptions<CommonDataApiLoaderOptions>()
-            .Configure<IConfiguration>((options, config) => { config.GetSection(CommonDataApiLoaderOptions.SectionKey).Bind(options); })
-            .ValidateDataAnnotations()
-            .ValidateOnStart();
-
-        services.AddSingleton<TimeProvider>(_ => TimeProvider.System);
-        services.AddTransient<IDataLoader, CommonDataApiLoader>();
-
-        SetupBlobStorage(services);
-        services.AddTransient<IConfigurationService, Configuration>();
-    }
-
-    public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
-    {
-        builder.ConfigurationBuilder.Build();
-
-        builder.ConfigurationBuilder
-            .SetBasePath(Environment.CurrentDirectory)
-            .AddUserSecrets(Assembly.GetExecutingAssembly(), true)
-            .AddEnvironmentVariables()
-            .Build();
     }
 }
