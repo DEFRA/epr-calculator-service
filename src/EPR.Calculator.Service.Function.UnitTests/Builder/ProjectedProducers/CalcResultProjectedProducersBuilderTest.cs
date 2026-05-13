@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using Newtonsoft.Json;
 using EPR.Calculator.Service.Function.Mappers;
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 {
@@ -539,7 +538,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 )
             ).Where(row => row is not null).Cast<string[]>();
 
-            return result       
+            return result
                     .OrderBy(a => a[PeriodI])
                     .ThenBy(a => a[ProducerI])
                     .ThenBy(a => string.IsNullOrEmpty(a[SubsidiaryI]) ? 0 : 1)

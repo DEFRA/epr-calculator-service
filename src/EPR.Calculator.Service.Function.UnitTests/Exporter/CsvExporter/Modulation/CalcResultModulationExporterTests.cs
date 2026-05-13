@@ -7,7 +7,6 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.UnitTests.Builder;
-using Newtonsoft.Json;
 using System.Text;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulation
