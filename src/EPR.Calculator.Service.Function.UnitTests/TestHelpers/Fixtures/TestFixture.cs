@@ -17,7 +17,8 @@ public static class TestFixtures
         var fixture = new Fixture()
             .Customize(new AutoFreezeMoqCustomization())
             .Customize(new ImmutableCollectionsCustomization())
-            .Customize(new IgnoreVirtualMembersCustomization());
+            .Customize(new IgnoreVirtualMembersCustomization())
+            .Customize(new RelativeYearCustomization());
 
         fixture.Register(() =>
         {

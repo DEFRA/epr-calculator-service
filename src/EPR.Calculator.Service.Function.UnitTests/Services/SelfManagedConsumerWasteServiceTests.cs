@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Services;
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Misc;

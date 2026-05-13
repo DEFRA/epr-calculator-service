@@ -5,8 +5,6 @@ using EFCore.BulkExtensions;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Common;
-using EPR.Calculator.Service.Common.Utils;
 using EPR.Calculator.Service.Function.Services.CommonDataApi;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -87,12 +85,12 @@ namespace EPR.Calculator.Service.Function.Services.DataLoading
         {
             var pomStream = httpClient.StreamPoms(relativeYear, linkedCt)
                 .Select(CommonDataApiLoaderMapper.MapPom(loadTime))
-                .BufferAsync(options.Value.PomBatchSize, linkedCt)
+                .Chunk(options.Value.PomBatchSize)
                 .GetAsyncEnumerator(linkedCt);
 
             var orgStream = httpClient.StreamOrganisations(relativeYear, linkedCt)
                 .Select(CommonDataApiLoaderMapper.MapOrganisation(loadTime))
-                .BufferAsync(options.Value.OrganisationBatchSize, linkedCt)
+                .Chunk(options.Value.OrganisationBatchSize)
                 .GetAsyncEnumerator(linkedCt);
 
             try

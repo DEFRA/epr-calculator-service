@@ -1,6 +1,6 @@
-﻿using EPR.Calculator.Service.Common.Logging;
+﻿using EPR.Calculator.Service.Function.Telemetry;
 
-namespace EPR.Calculator.Service.Common.UnitTests.Logging
+namespace EPR.Calculator.Service.Function.UnitTests.Telemetry
 {
     /// <summary>
     /// Unit tests for the <see cref="ErrorMessage"/> class.

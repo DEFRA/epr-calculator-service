@@ -2,14 +2,13 @@ using System.Text;
 using System.Text.Json;
 using AutoFixture;
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Common;
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.Services.DataLoading;
+using EPR.Calculator.Service.Function.Telemetry;
 using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services

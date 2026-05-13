@@ -1,6 +1,6 @@
 ﻿using EPR.Calculator.API.Data.Models;
 
-namespace EPR.Calculator.Service.Common
+namespace EPR.Calculator.Service.Function
 {
     /// <summary>
     /// CalculatorRunParameter model class.

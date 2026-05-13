@@ -2,7 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Enums;
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function.Builder.Summary;
 using EPR.Calculator.Service.Function.Builder.Summary.Common;
 using EPR.Calculator.Service.Function.Constants;

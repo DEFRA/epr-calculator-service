@@ -1,6 +1,4 @@
-﻿using EPR.Calculator.Service.Common;
-
-namespace EPR.Calculator.Service.Function.Services.DataLoading
+﻿namespace EPR.Calculator.Service.Function.Services.DataLoading
 {
     /// <summary>
     ///     Loads POM and Organisation data required for a calculator run.

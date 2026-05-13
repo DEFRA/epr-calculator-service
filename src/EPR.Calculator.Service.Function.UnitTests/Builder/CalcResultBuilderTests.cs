@@ -1,7 +1,5 @@
-using AutoFixture;
-using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Function.Builder.Modulation;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder;
 using EPR.Calculator.Service.Function.Builder.CancelledProducers;
 using EPR.Calculator.Service.Function.Builder.CommsCost;
@@ -10,23 +8,21 @@ using EPR.Calculator.Service.Function.Builder.ErrorReport;
 using EPR.Calculator.Service.Function.Builder.LaDisposalCost;
 using EPR.Calculator.Service.Function.Builder.Lapcap;
 using EPR.Calculator.Service.Function.Builder.LateReportingTonnages;
+using EPR.Calculator.Service.Function.Builder.Modulation;
 using EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment;
 using EPR.Calculator.Service.Function.Builder.ParametersOther;
-using EPR.Calculator.Service.Function.Builder.RejectedProducers;
-using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
 using EPR.Calculator.Service.Function.Builder.PartialObligations;
 using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
+using EPR.Calculator.Service.Function.Builder.RejectedProducers;
+using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
 using EPR.Calculator.Service.Function.Builder.Summary;
-using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
-using Moq;
-using Newtonsoft.Json;
-using System.Threading.Tasks;
 
-namespace EPR.Calculator.Service.Function.UnitTests
+namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
     [TestClass]
     public class CalcResultBuilderTests

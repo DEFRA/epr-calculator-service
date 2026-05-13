@@ -1,6 +1,6 @@
 ﻿using Microsoft.ApplicationInsights.DataContracts;
 
-namespace EPR.Calculator.Service.Common.Logging
+namespace EPR.Calculator.Service.Function.Telemetry
 {
     /// <summary>
     /// Logger for telemetry data in the calculator service.

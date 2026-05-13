@@ -1,7 +1,7 @@
 ﻿using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 
-namespace EPR.Calculator.Service.Common.Logging
+namespace EPR.Calculator.Service.Function.Telemetry
 {
     /// <summary>
     /// Wrapper class for TelemetryClient to track traces and exceptions.

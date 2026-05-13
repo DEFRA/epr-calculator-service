@@ -2,7 +2,6 @@ using System.Net;
 using System.Text;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Common;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Services.CommonDataApi;
 using EPR.Calculator.Service.Function.Services.DataLoading;

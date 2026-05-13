@@ -1,8 +1,8 @@
-using EPR.Calculator.Service.Common.Logging;
 using EPR.Calculator.Service.Function;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.Telemetry;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.WebJobs;
 
@@ -48,7 +48,7 @@ namespace EPR.Calculator.Service.Function
         [FunctionName("EPRCalculatorRunServiceBusQueueTrigger")]
         public async Task Run([ServiceBusTrigger(queueName: "%ServiceBusQueueName%", Connection = "ServiceBusConnectionString")] string myQueueItem)
         {
-            telemetryLogger.LogInformation(new TrackMessage { Message = "Executing the function app started" });            
+            telemetryLogger.LogInformation(new TrackMessage { Message = "Executing the function app started" });
 
             if (string.IsNullOrEmpty(myQueueItem))
             {
