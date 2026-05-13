@@ -1,4 +1,4 @@
-﻿namespace EPR.Calculator.Service.Function
+﻿namespace EPR.Calculator.Service.Function.Messaging
 {
     /// <summary>
     /// Billing file message model class.

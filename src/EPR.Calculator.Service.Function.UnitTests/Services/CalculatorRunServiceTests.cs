@@ -4,6 +4,7 @@ using AutoFixture;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Messaging;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.Services.DataLoading;
@@ -107,7 +108,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             // Arrange
             var calculatorRunParameter = new CalculatorRunParameter
-                { Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = MessageTypes.Result };
+                { Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = MessageBase.Result };
             var runName = "TestRun";
 
             TransposeService.Setup(t => t.Transpose(It.IsAny<int>(), It.IsAny<CancellationToken>()))
@@ -125,7 +126,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             // Arrange
             var calculatorRunParameter = new CalculatorRunParameter
-                { Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = MessageTypes.Result };
+                { Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = MessageBase.Result };
             var runName = "TestRun";
 
             TransposeService.Setup(t => t.Transpose(It.IsAny<int>(), It.IsAny<CancellationToken>()))
@@ -147,7 +148,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Arrange
             var runParams = new CalculatorRunParameter
             {
-                Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = MessageTypes.Result
+                Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = MessageBase.Result
             };
 
             // Act
@@ -171,7 +172,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var runParams = new CalculatorRunParameter
             {
-                Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = MessageTypes.Result
+                Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = MessageBase.Result
             };
 
             // Act
@@ -197,7 +198,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var runParams = new CalculatorRunParameter
             {
-                Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = MessageTypes.Result
+                Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = MessageBase.Result
             };
 
             // Act
@@ -220,7 +221,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var runParams = new CalculatorRunParameter
             {
-                Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = MessageTypes.Result
+                Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = MessageBase.Result
             };
 
             // Act
@@ -247,7 +248,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var runParams = new CalculatorRunParameter
             {
-                Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = MessageTypes.Result
+                Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = MessageBase.Result
             };
 
             // Act

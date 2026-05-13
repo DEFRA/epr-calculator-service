@@ -10,7 +10,6 @@ using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Newtonsoft.Json;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
@@ -419,7 +418,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual(new RAMTonnage(), aluResult.PublicBinRAMTonnage);
             Assert.AreEqual(20, aluResult.SelfManagedConsumerWasteTonnage);
             Assert.AreEqual(100, aluResult.TotalTonnage);
-            Assert.AreEqual(50.136m, aluResult.PartialHouseholdTonnage);         
+            Assert.AreEqual(50.136m, aluResult.PartialHouseholdTonnage);
             Assert.AreEqual(new RAMTonnage {
                  RedTonnage = 10.027m, AmberTonnage = 10.027m, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 30.082m
             }, aluResult.PartialHouseholdRAMTonnage);

@@ -2,6 +2,7 @@ using System.Text.Json;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Mappers;
+using EPR.Calculator.Service.Function.Messaging;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.Telemetry;
 using Moq;
@@ -55,7 +56,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Arrange
             var myQueueItem = @"{ CalculatorRunId: 678767, RelativeYear: 2024, CreatedBy: 'Test user'}";
-            var processedParameterData = new CalculatorRunParameter { RelativeYear = new RelativeYear(2024), User = "Test user", Id = 678767, MessageType = MessageTypes.Result };
+            var processedParameterData = new CalculatorRunParameter { RelativeYear = new RelativeYear(2024), User = "Test user", Id = 678767, MessageType = MessageBase.Result };
             var runName = "Test Run Name";
 
             runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
@@ -202,7 +203,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Arrange
             var myQueueItem = @"{ CalculatorRunId: 678767, RelativeYear: 2024, CreatedBy: 'Test user'}";
-            var processedParameterData = new CalculatorRunParameter { RelativeYear = new RelativeYear(2024), User = "Test user", Id = 678767 , MessageType = MessageTypes.Result };
+            var processedParameterData = new CalculatorRunParameter { RelativeYear = new RelativeYear(2024), User = "Test user", Id = 678767 , MessageType = MessageBase.Result };
             var runName = "Test Run Name";
 
             parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
@@ -247,7 +248,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
             // Arrange
             parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns((CalculatorRunParameter?)null!);
             var myQueueItem = @"{ CalculatorRunId: 678767, RelativeYear: 2024, CreatedBy: 'Test user'}";
-            var processedParameterData = new CalculatorRunParameter { RelativeYear = new RelativeYear(2024), User = "Test user", Id = 678767 , MessageType = MessageTypes.Result };
+            var processedParameterData = new CalculatorRunParameter { RelativeYear = new RelativeYear(2024), User = "Test user", Id = 678767 , MessageType = MessageBase.Result };
             var runName = "Test Run Name";
 
             parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
@@ -270,7 +271,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Arrange
             var myQueueItem = @"{ CalculatorRunId: 678767, RelativeYear: 2024, CreatedBy: 'Test user'}";
-            var processedParameterData = new CalculatorRunParameter { RelativeYear = new RelativeYear(2024), User = "Test user", Id = 678767 , MessageType = MessageTypes.Result };
+            var processedParameterData = new CalculatorRunParameter { RelativeYear = new RelativeYear(2024), User = "Test user", Id = 678767 , MessageType = MessageBase.Result };
             var runName = "Test Run Name";
 
             runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).ReturnsAsync(runName);
@@ -294,7 +295,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         {
             // Arrange
             var myQueueItem = @"{ CalculatorRunId: 678767, RelativeYear: 2024, CreatedBy: 'Test user'}";
-            var processedParameterData = new CalculatorRunParameter { RelativeYear = new RelativeYear(2024), User = "Test user", Id = 678767 , MessageType = MessageTypes.Result };
+            var processedParameterData = new CalculatorRunParameter { RelativeYear = new RelativeYear(2024), User = "Test user", Id = 678767 , MessageType = MessageBase.Result };
 
             parameterMapper.Setup(t => t.Map(It.IsAny<CreateResultFileMessage>())).Returns(processedParameterData);
             runNameService.Setup(t => t.GetRunNameAsync(It.IsAny<int>())).Throws<Exception>();

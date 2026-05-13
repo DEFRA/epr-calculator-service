@@ -7,7 +7,6 @@ using EPR.Calculator.Service.Function.UnitTests.Builder.Modulation;
 using EPR.Calculator.Service.Function.UnitTests.Builder;
 using Moq;
 using NetTopologySuite.Operation.Buffer;
-using Newtonsoft.Json;
 using System.Globalization;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation

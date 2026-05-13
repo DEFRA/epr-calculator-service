@@ -6,7 +6,6 @@ using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
-using Newtonsoft.Json;
 using System.Text;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation

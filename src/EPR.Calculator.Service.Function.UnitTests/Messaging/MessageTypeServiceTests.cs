@@ -1,8 +1,8 @@
 ﻿using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Function.Services;
-using Newtonsoft.Json;
+using EPR.Calculator.Service.Function.Messaging;
+using System.Text.Json;
 
-namespace EPR.Calculator.Service.Function.UnitTests.Services
+namespace EPR.Calculator.Service.Function.UnitTests.Messaging
 {
     [TestClass]
     public class MessageTypeServiceTests
@@ -19,11 +19,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public void DeserializeMessage_ValidBillingMessage_ReturnsCreateBillingFileMessage()
         {
             // Arrange
-            var json = @"{
-                            'MessageType': 'Billing',
-                            'CalculatorRunId': 123,
-                            'ApprovedBy': 'Test User'
-                }";
+            var json = """
+            {
+                "MessageType": "Billing",
+                "CalculatorRunId": 123,
+                "ApprovedBy": "Test User"
+            }
+            """;
 
             // Act
             var result = _service.DeserializeMessage(json);
@@ -41,12 +43,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public void DeserializeMessage_ResultMessageType_ReturnsCreateResultFileMessage()
         {
             // Arrange
-            var json = @"{
-                            'CalculatorRunId': 123,
-                            'CreatedBy': 'Test User',
-                            'RelativeYear': 2024,
-                            'MessageType': 'Result',
-                         }";
+            var json = """
+            {
+                "MessageType": "Result",
+                "CalculatorRunId": 123,
+                "CreatedBy": "Test User",
+                "RelativeYear": 2024
+            }
+            """;
 
             // Act
             var result = _service.DeserializeMessage(json);
@@ -63,15 +67,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void DeserializeMessage_MissingMessageType_ReturnsCreateResultFileMessage()
+        [ExpectedException(typeof(KeyNotFoundException))]
+        public void DeserializeMessage_MissingMessageType_Throws()
         {
             // Arrange
-            var json = @"{
-                            'CalculatorRunId': 123,
-                            'CreatedBy': 'Test User',
-                            'RelaiveYear': 2024
-                         }";
+            var json = """
+                {
+                    "CalculatorRunId": 123,
+                    "CreatedBy": "Test User",
+                    "RelativeYear": 2024
+                }
+                """;
 
             // Act
             _service.DeserializeMessage(json);
@@ -82,17 +88,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public void DeserializeMessage_UnsupportedMessageType_ThrowsNotSupportedException()
         {
             // Arrange
-            var json = @"{
-                             'MessageType': 'UnknownType',
-                             'Data': 'something'
-                         }";
+            var json = """
+                {
+                    "MessageType": "Unknown"
+                }
+                """;
 
             // Act
             _service.DeserializeMessage(json);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(JsonException))]
+        [ExpectedException(typeof(JsonException), AllowDerivedTypes = true)]
         public void DeserializeMessage_NullOrEmpty_ThrowsJsonException()
         {
             // Act
@@ -100,7 +107,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        [ExpectedException(typeof(JsonReaderException))]
+        [ExpectedException(typeof(JsonException), AllowDerivedTypes = true)]
         public void DeserializeMessage_InvalidJson_ThrowsJsonException()
         {
             // Arrange

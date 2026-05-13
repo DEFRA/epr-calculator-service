@@ -1,4 +1,6 @@
-﻿namespace EPR.Calculator.Service.Function.Mappers
+﻿using EPR.Calculator.Service.Function.Messaging;
+
+namespace EPR.Calculator.Service.Function.Mappers
 {
     /// <summary>
     /// Interface for mapping calculator parameters to calculator run parameters.

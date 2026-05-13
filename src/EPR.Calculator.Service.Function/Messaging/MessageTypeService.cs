@@ -1,8 +1,6 @@
-﻿using EPR.Calculator.Service.Function.Constants;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using System.Text.Json;
 
-namespace EPR.Calculator.Service.Function.Services
+namespace EPR.Calculator.Service.Function.Messaging
 {
     /// <summary>
     /// Defines a service for deserializing JSON strings into specific message types.
@@ -21,10 +19,10 @@ namespace EPR.Calculator.Service.Function.Services
     /// </summary>
     public class MessageTypeService : IMessageTypeService
     {
-        private readonly Dictionary<string, Type> _typeMappings = new()
+        private readonly Dictionary<string, Type> typeMappings = new()
         {
-            { MessageTypes.Billing, typeof(CreateBillingFileMessage) },
-            { MessageTypes.Result, typeof(CreateResultFileMessage) }
+            { MessageBase.Billing, typeof(CreateBillingFileMessage) },
+            { MessageBase.Result, typeof(CreateResultFileMessage) }
         };
 
         public MessageBase DeserializeMessage(string json)
@@ -32,21 +30,16 @@ namespace EPR.Calculator.Service.Function.Services
             if (string.IsNullOrWhiteSpace(json))
                 throw new JsonException("Input JSON is null or empty.");
 
-            var jObject = JObject.Parse(json);
-            var messageType = jObject["MessageType"]?.ToString();
+            var jObject = JsonDocument.Parse(json);
+            var messageType = jObject.RootElement.GetProperty("MessageType").ToString();
 
             if (string.IsNullOrWhiteSpace(messageType))
                 throw new ArgumentException("MessageType not found in the message.");
 
-            if (!_typeMappings.TryGetValue(messageType, out var targetType))
+            if (!typeMappings.TryGetValue(messageType, out var targetType))
                 throw new NotSupportedException($"Unsupported MessageType: {messageType}");
 
-            var result = JsonConvert.DeserializeObject(json, targetType);
-
-            if (result is not MessageBase message)
-                throw new InvalidCastException($"Deserialized object is not of type {nameof(MessageBase)}.");
-
-            return message;
+            return (MessageBase) JsonSerializer.Deserialize(json, targetType)!;
         }
     }
 }

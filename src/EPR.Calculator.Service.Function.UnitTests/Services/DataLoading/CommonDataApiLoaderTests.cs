@@ -3,6 +3,7 @@ using System.Text;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Messaging;
 using EPR.Calculator.Service.Function.Services.CommonDataApi;
 using EPR.Calculator.Service.Function.Services.DataLoading;
 using Microsoft.EntityFrameworkCore;
@@ -120,7 +121,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
                 Id = 42,
                 User = "user",
                 RelativeYear = new RelativeYear(2025),
-                MessageType = MessageTypes.Result,
+                MessageType = MessageBase.Result,
             };
 
             // Act & Assert
@@ -265,7 +266,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
                 Id = 1,
                 User = "test-user",
                 RelativeYear = new RelativeYear(2024),
-                MessageType = MessageTypes.Result,
+                MessageType = MessageBase.Result,
             };
 
         private static HttpResponseMessage OkNdJson(string content) =>
