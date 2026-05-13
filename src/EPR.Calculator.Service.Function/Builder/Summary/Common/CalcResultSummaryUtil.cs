@@ -198,7 +198,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
                     green: green
                 );
             } else {
-                var total = Math.Max((smcw.NetReportedTonnage.total ?? 0) * (pricePerTonne.total ?? 0), 0);
+                var total = (smcw.NetReportedTonnage.total ?? 0) * (pricePerTonne.total ?? 0);
                 return (total: total, red: null, amber: null, green: null);
             }
         }
