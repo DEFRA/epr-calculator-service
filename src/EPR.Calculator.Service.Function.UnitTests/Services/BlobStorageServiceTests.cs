@@ -2,7 +2,6 @@
 using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.Telemetry;
 using Moq;
@@ -72,8 +71,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Act
             var result = await BlobStorageService.UploadFileContentAsync(
-                (FileName: fileName, 
-                Content: content, 
+                (FileName: fileName,
+                Content: content,
                 RunName: runName,
                 ContainerName: containerName,
                 Overwrite: true));
@@ -97,7 +96,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             // Act
             var result = await BlobStorageService.UploadFileContentAsync(
-                (FileName: fileName, 
+                (FileName: fileName,
                 Content: content,
                 RunName: runName,
                 ContainerName: containerName,

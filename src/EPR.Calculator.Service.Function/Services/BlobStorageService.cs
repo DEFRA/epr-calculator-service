@@ -1,10 +1,21 @@
 ﻿using System.Configuration;
 using Azure.Storage.Blobs;
-using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Telemetry;
 
 namespace EPR.Calculator.Service.Function.Services
 {
+    public interface IStorageService
+    {
+        Task<string> UploadFileContentAsync(
+            (string FileName,
+                string Content,
+                string RunName,
+                string ContainerName,
+                bool Overwrite
+                )
+                args);
+    }
+
     /// <summary>
     /// Service for handling blob storage operations.
     /// </summary>

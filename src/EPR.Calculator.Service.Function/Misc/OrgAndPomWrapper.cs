@@ -1,10 +1,18 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.Service.Function.Interface;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Misc
 {
+    public interface IOrgAndPomWrapper
+    {
+        bool AnyOrganisationData();
+        bool AnyPomData();
+        Task<IEnumerable<OrganisationData>> GetOrganisationDataAsync();
+        Task<IEnumerable<PomData>> GetPomDataAsync();
+        Task<int> ExecuteSqlAsync(FormattableString sql, CancellationToken cancellationToken);
+    }
+
     public class OrgAndPomWrapper : IOrgAndPomWrapper
     {
         private readonly ApplicationDBContext context;

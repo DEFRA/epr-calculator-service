@@ -34,7 +34,6 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.RejectedProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter;
-using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;

@@ -1,6 +1,5 @@
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Mapper;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Mapper

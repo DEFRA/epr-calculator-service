@@ -6,7 +6,6 @@ using EPR.Calculator.Service.Function.Builder;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Exporter;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter;
-using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
@@ -25,7 +24,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         private ApplicationDBContext _context;
         private Mock<IDbContextFactory<ApplicationDBContext>> _dbContextFactory;
         private Mock<IRpdStatusDataValidator> _rpdStatusDataValidator;
-        private Mock<IOrgAndPomWrapper> _wrapper;
         private Mock<ICalcResultBuilder> _builder;
         private Mock<ICalcResultsExporter<CalcResult>> _exporter;
         private Mock<IProducerDataTransposer> _transposePomAndOrgDataService;
@@ -92,7 +90,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var fixture = new Fixture();
             _rpdStatusDataValidator = new Mock<IRpdStatusDataValidator>();
-            _wrapper = new Mock<IOrgAndPomWrapper>();
             _builder = new Mock<ICalcResultBuilder>();
             _builder.Setup(b => b.BuildAsync(It.IsAny<CalcResultsRequestDto>())).ReturnsAsync(calcResult);
             _exporter = new Mock<ICalcResultsExporter<CalcResult>>();

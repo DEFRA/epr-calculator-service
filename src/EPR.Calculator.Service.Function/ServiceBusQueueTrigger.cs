@@ -1,6 +1,6 @@
 using EPR.Calculator.Service.Function;
 using EPR.Calculator.Service.Function.Enums;
-using EPR.Calculator.Service.Function.Interface;
+using EPR.Calculator.Service.Function.Mapper;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.Telemetry;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;

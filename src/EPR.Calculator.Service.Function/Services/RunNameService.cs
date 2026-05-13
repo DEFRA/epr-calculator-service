@@ -1,9 +1,18 @@
 using EPR.Calculator.API.Data;
-using EPR.Calculator.Service.Function.Interface;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Services
 {
+    public interface IRunNameService
+    {
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="runId">runId is number.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<string> GetRunNameAsync(int runId);
+    }
+
     /// <summary>
     /// Service to fetch the run name from the database.
     /// </summary>

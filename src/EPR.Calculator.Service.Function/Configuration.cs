@@ -1,8 +1,21 @@
 ﻿using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Interface;
 
 namespace EPR.Calculator.Service.Function
 {
+    public interface IConfigurationService
+    {
+        string DbConnectionString { get; }
+        TimeSpan PrepareCalcResultsTimeout { get; }
+        TimeSpan RpdStatusTimeout { get; }
+        TimeSpan TransposeTimeout { get; }
+        string ResultFileCSVContainerName { get; }
+        string BlobConnectionString { get; }
+        string InstrumentationKey { get; }
+        TimeSpan CommandTimeout { get; }
+        string BillingFileCSVBlobContainerName { get; }
+        string BillingFileJsonBlobContainerName { get; }
+    }
+
     /// <summary>
     /// Provides configuration settings for the calculator service.
     /// </summary>
@@ -14,16 +27,6 @@ namespace EPR.Calculator.Service.Function
         public const double DefaultTimeout = 24;
 
 #pragma warning disable CS8603 // Possible null reference return.
-        /// <summary>
-        /// Gets the status update endpoint URI from environment variables.
-        /// </summary>
-        public Uri StatusEndpoint => new(Environment.GetEnvironmentVariable(EnvironmentVariableKeys.StatusUpdateEndpoint)!);
-
-        /// <summary>
-        /// Gets the URI for the endpoint used to prepare calculation results from environment variables.
-        /// </summary>
-        public Uri PrepareCalcResultEndPoint => new(Environment.GetEnvironmentVariable(EnvironmentVariableKeys.PrepareCalcResultEndPoint)!);
-
         /// <summary>
         /// Gets the URI for the endpoint used to Transpose before calculation of results from environment variables.
         /// </summary>

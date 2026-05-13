@@ -1,10 +1,21 @@
 ﻿using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Interface;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace EPR.Calculator.Service.Function.Services
 {
+    /// <summary>
+    /// Defines a service for deserializing JSON strings into specific message types.
+    /// </summary>
+    public interface IMessageTypeService
+    {
+        /// <summary>
+        /// Deserializes the specified JSON string into a concrete <see cref="MessageBase"/> derived type
+        /// based on the contained message type information.
+        /// </summary>
+        MessageBase DeserializeMessage(string json);
+    }
+
     /// <summary>
     /// Service for handling Mmssage type service operations.
     /// </summary>

@@ -1,6 +1,5 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Telemetry;
 using EPR.Calculator.Service.Function.Utils;
@@ -8,6 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Services
 {
+    public interface IPrepareBillingFileService
+    {
+        Task<bool> PrepareBillingFileAsync(int calculatorRunId, string runName, string approvedBy);
+    }
+
     public class PrepareBillingFileService(
         ApplicationDBContext applicationDBContext,
         IPrepareCalcService prepareCalcService,
