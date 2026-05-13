@@ -1,12 +1,17 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.Service.Function.Enums;
-using EPR.Calculator.Service.Function.Interface;
+using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Telemetry;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Services
 {
+    public interface IRpdStatusService
+    {
+        Task<RunClassification> UpdateRpdStatus(int runId, string? runName, string createdBy, CancellationToken timeout);
+    }
+
     /// <summary>
     /// Service for updating RPD status.
     /// </summary>
@@ -98,7 +103,7 @@ namespace EPR.Calculator.Service.Function.Services
             var relativeYear = calcRun!.RelativeYear;
 
             await using var transaction = await Context.Database.BeginTransactionAsync(timeout);
-            
+
             try
             {
                 TelemetryLogger.LogInformation(new TrackMessage { RunId = runId, RunName = runName, Message = $"Creating run organization and POM for run: {runId}" });

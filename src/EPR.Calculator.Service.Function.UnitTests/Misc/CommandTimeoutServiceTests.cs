@@ -1,6 +1,5 @@
 using AutoFixture;
 using EPR.Calculator.API.Data;
-using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Misc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;

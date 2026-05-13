@@ -2,13 +2,26 @@ using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
 using EPR.Calculator.Service.Function.Enums;
-using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Services.DataLoading;
 using EPR.Calculator.Service.Function.Telemetry;
 
 namespace EPR.Calculator.Service.Function.Services
 {
+    /// <summary>
+    /// Interface for starting the calculator process.
+    /// </summary>
+    public interface ICalculatorRunService
+    {
+        /// <summary>
+        /// Interface method to start the calculator process.
+        /// </summary>
+        /// <param name="calculatorRunParameter">The parameters required to run the calculator.</param>
+        /// <param name="runName">The name of the calculator run.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains a boolean indicating success or failure.</returns>
+        Task<bool> PrepareResultsFileAsync(CalculatorRunParameter calculatorRunParameter, string runName);
+    }
+
     public class CalculatorRunService(
         IConfigurationService configuration,
         IDataLoader dataLoader,

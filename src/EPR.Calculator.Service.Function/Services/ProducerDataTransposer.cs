@@ -2,7 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Enums;
-using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Utils;
 using Microsoft.EntityFrameworkCore;
 

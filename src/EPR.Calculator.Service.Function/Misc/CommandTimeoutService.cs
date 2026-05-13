@@ -1,9 +1,13 @@
-﻿using EPR.Calculator.Service.Function.Interface;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace EPR.Calculator.Service.Function.Misc
 {
+    public interface ICommandTimeoutService
+    {
+        void SetCommandTimeout(DatabaseFacade database);
+    }
+
     /// <summary>
     /// Service to set the command timeout for the database.
     /// </summary>

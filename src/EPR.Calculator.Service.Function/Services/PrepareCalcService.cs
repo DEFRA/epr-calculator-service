@@ -4,7 +4,6 @@ using EPR.Calculator.Service.Function.Builder;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Exporter;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter;
-using EPR.Calculator.Service.Function.Interface;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Telemetry;
@@ -13,6 +12,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Services
 {
+    public interface IPrepareCalcService
+    {
+        Task<bool> PrepareCalcResultsAsync([FromBody] CalcResultsRequestDto resultsRequestDto, string? runName, CancellationToken cancellationToken);
+
+        Task<bool> PrepareBillingResultsAsync([FromBody] CalcResultsRequestDto resultsRequestDto, string runName, CancellationToken cancellationToken);
+    }
+
     /// <summary>
     /// Service for preparing calculation results.
     /// </summary>
