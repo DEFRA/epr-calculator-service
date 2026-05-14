@@ -1,4 +1,3 @@
-using AutoFixture;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
@@ -14,7 +13,6 @@ using EPR.Calculator.Service.Function.Telemetry;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Options;
-using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {

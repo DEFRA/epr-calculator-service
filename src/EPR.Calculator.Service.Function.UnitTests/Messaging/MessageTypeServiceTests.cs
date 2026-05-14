@@ -1,6 +1,6 @@
-﻿using EPR.Calculator.API.Data.Models;
+﻿using System.Text.Json;
+using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Messaging;
-using System.Text.Json;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Messaging
 {

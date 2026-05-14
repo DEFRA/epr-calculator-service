@@ -1,7 +1,5 @@
 ﻿using EPR.Calculator.API.Data;
-using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Options;
-using EPR.Calculator.Service.Function.Services.CommonDataApi;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;

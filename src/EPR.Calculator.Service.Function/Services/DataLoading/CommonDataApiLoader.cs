@@ -9,7 +9,6 @@ using EPR.Calculator.Service.Function.Options;
 using EPR.Calculator.Service.Function.Services.CommonDataApi;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace EPR.Calculator.Service.Function.Services.DataLoading

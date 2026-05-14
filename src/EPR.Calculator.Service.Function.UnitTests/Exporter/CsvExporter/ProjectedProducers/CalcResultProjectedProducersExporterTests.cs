@@ -1,14 +1,12 @@
 
+using System.Text;
+using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers;
+using EPR.Calculator.Service.Function.Models;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.ProjectedProducers
 {
-    using System.Text;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Models;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers;
-    using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
-
-
     [TestClass]
     public class CalcResultProjectedProducersExporterTests
     {

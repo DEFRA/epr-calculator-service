@@ -1,4 +1,3 @@
-using AutoFixture;
 using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Models

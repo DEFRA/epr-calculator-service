@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.CancelledProducers;
 using EPR.Calculator.Service.Function.Builder.CommsCost;
@@ -18,7 +19,6 @@ using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.ApplicationInsights;
-using System.Diagnostics.CodeAnalysis;
 
 namespace EPR.Calculator.Service.Function.Builder
 {

@@ -1,4 +1,3 @@
-using AutoFixture;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter;
 using EPR.Calculator.Service.Function.Models;
 

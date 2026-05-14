@@ -1,10 +1,9 @@
-using EPR.Calculator.API.Data;
+﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
-using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {

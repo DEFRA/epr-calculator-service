@@ -1,5 +1,4 @@
 using System.Text;
-using AutoFixture;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
 using EPR.Calculator.Service.Function.Models;

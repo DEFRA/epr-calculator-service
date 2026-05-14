@@ -2,7 +2,6 @@
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.PartialObligations;
-using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Mappers;
 using EPR.Calculator.Service.Function.Misc;

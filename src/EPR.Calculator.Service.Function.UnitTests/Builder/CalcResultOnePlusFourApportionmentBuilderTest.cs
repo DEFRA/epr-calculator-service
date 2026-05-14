@@ -1,5 +1,4 @@
-﻿using AutoFixture;
-using EPR.Calculator.API.Data.Models;
+﻿using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Misc;

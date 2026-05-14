@@ -1,10 +1,8 @@
 using System.Reflection;
 using System.Text;
-using AutoFixture;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter;
-using Moq;
 using Moq.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter

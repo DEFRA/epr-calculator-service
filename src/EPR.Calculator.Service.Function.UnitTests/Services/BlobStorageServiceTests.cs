@@ -1,10 +1,8 @@
-﻿using AutoFixture;
-using Azure;
+﻿using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.Telemetry;
-using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {

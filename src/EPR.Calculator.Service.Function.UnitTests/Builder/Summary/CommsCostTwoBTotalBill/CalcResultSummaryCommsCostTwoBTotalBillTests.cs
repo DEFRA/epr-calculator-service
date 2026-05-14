@@ -1,5 +1,4 @@
-﻿using AutoFixture;
-using EPR.Calculator.API.Data.DataModels;
+﻿using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.Summary;
 using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoBTotalBill;
 using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer;

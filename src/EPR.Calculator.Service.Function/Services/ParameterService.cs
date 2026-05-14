@@ -1,6 +1,4 @@
 ﻿using EPR.Calculator.API.Data;
-using EPR.Calculator.Service.Function.Mappers;
-using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Services

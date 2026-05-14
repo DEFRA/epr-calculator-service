@@ -1,5 +1,4 @@
-﻿using AutoFixture;
-using EPR.Calculator.API.Data;
+﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C;
 using EPR.Calculator.Service.Function.Models;

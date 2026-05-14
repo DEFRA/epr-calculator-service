@@ -1,9 +1,7 @@
-using AutoFixture;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Misc;
 using Microsoft.AspNetCore.Http;
-using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Misc
 {

@@ -1,12 +1,10 @@
 using System.Globalization;
-using AutoFixture;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.LaDisposalCost;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Misc;
-using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;

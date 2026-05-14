@@ -1,13 +1,7 @@
-﻿using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.API.Data.Enums;
+﻿using System.Globalization;
 using EPR.Calculator.Service.Function.Builder.Modulation;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
-using EPR.Calculator.Service.Function.UnitTests.Builder.Modulation;
-using EPR.Calculator.Service.Function.UnitTests.Builder;
-using Moq;
-using NetTopologySuite.Operation.Buffer;
-using System.Globalization;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
 {
