@@ -1524,13 +1524,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             return new CalcResultPartialObligations
             {
-                ColumnHeaders = [],
-                MaterialBreakdownHeaders = [],
-                TitleHeader = new CalcResultPartialObligationHeader
-                {
-                    Name = "Partial Obligation Calculation",
-                    ColumnIndex = 1,
-                },
+                Materials = ImmutableList<MaterialDetail>.Empty,
                 PartialObligations =
                 [
                     new CalcResultPartialObligation

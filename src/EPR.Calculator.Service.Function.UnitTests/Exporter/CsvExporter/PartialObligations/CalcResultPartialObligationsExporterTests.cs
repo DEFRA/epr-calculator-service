@@ -28,9 +28,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
             var showModulation = true;
             var projectedProducers = new CalcResultPartialObligations()
             {
-                TitleHeader = new CalcResultPartialObligationHeader() { Name = CalcResultPartialObligationHeaders.PartialObligations },
-                MaterialBreakdownHeaders = CalcResultPartialObligationBuilder.GetMaterialsBreakdownHeader(materials, showModulation),
-                ColumnHeaders = CalcResultPartialObligationBuilder.GetColumnHeaders(materials, showModulation),
+                Materials = GetMaterials(),
                 PartialObligations = GetCalcResultPartialObligationsListWithRam()
             };
 
@@ -151,9 +149,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
             var showModulation = false;
             var projectedProducers = new CalcResultPartialObligations()
             {
-                TitleHeader = new CalcResultPartialObligationHeader() { Name = CalcResultPartialObligationHeaders.PartialObligations },
-                MaterialBreakdownHeaders = CalcResultPartialObligationBuilder.GetMaterialsBreakdownHeader(materials, showModulation),
-                ColumnHeaders = CalcResultPartialObligationBuilder.GetColumnHeaders(materials, showModulation),
+                Materials = GetMaterials(),
                 PartialObligations = GetCalcResultPartialObligationsList()
             };
 
@@ -274,9 +270,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
             var showModulation = true;
             var projectedProducers = new CalcResultPartialObligations()
             {
-                TitleHeader = new CalcResultPartialObligationHeader() { Name = CalcResultPartialObligationHeaders.PartialObligations },
-                MaterialBreakdownHeaders = CalcResultPartialObligationBuilder.GetMaterialsBreakdownHeader(materials, showModulation),
-                ColumnHeaders = CalcResultPartialObligationBuilder.GetColumnHeaders(materials, showModulation),
+                Materials = GetMaterials(),
                 PartialObligations = []
             };
 
@@ -423,6 +417,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
                     }
                 }
             ];
+        }
+
+        private ImmutableList<MaterialDetail> GetMaterials()
+        {
+            return new List<MaterialDetail>
+            {
+                new MaterialDetail { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
+                new MaterialDetail { Id = 2, Code = "GL", Name = "Glass", Description = "Glass" },
+                new MaterialDetail { Id = 3, Code = "OT", Name = "Other materials", Description = "Other materials" },
+            }.ToImmutableList();
         }
     }
 }

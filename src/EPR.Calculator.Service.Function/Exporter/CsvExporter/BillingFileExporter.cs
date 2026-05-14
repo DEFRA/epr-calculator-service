@@ -210,10 +210,8 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 
             return new CalcResultPartialObligations
             {
-                ColumnHeaders = producers.ColumnHeaders,
-                MaterialBreakdownHeaders = producers.MaterialBreakdownHeaders,
-                PartialObligations = acceptedProducers,
-                TitleHeader = producers.TitleHeader,
+                Materials = producers.Materials,
+                PartialObligations = acceptedProducers
             };
         }
 
