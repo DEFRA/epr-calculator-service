@@ -23,13 +23,13 @@
     }
 
     public record CalcResultH2ProjectedProducer : ICalcResultProjectedProducer
-    {    
+    {
         public IReadOnlyDictionary<string, CalcResultH2ProjectedProducerMaterialTonnage> H2ProjectedTonnageByMaterial { get; init; }
             = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>();
 
         public override IEnumerable<KeyValuePair<string, CalcResultProjectedProducerMaterialTonnage>> ProjectedTonnageByMaterial =>
             H2ProjectedTonnageByMaterial.Select(kv => new KeyValuePair<string, CalcResultProjectedProducerMaterialTonnage>(kv.Key, kv.Value));
-    }             
+    }
 
     public record CalcResultH1ProjectedProducer : ICalcResultProjectedProducer
     {
@@ -41,9 +41,8 @@
 
     public record CalcResultProjectedProducers
     {
-        public ProjectedProducersHeaders? H2ProjectedProducersHeaders { get; init; }
-        public ProjectedProducersHeaders? H1ProjectedProducersHeaders { get; init; }
-        public IEnumerable<CalcResultH2ProjectedProducer>? H2ProjectedProducers { get; init; }
-        public IEnumerable<CalcResultH1ProjectedProducer>? H1ProjectedProducers { get; init; }
+        public IImmutableList<MaterialDetail>? Materials { get; init; }
+        public IImmutableList<CalcResultH2ProjectedProducer>? H2ProjectedProducers { get; init; }
+        public IImmutableList<CalcResultH1ProjectedProducer>? H1ProjectedProducers { get; init; }
     }
 }

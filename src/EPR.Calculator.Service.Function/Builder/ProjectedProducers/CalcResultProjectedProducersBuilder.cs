@@ -58,10 +58,9 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 
             var result = new CalcResultProjectedProducers
             {
-                H2ProjectedProducersHeaders = H2ProjectedProducersBuilderUtils.GetProjectedProducerHeaders(materialDetails),
-                H1ProjectedProducersHeaders = H1ProjectedProducersBuilderUtils.GetProjectedProducerHeaders(materialDetails),
-                H2ProjectedProducers = allH2Rows.OrderBy(p => p.ProducerId).ThenBy(p => p.Level).ThenBy(p => p.SubsidiaryId).ToList(),
-                H1ProjectedProducers = allH1Rows.OrderBy(p => p.ProducerId).ThenBy(p => p.Level).ThenBy(p => p.SubsidiaryId).ToList()
+                Materials = materialDetails.ToImmutableList(),
+                H2ProjectedProducers = allH2Rows.OrderBy(p => p.ProducerId).ThenBy(p => p.Level).ThenBy(p => p.SubsidiaryId).ToImmutableList(),
+                H1ProjectedProducers = allH1Rows.OrderBy(p => p.ProducerId).ThenBy(p => p.Level).ThenBy(p => p.SubsidiaryId).ToImmutableList()
             };
 
             return (updatedProducers, result);
