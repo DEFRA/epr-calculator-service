@@ -1,8 +1,7 @@
-﻿using EPR.Calculator.API.Data.Enums;
+﻿using System.Globalization;
+using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
-using Microsoft.EntityFrameworkCore;
-using System.Globalization;
 
 namespace EPR.Calculator.Service.Function.Builder.Modulation
 {

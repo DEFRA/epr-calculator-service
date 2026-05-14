@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
 using EPR.Calculator.Service.Function.Models;
-using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.CancelledProducers
 {

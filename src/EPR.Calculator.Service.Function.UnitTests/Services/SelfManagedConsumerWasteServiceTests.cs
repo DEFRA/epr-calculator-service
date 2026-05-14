@@ -1,13 +1,11 @@
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.EntityFrameworkCore;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.Service.Function.Services;
-using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {

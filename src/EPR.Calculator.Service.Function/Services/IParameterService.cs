@@ -1,6 +1,4 @@
-﻿using EPR.Calculator.Service.Function.Models;
-
-namespace EPR.Calculator.Service.Function.Services
+﻿namespace EPR.Calculator.Service.Function.Services
 {
     public interface IParameterService
     {

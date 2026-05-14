@@ -1,5 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-
 namespace EPR.Calculator.Service.Function.Services
 {
     public interface IProducerData

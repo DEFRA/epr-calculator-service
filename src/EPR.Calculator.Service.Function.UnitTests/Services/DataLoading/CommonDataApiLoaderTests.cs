@@ -2,7 +2,6 @@ using System.Net;
 using System.Text;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Messaging;
 using EPR.Calculator.Service.Function.Options;
 using EPR.Calculator.Service.Function.Services.CommonDataApi;
@@ -10,7 +9,6 @@ using EPR.Calculator.Service.Function.Services.DataLoading;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
 {

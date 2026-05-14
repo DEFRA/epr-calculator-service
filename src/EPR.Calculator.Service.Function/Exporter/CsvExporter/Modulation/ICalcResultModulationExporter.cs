@@ -1,8 +1,7 @@
-﻿using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.Service.Function.Models;
+﻿using System.Text;
 using EPR.Calculator.Service.Function.Builder.Modulation;
+using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
-using System.Text;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation
 {

@@ -1,6 +1,6 @@
 ﻿using EPR.Calculator.Service.Function.Builder.Modulation;
-using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.Service.Function.Services;
+
 namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResult

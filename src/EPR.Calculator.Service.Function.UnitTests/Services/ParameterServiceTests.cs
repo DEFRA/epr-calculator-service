@@ -2,7 +2,6 @@
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
-using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {

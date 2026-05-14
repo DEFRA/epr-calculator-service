@@ -1,10 +1,10 @@
-﻿namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
-{
-    using EPR.Calculator.API.Data.DataModels;
-    using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
-    using EPR.Calculator.Service.Function.Constants;
-    using EPR.Calculator.Service.Function.Models;
+﻿using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
+using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Models;
 
+namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
+{
     [TestClass]
     public class H1ProjectedProducersBuilderUtilsTest
     {

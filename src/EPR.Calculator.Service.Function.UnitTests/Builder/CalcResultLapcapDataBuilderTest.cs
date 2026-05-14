@@ -9,7 +9,6 @@ using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Moq;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
