@@ -363,23 +363,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 },
                 CalcResultScaledupProducers = new CalcResultScaledupProducers
                 {
-                    TitleHeader = new CalcResultScaledupProducerHeader
-                    {
-                        Name = "Scaled-up Producers",
-                    },
-                    MaterialBreakdownHeaders =
-                    [
-                        new CalcResultScaledupProducerHeader { Name = "Each submission for the year", ColumnIndex = 1 },
-                        new CalcResultScaledupProducerHeader { Name = "Aluminium Breakdown", ColumnIndex = 2 },
-                        new CalcResultScaledupProducerHeader { Name = "Glass Breakdown", ColumnIndex = 3 },
-                    ],
-                    ColumnHeaders =
-                    [
-                        new CalcResultScaledupProducerHeader { Name = "Producer ID" },
-                        new CalcResultScaledupProducerHeader { Name = "Subsidiary ID" },
-                        new CalcResultScaledupProducerHeader { Name = "HouseholdDrinksContainersTonnageGlass" },
-                        new CalcResultScaledupProducerHeader { Name = "ScaledupHouseholdDrinksContainersTonnageGlass" },
-                    ],
+                    Materials = ImmutableList<MaterialDetail>.Empty,
                     ScaledupProducers = GetCalcResultScaledupProducerList(),
                 },
                 CalcResultPartialObligations = new CalcResultPartialObligations(),

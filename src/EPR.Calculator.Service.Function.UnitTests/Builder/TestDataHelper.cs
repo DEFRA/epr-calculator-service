@@ -1458,13 +1458,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             return new CalcResultScaledupProducers
             {
-                ColumnHeaders = [],
-                MaterialBreakdownHeaders = [],
-                TitleHeader = new CalcResultScaledupProducerHeader
-                {
-                    Name = "Scaled-up Producers",
-                    ColumnIndex = 1,
-                },
+                Materials = ImmutableList<MaterialDetail>.Empty,
                 ScaledupProducers =
                 [
                     new CalcResultScaledupProducer

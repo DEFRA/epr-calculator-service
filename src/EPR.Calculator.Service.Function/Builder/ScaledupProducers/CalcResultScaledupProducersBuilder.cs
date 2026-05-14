@@ -22,8 +22,6 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
     public class CalcResultScaledupProducersBuilder : ICalcResultScaledupProducersBuilder
     {
         private const decimal NormalScaleup = 1.0M;
-        private const int MaterialsBreakdownHeaderInitialColumnIndex = 10;
-        private const int MaterialsBreakdownHeaderIncrementalColumnIndex = 10;
 
         private readonly ApplicationDBContext dbContext;
 
@@ -172,8 +170,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
 
             if (!scaledupOrganisations.Any())
             {
-                var emptyResult = new CalcResultScaledupProducers { ScaledupProducers = [] };
-                SetHeaders(emptyResult, materialDetails);
+                var emptyResult = new CalcResultScaledupProducers { Materials = materialDetails.ToImmutableList(), ScaledupProducers = [] };
                 return (producerDetails, emptyResult);
             }
 
@@ -256,8 +253,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
 
             orderedRows.Add(GetOverallTotalRow(orderedRows, materialDetails));
 
-            var scaledupProducersSummary = new CalcResultScaledupProducers { ScaledupProducers = orderedRows.ToImmutableList() };
-            SetHeaders(scaledupProducersSummary, materialDetails);
+            var scaledupProducersSummary = new CalcResultScaledupProducers {  Materials = materialDetails.ToImmutableList(), ScaledupProducers = orderedRows.ToImmutableList() };
             return (updatedProducers, scaledupProducersSummary);
         }
 
@@ -396,90 +392,6 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
             }
 
             return scaledupProducerTonnages;
-        }
-
-        public static void SetHeaders(CalcResultScaledupProducers producers, IEnumerable<MaterialDetail> materials)
-        {
-            producers.TitleHeader = new CalcResultScaledupProducerHeader
-            {
-                Name = CalcResultScaledupProducerHeaders.ScaledupProducers,
-                ColumnIndex = 1,
-            };
-
-            producers.MaterialBreakdownHeaders = GetMaterialsBreakdownHeader(materials);
-
-            producers.ColumnHeaders = GetColumnHeaders(materials);
-        }
-
-        public static ImmutableList<CalcResultScaledupProducerHeader> GetMaterialsBreakdownHeader(IEnumerable<MaterialDetail> materials)
-        {
-            var materialsBreakdownHeaders = ImmutableList.CreateBuilder<CalcResultScaledupProducerHeader>();
-            var columnIndex = MaterialsBreakdownHeaderInitialColumnIndex;
-
-            materialsBreakdownHeaders.Add(new CalcResultScaledupProducerHeader
-            {
-                Name = CalcResultScaledupProducerHeaders.EachSubmissionForTheYear,
-                ColumnIndex = 1,
-            });
-
-            foreach (var material in materials)
-            {
-                materialsBreakdownHeaders.Add(new CalcResultScaledupProducerHeader
-                {
-                    Name = $"{material.Name} Breakdown",
-                    ColumnIndex = columnIndex,
-                });
-
-                columnIndex = material.Code == MaterialCodes.Glass
-                    ? columnIndex + MaterialsBreakdownHeaderIncrementalColumnIndex + 2
-                    : columnIndex + MaterialsBreakdownHeaderIncrementalColumnIndex;
-            }
-
-            return materialsBreakdownHeaders.ToImmutable();
-        }
-
-        public static ImmutableList<CalcResultScaledupProducerHeader> GetColumnHeaders(IEnumerable<MaterialDetail> materials)
-        {
-            var columnHeaders = ImmutableList.CreateBuilder<CalcResultScaledupProducerHeader>();
-
-            columnHeaders.AddRange([
-                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ProducerId },
-                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.SubsidiaryId },
-                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ProducerOrSubsidiaryName },
-                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.TradingName },
-                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.Level },
-                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.SubmissionPeriodCode },
-                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.DaysInSubmissionPeriod },
-                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.DaysInWholePeriod },
-                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaleupFactor }
-            ]);
-
-            foreach (var material in materials)
-            {
-                var columnHeadersList = new List<CalcResultScaledupProducerHeader>
-                {
-                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.HouseholdPackagingWasteTonnage },
-                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.PublicBinTonnage },
-                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.TotalTonnage },
-                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.SelfManagedConsumerWasteTonnage },
-                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.NetTonnage },
-                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupHouseholdPackagingWasteTonnage },
-                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupPublicBinTonnage },
-                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupTotalTonnage },
-                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupSelfManagedConsumerWasteTonnage },
-                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupNetTonnage },
-                };
-
-                if (material.Code == MaterialCodes.Glass)
-                {
-                    columnHeadersList.Insert(2, new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.HouseholdDrinksContainersTonnageGlass });
-                    columnHeadersList.Insert(8, new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupHouseholdDrinksContainersTonnageGlass });
-                }
-
-                columnHeaders.AddRange(columnHeadersList);
-            }
-
-            return columnHeaders.ToImmutable();
         }
     }
 }

@@ -173,10 +173,8 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         {
             return new CalcResultScaledupProducers
             {
-                ColumnHeaders = producers.ColumnHeaders,
-                MaterialBreakdownHeaders = producers.MaterialBreakdownHeaders,
-                ScaledupProducers = GetScaledupProducers(producers.ScaledupProducers, acceptedProducerIds),
-                TitleHeader = producers.TitleHeader,
+                Materials = producers.Materials,
+                ScaledupProducers = GetScaledupProducers(producers.ScaledupProducers, acceptedProducerIds)
             };
         }
 

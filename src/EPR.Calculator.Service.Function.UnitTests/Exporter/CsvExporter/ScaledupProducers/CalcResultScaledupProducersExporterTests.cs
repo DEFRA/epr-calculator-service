@@ -21,9 +21,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
             // Arrange
             var scaledupProducers = new CalcResultScaledupProducers
             {
-                TitleHeader = GetTitleHeader(),
-                MaterialBreakdownHeaders = GetMaterialBreakdownHeaders(),
-                ColumnHeaders = GetColumnHeaders(),
+                Materials = GetMaterials(),
                 ScaledupProducers = GetCalcResultScaledupProducerList(),
             };
 
@@ -54,9 +52,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
             // Arrange
             var scaledupProducers = new CalcResultScaledupProducers
             {
-                TitleHeader = GetTitleHeader(),
-                MaterialBreakdownHeaders = GetMaterialBreakdownHeaders(),
-                ColumnHeaders = GetColumnHeaders(),
+                Materials = GetMaterials(),
                 ScaledupProducers = null!,
             };
 
@@ -70,8 +66,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
             Assert.IsTrue(result.Contains("Scaled-up Producers"));
             Assert.IsTrue(result.Contains("Each submission for the year"));
             Assert.IsTrue(result.Contains("Aluminium Breakdown"));
-            Assert.IsTrue(result.Contains("Producer Id"));
-            Assert.IsTrue(result.Contains("Subsidiary Id"));
+            Assert.IsTrue(result.Contains("Producer ID"));
+            Assert.IsTrue(result.Contains("Subsidiary ID"));
             Assert.IsTrue(result.Contains("None"));
         }
 
@@ -81,9 +77,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
             // Arrange
             var scaledupProducers = new CalcResultScaledupProducers
             {
-                TitleHeader = GetTitleHeader(),
-                MaterialBreakdownHeaders = GetMaterialBreakdownHeaders(),
-                ColumnHeaders = GetColumnHeaders(),
+                Materials = GetMaterials(),
                 ScaledupProducers = GetCalcResultScaledupProducerList(),
             };
 
@@ -97,6 +91,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
             Assert.IsTrue(result.Contains("Glass"));
             Assert.IsTrue(result.Contains("Household Drinks Containers Tonnage - Glass"));
             Assert.IsTrue(result.Contains("Scaled-up Household Drinks Containers Tonnage - Glass"));
+        }
+
+        private ImmutableList<MaterialDetail> GetMaterials()
+        {
+            return new List<MaterialDetail>
+            {
+                new MaterialDetail { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
+                new MaterialDetail { Id = 2, Code = "GL", Name = "Glass", Description = "Glass" },
+            }.ToImmutableList();
         }
 
         private ImmutableList<CalcResultScaledupProducer> GetCalcResultScaledupProducerList()
@@ -127,58 +130,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
                     ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterial(),
                     IsTotalRow = true,
                 }
-            ];
-        }
-
-        private CalcResultScaledupProducerHeader GetTitleHeader()
-        {
-            return new CalcResultScaledupProducerHeader
-            {
-                Name = "Scaled-up Producers",
-                ColumnIndex = 1,
-            };
-        }
-
-        private ImmutableList<CalcResultScaledupProducerHeader> GetMaterialBreakdownHeaders()
-        {
-            return [
-                new CalcResultScaledupProducerHeader
-                {
-                    Name = "Each submission for the year",
-                    ColumnIndex = 1,
-                },
-                new CalcResultScaledupProducerHeader
-                {
-                    Name = "Aluminium Breakdown",
-                    ColumnIndex = 2,
-                }
-            ];
-        }
-
-        private ImmutableList<CalcResultScaledupProducerHeader> GetColumnHeaders()
-        {
-            return [
-                new CalcResultScaledupProducerHeader { Name = "Producer Id" },
-                new CalcResultScaledupProducerHeader { Name = "Subsidiary Id" },
-                new CalcResultScaledupProducerHeader { Name = "Producer / Subsidiary Name" },
-                new CalcResultScaledupProducerHeader { Name = "Trading Name" },
-                new CalcResultScaledupProducerHeader { Name = "Level" },
-                new CalcResultScaledupProducerHeader { Name = "Submission period code" },
-                new CalcResultScaledupProducerHeader { Name = "Days in submission period" },
-                new CalcResultScaledupProducerHeader { Name = "Days in whole period" },
-                new CalcResultScaledupProducerHeader { Name = "Scale-up factor" },
-                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.HouseholdPackagingWasteTonnage },
-                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.PublicBinTonnage },
-                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.HouseholdDrinksContainersTonnageGlass },
-                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.TotalTonnage },
-                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.SelfManagedConsumerWasteTonnage },
-                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.NetTonnage },
-                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupHouseholdPackagingWasteTonnage },
-                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupPublicBinTonnage },
-                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupHouseholdDrinksContainersTonnageGlass },
-                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupTotalTonnage },
-                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupSelfManagedConsumerWasteTonnage },
-                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupTotalTonnage },
             ];
         }
 

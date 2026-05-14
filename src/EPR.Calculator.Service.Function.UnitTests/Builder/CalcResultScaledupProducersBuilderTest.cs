@@ -593,43 +593,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         }
 
         [TestMethod]
-        public void GetColumnHeadersTest()
-        {
-            var materials = new List<Material>();
-            materials.Add(new Material { Code = "AL", Name = "Aluminium" });
-            var materialDetails = MaterialMapper.Map(materials);
-            var columnHeaders = CalcResultScaledupProducersBuilder.GetColumnHeaders(materialDetails);
-            Assert.IsNotNull(columnHeaders);
-            Assert.AreEqual(19, columnHeaders.Count);
-        }
-
-        [TestMethod]
-        public void GetMaterialsBreakdownHeaderTest()
-        {
-            var materials = new List<Material>();
-            materials.Add(new Material { Code = "AL", Name = "Aluminium" });
-            var materialDetails = MaterialMapper.Map(materials);
-            var materialsBreakDown = CalcResultScaledupProducersBuilder.GetMaterialsBreakdownHeader(materialDetails);
-            Assert.IsNotNull(materialsBreakDown);
-            Assert.AreEqual(2, materialsBreakDown.Count);
-        }
-
-        [TestMethod]
-        public void SetHeadersTest()
-        {
-            var producers = new CalcResultScaledupProducers
-            {
-                ScaledupProducers = []
-            };
-            var materials = new List<Material>();
-            materials.Add(new Material { Code = "AL", Name = "Aluminium" });
-            var materialDetails = MaterialMapper.Map(materials);
-            CalcResultScaledupProducersBuilder.SetHeaders(producers, materialDetails);
-            Assert.AreEqual(19, producers.ColumnHeaders?.Count());
-            Assert.AreEqual(2, producers.MaterialBreakdownHeaders?.Count());
-        }
-
-        [TestMethod]
         public void CalculateScaledupTonnageTest()
         {
             var producerId = 2;
