@@ -14,8 +14,6 @@
 
         public bool IsSubtotalRow { get; set; }
 
-        public bool IsTotalRow { get; set; }
-
         public string? SubmissionPeriodCode { get; set; }
 
         public int DaysInSubmissionPeriod { get; set; }

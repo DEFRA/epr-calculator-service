@@ -322,8 +322,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var result = (await builder.ConstructAsync(materialDetails, producers, requestDto)).Item2;
 
             // Assert
-            Assert.AreEqual(2, result.ScaledupProducers!.Count());
-            var tonnage = result.ScaledupProducers!.First(x => x.ProducerId == 12 && !x.IsTotalRow && !x.IsSubtotalRow).ScaledupProducerTonnageByMaterial["PC"];
+            Assert.AreEqual(1, result.ScaledupProducers!.Count());
+            var tonnage = result.ScaledupProducers!.First(x => x.ProducerId == 12 && !x.IsSubtotalRow).ScaledupProducerTonnageByMaterial["PC"];
             Assert.AreEqual(1, tonnage.TotalReportedTonnage);
             Assert.AreEqual(2.999m, tonnage.ScaledupTotalReportedTonnage);
         }
@@ -489,74 +489,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual(2, extraRows.Count());
             Assert.IsTrue(extraRows.All(x => x.IsSubtotalRow));
             Assert.AreEqual(2, runProducerMaterialDetails.Count(x => x.IsSubtotalRow));
-        }
-
-        [TestMethod]
-        public void GetOverallTotalRowTest()
-        {
-            builder = new CalcResultScaledupProducersBuilder(dbContext);
-            var runProducerMaterialDetails = new List<CalcResultScaledupProducer>();
-            var dictionary = new Dictionary<string, CalcResultScaledupProducerTonnage>();
-            dictionary.Add("AL", new CalcResultScaledupProducerTonnage
-            {
-                ReportedHouseholdPackagingWasteTonnage = 10,
-                ReportedPublicBinTonnage = 10,
-                TotalReportedTonnage = 10,
-                ReportedSelfManagedConsumerWasteTonnage = 10,
-                NetReportedTonnage = 10,
-                ScaledupReportedHouseholdPackagingWasteTonnage = 10,
-                ScaledupReportedPublicBinTonnage = 10,
-                ScaledupTotalReportedTonnage = 10,
-                ScaledupReportedSelfManagedConsumerWasteTonnage = 10,
-                ScaledupNetReportedTonnage = 10,
-            });
-            runProducerMaterialDetails.Add(new CalcResultScaledupProducer
-            {
-                ProducerId = 1,
-                ScaledupProducerTonnageByMaterial = dictionary,
-            });
-            runProducerMaterialDetails.Add(new CalcResultScaledupProducer
-            {
-                ProducerId = 1,
-                SubsidiaryId = "Sub1",
-                ScaledupProducerTonnageByMaterial = dictionary,
-            });
-            runProducerMaterialDetails.Add(new CalcResultScaledupProducer
-            {
-                ProducerId = 1,
-                SubsidiaryId = "Sub2",
-                ScaledupProducerTonnageByMaterial = dictionary,
-            });
-            runProducerMaterialDetails.Add(new CalcResultScaledupProducer
-            {
-                ProducerId = 2,
-                ScaledupProducerTonnageByMaterial = dictionary,
-            });
-            runProducerMaterialDetails.Add(new CalcResultScaledupProducer
-            {
-                ProducerId = 2,
-                SubsidiaryId = "Sub3",
-                ScaledupProducerTonnageByMaterial = dictionary,
-            });
-            runProducerMaterialDetails.Add(new CalcResultScaledupProducer
-            {
-                ProducerId = 2,
-                SubsidiaryId = "Sub4",
-                ScaledupProducerTonnageByMaterial = dictionary,
-            });
-
-            var materials = new List<Material>();
-            materials.Add(new Material { Code = "AL", Name = "Aluminium" });
-            var materialDetails = MaterialMapper.Map(materials);
-            var totalRow = CalcResultScaledupProducersBuilder.GetOverallTotalRow(runProducerMaterialDetails, materialDetails);
-            Assert.IsNotNull(totalRow);
-            var aluminium = totalRow.ScaledupProducerTonnageByMaterial["Aluminium"];
-            Assert.IsNotNull(aluminium);
-            Assert.AreEqual(60, aluminium.NetReportedTonnage);
-            Assert.AreEqual(60, aluminium.ScaledupTotalReportedTonnage);
-            Assert.AreEqual(60, aluminium.ScaledupNetReportedTonnage);
-            Assert.AreEqual(60, aluminium.ScaledupReportedPublicBinTonnage);
-            Assert.AreEqual(60, aluminium.ScaledupReportedPublicBinTonnage);
         }
 
         [TestMethod]

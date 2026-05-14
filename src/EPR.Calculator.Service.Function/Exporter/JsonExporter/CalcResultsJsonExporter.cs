@@ -11,7 +11,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
     {
         private const int decimalPrecision = 3;
 
-        private readonly IMaterialService materialService; 
+        private readonly IMaterialService materialService;
 
         public CalcResultsJsonExporter(IMaterialService materialService)
         {
@@ -25,10 +25,10 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
                 throw new ArgumentNullException(nameof(results), "The results parameter cannot be null.");
             }
 
-            var materials = materialService.GetMaterials().Result;
+            var materials = materialService.GetMaterials().Result; // TODO rather than call Result, this should be async. Better still, inject the materials.
 
             var billingFileContent = BillingFileJson.From(results, acceptedProducerIds, materials);
-           
+
             return JsonSerializer.Serialize(
                 billingFileContent,
                 new JsonSerializerOptions

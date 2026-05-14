@@ -30,49 +30,6 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
             this.dbContext = dbContext;
         }
 
-        public static CalcResultScaledupProducer GetOverallTotalRow(
-            IEnumerable<CalcResultScaledupProducer> orderedRunProducerMaterialDetails,
-            IEnumerable<MaterialDetail> materialDetails
-        )
-        {
-            var overallTotalRow = new CalcResultScaledupProducer
-            {
-                IsTotalRow = true,
-                ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>(),
-            };
-
-            var allMaterialDict = orderedRunProducerMaterialDetails.Where(x => !x.IsSubtotalRow).Select(x => x.ScaledupProducerTonnageByMaterial);
-            foreach (var material in materialDetails)
-            {
-                var totalRow = new CalcResultScaledupProducerTonnage();
-                var materialValues = allMaterialDict.Where(x => x.ContainsKey(material.Code)).Select(x => x[material.Code]).ToList();
-                totalRow.ReportedHouseholdPackagingWasteTonnage = materialValues.Sum(x => x.ReportedHouseholdPackagingWasteTonnage);
-                totalRow.ReportedPublicBinTonnage = materialValues.Sum(x => x.ReportedPublicBinTonnage);
-                if (material.Code == MaterialCodes.Glass)
-                {
-                    totalRow.HouseholdDrinksContainersTonnageGlass = materialValues.Sum(x => x.HouseholdDrinksContainersTonnageGlass);
-                }
-
-                totalRow.TotalReportedTonnage = materialValues.Sum(x => x.TotalReportedTonnage);
-                totalRow.ReportedSelfManagedConsumerWasteTonnage = materialValues.Sum(x => x.ReportedSelfManagedConsumerWasteTonnage);
-                totalRow.NetReportedTonnage = materialValues.Sum(x => x.NetReportedTonnage);
-                totalRow.ScaledupReportedHouseholdPackagingWasteTonnage = materialValues.Sum(x => x.ScaledupReportedHouseholdPackagingWasteTonnage);
-                totalRow.ScaledupReportedPublicBinTonnage = materialValues.Sum(x => x.ScaledupReportedPublicBinTonnage);
-                if (material.Code == MaterialCodes.Glass)
-                {
-                    totalRow.ScaledupHouseholdDrinksContainersTonnageGlass = materialValues.Sum(x => x.ScaledupHouseholdDrinksContainersTonnageGlass);
-                }
-
-                totalRow.ScaledupTotalReportedTonnage = materialValues.Sum(x => x.ScaledupTotalReportedTonnage);
-                totalRow.ScaledupReportedSelfManagedConsumerWasteTonnage = materialValues.Sum(x => x.ScaledupReportedSelfManagedConsumerWasteTonnage);
-                totalRow.ScaledupNetReportedTonnage = materialValues.Sum(x => x.ScaledupNetReportedTonnage);
-
-                overallTotalRow.ScaledupProducerTonnageByMaterial.Add(material.Name, totalRow);
-            }
-
-            return overallTotalRow;
-        }
-
         public static void CalculateScaledupTonnage(
             IEnumerable<CalcResultScaledupProducer> runScaledUpProducers,
             List<ProducerDetail> producerDetails,
@@ -181,7 +138,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
             // ScaleupFactor is period-based, so it is identical across all subsidiaries of the same
             // ProducerId (SubsidiaryId not needed in lookup).
             var scaleupFactorByProducer = scaledUpProducers
-                .Where(s => !s.IsSubtotalRow && !s.IsTotalRow)
+                .Where(s => !s.IsSubtotalRow)
                 .GroupBy(s => s.ProducerId)
                 .ToDictionary(
                     g => g.Key,
@@ -190,7 +147,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                 );
 
             var displayRowLookup = scaledUpProducers
-                .Where(s => !s.IsSubtotalRow && !s.IsTotalRow)
+                .Where(s => !s.IsSubtotalRow)
                 .GroupBy(s => (s.ProducerId, s.SubsidiaryId))
                 .ToDictionary(
                     g => g.Key,
@@ -250,8 +207,6 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                 .ThenBy(p => p.SubsidiaryId)
                 .ThenBy(p => p.SubmissionPeriodCode)
                 .ToList();
-
-            orderedRows.Add(GetOverallTotalRow(orderedRows, materialDetails));
 
             var scaledupProducersSummary = new CalcResultScaledupProducers {  Materials = materialDetails.ToImmutableList(), ScaledupProducers = orderedRows.ToImmutableList() };
             return (updatedProducers, scaledupProducersSummary);

@@ -1468,7 +1468,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         DaysInSubmissionPeriod = 91,
                         DaysInWholePeriod = 91,
                         IsSubtotalRow = false,
-                        IsTotalRow = false,
                         Level = "1",
                         ScaleupFactor = 1,
                         SubmissionPeriodCode = "2024-P2",

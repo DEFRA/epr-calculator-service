@@ -182,20 +182,9 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             IReadOnlyList<CalcResultScaledupProducer>? scaledupProducers,
             ImmutableHashSet<int> acceptedProducerIds)
         {
-            var acceptedProducers = scaledupProducers?
+            return scaledupProducers?
                 .Where(x => acceptedProducerIds.Contains(x.ProducerId) || x.ProducerId == 0)
                 .ToImmutableList() ?? [];
-
-            acceptedProducers.ForEach(x =>
-            {
-                if (x.IsTotalRow)
-                {
-                    x.ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>();
-
-                    ResetObjectUtil.ResetObject(x);
-                }
-            });
-            return acceptedProducers;
         }
 
         public CalcResultPartialObligations GetPartialObligationsForExport(
