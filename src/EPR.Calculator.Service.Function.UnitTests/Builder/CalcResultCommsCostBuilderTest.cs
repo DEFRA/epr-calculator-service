@@ -31,7 +31,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             dbContext.Database.EnsureCreated();
             builder = new CalcResultCommsCostBuilder(
                 dbContext,
-                new TelemetryClient(TelemetryConfiguration.CreateDefault()));
+                new TelemetryClient(new TelemetryConfiguration{ ConnectionString = "InstrumentationKey=00000000-0000-0000-0000-000000000000" }));
         }
 
         private Fixture Fixture { get; init; } = new Fixture();

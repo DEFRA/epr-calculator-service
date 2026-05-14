@@ -247,8 +247,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             new object[] { 300m      , 100m    , 0m  , 100m      , 0m    , 100m    , 0m    , 350m, ((decimal?, decimal?, decimal?, decimal?)) (0m        , 0m      , 0m        , 0m      ) },
         };
 
-        [DataTestMethod]
-        [DynamicData(nameof(NetReportedTonnageCases), DynamicDataSourceType.Property)]
+        [TestMethod]
+        [DynamicData(nameof(NetReportedTonnageCases))]
         public async Task CanGetNetReportedTonnage_WithModulations(
             decimal hh,
             decimal red,

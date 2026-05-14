@@ -67,7 +67,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Messaging
         }
 
         [TestMethod]
-        [ExpectedException(typeof(KeyNotFoundException))]
         public void DeserializeMessage_MissingMessageType_Throws()
         {
             // Arrange
@@ -79,12 +78,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Messaging
                 }
                 """;
 
-            // Act
-            _service.DeserializeMessage(json);
+            // Act & Assert
+            Should.Throw<KeyNotFoundException>(() => _service.DeserializeMessage(json));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(NotSupportedException))]
         public void DeserializeMessage_UnsupportedMessageType_ThrowsNotSupportedException()
         {
             // Arrange
@@ -94,27 +92,25 @@ namespace EPR.Calculator.Service.Function.UnitTests.Messaging
                 }
                 """;
 
-            // Act
-            _service.DeserializeMessage(json);
+            // Act & Assert
+            Should.Throw<NotSupportedException>(() => _service.DeserializeMessage(json));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(JsonException), AllowDerivedTypes = true)]
         public void DeserializeMessage_NullOrEmpty_ThrowsJsonException()
         {
-            // Act
-            _service.DeserializeMessage(null!);
+            // Act & Assert
+            Should.Throw<JsonException>(() => _service.DeserializeMessage(null!));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(JsonException), AllowDerivedTypes = true)]
         public void DeserializeMessage_InvalidJson_ThrowsJsonException()
         {
             // Arrange
             var json = "invalid json";
 
-            // Act
-            _service.DeserializeMessage(json);
+            // Act & Assert
+            Should.Throw<JsonException>(() => _service.DeserializeMessage(json));
         }
     }
 }

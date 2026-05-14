@@ -349,7 +349,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void HandleMissingRegistrationData_Throws_WhenPomDetailsNull()
         {
             // Arrange
@@ -360,12 +359,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 },
             };
 
-            // Act
-            ErrorReportService.HandleMissingRegistrationData(null!, orgDetails, 1, "u");
+            // Act & Assert
+            Should.Throw<ArgumentNullException>(() =>
+                ErrorReportService.HandleMissingRegistrationData(null!, orgDetails, 1, "u"));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void HandleMissingRegistrationData_Throws_WhenOrgDetailsNull()
         {
             // Arrange
@@ -379,8 +378,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 },
             };
 
-            // Act
-            ErrorReportService.HandleMissingRegistrationData(pomDetails, null!, 1, "u");
+            // Act & Assert
+            Should.Throw<ArgumentNullException>(() =>
+                ErrorReportService.HandleMissingRegistrationData(pomDetails, null!, 1, "u"));
         }
 
         [TestMethod]

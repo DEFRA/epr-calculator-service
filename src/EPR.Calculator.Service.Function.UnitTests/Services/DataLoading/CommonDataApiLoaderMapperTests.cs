@@ -79,7 +79,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
 
             var mapper = CommonDataApiLoaderMapper.MapPom(FixedUtcNow);
 
-            Assert.ThrowsException<FormatException>(() => mapper(response));
+            Should.Throw<FormatException>(() => mapper(response));
         }
 
         // ───────────────────── Organisation mapper – field mapping ─────────────────────
@@ -148,7 +148,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
 
             var mapper = CommonDataApiLoaderMapper.MapOrganisation(FixedUtcNow);
 
-            Assert.ThrowsException<FormatException>(() => mapper(response));
+            Should.Throw<FormatException>(() => mapper(response));
         }
 
         /// <summary>
@@ -167,7 +167,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
 
             var mapper = CommonDataApiLoaderMapper.MapOrganisation(FixedUtcNow);
 
-            Assert.ThrowsException<FormatException>(() => mapper(response));
+            Should.Throw<FormatException>(() => mapper(response));
         }
 
         /// <summary>
@@ -186,7 +186,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
 
             var mapper = CommonDataApiLoaderMapper.MapOrganisation(FixedUtcNow);
 
-            Assert.ThrowsException<FormatException>(() => mapper(response));
+            Should.Throw<FormatException>(() => mapper(response));
         }
 
         /// <summary>
@@ -205,7 +205,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
 
             var mapper = CommonDataApiLoaderMapper.MapOrganisation(FixedUtcNow);
 
-            Assert.ThrowsException<FormatException>(() => mapper(response));
+            Should.Throw<FormatException>(() => mapper(response));
         }
     }
 }

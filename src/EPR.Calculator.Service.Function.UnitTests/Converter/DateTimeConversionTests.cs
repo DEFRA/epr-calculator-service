@@ -14,14 +14,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Converter
         }
 
         [TestMethod]
-        [ExpectedException(typeof(FormatException))]
         public void ConvertToIso8601Utc_InvalidDateTimeString_ThrowsFormatException()
         {
             // Arrange  
             string input = "invalid-date";
 
-            // Act  
-            DateTimeConversion.ConvertToIso8601Utc(input);
+            // Act & Assert
+            Should.Throw<FormatException>(() => DateTimeConversion.ConvertToIso8601Utc(input));
         }
     }
 }
