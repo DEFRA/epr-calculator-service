@@ -178,7 +178,14 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
             foreach (var (key, subtotalRow) in subtotalLookup)
             {
                 if (subtotalAccumulator.TryGetValue(key, out var pomData))
-                    subtotalRow.PomData = pomData;
+                {
+                    subtotalRow.PomData = pomData
+                        .GroupBy(e => (e.MaterialId, e.PackagingType))
+                        .Select(g => new ScaledupPomEntry(
+                            g.Key.MaterialId, g.Key.PackagingType,
+                            g.Sum(e => e.Tonnage), g.Sum(e => e.ScaledTonnage)))
+                        .ToList();
+                }
             }
 
             var orderedRows = scaledUpProducers

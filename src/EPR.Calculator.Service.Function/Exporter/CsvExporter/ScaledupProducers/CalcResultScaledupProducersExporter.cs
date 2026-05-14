@@ -264,35 +264,22 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers
                 var scaledupProducerTonnage = new CalcResultScaledupProducerTonnage();
                 var materialPomData = pomData.Where(e => e.MaterialId == material.Id);
 
-                scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage = materialPomData
-                    .Where(e => e.PackagingType == PackagingTypes.Household)
-                    .Sum(e => e.Tonnage);
-                scaledupProducerTonnage.ScaledupReportedHouseholdPackagingWasteTonnage = materialPomData
-                    .Where(e => e.PackagingType == PackagingTypes.Household)
-                    .Sum(e => e.ScaledTonnage);
+                var hh  = materialPomData.SingleOrDefault(e => e.PackagingType == PackagingTypes.Household);
+                var pb  = materialPomData.SingleOrDefault(e => e.PackagingType == PackagingTypes.PublicBin);
+                var cw  = materialPomData.SingleOrDefault(e => e.PackagingType == PackagingTypes.ConsumerWaste);
 
-                scaledupProducerTonnage.ReportedPublicBinTonnage = materialPomData
-                    .Where(e => e.PackagingType == PackagingTypes.PublicBin)
-                    .Sum(e => e.Tonnage);
-                scaledupProducerTonnage.ScaledupReportedPublicBinTonnage = materialPomData
-                    .Where(e => e.PackagingType == PackagingTypes.PublicBin)
-                    .Sum(e => e.ScaledTonnage);
-
-                scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage = materialPomData
-                    .Where(e => e.PackagingType == PackagingTypes.ConsumerWaste)
-                    .Sum(e => e.Tonnage);
-                scaledupProducerTonnage.ScaledupReportedSelfManagedConsumerWasteTonnage = materialPomData
-                    .Where(e => e.PackagingType == PackagingTypes.ConsumerWaste)
-                    .Sum(e => e.ScaledTonnage);
+                scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage          = hh?.Tonnage       ?? 0;
+                scaledupProducerTonnage.ScaledupReportedHouseholdPackagingWasteTonnage  = hh?.ScaledTonnage ?? 0;
+                scaledupProducerTonnage.ReportedPublicBinTonnage                        = pb?.Tonnage       ?? 0;
+                scaledupProducerTonnage.ScaledupReportedPublicBinTonnage                = pb?.ScaledTonnage ?? 0;
+                scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage         = cw?.Tonnage       ?? 0;
+                scaledupProducerTonnage.ScaledupReportedSelfManagedConsumerWasteTonnage = cw?.ScaledTonnage ?? 0;
 
                 if (material.Code == MaterialCodes.Glass)
                 {
-                    scaledupProducerTonnage.HouseholdDrinksContainersTonnageGlass = materialPomData
-                        .Where(e => e.PackagingType == PackagingTypes.HouseholdDrinksContainers)
-                        .Sum(e => e.Tonnage);
-                    scaledupProducerTonnage.ScaledupHouseholdDrinksContainersTonnageGlass = materialPomData
-                        .Where(e => e.PackagingType == PackagingTypes.HouseholdDrinksContainers)
-                        .Sum(e => e.ScaledTonnage);
+                    var hdc = materialPomData.SingleOrDefault(e => e.PackagingType == PackagingTypes.HouseholdDrinksContainers);
+                    scaledupProducerTonnage.HouseholdDrinksContainersTonnageGlass          = hdc?.Tonnage       ?? 0;
+                    scaledupProducerTonnage.ScaledupHouseholdDrinksContainersTonnageGlass  = hdc?.ScaledTonnage ?? 0;
 
                     scaledupProducerTonnage.TotalReportedTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage +
                         scaledupProducerTonnage.ReportedPublicBinTonnage + scaledupProducerTonnage.HouseholdDrinksContainersTonnageGlass;
