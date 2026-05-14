@@ -85,7 +85,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
             var loader = CreateLoader(enabled: true, httpHandler: ServerErrorHandler());
 
             // Act & Assert
-            await Assert.ThrowsExceptionAsync<HttpRequestException>(
+            await Should.ThrowAsync<HttpRequestException>(
                 async () => await loader.LoadData(CreateRunParams(), "TestRun"));
 
             _mockTimeProvider.Verify(t => t.GetUtcNow(), Times.Once);
@@ -102,7 +102,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
             var loader = CreateLoader(enabled: true, httpHandler: ServerErrorHandler());
 
             // Act & Assert
-            await Assert.ThrowsExceptionAsync<HttpRequestException>(
+            await Should.ThrowAsync<HttpRequestException>(
                 async () => await loader.LoadData(CreateRunParams(), "TestRun"));
 
             VerifyLogContains(LogLevel.Information, "Starting", Times.Once());
@@ -126,7 +126,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
             };
 
             // Act & Assert
-            await Assert.ThrowsExceptionAsync<HttpRequestException>(
+            await Should.ThrowAsync<HttpRequestException>(
                 async () => await loader.LoadData(runParams, "MyTestRun"));
 
             VerifyLogContains(LogLevel.Information, "Id=42", Times.Once());
@@ -145,7 +145,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
             var loader = CreateLoader(enabled: true, httpHandler: ServerErrorHandler());
 
             // Act & Assert
-            await Assert.ThrowsExceptionAsync<HttpRequestException>(
+            await Should.ThrowAsync<HttpRequestException>(
                 async () => await loader.LoadData(CreateRunParams(), "TestRun"));
         }
 
@@ -165,7 +165,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
             var loader = CreateLoader(enabled: true, httpHandler: handler);
 
             // Act & Assert
-            await Assert.ThrowsExceptionAsync<HttpRequestException>(
+            await Should.ThrowAsync<HttpRequestException>(
                 async () => await loader.LoadData(CreateRunParams(), "TestRun"));
         }
 
@@ -185,7 +185,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
             var loader = CreateLoader(enabled: true, httpHandler: handler);
 
             // Act & Assert
-            await Assert.ThrowsExceptionAsync<HttpRequestException>(
+            await Should.ThrowAsync<HttpRequestException>(
                 async () => await loader.LoadData(CreateRunParams(), "TestRun"));
         }
 
@@ -205,7 +205,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
             await cts.CancelAsync();
 
             // Act & Assert
-            await Assert.ThrowsExceptionAsync<TaskCanceledException>(
+            await Should.ThrowAsync<TaskCanceledException>(
                 async () => await loader.LoadData(CreateRunParams(), "TestRun", cts.Token));
         }
 
@@ -229,7 +229,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
             var loader = CreateLoader(enabled: true, httpHandler: new UrlDispatchHandler(_ => OkNdJson(string.Empty)));
 
             // Act & Assert
-            await Assert.ThrowsExceptionAsync<InvalidOperationException>(
+            await Should.ThrowAsync<InvalidOperationException>(
                 async () => await loader.LoadData(CreateRunParams(), "TestRun"));
         }
 

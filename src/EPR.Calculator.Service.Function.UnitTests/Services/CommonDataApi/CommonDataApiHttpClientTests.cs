@@ -73,7 +73,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.CommonDataApi
             var client = CreateClient(handler);
 
             // Act & Assert
-            await Assert.ThrowsExceptionAsync<HttpRequestException>(
+            await Should.ThrowAsync<HttpRequestException>(
                 async () => await CollectAsync(client.StreamPoms(new RelativeYear(2024))));
         }
 
@@ -88,7 +88,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.CommonDataApi
             var client = CreateClient(handler);
 
             // Act & Assert
-            await Assert.ThrowsExceptionAsync<HttpRequestException>(
+            await Should.ThrowAsync<HttpRequestException>(
                 async () => await CollectAsync(client.StreamOrganisations(new RelativeYear(2024))));
         }
 
@@ -168,7 +168,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.CommonDataApi
             var client = CreateClient(handler);
 
             // Act & Assert
-            Assert.ThrowsException<ArgumentNullException>(() => client.StreamPoms(null!));
+            Should.Throw<ArgumentNullException>(() => client.StreamPoms(null!));
         }
 
         /// <summary>
@@ -182,7 +182,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.CommonDataApi
             var client = CreateClient(handler);
 
             // Act & Assert
-            Assert.ThrowsException<ArgumentNullException>(() => client.StreamOrganisations(null!));
+            Should.Throw<ArgumentNullException>(() => client.StreamOrganisations(null!));
         }
 
         /// <summary>

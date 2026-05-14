@@ -1,4 +1,4 @@
-﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Services;
@@ -68,7 +68,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var runId = 10;
 
             // Act
-            var exceptionResult = await Assert.ThrowsExceptionAsync<KeyNotFoundException>(() => runNameService.GetRunNameAsync(runId));
+            var exceptionResult = await Should.ThrowAsync<KeyNotFoundException>(() => runNameService.GetRunNameAsync(runId));
 
             // Assert
             Assert.AreEqual("Calculator run with id 10 not found", exceptionResult.Message);
@@ -87,7 +87,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             await dbContext.SaveChangesAsync();
 
             // Act
-            var exceptionResult = await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => runNameService.GetRunNameAsync(runId));
+            var exceptionResult = await Should.ThrowAsync<ArgumentNullException>(() => runNameService.GetRunNameAsync(runId));
 
             // Assert
             Assert.AreEqual("Value cannot be null. (Parameter 'Run name not found for the run id 2')", exceptionResult.Message);

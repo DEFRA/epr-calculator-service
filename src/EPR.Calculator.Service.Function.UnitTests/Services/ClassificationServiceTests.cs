@@ -1,4 +1,4 @@
-﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Enums;
@@ -63,7 +63,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var runId = 10;
 
             // Act
-            var exceptionResult = await Assert.ThrowsExceptionAsync<KeyNotFoundException>(() => classificationService.UpdateRunClassification(runId, RunClassification.ERROR));
+            var exceptionResult = await Should.ThrowAsync<KeyNotFoundException>(() => classificationService.UpdateRunClassification(runId, RunClassification.ERROR));
 
             // Assert
             Assert.AreEqual("Calculator run id 10 not found", exceptionResult.Message);

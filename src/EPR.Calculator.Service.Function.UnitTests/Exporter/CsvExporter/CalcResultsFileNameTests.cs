@@ -69,7 +69,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         /// Check that an exception is thrown when trying to construct the file name,
         /// but a blank run name is used.
         /// </summary>
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(null)]
         [DataRow("")]
         [DataRow("   ")]

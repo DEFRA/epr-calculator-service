@@ -74,7 +74,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             mockModulationBuilder = new Mock<ICalcResultModulationBuilder>();
             mockReportedProducerService = new Mock<IReportedProducerService>();
 
-            telemetryClient = new TelemetryClient(new TelemetryConfiguration());
+            telemetryClient = new TelemetryClient(new TelemetryConfiguration{ ConnectionString = "InstrumentationKey=00000000-0000-0000-0000-000000000000" });
 
             calcResultBuilder = new CalcResultBuilder(
                 mockParameterService.Object,

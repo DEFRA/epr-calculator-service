@@ -15,7 +15,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Telemetry
         public TelemetryClientWrapperTests()
         {
             mockTelemetryClient = new Mock<ITelemetryClientWrapper>();
-            telemetryClient = new TelemetryClient(new TelemetryConfiguration());
+            telemetryClient = new TelemetryClient(new TelemetryConfiguration{ ConnectionString = "InstrumentationKey=00000000-0000-0000-0000-000000000000" });
             telemetryClientWrapper = new TelemetryClientWrapper(telemetryClient);
         }
 
