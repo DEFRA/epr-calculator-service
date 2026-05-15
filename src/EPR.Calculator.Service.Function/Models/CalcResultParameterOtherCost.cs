@@ -5,7 +5,14 @@
         public required string Name { get; set; }
         public IEnumerable<CalcResultParameterOtherCostDetail> SaOperatingCost { get; set; } = new List<CalcResultParameterOtherCostDetail>();
         public IEnumerable<CalcResultParameterOtherCostDetail> Details { get; set; } = new List<CalcResultParameterOtherCostDetail>();
-        public CalcResultParameterOtherCostDetail SchemeSetupCost { get; set; } = new CalcResultParameterOtherCostDetail();
+        public CalcResultParameterOtherCostDetail SchemeSetupCost { get; set; } = new CalcResultParameterOtherCostDetail
+        {
+            England = 0m,
+            Wales = 0m,
+            Scotland = 0m,
+            NorthernIreland = 0m,
+            Total = 0m
+        };
         public KeyValuePair<string, string> BadDebtProvision { get; set; }
         public IEnumerable<CalcResultMateriality> Materiality { get; set; } = new List<CalcResultMateriality>();
         public decimal BadDebtValue { get; set; }

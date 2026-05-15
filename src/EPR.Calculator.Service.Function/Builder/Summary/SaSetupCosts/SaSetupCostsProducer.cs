@@ -29,7 +29,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.SaSetupCosts
 
         public static void GetProducerSetUpCosts(CalcResult calcResult, CalcResultSummary summary)
         {
-            summary.SaSetupCostsTitleSection5 = calcResult.CalcResultParameterOtherCost.SchemeSetupCost.TotalValue;
+            summary.SaSetupCostsTitleSection5 = calcResult.CalcResultParameterOtherCost.SchemeSetupCost.Total;
             summary.SaSetupCostsBadDebtProvisionTitleSection5 = (summary.SaSetupCostsTitleSection5 * calcResult.CalcResultParameterOtherCost.BadDebtValue) / 100;
             summary.SaSetupCostsWithBadDebtProvisionTitleSection5 = summary.SaSetupCostsBadDebtProvisionTitleSection5 + summary.SaSetupCostsTitleSection5;
 

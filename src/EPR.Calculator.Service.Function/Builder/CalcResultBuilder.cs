@@ -104,6 +104,7 @@ namespace EPR.Calculator.Service.Function.Builder
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
                     CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetail>(),
+                    CountryApportionment = new CountryApportionmentData()
                 },
                 CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
                 {

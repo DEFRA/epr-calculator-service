@@ -20,7 +20,7 @@ namespace EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment
             int orderId = 1;
 
             // Add the header row
-            apportionmentDetails.Add(CreateHeaderRow(orderId));
+            //apportionmentDetails.Add(CreateHeaderRow(orderId));
 
             // Add disposal cost row
             var totalLACost = GetTotalCost(calcResult, totalLabel);
@@ -41,21 +41,7 @@ namespace EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment
 #pragma warning restore
             apportionmentDetails.Add(apportionmentData);
 
-            return new CalcResultOnePlusFourApportionment { Name = "1 + 4 Apportionment %s", CalcResultOnePlusFourApportionmentDetails = apportionmentDetails };
-        }
-
-        private static CalcResultOnePlusFourApportionmentDetail CreateHeaderRow(int orderId)
-        {
-            return new CalcResultOnePlusFourApportionmentDetail
-            {
-                Name = OnePlus4ApportionmentRowHeaders.Name,
-                EnglandDisposalTotal = OnePlus4ApportionmentRowHeaders.EnglandDisposalCost,
-                WalesDisposalTotal = OnePlus4ApportionmentRowHeaders.WalesDisposalCost,
-                ScotlandDisposalTotal = OnePlus4ApportionmentRowHeaders.ScotlandDisposalCost,
-                NorthernIrelandDisposalTotal = OnePlus4ApportionmentRowHeaders.NorthernIrelandDisposalCost,
-                Total = OnePlus4ApportionmentRowHeaders.Total,
-                OrderId = orderId,
-            };
+            return new CalcResultOnePlusFourApportionment { CalcResultOnePlusFourApportionmentDetails = apportionmentDetails };
         }
 
         private static CalcResultLapcapDataDetail GetTotalCost(CalcResult calcResult, string name)
@@ -69,11 +55,7 @@ namespace EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment
             return new CalcResultOnePlusFourApportionmentDetail
             {
                 Name = name,
-                Total = totalLACost.TotalDisposalCost,
-                EnglandDisposalTotal = totalLACost.EnglandDisposalCost,
-                WalesDisposalTotal = totalLACost.WalesDisposalCost,
-                ScotlandDisposalTotal = totalLACost.ScotlandDisposalCost,
-                NorthernIrelandDisposalTotal = totalLACost.NorthernIrelandDisposalCost,
+                Total = totalLACost.TotalCost,
                 EnglandTotal = totalLACost.EnglandCost,
                 WalesTotal = totalLACost.WalesCost,
                 ScotlandTotal = totalLACost.ScotlandCost,
@@ -88,16 +70,11 @@ namespace EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment
             {
                 Name = OnePlus4ApportionmentColumnHeaders.LADataPrepCharge,
                 Total = dataPrepCharge.Total,
-                EnglandDisposalTotal = dataPrepCharge.England,
-                WalesDisposalTotal = dataPrepCharge.Wales,
-                ScotlandDisposalTotal = dataPrepCharge.Scotland,
-                NorthernIrelandDisposalTotal = dataPrepCharge.NorthernIreland,
-                AllTotal = dataPrepCharge.TotalValue,
-                EnglandTotal = dataPrepCharge.EnglandValue,
-                WalesTotal = dataPrepCharge.WalesValue,
-                ScotlandTotal = dataPrepCharge.ScotlandValue,
-                NorthernIrelandTotal = dataPrepCharge.NorthernIrelandValue,
-                OrderId = orderId,
+                EnglandTotal = dataPrepCharge.England,
+                WalesTotal = dataPrepCharge.Wales,
+                ScotlandTotal = dataPrepCharge.Scotland,
+                NorthernIrelandTotal = dataPrepCharge.NorthernIreland,
+                OrderId = orderId
             };
         }
 
@@ -110,49 +87,38 @@ namespace EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment
             return new CalcResultOnePlusFourApportionmentDetail
             {
                 Name = OnePlus4ApportionmentColumnHeaders.TotalOnePlusFour,
-                EnglandTotal = totalLACost.EnglandCost + dataPrepCharge.EnglandValue,
-                WalesTotal = totalLACost.WalesCost + dataPrepCharge.WalesValue,
-                ScotlandTotal = totalLACost.ScotlandCost + dataPrepCharge.ScotlandValue,
-                NorthernIrelandTotal = totalLACost.NorthernIrelandCost + dataPrepCharge.NorthernIrelandValue,
-                AllTotal = totalLACost.TotalCost + dataPrepCharge.TotalValue,
-                Total = (totalLACost.TotalCost + dataPrepCharge.TotalValue).ToString("C", culture),
-                EnglandDisposalTotal = (totalLACost.EnglandCost + dataPrepCharge.EnglandValue).ToString("C", culture),
-                WalesDisposalTotal = (totalLACost.WalesCost + dataPrepCharge.WalesValue).ToString("C", culture),
-                ScotlandDisposalTotal = (totalLACost.ScotlandCost + dataPrepCharge.ScotlandValue).ToString("C", culture),
-                NorthernIrelandDisposalTotal = (totalLACost.NorthernIrelandCost + dataPrepCharge.NorthernIrelandValue).ToString("C", culture),
-                OrderId = orderId,
+                EnglandTotal = totalLACost.EnglandCost + dataPrepCharge.England,
+                WalesTotal = totalLACost.WalesCost + dataPrepCharge.Wales,
+                ScotlandTotal = totalLACost.ScotlandCost + dataPrepCharge.Scotland,
+                NorthernIrelandTotal = totalLACost.NorthernIrelandCost + dataPrepCharge.NorthernIreland,
+                Total = totalLACost.TotalCost + dataPrepCharge.Total,
+                //Total = (totalLACost.TotalCost + dataPrepCharge.TotalValue).ToString("C", culture),
+                //EnglandDisposalTotal = (totalLACost.EnglandCost + dataPrepCharge.England).ToString("C", culture),
+                //WalesDisposalTotal = (totalLACost.WalesCost + dataPrepCharge.Wales).ToString("C", culture),
+                //ScotlandDisposalTotal = (totalLACost.ScotlandCost + dataPrepCharge.Scotland).ToString("C", culture),
+                //NorthernIrelandDisposalTotal = (totalLACost.NorthernIrelandCost + dataPrepCharge.NorthernIreland).ToString("C", culture),
+                OrderId = orderId
             };
         }
 
         private static CalcResultOnePlusFourApportionmentDetail CalculateApportionment(CalcResultOnePlusFourApportionmentDetail apportionmentData, int orderId)
         {
             var englandTotal =
-                CalcResultLapcapDataBuilder.CalculateApportionment(apportionmentData.EnglandTotal,
-                    apportionmentData.AllTotal);
+                CalcResultLapcapDataBuilder.CalculateApportionment(apportionmentData.EnglandTotal, apportionmentData.Total);
             var walesTotal =
-                CalcResultLapcapDataBuilder.CalculateApportionment(apportionmentData.WalesTotal,
-                    apportionmentData.AllTotal);
-
+                CalcResultLapcapDataBuilder.CalculateApportionment(apportionmentData.WalesTotal, apportionmentData.Total);
             var scotlandTotal =
-                CalcResultLapcapDataBuilder.CalculateApportionment(apportionmentData.ScotlandTotal,
-                    apportionmentData.AllTotal);
-            var niTotal = CalcResultLapcapDataBuilder.CalculateApportionment(apportionmentData.NorthernIrelandTotal,
-                apportionmentData.AllTotal);
-            var total = CalcResultLapcapDataBuilder.CalculateApportionment(apportionmentData.AllTotal,
-                apportionmentData.AllTotal);
+                CalcResultLapcapDataBuilder.CalculateApportionment(apportionmentData.ScotlandTotal, apportionmentData.Total);
+            var niTotal = CalcResultLapcapDataBuilder.CalculateApportionment(apportionmentData.NorthernIrelandTotal, apportionmentData.Total);
+            var total = CalcResultLapcapDataBuilder.CalculateApportionment(apportionmentData.Total, apportionmentData.Total);
             return new CalcResultOnePlusFourApportionmentDetail
             {
                 Name = OnePlus4ApportionmentColumnHeaders.OnePluseFourApportionment,
-                Total = $"{total.ToString("N", new NumberFormatInfo { NumberDecimalDigits = 8 })}%",
-                EnglandDisposalTotal = $"{englandTotal.ToString("N", new NumberFormatInfo { NumberDecimalDigits = 8 })}%",
-                WalesDisposalTotal = $"{walesTotal.ToString("N", new NumberFormatInfo { NumberDecimalDigits = 8 })}%",
-                ScotlandDisposalTotal = $"{scotlandTotal.ToString("N", new NumberFormatInfo { NumberDecimalDigits = 8 })}%",
-                NorthernIrelandDisposalTotal = $"{niTotal.ToString("N", new NumberFormatInfo { NumberDecimalDigits = 8 })}%",
-                AllTotal = total,
                 ScotlandTotal = scotlandTotal,
                 EnglandTotal = englandTotal,
                 NorthernIrelandTotal = niTotal,
                 WalesTotal = walesTotal,
+                Total = total,
                 OrderId = orderId,
             };
         }

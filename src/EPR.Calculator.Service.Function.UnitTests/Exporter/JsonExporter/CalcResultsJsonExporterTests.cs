@@ -5,6 +5,7 @@ using EPR.Calculator.Service.Function.Builder.Modulation;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.UnitTests.Builder;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
 {
@@ -52,28 +53,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                 },
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
-                    Name = "LAPCAP Data",
                     CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetail>
                     {
                         new()
                         {
                             Name = "Total",
-                            EnglandDisposalCost = "£13,280.45",
-                            WalesDisposalCost = "£210.28",
-                            ScotlandDisposalCost = "£161.07",
-                            NorthernIrelandDisposalCost = "£91.00",
-                            TotalDisposalCost = "£13,742.80",
                             EnglandCost = 13280.45m,
                             WalesCost = 210.28m,
                             ScotlandCost = 91.00m,
                             NorthernIrelandCost = 91.00m,
                             TotalCost = 13742.80m,
-                        },
-                        new()
-                        {
-                            Name = CalcResultLapcapDataBuilder.CountryApportionment,
                         }
                     },
+                    CountryApportionment = new CountryApportionmentData()
                 },
                 CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
                 {
@@ -118,16 +110,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                         {
                             Name = "4 LA Data Prep Charge",
                             OrderId = 1,
-                            England = "£40.00",
-                            EnglandValue = 40,
-                            Wales = "£30.00",
-                            WalesValue = 30,
-                            Scotland = "£20.00",
-                            ScotlandValue = 20,
-                            NorthernIreland = "£10.00",
-                            NorthernIrelandValue = 10,
-                            Total = "£100.00",
-                            TotalValue = 100,
+                            England = 40,
+                            Wales = 30,
+                            Scotland = 20,
+                            NorthernIreland = 10,
+                            Total = 100,
                         },
 
                     },
@@ -149,32 +136,22 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                         {
                             Name = string.Empty,
                             OrderId = 1,
-                            England = "£40.00",
-                            EnglandValue = 40,
-                            Wales = "£30.00",
-                            WalesValue = 30,
-                            Scotland = "£20.00",
-                            ScotlandValue = 20,
-                            NorthernIreland = "£10.00",
-                            NorthernIrelandValue = 10,
-                            Total = "£100.00",
-                            TotalValue = 100,
+                            England = 40,
+                            Wales = 30,
+                            Scotland = 20,
+                            NorthernIreland = 10,
+                            Total = 100
                         },
                     },
                     SchemeSetupCost = new CalcResultParameterOtherCostDetail
                     {
                         Name = "5 Scheme set up cost Yearly Cost",
                         OrderId = 1,
-                        England = "£40.00",
-                        EnglandValue = 40,
-                        Wales = "£30.00",
-                        WalesValue = 30,
-                        Scotland = "£20.00",
-                        ScotlandValue = 20,
-                        NorthernIreland = "£10.00",
-                        NorthernIrelandValue = 10,
-                        Total = "£100.00",
-                        TotalValue = 100,
+                        England = 40,
+                        Wales = 30,
+                        Scotland = 20,
+                        NorthernIreland = 10,
+                        Total = 100
                     },
                 },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment
@@ -183,32 +160,23 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                     {
                         new CalcResultOnePlusFourApportionmentDetail
                         {
-                            EnglandDisposalTotal = "80",
-                            NorthernIrelandDisposalTotal = "70",
-                            ScotlandDisposalTotal = "30",
-                            WalesDisposalTotal = "20",
-                            AllTotal = 0.1M,
+                            Name = "1 + 4 Apportionment %s",
                             EnglandTotal = 14.53M,
                             NorthernIrelandTotal = 0.15M,
                             ScotlandTotal = 1.15M,
                             WalesTotal = 0.20M,
-                            Name = "1 + 4 Apportionment %s",
+                            Total = 0.1M
                         },
                         new CalcResultOnePlusFourApportionmentDetail
                         {
-                            EnglandDisposalTotal = "80",
-                            NorthernIrelandDisposalTotal = "70",
-                            ScotlandDisposalTotal = "30",
-                            WalesDisposalTotal = "20",
-                            AllTotal = 0.1M,
+                            Name = "Test",
                             EnglandTotal = 0.10M,
                             NorthernIrelandTotal = 0.15M,
                             ScotlandTotal = 0.15M,
                             WalesTotal = 0.20M,
-                            Name = "Test",
+                            Total = 0.1M
                         },
-                    },
-                    Name = "some test",
+                    }
                 },
                 CalcResultCommsCostReportDetail = new CalcResultCommsCost
                 {
@@ -216,28 +184,40 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                     {
                         new CalcResultCommsCostCommsCostByMaterial
                         {
-                            CommsCostByMaterialPricePerTonne = "0.42",
                             Name = "Aluminium",
+                            CommsCostByMaterialPricePerTonne = 0.42m,
+                            ProducerReportedHouseholdPackagingWasteTonnage = 0,
+                            LateReportingTonnage  = 0,
+                            ReportedPublicBinTonnage  = 0,
+                            ProducerReportedTotalTonnage  = 0
                         },
                         new CalcResultCommsCostCommsCostByMaterial
                         {
-                            CommsCostByMaterialPricePerTonne = "0.3",
                             Name = "Glass",
+                            CommsCostByMaterialPricePerTonne = 0.3m,
+                            ProducerReportedHouseholdPackagingWasteTonnage = 0,
+                            LateReportingTonnage  = 0,
+                            ReportedPublicBinTonnage  = 0,
+                            ProducerReportedTotalTonnage  = 0
                         },
                         new CalcResultCommsCostCommsCostByMaterial
                         {
-                            CommsCostByMaterialPricePerTonne = "0.51",
                             Name = "Total",
-                        },
+                            CommsCostByMaterialPricePerTonne = 0.51m,
+                            ProducerReportedHouseholdPackagingWasteTonnage = 0,
+                            LateReportingTonnage  = 0,
+                            ReportedPublicBinTonnage  = 0,
+                            ProducerReportedTotalTonnage  = 0
+                        }
                     },
                     CalcResultCommsCostOnePlusFourApportionment = new List<CalcResultCommsCostOnePlusFourApportionment>
                     {
-                        new CalcResultCommsCostCommsCostByMaterial { Name = CalcResultCommsCostBuilder.TwoBCommsCostUkWide, England = "10", Wales = "20", Scotland = "30", NorthernIreland = "40", Total = "100", ProducerReportedHouseholdPackagingWasteTonnage = "50", ReportedPublicBinTonnage = "60", HouseholdDrinksContainers = "70", LateReportingTonnage = "80", ProducerReportedHouseholdPlusLateReportingTonnage = "90", CommsCostByMaterialPricePerTonne = "100" },
-                        new CalcResultCommsCostOnePlusFourApportionment { Name = CalcResultCommsCostBuilder.TwoCCommsCostByCountry, England = "10", Wales = "20", Scotland = "30", NorthernIreland = "40", Total = "100" }
+                        new CalcResultCommsCostCommsCostByMaterial { Name = CalcResultCommsCostBuilder.TwoBCommsCostUkWide, England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40, Total = 100, ProducerReportedHouseholdPackagingWasteTonnage = 50, ReportedPublicBinTonnage = 60, HouseholdDrinksContainers = 70, LateReportingTonnage = 80, ProducerReportedTotalTonnage = 90, CommsCostByMaterialPricePerTonne = 100 },
+                        new CalcResultCommsCostOnePlusFourApportionment { Name = CalcResultCommsCostBuilder.TwoCCommsCostByCountry, England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40, Total = 100 }
                     },
                     CommsCostByCountry = new List<CalcResultCommsCostOnePlusFourApportionment>
                     {
-                        new CalcResultCommsCostOnePlusFourApportionment { Name = CalcResultCommsCostBuilder.TwoCCommsCostByCountry, England = "10", Wales = "20", Scotland = "30", NorthernIreland = "40", Total = "100" }
+                        new CalcResultCommsCostOnePlusFourApportionment { Name = CalcResultCommsCostBuilder.TwoCCommsCostByCountry, England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40, Total = 100 }
                     }
                 },
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData
@@ -246,39 +226,39 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                     {
                         new CalcResultLaDisposalCostDataDetail
                         {
-                            DisposalCostPricePerTonne = "20",
-                            England = "EnglandTest",
-                            Wales = "WalesTest",
                             Name = "ScotlandTest",
-                            Scotland = "ScotlandTest",
-                            NorthernIreland = "NorthernIrelandTest",
-                            Total = "null",
-                            ProducerReportedHouseholdPackagingWasteTonnage = "null",
-                            ReportedPublicBinTonnage = string.Empty,
+                            DisposalCostPricePerTonne = 20,
+                            England = 0m,
+                            Wales = 0m,
+                            Scotland = 0m,
+                            NorthernIreland = 0m,
+                            ProducerReportedHouseholdPackagingWasteTonnage = 0m,
+                            ReportedPublicBinTonnage = 0m,
+                            Total = 0m
                         },
                         new CalcResultLaDisposalCostDataDetail
                         {
-                            DisposalCostPricePerTonne = "20",
-                            England = "EnglandTest",
-                            Wales = "WalesTest",
                             Name = "Material1",
-                            Scotland = "ScotlandTest",
-                            NorthernIreland = "NorthernIrelandTest",
-                            Total = "null",
-                            ProducerReportedHouseholdPackagingWasteTonnage = "null",
-                            ReportedPublicBinTonnage =string.Empty,
+                            DisposalCostPricePerTonne = 20,
+                            England = 0m,
+                            Wales = 0,
+                            Scotland = 0,
+                            NorthernIreland = 0,
+                            ProducerReportedHouseholdPackagingWasteTonnage = 0,
+                            ReportedPublicBinTonnage = 0,
+                            Total = 0
                         },
                         new CalcResultLaDisposalCostDataDetail
                         {
-                            DisposalCostPricePerTonne = "10",
-                            England = "EnglandTest",
-                            Wales = "WalesTest",
                             Name = "Material2",
-                            Scotland = "ScotlandTest",
-                            NorthernIreland = "NorthernIrelandTest",
-                            Total = "100",
-                            ProducerReportedHouseholdPackagingWasteTonnage = "null",
-                            ReportedPublicBinTonnage = string.Empty,
+                            DisposalCostPricePerTonne = 10,
+                            England = 0,
+                            Wales = 0,
+                            Scotland = 0,
+                            NorthernIreland = 0,
+                            ProducerReportedHouseholdPackagingWasteTonnage = 0,
+                            ReportedPublicBinTonnage = 0,
+                            Total = 100
                         },
                     },
                     Name = "LA Disposal Cost Data"

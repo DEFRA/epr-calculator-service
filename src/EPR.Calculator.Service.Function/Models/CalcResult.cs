@@ -10,8 +10,8 @@ namespace EPR.Calculator.Service.Function.Models
 
         public required CalcResultLapcapData CalcResultLapcapData { get; set; } = new()
         {
-            Name = string.Empty,
-            CalcResultLapcapDataDetails = []
+            CalcResultLapcapDataDetails = [],
+            CountryApportionment = new CountryApportionmentData()
         };
 
         public CalcResultCommsCost CalcResultCommsCostReportDetail { get; set; } = new();
@@ -39,19 +39,22 @@ namespace EPR.Calculator.Service.Function.Models
                 Details = new List<CalcResultParameterOtherCostDetail>(),
                 Materiality = new List<CalcResultMateriality>(),
                 SaOperatingCost = new List<CalcResultParameterOtherCostDetail>(),
-                SchemeSetupCost = new CalcResultParameterOtherCostDetail()
+                SchemeSetupCost = new CalcResultParameterOtherCostDetail{
+                    England = 0m,
+                    Wales = 0m,
+                    Scotland = 0m,
+                    NorthernIreland = 0m,
+                    Total = 0m
+                }
             };
 
         public CalcResultOnePlusFourApportionment CalcResultOnePlusFourApportionment { get; set; }
-            = new()
-            {
-                Name = string.Empty
-            };
+            = new();
 
         public CalcResultLaDisposalCostData CalcResultLaDisposalCostData { get; set; }
             = new()
             {
-                Name = string.Empty,
+                Name = string.Empty, // TODO remove
                 CalcResultLaDisposalCostDetails = []
             };
 

@@ -15,8 +15,8 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
             if (onePlusFourApportionment == null)
             {
-                return new CalcResultCommsCostJson {  
-                    OnePlusFourCommsCostApportionmentPercentages = new OnePlusFourCommsCostApportionmentPercentages() 
+                return new CalcResultCommsCostJson {
+                    OnePlusFourCommsCostApportionmentPercentages = new OnePlusFourCommsCostApportionmentPercentages()
                 };
             }
 
@@ -25,7 +25,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                 OnePlusFourCommsCostApportionmentPercentages = OnePlusFourCommsCostApportionmentPercentages.From(onePlusFourApportionment)
             };
         }
-    }    
+    }
 
     public class OnePlusFourCommsCostApportionmentPercentages
     {
@@ -46,17 +46,11 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
         public static OnePlusFourCommsCostApportionmentPercentages From(CalcResultCommsCostOnePlusFourApportionment dataRow)
         {
-            string AppendPercent(string input)
+            string AppendPercent(decimal input)
             {
-                if (string.IsNullOrWhiteSpace(input))
-                {
-                    return "0.00%";
-                }
-
-                string trimmedInput = input.Trim();
-                return trimmedInput.EndsWith('%') ? trimmedInput : trimmedInput + "%";
+                // TODO * 100?
+                return $"{input:0.00}%";
             }
-
 
             return new OnePlusFourCommsCostApportionmentPercentages
             {
@@ -69,5 +63,5 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         }
     }
 
-            
+
 }

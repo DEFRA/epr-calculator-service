@@ -1,7 +1,8 @@
 using System.Text.Json.Serialization;
+using System.Globalization;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
-{   
+{
     public class CalcResultCommsCostOnePlusFourApportionmentCountryWide
     {
         [JsonPropertyName("name")]
@@ -29,14 +30,17 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                 return null;
             }
 
+            var culture = CultureInfo.CreateSpecificCulture("en-GB");
+            culture.NumberFormat.CurrencySymbol = "£";
+
             return new CalcResultCommsCostOnePlusFourApportionmentCountryWide
             {
                 Name = record.Name,
-                EnglandCommsCostByCountry = record.England,
-                WalesCommsCostByCountry = record.Wales,
-                ScotlandCommsCostByCountry = record.Scotland,
-                NorthernIrelandCommsCostByCountry = record.NorthernIreland,
-                TotalCommsCostByCountry = record.Total,
+                EnglandCommsCostByCountry = $"{record.England.ToString("C", culture)}",
+                WalesCommsCostByCountry = $"{record.Wales.ToString("C", culture)}",
+                ScotlandCommsCostByCountry = $"{record.Scotland.ToString("C", culture)}",
+                NorthernIrelandCommsCostByCountry = $"{record.NorthernIreland.ToString("C", culture)}",
+                TotalCommsCostByCountry = $"{record.Total.ToString("C", culture)}"
             };
         }
     }

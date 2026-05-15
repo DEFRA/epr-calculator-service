@@ -62,7 +62,8 @@ namespace EPR.Calculator.Service.Function.Builder.ParametersOther
             };
 
             var saDetails = new List<CalcResultParameterOtherCostDetail>();
-            var saOperatinCostHeader = new CalcResultParameterOtherCostDetail
+            // TODO move header to Exporter
+            /*var saOperatinCostHeader = new CalcResultParameterOtherCostDetail
             {
                 England = CommonConstants.England,
                 Wales = CommonConstants.Wales,
@@ -70,7 +71,7 @@ namespace EPR.Calculator.Service.Function.Builder.ParametersOther
                 NorthernIreland = CommonConstants.NorthernIreland,
                 Total = CommonConstants.Total,
             };
-            saDetails.Add(saOperatinCostHeader);
+            saDetails.Add(saOperatinCostHeader);*/
 
             var saOperatingCost = GetPrepCharge(SaOperatingCostHeader, 2, schemeAdminCosts);
             saDetails.Add(saOperatingCost);
@@ -176,10 +177,10 @@ namespace EPR.Calculator.Service.Function.Builder.ParametersOther
                     RunId = resultsRequestDto.RunId,
                     Countries = countries,
                     CostTypeId = costTypeId,
-                    EnglandCost = laDataPrep.EnglandValue,
-                    NorthernIrelandCost = laDataPrep.NorthernIrelandValue,
-                    ScotlandCost = laDataPrep.ScotlandValue,
-                    WalesCost = laDataPrep.WalesValue,
+                    EnglandCost = laDataPrep.England,
+                    NorthernIrelandCost = laDataPrep.NorthernIreland,
+                    ScotlandCost = laDataPrep.Scotland,
+                    WalesCost = laDataPrep.Wales
                 });
             }
 
@@ -188,47 +189,53 @@ namespace EPR.Calculator.Service.Function.Builder.ParametersOther
 
         private static CalcResultParameterOtherCostDetail GetCountryApportionment(CalcResultParameterOtherCostDetail laDataPrep)
         {
-            var total = laDataPrep.EnglandValue + laDataPrep.NorthernIrelandValue + laDataPrep.WalesValue +
-                        laDataPrep.ScotlandValue;
+            var total = laDataPrep.England + laDataPrep.NorthernIreland + laDataPrep.Wales +
+                        laDataPrep.Scotland;
             var otherCostDetail = new CalcResultParameterOtherCostDetail
             {
                 Name = FourCountryApportionmentPercentage,
-                EnglandValue = total != 0 ? ((laDataPrep.EnglandValue / total) * 100) : 0M,
-                NorthernIrelandValue = total != 0 ? (laDataPrep.NorthernIrelandValue / total) * 100 : 0M,
-                ScotlandValue = total != 0 ? (laDataPrep.ScotlandValue / total) * 100 : 0M,
-                WalesValue = total != 0 ? (laDataPrep.WalesValue / total) * 100 : 0M,
-                OrderId = 2,
-                TotalValue = 100M,
+                England = total != 0 ? ((laDataPrep.England / total) * 100) : 0M,
+                NorthernIreland = total != 0 ? (laDataPrep.NorthernIreland / total) * 100 : 0M,
+                Scotland = total != 0 ? (laDataPrep.Scotland / total) * 100 : 0M,
+                Wales = total != 0 ? (laDataPrep.Wales / total) * 100 : 0M,
+                Total = 100M,
+                OrderId = 2
             };
-            otherCostDetail.England = $"{otherCostDetail.EnglandValue:0.00000000}%";
-            otherCostDetail.NorthernIreland = $"{otherCostDetail.NorthernIrelandValue:0.00000000}%";
-            otherCostDetail.Scotland = $"{otherCostDetail.ScotlandValue:0.00000000}%";
-            otherCostDetail.Wales = $"{otherCostDetail.WalesValue:0.00000000}%";
-            otherCostDetail.Total = $"{otherCostDetail.TotalValue:0.00000000}%";
+            //otherCostDetail.England = $"{otherCostDetail.EnglandValue:0.00000000}%";
+            //otherCostDetail.NorthernIreland = $"{otherCostDetail.NorthernIrelandValue:0.00000000}%";
+            //otherCostDetail.Scotland = $"{otherCostDetail.ScotlandValue:0.00000000}%";
+            //otherCostDetail.Wales = $"{otherCostDetail.WalesValue:0.00000000}%";
+            //otherCostDetail.Total = $"{otherCostDetail.TotalValue:0.00000000}%";
 
             return otherCostDetail;
         }
 
         private static CalcResultParameterOtherCostDetail GetPrepCharge(string name, int orderId, IEnumerable<DefaultParamResultsClass> lapPrepCharges)
         {
-            var culture = CultureInfo.CreateSpecificCulture("en-GB");
-            culture.NumberFormat.CurrencySymbol = "£";
-            culture.NumberFormat.CurrencyPositivePattern = 0;
+            //var culture = CultureInfo.CreateSpecificCulture("en-GB");
+            //culture.NumberFormat.CurrencySymbol = "£";
+            //culture.NumberFormat.CurrencyPositivePattern = 0;
+
+            var e  = lapPrepCharges.Single(cost => cost.ParameterCategory == "England").ParameterValue;
+            var ni = lapPrepCharges.Single(cost => cost.ParameterCategory == "Northern Ireland").ParameterValue;
+            var s  = lapPrepCharges.Single(cost => cost.ParameterCategory == "Scotland").ParameterValue;
+            var w  = lapPrepCharges.Single(cost => cost.ParameterCategory == "Wales").ParameterValue;
             var otherCostDetail = new CalcResultParameterOtherCostDetail
             {
                 Name = name,
-                EnglandValue = lapPrepCharges.Single(cost => cost.ParameterCategory == "England").ParameterValue,
-                NorthernIrelandValue = lapPrepCharges.Single(cost => cost.ParameterCategory == "Northern Ireland").ParameterValue,
-                ScotlandValue = lapPrepCharges.Single(cost => cost.ParameterCategory == "Scotland").ParameterValue,
-                WalesValue = lapPrepCharges.Single(cost => cost.ParameterCategory == "Wales").ParameterValue,
-                OrderId = orderId,
+                England = e,
+                NorthernIreland = ni,
+                Scotland = s,
+                Wales = w,
+                Total = e + s + w + ni, // TODO a derived field?
+                OrderId = orderId
             };
-            otherCostDetail.TotalValue = otherCostDetail.EnglandValue + otherCostDetail.ScotlandValue + otherCostDetail.WalesValue + otherCostDetail.NorthernIrelandValue;
-            otherCostDetail.England = otherCostDetail.EnglandValue.ToString("C", culture);
-            otherCostDetail.Wales = otherCostDetail.WalesValue.ToString("C", culture);
-            otherCostDetail.NorthernIreland = otherCostDetail.NorthernIrelandValue.ToString("C", culture);
-            otherCostDetail.Scotland = otherCostDetail.ScotlandValue.ToString("C", culture);
-            otherCostDetail.Total = otherCostDetail.TotalValue.ToString("C", culture);
+            otherCostDetail.Total = otherCostDetail.England + otherCostDetail.Scotland + otherCostDetail.Wales + otherCostDetail.NorthernIreland;
+            //otherCostDetail.England = otherCostDetail.EnglandValue.ToString("C", culture);
+            //otherCostDetail.Wales = otherCostDetail.WalesValue.ToString("C", culture);
+            //otherCostDetail.NorthernIreland = otherCostDetail.NorthernIrelandValue.ToString("C", culture);
+            //otherCostDetail.Scotland = otherCostDetail.ScotlandValue.ToString("C", culture);
+            //otherCostDetail.Total = otherCostDetail.TotalValue.ToString("C", culture);
 
             return otherCostDetail;
         }

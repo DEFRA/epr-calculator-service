@@ -64,8 +64,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 },
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
-                    Name = string.Empty,
                     CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetail>(),
+                    CountryApportionment = new CountryApportionmentData()
                 },
                 CalcResultParameterOtherCost = new()
                 {
@@ -74,7 +74,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Details = new List<CalcResultParameterOtherCostDetail>(),
                     Materiality = new List<CalcResultMateriality>(),
                     SaOperatingCost = new List<CalcResultParameterOtherCostDetail>(),
-                    SchemeSetupCost = new CalcResultParameterOtherCostDetail(),
+                    SchemeSetupCost = new CalcResultParameterOtherCostDetail
+                    {
+                        England = 0,
+                        Wales = 0,
+                        Scotland = 0,
+                        NorthernIreland = 0,
+                        Total = 0
+                    }
                 },
                 CalcResultLateReportingTonnageData = new()
                 {

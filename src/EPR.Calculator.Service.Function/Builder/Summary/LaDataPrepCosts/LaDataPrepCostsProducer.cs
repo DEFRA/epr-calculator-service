@@ -58,12 +58,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts
             var dataPrepCharge = calcResult.CalcResultParameterOtherCost.Details.FirstOrDefault(
                 cost => cost.Name == OnePlus4ApportionmentColumnHeaders.LADataPrepCharge);
 
-            if (dataPrepCharge != null)
-            {
-                return dataPrepCharge.TotalValue;
-            }
-
-            return 0;
+            return dataPrepCharge?.Total ?? 0m;
         }
 
         private static decimal GetLaDataPrepCostsBadDebtProvision(CalcResult calcResult)

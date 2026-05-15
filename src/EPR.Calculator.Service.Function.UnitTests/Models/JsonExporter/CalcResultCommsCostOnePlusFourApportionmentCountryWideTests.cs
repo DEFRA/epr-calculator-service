@@ -20,7 +20,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         }
 
         [TestMethod]
-        public void CanCallFrom_WithValidData()
+        public void CalcResultCommsCostOnePlusFourApportionmentCountryWideTests_CanCallFrom_WithValidData()
         {
             // Arrange
             var countryData = Fixture.Create<CalcResultCommsCostOnePlusFourApportionment>();
