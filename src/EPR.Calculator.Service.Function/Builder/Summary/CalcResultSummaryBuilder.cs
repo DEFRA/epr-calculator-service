@@ -1,4 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Enums;
@@ -28,7 +28,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
     public interface ICalcResultSummaryBuilder
     {
         Task<CalcResultSummary> ConstructAsync(
-            List<MaterialDetail> materialDetails,
+            IImmutableList<MaterialDetail> materialDetails,
             int runId,
             RelativeYear relativeYear,
             bool isBillingFile,
@@ -57,7 +57,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         private ImmutableDictionary<int, Organisation> parentOrganisationsById = ImmutableDictionary.Create<int, Organisation>();
 
         public async Task<CalcResultSummary> ConstructAsync(
-            List<MaterialDetail> materialDetails,
+            IImmutableList<MaterialDetail> materialDetails,
             int runId,
             RelativeYear relativeYear,
             bool isBillingFile,

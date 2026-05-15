@@ -29,7 +29,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             new Material { Id = 8, Code = "OT", Name = "Other materials", Description = "Other materials" }
         };
 
-        private (List<MaterialDetail>, List<L1Producer>) PrepareData()
+        private (IImmutableList<MaterialDetail>, List<L1Producer>) PrepareData()
         {
             var calcRunOrganisationDataMaster = new CalculatorRunOrganisationDataMaster
             {
@@ -150,7 +150,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             return (MaterialMapper.Map(materials), l1Producers);
         }
 
-        private (List<MaterialDetail>, List<L1Producer>) PrepareDataWithModulation()
+        private (IImmutableList<MaterialDetail>, List<L1Producer>) PrepareDataWithModulation()
         {
             var calcRunOrganisationDataMaster = new CalculatorRunOrganisationDataMaster
             {

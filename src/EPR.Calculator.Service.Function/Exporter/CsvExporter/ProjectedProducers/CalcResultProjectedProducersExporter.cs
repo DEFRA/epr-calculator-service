@@ -5,12 +5,15 @@ using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers
 {
+    public interface ICalcResultProjectedProducersExporter
+    {
+        public void Export(CalcResultProjectedProducers calcResultProjectedProducers, IImmutableList<MaterialDetail> materials, StringBuilder stringBuilder);
+    }
+
     public class CalcResultProjectedProducersExporter : ICalcResultProjectedProducersExporter
     {
-        public void Export(CalcResultProjectedProducers calcResultProjectedProducers, StringBuilder stringBuilder)
+        public void Export(CalcResultProjectedProducers calcResultProjectedProducers, IImmutableList<MaterialDetail> materials, StringBuilder stringBuilder)
         {
-            var materials = calcResultProjectedProducers.Materials!;
-
             var allH2 = calcResultProjectedProducers.H2ProjectedProducers ?? ImmutableList<CalcResultH2ProjectedProducer>.Empty;
             var allH1 = calcResultProjectedProducers.H1ProjectedProducers ?? ImmutableList<CalcResultH1ProjectedProducer>.Empty;
             var completeH1AndH2RamProducers = allH2

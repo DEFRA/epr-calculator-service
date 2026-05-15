@@ -28,7 +28,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
     public class CalcResultBuilderTests
     {
         private readonly Mock<IParameterService> mockParameterService;
-        private readonly Mock<IMaterialService> mockMaterialService;
         private readonly Mock<ICalcResultDetailBuilder> mockCalcResultDetailBuilder;
         private readonly Mock<ICalcResultLapcapDataBuilder> mockLapcapBuilder;
         private readonly Mock<ICalcResultLateReportingBuilder> mockLateReportingBuilder;
@@ -54,7 +53,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             Fixture = new Fixture();
             mockParameterService = new Mock<IParameterService>();
-            mockMaterialService = new Mock<IMaterialService>();
             mockCalcResultDetailBuilder = new Mock<ICalcResultDetailBuilder>();
             mockLapcapBuilder = new Mock<ICalcResultLapcapDataBuilder>();
             mockSummaryBuilder = new Mock<ICalcResultSummaryBuilder>();
@@ -78,7 +76,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             calcResultBuilder = new CalcResultBuilder(
                 mockParameterService.Object,
-                mockMaterialService.Object,
                 mockCalcResultDetailBuilder.Object,
                 mockLapcapBuilder.Object,
                 mockCalcResultParameterOtherCostBuilder.Object,
@@ -108,7 +105,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             // Act
             var instance = new CalcResultBuilder(
                 mockParameterService.Object,
-                mockMaterialService.Object,
                 mockCalcResultDetailBuilder.Object,
                 mockLapcapBuilder.Object,
                 mockCalcResultParameterOtherCostBuilder.Object,
@@ -157,9 +153,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var mockCalcResultPartialObligationsData = new Mock<CalcResultPartialObligations>();
             var mockCalcResultProjectedProducersData = new Mock<CalcResultProjectedProducers>();
             var mockCalcResultSummary = new Mock<CalcResultSummary>();
+            var mockMaterials = ImmutableList<MaterialDetail>.Empty;
 
-            mockMaterialService.Setup(x => x.GetMaterials())
-                .ReturnsAsync(new List<MaterialDetail>());
             mockCalcResultDetailBuilder.Setup(m => m.ConstructAsync(resultsRequestDto))
                 .ReturnsAsync(mockResultDetail.Object);
             mockLapcapBuilder.Setup(m => m.ConstructAsync(It.IsAny<IEnumerable<MaterialDetail>>(), resultsRequestDto))
@@ -169,19 +164,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             mockOnePlusFourApportionmentBuilder.Setup(m => m.ConstructAsync(resultsRequestDto, It.IsAny<CalcResult>()))
                 .Returns(mockOnePlusFourApp.Object);
             mockCommsCostReportBuilder
-                .Setup(m => m.ConstructAsync(It.IsAny<List<MaterialDetail>>(), resultsRequestDto, It.IsAny<CalcResultOnePlusFourApportionment>(), It.IsAny<CalcResultLateReportingTonnage>()))
+                .Setup(m => m.ConstructAsync(It.IsAny<IImmutableList<MaterialDetail>>(), resultsRequestDto, It.IsAny<CalcResultOnePlusFourApportionment>(), It.IsAny<CalcResultLateReportingTonnage>()))
                 .ReturnsAsync(mockCalcResultCommsCost.Object);
             mockLateReportingBuilder.Setup(m => m.ConstructAsync(resultsRequestDto))
                 .ReturnsAsync(mockCalcResultLateReportingTonnage);
-            mockCalcRunLaDisposalCostBuilder.Setup(m => m.ConstructAsync(resultsRequestDto, It.IsAny<List<MaterialDetail>>(), It.IsAny<CalcResultLapcapData>(), It.IsAny<CalcResultLateReportingTonnage>(), It.IsAny<SelfManagedConsumerWaste>(), It.IsAny<bool>()))
+            mockCalcRunLaDisposalCostBuilder.Setup(m => m.ConstructAsync(resultsRequestDto, It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<CalcResultLapcapData>(), It.IsAny<CalcResultLateReportingTonnage>(), It.IsAny<SelfManagedConsumerWaste>(), It.IsAny<bool>()))
                 .ReturnsAsync(mockCalcResultLaDisposalCostData.Object);
             mockReportedProducerService.Setup(m => m.GetProducers(resultsRequestDto.RunId))
                 .ReturnsAsync(mockProducers1);
-            mockCalcResultScaledupProducersBuilder.Setup(m => m.ConstructAsync(It.IsAny<List<MaterialDetail>>(), mockProducers1, resultsRequestDto))
+            mockCalcResultScaledupProducersBuilder.Setup(m => m.ConstructAsync(It.IsAny<IImmutableList<MaterialDetail>>(), mockProducers1, resultsRequestDto))
                 .ReturnsAsync((mockProducers2, mockCalcResultScaledUpProducersData.Object));
-            mockCalcResultPartialObligationBuilder.Setup(m => m.ConstructAsync(It.IsAny<List<MaterialDetail>>(), mockProducers2, resultsRequestDto, applyModulation))
+            mockCalcResultPartialObligationBuilder.Setup(m => m.ConstructAsync(It.IsAny<IImmutableList<MaterialDetail>>(), mockProducers2, resultsRequestDto, applyModulation))
                 .ReturnsAsync((mockProducers2, mockCalcResultPartialObligationsData.Object));
-            mockSummaryBuilder.Setup(x => x.ConstructAsync(It.IsAny<List<MaterialDetail>>(), It.IsAny<int>(), It.IsAny<RelativeYear>(), It.IsAny<bool>(), It.IsAny<CalcResult>(), It.IsAny<SelfManagedConsumerWaste>()))
+            mockSummaryBuilder.Setup(x => x.ConstructAsync(It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<int>(), It.IsAny<RelativeYear>(), It.IsAny<bool>(), It.IsAny<CalcResult>(), It.IsAny<SelfManagedConsumerWaste>()))
                 .ReturnsAsync(mockCalcResultSummary.Object);
 
             mockSelfManagedConsumerWasteService.Setup(x => x.Calculate(
@@ -194,7 +189,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     OverallTotalPerMaterials = []
                 });
 
-            var result = await calcResultBuilder.BuildAsync(resultsRequestDto);
+            var result = await calcResultBuilder.BuildAsync(resultsRequestDto, mockMaterials);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(mockResultDetail.Object, result.CalcResultDetail);
@@ -209,10 +204,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreNotEqual(mockCalcResultProjectedProducersData.Object, result.CalcResultProjectedProducers);
             Assert.AreEqual(mockCalcResultSummary.Object, result.CalcResultSummary);
 
-            mockCalcRunLaDisposalCostBuilder.Verify(m => m.ConstructAsync(resultsRequestDto, It.IsAny<List<MaterialDetail>>(), It.IsAny<CalcResultLapcapData>(), It.IsAny<CalcResultLateReportingTonnage>(), It.IsAny<SelfManagedConsumerWaste>(), It.IsAny<bool>()), Times.Once);
-            mockCalcResultScaledupProducersBuilder.Verify(m => m.ConstructAsync(It.IsAny<List<MaterialDetail>>(), It.IsAny<List<L1Producer>>(), resultsRequestDto), Times.Once);
-            mockCalcResultProjectedProducersBuilder.Verify(m => m.ConstructAsync(It.IsAny<List<MaterialDetail>>(), It.IsAny<List<L1Producer>>(), resultsRequestDto), Times.Never);
-            mockCalcResultPartialObligationBuilder.Verify(m => m.ConstructAsync(It.IsAny<List<MaterialDetail>>(), It.IsAny<List<L1Producer>>(), resultsRequestDto, It.IsAny<bool>()), Times.Once);
+            mockCalcRunLaDisposalCostBuilder.Verify(m => m.ConstructAsync(resultsRequestDto, It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<CalcResultLapcapData>(), It.IsAny<CalcResultLateReportingTonnage>(), It.IsAny<SelfManagedConsumerWaste>(), It.IsAny<bool>()), Times.Once);
+            mockCalcResultScaledupProducersBuilder.Verify(m => m.ConstructAsync(It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<L1Producer>>(), resultsRequestDto), Times.Once);
+            mockCalcResultProjectedProducersBuilder.Verify(m => m.ConstructAsync(It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<L1Producer>>(), resultsRequestDto), Times.Never);
+            mockCalcResultPartialObligationBuilder.Verify(m => m.ConstructAsync(It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<L1Producer>>(), resultsRequestDto, It.IsAny<bool>()), Times.Once);
         }
 
         [TestMethod]
@@ -228,6 +223,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             {
                 new L1Producer(2, [new ProducerDetail { ProducerId = 2, SubsidiaryId = null }])
             };
+            var mockMaterials = ImmutableList<MaterialDetail>.Empty;
 
             var mockCalcResultScaledUpProducersData = new Mock<CalcResultScaledupProducers>();
             var mockCalcResultProjectedProducersData = new Mock<CalcResultProjectedProducers>();
@@ -235,19 +231,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             mockReportedProducerService.Setup(m => m.GetProducers(resultsRequestDto.RunId))
                 .ReturnsAsync(mockProducers1);
-            mockCalcResultProjectedProducersBuilder.Setup(m => m.ConstructAsync(It.IsAny<List<MaterialDetail>>(), mockProducers1, resultsRequestDto))
+            mockCalcResultProjectedProducersBuilder.Setup(m => m.ConstructAsync(It.IsAny<IImmutableList<MaterialDetail>>(), mockProducers1, resultsRequestDto))
                 .Returns((mockProducers2, mockCalcResultProjectedProducersData.Object));
-            mockCalcResultPartialObligationBuilder.Setup(m => m.ConstructAsync(It.IsAny<List<MaterialDetail>>(), mockProducers2, resultsRequestDto, applyModulation))
+            mockCalcResultPartialObligationBuilder.Setup(m => m.ConstructAsync(It.IsAny<IImmutableList<MaterialDetail>>(), mockProducers2, resultsRequestDto, applyModulation))
                 .ReturnsAsync((mockProducers2, mockCalcResultPartialObligationsData.Object));
 
-            var result = await calcResultBuilder.BuildAsync(resultsRequestDto);
+            var result = await calcResultBuilder.BuildAsync(resultsRequestDto, mockMaterials);
 
             Assert.IsNotNull(result);
             Assert.AreNotEqual(mockCalcResultScaledUpProducersData.Object, result.CalcResultScaledupProducers);
             Assert.AreSame(mockCalcResultProjectedProducersData.Object, result.CalcResultProjectedProducers);
 
-            mockCalcResultScaledupProducersBuilder.Verify(m => m.ConstructAsync(It.IsAny<List<MaterialDetail>>(), It.IsAny<List<L1Producer>>(), resultsRequestDto), Times.Never);
-            mockCalcResultProjectedProducersBuilder.Verify(m => m.ConstructAsync(It.IsAny<List<MaterialDetail>>(), It.IsAny<List<L1Producer>>(), resultsRequestDto), Times.Once);
+            mockCalcResultScaledupProducersBuilder.Verify(m => m.ConstructAsync(It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<L1Producer>>(), resultsRequestDto), Times.Never);
+            mockCalcResultProjectedProducersBuilder.Verify(m => m.ConstructAsync(It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<L1Producer>>(), resultsRequestDto), Times.Once);
             mockProjectedProducerService.Verify(m => m.StoreProjectedProducers(1, It.IsAny<List<L1Producer>>()), Times.Once);
         }
 
@@ -263,23 +259,24 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             {
                 new L1Producer(2, [new ProducerDetail { ProducerId = 2, SubsidiaryId = null }])
             };
+            var mockMaterials = ImmutableList<MaterialDetail>.Empty;
             var mockCalcResultScaledUpProducersData = new Mock<CalcResultScaledupProducers>();
             var mockCalcResultProjectedProducersData = new Mock<CalcResultProjectedProducers>();
 
             mockReportedProducerService.Setup(m => m.GetProducers(resultsRequestDto.RunId))
                 .ReturnsAsync(mockProducers1);
 
-            mockCalcResultProjectedProducersBuilder.Setup(m => m.ConstructAsync(It.IsAny<List<MaterialDetail>>(), mockProducers1, resultsRequestDto))
+            mockCalcResultProjectedProducersBuilder.Setup(m => m.ConstructAsync(It.IsAny<IImmutableList<MaterialDetail>>(), mockProducers1, resultsRequestDto))
                 .Returns((mockProducers2, mockCalcResultProjectedProducersData.Object!));
 
-            var result = await calcResultBuilder.BuildAsync(resultsRequestDto);
+            var result = await calcResultBuilder.BuildAsync(resultsRequestDto, mockMaterials);
 
             Assert.IsNotNull(result);
             Assert.AreSame(mockCalcResultProjectedProducersData.Object, result.CalcResultProjectedProducers);
             Assert.AreNotEqual(mockCalcResultScaledUpProducersData.Object, result.CalcResultScaledupProducers);
 
-            mockCalcResultScaledupProducersBuilder.Verify(m => m.ConstructAsync(It.IsAny<List<MaterialDetail>>(), It.IsAny<List<L1Producer>>(), resultsRequestDto), Times.Never);
-            mockCalcResultProjectedProducersBuilder.Verify(m => m.ConstructAsync(It.IsAny<List<MaterialDetail>>(), It.IsAny<List<L1Producer>>(), resultsRequestDto), Times.Once);
+            mockCalcResultScaledupProducersBuilder.Verify(m => m.ConstructAsync(It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<L1Producer>>(), resultsRequestDto), Times.Never);
+            mockCalcResultProjectedProducersBuilder.Verify(m => m.ConstructAsync(It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<L1Producer>>(), resultsRequestDto), Times.Once);
             mockProjectedProducerService.Verify(m => m.StoreProjectedProducers(1, It.IsAny<List<L1Producer>>()), Times.Never);
         }
     }

@@ -26,15 +26,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
         public void Export_ShouldIncludePartialObligationWithModulation()
         {
             var showModulation = true;
+            var materials = GetMaterials();
             var projectedProducers = new CalcResultPartialObligations()
             {
-                Materials = GetMaterials(),
                 PartialObligations = GetCalcResultPartialObligationsListWithRam()
             };
 
             var csvContent = new StringBuilder();
 
-            exporter.Export(projectedProducers, csvContent, showModulation);
+            exporter.Export(projectedProducers, materials, csvContent, showModulation);
             var rows = CsvTestUtils.GetRows(csvContent);
 
             Assert.IsTrue(rows[2][0].Contains(CalcResultPartialObligationHeaders.PartialObligations));
@@ -147,15 +147,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
         public void Export_ShouldIncludePartialObligationWithoutModulation()
         {
             var showModulation = false;
+            var materials = GetMaterials();
             var projectedProducers = new CalcResultPartialObligations()
             {
-                Materials = GetMaterials(),
                 PartialObligations = GetCalcResultPartialObligationsList()
             };
 
             var csvContent = new StringBuilder();
 
-            exporter.Export(projectedProducers, csvContent, showModulation);
+            exporter.Export(projectedProducers, materials, csvContent, showModulation);
             var rows = CsvTestUtils.GetRows(csvContent);
 
             Assert.IsTrue(rows[2][0].Contains(CalcResultPartialObligationHeaders.PartialObligations));
@@ -268,15 +268,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
         public void Export_ShouldHandleWhenEmpty()
         {
             var showModulation = true;
+            var materials = GetMaterials();
             var projectedProducers = new CalcResultPartialObligations()
             {
-                Materials = GetMaterials(),
                 PartialObligations = []
             };
 
             var csvContent = new StringBuilder();
 
-            exporter.Export(projectedProducers, csvContent, showModulation);
+            exporter.Export(projectedProducers, materials, csvContent, showModulation);
             var rows = CsvTestUtils.GetRows(csvContent);
 
             Assert.IsTrue(rows[2][0].Contains(CalcResultPartialObligationHeaders.PartialObligations));

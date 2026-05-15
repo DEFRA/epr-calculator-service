@@ -3,7 +3,6 @@ using EPR.Calculator.Service.Function.Builder.CommsCost;
 using EPR.Calculator.Service.Function.Builder.Lapcap;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter;
 using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.UnitTests.Builder;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
@@ -12,16 +11,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
     [TestClass]
     public class CalcResultsJsonExporterTests
     {
-        private Fixture fixture;
         private CalcResultsJsonExporter testClass;
-        private Mock<IMaterialService> mockMaterialService;
 
         public CalcResultsJsonExporterTests()
         {
-            fixture = new Fixture();
-            mockMaterialService = new Mock<IMaterialService>();
-
-            testClass = new CalcResultsJsonExporter(mockMaterialService.Object);
+            testClass = new CalcResultsJsonExporter();
         }
 
         [TestMethod]
@@ -30,10 +24,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
             // Arrange
             var calcResult = CreateCalcResult();
             var materials = TestDataHelper.GetMaterials();
-            mockMaterialService.Setup(service => service.GetMaterials()).Returns(Task.FromResult(materials));
 
             // Act
-            var result = testClass.Export(calcResult, new List<int> { 1, 2 });
+            var result = testClass.Export(calcResult, materials, new List<int> { 1, 2 });
 
             // Assert
             Assert.IsNotNull(result);

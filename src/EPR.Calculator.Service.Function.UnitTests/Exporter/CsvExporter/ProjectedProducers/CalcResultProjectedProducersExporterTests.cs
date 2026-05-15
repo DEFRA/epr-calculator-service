@@ -11,12 +11,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
     {
         private CalcResultProjectedProducersExporter exporter = new CalcResultProjectedProducersExporter();
 
-        private readonly ImmutableList<MaterialDetail> materials = new List<MaterialDetail>()
-        {
+        private readonly ImmutableList<MaterialDetail> materials = ImmutableList.Create<MaterialDetail>
+        (
             new MaterialDetail { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
             new MaterialDetail { Id = 2, Code = "GL", Name = "Glass", Description = "Glass" },
             new MaterialDetail { Id = 3, Code = "OT", Name = "Other materials", Description = "Other materials" }
-        }.ToImmutableList();
+        );
 
         [TestMethod]
         public void Export_ShouldIncludeProjectedProducers_WhenNotNull()
@@ -24,7 +24,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
             // Arrange
             var projectedProducers = new CalcResultProjectedProducers
             {
-                Materials = materials,
                 H2ProjectedProducers = GetH2ProjectedProducersList(),
                 H1ProjectedProducers = GetH1ProjectedProducersList(),
             };
@@ -32,7 +31,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
             var csvContent = new StringBuilder();
 
             // Act
-            exporter.Export(projectedProducers, csvContent);
+            exporter.Export(projectedProducers, materials, csvContent);
             var rows = CsvTestUtils.GetRows(csvContent);
 
             // Assert H2
@@ -159,14 +158,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
         {
             var completeProjectedProducers = new CalcResultProjectedProducers
             {
-                Materials = materials,
                 H2ProjectedProducers = GetH2ProjectedProducersList().Concat(GetCompleteH2ProjectedProducersList()).ToImmutableList(),
                 H1ProjectedProducers = GetH1ProjectedProducersList().Concat(GetCompleteH1ProjectedProducersList()).ToImmutableList(),
             };
 
             var csvContent = new StringBuilder();
 
-            exporter.Export(completeProjectedProducers, csvContent);
+            exporter.Export(completeProjectedProducers, materials, csvContent);
 
             Assert.IsTrue(csvContent.ToString().Contains("101001"));
             Assert.IsFalse(csvContent.ToString().Contains("202002"));
@@ -179,14 +177,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
         {
             var completeProjectedProducers = new CalcResultProjectedProducers
             {
-                Materials = materials,
                 H2ProjectedProducers = GetCompleteH2ProjectedProducersList(),
                 H1ProjectedProducers = GetCompleteH1ProjectedProducersList(),
             };
 
             var csvContent = new StringBuilder();
 
-            exporter.Export(completeProjectedProducers, csvContent);
+            exporter.Export(completeProjectedProducers, materials, csvContent);
 
             var rows = CsvTestUtils.GetRows(csvContent);
 
@@ -201,14 +198,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
         {
             var projectedProducers = new CalcResultProjectedProducers
             {
-                Materials = materials,
                 H2ProjectedProducers = null,
                 H1ProjectedProducers = null,
             };
 
             var csvContent = new StringBuilder();
 
-            exporter.Export(projectedProducers, csvContent);
+            exporter.Export(projectedProducers, materials, csvContent);
 
             var rows = csvContent.ToString()
                         .Split(Environment.NewLine)

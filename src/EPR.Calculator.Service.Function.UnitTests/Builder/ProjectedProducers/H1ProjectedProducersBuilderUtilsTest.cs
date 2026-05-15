@@ -8,12 +8,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
     [TestClass]
     public class H1ProjectedProducersBuilderUtilsTest
     {
-        private List<MaterialDetail> materials = new List<MaterialDetail>()
-        {
+        private IImmutableList<MaterialDetail> materials = ImmutableList.Create<MaterialDetail>
+        (
             new MaterialDetail { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
             new MaterialDetail { Id = 2, Code = "GL", Name = "Glass", Description = "Glass" },
             new MaterialDetail { Id = 3, Code = "OT", Name = "Other materials", Description = "Other materials" }
-        };
+        );
 
         private RAMTonnage EmptyRAMTonnage() { return new RAMTonnage { RedTonnage = 0, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 }; }
 

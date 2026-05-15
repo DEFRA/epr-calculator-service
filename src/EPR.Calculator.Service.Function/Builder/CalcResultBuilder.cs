@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.CancelledProducers;
 using EPR.Calculator.Service.Function.Builder.CommsCost;
 using EPR.Calculator.Service.Function.Builder.Detail;
@@ -22,10 +21,14 @@ using Microsoft.ApplicationInsights;
 
 namespace EPR.Calculator.Service.Function.Builder
 {
+    public interface ICalcResultBuilder
+    {
+        Task<CalcResult> BuildAsync(CalcResultsRequestDto resultsRequestDto, IImmutableList<MaterialDetail> materialDetails);
+    }
+
     public class CalcResultBuilder : ICalcResultBuilder
     {
         private readonly IParameterService parameterService;
-        private readonly IMaterialService materialService;
         private readonly ICalcResultParameterOtherCostBuilder calcResultParameterOtherCostBuilder;
         private readonly ICalcResultDetailBuilder calcResultDetailBuilder;
         private readonly ICalcResultLapcapDataBuilder lapcapBuilder;
@@ -50,7 +53,6 @@ namespace EPR.Calculator.Service.Function.Builder
         [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         public CalcResultBuilder(
             IParameterService parameterService,
-            IMaterialService materialService,
             ICalcResultDetailBuilder calcResultDetailBuilder,
             ICalcResultLapcapDataBuilder lapcapBuilder,
             ICalcResultParameterOtherCostBuilder calcResultParameterOtherCostBuilder,
@@ -72,7 +74,6 @@ namespace EPR.Calculator.Service.Function.Builder
             TelemetryClient telemetryClient)
         {
             this.parameterService = parameterService;
-            this.materialService = materialService;
             this.calcResultDetailBuilder = calcResultDetailBuilder;
             this.lapcapBuilder = lapcapBuilder;
             this.commsCostReportBuilder = commsCostReportBuilder;
@@ -94,7 +95,7 @@ namespace EPR.Calculator.Service.Function.Builder
             this.telemetryClient = telemetryClient;
         }
 
-        public async Task<CalcResult> BuildAsync(CalcResultsRequestDto resultsRequestDto)
+        public async Task<CalcResult> BuildAsync(CalcResultsRequestDto resultsRequestDto, IImmutableList<MaterialDetail> materialDetails)
         {
             var result = new CalcResult
             {
@@ -121,10 +122,6 @@ namespace EPR.Calculator.Service.Function.Builder
 
             var defaultParams =
                 await parameterService.GetDefaultParameters(resultsRequestDto.RunId);
-
-            telemetryClient.TrackTrace("materialService started...");
-            var materialDetails = await materialService.GetMaterials();
-            telemetryClient.TrackTrace("materialService started...");
 
             telemetryClient.TrackTrace("lapcapBuilder started...");
             result.CalcResultLapcapData = await lapcapBuilder.ConstructAsync(materialDetails, resultsRequestDto);

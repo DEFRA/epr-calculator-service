@@ -6,7 +6,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 {
     public static class H2ProjectedProducersBuilderUtils
     {
-        public static List<CalcResultH2ProjectedProducer> GetProjectedProducers(List<ProducerDetail> producerDetails, List<MaterialDetail> materials, string submissionPeriod)
+        public static List<CalcResultH2ProjectedProducer> GetProjectedProducers(List<ProducerDetail> producerDetails, IImmutableList<MaterialDetail> materials, string submissionPeriod)
         {
             return producerDetails.Select(pd => new CalcResultH2ProjectedProducer
             {
@@ -21,7 +21,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             }).ToList();
         }
 
-        private static Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage> GetProjectedTonnages(List<MaterialDetail> materials, List<ProducerReportedMaterial> reportedMaterials)
+        private static Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage> GetProjectedTonnages(IImmutableList<MaterialDetail> materials, List<ProducerReportedMaterial> reportedMaterials)
         {
             return materials.ToDictionary(m => m.Code, m => GetProjectedTonnage(m, reportedMaterials.Where(rm => rm.MaterialId == m.Id).ToList()));
         }

@@ -41,7 +41,6 @@
 
     public record CalcResultProjectedProducers
     {
-        public IImmutableList<MaterialDetail>? Materials { get; init; }
         public IImmutableList<CalcResultH2ProjectedProducer>? H2ProjectedProducers { get; init; }
         public IImmutableList<CalcResultH1ProjectedProducer>? H1ProjectedProducers { get; init; }
     }

@@ -11,7 +11,7 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
     public interface ICalcResultPartialObligationBuilder
     {
         Task<(List<L1Producer>, CalcResultPartialObligations)> ConstructAsync(
-            List<MaterialDetail> materialDetails,
+            IImmutableList<MaterialDetail> materialDetails,
             List<L1Producer> producers,
             CalcResultsRequestDto resultsRequestDto,
             bool applyModulation
@@ -85,7 +85,7 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
         }
 
         public async Task<(List<L1Producer>, CalcResultPartialObligations)> ConstructAsync(
-            List<MaterialDetail> materialDetails,
+            IImmutableList<MaterialDetail> materialDetails,
             List<L1Producer> producers,
             CalcResultsRequestDto resultsRequestDto,
             bool applyModulation
@@ -115,7 +115,6 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
 
             var result = new CalcResultPartialObligations
             {
-                Materials = materialDetails.ToImmutableList(),
                 PartialObligations = partialObligationsForRun
                     .OrderBy(p => p.ProducerId)
                     .ThenBy(p => p.Level)

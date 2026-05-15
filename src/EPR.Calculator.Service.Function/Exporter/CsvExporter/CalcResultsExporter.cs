@@ -15,7 +15,12 @@ using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 {
-    public class CalcResultsExporter : ICalcResultsExporter<CalcResult>
+    public interface ICalcResultsExporter
+    {
+        string Export(CalcResult calcResult, IImmutableList<MaterialDetail> materials);
+    }
+
+    public class CalcResultsExporter : ICalcResultsExporter
     {
         private readonly ICalcResultSummaryExporter calcResultSummaryExporter;
         private readonly ICalcResultDetailExporter resultDetailexporter;
@@ -67,7 +72,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             calcResultErrorReportExporter = calcResultErrorReport;
         }
 
-        public string Export(CalcResult calcResult)
+        public string Export(CalcResult calcResult, IImmutableList<MaterialDetail> materials)
         {
             if (calcResult == null)
             {
@@ -97,14 +102,14 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 
             if (calcResult.ApplyModulation)
             {
-                calcResultProjectedProducersExporter.Export(calcResult.CalcResultProjectedProducers, csvContent);
+                calcResultProjectedProducersExporter.Export(calcResult.CalcResultProjectedProducers, materials, csvContent);
             }
             else
             {
-                calcResultScaledupProducersExporter.Export(calcResult.CalcResultScaledupProducers, csvContent);
+                calcResultScaledupProducersExporter.Export(calcResult.CalcResultScaledupProducers, materials, csvContent);
             }
 
-            calcResultPartialObligationsExporter.Export(calcResult.CalcResultPartialObligations, csvContent, calcResult.ApplyModulation);
+            calcResultPartialObligationsExporter.Export(calcResult.CalcResultPartialObligations, materials, csvContent, calcResult.ApplyModulation);
 
             calcResultSummaryExporter.Export(calcResult.CalcResultSummary, csvContent, calcResult.ApplyModulation);
 

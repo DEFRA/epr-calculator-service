@@ -5,7 +5,7 @@ namespace EPR.Calculator.Service.Function.Mappers
 {
     public static class MaterialMapper
     {
-        public static List<MaterialDetail> Map(IEnumerable<Material> materialsInDb)
+        public static IImmutableList<MaterialDetail> Map(IEnumerable<Material> materialsInDb)
         {
             var result = new List<MaterialDetail>();
 
@@ -20,7 +20,7 @@ namespace EPR.Calculator.Service.Function.Mappers
                 });
             }
 
-            return result;
+            return result.ToImmutableList();
         }
     }
 }

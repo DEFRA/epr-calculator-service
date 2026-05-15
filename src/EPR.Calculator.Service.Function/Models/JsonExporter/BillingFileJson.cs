@@ -44,7 +44,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("calculationResults")]
         public object? CalculationResults { get; set; }
 
-        public static BillingFileJson From(CalcResult results, IEnumerable<int> acceptedProducerIds, List<MaterialDetail> materials)
+        public static BillingFileJson From(CalcResult results, IEnumerable<int> acceptedProducerIds, IImmutableList<MaterialDetail> materials)
         {
             return new BillingFileJson {
                 CalcResultDetail = CalcResultDetailJson.From(results.CalcResultDetail),

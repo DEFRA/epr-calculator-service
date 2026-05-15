@@ -65,7 +65,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("calculationOfSuggestedBillingInstructionsAndInvoiceAmounts")]
         public required CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts { get; set; }
 
-        public static CalcSummaryProducerCalculationResults From(CalcResultSummaryProducerDisposalFees producer, List<MaterialDetail> materials) 
+        public static CalcSummaryProducerCalculationResults From(CalcResultSummaryProducerDisposalFees producer, IImmutableList<MaterialDetail> materials) 
         {
             return new CalcSummaryProducerCalculationResults
                 {

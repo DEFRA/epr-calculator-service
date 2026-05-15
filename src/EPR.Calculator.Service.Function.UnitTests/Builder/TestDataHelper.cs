@@ -1458,7 +1458,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             return new CalcResultScaledupProducers
             {
-                Materials = ImmutableList<MaterialDetail>.Empty,
                 ScaledupProducers =
                 [
                     new CalcResultScaledupProducer
@@ -1517,7 +1516,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             return new CalcResultPartialObligations
             {
-                Materials = ImmutableList<MaterialDetail>.Empty,
                 PartialObligations =
                 [
                     new CalcResultPartialObligation
@@ -1579,10 +1577,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             };
         }
 
-        public static List<MaterialDetail> GetMaterials()
+        public static IImmutableList<MaterialDetail> GetMaterials()
         {
-            return new List<MaterialDetail>
-            {
+            return ImmutableList.Create(
                 new MaterialDetail
                 {
                     Id = 1,
@@ -1638,8 +1635,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     Code = "OT",
                     Name = "Other materials",
                     Description = "Other materials",
-                },
-            };
+                }
+            );
         }
 
         public static List<ProducerDetail> GetProducers()

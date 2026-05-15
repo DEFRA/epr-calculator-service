@@ -2,8 +2,6 @@
 {
     public class CalcResultScaledupProducers
     {
-        public ImmutableList<MaterialDetail>? Materials { get; set; }
-
         public ImmutableList<CalcResultScaledupProducer>? ScaledupProducers { get; set; }
     }
 }

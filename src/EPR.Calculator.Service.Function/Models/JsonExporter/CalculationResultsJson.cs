@@ -17,7 +17,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         public static CalculationResultsJson From(
             CalcResultSummary summary,
             IEnumerable<int> acceptedProducerIds,
-            List<MaterialDetail> materials)
+            IImmutableList<MaterialDetail> materials)
         {
             return new CalculationResultsJson
             {
@@ -70,7 +70,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         private static List<CalcSummaryProducerCalculationResults> ArrangeProducerCalculationResult(
             CalcResultSummary calcResultSummary,
             IEnumerable<int> acceptedProducerIds,
-            List<MaterialDetail> materials)
+            IImmutableList<MaterialDetail> materials)
         {
             var results = new List<CalcSummaryProducerCalculationResults>();
 

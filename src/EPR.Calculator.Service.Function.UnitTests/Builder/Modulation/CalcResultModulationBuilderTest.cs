@@ -10,7 +10,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
     {
         private CalcResultModulationBuilder builder;
 
-        private static List<MaterialDetail> materials = TestDataHelper.GetMaterials().ToList();
+        private static IImmutableList<MaterialDetail> materials = TestDataHelper.GetMaterials();
 
         private MaterialDetail al = materials.First(m => m.Code == "AL");
         private MaterialDetail fc = materials.First(m => m.Code == "FC");
