@@ -184,10 +184,10 @@ internal static class ServiceRegistration
         services.AddTransient<ICalcResultModulationBuilder, CalcResultModulationBuilder>();
         services.AddTransient<ICalcResultSummaryBuilder, CalcResultSummaryBuilder>();
         services.AddTransient<IBillingInstructionService, BillingInstructionService>();
-        services.AddTransient<IOnePlusFourApportionmentExporter, OnePlusFourApportionmentExporter>();
+        services.AddTransient<ICalcResultOnePlusFourApportionmentExporter, CalcResultOnePlusFourApportionmentExporter>();
         services.AddTransient<IRpdStatusService, RpdStatusService>();
-        services.AddTransient<ILapcaptDetailExporter, LapcaptDetailExporter>();
-        services.AddTransient<ICalcResultDetailExporter, CalcResultDetailexporter>();
+        services.AddTransient<ICalcResultDetailExporter, CalcResultDetailExporter>();
+        services.AddTransient<ICalcResultLapcapDataExporter, CalcResultLapcapDataExporter>();
         services.AddTransient<ICalcResultLaDisposalCostExporter, CalcResultLaDisposalCostExporter>();
         services.AddTransient<ICalcResultScaledupProducersExporter, CalcResultScaledupProducersExporter>();
         services.AddTransient<ICalcResultPartialObligationsExporter, CalcResultPartialObligationsExporter>();
@@ -196,7 +196,7 @@ internal static class ServiceRegistration
         services.AddTransient<LateReportingExporter, LateReportingExporter>();
         services.AddTransient<ICalcResultParameterOtherCostExporter, CalcResultParameterOtherCostExporter>();
         services.AddTransient<ICalcResultModulationExporter, CalcResultModulationExporter>();
-        services.AddTransient<ICommsCostExporter, CommsCostExporter>();
+        services.AddTransient<ICalcResultCommsCostExporter, CalcResultCommsCostExporter>();
         services.AddTransient<ICalcResultSummaryExporter, CalcResultSummaryExporter>();
         services.AddTransient<ICalcBillingJsonExporter, CalcResultsJsonExporter>();
         services.AddTransient<ILateReportingExporter, LateReportingExporter>();

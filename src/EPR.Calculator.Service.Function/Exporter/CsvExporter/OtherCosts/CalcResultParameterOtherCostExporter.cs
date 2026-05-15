@@ -1,11 +1,23 @@
 ﻿using System.Text;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
+using System.Globalization;
+using NetTopologySuite.Operation.Buffer;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts
 {
     public class CalcResultParameterOtherCostExporter : ICalcResultParameterOtherCostExporter
     {
+        private CultureInfo culture = InitCulture();
+
+        private static CultureInfo InitCulture()
+        {
+            var culture = CultureInfo.CreateSpecificCulture("en-GB");
+            culture.NumberFormat.CurrencySymbol = "£";
+            culture.NumberFormat.CurrencyPositivePattern = 0;
+            return culture;
+        }
+
         public void Export(CalcResultParameterOtherCost otherCost, StringBuilder csvContent)
         {
             csvContent.AppendLine();
@@ -43,11 +55,11 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts
         {
             var schemeCost = otherCost.SchemeSetupCost;
             csvContent.Append($"{CsvSanitiser.SanitiseData(schemeCost.Name)}");
-            csvContent.Append($"{CsvSanitiser.SanitiseData(schemeCost.England)}");
-            csvContent.Append($"{CsvSanitiser.SanitiseData(schemeCost.Wales)}");
-            csvContent.Append($"{CsvSanitiser.SanitiseData(schemeCost.Scotland)}");
-            csvContent.Append($"{CsvSanitiser.SanitiseData(schemeCost.NorthernIreland)}");
-            csvContent.AppendLine($"{CsvSanitiser.SanitiseData(schemeCost.Total)}");
+            csvContent.Append($"{CsvSanitiser.SanitiseData(schemeCost.England.ToString("C", culture))}");
+            csvContent.Append($"{CsvSanitiser.SanitiseData(schemeCost.Wales.ToString("C", culture))}");
+            csvContent.Append($"{CsvSanitiser.SanitiseData(schemeCost.Scotland.ToString("C", culture))}");
+            csvContent.Append($"{CsvSanitiser.SanitiseData(schemeCost.NorthernIreland.ToString("C", culture))}");
+            csvContent.AppendLine($"{CsvSanitiser.SanitiseData(schemeCost.Total.ToString("C", culture))}");
         }
 
         public void LaDataPrepCosts(CalcResultParameterOtherCost otherCost, StringBuilder csvContent)

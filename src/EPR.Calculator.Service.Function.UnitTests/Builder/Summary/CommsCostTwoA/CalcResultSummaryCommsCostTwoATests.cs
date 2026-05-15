@@ -70,156 +70,122 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
         {
             // Arrange
             producers.Clear();
-            decimal expectedCost1 = 0m;
 
             // Act
             decimal totalCost = CalcResultSummaryCommsCostTwoA.GetEnglandWithBadDebtProvisionForCommsTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material, calcResult);
 
             // Assert
-            Assert.AreEqual(expectedCost1, totalCost);
+            Assert.AreEqual(0m, totalCost);
         }
 
         [TestMethod]
         public void GetEnglandWithBadDebtProvisionForCommsTotal_ShouldReturnCorrectTotal()
         {
-            // Arrange
-            decimal expectedCost1 = 1139.71200m;
-
             // Act
             decimal totalCost = CalcResultSummaryCommsCostTwoA.GetEnglandWithBadDebtProvisionForCommsTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material, calcResult);
 
             // Assert
-            Assert.AreEqual(expectedCost1, totalCost);
+            Assert.AreEqual(1139.71200m, totalCost);
         }
 
         [TestMethod]
         public void GetWalesWithBadDebtProvisionForCommsTotal_ShouldReturnCorrectTotal()
         {
-            // Arrange
-            decimal expectedCost1 = 284.92800m;
-
             // Act
             decimal totalCost = CalcResultSummaryCommsCostTwoA.GetWalesWithBadDebtProvisionForCommsTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material, calcResult);
 
             // Assert
-            Assert.AreEqual(expectedCost1, totalCost);
+            Assert.AreEqual(284.92800m, totalCost);
         }
 
         [TestMethod]
         public void GetScotlandWithBadDebtProvisionForCommsTotal_ShouldReturnCorrectTotal()
         {
-            // Arrange
-            decimal expectedCost1 = 427.39200m;
-
             // Act
             decimal totalCost = CalcResultSummaryCommsCostTwoA.GetScotlandWithBadDebtProvisionForCommsTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material, calcResult);
 
             // Assert
-            Assert.AreEqual(expectedCost1, totalCost);
+            Assert.AreEqual(427.39200m, totalCost);
         }
 
         [TestMethod]
         public void GetNorthernIrelandWithBadDebtProvisionForCommsTotal_ShouldReturnCorrectTotal()
         {
-            // Arrange
-            decimal expectedCost1 = 997.24800m;
-
             // Act
             decimal totalCost = CalcResultSummaryCommsCostTwoA.GetNorthernIrelandWithBadDebtProvisionForCommsTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material, calcResult);
 
             // Assert
-            Assert.AreEqual(expectedCost1, totalCost);
+            Assert.AreEqual(997.24800m, totalCost);
         }
 
         [TestMethod]
         public void GetProducerTotalCostWithoutBadDebtProvisionTotal_ShouldReturnCorrectTotal()
         {
-            // Arrange
-            decimal expectedCost1 = 1344.00m;
-
             // Act
             decimal totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostWithoutBadDebtProvisionTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material, calcResult);
 
             // Assert
-            Assert.AreEqual(expectedCost1, totalCost);
+            Assert.AreEqual(1344.00m, totalCost);
         }
 
         [TestMethod]
         public void GetBadDebtProvisionForCommsCostTotal_ShouldReturnCorrectTotal()
         {
-            // Arrange
-            decimal expectedCost1 = 80.64m;
-
             // Act
             decimal totalCost = CalcResultSummaryCommsCostTwoA.GetBadDebtProvisionForCommsCostTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material, calcResult);
 
             // Assert
-            Assert.AreEqual(expectedCost1, totalCost);
+            Assert.AreEqual(80.64m, totalCost);
         }
 
         [TestMethod]
         public void GetEnglandWithBadDebtProvisionForComms_ShouldReturnCorrectTotal()
         {
-            // Arrange
-            decimal expectedCost1 = 427.392m;
-
             // Act
             decimal totalCost = CalcResultSummaryCommsCostTwoA.GetEnglandWithBadDebtProvisionForComms(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers[0], material, calcResult);
 
             // Assert
-            Assert.AreEqual(expectedCost1, totalCost);
+            Assert.AreEqual(427.392m, totalCost);
         }
 
         [TestMethod]
         public void GetWalesWithBadDebtProvisionForComms_ShouldReturnCorrectTotal()
         {
-            // Arrange
-            decimal expectedCost1 = 106.848m;
-
             // Act
             decimal totalCost = CalcResultSummaryCommsCostTwoA.GetWalesWithBadDebtProvisionForComms(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers[0], material, calcResult);
 
             // Assert
-            Assert.AreEqual(expectedCost1, totalCost);
+            Assert.AreEqual(106.848m, totalCost);
         }
 
         [TestMethod]
         public void GetScotlandWithBadDebtProvisionForComms_ShouldReturnCorrectTotal()
         {
-            // Arrange
-            decimal expectedCost1 = 160.272m;
-
             // Act
             decimal totalCost = CalcResultSummaryCommsCostTwoA.GetScotlandWithBadDebtProvisionForComms(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers[0], material, calcResult);
 
             // Assert
-            Assert.AreEqual(expectedCost1, totalCost);
+            Assert.AreEqual(160.272m, totalCost);
         }
 
         [TestMethod]
         public void GetNorthernIrelandWithBadDebtProvisionForComms_ShouldReturnCorrectTotal()
         {
-            // Arrange
-            decimal expectedCost1 = 373.96800m;
-
             // Act
             decimal totalCost = CalcResultSummaryCommsCostTwoA.GetNorthernIrelandWithBadDebtProvisionForComms(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers[0], material, calcResult);
 
             // Assert
-            Assert.AreEqual(expectedCost1, totalCost);
+            Assert.AreEqual(373.96800m, totalCost);
         }
 
         [TestMethod]
         public void GetPriceperTonneForComms_ShouldReturnCorrectTotal()
         {
-            // Arrange
-            decimal expectedCost1 = 0.42m;
-
             // Act
             decimal totalCost = CalcResultSummaryCommsCostTwoA.GetPriceperTonneForComms(material, calcResult);
 
             // Assert
-            Assert.AreEqual(expectedCost1, totalCost);
+            Assert.AreEqual(0.42m, totalCost);
         }
 
         [TestMethod]
@@ -227,13 +193,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
         {
             // Arrange
             material.Name = "Aluminium";
-            decimal expectedCost1 = 0m;
 
             // Act
             decimal totalCost = CalcResultSummaryCommsCostTwoA.GetPriceperTonneForComms(material, calcResult);
 
             // Assert
-            Assert.AreEqual(expectedCost1, totalCost);
+            Assert.AreEqual(0m, totalCost);
         }
 
         [TestMethod]
@@ -241,85 +206,80 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
         {
             // Arrange
             calcResult.CalcResultCommsCostReportDetail.CalcResultCommsCostCommsCostByMaterial = [
-                        new ()
-                        {
-                            CommsCostByMaterialPricePerTonne="0.42A",
-                            Name = "Household",
-                        }
-                          ];
-            decimal expectedCost1 = 0m;
+                new ()
+                {
+                    Name = "Household",
+                    CommsCostByMaterialPricePerTonne = 0.42m,
+                    England = 0,
+                    Scotland = 0,
+                    NorthernIreland = 0,
+                    Wales = 0,
+                    Total = 0,
+                    ProducerReportedHouseholdPackagingWasteTonnage = 0,
+                    LateReportingTonnage = 0,
+                    ReportedPublicBinTonnage = 0,
+                    ProducerReportedTotalTonnage = 0
+                }
+            ];
 
             // Act
             decimal totalCost = CalcResultSummaryCommsCostTwoA.GetPriceperTonneForComms(material, calcResult);
 
             // Assert
-            Assert.AreEqual(expectedCost1, totalCost);
+            Assert.AreEqual(0m, totalCost);
         }
 
         [TestMethod]
         public void GetProducerTotalCostwithBadDebtProvision_ShouldReturnCorrectTotal()
         {
-            // Arrange
-            decimal expectedCost1 = 534.2400m;
-
             // Act
             decimal totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostwithBadDebtProvision(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers[0], material, calcResult);
 
             // Assert
-            Assert.AreEqual(expectedCost1, totalCost);
+            Assert.AreEqual(534.2400m, totalCost);
         }
 
         [TestMethod]
         public void GetProducerTotalCostWithoutBadDebtProvision_ShouldReturnCorrectTotal()
         {
-            // Arrange
-            decimal expectedCost1 = 504.00m;
-
             // Act
             decimal totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostWithoutBadDebtProvision(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers[0], material, calcResult);
 
             // Assert
-            Assert.AreEqual(expectedCost1, totalCost);
+            Assert.AreEqual(504.00m, totalCost);
         }
 
         [TestMethod]
         public void GetProducerTotalCostwithBadDebtProvisionTotal_ShouldReturnCorrectTotal()
         {
-            // Arrange
-            decimal expectedCost1 = 1424.6400m;
-
             // Act
             decimal totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostwithBadDebtProvisionTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material, calcResult);
 
             // Assert
-            Assert.AreEqual(expectedCost1, totalCost);
+            Assert.AreEqual(1424.6400m, totalCost);
         }
 
         [TestMethod]
         public void GetTotalReportedTonnageTotalForHDCShouldReturnCorrectTotal()
         {
             // Arrange
-            decimal expectedCost1 = 280;
             var material = GetHDCMaterial();
 
             // Act
             decimal totalCost = CalcResultSummaryCommsCostTwoA.GetTotalReportedTonnageTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material);
 
             // Assert
-            Assert.AreEqual(expectedCost1, totalCost);
+            Assert.AreEqual(280, totalCost);
         }
 
         [TestMethod]
         public void GetTotalReportedTonnageTotalShouldReturnCorrectTotal()
         {
-            // Arrange
-            decimal expectedCost1 = 3200;
-
             // Act
             decimal totalCost = CalcResultSummaryCommsCostTwoA.GetTotalReportedTonnageTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material);
 
             // Assert
-            Assert.AreEqual(expectedCost1, totalCost);
+            Assert.AreEqual(3200, totalCost);
         }
 
         private static List<ProducerDetail> GetProducers()

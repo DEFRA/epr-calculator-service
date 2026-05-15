@@ -1,6 +1,7 @@
 using System.Text;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.LaDisposalCost
 {
@@ -20,62 +21,89 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.LaDispo
             // Arrange
             var calcResultLaDisposalCostData = new CalcResultLaDisposalCostData
             {
+                Name = "LA Disposal Cost Data",
                 CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>
                 {
                     new CalcResultLaDisposalCostDataDetail
                     {
-                        DisposalCostPricePerTonne = "20",
-                        England = "EnglandTest",
-                        Wales = "WalesTest",
-                        Name = "ScotlandTest",
-                        Scotland = "ScotlandTest",
-                        NorthernIreland = "NorthernIrelandTest",
-                        Total = "null",
-                        ProducerReportedHouseholdPackagingWasteTonnage = "null",
-                        ReportedPublicBinTonnage = string.Empty,
-                        HouseholdDrinkContainers = "100.12345",
-                        ProducerReportedTotalTonnage = "200.12345",
-                    },
-                    new CalcResultLaDisposalCostDataDetail
-                    {
-                        DisposalCostPricePerTonne = "20",
-                        England = "EnglandTest",
-                        Wales = "WalesTest",
                         Name = "Material1",
-                        Scotland = "ScotlandTest",
-                        NorthernIreland = "NorthernIrelandTest",
-                        Total = "null",
-                        ProducerReportedHouseholdPackagingWasteTonnage = "null",
-                        ReportedPublicBinTonnage = string.Empty,
+                        DisposalCostPricePerTonne = 20,
+                        England = 0m,
+                        Wales = 0m,
+                        Scotland = 0m,
+                        NorthernIreland = 0m,
+                        Total = 0m,
+                        ProducerReportedHouseholdPackagingWasteTonnage = 0m,
+                        ReportedPublicBinTonnage = 0m,
+                        HouseholdDrinkContainers = 100.12345m,
+                        ProducerReportedTotalTonnage = 200.12345m,
                     },
                     new CalcResultLaDisposalCostDataDetail
                     {
-                        DisposalCostPricePerTonne = "10",
-                        England = "EnglandTest",
-                        Wales = "WalesTest",
                         Name = "Material2",
-                        Scotland = "ScotlandTest",
-                        NorthernIreland = "NorthernIrelandTest",
-                        Total = "100",
-                        ProducerReportedHouseholdPackagingWasteTonnage = "null",
-                        ReportedPublicBinTonnage = string.Empty,
+                        DisposalCostPricePerTonne = 10,
+                        England = 0m,
+                        Wales = 0m,
+                        Scotland = 0m,
+                        NorthernIreland = 0m,
+                        Total = 100,
+                        ProducerReportedHouseholdPackagingWasteTonnage = 0m,
+                        ReportedPublicBinTonnage = 0m,
+                        ActionedSelfManagedConsumerWasteTonnage = 1.23m
                     },
-                },
-                Name = "LA Disposal Cost Data"
+                    new CalcResultLaDisposalCostDataDetail
+                    {
+                        Name = "Total",
+                        DisposalCostPricePerTonne = 10,
+                        England = 0m,
+                        Wales = 0m,
+                        Scotland = 0m,
+                        NorthernIreland = 0m,
+                        Total = 100,
+                        ProducerReportedHouseholdPackagingWasteTonnage = 0m,
+                        ReportedPublicBinTonnage = 0m,
+                        HouseholdDrinkContainers = 100.12345m,
+                        ActionedSelfManagedConsumerWasteTonnage = 1.23m
+                    }
+                }
             };
 
             var csvContent = new StringBuilder();
 
             // Act
-            exporter.Export(calcResultLaDisposalCostData, csvContent);
-            var result = csvContent.ToString();
+            // TODO test applyModulation: true
+            exporter.Export(applyModulation: false, calcResultLaDisposalCostData, csvContent);
 
             // Assert
-            Assert.IsTrue(result.Contains("LA Disposal Cost Data"));
-            Assert.IsTrue(result.Contains("200.123"));
-            Assert.IsFalse(result.Contains("200.12345"));
-            Assert.IsTrue(result.Contains("100.123"));
-            Assert.IsFalse(result.Contains("100.12345"));
+            var result = csvContent.ToString().Split("\n").Select(s => s.TrimEnd(',')).ToArray();
+            //Console.WriteLine($">> {JsonConvert.SerializeObject(result, Formatting.Indented)}");
+            Console.WriteLine(string.Join("\n", result));
+
+            var expected = new[] {
+                new string[] {},
+                new string[] {},
+                new[] { "LA Disposal Cost Data" },
+                new[] { "Material",
+                        "England",
+                        "Wales",
+                        "Scotland",
+                        "Northern Ireland",
+                        "Total",
+                        "Producer Household Packaging Tonnage",
+                        "Public Bin Tonnage",
+                        "Household Drinks Containers Tonnage",
+                        "Late Reporting Tonnage",
+                        "",
+                        "Producer Household Tonnage + Late Reporting Tonnage + Public Bin Tonnage + Household Drinks Containers Tonnage",
+                        "Disposal Cost Price Per Tonne"
+                },
+                new[] { "Material1","0","0","0","0","0","0","0","100.123",null,"200.123","20" },
+                new[] { "Material2","0","0","0","0","100","0","0","0",null,"1.23","0","10" },
+                new[] { "Total","0","0","0","0","100","0","0","100.123",null,"1.23","0","10" },
+                new string[] { }
+            };
+
+            CsvTestUtils.AssertCsv(expected, result);
         }
     }
 }

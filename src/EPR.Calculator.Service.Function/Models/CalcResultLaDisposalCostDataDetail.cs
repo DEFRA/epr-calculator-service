@@ -2,33 +2,33 @@
 {
     public class CalcResultLaDisposalCostDataDetail
     {
-        public required string Name { get; set; }
+        public required string Name { get; set; } // TODO this conflates MaterialName (for lookup) and Total label
 
-        public required string England { get; set; }
+        public required decimal England { get; set; }
 
-        public required string Wales { get; set; }
+        public required decimal Wales { get; set; }
 
-        public required string Scotland { get; set; }
+        public required decimal Scotland { get; set; }
 
-        public required string NorthernIreland { get; set; }
+        public required decimal NorthernIreland { get; set; }
 
-        public required string Total { get; set; }
+        public required decimal Total { get; set; }
 
-        public required string ProducerReportedHouseholdPackagingWasteTonnage { get; set; }
+        public required decimal ProducerReportedHouseholdPackagingWasteTonnage { get; set; }
 
-        public required string ReportedPublicBinTonnage { get; set; }
+        public required decimal ReportedPublicBinTonnage { get; set; }
 
-        public string HouseholdDrinkContainers { get; set; } = string.Empty;
+        public decimal? HouseholdDrinkContainers { get; set; }
 
-        public string LateReportingTonnage { get; set; } = string.Empty;
+        public decimal? LateReportingTonnage { get; set; }
 
-        public string? TotalReportedTonnage { get; set; }
+        public decimal? TotalReportedTonnage { get; set; }
 
-        public string ActionedSelfManagedConsumerWasteTonnage { get; set; } = string.Empty;
+        public decimal? ActionedSelfManagedConsumerWasteTonnage { get; set; }
 
-        public string ProducerReportedTotalTonnage { get; set; } = string.Empty;
+        public decimal? ProducerReportedTotalTonnage { get; set; }
 
-        public string? DisposalCostPricePerTonne { get; set; }
+        public decimal? DisposalCostPricePerTonne { get; set; }
 
         public int OrderId { get; set; }
     }

@@ -42,18 +42,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
             return new CalcResultLaDisposalCostDataDetail
             {
                 Name = material.Name,
-                DisposalCostPricePerTonne = "£" + costPerTonnage.ToString(),
-                England = "",
-                Wales = "",
-                Scotland = "",
-                NorthernIreland = "",
-                Total = "",
-                ProducerReportedHouseholdPackagingWasteTonnage = "",
-                ReportedPublicBinTonnage = "",
-                HouseholdDrinkContainers = "",
-                LateReportingTonnage = "",
-                TotalReportedTonnage = "",
-                ProducerReportedTotalTonnage = "",
+                DisposalCostPricePerTonne = costPerTonnage,
+                England = 0,
+                Wales = 0,
+                Scotland = 0,
+                NorthernIreland = 0,
+                Total = 0,
+                ProducerReportedHouseholdPackagingWasteTonnage = 0,
+                ReportedPublicBinTonnage = 0,
+                HouseholdDrinkContainers = 0,
+                LateReportingTonnage = 0,
+                TotalReportedTonnage = 0,
+                ProducerReportedTotalTonnage = 0,
                 OrderId = 0
             };
         }
@@ -254,8 +254,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
             Assert.AreEqual(1m, modulationResults.GreenFactor);
             foreach (var material in materials)
             {
-                var costStr = laDisposalCostData.CalcResultLaDisposalCostDetails.First(d => d.Name == material.Name).DisposalCostPricePerTonne;
-                var cost = decimal.Parse(costStr!.TrimStart('£'), CultureInfo.InvariantCulture);
+                var cost = laDisposalCostData.CalcResultLaDisposalCostDetails.First(d => d.Name == material.Name).DisposalCostPricePerTonne;
 
                 var mm = modulationResults.MaterialModulation[material];
                 Assert.AreEqual(cost, mm.AmberMaterialDisposalCost);
@@ -314,8 +313,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
             Assert.AreEqual(1.0m, modulationResults.GreenFactor);
             foreach (var material in materials)
             {
-                var costStr = laDisposalCostData.CalcResultLaDisposalCostDetails.First(d => d.Name == material.Name).DisposalCostPricePerTonne;
-                var cost = decimal.Parse(costStr!.TrimStart('£'), CultureInfo.InvariantCulture);
+                var cost = laDisposalCostData.CalcResultLaDisposalCostDetails.First(d => d.Name == material.Name).DisposalCostPricePerTonne;
 
                 var mm = modulationResults.MaterialModulation[material];
                 Assert.AreEqual(cost, mm.AmberMaterialDisposalCost);

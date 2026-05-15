@@ -166,8 +166,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
                 return (total: null, red: null, amber: null, green: null);
             }
 
-            var isParseSuccessful = decimal.TryParse(laDisposalCostDataDetail.DisposalCostPricePerTonne, NumberStyles.Currency, CultureInfo.GetCultureInfo("en-GB"), out decimal value);
-            var total = isParseSuccessful ? value : 0;
+            var total = laDisposalCostDataDetail.DisposalCostPricePerTonne ?? 0m;
 
             if (calcResult.CalcResultModulation is not null) {
                 return (
@@ -229,40 +228,33 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
         {
             var producerDisposalFeeWithBadDebtProvision = GetProducerDisposalFeeWithBadDebtProvision(calcResult, producerDisposalFeeTotal);
 
-            var countryApportionmentPercentage = GetCountryApportionmentPercentage(calcResult);
-            if (countryApportionmentPercentage == null)
+            var countryApportionment = calcResult.CalcResultLapcapData.CountryApportionment;
+            if (countryApportionment == null)
             {
                 return 0;
             }
 
-            string? disposalCost;
+            decimal? disposalCostPercentage;
             switch (country)
             {
                 case Countries.England:
-                    disposalCost = countryApportionmentPercentage.EnglandDisposalCost;
+                    disposalCostPercentage = countryApportionment.England;
                     break;
                 case Countries.Wales:
-                    disposalCost = countryApportionmentPercentage.WalesDisposalCost;
+                    disposalCostPercentage = countryApportionment.Wales;
                     break;
                 case Countries.Scotland:
-                    disposalCost = countryApportionmentPercentage.ScotlandDisposalCost;
+                    disposalCostPercentage = countryApportionment.Scotland;
                     break;
                 case Countries.NorthernIreland:
-                    disposalCost = countryApportionmentPercentage.NorthernIrelandDisposalCost;
+                    disposalCostPercentage = countryApportionment.NorthernIreland;
                     break;
                 default:
-                    disposalCost = "0%";
+                    disposalCostPercentage = 0m;
                     break;
             }
 
-            return decimal.TryParse(disposalCost.Replace("%", string.Empty), out decimal value)
-                ? producerDisposalFeeWithBadDebtProvision * value / 100
-                : 0;
-        }
-
-        public static CalcResultLapcapDataDetail? GetCountryApportionmentPercentage(CalcResult calcResult)
-        {
-            return calcResult.CalcResultLapcapData.CalcResultLapcapDataDetails?.FirstOrDefault(la => la.Name == CalcResultSummaryHeaders.OneCountryApportionment);
+            return producerDisposalFeeWithBadDebtProvision * (disposalCostPercentage ?? 0m);
         }
 
         public static void SetHeaders(CalcResultSummary result, IReadOnlyList<MaterialDetail> materials, bool applyModulation)
@@ -587,7 +579,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         public static decimal GetCommsCostHeaderWithoutBadDebtFor2bTitle(CalcResult calcResult)
         {
-            return calcResult.CalcResultCommsCostReportDetail.CommsCostByCountry.ToList()[1].TotalValue;
+            // TODO this only has one entry now total has moved - remove List
+            return calcResult.CalcResultCommsCostReportDetail.CommsCostByCountry.ToList()[0].Total;
         }
 
         public static decimal GetCommsCostHeaderBadDebtProvisionFor2bTitle(
@@ -629,6 +622,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             }
         }
 
+        // TODO remove "Percentage" from name
         public static decimal GetParamsOtherFourCountryApportionmentPercentage(
             CalcResult calcResult,
             Countries country)
@@ -644,13 +638,13 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             switch (country)
             {
                 case Countries.England:
-                    return fourCountryApportionment.EnglandValue;
+                    return fourCountryApportionment.England;
                 case Countries.Wales:
-                    return fourCountryApportionment.WalesValue;
+                    return fourCountryApportionment.Wales;
                 case Countries.Scotland:
-                    return fourCountryApportionment.ScotlandValue;
+                    return fourCountryApportionment.Scotland;
                 case Countries.NorthernIreland:
-                    return fourCountryApportionment.NorthernIrelandValue;
+                    return fourCountryApportionment.NorthernIreland;
                 default:
                     return 0;
             }

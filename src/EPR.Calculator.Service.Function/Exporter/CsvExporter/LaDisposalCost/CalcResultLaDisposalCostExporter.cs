@@ -2,18 +2,27 @@
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Constants;
+using Microsoft.IdentityModel.Tokens;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost
 {
+    public interface ICalcResultLaDisposalCostExporter
+    {
+        void Export(bool applyModulation, CalcResultLaDisposalCostData calcResultLaDisposalCostData, StringBuilder csvContent);
+    }
+
     public class CalcResultLaDisposalCostExporter : ICalcResultLaDisposalCostExporter
     {
-        public void Export(CalcResultLaDisposalCostData calcResultLaDisposalCostData, StringBuilder csvContent)
+        public void Export(bool applyModulation, CalcResultLaDisposalCostData calcResultLaDisposalCostData, StringBuilder csvContent)
         {
             csvContent.AppendLine();
             csvContent.AppendLine();
 
-            csvContent.AppendLine(calcResultLaDisposalCostData.Name);
+            csvContent.AppendLine(CsvSanitiser.SanitiseData(calcResultLaDisposalCostData.Name));
             var laDisposalCostDataDetails = calcResultLaDisposalCostData.CalcResultLaDisposalCostDetails.OrderBy(x => x.OrderId);
+
+            AppendHeader(applyModulation, csvContent);
 
             foreach (var d in laDisposalCostDataDetails)
             {
@@ -27,13 +36,31 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost
                 csvContent.Append(CsvSanitiser.SanitiseData(d.ReportedPublicBinTonnage));
                 csvContent.Append(CsvSanitiser.SanitiseData(d.HouseholdDrinkContainers, DecimalPlaces.Three, null));
                 csvContent.Append(CsvSanitiser.SanitiseData(d.LateReportingTonnage));
-                if (!string.IsNullOrEmpty(d.ActionedSelfManagedConsumerWasteTonnage)) {
-                    csvContent.Append(CsvSanitiser.SanitiseData(d.ActionedSelfManagedConsumerWasteTonnage));
+                if (d.ActionedSelfManagedConsumerWasteTonnage != null) {
+                    csvContent.Append(CsvSanitiser.SanitiseData(d.ActionedSelfManagedConsumerWasteTonnage, DecimalPlaces.Three, null));
                 }
                 csvContent.Append(CsvSanitiser.SanitiseData(d.ProducerReportedTotalTonnage, DecimalPlaces.Three, null));
                 csvContent.Append(CsvSanitiser.SanitiseData(d.DisposalCostPricePerTonne));
                 csvContent.AppendLine();
             }
+        }
+
+        private static void AppendHeader(bool applyModulation, StringBuilder csvContent)
+        {
+            csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.Material));
+            csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.England));
+            csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.Wales));
+            csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.Scotland));
+            csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.NorthernIreland));
+            csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.Total));
+            csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.ProducerReportedHouseholdPackagingWasteTonnage));
+            csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.ReportedPublicBinTonnage));
+            csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.HouseholdDrinkContainers));
+            csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.LateReportingTonnage));
+            csvContent.Append(CsvSanitiser.SanitiseData(applyModulation ? CommonConstants.ActionedSelfManagedConsumerWasteTonnage : String.Empty));
+            csvContent.Append(CsvSanitiser.SanitiseData(applyModulation ? CommonConstants.ModulatedProducerReportedTotalTonnage : CommonConstants.ProducerReportedTotalTonnage));
+            csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.DisposalCostPricePerTonne));
+            csvContent.AppendLine();
         }
     }
 }

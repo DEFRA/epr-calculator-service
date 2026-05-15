@@ -1,4 +1,5 @@
 ﻿using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Builder.CommsCost;
 using EPR.Calculator.Service.Function.Builder.Summary.Common;
 using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer;
 using EPR.Calculator.Service.Function.Models;
@@ -132,15 +133,16 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoBTotalBill
 
         public static decimal GetRegionApportionment(CalcResult calcResult, string region)
         {
-            var apportionmentDetails = calcResult.CalcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails;
+            var apportionmentDetail = calcResult.CalcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails
+                .Single(x => x.Name == CalcResultCommsCostBuilder.OnePlusFourApportionment);
 
             return region switch
             {
-                England => Convert.ToDecimal(apportionmentDetails.Select(x => x.EnglandDisposalTotal).ToList()[4].Trim('%')) / 100,
-                Wales => Convert.ToDecimal(apportionmentDetails.Select(x => x.WalesDisposalTotal).ToList()[4].Trim('%')) / 100,
-                Scotland => Convert.ToDecimal(apportionmentDetails.Select(x => x.ScotlandDisposalTotal).ToList()[4].Trim('%')) / 100,
-                NorthernIreland => Convert.ToDecimal(apportionmentDetails.Select(x => x.NorthernIrelandDisposalTotal).ToList()[4].Trim('%')) / 100,
-                _ => throw new ArgumentException("Invalid region specified")
+                England         => apportionmentDetail.EnglandTotal,
+                Wales           => apportionmentDetail.WalesTotal,
+                Scotland        => apportionmentDetail.ScotlandTotal,
+                NorthernIreland => apportionmentDetail.NorthernIrelandTotal,
+                _               => throw new ArgumentException("Invalid region specified")
             };
         }
 

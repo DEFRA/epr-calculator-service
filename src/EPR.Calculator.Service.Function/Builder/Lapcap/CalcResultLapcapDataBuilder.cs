@@ -4,6 +4,7 @@ using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.Builder.Lapcap
 {
@@ -19,10 +20,9 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
     {
         private readonly ICalcCountryApportionmentService calcCountryApportionmentService;
         private readonly ApplicationDBContext dbContext;
-        public const string LapcapHeader = "LAPCAP Data";
-        public const string CountryApportionment = "1 Country Apportionment %s";
+
+        //public const string CountryApportionment = "1 Country Apportionment %s";
         public const string Total = "Total";
-        public const int HundredPercent = 100;
 
         public CalcResultLapcapDataBuilder(ApplicationDBContext dbContext,
             ICalcCountryApportionmentService calcCountryApportionmentService)
@@ -37,21 +37,8 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
             CalcResultsRequestDto resultsRequestDto
         )
         {
-            var culture = CultureInfo.CreateSpecificCulture("en-GB");
-            culture.NumberFormat.CurrencySymbol = "£";
-            culture.NumberFormat.CurrencyPositivePattern = 0;
             var orderId = 1;
             var data = new List<CalcResultLapcapDataDetail>();
-            data.Add(new CalcResultLapcapDataDetail
-            {
-                Name = LapcapHeaderConstants.Name,
-                EnglandDisposalCost = LapcapHeaderConstants.EnglandDisposalCost,
-                WalesDisposalCost = LapcapHeaderConstants.WalesDisposalCost,
-                ScotlandDisposalCost = LapcapHeaderConstants.ScotlandDisposalCost,
-                NorthernIrelandDisposalCost = LapcapHeaderConstants.NorthernIrelandDisposalCost,
-                OrderId = orderId,
-                TotalDisposalCost = LapcapHeaderConstants.TotalDisposalCost,
-            });
 
             var results = await (
                 from run in dbContext.CalculatorRuns
@@ -76,74 +63,53 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
             {
                 var detail = new CalcResultLapcapDataDetail
                 {
-                    Name = material,
-                    EnglandCost = GetMaterialDisposalCostPerCountry(CountryConstants.England, material, results),
+                    Name                = material,
+                    EnglandCost         = GetMaterialDisposalCostPerCountry(CountryConstants.England, material, results),
                     NorthernIrelandCost = GetMaterialDisposalCostPerCountry(CountryConstants.NI, material, results),
-                    ScotlandCost = GetMaterialDisposalCostPerCountry(CountryConstants.Scotland, material, results),
-                    WalesCost = GetMaterialDisposalCostPerCountry(CountryConstants.Wales, material, results),
-                    OrderId = ++orderId,
-                    TotalCost = GetTotalMaterialDisposalCost(material, results),
+                    ScotlandCost        = GetMaterialDisposalCostPerCountry(CountryConstants.Scotland, material, results),
+                    WalesCost           = GetMaterialDisposalCostPerCountry(CountryConstants.Wales, material, results),
+                    TotalCost           = GetTotalMaterialDisposalCost(material, results),
+                    OrderId             = ++orderId
                 };
-
-                detail.EnglandDisposalCost = detail.EnglandCost.ToString("C", culture);
-                detail.NorthernIrelandDisposalCost = detail.NorthernIrelandCost.ToString("C", culture);
-                detail.ScotlandDisposalCost = detail.ScotlandCost.ToString("C", culture);
-                detail.WalesDisposalCost = detail.WalesCost.ToString("C", culture);
-                detail.TotalDisposalCost = detail.TotalCost.ToString("C", culture);
 
                 data.Add(detail);
             }
 
             var totalDetail = new CalcResultLapcapDataDetail
             {
-                Name = Total,
-                EnglandCost = data.Sum(x => x.EnglandCost),
+                Name                = Total,
+                EnglandCost         = data.Sum(x => x.EnglandCost),
                 NorthernIrelandCost = data.Sum(x => x.NorthernIrelandCost),
-                ScotlandCost = data.Sum(x => x.ScotlandCost),
-                WalesCost = data.Sum(x => x.WalesCost),
-                TotalCost = data.Sum(x => x.TotalCost),
-                OrderId = ++orderId,
+                ScotlandCost        = data.Sum(x => x.ScotlandCost),
+                WalesCost           = data.Sum(x => x.WalesCost),
+                TotalCost           = data.Sum(x => x.TotalCost),
+                OrderId             = ++orderId,
             };
-            totalDetail.EnglandDisposalCost = totalDetail.EnglandCost.ToString("C", culture);
-            totalDetail.NorthernIrelandDisposalCost = totalDetail.NorthernIrelandCost.ToString("C", culture);
-            totalDetail.ScotlandDisposalCost = totalDetail.ScotlandCost.ToString("C", culture);
-            totalDetail.WalesDisposalCost = totalDetail.WalesCost.ToString("C", culture);
-            totalDetail.TotalDisposalCost = totalDetail.TotalCost.ToString("C", culture);
             data.Add(totalDetail);
 
-
-            var countryApportionment = new CalcResultLapcapDataDetail
+            var countryApportionment = new CountryApportionmentData
             {
-                Name = CountryApportionment,
-                EnglandCost = CalculateApportionment(totalDetail.EnglandCost, totalDetail.TotalCost),
-                NorthernIrelandCost = CalculateApportionment(totalDetail.NorthernIrelandCost, totalDetail.TotalCost),
-                ScotlandCost = CalculateApportionment(totalDetail.ScotlandCost, totalDetail.TotalCost),
-                WalesCost = CalculateApportionment(totalDetail.WalesCost, totalDetail.TotalCost),
-                TotalCost = HundredPercent,
-                OrderId = ++orderId,
+                England         = CalculateApportionment(totalDetail.EnglandCost, totalDetail.TotalCost),
+                NorthernIreland = CalculateApportionment(totalDetail.NorthernIrelandCost, totalDetail.TotalCost),
+                Scotland        = CalculateApportionment(totalDetail.ScotlandCost, totalDetail.TotalCost),
+                Wales           = CalculateApportionment(totalDetail.WalesCost, totalDetail.TotalCost)
             };
-            countryApportionment.EnglandDisposalCost = $"{countryApportionment.EnglandCost.ToString("N", new NumberFormatInfo { NumberDecimalDigits = 8 })}%";
-            countryApportionment.NorthernIrelandDisposalCost = $"{countryApportionment.NorthernIrelandCost.ToString("N", new NumberFormatInfo { NumberDecimalDigits = 8 })}%";
-            countryApportionment.ScotlandDisposalCost = $"{countryApportionment.ScotlandCost.ToString("N", new NumberFormatInfo { NumberDecimalDigits = 8 })}%";
-            countryApportionment.WalesDisposalCost = $"{countryApportionment.WalesCost.ToString("N", new NumberFormatInfo { NumberDecimalDigits = 8 })}%";
-            countryApportionment.TotalDisposalCost = $"{countryApportionment.TotalCost.ToString("N", new NumberFormatInfo { NumberDecimalDigits = 8 })}%";
-            data.Add(countryApportionment);
 
-            if(!resultsRequestDto.IsBillingFile)
+            if (!resultsRequestDto.IsBillingFile)
             {
                 await calcCountryApportionmentService.SaveChangesAsync(new CalcCountryApportionmentServiceDto
                 {
-                    RunId = resultsRequestDto.RunId,
-                    Countries = countries,
-                    CostTypeId = costTypeId,
-                    EnglandCost = countryApportionment.EnglandCost,
-                    NorthernIrelandCost = countryApportionment.NorthernIrelandCost,
-                    ScotlandCost = countryApportionment.ScotlandCost,
-                    WalesCost = countryApportionment.WalesCost,
+                    RunId               = resultsRequestDto.RunId,
+                    Countries           = countries,
+                    CostTypeId          = costTypeId,
+                    EnglandCost         = countryApportionment.England,
+                    NorthernIrelandCost = countryApportionment.NorthernIreland,
+                    ScotlandCost        = countryApportionment.Scotland,
+                    WalesCost           = countryApportionment.Wales
                 });
             }
 
-            return new CalcResultLapcapData { Name = LapcapHeader, CalcResultLapcapDataDetails = data };
+            return new CalcResultLapcapData { CalcResultLapcapDataDetails = data, CountryApportionment = countryApportionment };
         }
 #pragma warning restore
 

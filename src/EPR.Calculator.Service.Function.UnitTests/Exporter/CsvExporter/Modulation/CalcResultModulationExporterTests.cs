@@ -31,44 +31,44 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
                     new CalcResultLaDisposalCostDataDetail
                     {
                         Name = al.Name,
-                        England = "",
-                        Wales = "",
-                        Scotland = "",
-                        NorthernIreland = "",
-                        Total = "",
-                        ProducerReportedHouseholdPackagingWasteTonnage = "26181753.110",
-                        ReportedPublicBinTonnage = "24610.429",
-                        HouseholdDrinkContainers = "",
-                        LateReportingTonnage = "3500"
+                        England = 0m,
+                        Wales = 0m,
+                        Scotland = 0m,
+                        NorthernIreland = 0m,
+                        Total = 0m,
+                        ProducerReportedHouseholdPackagingWasteTonnage = 26181753.110m,
+                        ReportedPublicBinTonnage = 24610.429m,
+                        HouseholdDrinkContainers = null,
+                        LateReportingTonnage = 3500
                     },
                     new CalcResultLaDisposalCostDataDetail
                     {
                         Name = fc.Name,
-                        England = "",
-                        Wales = "",
-                        Scotland = "",
-                        NorthernIreland = "",
-                        Total = "",
-                        ProducerReportedHouseholdPackagingWasteTonnage = "401772.341",
-                        ReportedPublicBinTonnage = "1146.546",
-                        HouseholdDrinkContainers = "",
-                        LateReportingTonnage = "789"
+                        England = 0m,
+                        Wales = 0m,
+                        Scotland = 0m,
+                        NorthernIreland = 0m,
+                        Total = 0m,
+                        ProducerReportedHouseholdPackagingWasteTonnage = 401772.341m,
+                        ReportedPublicBinTonnage = 1146.546m,
+                        HouseholdDrinkContainers = null,
+                        LateReportingTonnage = 789
                     },
                     new CalcResultLaDisposalCostDataDetail
                     {
                         Name = "Total",
-                        England = "",
-                        Wales = "",
-                        Scotland = "",
-                        NorthernIreland = "",
-                        Total = "",
-                        ProducerReportedHouseholdPackagingWasteTonnage = "26583525.451",
-                        ReportedPublicBinTonnage = "25756.975",
-                        HouseholdDrinkContainers = "",
-                        LateReportingTonnage = "4289"
+                        England = 0m,
+                        Wales = 0m,
+                        Scotland = 0m,
+                        NorthernIreland = 0m,
+                        Total = 0m,
+                        ProducerReportedHouseholdPackagingWasteTonnage = 26583525.451m,
+                        ReportedPublicBinTonnage = 25756.975m,
+                        HouseholdDrinkContainers = null,
+                        LateReportingTonnage = 4289
                     }
                 },
-                Name = ""
+                Name = "" // TODO still need Name?
             };
 
             SelfManagedConsumerWasteData mkSmcwData(decimal red, decimal amber, decimal green, decimal? actionedSmcw, decimal? residualSmcw)
@@ -155,39 +155,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
                     "Amber Material Disposal Cost = Material Disposal Cost per Tonne",
                     "Green Material Disposal Cost = Green Modulation Factor * Amber Material Disposal Cost"
                 },
-                new[] { "Aluminium"      , "26181753.110", "24610.429", "", "3500", "123.456", "26209863.530", "21000000.120", "5000000.230", "209863.180",  "£6280704.41",  "£4955297.80",   "£0.7612",  "£0.6312",  "£0.4712" },
-                new[] { "Fibre composite",   "401772.341",  "1146.546", "",  "789",   "0.000",   "403707.880",     "3001.330",  "400000.220",    "706.330", "£14817325.23", "£11697888.16", "£115.9012", "£96.5912", "£72.5512" },
-                new[] { "Total"          , "26583525.451", "25756.975", "", "4289", "123.456", "26613571.410", "21003001.450", "5400000.450", "210569.510", "£21098029.64", "£16653185.96" },
+                new[] { "Aluminium"      , "26181753.110", "24610.429", null   , "3500.000", "123.456", "26209863.530", "21000000.120", "5000000.230", "209863.180",  "£6280704.41",  "£4955297.80",   "£0.7612",  "£0.6312",  "£0.4712" },
+                new[] { "Fibre composite",   "401772.341",  "1146.546", null   ,  "789.000",   "0.000",   "403707.880",     "3001.330",  "400000.220",    "706.330", "£14817325.23", "£11697888.16", "£115.9012", "£96.5912", "£72.5512" },
+                new[] { "Total"          , "26583525.451", "25756.975", "0.000", "4289.000", "123.456", "26613571.410", "21003001.450", "5400000.450", "210569.510", "£21098029.64", "£16653185.96" },
                 new string[] { }
             };
 
-
-            var expected2 =
-                expected.Select(row => string.Join(",", row.Select(cell => $"\"{cell}\""))).ToArray();
-
-            // FluentAssertions would give the clearest diff output?
-            //result.Should().Be(expected2);
-
-            void assert(string[] expected, string[] actual)
-            {
-                Assert.AreEqual(expected.Length, actual.Length, $"CSV sizes differ\nExpected: {expected}\nActual: {actual}");
-
-                for (int i = 0; i < expected.Length; i++)
-                {
-                    var expectedRow = expected[i];
-                    var actualRow = actual[i];
-                    var data = $"Expected row: {expectedRow}\nActual row  : {actualRow}";
-
-                    for (int j = 0; j < expectedRow.Length; j++)
-                    {
-                        var exp = expectedRow[j];
-                        var act = actualRow[j];
-                        Assert.AreEqual(exp, act, $"First difference on Row {i}, index {j}: expected '{exp}' but was '{act}'.\n{data}");
-                    }
-                }
-            };
-
-            assert(expected2, result);
+            CsvTestUtils.AssertCsv(expected, result);
         }
     }
 }

@@ -47,8 +47,7 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
 
             decimal pricePerTonne(MaterialDetail material)
             {
-                var cost = laDisposalCostData.CalcResultLaDisposalCostDetails.First(ldc => ldc.Name == material.Name).DisposalCostPricePerTonne;
-                return decimal.Parse(cost!.TrimStart('£'), CultureInfo.InvariantCulture);
+                return laDisposalCostData.CalcResultLaDisposalCostDetails.First(ldc => ldc.Name == material.Name).DisposalCostPricePerTonne ?? 0m;
             }
 
             var materialCosts =

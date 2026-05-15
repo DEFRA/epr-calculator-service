@@ -4,7 +4,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 {
     public static class CsvTestUtils {
 
-        public static string[][] GetRows(StringBuilder csvContent){ 
+        public static string[][] GetRows(StringBuilder csvContent){
             return csvContent.ToString()
                         .Split(Environment.NewLine)
                         .Select(r => r.Split(','))
@@ -18,7 +18,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                         Key = h?.Trim().Trim('"'),
                         Value = (i < values.Length ? values[i] : null)?
                                     .Trim()
-                                    .Trim('"') 
+                                    .Trim('"')
                                 ?? string.Empty
                     })
                     .Where(x => !string.IsNullOrWhiteSpace(x.Key))
@@ -37,6 +37,31 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                         .Where(x => x.h!.Equals(headerToFind))
                         .Select(x => x.i)
                         .ToArray();
+        }
+
+        public static void AssertCsv(string[][] expected, string[] actual)
+        {
+            var expected2 =
+                expected.Select(row => string.Join(",", row.Select(cell => cell == null ? "" : $"\"{cell}\""))).ToArray();
+
+            // FluentAssertions would give the clearest diff output?
+            //result.Should().Be(expected2);
+
+            Assert.AreEqual(expected2.Length, actual.Length, $"CSV sizes differ\nExpected: {expected2}\nActual: {actual}");
+
+            for (int i = 0; i < expected2.Length; i++)
+            {
+                var expectedRow = expected2[i];
+                var actualRow = actual[i];
+                var data = $"Expected row: {expectedRow}\nActual row  : {actualRow}";
+
+                for (int j = 0; j < expectedRow.Length; j++)
+                {
+                    var exp = expectedRow[j];
+                    var act = actualRow[j];
+                    Assert.AreEqual(exp, act, $"First difference on Row {i}, index {j}: expected '{exp}' but was '{act}'.\n{data}");
+                }
+            }
         }
     }
 }

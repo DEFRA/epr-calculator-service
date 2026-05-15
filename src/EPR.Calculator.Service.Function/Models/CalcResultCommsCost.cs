@@ -5,7 +5,6 @@
     /// </summary>
     public class CalcResultCommsCost
     {
-        public string Name { get; set; } = string.Empty;
         public IEnumerable<CalcResultCommsCostOnePlusFourApportionment> CalcResultCommsCostOnePlusFourApportionment { get; set; }
             = [];
         public IEnumerable<CalcResultCommsCostCommsCostByMaterial> CalcResultCommsCostCommsCostByMaterial { get; set; }

@@ -1,5 +1,7 @@
 ﻿using System.Globalization;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Builder.CommsCost;
+using EPR.Calculator.Service.Function.Builder.Lapcap;
 using EPR.Calculator.Service.Function.Builder.Summary.Common;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
@@ -77,8 +79,12 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
             CalcResult calcResult
         )
         {
+            // TODO was getting 4th? Also `calcResult.CalcResultCommsCostReportDetail.CommsCostByCountry.Last()` - should be Last for Total?
+            // Looks to be getting `CalcResultSummaryCommsCostTwoA.OnePlusFourApportionment` entry - should be in the model.
+            // Also `%s` is a UI thing - the values are actually coefficients
+            // TODO refactor like `CalcResultSummaryCommsCostTwoBTotalBill#GetRegionApportionment`
             var producerTotalCostwithBadDebtProvision = GetProducerTotalCostwithBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
-            return producerTotalCostwithBadDebtProvision * (Convert.ToDecimal(calcResult.CalcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.Select(x => x.EnglandDisposalTotal).ToList()[4].Trim('%')) / 100);
+            return producerTotalCostwithBadDebtProvision * calcResult.CalcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.Where(a => a.Name == CalcResultCommsCostBuilder.OnePlusFourApportionment).First().EnglandTotal;
         }
 
         public static decimal GetWalesWithBadDebtProvisionForComms(
@@ -89,7 +95,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
         )
         {
             var producerTotalCostwithBadDebtProvision = GetProducerTotalCostwithBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
-            return producerTotalCostwithBadDebtProvision * (Convert.ToDecimal(calcResult.CalcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.Select(x => x.WalesDisposalTotal).ToList()[4].Trim('%')) / 100);
+            return producerTotalCostwithBadDebtProvision * calcResult.CalcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.Where(a => a.Name == CalcResultCommsCostBuilder.OnePlusFourApportionment).First().WalesTotal;
         }
 
         public static decimal GetScotlandWithBadDebtProvisionForComms(
@@ -100,7 +106,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
         )
         {
             var producerTotalCostwithBadDebtProvision = GetProducerTotalCostwithBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
-            return producerTotalCostwithBadDebtProvision * (Convert.ToDecimal(calcResult.CalcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.Select(x => x.ScotlandDisposalTotal).ToList()[4].Trim('%')) / 100);
+            return producerTotalCostwithBadDebtProvision * calcResult.CalcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.Where(a => a.Name == CalcResultCommsCostBuilder.OnePlusFourApportionment).First().ScotlandTotal;
         }
 
         public static decimal GetNorthernIrelandWithBadDebtProvisionForComms(
@@ -111,7 +117,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
         )
         {
             var producerTotalCostwithBadDebtProvision = GetProducerTotalCostwithBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
-            return producerTotalCostwithBadDebtProvision * (Convert.ToDecimal(calcResult.CalcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.Select(x => x.NorthernIrelandDisposalTotal).ToList()[4].Trim('%')) / 100);
+            return producerTotalCostwithBadDebtProvision * calcResult.CalcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.Where(a => a.Name == CalcResultCommsCostBuilder.OnePlusFourApportionment).First().NorthernIrelandTotal;
         }
 
         public static decimal GetPriceperTonneForComms(MaterialDetail material, CalcResult calcResult)
@@ -123,9 +129,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
                 return 0;
             }
 
-            var isParseSuccessful = decimal.TryParse(commsCostDataDetail.CommsCostByMaterialPricePerTonne, NumberStyles.Currency, CultureInfo.CurrentCulture.NumberFormat, out decimal value);
-
-            return isParseSuccessful ? value : 0;
+            return commsCostDataDetail.CommsCostByMaterialPricePerTonne ?? 0m;
         }
 
         public static decimal GetProducerTotalCostwithBadDebtProvision(

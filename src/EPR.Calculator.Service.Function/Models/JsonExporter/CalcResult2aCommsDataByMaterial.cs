@@ -4,7 +4,7 @@ using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
-{   
+{
     public class CalcResult2ACommsDataByMaterial
     {
         [JsonPropertyName("name")]
@@ -66,20 +66,20 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
             return new CalcResult2ACommsDataDetails
             {
                 MaterialName = materialCost.Name,
-                ProducerHouseholdPackagingWasteTonnage = Math.Round(materialCost.ProducerReportedHouseholdPackagingWasteTonnageValue, 3),
-                PublicBinTonnage = Math.Round(materialCost.ReportedPublicBinTonnageValue, 3),
+                ProducerHouseholdPackagingWasteTonnage = Math.Round(materialCost.ProducerReportedHouseholdPackagingWasteTonnage, 3), // TODO should rounding hae happened in the Builder?
+                PublicBinTonnage = Math.Round(materialCost.ReportedPublicBinTonnage, 3),
                 TotalTonnage = Math.Round(materialCost.ProducerReportedTotalTonnage, 3),
-                HouseholdDrinksContainersTonnage = Math.Round(materialCost.HouseholdDrinksContainersValue, 3),
-                CommsCostByMaterialPricePerTonne = $"£{materialCost.CommsCostByMaterialPricePerTonneValue.ToString("N4", CultureInfo.CreateSpecificCulture("en-GB"))}",
-                EnglandCommsCost = CurrencyConverterUtils.ConvertToCurrency(materialCost.EnglandValue),
-                WalesCommsCost = CurrencyConverterUtils.ConvertToCurrency(materialCost.WalesValue),
-                ScotlandCommsCost = CurrencyConverterUtils.ConvertToCurrency(materialCost.ScotlandValue),
-                NorthernIrelandCommsCost = CurrencyConverterUtils.ConvertToCurrency(materialCost.NorthernIrelandValue),
-                TotalCommsCost = CurrencyConverterUtils.ConvertToCurrency(materialCost.TotalValue),
-                LateReportingTonnage = Math.Round(materialCost.LateReportingTonnageValue, 3)
+                HouseholdDrinksContainersTonnage = Math.Round(materialCost.HouseholdDrinksContainers ?? 0m, 3),
+                CommsCostByMaterialPricePerTonne = $"£{materialCost.CommsCostByMaterialPricePerTonne?.ToString("N4", CultureInfo.CreateSpecificCulture("en-GB")) : 0m}",
+                EnglandCommsCost = CurrencyConverterUtils.ConvertToCurrency(materialCost.England),
+                WalesCommsCost = CurrencyConverterUtils.ConvertToCurrency(materialCost.Wales),
+                ScotlandCommsCost = CurrencyConverterUtils.ConvertToCurrency(materialCost.Scotland),
+                NorthernIrelandCommsCost = CurrencyConverterUtils.ConvertToCurrency(materialCost.NorthernIreland),
+                TotalCommsCost = CurrencyConverterUtils.ConvertToCurrency(materialCost.Total),
+                LateReportingTonnage = Math.Round(materialCost.LateReportingTonnage, 3)
             };
         }
     }
 
-    
+
 }

@@ -3,7 +3,7 @@ using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Models
-{    
+{
     public class CalcResultOnePlusFourApportionmentJson
     {
         [JsonPropertyName("oneFeeForLADisposalCosts")]
@@ -34,7 +34,7 @@ namespace EPR.Calculator.Service.Function.Models
                     Scotland = CurrencyConverterUtils.ConvertToCurrency(y.ScotlandTotal),
                     Wales = CurrencyConverterUtils.ConvertToCurrency(y.WalesTotal),
                     NorthernIreland = CurrencyConverterUtils.ConvertToCurrency(y.NorthernIrelandTotal),
-                    Total = y.Total
+                    Total = CurrencyConverterUtils.ConvertToCurrency(y.Total)
                 }).SingleOrDefault() ?? new CalcResultOnePlusFourApportionmentDetailJson(),
 
                 FourLADataPrepCharge = calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.
@@ -45,7 +45,7 @@ namespace EPR.Calculator.Service.Function.Models
                     Scotland = CurrencyConverterUtils.ConvertToCurrency(y.ScotlandTotal),
                     Wales = CurrencyConverterUtils.ConvertToCurrency(y.WalesTotal),
                     NorthernIreland = CurrencyConverterUtils.ConvertToCurrency(y.NorthernIrelandTotal),
-                    Total = y.Total
+                    Total = CurrencyConverterUtils.ConvertToCurrency(y.Total)
                 }).SingleOrDefault() ?? new CalcResultOnePlusFourApportionmentDetailJson(),
 
                 TotalOfonePlusFour = calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.
@@ -56,7 +56,7 @@ namespace EPR.Calculator.Service.Function.Models
                     Scotland = CurrencyConverterUtils.ConvertToCurrency(y.ScotlandTotal),
                     Wales = CurrencyConverterUtils.ConvertToCurrency(y.WalesTotal),
                     NorthernIreland = CurrencyConverterUtils.ConvertToCurrency(y.NorthernIrelandTotal),
-                    Total = y.Total
+                    Total = CurrencyConverterUtils.ConvertToCurrency(y.Total)
                 }).SingleOrDefault() ?? new CalcResultOnePlusFourApportionmentDetailJson(),
 
                 OnePlusFourApportionmentPercentages = calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.
@@ -67,7 +67,7 @@ namespace EPR.Calculator.Service.Function.Models
                     Scotland = $"{Math.Round(y.ScotlandTotal, (int)DecimalPlaces.Eight).ToString()}%",
                     Wales = $"{Math.Round(y.WalesTotal, (int)DecimalPlaces.Eight).ToString()}%",
                     NorthernIreland = $"{Math.Round(y.NorthernIrelandTotal, (int)DecimalPlaces.Eight).ToString()}%",
-                    Total = y.Total
+                    Total = CurrencyConverterUtils.ConvertToCurrency(y.Total)
                 }).SingleOrDefault() ?? new CalcResultOnePlusFourApportionmentDetailJson()
             };
         }

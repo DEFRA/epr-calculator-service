@@ -10,6 +10,7 @@ using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Newtonsoft.Json;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {
@@ -42,7 +43,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         }
 
         [TestMethod]
-        public async Task ConstructTest()
+        public async Task CalcResultCommsCostBuilder_ConstructTest()
         {
             var calcResult = TestDataHelper.GetCalcResult();
 
@@ -54,7 +55,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) };
             var apportionment = new CalcResultOnePlusFourApportionment
             {
-                Name = Fixture.Create<string>(),
                 CalcResultOnePlusFourApportionmentDetails = new List<CalcResultOnePlusFourApportionmentDetail>
                 {
                     new CalcResultOnePlusFourApportionmentDetail
@@ -64,11 +64,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         ScotlandTotal = 20M,
                         WalesTotal = 20M,
                         NorthernIrelandTotal = 20M,
-                        Total = "100%",
-                        EnglandDisposalTotal = "40%",
-                        ScotlandDisposalTotal = "20%",
-                        WalesDisposalTotal = "20%",
-                        NorthernIrelandDisposalTotal = "20%",
+                        Total = 100
                     },
                 },
             };
@@ -76,106 +72,73 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             Assert.IsNotNull(result);
 
-            Assert.AreEqual("Parameters - Comms Costs", result.Name);
-
             var onePlusFourApp = result.CalcResultCommsCostOnePlusFourApportionment;
             Assert.IsNotNull(onePlusFourApp);
-            Assert.AreEqual(2, onePlusFourApp.Count());
-            var headerApp = onePlusFourApp.First();
-            Assert.IsTrue(string.IsNullOrEmpty(headerApp.Name));
-
-            Assert.AreEqual("England", headerApp.England);
-            Assert.AreEqual("Wales", headerApp.Wales);
-            Assert.AreEqual("Northern Ireland", headerApp.NorthernIreland);
-            Assert.AreEqual("Scotland", headerApp.Scotland);
-
-            Assert.AreEqual("Total", headerApp.Total);
+            Assert.AreEqual(1, onePlusFourApp.Count());
 
             var dataApp = result.CalcResultCommsCostOnePlusFourApportionment.Last();
             Assert.IsNotNull(dataApp);
 
             Assert.AreEqual("1 + 4 Apportionment %s", dataApp.Name);
-            Assert.AreEqual("40%", dataApp.England);
-            Assert.AreEqual("20%", dataApp.Wales);
-            Assert.AreEqual("20%", dataApp.NorthernIreland);
-            Assert.AreEqual("20%", dataApp.Scotland);
-            Assert.AreEqual("100%", dataApp.Total);
+            Assert.AreEqual(40, dataApp.England);
+            Assert.AreEqual(20, dataApp.Wales);
+            Assert.AreEqual(20, dataApp.NorthernIreland);
+            Assert.AreEqual(20, dataApp.Scotland);
+            Assert.AreEqual(100, dataApp.Total);
 
             var materialCosts = result.CalcResultCommsCostCommsCostByMaterial.ToList();
             Assert.IsNotNull(materialCosts);
-            Assert.AreEqual(10, materialCosts.Count);
+            Assert.AreEqual(9, materialCosts.Count);
 
-            var materialHeader = materialCosts.First();
-
-            Assert.IsNotNull(materialHeader);
-
-            Assert.AreEqual("2a Comms Costs - by Material", materialHeader.Name);
-            Assert.AreEqual("England", materialHeader.England);
-            Assert.AreEqual("Wales", materialHeader.Wales);
-            Assert.AreEqual("Scotland", materialHeader.Scotland);
-            Assert.AreEqual("Northern Ireland", materialHeader.NorthernIreland);
-            Assert.AreEqual("Total", materialHeader.Total);
-            Assert.AreEqual(
-                "Producer Household Packaging Tonnage",
-                materialHeader.ProducerReportedHouseholdPackagingWasteTonnage);
-            Assert.AreEqual("Public Bin Tonnage", materialHeader.ReportedPublicBinTonnage);
-            Assert.AreEqual("Household Drinks Containers Tonnage", materialHeader.HouseholdDrinksContainers);
-            Assert.AreEqual("Late Reporting Tonnage", materialHeader.LateReportingTonnage);
-            Assert.AreEqual(
-                "Producer Household Tonnage + Late Reporting Tonnage + Public Bin Tonnage + Household Drinks Containers Tonnage",
-                materialHeader.ProducerReportedHouseholdPlusLateReportingTonnage);
-            Assert.AreEqual(
-                "Comms Cost - by Material Price Per Tonne",
-                materialHeader.CommsCostByMaterialPricePerTonne);
-
-            var aluminiumCost = materialCosts[1];
+            var aluminiumCost = materialCosts[0];
             Assert.AreEqual("Aluminium", aluminiumCost.Name);
-            Assert.AreEqual("£4.00", aluminiumCost.England);
-            Assert.AreEqual("£2.00", aluminiumCost.Wales);
-            Assert.AreEqual("£2.00", aluminiumCost.Scotland);
-            Assert.AreEqual("£2.00", aluminiumCost.NorthernIreland);
-            Assert.AreEqual("£10.00", aluminiumCost.Total);
-            Assert.AreEqual("1000.000", aluminiumCost.ProducerReportedHouseholdPackagingWasteTonnage);
-            Assert.AreEqual("8000.000", aluminiumCost.LateReportingTonnage);
-            Assert.AreEqual("9000.000", aluminiumCost.ProducerReportedHouseholdPlusLateReportingTonnage);
-            Assert.AreEqual("0.0011", aluminiumCost.CommsCostByMaterialPricePerTonne);
+            Assert.AreEqual(4, aluminiumCost.England);
+            Assert.AreEqual(2, aluminiumCost.Wales);
+            Assert.AreEqual(2, aluminiumCost.Scotland);
+            Assert.AreEqual(2, aluminiumCost.NorthernIreland);
+            Assert.AreEqual(10, aluminiumCost.Total);
+            Assert.AreEqual(1000, aluminiumCost.ProducerReportedHouseholdPackagingWasteTonnage);
+            Assert.AreEqual(8000, aluminiumCost.LateReportingTonnage);
+            Assert.AreEqual(9000, aluminiumCost.ProducerReportedTotalTonnage);
+            // TODO this rounding should happen in the builder
+            Assert.AreEqual(0.0011m, Math.Round(aluminiumCost.CommsCostByMaterialPricePerTonne!.Value, 4));
 
-            var fibreCompositeCost = materialCosts[2];
+            var fibreCompositeCost = materialCosts[1];
             Assert.AreEqual("Fibre composite", fibreCompositeCost.Name);
-            Assert.AreEqual("£4.00", fibreCompositeCost.England);
-            Assert.AreEqual("£2.00", fibreCompositeCost.Wales);
-            Assert.AreEqual("£2.00", fibreCompositeCost.Scotland);
-            Assert.AreEqual("£2.00", fibreCompositeCost.NorthernIreland);
-            Assert.AreEqual("£10.00", fibreCompositeCost.Total);
-            Assert.AreEqual("2000.000", fibreCompositeCost.ProducerReportedHouseholdPackagingWasteTonnage);
-            Assert.AreEqual("10.000", fibreCompositeCost.LateReportingTonnage);
-            Assert.AreEqual("2210.000", fibreCompositeCost.ProducerReportedHouseholdPlusLateReportingTonnage);
-            Assert.AreEqual("0.0045", fibreCompositeCost.CommsCostByMaterialPricePerTonne);
+            Assert.AreEqual(4, fibreCompositeCost.England);
+            Assert.AreEqual(2, fibreCompositeCost.Wales);
+            Assert.AreEqual(2, fibreCompositeCost.Scotland);
+            Assert.AreEqual(2, fibreCompositeCost.NorthernIreland);
+            Assert.AreEqual(10, fibreCompositeCost.Total);
+            Assert.AreEqual(2000, fibreCompositeCost.ProducerReportedHouseholdPackagingWasteTonnage);
+            Assert.AreEqual(10, fibreCompositeCost.LateReportingTonnage);
+            Assert.AreEqual(2210, fibreCompositeCost.ProducerReportedTotalTonnage);
+            Assert.AreEqual(0.0045m, Math.Round(fibreCompositeCost.CommsCostByMaterialPricePerTonne!.Value, 4));
 
-            var glassCost = materialCosts[3];
+            var glassCost = materialCosts[2];
             Assert.AreEqual("Glass", glassCost.Name);
-            Assert.AreEqual("£4.00", glassCost.England);
-            Assert.AreEqual("£2.00", glassCost.Wales);
-            Assert.AreEqual("£2.00", glassCost.Scotland);
-            Assert.AreEqual("£2.00", glassCost.NorthernIreland);
-            Assert.AreEqual("£10.00", glassCost.Total);
-            Assert.AreEqual("3000.000", glassCost.ProducerReportedHouseholdPackagingWasteTonnage);
-            Assert.AreEqual("10.000", glassCost.LateReportingTonnage);
-            Assert.AreEqual("3210.000", glassCost.ProducerReportedHouseholdPlusLateReportingTonnage);
-            Assert.AreEqual("0.0031", glassCost.CommsCostByMaterialPricePerTonne);
-            Assert.AreEqual("200.0000", glassCost.HouseholdDrinksContainers);
+            Assert.AreEqual(4, glassCost.England);
+            Assert.AreEqual(2, glassCost.Wales);
+            Assert.AreEqual(2, glassCost.Scotland);
+            Assert.AreEqual(2, glassCost.NorthernIreland);
+            Assert.AreEqual(10, glassCost.Total);
+            Assert.AreEqual(3000, glassCost.ProducerReportedHouseholdPackagingWasteTonnage);
+            Assert.AreEqual(10, glassCost.LateReportingTonnage);
+            Assert.AreEqual(3210, glassCost.ProducerReportedTotalTonnage);
+            Assert.AreEqual(0.0031m, Math.Round(glassCost.CommsCostByMaterialPricePerTonne!.Value, 4));
+            Assert.AreEqual(200, glassCost.HouseholdDrinksContainers);
 
             var totalMaterialCost = materialCosts.Last();
             Assert.AreEqual("Total", totalMaterialCost.Name);
-            Assert.AreEqual("£32.00", totalMaterialCost.England);
-            Assert.AreEqual("£16.00", totalMaterialCost.Wales);
-            Assert.AreEqual("£16.00", totalMaterialCost.Scotland);
-            Assert.AreEqual("£16.00", totalMaterialCost.NorthernIreland);
-            Assert.AreEqual("£80.00", totalMaterialCost.Total);
-            Assert.AreEqual("36000.000", totalMaterialCost.ProducerReportedHouseholdPackagingWasteTonnage);
-            Assert.AreEqual("10020.000", totalMaterialCost.LateReportingTonnage);
-            Assert.AreEqual("46420.000", totalMaterialCost.ProducerReportedHouseholdPlusLateReportingTonnage);
-            Assert.IsTrue(string.IsNullOrEmpty(totalMaterialCost.CommsCostByMaterialPricePerTonne));
+            Assert.AreEqual(32, totalMaterialCost.England);
+            Assert.AreEqual(16, totalMaterialCost.Wales);
+            Assert.AreEqual(16, totalMaterialCost.Scotland);
+            Assert.AreEqual(16, totalMaterialCost.NorthernIreland);
+            Assert.AreEqual(80, totalMaterialCost.Total);
+            Assert.AreEqual(36000, totalMaterialCost.ProducerReportedHouseholdPackagingWasteTonnage);
+            Assert.AreEqual(10020, totalMaterialCost.LateReportingTonnage);
+            Assert.AreEqual(46420, totalMaterialCost.ProducerReportedTotalTonnage);
+            Assert.IsNull(totalMaterialCost.CommsCostByMaterialPricePerTonne);
         }
 
         [TestMethod]
