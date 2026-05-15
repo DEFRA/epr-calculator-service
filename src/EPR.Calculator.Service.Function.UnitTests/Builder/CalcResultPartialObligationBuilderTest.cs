@@ -306,7 +306,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual(183, parOrg.DaysObligated);
             Assert.AreEqual(365, parOrg.DaysInSubmissionYear);
             Assert.AreEqual(0.5013698630136986301369863014m, parOrg.ObligatedFactor);
-            Assert.AreEqual("50.14%", parOrg.ObligatedPercentage);
 
             var parOrgMats = parOrg.PartialObligationTonnageByMaterial;
             Assert.AreEqual(8, parOrgMats.Count());
@@ -404,7 +403,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual(183, parOrg.DaysObligated);
             Assert.AreEqual(365, parOrg.DaysInSubmissionYear);
             Assert.AreEqual(0.5013698630136986301369863014m, parOrg.ObligatedFactor);
-            Assert.AreEqual("50.14%", parOrg.ObligatedPercentage);
 
             var parOrgMats = parOrg.PartialObligationTonnageByMaterial;
             Assert.AreEqual(8, parOrgMats.Count());

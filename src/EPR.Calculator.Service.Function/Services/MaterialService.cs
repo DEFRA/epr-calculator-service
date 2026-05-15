@@ -5,6 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Services
 {
+    public interface IMaterialService
+    {
+        public Task<List<MaterialDetail>> GetMaterials();
+    }
+
     public class MaterialService : IMaterialService
     {
         private readonly ApplicationDBContext context;

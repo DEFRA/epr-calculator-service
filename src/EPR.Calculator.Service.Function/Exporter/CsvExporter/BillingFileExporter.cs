@@ -173,10 +173,8 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         {
             return new CalcResultScaledupProducers
             {
-                ColumnHeaders = producers.ColumnHeaders,
-                MaterialBreakdownHeaders = producers.MaterialBreakdownHeaders,
-                ScaledupProducers = GetScaledupProducers(producers.ScaledupProducers, acceptedProducerIds),
-                TitleHeader = producers.TitleHeader,
+                Materials = producers.Materials,
+                ScaledupProducers = GetScaledupProducers(producers.ScaledupProducers, acceptedProducerIds)
             };
         }
 
@@ -184,20 +182,9 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             IReadOnlyList<CalcResultScaledupProducer>? scaledupProducers,
             ImmutableHashSet<int> acceptedProducerIds)
         {
-            var acceptedProducers = scaledupProducers?
+            return scaledupProducers?
                 .Where(x => acceptedProducerIds.Contains(x.ProducerId) || x.ProducerId == 0)
                 .ToImmutableList() ?? [];
-
-            acceptedProducers.ForEach(x =>
-            {
-                if (x.IsTotalRow)
-                {
-                    x.ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>();
-
-                    ResetObjectUtil.ResetObject(x);
-                }
-            });
-            return acceptedProducers;
         }
 
         public CalcResultPartialObligations GetPartialObligationsForExport(
@@ -210,10 +197,8 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 
             return new CalcResultPartialObligations
             {
-                ColumnHeaders = producers.ColumnHeaders,
-                MaterialBreakdownHeaders = producers.MaterialBreakdownHeaders,
-                PartialObligations = acceptedProducers,
-                TitleHeader = producers.TitleHeader,
+                Materials = producers.Materials,
+                PartialObligations = acceptedProducers
             };
         }
 
@@ -222,13 +207,12 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             ImmutableHashSet<int> acceptedProducerIds)
         {
             var isAccepted = (int producerId) => acceptedProducerIds.Contains(producerId) || producerId == 0;
-            var acceptedH2Producers = producers.H2ProjectedProducers?.Where(x => isAccepted(x.ProducerId)).ToList() ?? new List<CalcResultH2ProjectedProducer>();
-            var acceptedH1Producers = producers.H1ProjectedProducers?.Where(x => isAccepted(x.ProducerId)).ToList() ?? new List<CalcResultH1ProjectedProducer>();
+            var acceptedH2Producers = producers.H2ProjectedProducers?.Where(x => isAccepted(x.ProducerId)).ToImmutableList() ?? ImmutableList<CalcResultH2ProjectedProducer>.Empty;
+            var acceptedH1Producers = producers.H1ProjectedProducers?.Where(x => isAccepted(x.ProducerId)).ToImmutableList() ?? ImmutableList<CalcResultH1ProjectedProducer>.Empty;
 
             return new CalcResultProjectedProducers
             {
-                H2ProjectedProducersHeaders = producers.H2ProjectedProducersHeaders,
-                H1ProjectedProducersHeaders = producers.H1ProjectedProducersHeaders,
+                Materials = producers.Materials,
                 H2ProjectedProducers = acceptedH2Producers,
                 H1ProjectedProducers = acceptedH1Producers,
             };

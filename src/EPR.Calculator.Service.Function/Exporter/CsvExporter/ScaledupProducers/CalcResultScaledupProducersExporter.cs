@@ -3,11 +3,21 @@ using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers
 {
+    public interface ICalcResultScaledupProducersExporter
+    {
+        public void Export(CalcResultScaledupProducers calcResultScaledupProducers, StringBuilder stringBuilder);
+    }
+
     public class CalcResultScaledupProducersExporter : ICalcResultScaledupProducersExporter
     {
+        private const int MaterialsBreakdownHeaderInitialColumnIndex = 10;
+        private const int MaterialsBreakdownHeaderIncrementalColumnIndex = 10;
+
+
         public void Export(CalcResultScaledupProducers calcResultScaledupProducers, StringBuilder stringBuilder)
         {
             // Add empty lines
@@ -15,12 +25,17 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers
             stringBuilder.AppendLine();
 
             // Add headers
-            PrepareScaledupProducersHeader(calcResultScaledupProducers, stringBuilder);
+            PrepareScaledupProducersHeader(calcResultScaledupProducers.Materials!, stringBuilder);
 
             // Add data
             if (calcResultScaledupProducers.ScaledupProducers?.Any() == true)
             {
-                AppendScaledupProducers(calcResultScaledupProducers, stringBuilder);
+                var materials = calcResultScaledupProducers.Materials!;
+                foreach (var producer in calcResultScaledupProducers.ScaledupProducers)
+                    producer.ScaledupProducerTonnageByMaterial = GetTonnages(producer.PomData, materials);
+
+                AppendScaledupProducers(calcResultScaledupProducers.ScaledupProducers, stringBuilder);
+                AppendOverallTotalRow(GetOverallTotalRow(calcResultScaledupProducers.ScaledupProducers, materials), stringBuilder);
             }
             else
             {
@@ -28,32 +43,32 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers
             }
         }
 
-        private static void AppendScaledupProducers(CalcResultScaledupProducers producers, StringBuilder csvContent)
+        private static void AppendScaledupProducers(IEnumerable<CalcResultScaledupProducer> producers, StringBuilder csvContent)
         {
-            foreach (var producer in producers.ScaledupProducers!)
+            foreach (var producer in producers)
             {
-                if (producer.IsTotalRow)
-                {
-                    _ = csvContent.Append(new string(CommonConstants.CsvFileDelimiter[0], 8));
-                    csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.Totals));
-                }
-                else
-                {
-                    csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerId));
-                    csvContent.Append(CsvSanitiser.SanitiseData(producer.SubsidiaryId));
-                    csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerName));
-                    csvContent.Append(CsvSanitiser.SanitiseData(producer.TradingName));
-                    csvContent.Append(CsvSanitiser.SanitiseData(producer.Level));
-                    csvContent.Append(CsvSanitiser.SanitiseData(producer.SubmissionPeriodCode));
-                    csvContent.Append(CsvSanitiser.SanitiseData(producer.DaysInSubmissionPeriod != -1 ? producer.DaysInSubmissionPeriod.ToString() : string.Empty));
-                    csvContent.Append(CsvSanitiser.SanitiseData(producer.DaysInWholePeriod != -1 ? producer.DaysInWholePeriod.ToString() : string.Empty));
-                    csvContent.Append(CsvSanitiser.SanitiseData(producer.ScaleupFactor == -1 ? CommonConstants.Totals : producer.ScaleupFactor.ToString()));
-                }
+                csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerId));
+                csvContent.Append(CsvSanitiser.SanitiseData(producer.SubsidiaryId));
+                csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerName));
+                csvContent.Append(CsvSanitiser.SanitiseData(producer.TradingName));
+                csvContent.Append(CsvSanitiser.SanitiseData(producer.Level));
+                csvContent.Append(CsvSanitiser.SanitiseData(producer.SubmissionPeriodCode));
+                csvContent.Append(CsvSanitiser.SanitiseData(producer.DaysInSubmissionPeriod != -1 ? producer.DaysInSubmissionPeriod.ToString() : string.Empty));
+                csvContent.Append(CsvSanitiser.SanitiseData(producer.DaysInWholePeriod != -1 ? producer.DaysInWholePeriod.ToString() : string.Empty));
+                csvContent.Append(CsvSanitiser.SanitiseData(producer.ScaleupFactor == -1 ? CommonConstants.Totals : producer.ScaleupFactor.ToString()));
 
                 AppendScaledupProducerTonnageByMaterial(csvContent, producer);
 
                 csvContent.AppendLine();
             }
+        }
+
+        private static void AppendOverallTotalRow(CalcResultScaledupProducer totalProducer, StringBuilder csvContent)
+        {
+            csvContent.Append(new string(CommonConstants.CsvFileDelimiter[0], 8));
+            csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.Totals));
+            AppendScaledupProducerTonnageByMaterial(csvContent, totalProducer);
+            csvContent.AppendLine();
         }
 
         private static void AppendScaledupProducerTonnageByMaterial(StringBuilder csvContent, CalcResultScaledupProducer producer)
@@ -88,17 +103,59 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers
             }
         }
 
-        private static void PrepareScaledupProducersHeader(CalcResultScaledupProducers producers, StringBuilder csvContent)
+        public static CalcResultScaledupProducer GetOverallTotalRow(
+            IEnumerable<CalcResultScaledupProducer> producers,
+            IEnumerable<MaterialDetail> materials
+        )
+        {
+            var overallTotalRow = new CalcResultScaledupProducer
+            {
+                ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>(),
+            };
+
+            var allMaterialDict = producers.Where(x => !x.IsSubtotalRow).Select(x => x.ScaledupProducerTonnageByMaterial);
+            foreach (var material in materials)
+            {
+                var totalRow = new CalcResultScaledupProducerTonnage();
+                var materialValues = allMaterialDict.Where(x => x.ContainsKey(material.Code)).Select(x => x[material.Code]).ToList();
+                totalRow.ReportedHouseholdPackagingWasteTonnage = materialValues.Sum(x => x.ReportedHouseholdPackagingWasteTonnage);
+                totalRow.ReportedPublicBinTonnage = materialValues.Sum(x => x.ReportedPublicBinTonnage);
+                if (material.Code == MaterialCodes.Glass)
+                {
+                    totalRow.HouseholdDrinksContainersTonnageGlass = materialValues.Sum(x => x.HouseholdDrinksContainersTonnageGlass);
+                }
+
+                totalRow.TotalReportedTonnage = materialValues.Sum(x => x.TotalReportedTonnage);
+                totalRow.ReportedSelfManagedConsumerWasteTonnage = materialValues.Sum(x => x.ReportedSelfManagedConsumerWasteTonnage);
+                totalRow.NetReportedTonnage = materialValues.Sum(x => x.NetReportedTonnage);
+                totalRow.ScaledupReportedHouseholdPackagingWasteTonnage = materialValues.Sum(x => x.ScaledupReportedHouseholdPackagingWasteTonnage);
+                totalRow.ScaledupReportedPublicBinTonnage = materialValues.Sum(x => x.ScaledupReportedPublicBinTonnage);
+                if (material.Code == MaterialCodes.Glass)
+                {
+                    totalRow.ScaledupHouseholdDrinksContainersTonnageGlass = materialValues.Sum(x => x.ScaledupHouseholdDrinksContainersTonnageGlass);
+                }
+
+                totalRow.ScaledupTotalReportedTonnage = materialValues.Sum(x => x.ScaledupTotalReportedTonnage);
+                totalRow.ScaledupReportedSelfManagedConsumerWasteTonnage = materialValues.Sum(x => x.ScaledupReportedSelfManagedConsumerWasteTonnage);
+                totalRow.ScaledupNetReportedTonnage = materialValues.Sum(x => x.ScaledupNetReportedTonnage);
+
+                overallTotalRow.ScaledupProducerTonnageByMaterial.Add(material.Name, totalRow);
+            }
+
+            return overallTotalRow;
+        }
+
+        private static void PrepareScaledupProducersHeader(IImmutableList<MaterialDetail> materials, StringBuilder csvContent)
         {
             // Add scaledup producer header
-            csvContent.AppendLine(CsvSanitiser.SanitiseData(producers.TitleHeader!.Name));
+            csvContent.AppendLine(CsvSanitiser.SanitiseData(CalcResultScaledupProducerHeaders.ScaledupProducers));
             csvContent.AppendLine();
 
             // Add material breakdown header
-            WriteScaledupProducersSecondaryHeaders(producers.MaterialBreakdownHeaders!, csvContent);
+            WriteScaledupProducersSecondaryHeaders(GetMaterialsBreakdownHeader(materials), csvContent);
 
             // Add column header
-            WriteScaledupProducersColumnHeaders(producers, csvContent);
+            WriteScaledupProducersColumnHeaders(GetColumnHeaders(materials), csvContent);
             csvContent.AppendLine();
         }
 
@@ -116,12 +173,149 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers
             csvContent.AppendLine(headerRow);
         }
 
-        private static void WriteScaledupProducersColumnHeaders(CalcResultScaledupProducers producers, StringBuilder csvContent)
+        private static void WriteScaledupProducersColumnHeaders(IEnumerable<CalcResultScaledupProducerHeader> columnHeaders, StringBuilder csvContent)
         {
-            foreach (var item in producers.ColumnHeaders!)
+            foreach (var item in columnHeaders)
             {
                 csvContent.Append(CsvSanitiser.SanitiseData(item.Name));
             }
+        }
+
+        public static ImmutableList<CalcResultScaledupProducerHeader> GetMaterialsBreakdownHeader(IEnumerable<MaterialDetail> materials)
+        {
+            var materialsBreakdownHeaders = ImmutableList.CreateBuilder<CalcResultScaledupProducerHeader>();
+            var columnIndex = MaterialsBreakdownHeaderInitialColumnIndex;
+
+            materialsBreakdownHeaders.Add(new CalcResultScaledupProducerHeader
+            {
+                Name = CalcResultScaledupProducerHeaders.EachSubmissionForTheYear,
+                ColumnIndex = 1,
+            });
+
+            foreach (var material in materials)
+            {
+                materialsBreakdownHeaders.Add(new CalcResultScaledupProducerHeader
+                {
+                    Name = $"{material.Name} Breakdown",
+                    ColumnIndex = columnIndex,
+                });
+
+                columnIndex = material.Code == MaterialCodes.Glass
+                    ? columnIndex + MaterialsBreakdownHeaderIncrementalColumnIndex + 2
+                    : columnIndex + MaterialsBreakdownHeaderIncrementalColumnIndex;
+            }
+
+            return materialsBreakdownHeaders.ToImmutable();
+        }
+
+        public static ImmutableList<CalcResultScaledupProducerHeader> GetColumnHeaders(IEnumerable<MaterialDetail> materials)
+        {
+            var columnHeaders = ImmutableList.CreateBuilder<CalcResultScaledupProducerHeader>();
+
+            columnHeaders.AddRange([
+                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ProducerId },
+                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.SubsidiaryId },
+                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ProducerOrSubsidiaryName },
+                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.TradingName },
+                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.Level },
+                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.SubmissionPeriodCode },
+                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.DaysInSubmissionPeriod },
+                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.DaysInWholePeriod },
+                new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaleupFactor }
+            ]);
+
+            foreach (var material in materials)
+            {
+                var columnHeadersList = new List<CalcResultScaledupProducerHeader>
+                {
+                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.HouseholdPackagingWasteTonnage },
+                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.PublicBinTonnage },
+                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.TotalTonnage },
+                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.SelfManagedConsumerWasteTonnage },
+                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.NetTonnage },
+                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupHouseholdPackagingWasteTonnage },
+                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupPublicBinTonnage },
+                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupTotalTonnage },
+                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupSelfManagedConsumerWasteTonnage },
+                    new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupNetTonnage },
+                };
+
+                if (material.Code == MaterialCodes.Glass)
+                {
+                    columnHeadersList.Insert(2, new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.HouseholdDrinksContainersTonnageGlass });
+                    columnHeadersList.Insert(8, new CalcResultScaledupProducerHeader { Name = CalcResultScaledupProducerHeaders.ScaledupHouseholdDrinksContainersTonnageGlass });
+                }
+
+                columnHeaders.AddRange(columnHeadersList);
+            }
+
+            return columnHeaders.ToImmutable();
+        }
+
+        public static Dictionary<string, CalcResultScaledupProducerTonnage> GetTonnages(
+            IReadOnlyList<ScaledupPomEntry> pomData,
+            IEnumerable<MaterialDetail> materials
+        )
+        {
+            var scaledupProducerTonnages = new Dictionary<string, CalcResultScaledupProducerTonnage>();
+
+            foreach (var material in materials)
+            {
+                var scaledupProducerTonnage = new CalcResultScaledupProducerTonnage();
+                var materialPomData = pomData.Where(e => e.MaterialId == material.Id);
+
+                scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage = materialPomData
+                    .Where(e => e.PackagingType == PackagingTypes.Household)
+                    .Sum(e => e.Tonnage);
+                scaledupProducerTonnage.ScaledupReportedHouseholdPackagingWasteTonnage = materialPomData
+                    .Where(e => e.PackagingType == PackagingTypes.Household)
+                    .Sum(e => e.ScaledTonnage);
+
+                scaledupProducerTonnage.ReportedPublicBinTonnage = materialPomData
+                    .Where(e => e.PackagingType == PackagingTypes.PublicBin)
+                    .Sum(e => e.Tonnage);
+                scaledupProducerTonnage.ScaledupReportedPublicBinTonnage = materialPomData
+                    .Where(e => e.PackagingType == PackagingTypes.PublicBin)
+                    .Sum(e => e.ScaledTonnage);
+
+                scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage = materialPomData
+                    .Where(e => e.PackagingType == PackagingTypes.ConsumerWaste)
+                    .Sum(e => e.Tonnage);
+                scaledupProducerTonnage.ScaledupReportedSelfManagedConsumerWasteTonnage = materialPomData
+                    .Where(e => e.PackagingType == PackagingTypes.ConsumerWaste)
+                    .Sum(e => e.ScaledTonnage);
+
+                if (material.Code == MaterialCodes.Glass)
+                {
+                    scaledupProducerTonnage.HouseholdDrinksContainersTonnageGlass = materialPomData
+                        .Where(e => e.PackagingType == PackagingTypes.HouseholdDrinksContainers)
+                        .Sum(e => e.Tonnage);
+                    scaledupProducerTonnage.ScaledupHouseholdDrinksContainersTonnageGlass = materialPomData
+                        .Where(e => e.PackagingType == PackagingTypes.HouseholdDrinksContainers)
+                        .Sum(e => e.ScaledTonnage);
+
+                    scaledupProducerTonnage.TotalReportedTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage +
+                        scaledupProducerTonnage.ReportedPublicBinTonnage + scaledupProducerTonnage.HouseholdDrinksContainersTonnageGlass;
+                    scaledupProducerTonnage.ScaledupTotalReportedTonnage = scaledupProducerTonnage.ScaledupReportedHouseholdPackagingWasteTonnage +
+                        scaledupProducerTonnage.ScaledupReportedPublicBinTonnage + scaledupProducerTonnage.ScaledupHouseholdDrinksContainersTonnageGlass;
+                }
+                else
+                {
+                    scaledupProducerTonnage.TotalReportedTonnage = scaledupProducerTonnage.ReportedHouseholdPackagingWasteTonnage +
+                        scaledupProducerTonnage.ReportedPublicBinTonnage;
+                    scaledupProducerTonnage.ScaledupTotalReportedTonnage = scaledupProducerTonnage.ScaledupReportedHouseholdPackagingWasteTonnage +
+                        scaledupProducerTonnage.ScaledupReportedPublicBinTonnage;
+                }
+
+                scaledupProducerTonnage.NetReportedTonnage = scaledupProducerTonnage.TotalReportedTonnage -
+                    scaledupProducerTonnage.ReportedSelfManagedConsumerWasteTonnage;
+                scaledupProducerTonnage.ScaledupNetReportedTonnage = scaledupProducerTonnage.ScaledupTotalReportedTonnage -
+                    scaledupProducerTonnage.ScaledupReportedSelfManagedConsumerWasteTonnage;
+
+                scaledupProducerTonnages.Add(material.Code, scaledupProducerTonnage);
+            }
+
+            return scaledupProducerTonnages;
         }
     }
 }

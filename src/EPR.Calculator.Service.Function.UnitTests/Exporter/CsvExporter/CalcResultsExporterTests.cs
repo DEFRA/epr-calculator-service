@@ -363,23 +363,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 },
                 CalcResultScaledupProducers = new CalcResultScaledupProducers
                 {
-                    TitleHeader = new CalcResultScaledupProducerHeader
-                    {
-                        Name = "Scaled-up Producers",
-                    },
-                    MaterialBreakdownHeaders =
-                    [
-                        new CalcResultScaledupProducerHeader { Name = "Each submission for the year", ColumnIndex = 1 },
-                        new CalcResultScaledupProducerHeader { Name = "Aluminium Breakdown", ColumnIndex = 2 },
-                        new CalcResultScaledupProducerHeader { Name = "Glass Breakdown", ColumnIndex = 3 },
-                    ],
-                    ColumnHeaders =
-                    [
-                        new CalcResultScaledupProducerHeader { Name = "Producer ID" },
-                        new CalcResultScaledupProducerHeader { Name = "Subsidiary ID" },
-                        new CalcResultScaledupProducerHeader { Name = "HouseholdDrinksContainersTonnageGlass" },
-                        new CalcResultScaledupProducerHeader { Name = "ScaledupHouseholdDrinksContainersTonnageGlass" },
-                    ],
+                    Materials = ImmutableList<MaterialDetail>.Empty,
                     ScaledupProducers = GetCalcResultScaledupProducerList(),
                 },
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
@@ -478,19 +462,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                     DaysInWholePeriod = 91,
                     ScaleupFactor = 2,
                     ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterial(),
-                },
-                new CalcResultScaledupProducer
-                {
-                    ProducerId = 101001,
-                    SubsidiaryId = string.Empty,
-                    ProducerName = "Allied Packaging",
-                    Level = "1",
-                    SubmissionPeriodCode = "2024-P2",
-                    DaysInSubmissionPeriod = 91,
-                    DaysInWholePeriod = 91,
-                    ScaleupFactor = 2,
-                    ScaledupProducerTonnageByMaterial = GetScaledupProducerTonnageByMaterial(),
-                    IsTotalRow = true,
                 }
             ];
         }

@@ -20,7 +20,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligation
             stringBuilder.AppendLine();
 
             // Add headers
-            PreparePartialObligationsHeader(calcResultPartialObligations, stringBuilder);
+            PreparePartialObligationsHeader(calcResultPartialObligations.Materials!, stringBuilder, showModulation);
 
             // Add data
             if (calcResultPartialObligations.PartialObligations?.Any() == true)
@@ -46,7 +46,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligation
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.DaysInSubmissionYear));
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.JoiningDate));
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.DaysObligated));
-                csvContent.Append(CsvSanitiser.SanitiseData(producer.ObligatedPercentage));
+                csvContent.Append(CsvSanitiser.SanitiseData((producer.ObligatedFactor * 100).ToString("F2") + "%"));
 
                 AppendPartialObligationTonnageByMaterial(csvContent, producer.PartialObligationTonnageByMaterial, showModulation);
 
@@ -59,7 +59,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligation
             void AppendRam(RAMTonnage? ram)
             {
                 if (showModulation && ram != null)
-                { 
+                {
                     csvContent.Append(CsvSanitiser.SanitiseData(ram.RedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                     csvContent.Append(CsvSanitiser.SanitiseData(ram.AmberTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                     csvContent.Append(CsvSanitiser.SanitiseData(ram.GreenTonnage, DecimalPlaces.Three, DecimalFormats.F3));
@@ -67,7 +67,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligation
                     csvContent.Append(CsvSanitiser.SanitiseData(ram.AmberMedicalTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                     csvContent.Append(CsvSanitiser.SanitiseData(ram.GreenMedicalTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 }
-            } 
+            }
 
             foreach (var producerTonnage in partialObligationTonnageByMaterial)
             {
@@ -88,7 +88,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligation
 
                 csvContent.Append(CsvSanitiser.SanitiseData(tonnage.TotalTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 csvContent.Append(CsvSanitiser.SanitiseData(tonnage.SelfManagedConsumerWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                
+
                 csvContent.Append(CsvSanitiser.SanitiseData(tonnage.PartialHouseholdTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 AppendRam(tonnage.PartialHouseholdRAMTonnage);
 
@@ -106,17 +106,17 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligation
             }
         }
 
-        private static void PreparePartialObligationsHeader(CalcResultPartialObligations producers, StringBuilder csvContent)
+        private static void PreparePartialObligationsHeader(IReadOnlyCollection<MaterialDetail> materials, StringBuilder csvContent, bool showModulation)
         {
             // Add partial obligation producer header
-            csvContent.AppendLine(CsvSanitiser.SanitiseData(producers.TitleHeader!.Name));
+            csvContent.AppendLine(CsvSanitiser.SanitiseData(CalcResultPartialObligationHeaders.PartialObligations));
             csvContent.AppendLine();
 
             // Add material breakdown header
-            WritePartialObligationsSecondaryHeaders(producers.MaterialBreakdownHeaders!, csvContent);
+            WritePartialObligationsSecondaryHeaders(GetMaterialsBreakdownHeader(materials, showModulation), csvContent);
 
             // Add column header
-            WritePartialObligationsColumnHeaders(producers, csvContent);
+            WritePartialObligationsColumnHeaders(GetColumnHeaders(materials, showModulation), csvContent);
             csvContent.AppendLine();
         }
 
@@ -134,12 +134,148 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligation
             csvContent.AppendLine(headerRow);
         }
 
-        private static void WritePartialObligationsColumnHeaders(CalcResultPartialObligations producers, StringBuilder csvContent)
+        private static void WritePartialObligationsColumnHeaders(IEnumerable<CalcResultPartialObligationHeader> columnHeaders, StringBuilder csvContent)
         {
-            foreach (var item in producers.ColumnHeaders!)
+            foreach (var item in columnHeaders!)
             {
                 csvContent.Append(CsvSanitiser.SanitiseData(item.Name));
             }
+        }
+
+        public static ImmutableList<CalcResultPartialObligationHeader> GetMaterialsBreakdownHeader(IReadOnlyCollection<MaterialDetail> materials, bool showModulation)
+        {
+            var materialsBreakdownHeaders = ImmutableList.CreateBuilder<CalcResultPartialObligationHeader>();
+            var columnIndex = GetInitialHeaders().Count + 1;
+
+            foreach (var material in materials)
+            {
+                materialsBreakdownHeaders.Add(new CalcResultPartialObligationHeader
+                {
+                    Name = $"{material.Name} Breakdown",
+                    ColumnIndex = columnIndex,
+                });
+
+                columnIndex = columnIndex + GetMaterialHeaders(isGlass: material.Code == MaterialCodes.Glass, showModulation).Count;
+            }
+
+            return materialsBreakdownHeaders.ToImmutable();
+        }
+
+        public static ImmutableList<CalcResultPartialObligationHeader> GetColumnHeaders(IReadOnlyCollection<MaterialDetail> materials, bool showModulation)
+        {
+            var columnHeaders = ImmutableList.CreateBuilder<CalcResultPartialObligationHeader>();
+
+            columnHeaders.AddRange(GetInitialHeaders());
+
+            foreach (var material in materials.Select(m => m.Code))
+            {
+                columnHeaders.AddRange(GetMaterialHeaders(isGlass: material == MaterialCodes.Glass, showModulation));
+            }
+
+            return columnHeaders.ToImmutable();
+        }
+
+        private static ImmutableList<CalcResultPartialObligationHeader> GetInitialHeaders()
+        {
+            return [
+                new CalcResultPartialObligationHeader { Name = CalcResultPartialObligationHeaders.ProducerId },
+                new CalcResultPartialObligationHeader { Name = CalcResultPartialObligationHeaders.SubsidiaryId },
+                new CalcResultPartialObligationHeader { Name = CalcResultPartialObligationHeaders.ProducerOrSubsidiaryName },
+                new CalcResultPartialObligationHeader { Name = CalcResultPartialObligationHeaders.TradingName },
+                new CalcResultPartialObligationHeader { Name = CalcResultPartialObligationHeaders.Level },
+                new CalcResultPartialObligationHeader { Name = CalcResultPartialObligationHeaders.SubmissionYear },
+                new CalcResultPartialObligationHeader { Name = CalcResultPartialObligationHeaders.DaysInSubmissionYear },
+                new CalcResultPartialObligationHeader { Name = CalcResultPartialObligationHeaders.JoiningDate },
+                new CalcResultPartialObligationHeader { Name = CalcResultPartialObligationHeaders.ObligatedDays },
+                new CalcResultPartialObligationHeader { Name = CalcResultPartialObligationHeaders.ObligatedPercentage },
+            ];
+        }
+        private static ImmutableList<CalcResultPartialObligationHeader> GetMaterialHeaders(bool isGlass, bool showModulation)
+        {
+            var columns = ImmutableList.CreateBuilder<CalcResultPartialObligationHeader>();
+
+            void Add(string name) => columns.Add(new CalcResultPartialObligationHeader { Name = name });
+
+            void AddRange(params string[] names)
+            {
+                foreach (var name in names)
+                    Add(name);
+            }
+
+            void AddRangeIf(bool condition, params string[] names)
+            {
+                if (!condition) return;
+                AddRange(names);
+            }
+
+            Add(CalcResultPartialObligationHeaders.HouseholdPackagingWasteTonnage);
+            AddRangeIf(showModulation,
+                CalcResultPartialObligationHeaders.HouseholdRedTonnage,
+                CalcResultPartialObligationHeaders.HouseholdAmberTonnage,
+                CalcResultPartialObligationHeaders.HouseholdGreenTonnage,
+                CalcResultPartialObligationHeaders.HouseholdRedMedicalTonnage,
+                CalcResultPartialObligationHeaders.HouseholdAmberMedicalTonnage,
+                CalcResultPartialObligationHeaders.HouseholdGreenMedicalTonnage
+            );
+            Add(CalcResultPartialObligationHeaders.PublicBinTonnage);
+            AddRangeIf(showModulation,
+                CalcResultPartialObligationHeaders.PublicBinRedTonnage,
+                CalcResultPartialObligationHeaders.PublicBinAmberTonnage,
+                CalcResultPartialObligationHeaders.PublicBinGreenTonnage,
+                CalcResultPartialObligationHeaders.PublicBinRedMedicalTonnage,
+                CalcResultPartialObligationHeaders.PublicBinAmberMedicalTonnage,
+                CalcResultPartialObligationHeaders.PublicBinGreenMedicalTonnage
+            );
+            if (isGlass) {
+                Add(CalcResultPartialObligationHeaders.HouseholdDrinksContainersTonnage);
+                AddRangeIf(showModulation,
+                    CalcResultPartialObligationHeaders.HouseholdDrinksContainersRedTonnage,
+                    CalcResultPartialObligationHeaders.HouseholdDrinksContainersAmberTonnage,
+                    CalcResultPartialObligationHeaders.HouseholdDrinksContainersGreenTonnage,
+                    CalcResultPartialObligationHeaders.HouseholdDrinksContainersRedMedicalTonnage,
+                    CalcResultPartialObligationHeaders.HouseholdDrinksContainersAmberMedicalTonnage,
+                    CalcResultPartialObligationHeaders.HouseholdDrinksContainersGreenMedicalTonnage
+                );
+            }
+            AddRange(
+                CalcResultPartialObligationHeaders.TotalTonnage,
+                CalcResultPartialObligationHeaders.SelfManagedConsumerWasteTonnage,
+                CalcResultPartialObligationHeaders.PartialHouseholdPackagingWasteTonnage
+            );
+            AddRangeIf(showModulation,
+                CalcResultPartialObligationHeaders.PartialHouseholdRedTonnage,
+                CalcResultPartialObligationHeaders.PartialHouseholdAmberTonnage,
+                CalcResultPartialObligationHeaders.PartialHouseholdGreenTonnage,
+                CalcResultPartialObligationHeaders.PartialHouseholdRedMedicalTonnage,
+                CalcResultPartialObligationHeaders.PartialHouseholdAmberMedicalTonnage,
+                CalcResultPartialObligationHeaders.PartialHouseholdGreenMedicalTonnage
+            );
+            Add(CalcResultPartialObligationHeaders.PartialPublicBinTonnage);
+            AddRangeIf(showModulation,
+                CalcResultPartialObligationHeaders.PartialPublicBinRedTonnage,
+                CalcResultPartialObligationHeaders.PartialPublicBinAmberTonnage,
+                CalcResultPartialObligationHeaders.PartialPublicBinGreenTonnage,
+                CalcResultPartialObligationHeaders.PartialPublicBinRedMedicalTonnage,
+                CalcResultPartialObligationHeaders.PartialPublicBinAmberMedicalTonnage,
+                CalcResultPartialObligationHeaders.PartialPublicBinGreenMedicalTonnage
+            );
+            if (isGlass) {
+                Add(CalcResultPartialObligationHeaders.PartialHouseholdDrinksContainersTonnage);
+                AddRangeIf(showModulation,
+                    CalcResultPartialObligationHeaders.PartialHouseholdDrinksContainersRedTonnage,
+                    CalcResultPartialObligationHeaders.PartialHouseholdDrinksContainersAmberTonnage,
+                    CalcResultPartialObligationHeaders.PartialHouseholdDrinksContainersGreenTonnage,
+                    CalcResultPartialObligationHeaders.PartialHouseholdDrinksContainersRedMedicalTonnage,
+                    CalcResultPartialObligationHeaders.PartialHouseholdDrinksContainersAmberMedicalTonnage,
+                    CalcResultPartialObligationHeaders.PartialHouseholdDrinksContainersGreenMedicalTonnage
+                );
+            }
+            AddRange(
+                CalcResultPartialObligationHeaders.PartialTotalTonnage,
+                CalcResultPartialObligationHeaders.PartialSelfManagedConsumerWasteTonnage
+            );
+
+            return columns.ToImmutable();
         }
     }
 }

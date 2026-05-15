@@ -9,8 +9,10 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
     {
         public void Export(CalcResultProjectedProducers calcResultProjectedProducers, StringBuilder stringBuilder)
         {
-            var allH2 = calcResultProjectedProducers.H2ProjectedProducers ?? new List<CalcResultH2ProjectedProducer>();
-            var allH1 = calcResultProjectedProducers.H1ProjectedProducers ?? new List<CalcResultH1ProjectedProducer>();
+            var materials = calcResultProjectedProducers.Materials!;
+
+            var allH2 = calcResultProjectedProducers.H2ProjectedProducers ?? ImmutableList<CalcResultH2ProjectedProducer>.Empty;
+            var allH1 = calcResultProjectedProducers.H1ProjectedProducers ?? ImmutableList<CalcResultH1ProjectedProducer>.Empty;
             var completeH1AndH2RamProducers = allH2
                 .Cast<ICalcResultProjectedProducer>()
                 .Concat(allH1)
@@ -19,15 +21,15 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
                 .Select(g => g.Key)
                 .ToHashSet();
 
-            var h2WhereModified = allH2.Where(p => !completeH1AndH2RamProducers.Contains(p.ProducerId)).ToList();
-            var h1WhereModified = allH1.Where(p => !completeH1AndH2RamProducers.Contains(p.ProducerId)).ToList();
+            var h2WhereModified = allH2.Where(p => !completeH1AndH2RamProducers.Contains(p.ProducerId)).ToImmutableList();
+            var h1WhereModified = allH1.Where(p => !completeH1AndH2RamProducers.Contains(p.ProducerId)).ToImmutableList();
 
             // Add empty lines
             stringBuilder.AppendLine();
             stringBuilder.AppendLine();
 
             // Add H2 headers
-            PrepareProjectedProducersHeaders(calcResultProjectedProducers.H2ProjectedProducersHeaders!, stringBuilder);
+            PrepareProjectedProducersHeaders(H2ProjectedProducersExporterUtils.GetProjectedProducerHeaders(materials), stringBuilder);
 
             // Add H2 data
             if (h2WhereModified.Any() == true)
@@ -44,10 +46,10 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
             stringBuilder.AppendLine();
 
             // Add H1 headers
-            PrepareProjectedProducersHeaders(calcResultProjectedProducers.H1ProjectedProducersHeaders!, stringBuilder);
+            PrepareProjectedProducersHeaders(H1ProjectedProducersExporterUtils.GetProjectedProducerHeaders(materials), stringBuilder);
 
             // Add H1 data
-            if (h1WhereModified.Any() == true)
+            if (h1WhereModified.Any())
             {
                 H1ProjectedProducersExporterUtils.AppendProjectedProducers(h1WhereModified, stringBuilder);
             }

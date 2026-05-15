@@ -1458,13 +1458,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             return new CalcResultScaledupProducers
             {
-                ColumnHeaders = [],
-                MaterialBreakdownHeaders = [],
-                TitleHeader = new CalcResultScaledupProducerHeader
-                {
-                    Name = "Scaled-up Producers",
-                    ColumnIndex = 1,
-                },
+                Materials = ImmutableList<MaterialDetail>.Empty,
                 ScaledupProducers =
                 [
                     new CalcResultScaledupProducer
@@ -1474,7 +1468,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         DaysInSubmissionPeriod = 91,
                         DaysInWholePeriod = 91,
                         IsSubtotalRow = false,
-                        IsTotalRow = false,
                         Level = "1",
                         ScaleupFactor = 1,
                         SubmissionPeriodCode = "2024-P2",
@@ -1524,13 +1517,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             return new CalcResultPartialObligations
             {
-                ColumnHeaders = [],
-                MaterialBreakdownHeaders = [],
-                TitleHeader = new CalcResultPartialObligationHeader
-                {
-                    Name = "Partial Obligation Calculation",
-                    ColumnIndex = 1,
-                },
+                Materials = ImmutableList<MaterialDetail>.Empty,
                 PartialObligations =
                 [
                     new CalcResultPartialObligation
@@ -1541,8 +1528,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         DaysInSubmissionYear = 366,
                         Level = "1",
                         JoiningDate = "15/07/2024",
-                        ObligatedPercentage = "50.00%",
-                        SubmissionYear = "2024",
+                        ObligatedFactor = 0.5m,
+                        SubmissionYear = 2024,
                         SubsidiaryId = null,
                         PartialObligationTonnageByMaterial = new Dictionary<string, CalcResultPartialObligationTonnage>
                         {
