@@ -13,7 +13,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
     public interface ICalcResultScaledupProducersBuilder
     {
         Task<(List<L1Producer>, CalcResultScaledupProducers)> ConstructAsync(
-            List<MaterialDetail> materialDetails,
+            IImmutableList<MaterialDetail> materialDetails,
             List<L1Producer> producers,
             CalcResultsRequestDto resultsRequestDto
         );
@@ -87,7 +87,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
             "S3776:Cognitive Complexity of methods should not be too high",
             Justification = "Temporaraly suppress - will refactor later.")]
         public async Task<(List<L1Producer>, CalcResultScaledupProducers)> ConstructAsync(
-            List<MaterialDetail> materialDetails,
+            IImmutableList<MaterialDetail> materialDetails,
             List<L1Producer> producers,
             CalcResultsRequestDto resultsRequestDto
         )
@@ -98,7 +98,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
 
             if (!scaledUpProducers.Any())
             {
-                var emptyResult = new CalcResultScaledupProducers { Materials = materialDetails.ToImmutableList(), ScaledupProducers = [] };
+                var emptyResult = new CalcResultScaledupProducers { ScaledupProducers = [] };
                 return (producers, emptyResult);
             }
 
@@ -195,7 +195,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                 .ThenBy(p => p.SubmissionPeriodCode)
                 .ToList();
 
-            var scaledupProducersSummary = new CalcResultScaledupProducers {  Materials = materialDetails.ToImmutableList(), ScaledupProducers = orderedRows.ToImmutableList() };
+            var scaledupProducersSummary = new CalcResultScaledupProducers {  ScaledupProducers = orderedRows.ToImmutableList() };
             return (updatedL1Producers, scaledupProducersSummary);
         }
 

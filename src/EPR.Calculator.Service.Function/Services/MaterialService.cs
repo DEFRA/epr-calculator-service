@@ -7,7 +7,7 @@ namespace EPR.Calculator.Service.Function.Services
 {
     public interface IMaterialService
     {
-        public Task<List<MaterialDetail>> GetMaterials();
+        public Task<IImmutableList<MaterialDetail>> GetMaterials();
     }
 
     public class MaterialService : IMaterialService
@@ -19,10 +19,10 @@ namespace EPR.Calculator.Service.Function.Services
             this.context = context.CreateDbContext();
         }
 
-        public async Task<List<MaterialDetail>> GetMaterials()
+        public async Task<IImmutableList<MaterialDetail>> GetMaterials()
         {
             var materials = await context.Material.ToListAsync();
-            return MaterialMapper.Map(materials);
+            return MaterialMapper.Map(materials).ToImmutableList();
         }
     }
 }

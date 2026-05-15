@@ -23,7 +23,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         private readonly CalculatorRunOrganisationDataMaster calcRunOrganisationDataMaster;
         private readonly int pcId;
         private readonly int runId = 1;
-        private readonly List<MaterialDetail> materialDetails;
+        private readonly IImmutableList<MaterialDetail> materialDetails;
 
         private CalcResultScaledupProducersBuilder builder;
 

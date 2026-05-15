@@ -15,7 +15,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         private IFixture _fixture = null!;
         private ProducerInvoiceNetTonnageService _sut = null!;
         private Mock<ICalculatorTelemetryLogger> _telemetryLogger = null!;
-        private Mock<IMaterialService> _materialService = null!;
+        private Mock<IBulkOperations> _bulkOperations = null!;
         private Mock<IProducerInvoiceTonnageMapper> _producerInvoiceMapper = null!;
 
         [TestInitialize]
@@ -23,7 +23,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             _fixture = TestFixtures.New();
             _telemetryLogger = _fixture.Freeze<Mock<ICalculatorTelemetryLogger>>();
-            _materialService = _fixture.Freeze<Mock<IMaterialService>>();
+            _bulkOperations = _fixture.Freeze<Mock<IBulkOperations>>();
             _producerInvoiceMapper = _fixture.Freeze<Mock<IProducerInvoiceTonnageMapper>>();
 
             _sut = _fixture.Create<ProducerInvoiceNetTonnageService>();
@@ -34,16 +34,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             // Arrange
             var calcResult = TestDataHelper.GetCalcResult();
+            var materials = TestDataHelper.GetMaterials();
 
             _telemetryLogger.Setup(mock => mock.LogInformation(It.IsAny<TrackMessage>())).Verifiable();
             _telemetryLogger.Setup(mock => mock.LogError(It.IsAny<ErrorMessage>())).Verifiable();
-
-            _materialService.Setup(m => m.GetMaterials()).ReturnsAsync(TestDataHelper.GetMaterials());
             _producerInvoiceMapper.Setup(m => m.Map(It.IsAny<ProducerInvoiceTonnage>())).Returns(_fixture.Create<ProducerInvoicedMaterialNetTonnage>());
 
             // Act
 
-            var result = await _sut.CreateProducerInvoiceNetTonnage(calcResult);
+            var result = await _sut.CreateProducerInvoiceNetTonnage(calcResult, materials);
 
             // Assert
             _telemetryLogger.Verify(mock => mock.LogInformation(It.IsAny<TrackMessage>()));
@@ -91,30 +90,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
             };
 
-            _materialService.Setup(mock => mock.GetMaterials()).ReturnsAsync(_fixture.Create<List<MaterialDetail>>());
+            var materials = TestDataHelper.GetMaterials();
             _telemetryLogger.Setup(mock => mock.LogInformation(It.IsAny<TrackMessage>())).Verifiable();
             _telemetryLogger.Setup(mock => mock.LogError(It.IsAny<ErrorMessage>())).Verifiable();
 
             // Act
-            var result = await _sut.CreateProducerInvoiceNetTonnage(calcResult);
-
-            Assert.IsFalse(result);
-        }
-
-        [TestMethod]
-        public async Task CannotCallCreateProducerInvoiceTonnageWithNullCalcResult()
-        {
-            // Arrange
-            var calcResult = _fixture.Create<CalcResult>();
-
-            _telemetryLogger.Setup(mock => mock.LogInformation(It.IsAny<TrackMessage>())).Verifiable();
-            _materialService.Setup(mock => mock.GetMaterials()).Throws<Exception>();
-
-            // Act
-            var result = await _sut.CreateProducerInvoiceNetTonnage(calcResult);
-
-            // Assert
-            _telemetryLogger.Verify(mock => mock.LogError(It.IsAny<ErrorMessage>()));
+            var result = await _sut.CreateProducerInvoiceNetTonnage(calcResult, materials);
 
             Assert.IsFalse(result);
         }

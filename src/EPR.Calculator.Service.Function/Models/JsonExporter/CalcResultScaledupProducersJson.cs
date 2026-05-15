@@ -12,9 +12,9 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("producerSubmissions")]
         public IEnumerable<ProducerSubmission>? ProducerSubmissions { get; set; }
 
-        public static CalcResultScaledupProducersJson From(CalcResultScaledupProducers calcResultScaledupProducers,IEnumerable<int> acceptedProducerIds,List<MaterialDetail> materials)
+        public static CalcResultScaledupProducersJson From(CalcResultScaledupProducers calcResultScaledupProducers,IEnumerable<int> acceptedProducerIds,IImmutableList<MaterialDetail> materials)
         {
-            IEnumerable<ProducerSubmission> GetProducerSubmissions(CalcResultScaledupProducers calcResultScaledupProducers, IEnumerable<int> acceptedProducerIds, List<MaterialDetail> materials)
+            IEnumerable<ProducerSubmission> GetProducerSubmissions(CalcResultScaledupProducers calcResultScaledupProducers, IEnumerable<int> acceptedProducerIds, IImmutableList<MaterialDetail> materials)
             {
                 var producerSubmissions = new List<ProducerSubmission>();
 
@@ -80,9 +80,9 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("materialBreakdown")]
         public required IEnumerable<MaterialBreakdown> MaterialBreakdown { get; set; }
 
-        public static ProducerSubmission From(int? level, CalcResultScaledupProducer item, List<MaterialDetail> materials)
+        public static ProducerSubmission From(int? level, CalcResultScaledupProducer item, IImmutableList<MaterialDetail> materials)
         {
-            IEnumerable<MaterialBreakdown> GetMaterialBreakdown(Dictionary<string, CalcResultScaledupProducerTonnage> producerTonnageByMaterial, List<MaterialDetail> materials)
+            IEnumerable<MaterialBreakdown> GetMaterialBreakdown(Dictionary<string, CalcResultScaledupProducerTonnage> producerTonnageByMaterial, IImmutableList<MaterialDetail> materials)
             {
                 var materialBreakdown = new List<MaterialBreakdown>();
 

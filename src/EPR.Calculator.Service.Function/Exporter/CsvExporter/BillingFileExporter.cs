@@ -17,7 +17,12 @@ using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 {
-    public class BillingFileExporter : IBillingFileExporter<CalcResult>
+    public interface IBillingFileExporter
+    {
+        string Export(CalcResult results, IImmutableList<MaterialDetail> materials, ImmutableHashSet<int> acceptedProducerIds);
+    }
+
+    public class BillingFileExporter : IBillingFileExporter
     {
         private readonly ICalcResultSummaryExporter calcResultSummaryExporterCsv;
         private readonly ICalcResultDetailExporter resultDetailexporterCsv;
@@ -67,7 +72,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             calcResultRejectedProducersExporterCsv = calcResultRejectedProducersExporter;
         }
 
-        public string Export(CalcResult calcResult, ImmutableHashSet<int> acceptedProducerIds)
+        public string Export(CalcResult calcResult, IImmutableList<MaterialDetail> materials, ImmutableHashSet<int> acceptedProducerIds)
         {
             var csvContent = new StringBuilder();
             resultDetailexporterCsv.Export(calcResult.CalcResultDetail, csvContent);
@@ -93,13 +98,13 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             if (calcResult.ApplyModulation)
             {
                 var accepted = GetProjectedProducerForExport(calcResult.CalcResultProjectedProducers, acceptedProducerIds);
-                calcResultProjectedProducersExporterCsv.Export(accepted, csvContent);
+                calcResultProjectedProducersExporterCsv.Export(accepted, materials, csvContent);
             } else {
                 var acceptedProducers = GetScaledUpProducersForExport(calcResult.CalcResultScaledupProducers, acceptedProducerIds);
-                calcResultScaledupProducersExporterCsv.Export(acceptedProducers, csvContent);
+                calcResultScaledupProducersExporterCsv.Export(acceptedProducers, materials, csvContent);
             }
 
-            calcResultPartialObligationsExporterCsv.Export(GetPartialObligationsForExport(calcResult.CalcResultPartialObligations, acceptedProducerIds), csvContent, calcResult.ApplyModulation);
+            calcResultPartialObligationsExporterCsv.Export(GetPartialObligationsForExport(calcResult.CalcResultPartialObligations, acceptedProducerIds), materials, csvContent, calcResult.ApplyModulation);
 
             var acceptedCalcResultSummary = GetAcceptedProducersCalcResults(calcResult.CalcResultSummary, acceptedProducerIds);
 
@@ -173,7 +178,6 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         {
             return new CalcResultScaledupProducers
             {
-                Materials = producers.Materials,
                 ScaledupProducers = GetScaledupProducers(producers.ScaledupProducers, acceptedProducerIds)
             };
         }
@@ -197,7 +201,6 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 
             return new CalcResultPartialObligations
             {
-                Materials = producers.Materials,
                 PartialObligations = acceptedProducers
             };
         }
@@ -212,7 +215,6 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 
             return new CalcResultProjectedProducers
             {
-                Materials = producers.Materials,
                 H2ProjectedProducers = acceptedH2Producers,
                 H1ProjectedProducers = acceptedH1Producers,
             };

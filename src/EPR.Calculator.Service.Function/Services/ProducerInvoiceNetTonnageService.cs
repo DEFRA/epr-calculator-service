@@ -7,15 +7,19 @@ using EPR.Calculator.Service.Function.Telemetry;
 
 namespace EPR.Calculator.Service.Function.Services
 {
+    public interface IProducerInvoiceNetTonnageService
+    {
+        public Task<bool> CreateProducerInvoiceNetTonnage(CalcResult calcResult, IImmutableList<MaterialDetail> materials);
+    }
+
     public class ProducerInvoiceNetTonnageService(
             ApplicationDBContext dbContext,
             IBulkOperations bulkOps,
-            IMaterialService materialService,
             IProducerInvoiceTonnageMapper producerInvoiceTonnageMapper,
             ICalculatorTelemetryLogger telemetryLogger)
         : IProducerInvoiceNetTonnageService
     {
-       public async Task<bool> CreateProducerInvoiceNetTonnage(CalcResult calcResult)
+       public async Task<bool> CreateProducerInvoiceNetTonnage(CalcResult calcResult, IImmutableList<MaterialDetail> materials)
         {
             try
             {
@@ -23,8 +27,6 @@ namespace EPR.Calculator.Service.Function.Services
                 var startTime = DateTime.UtcNow;
 
                 var producers = calcResult.CalcResultSummary.ProducerDisposalFees.Where(producer => producer.Level == CommonConstants.LevelOne.ToString());
-
-                var materials = await materialService.GetMaterials();
 
                 var runId = calcResult.CalcResultDetail.RunId;
 

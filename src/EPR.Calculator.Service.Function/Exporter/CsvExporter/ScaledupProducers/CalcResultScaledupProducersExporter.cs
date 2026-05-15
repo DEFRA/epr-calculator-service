@@ -9,7 +9,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers
 {
     public interface ICalcResultScaledupProducersExporter
     {
-        public void Export(CalcResultScaledupProducers calcResultScaledupProducers, StringBuilder stringBuilder);
+        public void Export(CalcResultScaledupProducers calcResultScaledupProducers, IImmutableList<MaterialDetail> materials, StringBuilder stringBuilder);
     }
 
     public class CalcResultScaledupProducersExporter : ICalcResultScaledupProducersExporter
@@ -18,19 +18,18 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers
         private const int MaterialsBreakdownHeaderIncrementalColumnIndex = 10;
 
 
-        public void Export(CalcResultScaledupProducers calcResultScaledupProducers, StringBuilder stringBuilder)
+        public void Export(CalcResultScaledupProducers calcResultScaledupProducers, IImmutableList<MaterialDetail> materials, StringBuilder stringBuilder)
         {
             // Add empty lines
             stringBuilder.AppendLine();
             stringBuilder.AppendLine();
 
             // Add headers
-            PrepareScaledupProducersHeader(calcResultScaledupProducers.Materials!, stringBuilder);
+            PrepareScaledupProducersHeader(materials, stringBuilder);
 
             // Add data
             if (calcResultScaledupProducers.ScaledupProducers?.Any() == true)
             {
-                var materials = calcResultScaledupProducers.Materials!;
                 foreach (var producer in calcResultScaledupProducers.ScaledupProducers)
                     producer.ScaledupProducerTonnageByMaterial = GetTonnages(producer.PomData, materials);
 

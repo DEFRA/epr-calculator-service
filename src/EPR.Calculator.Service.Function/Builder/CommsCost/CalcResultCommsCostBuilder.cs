@@ -13,7 +13,7 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
     public interface ICalcResultCommsCostBuilder
     {
         Task<CalcResultCommsCost> ConstructAsync(
-            List<MaterialDetail> materialDetails,
+            IImmutableList<MaterialDetail> materialDetails,
             CalcResultsRequestDto resultsRequestDto,
             CalcResultOnePlusFourApportionment apportionment,
             CalcResultLateReportingTonnage calcResultLateReportingTonnage
@@ -37,7 +37,7 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
         public const string PoundSign = "£";
 
         public async Task<CalcResultCommsCost> ConstructAsync(
-            List<MaterialDetail> materialDetails,
+            IImmutableList<MaterialDetail> materialDetails,
             CalcResultsRequestDto resultsRequestDto,
             CalcResultOnePlusFourApportionment apportionment,
             CalcResultLateReportingTonnage calcResultLateReportingTonnage

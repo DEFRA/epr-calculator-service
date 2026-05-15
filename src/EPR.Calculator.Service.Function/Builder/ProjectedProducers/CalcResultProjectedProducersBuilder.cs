@@ -10,7 +10,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
     public interface ICalcResultProjectedProducersBuilder
     {
         (List<L1Producer>, CalcResultProjectedProducers) ConstructAsync(
-            List<MaterialDetail> materialDetails,
+            IImmutableList<MaterialDetail> materialDetails,
             List<L1Producer> producers,
             CalcResultsRequestDto resultsRequestDto
         );
@@ -19,7 +19,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
     public class CalcResultProjectedProducersBuilder : ICalcResultProjectedProducersBuilder
     {
         public (List<L1Producer>, CalcResultProjectedProducers) ConstructAsync(
-            List<MaterialDetail> materialDetails,
+            IImmutableList<MaterialDetail> materialDetails,
             List<L1Producer> producers,
             CalcResultsRequestDto resultsRequestDto
         )
@@ -61,7 +61,6 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 
             var result = new CalcResultProjectedProducers
             {
-                Materials = materialDetails.ToImmutableList(),
                 H2ProjectedProducers = allH2Rows.OrderBy(p => p.ProducerId).ThenBy(p => p.Level).ThenBy(p => p.SubsidiaryId).ToImmutableList(),
                 H1ProjectedProducers = allH1Rows.OrderBy(p => p.ProducerId).ThenBy(p => p.Level).ThenBy(p => p.SubsidiaryId).ToImmutableList()
             };
@@ -73,14 +72,14 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             ProducerDetail pd,
             ICalcResultProjectedProducer h1Row,
             ICalcResultProjectedProducer h2Row,
-            List<MaterialDetail> materials,
+            IImmutableList<MaterialDetail> materials,
             string h1Period,
             string h2Period)
         {
             var h1ById = h1Row.ProjectedTonnageByMaterial
-                .ToDictionary(kvp => materials.Find(m => m.Code == kvp.Key)?.Id ?? -1, kvp => kvp.Value);
+                .ToDictionary(kvp => materials.FirstOrDefault(m => m.Code == kvp.Key)?.Id ?? -1, kvp => kvp.Value);
             var h2ById = h2Row.ProjectedTonnageByMaterial
-                .ToDictionary(kvp => materials.Find(m => m.Code == kvp.Key)?.Id ?? -1, kvp => kvp.Value);
+                .ToDictionary(kvp => materials.FirstOrDefault(m => m.Code == kvp.Key)?.Id ?? -1, kvp => kvp.Value);
 
             ProducerReportedMaterial Apply(ProducerReportedMaterial rm, Dictionary<int, CalcResultProjectedProducerMaterialTonnage> projectedById)
             {

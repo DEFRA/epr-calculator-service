@@ -127,7 +127,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         }
 
         [TestMethod]
-        public async Task H1H2Projection_untouched_hc()
+        public void H1H2Projection_untouched_hc()
         {
             // RAM is complete - no modifications made
             var given = new[] {
@@ -465,7 +465,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             AssertExcepted(expected, FillGapsPrevious(given));
         }
 
-        private (List<MaterialDetail>, CalcResultsRequestDto) InsertData(string[][] given)
+        private (IImmutableList<MaterialDetail>, CalcResultsRequestDto) InsertData(string[][] given)
         {
             for (int i = 0; i < given.GetLength(0); i++)
             {

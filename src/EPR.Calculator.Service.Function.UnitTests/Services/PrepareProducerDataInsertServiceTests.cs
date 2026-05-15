@@ -7,9 +7,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     [TestClass]
     public class PrepareProducerDataInsertServiceTests
     {
-
-
-
         public PrepareProducerDataInsertServiceTests()
         {
             _billingInstructionService = new Mock<IBillingInstructionService>();
@@ -40,11 +37,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Arrange
             var fixture = new Fixture().Customize(new ImmutableCollectionsCustomization());
             var calcResult = fixture.Create<CalcResult>();
+            var materials = fixture.Create<IImmutableList<MaterialDetail>>();
+            
 
             _telemetryLogger.Setup(mock => mock.LogInformation(It.IsAny<TrackMessage>())).Verifiable();
 
             // Act
-            var result = await testClass.InsertProducerDataToDatabase(calcResult);
+            var result = await testClass.InsertProducerDataToDatabase(calcResult, materials);
 
             // Assert
             _telemetryLogger.Verify(mock => mock.LogInformation(It.IsAny<TrackMessage>()));
@@ -58,13 +57,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Arrange
             var fixture = new Fixture().Customize(new ImmutableCollectionsCustomization());
             var calcResult = fixture.Create<CalcResult>();
+            var materials = fixture.Create<IImmutableList<MaterialDetail>>();
 
             _telemetryLogger.Setup(mock => mock.LogInformation(It.IsAny<TrackMessage>())).Verifiable();
             _billingInstructionService.Setup(m => m.CreateBillingInstructions(It.IsAny<CalcResult>())).ReturnsAsync(true);
-            _producerInvoiceNetTonnageService.Setup(m => m.CreateProducerInvoiceNetTonnage(It.IsAny<CalcResult>())).ReturnsAsync(true);
+            _producerInvoiceNetTonnageService.Setup(m => m.CreateProducerInvoiceNetTonnage(It.IsAny<CalcResult>(), It.IsAny<IImmutableList<MaterialDetail>>())).ReturnsAsync(true);
 
             // Act
-            var result = await testClass.InsertProducerDataToDatabase(calcResult);
+            var result = await testClass.InsertProducerDataToDatabase(calcResult, materials);
 
             // Assert
             _telemetryLogger.Verify(mock => mock.LogInformation(It.IsAny<TrackMessage>()));
@@ -80,13 +80,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Arrange
             var fixture = new Fixture().Customize(new ImmutableCollectionsCustomization());
             var calcResult = fixture.Create<CalcResult>();
-
+            var materials = fixture.Create<IImmutableList<MaterialDetail>>();
             _telemetryLogger.Setup(mock => mock.LogInformation(It.IsAny<TrackMessage>())).Verifiable();
             _billingInstructionService.Setup(m => m.CreateBillingInstructions(It.IsAny<CalcResult>())).ThrowsAsync(new Exception());
-            _producerInvoiceNetTonnageService.Setup(m => m.CreateProducerInvoiceNetTonnage(It.IsAny<CalcResult>())).ReturnsAsync(true);
+            _producerInvoiceNetTonnageService.Setup(m => m.CreateProducerInvoiceNetTonnage(It.IsAny<CalcResult>(), It.IsAny<IImmutableList<MaterialDetail>>())).ReturnsAsync(true);
 
             // Act
-            var result = await testClass.InsertProducerDataToDatabase(calcResult);
+            var result = await testClass.InsertProducerDataToDatabase(calcResult, materials);
 
             // Assert
             _telemetryLogger.Verify(mock => mock.LogError(It.IsAny<ErrorMessage>()));

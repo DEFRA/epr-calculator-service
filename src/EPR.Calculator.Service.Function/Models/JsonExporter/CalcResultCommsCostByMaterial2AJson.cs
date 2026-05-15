@@ -12,11 +12,11 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
         public static CalcResultCommsCostByMaterial2AJson From(
             Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostByMaterial,
-            List<MaterialDetail> materials)
+            IImmutableList<MaterialDetail> materials)
         {
             IEnumerable<CalcResultCommsCostByMaterial2AMaterialBreakdown> GetMaterialBreakdown(
                 Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostByMaterial,
-                List<MaterialDetail> materials)
+                IImmutableList<MaterialDetail> materials)
             {
                 var materialBreakdown = new List<CalcResultCommsCostByMaterial2AMaterialBreakdown>();
 

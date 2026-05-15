@@ -8,14 +8,14 @@ namespace EPR.Calculator.Service.Function.Builder.CancelledProducers;
 
 public interface ICalcResultCancelledProducersBuilder
 {
-    Task<CalcResultCancelledProducersResponse> ConstructAsync(CalcResultsRequestDto runContext, List<MaterialDetail> materialDetails);
+    Task<CalcResultCancelledProducersResponse> ConstructAsync(CalcResultsRequestDto runContext, IImmutableList<MaterialDetail> materialDetails);
 }
 
 [ExcludeFromCodeCoverage(Justification = "Tests to be re-added within ECV-473")]
 public class CalcResultCancelledProducersBuilder(IInvoicedProducerService invoicedProducerService)
     : ICalcResultCancelledProducersBuilder
 {
-    public async Task<CalcResultCancelledProducersResponse> ConstructAsync(CalcResultsRequestDto runContext, List<MaterialDetail> materialDetails)
+    public async Task<CalcResultCancelledProducersResponse> ConstructAsync(CalcResultsRequestDto runContext, IImmutableList<MaterialDetail> materialDetails)
     {
         return new CalcResultCancelledProducersResponse
         {
@@ -24,7 +24,7 @@ public class CalcResultCancelledProducersBuilder(IInvoicedProducerService invoic
         };
     }
 
-    private async Task<ImmutableList<CalcResultCancelledProducersDto>> GetCancelledProducers(CalcResultsRequestDto runContext, List<MaterialDetail> materialDetails)
+    private async Task<ImmutableList<CalcResultCancelledProducersDto>> GetCancelledProducers(CalcResultsRequestDto runContext, IImmutableList<MaterialDetail> materialDetails)
     {
         var lookup = await GetMissingAcceptedCancelledInvoicedProducersLookup(runContext);
         var materialsByCode = materialDetails.ToImmutableDictionary(m => m.Code);

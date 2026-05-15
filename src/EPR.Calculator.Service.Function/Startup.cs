@@ -166,7 +166,7 @@ internal static class ServiceRegistration
         services.AddTransient<IRpdStatusDataValidator, RpdStatusDataValidator>();
         services.AddTransient<IOrgAndPomWrapper, OrgAndPomWrapper>();
         services.AddTransient<ICalcResultBuilder, CalcResultBuilder>();
-        services.AddTransient<ICalcResultsExporter<CalcResult>, CalcResultsExporter>();
+        services.AddTransient<ICalcResultsExporter, CalcResultsExporter>();
         services.AddTransient<CalculatorRunValidator, CalculatorRunValidator>();
         services.AddTransient<IPrepareCalcService, PrepareCalcService>();
         services.AddTransient<IParameterService, ParameterService>();
@@ -198,7 +198,7 @@ internal static class ServiceRegistration
         services.AddTransient<ICalcResultModulationExporter, CalcResultModulationExporter>();
         services.AddTransient<ICommsCostExporter, CommsCostExporter>();
         services.AddTransient<ICalcResultSummaryExporter, CalcResultSummaryExporter>();
-        services.AddTransient<ICalcBillingJsonExporter<CalcResult>, CalcResultsJsonExporter>();
+        services.AddTransient<ICalcBillingJsonExporter, CalcResultsJsonExporter>();
         services.AddTransient<ILateReportingExporter, LateReportingExporter>();
         services.AddTransient<IRunNameService, RunNameService>();
         services.AddTransient<IClassificationService, ClassificationService>();
@@ -210,7 +210,7 @@ internal static class ServiceRegistration
         services.AddTransient<IInvoicedProducerService, InvoicedProducerService>();
         services.AddTransient<ICalcResultCancelledProducersBuilder, CalcResultCancelledProducersBuilder>();
         services.AddTransient<ICalcResultCancelledProducersExporter, CalcResultCancelledProducersExporter>();
-        services.AddTransient<IBillingFileExporter<CalcResult>, BillingFileExporter>();
+        services.AddTransient<IBillingFileExporter, BillingFileExporter>();
         services.AddTransient<IProducerInvoiceNetTonnageService, ProducerInvoiceNetTonnageService>();
         services.AddTransient<IProducerInvoiceTonnageMapper, ProducerInvoiceTonnageMapper>();
         services.AddTransient<IPrepareProducerDataInsertService, PrepareProducerDataInsertService>();

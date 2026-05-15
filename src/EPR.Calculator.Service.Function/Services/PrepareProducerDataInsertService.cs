@@ -3,9 +3,13 @@ using EPR.Calculator.Service.Function.Telemetry;
 
 namespace EPR.Calculator.Service.Function.Services
 {
+    public interface IPrepareProducerDataInsertService
+    {
+        public Task<bool> InsertProducerDataToDatabase(CalcResult calcResult, IImmutableList<MaterialDetail> materials);
+    }
+
     public class PrepareProducerDataInsertService : IPrepareProducerDataInsertService
     {
-
         private IBillingInstructionService billingInstructionService { get; init; }
         private IProducerInvoiceNetTonnageService producerInvoiceNetTonnageService {  get; init; }
 
@@ -20,7 +24,7 @@ namespace EPR.Calculator.Service.Function.Services
 
         private readonly ICalculatorTelemetryLogger telemetryLogger;
 
-        public async Task<bool> InsertProducerDataToDatabase(CalcResult calcResult)
+        public async Task<bool> InsertProducerDataToDatabase(CalcResult calcResult, IImmutableList<MaterialDetail> materials)
         {
             try
             {
@@ -46,7 +50,7 @@ namespace EPR.Calculator.Service.Function.Services
                     Message = "Create producer Invoice Tonnage start...",
                 });
 
-                var IsProduceInvoiceTonnageInserted = await producerInvoiceNetTonnageService.CreateProducerInvoiceNetTonnage(calcResult);
+                var IsProduceInvoiceTonnageInserted = await producerInvoiceNetTonnageService.CreateProducerInvoiceNetTonnage(calcResult, materials);
 
                 telemetryLogger.LogInformation(new TrackMessage
                 {

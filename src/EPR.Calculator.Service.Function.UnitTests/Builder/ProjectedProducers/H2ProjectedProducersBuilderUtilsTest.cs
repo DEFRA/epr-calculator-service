@@ -8,11 +8,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
     [TestClass]
     public class H2ProjectedProducersBuilderUtilsTest
     {
-        private List<MaterialDetail> materials = new List<MaterialDetail>()
-        {
+        private IImmutableList<MaterialDetail> materials = ImmutableList.Create<MaterialDetail>
+        (
             new MaterialDetail { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
             new MaterialDetail { Id = 2, Code = "GL", Name = "Glass", Description = "Glass" }
-        };
+        );
 
         [TestMethod]
         public void GetProjectedProducers()

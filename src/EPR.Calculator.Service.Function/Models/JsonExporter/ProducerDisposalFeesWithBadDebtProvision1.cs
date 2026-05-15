@@ -12,12 +12,12 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
         public static ProducerDisposalFeesWithBadDebtProvision1 From(
             Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>? producerDisposalFeesByMaterial,
-            List<MaterialDetail> materials,
+            IImmutableList<MaterialDetail> materials,
             string level)
         {
             IEnumerable<ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown> GetMaterialBreakdown(
                 Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>? producerDisposalFeesByMaterial,
-                List<MaterialDetail> materials,
+                IImmutableList<MaterialDetail> materials,
                 string level)
             {
                 var materialBreakdown = new List<ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown>();

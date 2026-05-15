@@ -429,7 +429,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             return 10;
         }
 
-        private List<MaterialDetail> CreateMaterials()
+        private IImmutableList<MaterialDetail> CreateMaterials()
         {
             var materials = TestDataHelper.GetMaterials();
 

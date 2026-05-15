@@ -1,12 +1,11 @@
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder;
 using EPR.Calculator.Service.Function.Enums;
-using EPR.Calculator.Service.Function.Exporter;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter;
+using EPR.Calculator.Service.Function.Exporter.JsonExporter;
 using EPR.Calculator.Service.Function.Misc;
-using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Options;
 using EPR.Calculator.Service.Function.Telemetry;
 using Microsoft.AspNetCore.Mvc;
@@ -28,13 +27,14 @@ namespace EPR.Calculator.Service.Function.Services
     [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
     public class PrepareCalcService(
         ApplicationDBContext dbContext,
+        IMaterialService materialService,
         ICalcResultBuilder builder,
-        ICalcResultsExporter<CalcResult> exporter,
+        ICalcResultsExporter exporter,
         IStorageService storageService,
         CalculatorRunValidator validator,
         ICalculatorTelemetryLogger telemetryLogger,
-        ICalcBillingJsonExporter<CalcResult> jsonExporter,
-        IBillingFileExporter<CalcResult> billingFileExporter,
+        ICalcBillingJsonExporter jsonExporter,
+        IBillingFileExporter billingFileExporter,
         IPrepareProducerDataInsertService producerDataInsertService,
         IOptions<BlobStorageOptions> blobStorageOptions)
         : IPrepareCalcService
@@ -70,10 +70,24 @@ namespace EPR.Calculator.Service.Function.Services
                 {
                     RunId = resultsRequestDto.RunId,
                     RunName = runName,
+                    Message = "Material service started...",
+                });
+                var materials = await materialService.GetMaterials();
+                telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = resultsRequestDto.RunId,
+                    RunName = runName,
+                    Message = "Material service ended...",
+                });
+
+                telemetryLogger.LogInformation(new TrackMessage
+                {
+                    RunId = resultsRequestDto.RunId,
+                    RunName = runName,
                     Message = "Builder started...",
                 });
 
-                var results = await builder.BuildAsync(resultsRequestDto);
+                var results = await builder.BuildAsync(resultsRequestDto, materials);
                 telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = resultsRequestDto.RunId,
@@ -88,7 +102,7 @@ namespace EPR.Calculator.Service.Function.Services
                     Message = "Create producer data insert service started...",
                 });
 
-                await producerDataInsertService.InsertProducerDataToDatabase(results);
+                await producerDataInsertService.InsertProducerDataToDatabase(results, materials);
                 telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = resultsRequestDto.RunId,
@@ -103,7 +117,7 @@ namespace EPR.Calculator.Service.Function.Services
                     Message = "Exporter started...",
                 });
 
-                var exportedResults = exporter.Export(results);
+                var exportedResults = exporter.Export(results, materials);
                 telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = resultsRequestDto.RunId,
@@ -203,6 +217,19 @@ namespace EPR.Calculator.Service.Function.Services
             string runName,
             CancellationToken cancellationToken)
         {
+            telemetryLogger.LogInformation(new TrackMessage
+            {
+                RunId = resultsRequestDto.RunId,
+                RunName = runName,
+                Message = "Material service started...",
+            });
+            var materials = (await materialService.GetMaterials()).ToImmutableList();
+            telemetryLogger.LogInformation(new TrackMessage
+            {
+                RunId = resultsRequestDto.RunId,
+                RunName = runName,
+                Message = "Material service ended...",
+            });
 
             telemetryLogger.LogInformation(new TrackMessage
             {
@@ -211,7 +238,7 @@ namespace EPR.Calculator.Service.Function.Services
                 Message = "Billing Builder started...",
             });
 
-            var calcResults = await builder.BuildAsync(resultsRequestDto);
+            var calcResults = await builder.BuildAsync(resultsRequestDto, materials);
 
             telemetryLogger.LogInformation(new TrackMessage
             {
@@ -220,7 +247,6 @@ namespace EPR.Calculator.Service.Function.Services
                 Message = "Billing Builder ended...",
             });
 
-            // Get File name for the billing json file
             var billingFileCsvName = new CalcResultsAndBillingFileName(
                 resultsRequestDto.RunId,
                 runName,
@@ -243,7 +269,7 @@ namespace EPR.Calculator.Service.Function.Services
                 Message = $"Billing file JSON file name only is created {billingFileJsonName}",
             });
 
-            var jsonResponse = jsonExporter.Export(calcResults, resultsRequestDto.AcceptedProducerIds);
+            var jsonResponse = jsonExporter.Export(calcResults, materials, resultsRequestDto.AcceptedProducerIds);
 
             telemetryLogger.LogInformation(new TrackMessage
             {
@@ -252,9 +278,7 @@ namespace EPR.Calculator.Service.Function.Services
                 Message = "Billing file JSON content is now created",
             });
 
-            // call csv Exporter
-
-            var exportedResults = billingFileExporter.Export(calcResults, resultsRequestDto.AcceptedProducerIds);
+            var exportedResults = billingFileExporter.Export(calcResults, materials, resultsRequestDto.AcceptedProducerIds);
 
             telemetryLogger.LogInformation(new TrackMessage
             {
@@ -262,7 +286,6 @@ namespace EPR.Calculator.Service.Function.Services
                 RunName = runName,
                 Message = $"Billing file CSV file before upload {billingFileCsvName}",
             });
-
 
             var csvBlobUri = await storageService.UploadFileContentAsync((
                  FileName: billingFileCsvName,
@@ -277,8 +300,6 @@ namespace EPR.Calculator.Service.Function.Services
                 RunName = runName,
                 Message = $"Billing file CSV file after upload {billingFileCsvName}",
             });
-
-            // upload the csv file to blob storage
 
             telemetryLogger.LogInformation(new TrackMessage
             {

@@ -8,19 +8,19 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligation
 {
     public interface ICalcResultPartialObligationsExporter
     {
-        public void Export(CalcResultPartialObligations calcResultPartialObligations, StringBuilder stringBuilder, bool showModulation);
+        public void Export(CalcResultPartialObligations calcResultPartialObligations, IImmutableList<MaterialDetail> materials, StringBuilder stringBuilder, bool showModulation);
     }
 
     public class CalcResultPartialObligationsExporter : ICalcResultPartialObligationsExporter
     {
-        public void Export(CalcResultPartialObligations calcResultPartialObligations, StringBuilder stringBuilder, bool showModulation)
+        public void Export(CalcResultPartialObligations calcResultPartialObligations, IImmutableList<MaterialDetail> materials, StringBuilder stringBuilder, bool showModulation)
         {
             // Add empty lines
             stringBuilder.AppendLine();
             stringBuilder.AppendLine();
 
             // Add headers
-            PreparePartialObligationsHeader(calcResultPartialObligations.Materials!, stringBuilder, showModulation);
+            PreparePartialObligationsHeader(materials, stringBuilder, showModulation);
 
             // Add data
             if (calcResultPartialObligations.PartialObligations?.Any() == true)

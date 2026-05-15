@@ -2,7 +2,6 @@
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Mappers;
 
@@ -22,16 +21,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
         public void Export_ShouldIncludeScaledupProducers_WhenNotNull()
         {
             // Arrange
+            var materials = GetMaterials();
             var scaledupProducers = new CalcResultScaledupProducers
             {
-                Materials = GetMaterials(),
                 ScaledupProducers = GetCalcResultScaledupProducerList(),
             };
 
             var csvContent = new StringBuilder();
 
             // Act
-            exporter.Export(scaledupProducers, csvContent);
+            exporter.Export(scaledupProducers, materials, csvContent);
 
             var result = csvContent.ToString().Split("\n").Select(s => s.TrimEnd(',')).ToArray();
             //Console.WriteLine($">> {JsonConvert.SerializeObject(result, Formatting.Indented)}");
@@ -96,16 +95,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
         public void Export_ScaledUpProducer_ShouldIncludeHeadersAndDisplayNone_WhenNoScaledUpProducer()
         {
             // Arrange
+            var materials = GetMaterials();
             var scaledupProducers = new CalcResultScaledupProducers
             {
-                Materials = GetMaterials(),
                 ScaledupProducers = null!,
             };
 
             var csvContent = new StringBuilder();
 
             // Act
-            exporter.Export(scaledupProducers, csvContent);
+            exporter.Export(scaledupProducers, materials, csvContent);
             var result = csvContent.ToString();
 
             // Assert
@@ -121,16 +120,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
         public void Export_ShouldIncludeGlassColumns_WhenGlassMaterialPresent()
         {
             // Arrange
+            var materials = GetMaterials();
             var scaledupProducers = new CalcResultScaledupProducers
             {
-                Materials = GetMaterials(),
                 ScaledupProducers = GetCalcResultScaledupProducerList(),
             };
 
             var csvContent = new StringBuilder();
 
             // Act
-            exporter.Export(scaledupProducers, csvContent);
+            exporter.Export(scaledupProducers, materials, csvContent);
             var result = csvContent.ToString();
 
             // Assert

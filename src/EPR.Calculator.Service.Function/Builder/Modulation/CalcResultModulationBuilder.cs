@@ -28,7 +28,7 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
     {
         Task<ModulationResult> ConstructAsync(
             IReadOnlyDictionary<string, decimal> defaultParams,
-            List<MaterialDetail> materials,
+            IImmutableList<MaterialDetail> materials,
             CalcResultLaDisposalCostData laDisposalCostData,
             SelfManagedConsumerWaste smcw
         );
@@ -38,7 +38,7 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
     {
         public Task<ModulationResult> ConstructAsync(
             IReadOnlyDictionary<string, decimal> defaultParams,
-            List<MaterialDetail> materials,
+            IImmutableList<MaterialDetail> materials,
             CalcResultLaDisposalCostData laDisposalCostData,
             SelfManagedConsumerWaste smcw
         )
