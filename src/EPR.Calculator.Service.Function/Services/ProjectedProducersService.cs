@@ -6,7 +6,7 @@ namespace EPR.Calculator.Service.Function.Services
     // TODO rename this - not just projected producers
     public interface IProjectedProducersService
     {
-        Task StoreProjectedProducers(int runId, List<ProducerDetail> producerDetails);
+        Task StoreProjectedProducers(int runId, List<L1Producer> producerDetails);
     }
 
     public class ProjectedProducersService(
@@ -14,11 +14,12 @@ namespace EPR.Calculator.Service.Function.Services
         IBulkOperations bulkOps)
         : IProjectedProducersService
     {
-        public async Task StoreProjectedProducers(int runId, List<ProducerDetail> producerDetails)
+        public async Task StoreProjectedProducers(int runId, List<L1Producer> producerDetails)
         {
             var producerProjected =
-                producerDetails.SelectMany(p =>
-                    p.ProducerReportedMaterials.Select(rm =>
+                producerDetails
+                    .SelectMany(p => p.Producers)
+                    .SelectMany(p => p.ProducerReportedMaterials.Select(rm =>
                         new ProducerReportedMaterialProjected
                         {
                             ProducerDetailId             = rm.ProducerDetailId,

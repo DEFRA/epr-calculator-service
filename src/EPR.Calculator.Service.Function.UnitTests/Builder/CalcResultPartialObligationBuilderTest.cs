@@ -29,7 +29,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             new Material { Id = 8, Code = "OT", Name = "Other materials", Description = "Other materials" }
         };
 
-        private (List<MaterialDetail>, List<ProducerDetail>) PrepareData()
+        private (List<MaterialDetail>, List<L1Producer>) PrepareData()
         {
             var calcRunOrganisationDataMaster = new CalculatorRunOrganisationDataMaster
             {
@@ -142,10 +142,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             dbContext.SaveChanges();
 
             // read from db to populate ids
-            return (MaterialMapper.Map(materials), (dbContext.ProducerDetail).ToList());
+            var producerDetails = dbContext.ProducerDetail.ToList();
+            var l1Producers = producerDetails
+                .GroupBy(pd => pd.ProducerId)
+                .Select(g => new L1Producer(g.Key, g.ToList()))
+                .ToList();
+            return (MaterialMapper.Map(materials), l1Producers);
         }
 
-        private (List<MaterialDetail>, List<ProducerDetail>) PrepareDataWithModulation()
+        private (List<MaterialDetail>, List<L1Producer>) PrepareDataWithModulation()
         {
             var calcRunOrganisationDataMaster = new CalculatorRunOrganisationDataMaster
             {
@@ -262,7 +267,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             dbContext.SaveChanges();
 
             // read from db to populate ids
-            return (MaterialMapper.Map(materials), (dbContext.ProducerDetail).ToList());
+            var producerDetails = dbContext.ProducerDetail.ToList();
+            var l1Producers = producerDetails
+                .GroupBy(pd => pd.ProducerId)
+                .Select(g => new L1Producer(g.Key, g.ToList()))
+                .ToList();
+            return (MaterialMapper.Map(materials), l1Producers);
         }
 
         public CalcResultPartialObligationBuilderTest()
@@ -353,9 +363,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var updatedProducers = (await builder.ConstructAsync(materialDetails, producers, requestDto, applyModulation)).Item1;
 
             // Assert
-            Assert.AreEqual(producers.Count(), updatedProducers.Count());
+            Assert.AreEqual(producers.Count, updatedProducers.Count);
 
-            foreach (var producer in updatedProducers)
+            var updatedPds = updatedProducers.SelectMany(l1 => l1.Producers).ToList();
+            var originalPds = producers.SelectMany(l1 => l1.Producers).ToList();
+
+            foreach (var producer in updatedPds)
             {
                 if (producer.ProducerId == 22 && producer.SubsidiaryId == null)
                 {
@@ -365,17 +378,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     var reportedAlCW = producer.ProducerReportedMaterials.First(rm => rm.MaterialId == alId && rm.PackagingType == "CW" && rm.SubmissionPeriod == "2024-P1");
                     Assert.AreEqual(5.014m, reportedAlCW.PackagingTonnage);
                 }
-                else if (producer.ProducerId == 22 && producer.SubsidiaryId == null)
-                {
-                    var reportedAl = producer.ProducerReportedMaterials.First(rm => rm.MaterialId == alId && rm.PackagingType == "HH" && rm.SubmissionPeriod == "2024-P4");
-                    Assert.AreEqual(25.068m, reportedAl.PackagingTonnage);
-
-                    var reportedAlCW = producer.ProducerReportedMaterials.First(rm => rm.MaterialId == alId && rm.PackagingType == "CW" && rm.SubmissionPeriod == "2024-P4");
-                    Assert.AreEqual(5.014m, reportedAlCW.PackagingTonnage);
-                }
                 else
                 {
-                    var expectedProducer = producers.First(p => p.ProducerId == producer.ProducerId && p.SubsidiaryId == producer.SubsidiaryId);
+                    var expectedProducer = originalPds.First(p => p.ProducerId == producer.ProducerId && p.SubsidiaryId == producer.SubsidiaryId);
                     Assert.AreEqual(expectedProducer, producer);
                 }
             }
@@ -454,9 +459,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var updatedProducers = (await builder.ConstructAsync(materialDetails, producers, requestDto, applyModulation)).Item1;
 
             // Assert
-            Assert.AreEqual(producers.Count(), updatedProducers.Count());
+            Assert.AreEqual(producers.Count, updatedProducers.Count);
 
-            foreach (var producer in updatedProducers)
+            var updatedPds = updatedProducers.SelectMany(l1 => l1.Producers).ToList();
+            var originalPds = producers.SelectMany(l1 => l1.Producers).ToList();
+
+            foreach (var producer in updatedPds)
             {
                 if (producer.ProducerId == 22 && producer.SubsidiaryId == null)
                 {
@@ -478,29 +486,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     Assert.IsNull(reportedAlCW.PackagingTonnageAmberMedical);
                     Assert.IsNull(reportedAlCW.PackagingTonnageGreenMedical);
                 }
-                else if (producer.ProducerId == 22 && producer.SubsidiaryId == null)
-                {
-                    var reportedAlHH = producer.ProducerReportedMaterials.First(rm => rm.MaterialId == alId && rm.PackagingType == "HH" && rm.SubmissionPeriod == "2025-H2");
-                    Assert.AreEqual(25.068m, reportedAlHH.PackagingTonnage);
-                    Assert.AreEqual(5.014m, reportedAlHH.PackagingTonnageRed);
-                    Assert.AreEqual(5.014m, reportedAlHH.PackagingTonnageAmber);
-                    Assert.AreEqual(0, reportedAlHH.PackagingTonnageGreen);
-                    Assert.AreEqual(0, reportedAlHH.PackagingTonnageRedMedical);
-                    Assert.AreEqual(0, reportedAlHH.PackagingTonnageAmberMedical);
-                    Assert.AreEqual(15.041m, reportedAlHH.PackagingTonnageGreenMedical);
-
-                    var reportedAlCW = producer.ProducerReportedMaterials.First(rm => rm.MaterialId == alId && rm.PackagingType == "CW" && rm.SubmissionPeriod == "2025-H2");
-                    Assert.AreEqual(5.014m, reportedAlCW.PackagingTonnage);
-                    Assert.IsNull(reportedAlCW.PackagingTonnageRed);
-                    Assert.IsNull(reportedAlCW.PackagingTonnageAmber);
-                    Assert.IsNull(reportedAlCW.PackagingTonnageGreen);
-                    Assert.IsNull(reportedAlCW.PackagingTonnageRedMedical);
-                    Assert.IsNull(reportedAlCW.PackagingTonnageAmberMedical);
-                    Assert.IsNull(reportedAlCW.PackagingTonnageGreenMedical);
-                }
                 else
                 {
-                    var expectedProducer = producers.First(p => p.ProducerId == producer.ProducerId && p.SubsidiaryId == producer.SubsidiaryId);
+                    var expectedProducer = originalPds.First(p => p.ProducerId == producer.ProducerId && p.SubsidiaryId == producer.SubsidiaryId);
                     Assert.AreEqual(expectedProducer, producer);
                 }
             }

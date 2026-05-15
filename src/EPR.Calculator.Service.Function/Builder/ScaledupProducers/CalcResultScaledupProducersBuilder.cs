@@ -12,9 +12,9 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
 {
     public interface ICalcResultScaledupProducersBuilder
     {
-        Task<(List<ProducerDetail>, CalcResultScaledupProducers)> ConstructAsync(
+        Task<(List<L1Producer>, CalcResultScaledupProducers)> ConstructAsync(
             List<MaterialDetail> materialDetails,
-            List<ProducerDetail> producerDetails,
+            List<L1Producer> producers,
             CalcResultsRequestDto resultsRequestDto
         );
     }
@@ -86,9 +86,9 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
             "Critical Code Smell",
             "S3776:Cognitive Complexity of methods should not be too high",
             Justification = "Temporaraly suppress - will refactor later.")]
-        public async Task<(List<ProducerDetail>, CalcResultScaledupProducers)> ConstructAsync(
+        public async Task<(List<L1Producer>, CalcResultScaledupProducers)> ConstructAsync(
             List<MaterialDetail> materialDetails,
-            List<ProducerDetail> producerDetails,
+            List<L1Producer> producers,
             CalcResultsRequestDto resultsRequestDto
         )
         {
@@ -99,7 +99,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
             if (!scaledUpProducers.Any())
             {
                 var emptyResult = new CalcResultScaledupProducers { Materials = materialDetails.ToImmutableList(), ScaledupProducers = [] };
-                return (producerDetails, emptyResult);
+                return (producers, emptyResult);
             }
 
             AddExtraRows(scaledUpProducers, scaledupOrganisations);
@@ -129,52 +129,63 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
 
             // Aggregates original (pre-scale) POM data per (ProducerId, Period) for subtotal rows
             var subtotalAccumulator = new Dictionary<(int, string), List<ScaledupPomEntry>>();
-            var updatedProducers = new List<ProducerDetail>(producerDetails.Count);
+            var updatedL1Producers = new List<L1Producer>(producers.Count);
 
-            foreach (var pd in producerDetails)
+            foreach (var l1 in producers)
             {
-                if (!scaleupFactorByProducer.TryGetValue(pd.ProducerId, out var factorByPeriod))
+                if (!scaleupFactorByProducer.TryGetValue(l1.OrganisationId, out var factorByPeriod))
                 {
-                    updatedProducers.Add(pd);
+                    updatedL1Producers.Add(l1);
                     continue;
                 }
-
-                // Scale each material once: the scaled result feeds both the pipeline and the display entry
-                var scaledWithEntries = pd.ProducerReportedMaterials
-                    .Select(rm =>
-                    {
-                        var scaledRm = factorByPeriod.TryGetValue(rm.SubmissionPeriod, out var factor) ? Scale(rm, factor) : rm;
-                        return (scaledRm, entry: new ScaledupPomEntry(rm.MaterialId, rm.PackagingType, rm.PackagingTonnage, scaledRm.PackagingTonnage));
-                    })
-                    .ToList();
-
-                if (displayRowLookup.TryGetValue((pd.ProducerId, pd.SubsidiaryId), out var periodToRow))
+                var updatedPds = new List<ProducerDetail>(l1.Producers.Count);
+                foreach (var pd in l1.Producers)
                 {
-                    foreach (var (period, row) in periodToRow)
-                    {
-                        var entries = scaledWithEntries
-                            .Where(x => x.scaledRm.SubmissionPeriod == period)
-                            .Select(x => x.entry)
-                            .ToList();
-                        row.PomData = entries;
+                    // Scale each material once: the scaled result feeds both the pipeline and the display entry
+                    var scaledWithEntries = pd.ProducerReportedMaterials
+                        .Select(rm =>
+                        {
+                            var scaledRm = factorByPeriod.TryGetValue(rm.SubmissionPeriod, out var factor) ? Scale(rm, factor) : rm;
+                            return (scaledRm, entry: new ScaledupPomEntry(rm.MaterialId, rm.PackagingType, rm.PackagingTonnage, scaledRm.PackagingTonnage));
+                        })
+                        .ToList();
 
-                        var key = (pd.ProducerId, period);
-                        if (!subtotalAccumulator.ContainsKey(key))
-                            subtotalAccumulator[key] = [];
-                        subtotalAccumulator[key].AddRange(entries);
+                    if (displayRowLookup.TryGetValue((pd.ProducerId, pd.SubsidiaryId), out var periodToRow))
+                    {
+                        foreach (var (period, row) in periodToRow)
+                        {
+                            var entries = scaledWithEntries
+                                .Where(x => x.scaledRm.SubmissionPeriod == period)
+                                .Select(x => x.entry)
+                                .ToList();
+                            row.PomData = entries;
+
+                            var key = (pd.ProducerId, period);
+                            if (!subtotalAccumulator.ContainsKey(key))
+                                subtotalAccumulator[key] = [];
+                            subtotalAccumulator[key].AddRange(entries);
+                        }
+
+                        updatedPds.Add(CalcResultPartialObligationBuilder.UpdateReportedMaterials(
+                            pd,
+                            _ => scaledWithEntries.Select(x => x.scaledRm).ToList()
+                        ));
                     }
                 }
-
-                updatedProducers.Add(CalcResultPartialObligationBuilder.UpdateReportedMaterials(
-                    pd,
-                    _ => scaledWithEntries.Select(x => x.scaledRm).ToList()
-                ));
+                updatedL1Producers.Add(new L1Producer(l1.OrganisationId, updatedPds));
             }
 
             foreach (var (key, subtotalRow) in subtotalLookup)
             {
                 if (subtotalAccumulator.TryGetValue(key, out var pomData))
-                    subtotalRow.PomData = pomData;
+                {
+                    subtotalRow.PomData = pomData
+                        .GroupBy(e => (e.MaterialId, e.PackagingType))
+                        .Select(g => new ScaledupPomEntry(
+                            g.Key.MaterialId, g.Key.PackagingType,
+                            g.Sum(e => e.Tonnage), g.Sum(e => e.ScaledTonnage)))
+                        .ToList();
+                }
             }
 
             var orderedRows = scaledUpProducers
@@ -185,7 +196,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                 .ToList();
 
             var scaledupProducersSummary = new CalcResultScaledupProducers {  Materials = materialDetails.ToImmutableList(), ScaledupProducers = orderedRows.ToImmutableList() };
-            return (updatedProducers, scaledupProducersSummary);
+            return (updatedL1Producers, scaledupProducersSummary);
         }
 
         private ProducerReportedMaterial Scale(ProducerReportedMaterial reportedMaterial, decimal scaleupFactor)

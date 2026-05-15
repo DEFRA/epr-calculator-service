@@ -146,9 +146,9 @@ namespace EPR.Calculator.Service.Function.Builder
             result.CalcResultCancelledProducers = await calcResultCancelledProducersBuilder.ConstructAsync(resultsRequestDto, materialDetails);
             telemetryClient.TrackTrace("calcResultCancelledProducersBuilder end...");
 
-            List<ProducerDetail> producers1 = await reportedProducerService.GetProducers(resultsRequestDto.RunId);
+            List<L1Producer> producers1 = await reportedProducerService.GetProducers(resultsRequestDto.RunId);
 
-            List<ProducerDetail> producers2;
+            List<L1Producer> producers2;
             if (result.ApplyModulation)
             {
                 telemetryClient.TrackTrace("calcResultProjectedProducerBuilder started...");
@@ -161,7 +161,7 @@ namespace EPR.Calculator.Service.Function.Builder
                 producers2 = producers1;
             }
 
-            List<ProducerDetail> producers3;
+            List<L1Producer> producers3;
             if (resultsRequestDto.RelativeYear.Value == 2025)
             {
                 telemetryClient.TrackTrace("calcResultScaledupProducersBuilder started...");
@@ -177,7 +177,7 @@ namespace EPR.Calculator.Service.Function.Builder
             telemetryClient.TrackTrace("calcResultPartialObligationBuilder started...");
             var partialObligationsResult = await calcResultPartialObligationBuilder.ConstructAsync(materialDetails, producers3, resultsRequestDto, result.ApplyModulation);
             result.CalcResultPartialObligations = partialObligationsResult.Item2;
-            List<ProducerDetail> producers4 = partialObligationsResult.Item1;
+            List<L1Producer> producers4 = partialObligationsResult.Item1;
             telemetryClient.TrackTrace("calcResultPartialObligationBuilder end...");
 
             if (!resultsRequestDto.IsBillingFile)

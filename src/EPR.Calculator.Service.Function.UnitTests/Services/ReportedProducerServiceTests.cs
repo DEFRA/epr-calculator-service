@@ -42,13 +42,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             Assert.AreEqual(3, result.Count);
 
-            var firstProducer = result.Single(p => p.Id == 1);
+            var firstProducer = result.Single(p => p.OrganisationId == 1);
 
-            Assert.AreEqual(2, firstProducer.ProducerReportedMaterials.Count);
+            var firstPd = firstProducer.Producers.Single();
+            Assert.AreEqual(2, firstPd.ProducerReportedMaterials.Count);
             CollectionAssert.AreEquivalent(
                 new List<string> { "2025-H1",  "2025-H2" },
-                firstProducer
-                    .ProducerReportedMaterials
+                firstPd.ProducerReportedMaterials
                     .Select(m => m.SubmissionPeriod)
                     .ToList()
             );

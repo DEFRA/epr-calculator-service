@@ -3,23 +3,24 @@ using EPR.Calculator.Service.Function.Builder.PartialObligations;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Services;
 
 namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 {
     public interface ICalcResultProjectedProducersBuilder
     {
-        (List<ProducerDetail>, CalcResultProjectedProducers) ConstructAsync(
+        (List<L1Producer>, CalcResultProjectedProducers) ConstructAsync(
             List<MaterialDetail> materialDetails,
-            List<ProducerDetail> producerDetails,
+            List<L1Producer> producers,
             CalcResultsRequestDto resultsRequestDto
         );
     }
 
     public class CalcResultProjectedProducersBuilder : ICalcResultProjectedProducersBuilder
     {
-        public (List<ProducerDetail>, CalcResultProjectedProducers) ConstructAsync(
+        public (List<L1Producer>, CalcResultProjectedProducers) ConstructAsync(
             List<MaterialDetail> materialDetails,
-            List<ProducerDetail> producerDetails,
+            List<L1Producer> producers,
             CalcResultsRequestDto resultsRequestDto
         )
         {
@@ -28,13 +29,13 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 
             var allH2Rows = new List<CalcResultH2ProjectedProducer>();
             var allH1Rows = new List<CalcResultH1ProjectedProducer>();
-            var updatedProducers = new List<ProducerDetail>(producerDetails.Count);
+            var updatedProducers = new List<L1Producer>(producers.Count);
 
             // H1 for a producer only depends on H2 from the same ProducerId group, so each group
             // can be processed fully in one pass.
-            foreach (var producerGroup in producerDetails.GroupBy(pd => pd.ProducerId))
+            foreach (var l1 in producers)
             {
-                var groupList = producerGroup.ToList();
+                var groupList = l1.Producers;
 
                 var h2Rows = H2ProjectedProducersBuilderUtils.GetProjectedProducers(groupList, materialDetails, h2Period);
                 var h2WithGroupSubtotals = AddSubtotals<CalcResultH2ProjectedProducer>(
@@ -45,8 +46,10 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 
                 var h1Rows = H1ProjectedProducersBuilderUtils.GetProjectedProducers(groupList, h2WithGroupSubtotals, materialDetails, h1Period);
 
+                var updatedPds = new List<ProducerDetail>(groupList.Count);
                 for (var i = 0; i < groupList.Count; i++)
-                    updatedProducers.Add(ApplyProjectedMaterials(groupList[i], h1Rows[i], h2Rows[i], materialDetails, h1Period, h2Period));
+                    updatedPds.Add(ApplyProjectedMaterials(groupList[i], h1Rows[i], h2Rows[i], materialDetails, h1Period, h2Period));
+                updatedProducers.Add(new L1Producer(l1.OrganisationId, updatedPds));
 
                 allH2Rows.AddRange(h2WithGroupSubtotals);
                 allH1Rows.AddRange(AddSubtotals<CalcResultH1ProjectedProducer>(
