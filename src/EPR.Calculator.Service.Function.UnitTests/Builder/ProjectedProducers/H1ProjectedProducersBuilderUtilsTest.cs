@@ -485,17 +485,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         [TestMethod]
         public void ReconcileRoundingDifference_MissingRam_EqualDominantRam()
         {
-            // Red and amber result in the same tonnages - assign missing ram to amber due to priority order
+            // Red and amber medical result in the same tonnages - assign missing ram to amber medical due to priority order
             var tonnage = 200;
-            var ramTonnage = new RAMTonnage { RedTonnage = 30, AmberTonnage = 30, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 40, GreenMedicalTonnage = 0 };
-            var h2Proportions = new RAMProportions { Red = 0.333333m, Amber = 0.333333m, Green = 0.333334m, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 };
+            var ramTonnage = new RAMTonnage { RedTonnage = 30, AmberTonnage = 40, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 30, GreenMedicalTonnage = 0 };
+            var h2Proportions = new RAMProportions { Red = 0.333333m, Amber = 0, Green = 0.333334m, RedMedical = 0, AmberMedical = 0.333333m, GreenMedical = 0 };
             var withProportions = H1ProjectedProducersBuilderUtils.GetProportionateRam(ramTonnage, 100, h2Proportions);
             var roundingDiff = tonnage - withProportions.TotalRamTonnage();
             Assert.IsTrue(roundingDiff > 0);
-            Assert.AreEqual(withProportions.RedTonnage, withProportions.AmberTonnage);
+            Assert.AreEqual(withProportions.RedTonnage, withProportions.AmberMedicalTonnage);
             var reconciled = H1ProjectedProducersBuilderUtils.ReconcileRoundingDifference(tonnage, withProportions);
             Assert.AreEqual(0, tonnage - reconciled.TotalRamTonnage());
-            Assert.AreEqual(withProportions with { AmberTonnage = withProportions.AmberTonnage + roundingDiff }, reconciled);
+            Assert.AreEqual(withProportions with { AmberMedicalTonnage = withProportions.AmberMedicalTonnage + roundingDiff }, reconciled);
         }
 
         [TestMethod]
