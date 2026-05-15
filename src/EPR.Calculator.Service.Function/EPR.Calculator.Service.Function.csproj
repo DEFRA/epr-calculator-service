@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Using Include="EPR.Calculator.Service.Function.Telemetry"/>
     <Using Include="JetBrains.Annotations"/>
     <Using Include="Microsoft.Extensions.Logging"/>
     <Using Include="System.Collections.Immutable"/>
@@ -30,6 +31,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0"/>
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.1"/>
     <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1"/>
+    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2"/>
     <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="8.0.0"/>
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.5.0"/>
     <PackageReference Include="EPR.Calculator.API.Data" Version="2.4.0"/>
@@ -60,8 +62,16 @@
 
       FunctionsPreservedDependencies instructs the SDK not to delete these specific assemblies.
     -->
+    <FunctionsPreservedDependencies Include="Microsoft.ApplicationInsights.dll"/>
+    <FunctionsPreservedDependencies Include="Microsoft.Extensions.DependencyInjection.dll"/>
+    <FunctionsPreservedDependencies Include="Microsoft.Extensions.DependencyInjection.Abstractions.dll"/>
     <FunctionsPreservedDependencies Include="Microsoft.Extensions.DependencyModel.dll"/>
+    <FunctionsPreservedDependencies Include="Microsoft.Extensions.Logging.dll"/>
+    <FunctionsPreservedDependencies Include="Microsoft.Extensions.Logging.Abstractions.dll"/>
+    <FunctionsPreservedDependencies Include="Microsoft.Extensions.Primitives.dll"/>
     <FunctionsPreservedDependencies Include="Microsoft.Extensions.Options.dll"/>
+    <FunctionsPreservedDependencies Include="Microsoft.Extensions.Options.DataAnnotations.dll"/>
+    <FunctionsPreservedDependencies Include="System.Diagnostics.DiagnosticSource.dll"/>
     <FunctionsPreservedDependencies Include="System.Memory.Data.dll"/>
   </ItemGroup>
 

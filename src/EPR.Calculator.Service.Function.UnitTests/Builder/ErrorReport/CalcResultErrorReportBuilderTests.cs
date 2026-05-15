@@ -121,7 +121,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
             var request = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
             // Act
-            var result = builder.ConstructAsync(request).ToList();
+            var result = builder.Construct(request).ToList();
 
             Assert.AreEqual(5, result.Count);
             var report = result[0];
@@ -192,7 +192,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
             var request = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
             // Act
-            var result = builder.ConstructAsync(request).ToList();
+            var result = builder.Construct(request).ToList();
 
             // Assert
             Assert.AreEqual(1, result.Count);
@@ -232,7 +232,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ErrorReport
             var request = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
 
             // Act
-            var result = builder.ConstructAsync(request).ToList();
+            var result = builder.Construct(request).ToList();
 
             // Assert
             Assert.AreEqual(1, result.Count);

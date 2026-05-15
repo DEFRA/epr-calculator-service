@@ -69,7 +69,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
             };
 
-            var resultCalc = ConstructAsync(resultsDto, calcResult);
+            var resultCalc = Construct(resultsDto, calcResult);
             // Assert
             Assert.IsNotNull(calcResult);
             Assert.AreEqual("1 + 4 Apportionment %s", resultCalc.Name);

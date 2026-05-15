@@ -4,7 +4,6 @@ using System.Text.Json;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Services.DataLoading;
-using EPR.Calculator.Service.Function.Telemetry;
 
 namespace EPR.Calculator.Service.Function.Services
 {
@@ -27,31 +26,24 @@ namespace EPR.Calculator.Service.Function.Services
         IProducerDataTransposer producerDataTransposer,
         IPrepareCalcService prepareCalcService,
         IRpdStatusService statusService,
-        ICalculatorTelemetryLogger telemetryLogger)
+        ILogger<CalculatorRunService> logger)
         : ICalculatorRunService
     {
         public async Task<bool> PrepareResultsFileAsync(CalculatorRunParameter calculatorRunParameter, string runName)
         {
             try
             {
-                telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = calculatorRunParameter.Id,
-                    RunName = runName,
-                    Message = "Process started"
-                });
-
                 await dataLoader.LoadData(calculatorRunParameter, runName);
                 return await RunResultsFileCalculationAsync(calculatorRunParameter, runName);
             }
-            catch (TaskCanceledException ex)
+            catch (OperationCanceledException ex)
             {
-                LogError(calculatorRunParameter.Id, runName, "StartProcess - Task was canceled", ex);
+                logger.LogError(ex, "Prepare results file cancelled");
                 return false;
             }
             catch (Exception ex)
             {
-                LogError(calculatorRunParameter.Id, runName, "StartProcess - An error occurred", ex);
+                logger.LogError(ex, "Prepare results file failed");
                 return false;
             }
         }
@@ -74,13 +66,16 @@ namespace EPR.Calculator.Service.Function.Services
                 MediaTypeNames.Application.Json);
         }
 
-
         private async Task<bool> RunResultsFileCalculationAsync(CalculatorRunParameter calculatorRunParameter,
             string runName)
         {
             var isSuccess = false;
 
-            var statusUpdateResponse = await LogAndUpdateStatus(calculatorRunParameter, runName);
+            var statusUpdateResponse = await statusService.UpdateRpdStatus(
+                calculatorRunParameter.Id,
+                runName,
+                calculatorRunParameter.User,
+                CancellationToken.None);
 
             if (statusUpdateResponse == RunClassification.RUNNING)
             {
@@ -90,53 +85,9 @@ namespace EPR.Calculator.Service.Function.Services
                     new CalcResultsRequestDto { RunId = calculatorRunParameter.Id, RelativeYear = calculatorRunParameter.RelativeYear },
                     runName,
                     CancellationToken.None);
-
-                LogInformation(calculatorRunParameter.Id, runName,
-                    $"UpdateStatusAndPrepareResult - prepareCalcResultResponse: {isSuccess}");
             }
 
-            LogInformation(calculatorRunParameter.Id, runName,
-                $"UpdateStatusAndPrepareResult - CalculatorRunParameter ID: {calculatorRunParameter.Id}");
-            LogInformation(calculatorRunParameter.Id, runName,
-                $"UpdateStatusAndPrepareResult - GetPrepareCalcResultMessage: {GetCalcResultMessage(calculatorRunParameter.Id)}");
-
             return isSuccess;
-        }
-
-        private async Task<RunClassification> LogAndUpdateStatus(CalculatorRunParameter calculatorRunParameter,
-            string runName)
-        {
-            LogInformation(calculatorRunParameter.Id, runName,
-                $"UpdateStatusAndPrepareResult");
-            var statusUpdateResponse = await statusService.UpdateRpdStatus(
-                calculatorRunParameter.Id,
-                runName,
-                calculatorRunParameter.User,
-                CancellationToken.None);
-            LogInformation(calculatorRunParameter.Id, runName,
-                $"UpdateStatusAndPrepareResult - Status Response: {statusUpdateResponse}");
-            return statusUpdateResponse;
-        }
-
-        private void LogInformation(int runId, string runName, string message)
-        {
-            telemetryLogger.LogInformation(new TrackMessage
-            {
-                RunId = runId,
-                RunName = runName,
-                Message = message
-            });
-        }
-
-        private void LogError(int runId, string runName, string message, Exception ex)
-        {
-            telemetryLogger.LogError(new ErrorMessage
-            {
-                RunId = runId,
-                RunName = runName,
-                Message = message,
-                Exception = ex
-            });
         }
     }
 }

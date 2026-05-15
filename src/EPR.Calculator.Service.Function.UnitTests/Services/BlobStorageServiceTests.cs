@@ -2,101 +2,83 @@
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using EPR.Calculator.Service.Function.Services;
-using EPR.Calculator.Service.Function.Telemetry;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Exceptions;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
-namespace EPR.Calculator.Service.Function.UnitTests.Services
+namespace EPR.Calculator.Service.Function.UnitTests.Services;
+
+[TestClass]
+public class BlobStorageServiceTests
 {
-    /// <summary>Unit tests for the <see cref="BlobStorageService"/> class.</summary>
-    [TestClass]
-    public class BlobStorageServiceTests
+    private IFixture fixture = null!;
+    private Mock<BlobClient> mockBlobClient = null!;
+    private BlobStorageService sut = null!;
+
+    [TestInitialize]
+    public void Init()
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="BlobStorageServiceTests"/> class.
-        /// </summary>
-        public BlobStorageServiceTests()
-        {
-            Fixture = new Fixture();
+        fixture = TestFixtures.New();
 
-            MockBlobServiceClient = new Mock<BlobServiceClient>();
-            MockBlobContainerClient = new Mock<BlobContainerClient>();
-            MockBlobClient = new Mock<BlobClient>();
+        mockBlobClient = fixture.Freeze<Mock<BlobClient>>();
 
-            MockBlobServiceClient.Setup(x => x.GetBlobContainerClient(It.IsAny<string>()))
-                .Returns(MockBlobContainerClient.Object);
+        var mockBlobContainerClient = new Mock<BlobContainerClient>();
+        mockBlobContainerClient.Setup(x => x.GetBlobClient(It.IsAny<string>()))
+            .Returns(mockBlobClient.Object);
 
-            MockBlobContainerClient.Setup(x => x.GetBlobClient(It.IsAny<string>()))
-                .Returns(MockBlobClient.Object);
+        var mockBlobServiceClient = fixture.Freeze<Mock<BlobServiceClient>>();
+        mockBlobServiceClient.Setup(x => x.GetBlobContainerClient(It.IsAny<string>()))
+            .Returns(mockBlobContainerClient.Object);
 
-            TelemetryLogger = new Mock<ICalculatorTelemetryLogger>();
+        fixture.Inject(mockBlobServiceClient.Object);
 
-            BlobStorageService = new BlobStorageService(
-                MockBlobServiceClient.Object,
-                TelemetryLogger.Object);
-        }
+        sut = fixture.Create<BlobStorageService>();
+    }
 
-        private Fixture Fixture { get; init; }
+    [TestMethod]
+    public async Task UploadResultFileContentAsync_ReturnsTrue_WhenUploadSucceeds()
+    {
+        // Arrange
+        var fileName = "test.txt";
+        var content = "test content";
+        var runName = "test";
+        var containerName = fixture.Create<string>();
+        var expectedUri = new Uri("https://example.com/test.txt");
 
-        private Mock<BlobServiceClient> MockBlobServiceClient { get; init; }
+        mockBlobClient.Setup(x => x.UploadAsync(It.IsAny<BinaryData>(), true, default))
+            .ReturnsAsync(new Mock<Response<BlobContentInfo>>().Object);
+        mockBlobClient.Setup(x => x.Uri)
+            .Returns(expectedUri);
 
-        private Mock<BlobContainerClient> MockBlobContainerClient { get; init; }
-
-        private Mock<BlobClient> MockBlobClient { get; init; }
-
-        private BlobStorageService BlobStorageService { get; init; }
-
-        private Mock<ICalculatorTelemetryLogger> TelemetryLogger { get; init; }
-
-        [TestMethod]
-        public async Task UploadResultFileContentAsync_ReturnsTrue_WhenUploadSucceeds()
-        {
-            // Arrange
-            var fileName = "test.txt";
-            var content = "test content";
-            var runName = "test";
-            var containerName = Fixture.Create<string>();
-            var expectedUri = new Uri("https://example.com/test.txt");
-
-            var responseMock = new Mock<Response<BlobContentInfo>>();
-            MockBlobClient.Setup(x => x.UploadAsync(It.IsAny<BinaryData>(), true, default))
-                          .ReturnsAsync(responseMock.Object);
-            MockBlobClient.Setup(x => x.Uri).Returns(expectedUri);
-
-            // Act
-            var result = await BlobStorageService.UploadFileContentAsync(
-                (FileName: fileName,
+        // Act
+        var result = await sut.UploadFileContentAsync(
+            (FileName: fileName,
                 Content: content,
                 RunName: runName,
                 ContainerName: containerName,
                 Overwrite: true));
 
-            // Assert
-            Assert.AreEqual(result, expectedUri.ToString());
-            MockBlobClient.Verify(x => x.UploadAsync(It.IsAny<BinaryData>(), true, default), Times.Once);
-        }
+        // Assert
+        Assert.AreEqual(result, expectedUri.ToString());
+    }
 
-        [TestMethod]
-        public async Task UploadResultFileContentAsync_ShouldReturnFalse_WhenUploadFails()
-        {
-            // Arrange
-            var fileName = "test.txt";
-            var content = "test content";
-            var runName = "test";
-            var containerName = Fixture.Create<string>();
+    [TestMethod]
+    public async Task UploadResultFileContentAsync_ShouldReturnFalse_WhenUploadFails()
+    {
+        // Arrange
+        var fileName = "test.txt";
+        var content = "test content";
+        var runName = "test";
+        var containerName = fixture.Create<string>();
 
-            MockBlobClient.Setup(x => x.UploadAsync(It.IsAny<BinaryData>()))
-                .ThrowsAsync(new Exception("Upload failed"));
+        mockBlobClient.Setup(x => x.UploadAsync(It.IsAny<BinaryData>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new TestException());
 
-            // Act
-            var result = await BlobStorageService.UploadFileContentAsync(
-                (FileName: fileName,
+        // Act & Assert
+        await Should.ThrowAsync<TestException>(async () => await sut.UploadFileContentAsync(
+            (FileName: fileName,
                 Content: content,
                 RunName: runName,
                 ContainerName: containerName,
-                Overwrite: true));
-
-            // Assert
-            Assert.AreEqual(result, string.Empty);
-            MockBlobClient.Verify(x => x.UploadAsync(It.IsAny<BinaryData>(), true, default), Times.Once);
-        }
+                Overwrite: true)));
     }
 }

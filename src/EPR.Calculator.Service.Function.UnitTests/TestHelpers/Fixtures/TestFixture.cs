@@ -1,9 +1,9 @@
-﻿using EPR.Calculator.API.Data;
+﻿using EntityFrameworkCore.AutoFixture.InMemory;
 using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.Telemetry;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures.Customizations;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Utils;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Time.Testing;
 
 namespace EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
@@ -18,22 +18,11 @@ public static class TestFixtures
             .Customize(new AutoFreezeMoqCustomization())
             .Customize(new ImmutableCollectionsCustomization())
             .Customize(new IgnoreVirtualMembersCustomization())
-            .Customize(new RelativeYearCustomization());
+            .Customize(new RelativeYearCustomization())
+            .Customize(new InMemoryCustomization());
 
-        fixture.Register(() =>
-        {
-            var options = new DbContextOptionsBuilder<ApplicationDBContext>();
-
-            options
-                .UseInMemoryDatabase(new Fixture().Create<string>()) // Unique each time to avoid pollution across tests
-                .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning));
-
-            var dbContext = new ApplicationDBContext(options.Options);
-            dbContext.Database.EnsureCreated();
-
-            return dbContext;
-        });
-
+        fixture.Register<TimeProvider>(() => new FakeTimeProvider());
+        fixture.Register<ITelemetryClient>(() => new TestTelemetryClient());
         fixture.Register<IBulkOperations>(() => new TestBulkOps());
 
         return fixture;

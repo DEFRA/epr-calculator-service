@@ -33,7 +33,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Mappers
                 RelativeYear = new RelativeYear(2024),
                 CreatedBy = "Test user",
                 CalculatorRunId = 678767,
-                MessageType = MessageBase.Result
+                MessageType = "ignored"
             };
 
             // Act

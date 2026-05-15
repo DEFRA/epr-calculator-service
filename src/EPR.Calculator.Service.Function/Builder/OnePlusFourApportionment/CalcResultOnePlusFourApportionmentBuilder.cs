@@ -8,12 +8,12 @@ namespace EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment
 {
     public interface ICalcResultOnePlusFourApportionmentBuilder
     {
-        CalcResultOnePlusFourApportionment ConstructAsync(CalcResultsRequestDto resultsRequestDto, CalcResult calcResult);
+        CalcResultOnePlusFourApportionment Construct(CalcResultsRequestDto resultsRequestDto, CalcResult calcResult);
     }
 
     public class CalcResultOnePlusFourApportionmentBuilder : ICalcResultOnePlusFourApportionmentBuilder
     {
-        public CalcResultOnePlusFourApportionment ConstructAsync(CalcResultsRequestDto resultsRequestDto, CalcResult calcResult)
+        public CalcResultOnePlusFourApportionment Construct(CalcResultsRequestDto resultsRequestDto, CalcResult calcResult)
         {
             const string totalLabel = "Total";
             var apportionmentDetails = new List<CalcResultOnePlusFourApportionmentDetail>();

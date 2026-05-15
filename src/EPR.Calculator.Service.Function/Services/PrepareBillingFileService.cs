@@ -1,96 +1,59 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Logging;
 using EPR.Calculator.Service.Function.Misc;
-using EPR.Calculator.Service.Function.Telemetry;
 using EPR.Calculator.Service.Function.Utils;
 using Microsoft.EntityFrameworkCore;
 
-namespace EPR.Calculator.Service.Function.Services
+namespace EPR.Calculator.Service.Function.Services;
+
+public interface IPrepareBillingFileService
 {
-    public interface IPrepareBillingFileService
-    {
-        Task<bool> PrepareBillingFileAsync(int calculatorRunId, string runName, string approvedBy);
-    }
+    Task<bool> PrepareBillingFileAsync(int calculatorRunId, string runName, string approvedBy);
+}
 
-    public class PrepareBillingFileService(
-        ApplicationDBContext applicationDBContext,
-        IPrepareCalcService prepareCalcService,
-        ICalculatorTelemetryLogger telemetryLogger) : IPrepareBillingFileService
-    {
-        public async Task<bool> PrepareBillingFileAsync(int calculatorRunId, string runName, string approvedBy)
+public class PrepareBillingFileService(
+    ApplicationDBContext dbContext,
+    IPrepareCalcService prepareCalcService,
+    ILogger<PrepareBillingFileService> logger)
+    : IPrepareBillingFileService
+{
+    public Task<bool> PrepareBillingFileAsync(int calculatorRunId, string runName, string approvedBy) =>
+        logger.LogDuration(async () =>
         {
-            telemetryLogger.LogInformation(new TrackMessage
+            try
             {
-                RunId = calculatorRunId,
-                RunName = runName,
-                Message = "PrepareBillingFileAsync started",
-            });
+                var run = await dbContext.CalculatorRuns
+                    .Where(run => run.Id == calculatorRunId && (run.IsBillingFileGenerating ?? false))
+                    .SingleAsync(x => x.Id == calculatorRunId);
 
-#pragma warning disable S1135
-            // TODO We need validate the Run Classification Id But not part of this ticket
-#pragma warning restore S1135
-            var calculatorRun = await applicationDBContext.CalculatorRuns
-            .SingleOrDefaultAsync(x => x.Id == calculatorRunId);
-
-            if (calculatorRun is null)
-            {
-                telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = calculatorRunId,
-                    RunName = runName,
-                    Message = PrepareBillingFileConstants.CalculatorRunNotFound,
-                });
-                return false;
-            }
-
-            if (!calculatorRun.IsBillingFileGenerating.GetValueOrDefault())
-            {
-                telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = calculatorRunId,
-                    RunName = runName,
-                    Message = PrepareBillingFileConstants.IsBillingFileGeneratingNotSet,
-                });
-                return false;
-            }
-
-            var acceptedProducerIds = await GetAcceptedProducerIdsAsync(calculatorRunId, applicationDBContext);
-
-            if (acceptedProducerIds.Count == 0)
-            {
-                telemetryLogger.LogInformation(new TrackMessage
-                {
-                    RunId = calculatorRunId,
-                    RunName = runName,
-                    Message = PrepareBillingFileConstants.AcceptedProducerIdsAreNull,
-                });
-                return false;
-            }
-
-            var result = await prepareCalcService.PrepareBillingResultsAsync(
-                new CalcResultsRequestDto
+                var acceptedProducerIds = await GetAcceptedProducerIdsAsync(run.Id);
+                var request = new CalcResultsRequestDto
                 {
                     RunId = calculatorRunId,
                     AcceptedProducerIds = acceptedProducerIds,
                     IsBillingFile = true,
                     ApprovedBy = approvedBy,
-                    RelativeYear = calculatorRun.RelativeYear
-                },
-                runName,
-                CancellationToken.None);
+                    RelativeYear = run.RelativeYear
+                };
 
-            return result;
-        }
+                return await prepareCalcService.PrepareBillingResultsAsync(request, runName, CancellationToken.None);
+            }
+            catch (Exception exception)
+            {
+                logger.LogError(exception, "Error occurred while preparing the billing file");
+                return false;
+            }
+        });
 
-        private static async Task<ImmutableHashSet<int>> GetAcceptedProducerIdsAsync(int calculatorRunId, ApplicationDBContext applicationDBContext)
-        {
-            return await applicationDBContext.ProducerResultFileSuggestedBillingInstruction
-                .Where(x => x.CalculatorRunId == calculatorRunId
+    private async Task<ImmutableHashSet<int>> GetAcceptedProducerIdsAsync(int calculatorRunId)
+    {
+        return await dbContext.ProducerResultFileSuggestedBillingInstruction
+            .Where(x => x.CalculatorRunId == calculatorRunId
                         && x.BillingInstructionAcceptReject == PrepareBillingFileConstants.BillingInstructionAccepted
                         && x.SuggestedBillingInstruction.Trim().ToLower() != PrepareBillingFileConstants.SuggestedBillingInstructionCancelBill.Trim().ToLower())
-                .Select(x => x.ProducerId)
-                .Distinct()
-                .ToImmutableHashSetAsync();
-        }
+            .Select(x => x.ProducerId)
+            .Distinct()
+            .ToImmutableHashSetAsync();
     }
 }

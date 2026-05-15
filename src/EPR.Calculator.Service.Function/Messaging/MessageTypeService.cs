@@ -21,8 +21,8 @@ namespace EPR.Calculator.Service.Function.Messaging
     {
         private readonly Dictionary<string, Type> typeMappings = new()
         {
-            { MessageBase.Billing, typeof(CreateBillingFileMessage) },
-            { MessageBase.Result, typeof(CreateResultFileMessage) }
+            { "Billing", typeof(CreateBillingFileMessage) },
+            { "Result", typeof(CreateResultFileMessage) }
         };
 
         public MessageBase DeserializeMessage(string json)

@@ -9,18 +9,18 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 {
     public interface ICalcResultProjectedProducersBuilder
     {
-        (List<L1Producer>, CalcResultProjectedProducers) ConstructAsync(
+        (List<L1Producer>, CalcResultProjectedProducers) Construct(
             IImmutableList<MaterialDetail> materialDetails,
-            List<L1Producer> producers,
+            IReadOnlyCollection<L1Producer> producers,
             CalcResultsRequestDto resultsRequestDto
         );
     }
 
     public class CalcResultProjectedProducersBuilder : ICalcResultProjectedProducersBuilder
     {
-        public (List<L1Producer>, CalcResultProjectedProducers) ConstructAsync(
+        public (List<L1Producer>, CalcResultProjectedProducers) Construct(
             IImmutableList<MaterialDetail> materialDetails,
-            List<L1Producer> producers,
+            IReadOnlyCollection<L1Producer> producers,
             CalcResultsRequestDto resultsRequestDto
         )
         {
