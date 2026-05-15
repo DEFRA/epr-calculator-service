@@ -56,7 +56,6 @@ namespace EPR.Calculator.Service.Function.Models
             return new CalcResultParametersOtherJson
             {
                 ThreeSAOperatingCost = CountryAmountJson.From(otherCost.SaOperatingCost
-                    .Where(sa => decimal.TryParse(sa.England, NumberStyles.Currency, CultureInfo.GetCultureInfo("en-GB"), out _)) // Filter out the header line.
                     .OrderBy(sa => sa.OrderId)
                     .FirstOrDefault()),
                 FourDataPreparationCharge = CountryAmountJson.From(otherCost.Details.OrderBy(sa => sa.OrderId).FirstOrDefault()),
@@ -92,13 +91,17 @@ namespace EPR.Calculator.Service.Function.Models
         public static CountryAmountJson From(CalcResultParameterOtherCostDetail? costDetail)
         {
             if (costDetail == null) return new CountryAmountJson();
+
+            var culture = CultureInfo.CreateSpecificCulture("en-GB");
+            culture.NumberFormat.CurrencySymbol = "£";
+            culture.NumberFormat.CurrencyPositivePattern = 0;
             return new CountryAmountJson
             {
-                England = costDetail.England,
-                Wales = costDetail.Wales,
-                Scotland = costDetail.Scotland,
-                NorthernIreland = costDetail.NorthernIreland,
-                Total = costDetail.Total,
+                England = costDetail.England.ToString("C", culture),
+                Wales = costDetail.Wales.ToString("C", culture),
+                Scotland = costDetail.Scotland.ToString("C", culture),
+                NorthernIreland = costDetail.NorthernIreland.ToString("C", culture),
+                Total = costDetail.Total.ToString("C", culture),
             };
         }
     }

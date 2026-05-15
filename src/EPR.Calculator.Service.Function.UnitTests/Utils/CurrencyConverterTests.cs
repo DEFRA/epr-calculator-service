@@ -6,26 +6,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Utils
     public class CurrencyConverterTests
     {
         [TestMethod]
-        public void CanCallGetDecimalValue()
-        {
-            // Act
-            var result = CurrencyConverterUtils.GetDecimalValue("650.95");
-
-            // Assert
-            Assert.AreEqual(650.95M, result);
-        }
-
-        [TestMethod]
-        public void CanCallFormatAsGbpCurrency()
-        {
-            // Act
-            var result = CurrencyConverterUtils.ConvertToCurrency("650.95");
-
-            // Assert
-            Assert.AreEqual("£650.95", result);
-        }
-
-        [TestMethod]
         public void CanCallFormatAsGbpCurrencyForZeroCurrency()
         {
             // Act

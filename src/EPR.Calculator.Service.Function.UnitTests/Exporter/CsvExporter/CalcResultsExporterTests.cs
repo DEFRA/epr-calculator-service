@@ -31,7 +31,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             MockScaledupProducersExporter = new();
             MockPartialObligationsExporter = new();
             MockProjectedProducersExporter = new();
-            MockLapcaptDetailExporter = new();
+            MockLapcapDataExporter = new();
             MockParameterOtherCostExporter = new();
             MockCalcResultSummaryExporter = new();
             MockCalcResultCancelledProducersExporter = new();
@@ -46,7 +46,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 MockScaledupProducersExporter.Object,
                 MockPartialObligationsExporter.Object,
                 MockProjectedProducersExporter.Object,
-                MockLapcaptDetailExporter.Object,
+                MockLapcapDataExporter.Object,
                 MockParameterOtherCostExporter.Object,
                 MockCommsCostExporter.Object,
                 MockCalcResultSummaryExporter.Object,
@@ -60,7 +60,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 
         private Mock<ICalcResultDetailExporter> MockResultDetailexporter { get; init; }
 
-        private Mock<IOnePlusFourApportionmentExporter> MockOnePlusFourExporter { get; init; }
+        private Mock<ICalcResultOnePlusFourApportionmentExporter> MockOnePlusFourExporter { get; init; }
 
         private Mock<ICalcResultLaDisposalCostExporter> MockLaDisposalCostDataExporter { get; init; }
 
@@ -72,7 +72,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 
         private Mock<ICalcResultProjectedProducersExporter> MockProjectedProducersExporter { get; init; }
 
-        private Mock<ILapcaptDetailExporter> MockLapcaptDetailExporter { get; init; }
+        private Mock<ICalcResultLapcapDataExporter> MockLapcapDataExporter { get; init; }
 
         private Mock<ICalcResultParameterOtherCostExporter> MockParameterOtherCostExporter { get; init; }
 
@@ -80,7 +80,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 
         private Mock<ICalcResultCancelledProducersExporter> MockCalcResultCancelledProducersExporter { get; init; }
 
-        private Mock<ICommsCostExporter> MockCommsCostExporter { get; init; }
+        private Mock<ICalcResultCommsCostExporter> MockCommsCostExporter { get; init; }
 
         private CalcResultsExporter TestClass { get; init; }
 
@@ -101,9 +101,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 
             MockLateReportingExporter.Verify(x => x.Export(calcResult.CalcResultLateReportingTonnageData));
             MockCalcResultSummaryExporter.Verify(x => x.Export(It.IsAny<CalcResultSummary>(), It.IsAny<StringBuilder>(), It.IsAny<bool>()));
-            MockLapcaptDetailExporter.Verify(x => x.Export(It.IsAny<CalcResultLapcapData>(), It.IsAny<StringBuilder>()));
+            MockLapcapDataExporter.Verify(x => x.Export(It.IsAny<CalcResultLapcapData>(), It.IsAny<StringBuilder>()));
             MockResultDetailexporter.Verify(x => x.Export(It.IsAny<CalcResultDetail>(), It.IsAny<StringBuilder>()));
-            MockLaDisposalCostDataExporter.Verify(x => x.Export(It.IsAny<CalcResultLaDisposalCostData>(), It.IsAny<StringBuilder>()));
+            MockLaDisposalCostDataExporter.Verify(x => x.Export(It.IsAny<bool>(), It.IsAny<CalcResultLaDisposalCostData>(), It.IsAny<StringBuilder>()));
             MockCommsCostExporter.Verify(x => x.Export(It.IsAny<CalcResultCommsCost>(), It.IsAny<StringBuilder>()));
             MockOnePlusFourExporter.Verify(x => x.Export(It.IsAny<CalcResultOnePlusFourApportionment>(), It.IsAny<StringBuilder>()));
             MockScaledupProducersExporter.Verify(x => x.Export(It.IsAny<CalcResultScaledupProducers>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<bool>(), It.IsAny<StringBuilder>()));
@@ -134,7 +134,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         public void AppendFileInfoTest()
         {
             var csvContent = new StringBuilder();
-            CalcResultDetailexporter.AppendFileInfo(csvContent, "Label", "Filename,20/12/2024,User");
+            CalcResultDetailExporter.AppendFileInfo(csvContent, "Label", "Filename,20/12/2024,User");
             Assert.IsTrue(csvContent.ToString().Contains("Label"));
             Assert.IsTrue(csvContent.ToString().Contains("Filename"));
             Assert.IsTrue(csvContent.ToString().Contains("20/12/2024"));
@@ -147,25 +147,20 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 ApplyModulation = false,
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
-                    Name = "LAPCAP Data",
                     CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetail>
                     {
                         new()
                         {
                             Name = "Total",
-                            EnglandDisposalCost = "£13,280.45",
-                            WalesDisposalCost = "£210.28",
-                            ScotlandDisposalCost = "£161.07",
-                            NorthernIrelandDisposalCost = "£91.00",
-                            TotalDisposalCost = "£13,742.80",
                             EnglandCost = 13280.45m,
                             WalesCost = 210.28m,
                             ScotlandCost = 91.00m,
                             NorthernIrelandCost = 91.00m,
-                            TotalCost = 13742.80m,
+                            TotalCost = 13742.80m
                         },
 
                     },
+                    CountryApportionment = new CountryApportionmentData()
                 },
                 CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
                 {
@@ -210,16 +205,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                         {
                             Name = "4 LA Data Prep Charge",
                             OrderId = 1,
-                            England = "£40.00",
-                            EnglandValue = 40,
-                            Wales = "£30.00",
-                            WalesValue = 30,
-                            Scotland = "£20.00",
-                            ScotlandValue = 20,
-                            NorthernIreland = "£10.00",
-                            NorthernIrelandValue = 10,
-                            Total = "£100.00",
-                            TotalValue = 100,
+                            England = 40,
+                            Wales = 30,
+                            Scotland = 20,
+                            NorthernIreland = 10,
+                            Total = 100
                         },
 
                     },
@@ -227,7 +217,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                     {
                         new CalcResultMateriality
                         {
-                            Amount = "Amount £s",
+                            Amount = "Amount £s", // TODO remove String variant
                             AmountValue = 0,
                             Percentage = "%",
                             PercentageValue = 0,
@@ -241,32 +231,22 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                         {
                             Name = string.Empty,
                             OrderId = 1,
-                            England = "£40.00",
-                            EnglandValue = 40,
-                            Wales = "£30.00",
-                            WalesValue = 30,
-                            Scotland = "£20.00",
-                            ScotlandValue = 20,
-                            NorthernIreland = "£10.00",
-                            NorthernIrelandValue = 10,
-                            Total = "£100.00",
-                            TotalValue = 100,
+                            England = 40,
+                            Wales = 30,
+                            Scotland = 20,
+                            NorthernIreland = 10,
+                            Total = 100
                         },
                     },
                     SchemeSetupCost = new CalcResultParameterOtherCostDetail
                     {
                         Name = "5 Scheme set up cost Yearly Cost",
                         OrderId = 1,
-                        England = "£40.00",
-                        EnglandValue = 40,
-                        Wales = "£30.00",
-                        WalesValue = 30,
-                        Scotland = "£20.00",
-                        ScotlandValue = 20,
-                        NorthernIreland = "£10.00",
-                        NorthernIrelandValue = 10,
-                        Total = "£100.00",
-                        TotalValue = 100,
+                        England = 40,
+                        Wales = 30,
+                        Scotland = 20,
+                        NorthernIreland = 10,
+                        Total = 100
                     },
                 },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment
@@ -275,32 +255,23 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                     {
                         new CalcResultOnePlusFourApportionmentDetail
                         {
-                            EnglandDisposalTotal = "80",
-                            NorthernIrelandDisposalTotal = "70",
-                            ScotlandDisposalTotal = "30",
-                            WalesDisposalTotal = "20",
-                            AllTotal = 0.1M,
+                            Name = "1 + 4 Apportionment %s",
                             EnglandTotal = 14.53M,
                             NorthernIrelandTotal = 0.15M,
                             ScotlandTotal = 1.15M,
                             WalesTotal = 0.20M,
-                            Name = "1 + 4 Apportionment %s",
+                            Total = 0.1M
                         },
                         new CalcResultOnePlusFourApportionmentDetail
                         {
-                            EnglandDisposalTotal = "80",
-                            NorthernIrelandDisposalTotal = "70",
-                            ScotlandDisposalTotal = "30",
-                            WalesDisposalTotal = "20",
-                            AllTotal = 0.1M,
+                            Name = "Test",
                             EnglandTotal = 0.10M,
                             NorthernIrelandTotal = 0.15M,
                             ScotlandTotal = 0.15M,
                             WalesTotal = 0.20M,
-                            Name = "Test",
+                            Total = 0.1M
                         },
-                    },
-                    Name = "some test",
+                    }
                 },
                 CalcResultCommsCostReportDetail = new CalcResultCommsCost
                 {
@@ -308,13 +279,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                     {
                         new CalcResultCommsCostCommsCostByMaterial
                         {
-                            CommsCostByMaterialPricePerTonne = "0.42",
                             Name = "Aluminium",
+                            CommsCostByMaterialPricePerTonne = 0.42m,
+                            ProducerReportedHouseholdPackagingWasteTonnage = 0m,
+                            LateReportingTonnage = 0m,
+                            ReportedPublicBinTonnage = 0m,
+                            ProducerReportedTotalTonnage = 0m
                         },
                         new CalcResultCommsCostCommsCostByMaterial
                         {
-                            CommsCostByMaterialPricePerTonne = "0.3",
                             Name = "Glass",
+                            CommsCostByMaterialPricePerTonne = 0.3m,
+                            ProducerReportedHouseholdPackagingWasteTonnage = 0m,
+                            LateReportingTonnage = 0m,
+                            ReportedPublicBinTonnage = 0m,
+                            ProducerReportedTotalTonnage = 0m
                         },
                     },
                     CalcResultCommsCostOnePlusFourApportionment =
@@ -325,7 +304,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 {
                     CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>
                     {
-                        new CalcResultLaDisposalCostDataDetail
+                        /*new CalcResultLaDisposalCostDataDetail
                         {
                             DisposalCostPricePerTonne = "20",
                             England = "EnglandTest",
@@ -360,7 +339,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                             Total = "100",
                             ProducerReportedHouseholdPackagingWasteTonnage = "null",
                             ReportedPublicBinTonnage = string.Empty,
-                        },
+                        }*/
                     },
                     Name = "LA Disposal Cost Data"
                 },

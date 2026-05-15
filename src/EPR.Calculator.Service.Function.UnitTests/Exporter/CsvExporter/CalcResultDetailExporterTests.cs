@@ -6,13 +6,13 @@ using EPR.Calculator.Service.Function.Models;
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 {
     [TestClass]
-    public class CalcResultDetailexporterTests
+    public class CalcResultDetailExporterTests
     {
-        private CalcResultDetailexporter _testClass;
+        private CalcResultDetailExporter _testClass;
 
-        public CalcResultDetailexporterTests()
+        public CalcResultDetailExporterTests()
         {
-            _testClass = new CalcResultDetailexporter();
+            _testClass = new CalcResultDetailExporter();
         }
 
         [TestMethod]

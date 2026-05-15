@@ -33,21 +33,30 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             {
                 new CalcResultCommsCostCommsCostByMaterial
                 {
-                    CommsCostByMaterialPricePerTonne = "0.42",
-                    CommsCostByMaterialPricePerTonneValue = 0.42m,
                     Name = "Aluminium",
+                    CommsCostByMaterialPricePerTonne = 0.42m,
+                    ProducerReportedHouseholdPackagingWasteTonnage = 0,
+                    LateReportingTonnage = 0,
+                    ReportedPublicBinTonnage = 0,
+                    ProducerReportedTotalTonnage = 0
                 },
                 new CalcResultCommsCostCommsCostByMaterial
                 {
-                    CommsCostByMaterialPricePerTonne = "0.3",
-                    CommsCostByMaterialPricePerTonneValue = 0.3m,
                     Name = "Glass",
+                    CommsCostByMaterialPricePerTonne = 0.3m,
+                    ProducerReportedHouseholdPackagingWasteTonnage = 0,
+                    LateReportingTonnage = 0,
+                    ReportedPublicBinTonnage = 0,
+                    ProducerReportedTotalTonnage = 0
                 },
                 new CalcResultCommsCostCommsCostByMaterial
                 {
-                    CommsCostByMaterialPricePerTonne = "0.51",
-                    CommsCostByMaterialPricePerTonneValue = 0.51m,
                     Name = "Total",
+                    CommsCostByMaterialPricePerTonne = 0.51m,
+                    ProducerReportedHouseholdPackagingWasteTonnage = 0,
+                    LateReportingTonnage = 0,
+                    ReportedPublicBinTonnage = 0,
+                    ProducerReportedTotalTonnage = 0
                 },
             };
         }

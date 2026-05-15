@@ -42,7 +42,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         }
 
         [TestMethod]
-        public async Task ConstructTest()
+        public async Task CalcResultParamterOtherCostBuilder_ConstructTest()
         {
             var run = new CalculatorRun
             {
@@ -95,42 +95,42 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var otherCost = await builder.ConstructAsync(new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) });
 
             Assert.IsNotNull(otherCost.SaOperatingCost);
-            Assert.AreEqual(2, otherCost.SaOperatingCost.Count());
-            var saOperatingheader = otherCost.SaOperatingCost.First();
+            Assert.AreEqual(1, otherCost.SaOperatingCost.Count());
+            /*var saOperatingheader = otherCost.SaOperatingCost.First();
             Assert.AreEqual("England", saOperatingheader.England);
             Assert.AreEqual("Northern Ireland", saOperatingheader.NorthernIreland);
             Assert.AreEqual("Scotland", saOperatingheader.Scotland);
-            Assert.AreEqual("Wales", saOperatingheader.Wales);
+            Assert.AreEqual("Wales", saOperatingheader.Wales);*/
 
             var saOperatingData = otherCost.SaOperatingCost.Last();
             Assert.AreEqual("3 SA Operating Costs", saOperatingData.Name);
 
-            Assert.AreEqual(40M, saOperatingData.EnglandValue);
-            Assert.AreEqual(10, saOperatingData.NorthernIrelandValue);
-            Assert.AreEqual(20, saOperatingData.ScotlandValue);
-            Assert.AreEqual(30, saOperatingData.WalesValue);
+            Assert.AreEqual(40M, saOperatingData.England);
+            Assert.AreEqual(10, saOperatingData.NorthernIreland);
+            Assert.AreEqual(20, saOperatingData.Scotland);
+            Assert.AreEqual(30, saOperatingData.Wales);
 
 
             var dataLa = otherCost.Details.First();
-            Assert.AreEqual(40M, dataLa.EnglandValue);
-            Assert.AreEqual(10M, dataLa.NorthernIrelandValue);
-            Assert.AreEqual(20M, dataLa.ScotlandValue);
-            Assert.AreEqual(30M, dataLa.WalesValue);
+            Assert.AreEqual(40M, dataLa.England);
+            Assert.AreEqual(10M, dataLa.NorthernIreland);
+            Assert.AreEqual(20M, dataLa.Scotland);
+            Assert.AreEqual(30M, dataLa.Wales);
 
             var counteyAppLa = otherCost.Details.Last();
-            Assert.AreEqual(40, counteyAppLa.EnglandValue);
-            Assert.AreEqual(10, counteyAppLa.NorthernIrelandValue);
-            Assert.AreEqual(20, counteyAppLa.ScotlandValue);
-            Assert.AreEqual(30, counteyAppLa.WalesValue);
+            Assert.AreEqual(40, counteyAppLa.England);
+            Assert.AreEqual(10, counteyAppLa.NorthernIreland);
+            Assert.AreEqual(20, counteyAppLa.Scotland);
+            Assert.AreEqual(30, counteyAppLa.Wales);
 
             Assert.AreEqual("6 Bad Debt Provision", otherCost.BadDebtProvision.Key);
             Assert.AreEqual("10.00%", otherCost.BadDebtProvision.Value);
 
             var schemeSetup = otherCost.SchemeSetupCost;
-            Assert.AreEqual(40, schemeSetup.EnglandValue);
-            Assert.AreEqual(10, schemeSetup.NorthernIrelandValue);
-            Assert.AreEqual(20, schemeSetup.ScotlandValue);
-            Assert.AreEqual(30, schemeSetup.WalesValue);
+            Assert.AreEqual(40, schemeSetup.England);
+            Assert.AreEqual(10, schemeSetup.NorthernIreland);
+            Assert.AreEqual(20, schemeSetup.Scotland);
+            Assert.AreEqual(30, schemeSetup.Wales);
 
             Assert.AreEqual(6, otherCost.Materiality.Count());
 

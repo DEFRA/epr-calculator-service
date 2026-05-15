@@ -53,16 +53,16 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         {
             return new CalcResult2ACommsDataDetailsTotal
             {
-                EnglandCommsCostTotal = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.EnglandValue),
-                HouseholdDrinksContainersTonnageTotal = Math.Round(commsCostByMaterial.HouseholdDrinksContainersValue, 3),
-                LateReportingTonnageTotal = Math.Round(commsCostByMaterial.LateReportingTonnageValue, 3),
-                NorthernIrelandCommsCostTotal = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.NorthernIrelandValue),
-                ScotlandCommsCostTotal = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.ScotlandValue),
-                WalesCommsCostTotal = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.WalesValue),
-                ProducerHouseholdPackagingWasteTonnageTotal = Math.Round(commsCostByMaterial.ProducerReportedHouseholdPackagingWasteTonnageValue, 3),
-                PublicBinTonnage = Math.Round(commsCostByMaterial.ReportedPublicBinTonnageValue, 3),
+                EnglandCommsCostTotal = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.England),
+                HouseholdDrinksContainersTonnageTotal = Math.Round(commsCostByMaterial.HouseholdDrinksContainers ?? 0m, 3),
+                LateReportingTonnageTotal = Math.Round(commsCostByMaterial.LateReportingTonnage, 3),
+                NorthernIrelandCommsCostTotal = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.NorthernIreland),
+                ScotlandCommsCostTotal = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.Scotland),
+                WalesCommsCostTotal = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.Wales),
+                ProducerHouseholdPackagingWasteTonnageTotal = Math.Round(commsCostByMaterial.ProducerReportedHouseholdPackagingWasteTonnage, 3),
+                PublicBinTonnage = Math.Round(commsCostByMaterial.ReportedPublicBinTonnage, 3),
                 Total = commsCostByMaterial.Name,
-                TotalCommsCostTotal = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.TotalValue),
+                TotalCommsCostTotal = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.Total),
                 TotalTonnageTotal = Math.Round(commsCostByMaterial.ProducerReportedTotalTonnage, 3)
             };
         }

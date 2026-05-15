@@ -17,11 +17,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                     new CalcResultCommsCostOnePlusFourApportionment
                     {
                         Name = CalcResultCommsCostBuilder.OnePlusFourApportionment,
-                        England = "10",
-                        Wales = "20%",
-                        Scotland = " 30 ",
-                        NorthernIreland = "",
-                        Total = string.Empty
+                        England = 10,
+                        Wales = 20,
+                        Scotland = 30,
+                        NorthernIreland = 0,
+                        Total = 0
                     }
                 }
             };
@@ -31,11 +31,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             Assert.IsNotNull(result);
             var pct = result.OnePlusFourCommsCostApportionmentPercentages;
             Assert.IsNotNull(pct);
-            Assert.AreEqual("10%", pct.England);
-            Assert.AreEqual("20%", pct.Wales);
-            Assert.AreEqual("30%", pct.Scotland);
-            Assert.AreEqual("0.00%", pct.NorthernIreland);
-            Assert.AreEqual("0.00%", pct.Total);
+            Assert.AreEqual("10.00%", pct.England);
+            Assert.AreEqual("20.00%", pct.Wales);
+            Assert.AreEqual("30.00%", pct.Scotland);
+            Assert.AreEqual( "0.00%", pct.NorthernIreland);
+            Assert.AreEqual( "0.00%", pct.Total);
         }
 
         [TestMethod]
