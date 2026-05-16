@@ -21,7 +21,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.LaDispo
             // Arrange
             var calcResultLaDisposalCostData = new CalcResultLaDisposalCostData
             {
-                Name = "LA Disposal Cost Data",
                 CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>
                 {
                     new CalcResultLaDisposalCostDataDetail
