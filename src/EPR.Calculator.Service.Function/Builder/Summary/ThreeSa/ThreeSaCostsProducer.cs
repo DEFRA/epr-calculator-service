@@ -30,7 +30,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.ThreeSa
 
         public static void GetProducerSetUpCostsSection3(CalcResult calcResult, CalcResultSummary summary)
         {
-            summary.SaOperatingCostsWoTitleSection3 = calcResult.CalcResultParameterOtherCost.SaOperatingCost.OrderByDescending(t => t.OrderId).First().Total;
+            summary.SaOperatingCostsWoTitleSection3 = calcResult.CalcResultParameterOtherCost.SaOperatingCost.Total;
             summary.BadDebtProvisionTitleSection3 = (summary.SaOperatingCostsWoTitleSection3 * calcResult.CalcResultParameterOtherCost.BadDebtValue) / 100;
             summary.SaOperatingCostsWithTitleSection3 = summary.BadDebtProvisionTitleSection3 + summary.SaOperatingCostsWoTitleSection3;
 

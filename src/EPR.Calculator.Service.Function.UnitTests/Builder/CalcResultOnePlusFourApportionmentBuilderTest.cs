@@ -42,22 +42,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
                 CalcResultParameterOtherCost = new CalcResultParameterOtherCost
                 {
-                    Name = "4 LA Data Prep Charge",
-                    Details = new[]
+                    LaDataPrepCharge = new CalcResultParameterOtherCostDetail
                     {
-                        new CalcResultParameterOtherCostDetail
-                        {
-                            Name            = "4 LA Data Prep Charge",
-                            England         = 115.45m,
-                            Wales           = 114.00m,
-                            Scotland        = 117.00m,
-                            NorthernIreland = 19.00m,
-                            Total           = 365.45m
-                        },
-                    },
+                        England         = 115.45m,
+                        Wales           = 114.00m,
+                        Scotland        = 117.00m,
+                        NorthernIreland = 19.00m,
+                        Total           = 365.45m
+                    }
                 },
                 CalcResultLateReportingTonnageData = Fixture.Create<CalcResultLateReportingTonnage>(),
-                CalcResultProjectedProducers = new CalcResultProjectedProducers(),
+                CalcResultProjectedProducers = new CalcResultProjectedProducers()
             };
 
             var resultCalc = Construct(resultsDto, calcResult);

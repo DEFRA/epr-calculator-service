@@ -127,7 +127,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoBTotalBill
             decimal commsCostHeaderWithoutBadDebtFor2bTitle = CalcResultSummaryUtil.GetCommsCostHeaderWithoutBadDebtFor2bTitle(calcResult);
             decimal percentageOfProducerReportedHHTonnagevsAllProducers = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducers(producer, hhTotalPackagingTonnage) / 100;
             decimal regionApportionment = GetRegionApportionment(calcResult, region);
-            decimal badDebtProvision = Convert.ToDecimal(calcResult.CalcResultParameterOtherCost.BadDebtProvision.Value.Trim('%')) / 100;
+            decimal badDebtProvision = calcResult.CalcResultParameterOtherCost.BadDebtValue / 100;
             return commsCostHeaderWithoutBadDebtFor2bTitle * (1 + badDebtProvision) * percentageOfProducerReportedHHTonnagevsAllProducers * regionApportionment;
         }
 
@@ -149,7 +149,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoBTotalBill
         public static decimal GetCommsBadDebtProvisionFor2b(CalcResult calcResult, ProducerDetail producer, IReadOnlyList<TotalPackagingTonnagePerRun> hhTotalPackagingTonnage)
         {
             decimal producerFeeWithoutBadDebtFor2b = GetCommsProducerFeeWithoutBadDebtFor2b(calcResult, producer, hhTotalPackagingTonnage);
-            decimal badDebtProvision = Convert.ToDecimal(calcResult.CalcResultParameterOtherCost.BadDebtProvision.Value.Trim('%')) / 100;
+            decimal badDebtProvision = calcResult.CalcResultParameterOtherCost.BadDebtValue / 100;
             return producerFeeWithoutBadDebtFor2b * badDebtProvision;
         }
 

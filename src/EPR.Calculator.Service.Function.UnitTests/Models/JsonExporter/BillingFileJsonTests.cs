@@ -124,57 +124,31 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                 },
                 CalcResultParameterOtherCost = new CalcResultParameterOtherCost
                 {
-                    BadDebtProvision = new KeyValuePair<string, string>("key1", "6%"),
                     BadDebtValue = 6m,
-                    Details = new List<CalcResultParameterOtherCostDetail>
+                    LaDataPrepCharge = new CalcResultParameterOtherCostDetail
                     {
-                        new CalcResultParameterOtherCostDetail
-                        {
-                            Name = "4 LA Data Prep Charge",
-                            OrderId = 1,
-                            England = 40,
-                            Wales = 30,
-                            Scotland = 20,
-                            NorthernIreland = 10,
-                            Total = 100,
-                        },
-
+                        England = 40,
+                        Wales = 30,
+                        Scotland = 20,
+                        NorthernIreland = 10,
+                        Total = 100,
                     },
-                    Materiality = new List<CalcResultMateriality>
+                    SaOperatingCost = new CalcResultParameterOtherCostDetail
                     {
-                        new CalcResultMateriality
-                        {
-                            Amount = "Amount £s",
-                            AmountValue = 0,
-                            Percentage = "%",
-                            PercentageValue = 0,
-                            SevenMateriality = "7 Materiality",
-                        },
-                    },
-                    Name = "Parameters - Other",
-                    SaOperatingCost = new List<CalcResultParameterOtherCostDetail>
-                    {
-                        new CalcResultParameterOtherCostDetail
-                        {
-                            Name = string.Empty,
-                            OrderId = 1,
-                            England = 40,
-                            Wales = 30,
-                            Scotland = 20,
-                            NorthernIreland = 10,
-                            Total = 100,
-                        },
+                        England = 40,
+                        Wales = 30,
+                        Scotland = 20,
+                        NorthernIreland = 10,
+                        Total = 100,
                     },
                     SchemeSetupCost = new CalcResultParameterOtherCostDetail
                     {
-                        Name = "5 Scheme set up cost Yearly Cost",
-                        OrderId = 1,
                         England = 40,
                         Wales = 30,
                         Scotland = 20,
                         NorthernIreland = 10,
                         Total = 100
-                    },
+                    }
                 },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment
                 {

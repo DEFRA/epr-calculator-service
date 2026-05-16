@@ -27,8 +27,7 @@ namespace EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment
             apportionmentDetails.Add(CreateDisposalDetailRow(OnePlus4ApportionmentColumnHeaders.LADisposalCost, totalLACost, orderId++));
 
             // Add data preparation charge row
-            var dataPrepCharge = calcResult.CalcResultParameterOtherCost.Details
-                .Single(x => x.Name == OnePlus4ApportionmentColumnHeaders.LADataPrepCharge);
+            var dataPrepCharge = calcResult.CalcResultParameterOtherCost.LaDataPrepCharge;
 
             apportionmentDetails.Add(CreateDataPrepChargeRow(dataPrepCharge, orderId++));
 

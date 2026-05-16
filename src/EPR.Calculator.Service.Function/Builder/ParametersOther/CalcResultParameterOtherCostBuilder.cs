@@ -17,20 +17,17 @@ namespace EPR.Calculator.Service.Function.Builder.ParametersOther
     {
         public const string SchemeAdminOperatingCost = "Scheme administrator operating costs";
         public const string LaPrepCharge = "Local authority data preparation costs";
-        public const string FourCountryApportionmentPercentage = "4 Country Apportionment %s";
         public const string SchemeSetupCost = "Scheme setup costs";
         public const string BadDebtProvision = "Bad debt provision";
-        private const string SchemeSetupYearlyCostHeader = "5 Scheme set up cost Yearly Cost";
-        private const string BadDebtProvisionHeader = "6 Bad Debt Provision";
-        private const string SaOperatingCostHeader = "3 SA Operating Costs";
-        private const string LaDataPrepChargeHeader = "4 LA Data Prep Charge";
-        private readonly ApplicationDBContext context;
+
+        private readonly ApplicationDBContext dbContext;
         private readonly ICalcCountryApportionmentService calcCountryApportionmentService;
 
-        public CalcResultParameterOtherCostBuilder(ApplicationDBContext context,
+        public CalcResultParameterOtherCostBuilder(
+            ApplicationDBContext dbContext,
             ICalcCountryApportionmentService calcCountryApportionmentService)
         {
-            this.context = context;
+            this.dbContext = dbContext;
             this.calcCountryApportionmentService = calcCountryApportionmentService;
         }
 
@@ -39,11 +36,13 @@ namespace EPR.Calculator.Service.Function.Builder.ParametersOther
             var culture = CultureInfo.CreateSpecificCulture("en-GB");
             culture.NumberFormat.CurrencySymbol = "£";
             culture.NumberFormat.CurrencyPositivePattern = 0;
+
+            //TODO inject params
             var results = await (
-                from run in context.CalculatorRuns
-                join defaultMaster in context.DefaultParameterSettings on run.DefaultParameterSettingMasterId equals defaultMaster.Id
-                join defaultDetail in context.DefaultParameterSettingDetail on defaultMaster.Id equals defaultDetail.DefaultParameterSettingMasterId
-                join defaultTemplate in context.DefaultParameterTemplateMasterList on defaultDetail.ParameterUniqueReferenceId equals defaultTemplate.ParameterUniqueReferenceId
+                from run in dbContext.CalculatorRuns
+                join defaultMaster in dbContext.DefaultParameterSettings on run.DefaultParameterSettingMasterId equals defaultMaster.Id
+                join defaultDetail in dbContext.DefaultParameterSettingDetail on defaultMaster.Id equals defaultDetail.DefaultParameterSettingMasterId
+                join defaultTemplate in dbContext.DefaultParameterTemplateMasterList on defaultDetail.ParameterUniqueReferenceId equals defaultTemplate.ParameterUniqueReferenceId
                 where run.Id == resultsRequestDto.RunId
                 select new DefaultParamResultsClass
                 {
@@ -56,188 +55,92 @@ namespace EPR.Calculator.Service.Function.Builder.ParametersOther
 
             var schemeAdminCosts = results.Where(x => x.ParameterType == SchemeAdminOperatingCost);
 
-            var other = new CalcResultParameterOtherCost
-            {
-                Name = CommonConstants.ParametersOther,
-            };
-
-            var saDetails = new List<CalcResultParameterOtherCostDetail>();
-            // TODO move header to Exporter
-            /*var saOperatinCostHeader = new CalcResultParameterOtherCostDetail
-            {
-                England = CommonConstants.England,
-                Wales = CommonConstants.Wales,
-                Scotland = CommonConstants.Scotland,
-                NorthernIreland = CommonConstants.NorthernIreland,
-                Total = CommonConstants.Total,
-            };
-            saDetails.Add(saOperatinCostHeader);*/
-
-            var saOperatingCost = GetPrepCharge(SaOperatingCostHeader, 2, schemeAdminCosts);
-            saDetails.Add(saOperatingCost);
-            other.SaOperatingCost = saDetails;
+            var saOperatingCost = GetPrepCharge(schemeAdminCosts);
 
             var lapPrepCharges = results.Where(x => x.ParameterType == LaPrepCharge);
-            var laDataPrepCharges = new List<CalcResultParameterOtherCostDetail>();
-            var laDataPrep = GetPrepCharge(LaDataPrepChargeHeader, 1, lapPrepCharges);
-            laDataPrepCharges.Add(laDataPrep);
+            var laDataPrep = GetPrepCharge(lapPrepCharges);
             var countryApportionment = GetCountryApportionment(laDataPrep);
-            laDataPrepCharges.Add(countryApportionment);
-            other.Details = laDataPrepCharges;
 
             var schemeSetUpCharges = results.Where(x => x.ParameterType == SchemeSetupCost);
-            var schemeSetupCharge = GetPrepCharge(SchemeSetupYearlyCostHeader, 1, schemeSetUpCharges);
-            other.SchemeSetupCost = schemeSetupCharge;
+            var schemeSetupCharge = GetPrepCharge(schemeSetUpCharges);
 
             var badDebtValue = results.Single(x => x.ParameterType == BadDebtProvision).ParameterValue;
-            other.BadDebtValue = badDebtValue;
-            other.BadDebtProvision = new KeyValuePair<string, string> (BadDebtProvisionHeader, $"{badDebtValue:0.00}%");
 
-            var materialityHeader = new CalcResultMateriality
-            {
-                SevenMateriality = "7 Materiality",
-                Amount = "Amount £s",
-                Percentage = "%",
-            };
-
-            var materialities = new List<CalcResultMateriality>();
-            materialities.Add(materialityHeader);
+            //var badDebtProvision = new KeyValuePair<string, string> (BadDebtProvisionHeader, $"{badDebtValue:0.00}%");
 
             var materialityResults = results.Where(x => x.ParameterType == "Materiality threshold");
 
             var amountIncrease = materialityResults.Single(x => x.ParameterCategory == "Amount Increase");
             var amountDecrease = materialityResults.Single(x => x.ParameterCategory == "Amount Decrease");
             var percentageDecrease = materialityResults.Single(x => x.ParameterCategory == "Percent Decrease");
-            var precentageIncrease = materialityResults.Single(x => x.ParameterCategory == "Percent Increase");
-
-            var materialityIncrease = new CalcResultMateriality
-            {
-                SevenMateriality = "Increase",
-                AmountValue = amountIncrease.ParameterValue,
-                PercentageValue = precentageIncrease.ParameterValue,
-            };
-            materialityIncrease.Amount = materialityIncrease.AmountValue.ToString("C", culture);
-            materialityIncrease.Percentage = $"{materialityIncrease.PercentageValue:0.00}%";
-            materialities.Add (materialityIncrease);
-
-            var materialityDecrease = new CalcResultMateriality
-            {
-                SevenMateriality = "Decrease",
-                AmountValue = amountDecrease.ParameterValue,
-                PercentageValue = percentageDecrease.ParameterValue,
-            };
-            materialityDecrease.Amount = materialityDecrease.AmountValue.ToString("C", culture);
-            materialityDecrease.Percentage = $"{materialityDecrease.PercentageValue:0.00}%";
-            materialities.Add(materialityDecrease);
-            other.Materiality = materialities;
-
-            materialities.Add(new CalcResultMateriality
-            {
-                SevenMateriality = "8 Tonnage Change",
-                Percentage = "%",
-                Amount = "Amount £s",
-            });
+            var percentageIncrease = materialityResults.Single(x => x.ParameterCategory == "Percent Increase");
 
             var tonnageResults = results.Where(x => x.ParameterType == "Tonnage change threshold");
             var tonIncrease = tonnageResults.Single(x => x.ParameterCategory == "Amount Increase");
             var tonDecrease = tonnageResults.Single(x => x.ParameterCategory == "Amount Decrease");
             var tonPercentageDecrease = tonnageResults.Single(x => x.ParameterCategory == "Percent Decrease");
-            var tonPrecentageIncrease = tonnageResults.Single(x => x.ParameterCategory == "Percent Increase");
+            var tonPercentageIncrease = tonnageResults.Single(x => x.ParameterCategory == "Percent Increase");
 
-            var tonnageIncrease = new CalcResultMateriality
-            {
-                SevenMateriality = "Increase",
-                AmountValue = tonIncrease.ParameterValue,
-                PercentageValue = tonPrecentageIncrease.ParameterValue,
-                Amount = $"{tonIncrease.ParameterValue.ToString("C", culture)}",
-                Percentage = $"{tonPrecentageIncrease.ParameterValue:0.00}%",
-            };
-            materialities.Add(tonnageIncrease);
+            var countries = await dbContext.Country.ToListAsync();
 
-            var tonnageDecrease = new CalcResultMateriality
-            {
-                SevenMateriality = "Decrease",
-                AmountValue = tonDecrease.ParameterValue,
-                PercentageValue = tonPercentageDecrease.ParameterValue,
-                Amount = $"{tonDecrease.ParameterValue.ToString("C", culture)}",
-                Percentage = $"{tonPercentageDecrease.ParameterValue:0.00}%",
-            };
-            materialities.Add(tonnageDecrease);
-            other.Materiality = materialities;
-
-            var countries = await context.Country.ToListAsync();
-
-            var costType = await context.CostType.SingleAsync(x => x.Name == "LA Data Prep Charge");
+            var costType = await dbContext.CostType.SingleAsync(x => x.Name == "LA Data Prep Charge");
             var costTypeId = costType.Id;
 
             if (!resultsRequestDto.IsBillingFile)
             {
                 await calcCountryApportionmentService.SaveChangesAsync(new CalcCountryApportionmentServiceDto
                 {
-                    RunId = resultsRequestDto.RunId,
-                    Countries = countries,
-                    CostTypeId = costTypeId,
-                    EnglandCost = laDataPrep.England,
+                    RunId               = resultsRequestDto.RunId,
+                    Countries           = countries,
+                    CostTypeId          = costTypeId,
+                    EnglandCost         = laDataPrep.England,
                     NorthernIrelandCost = laDataPrep.NorthernIreland,
-                    ScotlandCost = laDataPrep.Scotland,
-                    WalesCost = laDataPrep.Wales
+                    ScotlandCost        = laDataPrep.Scotland,
+                    WalesCost           = laDataPrep.Wales
                 });
             }
 
-            return other;
+            return new CalcResultParameterOtherCost
+            {
+                LaDataPrepCharge      = laDataPrep,
+                CountryApportionment  = countryApportionment,
+                SaOperatingCost       = saOperatingCost,
+                SchemeSetupCost       = schemeSetupCharge,
+                BadDebtValue          = badDebtValue,
+                MaterialityIncrease   = new Materiality { Amount = amountIncrease.ParameterValue, Percentage = percentageIncrease.ParameterValue },
+                MaterialityDecrease   = new Materiality { Amount = amountDecrease.ParameterValue, Percentage = percentageDecrease.ParameterValue },
+                TonnageChangeIncrease = new Materiality { Amount = tonIncrease.ParameterValue   , Percentage = tonPercentageIncrease.ParameterValue },
+                TonnageChangeDecrease = new Materiality { Amount = tonDecrease.ParameterValue   , Percentage = tonPercentageDecrease.ParameterValue }
+            };
         }
 
         private static CalcResultParameterOtherCostDetail GetCountryApportionment(CalcResultParameterOtherCostDetail laDataPrep)
         {
-            var total = laDataPrep.England + laDataPrep.NorthernIreland + laDataPrep.Wales +
-                        laDataPrep.Scotland;
-            var otherCostDetail = new CalcResultParameterOtherCostDetail
+            var total = laDataPrep.England + laDataPrep.NorthernIreland + laDataPrep.Wales + laDataPrep.Scotland;
+            return new CalcResultParameterOtherCostDetail
             {
-                Name = FourCountryApportionmentPercentage,
-                England = total != 0 ? ((laDataPrep.England / total) * 100) : 0M,
+                England         = total != 0 ? (laDataPrep.England         / total) * 100 : 0M,
                 NorthernIreland = total != 0 ? (laDataPrep.NorthernIreland / total) * 100 : 0M,
-                Scotland = total != 0 ? (laDataPrep.Scotland / total) * 100 : 0M,
-                Wales = total != 0 ? (laDataPrep.Wales / total) * 100 : 0M,
-                Total = 100M,
-                OrderId = 2
+                Scotland        = total != 0 ? (laDataPrep.Scotland        / total) * 100 : 0M,
+                Wales           = total != 0 ? (laDataPrep.Wales           / total) * 100 : 0M,
+                Total           = 100M
             };
-            //otherCostDetail.England = $"{otherCostDetail.EnglandValue:0.00000000}%";
-            //otherCostDetail.NorthernIreland = $"{otherCostDetail.NorthernIrelandValue:0.00000000}%";
-            //otherCostDetail.Scotland = $"{otherCostDetail.ScotlandValue:0.00000000}%";
-            //otherCostDetail.Wales = $"{otherCostDetail.WalesValue:0.00000000}%";
-            //otherCostDetail.Total = $"{otherCostDetail.TotalValue:0.00000000}%";
-
-            return otherCostDetail;
         }
 
-        private static CalcResultParameterOtherCostDetail GetPrepCharge(string name, int orderId, IEnumerable<DefaultParamResultsClass> lapPrepCharges)
+        private static CalcResultParameterOtherCostDetail GetPrepCharge(IEnumerable<DefaultParamResultsClass> lapPrepCharges)
         {
-            //var culture = CultureInfo.CreateSpecificCulture("en-GB");
-            //culture.NumberFormat.CurrencySymbol = "£";
-            //culture.NumberFormat.CurrencyPositivePattern = 0;
-
             var e  = lapPrepCharges.Single(cost => cost.ParameterCategory == "England").ParameterValue;
-            var ni = lapPrepCharges.Single(cost => cost.ParameterCategory == "Northern Ireland").ParameterValue;
-            var s  = lapPrepCharges.Single(cost => cost.ParameterCategory == "Scotland").ParameterValue;
             var w  = lapPrepCharges.Single(cost => cost.ParameterCategory == "Wales").ParameterValue;
-            var otherCostDetail = new CalcResultParameterOtherCostDetail
+            var s  = lapPrepCharges.Single(cost => cost.ParameterCategory == "Scotland").ParameterValue;
+            var ni = lapPrepCharges.Single(cost => cost.ParameterCategory == "Northern Ireland").ParameterValue;
+            return new CalcResultParameterOtherCostDetail
             {
-                Name = name,
-                England = e,
+                England         = e,
+                Wales           = w,
+                Scotland        = s,
                 NorthernIreland = ni,
-                Scotland = s,
-                Wales = w,
-                Total = e + s + w + ni, // TODO a derived field?
-                OrderId = orderId
+                Total           = e + w + s + ni, // TODO a derived field?
             };
-            otherCostDetail.Total = otherCostDetail.England + otherCostDetail.Scotland + otherCostDetail.Wales + otherCostDetail.NorthernIreland;
-            //otherCostDetail.England = otherCostDetail.EnglandValue.ToString("C", culture);
-            //otherCostDetail.Wales = otherCostDetail.WalesValue.ToString("C", culture);
-            //otherCostDetail.NorthernIreland = otherCostDetail.NorthernIrelandValue.ToString("C", culture);
-            //otherCostDetail.Scotland = otherCostDetail.ScotlandValue.ToString("C", culture);
-            //otherCostDetail.Total = otherCostDetail.TotalValue.ToString("C", culture);
-
-            return otherCostDetail;
         }
     }
 }

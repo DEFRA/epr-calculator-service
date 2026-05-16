@@ -65,10 +65,7 @@ public class CalcResultBuilder(
             {
                 CalcResultLateReportingTonnageDetails = new List<CalcResultLateReportingTonnageDetail>()
             },
-            CalcResultParameterOtherCost = new CalcResultParameterOtherCost
-            {
-                Name = string.Empty
-            },
+            CalcResultParameterOtherCost = new CalcResultParameterOtherCost(),
             CalcResultPartialObligations = new CalcResultPartialObligations(),
             CalcResultProjectedProducers = new CalcResultProjectedProducers(),
             CalcResultScaledupProducers = new CalcResultScaledupProducers(),
