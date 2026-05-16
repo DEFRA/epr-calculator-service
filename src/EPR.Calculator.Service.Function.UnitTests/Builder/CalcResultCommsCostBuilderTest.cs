@@ -66,17 +66,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             var onePlusFourApp = result.CalcResultCommsCostOnePlusFourApportionment;
             Assert.IsNotNull(onePlusFourApp);
-            Assert.AreEqual(1, onePlusFourApp.Count());
 
-            var dataApp = result.CalcResultCommsCostOnePlusFourApportionment.Last();
-            Assert.IsNotNull(dataApp);
-
-            Assert.AreEqual("1 + 4 Apportionment %s", dataApp.Name);
-            Assert.AreEqual(40, dataApp.England);
-            Assert.AreEqual(20, dataApp.Wales);
-            Assert.AreEqual(20, dataApp.NorthernIreland);
-            Assert.AreEqual(20, dataApp.Scotland);
-            Assert.AreEqual(100, dataApp.Total);
+            Assert.AreEqual("1 + 4 Apportionment %s", onePlusFourApp.Name);
+            Assert.AreEqual(40 , onePlusFourApp.England);
+            Assert.AreEqual(20 , onePlusFourApp.Wales);
+            Assert.AreEqual(20 , onePlusFourApp.NorthernIreland);
+            Assert.AreEqual(20 , onePlusFourApp.Scotland);
+            Assert.AreEqual(100, onePlusFourApp.Total);
 
             var materialCosts = result.CalcResultCommsCostCommsCostByMaterial.ToList();
             Assert.IsNotNull(materialCosts);

@@ -44,7 +44,7 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
         var apportionmentDetail = apportionment.OnePlusFourApportionment;
 
         var result = new CalcResultCommsCost();
-        result.CalcResultCommsCostOnePlusFourApportionment = GetApportionment(apportionmentDetail, result);
+        var calcResultCommsCostOnePlusFourApportionment = GetApportionment(apportionmentDetail);
 
         var allDefaultResults = await (
             from run in context.CalculatorRuns
@@ -64,8 +64,7 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
 
         var producerReportedMaterials = await GetProducerReportedMaterials(context, runId);
 
-        var list = new List<CalcResultCommsCostCommsCostByMaterial>();
-
+        var calcResultCommsCostCommsCostByMaterial = new List<CalcResultCommsCostCommsCostByMaterial>();
 
         foreach (var material in materialDetails)
         {
@@ -100,13 +99,12 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
                         ? total / producerReportedTotalTonnage : 0
             };
 
-            list.Add(commsCost);
+            calcResultCommsCostCommsCostByMaterial.Add(commsCost);
         }
 
-        var totalRow = GetTotalRow(list);
+        var totalRow = GetTotalRow(calcResultCommsCostCommsCostByMaterial);
 
-        list.Add(totalRow);
-        result.CalcResultCommsCostCommsCostByMaterial = list;
+        calcResultCommsCostCommsCostByMaterial.Add(totalRow);
 
         var commsCostByUk =
             allDefaultResults.Single(x =>
@@ -119,14 +117,18 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
             Wales           = (commsCostByUk.ParameterValue * apportionmentDetail.WalesTotal) / 100,
             Scotland        = (commsCostByUk.ParameterValue * apportionmentDetail.ScotlandTotal) / 100,
             NorthernIreland = (commsCostByUk.ParameterValue * apportionmentDetail.NorthernIrelandTotal) / 100,
-            Total           = commsCostByUk.ParameterValue,
-            OrderId         = 2
+            Total           = commsCostByUk.ParameterValue
         };
 
-        var commsCostByCountryList = GetCommsCostByCountryList(ukCost, allDefaultResults);
-        result.CommsCostByCountry = commsCostByCountryList;
+        var commsCostByCountryList = GetCommsCostByCountryList(allDefaultResults);
 
-        return result;
+        return new CalcResultCommsCost()
+        {
+            CalcResultCommsCostOnePlusFourApportionment = calcResultCommsCostOnePlusFourApportionment,
+            CalcResultCommsCostCommsCostByMaterial      = calcResultCommsCostCommsCostByMaterial,
+            CommsCostUkWide                             = ukCost,
+            CommsCostByCountry                          = commsCostByCountryList
+        };
     }
 
     public async Task<List<ProducerReportedMaterialProjected>> GetProducerReportedMaterials(ApplicationDBContext context, int runId)
@@ -169,14 +171,10 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
     }
 
 
-    private static List<CalcResultCommsCostOnePlusFourApportionment> GetCommsCostByCountryList(
-        CalcResultCommsCostOnePlusFourApportionment ukCost,
+    private static CalcResultCommsCostOnePlusFourApportionment GetCommsCostByCountryList(
         IEnumerable<CalcCommsBuilderResult> allDefaultResults
     )
     {
-        var commsCostByCountryList = new List<CalcResultCommsCostOnePlusFourApportionment>();
-        commsCostByCountryList.Add(ukCost);
-
         var englandValue =
             allDefaultResults.Single(x =>
                 x.ParameterType == CommunicationCostByCountry &&
@@ -194,30 +192,23 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
                 x.ParameterType == CommunicationCostByCountry &&
                 x.ParameterCategory == "Scotland").ParameterValue;
 
-        var countryCost = new CalcResultCommsCostOnePlusFourApportionment
+        return new CalcResultCommsCostOnePlusFourApportionment
         {
             England         = englandValue,
             Wales           = walesValue,
             Scotland        = scotlandValue,
             NorthernIreland = niValue,
             Total           = englandValue + walesValue + scotlandValue + niValue,
-            Name            = TwoCCommsCostByCountry,
-            OrderId         = 3
+            Name            = TwoCCommsCostByCountry
         };
-
-        commsCostByCountryList.Add(countryCost);
-
-        return commsCostByCountryList;
     }
 
-    private static List<CalcResultCommsCostOnePlusFourApportionment> GetApportionment(
-        CalcResultOnePlusFourApportionmentDetail apportionmentDetail,
-        CalcResultCommsCost result)
+    private static CalcResultCommsCostOnePlusFourApportionment GetApportionment(
+        CalcResultOnePlusFourApportionmentDetail apportionmentDetail
+    )
     {
-        // TODO this does not need to be a list
-        var commsApportionments = new List<CalcResultCommsCostOnePlusFourApportionment>();
-
-        var commsApportionment = new CalcResultCommsCostOnePlusFourApportionment
+         // TODO just use CalcResultOnePlusFourApportionmentDetail?
+        return new CalcResultCommsCostOnePlusFourApportionment
         {
             Name            = OnePlusFourApportionment,
             England         = apportionmentDetail.EnglandTotal,
@@ -226,9 +217,5 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
             NorthernIreland = apportionmentDetail.NorthernIrelandTotal,
             Total           = apportionmentDetail.Total
         };
-
-        commsApportionments.Add(commsApportionment);
-
-        return commsApportionments;
     }
 }

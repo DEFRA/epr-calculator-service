@@ -281,10 +281,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                             ReportedPublicBinTonnage = 0m,
                             ProducerReportedTotalTonnage = 0m
                         },
-                    },
-                    CalcResultCommsCostOnePlusFourApportionment =
-                        new Fixture().CreateMany<CalcResultCommsCostOnePlusFourApportionment>(1),
-                    CommsCostByCountry = new Fixture().CreateMany<CalcResultCommsCostOnePlusFourApportionment>(1),
+                    }
                 },
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData
                 {
