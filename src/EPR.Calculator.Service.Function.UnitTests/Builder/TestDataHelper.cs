@@ -29,116 +29,43 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             return new CalcResultParameterOtherCost
             {
-                Name = "Parameters - Other",
-                SaOperatingCost = new List<CalcResultParameterOtherCostDetail>
+                SaOperatingCost = new CalcResultParameterOtherCostDetail
                 {
-                    new CalcResultParameterOtherCostDetail
-                    {
-                        Name = null,
-                        England = 0,
-                        Wales = 0,
-                        Scotland = 0,
-                        NorthernIreland = 0,
-                        Total = 0,
-                        OrderId = 0,
-                    },
-                    new CalcResultParameterOtherCostDetail
-                    {
-                        Name = "3 SA Operating Costs",
-                        England = 25000,
-                        Wales = 14000,
-                        Scotland = 17000,
-                        NorthernIreland = 9000,
-                        Total = 65000,
-                        OrderId = 2,
-                    },
+                    England = 25000,
+                    Wales = 14000,
+                    Scotland = 17000,
+                    NorthernIreland = 9000,
+                    Total = 65000,
                 },
-                Details = new List<CalcResultParameterOtherCostDetail>
+                LaDataPrepCharge = new CalcResultParameterOtherCostDetail
                 {
-                    new CalcResultParameterOtherCostDetail
-                    {
-                        Name = "4 LA Data Prep Charge",
-                        England = 16000,
-                        Wales = 7000,
-                        Scotland = 9000,
-                        NorthernIreland = 4500,
-                        Total = 36500,
-                        OrderId = 1,
-                    },
-                    new CalcResultParameterOtherCostDetail
-                    {
-                        Name = "4 Country Apportionment %s",
-                        England = 0.4383561643835616m,
-                        Wales = 0.1917808219178082m,
-                        Scotland = 0.2465753424657534m,
-                        NorthernIreland = 0.1232876712328767m,
-                        Total = 1,
-                        OrderId = 2,
-                    },
+                    England = 16000,
+                    Wales = 7000,
+                    Scotland = 9000,
+                    NorthernIreland = 4500,
+                    Total = 36500,
+                },
+                CountryApportionment = new CalcResultParameterOtherCostDetail
+                {
+                    England = 0.4383561643835616m,
+                    Wales = 0.1917808219178082m,
+                    Scotland = 0.2465753424657534m,
+                    NorthernIreland = 0.1232876712328767m,
+                    Total = 1,
                 },
                 SchemeSetupCost =
                 {
-                    Name = "5 Scheme set up cost Yearly Cost",
-                    England = 17500,
-                    Wales = 23400,
-                    Scotland = 12400,
+                    England         = 17500,
+                    Wales           = 23400,
+                    Scotland        = 12400,
                     NorthernIreland = 9450,
-                    Total = 62750,
-                    OrderId = 1,
-                },
-                BadDebtProvision = new KeyValuePair<string, string>("6 Bad Debt Provision", "6.00%"),
-                Materiality = new List<CalcResultMateriality>
-                {
-                    new CalcResultMateriality
-                    {
-                        SevenMateriality = "7 Materiality",
-                        Amount = "Amount £s",
-                        Percentage = "%",
-                        AmountValue = 0,
-                        PercentageValue = 0,
-                    },
-                    new CalcResultMateriality
-                    {
-                        SevenMateriality = "Increase",
-                        Amount = "5000",
-                        Percentage = "2.00%",
-                        AmountValue = 5000,
-                        PercentageValue = 2,
-                    },
-                    new CalcResultMateriality
-                    {
-                        SevenMateriality = "Decrease",
-                        Amount = "-£1,000.00",
-                        Percentage = "-1.00%",
-                        AmountValue = -1000,
-                        PercentageValue = -1,
-                    },
-                    new CalcResultMateriality
-                    {
-                        SevenMateriality = "8 Tonnage Change",
-                        Amount = "Amount £s",
-                        Percentage = "%",
-                        AmountValue = 0,
-                        PercentageValue = 0,
-                    },
-                    new CalcResultMateriality
-                    {
-                        SevenMateriality = "Increase",
-                        Amount = "£50.00",
-                        Percentage = "2.00%",
-                        AmountValue = 50,
-                        PercentageValue = 2,
-                    },
-                    new CalcResultMateriality
-                    {
-                        SevenMateriality = "Decrease",
-                        Amount = "-£10.00",
-                        Percentage = "-0.50%",
-                        AmountValue = -10,
-                        PercentageValue = -0.5m,
-                    },
+                    Total           = 62750,
                 },
                 BadDebtValue = 6,
+                MaterialityIncrease   = new Materiality { Amount = 5000, Percentage = 2 },
+                MaterialityDecrease   = new Materiality { Amount = -1000, Percentage = -1 },
+                TonnageChangeIncrease = new Materiality { Amount = 50, Percentage = 2 },
+                TonnageChangeDecrease = new Materiality { Amount = -10, Percentage = -0.5m }
             };
         }
 

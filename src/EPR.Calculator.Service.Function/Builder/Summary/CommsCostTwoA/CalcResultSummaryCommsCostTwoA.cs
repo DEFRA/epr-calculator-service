@@ -139,7 +139,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
             CalcResult calcResult
         )
         {
-            var badDebtProvision = Convert.ToDecimal(calcResult.CalcResultParameterOtherCost.BadDebtProvision.Value.Trim('%'));
+            var badDebtProvision = calcResult.CalcResultParameterOtherCost.BadDebtValue;
             var producerTotalCostWithoutBadDebtProvision = GetProducerTotalCostWithoutBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
             return producerTotalCostWithoutBadDebtProvision * (1 + badDebtProvision / 100);
         }
@@ -182,7 +182,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
             CalcResult calcResult
         )
         {
-            var badDebtProvision = Convert.ToDecimal(calcResult.CalcResultParameterOtherCost.BadDebtProvision.Value.Trim('%'));
+            var badDebtProvision = calcResult.CalcResultParameterOtherCost.BadDebtValue;
             var producerTotalCostWithoutBadDebtProvision = GetProducerTotalCostWithoutBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
             return producerTotalCostWithoutBadDebtProvision * badDebtProvision / 100;
         }

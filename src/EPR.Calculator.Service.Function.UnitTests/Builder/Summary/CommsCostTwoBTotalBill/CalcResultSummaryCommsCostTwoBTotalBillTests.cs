@@ -39,7 +39,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
 
             // Set up consistent data
             this._calcResult.CalcResultParameterOtherCost = Fixture.Create<CalcResultParameterOtherCost>();
-            this._calcResult.CalcResultParameterOtherCost.BadDebtProvision = new KeyValuePair<string, string>("10 Bad Debt Provision", "10.00%");
+            this._calcResult.CalcResultParameterOtherCost.BadDebtValue = 10;
             var producer1 = new ProducerDetail
                             {
                                 Id = 1,

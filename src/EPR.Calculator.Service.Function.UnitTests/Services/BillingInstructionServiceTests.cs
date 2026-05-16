@@ -66,11 +66,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 },
                 CalcResultParameterOtherCost = new()
                 {
-                    BadDebtProvision = new KeyValuePair<string, string>(),
-                    Name = string.Empty,
-                    Details = new List<CalcResultParameterOtherCostDetail>(),
-                    Materiality = new List<CalcResultMateriality>(),
-                    SaOperatingCost = new List<CalcResultParameterOtherCostDetail>(),
                     SchemeSetupCost = new CalcResultParameterOtherCostDetail
                     {
                         England = 0,
@@ -156,11 +151,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 },
                 CalcResultParameterOtherCost = new()
                 {
-                    BadDebtProvision = new KeyValuePair<string, string>(),
-                    Name = string.Empty,
-                    Details = new List<CalcResultParameterOtherCostDetail>(),
-                    Materiality = new List<CalcResultMateriality>(),
-                    SaOperatingCost = new List<CalcResultParameterOtherCostDetail>(),
                     SchemeSetupCost = new CalcResultParameterOtherCostDetail
                     {
                         England = 0,
@@ -217,11 +207,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 },
                 CalcResultParameterOtherCost = new()
                 {
-                    BadDebtProvision = new KeyValuePair<string, string>(),
-                    Name = string.Empty,
-                    Details = new List<CalcResultParameterOtherCostDetail>(),
-                    Materiality = new List<CalcResultMateriality>(),
-                    SaOperatingCost = new List<CalcResultParameterOtherCostDetail>(),
                     SchemeSetupCost = new CalcResultParameterOtherCostDetail
                     {
                         England = 0,

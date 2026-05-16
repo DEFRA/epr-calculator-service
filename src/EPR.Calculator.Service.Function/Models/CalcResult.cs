@@ -34,17 +34,13 @@ namespace EPR.Calculator.Service.Function.Models
         public required CalcResultParameterOtherCost CalcResultParameterOtherCost { get; set; } =
             new()
             {
-                BadDebtProvision = new KeyValuePair<string, string>(),
-                Name = string.Empty,
-                Details = new List<CalcResultParameterOtherCostDetail>(),
-                Materiality = new List<CalcResultMateriality>(),
-                SaOperatingCost = new List<CalcResultParameterOtherCostDetail>(),
-                SchemeSetupCost = new CalcResultParameterOtherCostDetail{
-                    England = 0m,
-                    Wales = 0m,
-                    Scotland = 0m,
+                SchemeSetupCost  = new CalcResultParameterOtherCostDetail
+                {
+                    England         = 0m,
+                    Wales           = 0m,
+                    Scotland        = 0m,
                     NorthernIreland = 0m,
-                    Total = 0m
+                    Total           = 0m
                 }
             };
 

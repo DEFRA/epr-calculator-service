@@ -99,52 +99,30 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultParameterOtherCost = new CalcResultParameterOtherCost
                 {
-                    BadDebtProvision = new KeyValuePair<string, string>("key1", "6%"),
                     BadDebtValue = 6m,
-                    Details = [
-                        new CalcResultParameterOtherCostDetail
-                        {
-                            Name = "4 LA Data Prep Charge",
-                            OrderId = 1,
-                            England = 40,
-                            Wales = 30,
-                            Scotland = 20,
-                            NorthernIreland = 10,
-                            Total = 100,
-                        }
-                    ],
-                    Materiality = [
-                        new CalcResultMateriality
-                        {
-                            Amount = "Amount £s",
-                            AmountValue = 0,
-                            Percentage = "%",
-                            PercentageValue = 0,
-                            SevenMateriality = "7 Materiality",
-                        }
-                    ],
-                    Name = "Parameters - Other",
-                    SaOperatingCost = [
-                        new CalcResultParameterOtherCostDetail
-                        {
-                            Name = string.Empty,
-                            OrderId = 0,
-                            England = 0,
-                            Wales = 0,
-                            Scotland = 0,
-                            NorthernIreland = 0,
-                            Total = 0
-                        },
-                    ],
+                    LaDataPrepCharge =  new CalcResultParameterOtherCostDetail
+                    {
+                        England = 40,
+                        Wales = 30,
+                        Scotland = 20,
+                        NorthernIreland = 10,
+                        Total = 100,
+                    },
+                    SaOperatingCost = new CalcResultParameterOtherCostDetail
+                    {
+                        England = 0,
+                        Wales = 0,
+                        Scotland = 0,
+                        NorthernIreland = 0,
+                        Total = 0
+                    },
                     SchemeSetupCost = {
-                        Name = "5 Scheme set up cost Yearly Cost",
-                        OrderId = 1,
                         England = 40,
                         Wales = 30,
                         Scotland = 20,
                         NorthernIreland = 10,
                         Total = 100
-                    },
+                    }
                 },
                 CalcResultDetail = new CalcResultDetail { RunId = 1, RelativeYear = new RelativeYear(2024) },
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData

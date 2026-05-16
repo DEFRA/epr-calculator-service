@@ -207,18 +207,14 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             CalcResult calcResult,
             decimal? producerDisposalFeeTotal)
         {
-            return decimal.TryParse(calcResult.CalcResultParameterOtherCost.BadDebtProvision.Value.Replace("%", string.Empty), out decimal value)
-                ? (producerDisposalFeeTotal ?? 0) * value / 100
-                : 0;
+            return (producerDisposalFeeTotal ?? 0) * calcResult.CalcResultParameterOtherCost.BadDebtValue / 100;
         }
 
         public static decimal GetProducerDisposalFeeWithBadDebtProvision(
             CalcResult calcResult,
             decimal? producerDisposalFeeTotal)
         {
-            return decimal.TryParse(calcResult.CalcResultParameterOtherCost.BadDebtProvision.Value.Replace("%", string.Empty), out decimal value)
-                ? (producerDisposalFeeTotal ?? 0) * (1 + (value / 100))
-                : 0;
+            return (producerDisposalFeeTotal ?? 0) * (1 + (calcResult.CalcResultParameterOtherCost.BadDebtValue / 100));
         }
 
         public static decimal GetCountryBadDebtProvision(
@@ -588,7 +584,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             CalcResultSummary calcResultSummary)
         {
             var commsCost = calcResultSummary.CommsCostHeaderWithoutBadDebtFor2bTitle;
-            var badDebtProvision = Convert.ToDecimal(calcResult.CalcResultParameterOtherCost.BadDebtProvision.Value.Trim('%')) / 100;
+            var badDebtProvision = calcResult.CalcResultParameterOtherCost.BadDebtValue / 100;
             return commsCost * badDebtProvision;
         }
 
@@ -627,8 +623,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             CalcResult calcResult,
             Countries country)
         {
-            var fourCountryApportionment = calcResult.CalcResultParameterOtherCost.Details
-                .SingleOrDefault(x => x.Name == CalcResultParameterOtherCostBuilder.FourCountryApportionmentPercentage);
+            var fourCountryApportionment = calcResult.CalcResultParameterOtherCost.CountryApportionment;
 
             if (fourCountryApportionment == null)
             {
