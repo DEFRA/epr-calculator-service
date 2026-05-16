@@ -165,8 +165,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                             ProducerReportedHouseholdPackagingWasteTonnage = 0,
                             ReportedPublicBinTonnage = 0
                         },
-                    },
-                    Name = "some test"
+                    }
                 },
                 CalcResultLapcapData = new CalcResultLapcapData
                 {

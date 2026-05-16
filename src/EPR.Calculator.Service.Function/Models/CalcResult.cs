@@ -50,7 +50,6 @@ namespace EPR.Calculator.Service.Function.Models
         public CalcResultLaDisposalCostData CalcResultLaDisposalCostData { get; set; }
             = new()
             {
-                Name = string.Empty, // TODO remove
                 CalcResultLaDisposalCostDetails = []
             };
 

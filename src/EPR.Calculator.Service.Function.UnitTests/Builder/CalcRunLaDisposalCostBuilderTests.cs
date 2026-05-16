@@ -125,36 +125,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             // Assert
             Assert.IsNotNull(lapcapDisposalCostResults);
-            Assert.AreEqual(CommonConstants.LADisposalCostData, lapcapDisposalCostResults.Name);
             Assert.AreEqual(9, lapcapDisposalCostResults.CalcResultLaDisposalCostDetails.Count());
         }
-
-        /*[TestMethod]
-        public async Task Should_Return_HeaderRow()
-        {
-            // Assign
-            var resultsDto = new CalcResultsRequestDto { RunId = 2, RelativeYear = new RelativeYear(2025) };
-            var calcResult = TestDataHelper.GetCalcResult();
-
-            // Act
-            var lapcapDisposalCostResults = await builder.ConstructAsync(resultsDto, TestDataHelper.GetMaterials(), calcResult.CalcResultLapcapData, calcResult.CalcResultLateReportingTonnageData, smcw, calcResult.ApplyModulation);
-
-            // Assert
-            var headerRow = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails.Single(x => x.OrderId == 1);
-            Assert.IsNotNull(headerRow);
-            Assert.AreEqual(CommonConstants.Material, headerRow.Name);
-            Assert.AreEqual(CommonConstants.England, headerRow.England);
-            Assert.AreEqual(CommonConstants.Wales, headerRow.Wales);
-            Assert.AreEqual(CommonConstants.Scotland, headerRow.Scotland);
-            Assert.AreEqual(CommonConstants.NorthernIreland, headerRow.NorthernIreland);
-            Assert.AreEqual(CommonConstants.Total, headerRow.Total);
-            Assert.AreEqual(CommonConstants.ProducerReportedHouseholdPackagingWasteTonnage, headerRow.ProducerReportedHouseholdPackagingWasteTonnage);
-            Assert.AreEqual(CommonConstants.ReportedPublicBinTonnage, headerRow.ReportedPublicBinTonnage);
-            Assert.AreEqual(CommonConstants.HouseholdDrinkContainers, headerRow.HouseholdDrinkContainers);
-            Assert.AreEqual(CommonConstants.LateReportingTonnage, headerRow.LateReportingTonnage);
-            Assert.AreEqual(CommonConstants.ProducerReportedTotalTonnage, headerRow.ProducerReportedTotalTonnage);
-            Assert.AreEqual(CommonConstants.DisposalCostPricePerTonne, headerRow.DisposalCostPricePerTonne);
-        }*/
 
         [TestMethod]
         public async Task Should_Return_Material_Data_With_PublicBin()

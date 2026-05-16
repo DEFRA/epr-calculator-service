@@ -89,7 +89,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
         {
             var laDisposalCostData = new CalcResultLaDisposalCostData
             {
-                Name = "",
                 CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>
                 {
                     mkLaDisposalCost(al, 100),
@@ -153,7 +152,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
         {
             var laDisposalCostData = new CalcResultLaDisposalCostData
             {
-                Name = "",
                 CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>
                 {
                     mkLaDisposalCost(al, 0.1508m),
@@ -217,7 +215,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
         {
             var laDisposalCostData = new CalcResultLaDisposalCostData
             {
-                Name = "",
                 CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>
                 {
                     mkLaDisposalCost(al, 100),
@@ -268,7 +265,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
         {
             var laDisposalCostData = new CalcResultLaDisposalCostData
             {
-                Name = "",
                 CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>
                 {
                     mkLaDisposalCost(al, 100),

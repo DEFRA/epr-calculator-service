@@ -276,46 +276,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 },
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData
                 {
-                    CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>
-                    {
-                        /*new CalcResultLaDisposalCostDataDetail
-                        {
-                            DisposalCostPricePerTonne = "20",
-                            England = "EnglandTest",
-                            Wales = "WalesTest",
-                            Name = "ScotlandTest",
-                            Scotland = "ScotlandTest",
-                            NorthernIreland = "NorthernIrelandTest",
-                            Total = "null",
-                            ProducerReportedHouseholdPackagingWasteTonnage = "null",
-                            ReportedPublicBinTonnage = string.Empty,
-                        },
-                        new CalcResultLaDisposalCostDataDetail
-                        {
-                            DisposalCostPricePerTonne = "20",
-                            England = "EnglandTest",
-                            Wales = "WalesTest",
-                            Name = "Material1",
-                            Scotland = "ScotlandTest",
-                            NorthernIreland = "NorthernIrelandTest",
-                            Total = "null",
-                            ProducerReportedHouseholdPackagingWasteTonnage = "null",
-                            ReportedPublicBinTonnage =string.Empty,
-                        },
-                        new CalcResultLaDisposalCostDataDetail
-                        {
-                            DisposalCostPricePerTonne = "10",
-                            England = "EnglandTest",
-                            Wales = "WalesTest",
-                            Name = "Material2",
-                            Scotland = "ScotlandTest",
-                            NorthernIreland = "NorthernIrelandTest",
-                            Total = "100",
-                            ProducerReportedHouseholdPackagingWasteTonnage = "null",
-                            ReportedPublicBinTonnage = string.Empty,
-                        }*/
-                    },
-                    Name = "LA Disposal Cost Data"
+                    CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>()
                 },
                 CalcResultScaledupProducers = new CalcResultScaledupProducers
                 {
