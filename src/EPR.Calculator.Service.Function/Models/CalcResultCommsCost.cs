@@ -5,15 +5,11 @@
     /// </summary>
     public class CalcResultCommsCost
     {
-        public IEnumerable<CalcResultCommsCostOnePlusFourApportionment> CalcResultCommsCostOnePlusFourApportionment { get; set; }
-            = [];
+        public CalcResultCommsCostOnePlusFourApportionment CalcResultCommsCostOnePlusFourApportionment { get; set; }
         public IEnumerable<CalcResultCommsCostCommsCostByMaterial> CalcResultCommsCostCommsCostByMaterial { get; set; }
             = [];
 
-        /// <summary>
-        /// Contains records for several different types of comms cost records.
-        /// </summary>
-        public IEnumerable<CalcResultCommsCostOnePlusFourApportionment> CommsCostByCountry { get; set; }
-            = [];
+        public CalcResultCommsCostOnePlusFourApportionment CommsCostUkWide { get; set; }
+        public CalcResultCommsCostOnePlusFourApportionment CommsCostByCountry { get; set; }
     }
 }

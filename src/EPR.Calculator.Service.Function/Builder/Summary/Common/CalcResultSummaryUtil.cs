@@ -565,8 +565,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         public static decimal GetCommsCostHeaderWithoutBadDebtFor2bTitle(CalcResult calcResult)
         {
-            // TODO this only has one entry now total has moved - remove List
-            return calcResult.CalcResultCommsCostReportDetail.CommsCostByCountry.ToList()[0].Total;
+            return calcResult.CalcResultCommsCostReportDetail.CommsCostByCountry.Total;
         }
 
         public static decimal GetCommsCostHeaderBadDebtProvisionFor2bTitle(
