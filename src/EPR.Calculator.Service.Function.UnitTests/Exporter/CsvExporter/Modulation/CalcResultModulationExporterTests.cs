@@ -67,8 +67,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
                         HouseholdDrinkContainers = null,
                         LateReportingTonnage = 4289
                     }
-                },
-                Name = "" // TODO still need Name?
+                }
             };
 
             SelfManagedConsumerWasteData mkSmcwData(decimal red, decimal amber, decimal green, decimal? actionedSmcw, decimal? residualSmcw)

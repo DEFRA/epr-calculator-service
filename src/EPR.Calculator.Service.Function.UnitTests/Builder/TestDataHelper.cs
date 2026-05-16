@@ -78,7 +78,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             return new CalcResultLaDisposalCostData
             {
-                Name = "Disposal Cost Data",
                 CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>
                 {
                     new CalcResultLaDisposalCostDataDetail

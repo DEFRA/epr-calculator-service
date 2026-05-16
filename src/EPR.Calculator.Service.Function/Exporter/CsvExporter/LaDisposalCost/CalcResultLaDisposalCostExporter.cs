@@ -19,7 +19,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost
             csvContent.AppendLine();
             csvContent.AppendLine();
 
-            csvContent.AppendLine(CsvSanitiser.SanitiseData(calcResultLaDisposalCostData.Name));
+            csvContent.AppendLine(CsvSanitiser.SanitiseData("LA Disposal Cost Data"));
             var laDisposalCostDataDetails = calcResultLaDisposalCostData.CalcResultLaDisposalCostDetails.OrderBy(x => x.OrderId);
 
             AppendHeader(applyModulation, csvContent);

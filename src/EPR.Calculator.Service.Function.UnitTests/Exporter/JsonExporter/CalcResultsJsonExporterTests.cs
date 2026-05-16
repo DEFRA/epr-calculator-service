@@ -233,8 +233,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                             ReportedPublicBinTonnage = 0,
                             Total = 100
                         },
-                    },
-                    Name = "LA Disposal Cost Data"
+                    }
                 },
                 CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers(),
                 CalcResultSummary = TestDataHelper.GetCalcResultSummary(),
