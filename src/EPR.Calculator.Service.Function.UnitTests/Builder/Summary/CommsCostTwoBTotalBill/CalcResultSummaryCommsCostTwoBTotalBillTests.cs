@@ -318,19 +318,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
 
         private CalcResultOnePlusFourApportionment GetCalcResultOnePlusFourApportionment()
         {
-            var calcResultOnePlusFourApportionment = Fixture.Create<CalcResultOnePlusFourApportionment>();
-
-            // Ensure the lists have enough elements
-            calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails = Fixture.CreateMany<CalcResultOnePlusFourApportionmentDetail>(5).ToList();
-
-            // Set up consistent data
-            calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.Last().Name = CalcResultCommsCostBuilder.OnePlusFourApportionment;
-            calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.Last().EnglandTotal = 0.5m;
-            calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.Last().WalesTotal = 0.2m;
-            calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.Last().ScotlandTotal = 0.2m;
-            calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.Last().NorthernIrelandTotal = 0.1m;
-
-            return calcResultOnePlusFourApportionment;
+            return new CalcResultOnePlusFourApportionment
+            {
+                OnePlusFourApportionment = new CalcResultOnePlusFourApportionmentDetail {
+                    EnglandTotal         = 0.5m,
+                    WalesTotal           = 0.2m,
+                    ScotlandTotal        = 0.2m,
+                    NorthernIrelandTotal = 0.1m,
+                }
+            };
         }
     }
 }

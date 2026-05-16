@@ -42,8 +42,7 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
             telemetryClient.TrackTrace("Begining constructing comms cost...");
             var runId = resultsRequestDto.RunId;
 
-            var apportionmentDetails = apportionment.CalcResultOnePlusFourApportionmentDetails;
-            var apportionmentDetail = apportionmentDetails.Last();
+            var apportionmentDetail = apportionment.OnePlusFourApportionment;
 
             var result = new CalcResultCommsCost();
             telemetryClient.TrackTrace("Calculating apportionment...");

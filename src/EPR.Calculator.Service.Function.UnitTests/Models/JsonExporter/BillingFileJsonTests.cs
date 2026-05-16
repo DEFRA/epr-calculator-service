@@ -151,26 +151,38 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                 },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment
                 {
-                    CalcResultOnePlusFourApportionmentDetails = new List<CalcResultOnePlusFourApportionmentDetail>
+                    LaDisposalCost = new()
                     {
-                        new CalcResultOnePlusFourApportionmentDetail
-                        {
-                            Name = "1 + 4 Apportionment %s",
-                            EnglandTotal = 14.53M,
-                            NorthernIrelandTotal = 0.15M,
-                            ScotlandTotal = 1.15M,
-                            WalesTotal = 0.20M,
-                            Total = 0.1M
-                        },
-                        new CalcResultOnePlusFourApportionmentDetail
-                        {
-                            Name = "Test",
-                            EnglandTotal = 0.10M,
-                            NorthernIrelandTotal = 0.15M,
-                            ScotlandTotal = 0.15M,
-                            WalesTotal = 0.20M,
-                            Total = 0.1M
-                        },
+                        Name = "",
+                        EnglandCost       = 0.10M,
+                        WalesCost         = 020M,
+                        NorthernIrelandCost = 0.15M,
+                        ScotlandCost        = 0.15M,
+                        TotalCost           = 0.1M
+                    },
+                    LADataPrepCharge = new()
+                    {
+                        England         = 0.10M,
+                        Wales           = 020M,
+                        Scotland        = 0.15M,
+                        NorthernIreland = 0.15M,
+                        Total           = 0.1M
+                    },
+                    TotalOnePlusFour =  new()
+                    {
+                        EnglandTotal         = 14.53M,
+                        WalesTotal           = 020M,
+                        ScotlandTotal        = 0.15M,
+                        NorthernIrelandTotal = 0.15M,
+                        Total                = 0.1M
+                    },
+                    OnePlusFourApportionment = new()
+                    {
+                        EnglandTotal         = 0.10M,
+                        WalesTotal           = 020M,
+                        ScotlandTotal        = 0.15M,
+                        NorthernIrelandTotal = 0.15M,
+                        Total                = 0.1M
                     }
                 },
                 CalcResultCommsCostReportDetail = new CalcResultCommsCost

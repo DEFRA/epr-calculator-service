@@ -23,29 +23,37 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 
             AppendHeaders(csvContent);
 
-            var lapcapDataDetails = calcResult1Plus4Apportionment.CalcResultOnePlusFourApportionmentDetails.OrderBy(x => x.OrderId);
+            csvContent.Append(CsvSanitiser.SanitiseData("1 Fee for LA Disposal Costs"));
+            csvContent.Append(CsvSanitiser.SanitiseData(calcResult1Plus4Apportionment.LaDisposalCost.EnglandCost        , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(calcResult1Plus4Apportionment.LaDisposalCost.WalesCost          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(calcResult1Plus4Apportionment.LaDisposalCost.ScotlandCost       , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(calcResult1Plus4Apportionment.LaDisposalCost.NorthernIrelandCost, DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(calcResult1Plus4Apportionment.LaDisposalCost.TotalCost          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.AppendLine();
 
-            foreach (var lapcapData in lapcapDataDetails)
-            {
-                csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.Name));
-                if (lapcapData.Name == "1 + 4 Apportionment %s")
-                {
-                    csvContent.Append(CsvSanitiser.SanitiseData(100 * lapcapData.EnglandTotal        , DecimalPlaces.Eight, null, isPercentage: true));
-                    csvContent.Append(CsvSanitiser.SanitiseData(100 * lapcapData.WalesTotal          , DecimalPlaces.Eight, null, isPercentage: true));
-                    csvContent.Append(CsvSanitiser.SanitiseData(100 * lapcapData.ScotlandTotal       , DecimalPlaces.Eight, null, isPercentage: true));
-                    csvContent.Append(CsvSanitiser.SanitiseData(100 * lapcapData.NorthernIrelandTotal, DecimalPlaces.Eight, null, isPercentage: true));
-                    csvContent.Append(CsvSanitiser.SanitiseData(100                                  , DecimalPlaces.Eight, null, isPercentage: true));
-                }
-                else
-                {
-                    csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.EnglandTotal        , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
-                    csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.WalesTotal          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
-                    csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.ScotlandTotal       , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
-                    csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.NorthernIrelandTotal, DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
-                    csvContent.Append(CsvSanitiser.SanitiseData(lapcapData.Total               , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
-                }
-                csvContent.AppendLine();
-            }
+            csvContent.Append(CsvSanitiser.SanitiseData("4 LA Data Prep Charge"));
+            csvContent.Append(CsvSanitiser.SanitiseData(calcResult1Plus4Apportionment.LADataPrepCharge.England        , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(calcResult1Plus4Apportionment.LADataPrepCharge.Wales          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(calcResult1Plus4Apportionment.LADataPrepCharge.Scotland       , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(calcResult1Plus4Apportionment.LADataPrepCharge.NorthernIreland, DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(calcResult1Plus4Apportionment.LADataPrepCharge.Total          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.AppendLine();
+
+            csvContent.Append(CsvSanitiser.SanitiseData("Total of 1 + 4"));
+            csvContent.Append(CsvSanitiser.SanitiseData(calcResult1Plus4Apportionment.TotalOnePlusFour.EnglandTotal        , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(calcResult1Plus4Apportionment.TotalOnePlusFour.WalesTotal          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(calcResult1Plus4Apportionment.TotalOnePlusFour.ScotlandTotal       , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(calcResult1Plus4Apportionment.TotalOnePlusFour.NorthernIrelandTotal, DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(calcResult1Plus4Apportionment.TotalOnePlusFour.Total               , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.AppendLine();
+
+            csvContent.Append(CsvSanitiser.SanitiseData("1 + 4 Apportionment %s"));
+            csvContent.Append(CsvSanitiser.SanitiseData(100 * calcResult1Plus4Apportionment.OnePlusFourApportionment.EnglandTotal        , DecimalPlaces.Eight, null, isPercentage: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(100 * calcResult1Plus4Apportionment.OnePlusFourApportionment.WalesTotal          , DecimalPlaces.Eight, null, isPercentage: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(100 * calcResult1Plus4Apportionment.OnePlusFourApportionment.ScotlandTotal       , DecimalPlaces.Eight, null, isPercentage: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(100 * calcResult1Plus4Apportionment.OnePlusFourApportionment.NorthernIrelandTotal, DecimalPlaces.Eight, null, isPercentage: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(100                                                                              , DecimalPlaces.Eight, null, isPercentage: true));
+            csvContent.AppendLine();
         }
 
         private void AppendHeaders(StringBuilder csvContent)

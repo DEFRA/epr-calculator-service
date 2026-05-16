@@ -20,55 +20,43 @@ namespace EPR.Calculator.Service.Function.Models
 
         public static CalcResultOnePlusFourApportionmentJson From(CalcResultOnePlusFourApportionment calcResultOnePlusFourApportionment)
         {
-            if (calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails is null) return new CalcResultOnePlusFourApportionmentJson();
-
-            var i = 1;
-
             return new CalcResultOnePlusFourApportionmentJson
             {
-                OneFeeForLADisposalCosts = calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.
-                Where(t => t.OrderId == i && !string.IsNullOrWhiteSpace(t.Name)).
-                Select(y => new CalcResultOnePlusFourApportionmentDetailJson
+                OneFeeForLADisposalCosts = new CalcResultOnePlusFourApportionmentDetailJson
                 {
-                    England = CurrencyConverterUtils.ConvertToCurrency(y.EnglandTotal),
-                    Scotland = CurrencyConverterUtils.ConvertToCurrency(y.ScotlandTotal),
-                    Wales = CurrencyConverterUtils.ConvertToCurrency(y.WalesTotal),
-                    NorthernIreland = CurrencyConverterUtils.ConvertToCurrency(y.NorthernIrelandTotal),
-                    Total = CurrencyConverterUtils.ConvertToCurrency(y.Total)
-                }).SingleOrDefault() ?? new CalcResultOnePlusFourApportionmentDetailJson(),
+                    England         = CurrencyConverterUtils.ConvertToCurrency(calcResultOnePlusFourApportionment.LaDisposalCost.EnglandCost),
+                    Wales           = CurrencyConverterUtils.ConvertToCurrency(calcResultOnePlusFourApportionment.LaDisposalCost.WalesCost),
+                    Scotland        = CurrencyConverterUtils.ConvertToCurrency(calcResultOnePlusFourApportionment.LaDisposalCost.ScotlandCost),
+                    NorthernIreland = CurrencyConverterUtils.ConvertToCurrency(calcResultOnePlusFourApportionment.LaDisposalCost.NorthernIrelandCost),
+                    Total           = CurrencyConverterUtils.ConvertToCurrency(calcResultOnePlusFourApportionment.LaDisposalCost.TotalCost)
+                },
 
-                FourLADataPrepCharge = calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.
-                Where(t => t.OrderId == i + 1).
-                Select(y => new CalcResultOnePlusFourApportionmentDetailJson
+                FourLADataPrepCharge = new CalcResultOnePlusFourApportionmentDetailJson
                 {
-                    England = CurrencyConverterUtils.ConvertToCurrency(y.EnglandTotal),
-                    Scotland = CurrencyConverterUtils.ConvertToCurrency(y.ScotlandTotal),
-                    Wales = CurrencyConverterUtils.ConvertToCurrency(y.WalesTotal),
-                    NorthernIreland = CurrencyConverterUtils.ConvertToCurrency(y.NorthernIrelandTotal),
-                    Total = CurrencyConverterUtils.ConvertToCurrency(y.Total)
-                }).SingleOrDefault() ?? new CalcResultOnePlusFourApportionmentDetailJson(),
+                    England         = CurrencyConverterUtils.ConvertToCurrency(calcResultOnePlusFourApportionment.LADataPrepCharge.England),
+                    Wales           = CurrencyConverterUtils.ConvertToCurrency(calcResultOnePlusFourApportionment.LADataPrepCharge.Wales),
+                    Scotland        = CurrencyConverterUtils.ConvertToCurrency(calcResultOnePlusFourApportionment.LADataPrepCharge.Scotland),
+                    NorthernIreland = CurrencyConverterUtils.ConvertToCurrency(calcResultOnePlusFourApportionment.LADataPrepCharge.NorthernIreland),
+                    Total           = CurrencyConverterUtils.ConvertToCurrency(calcResultOnePlusFourApportionment.LADataPrepCharge.Total)
+                },
 
-                TotalOfonePlusFour = calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.
-                Where(t => t.OrderId == i + 2).
-                Select(y => new CalcResultOnePlusFourApportionmentDetailJson
+                TotalOfonePlusFour = new CalcResultOnePlusFourApportionmentDetailJson
                 {
-                    England = CurrencyConverterUtils.ConvertToCurrency(y.EnglandTotal),
-                    Scotland = CurrencyConverterUtils.ConvertToCurrency(y.ScotlandTotal),
-                    Wales = CurrencyConverterUtils.ConvertToCurrency(y.WalesTotal),
-                    NorthernIreland = CurrencyConverterUtils.ConvertToCurrency(y.NorthernIrelandTotal),
-                    Total = CurrencyConverterUtils.ConvertToCurrency(y.Total)
-                }).SingleOrDefault() ?? new CalcResultOnePlusFourApportionmentDetailJson(),
+                    England         = CurrencyConverterUtils.ConvertToCurrency(calcResultOnePlusFourApportionment.TotalOnePlusFour.EnglandTotal),
+                    Wales           = CurrencyConverterUtils.ConvertToCurrency(calcResultOnePlusFourApportionment.TotalOnePlusFour.WalesTotal),
+                    Scotland        = CurrencyConverterUtils.ConvertToCurrency(calcResultOnePlusFourApportionment.TotalOnePlusFour.ScotlandTotal),
+                    NorthernIreland = CurrencyConverterUtils.ConvertToCurrency(calcResultOnePlusFourApportionment.TotalOnePlusFour.NorthernIrelandTotal),
+                    Total           = CurrencyConverterUtils.ConvertToCurrency(calcResultOnePlusFourApportionment.TotalOnePlusFour.Total)
+                },
 
-                OnePlusFourApportionmentPercentages = calcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.
-                Where(t => t.OrderId == i + 3).
-                Select(y => new CalcResultOnePlusFourApportionmentDetailJson
+                OnePlusFourApportionmentPercentages = new CalcResultOnePlusFourApportionmentDetailJson
                 {
-                    England = $"{Math.Round(y.EnglandTotal, (int)DecimalPlaces.Eight).ToString()}%",
-                    Scotland = $"{Math.Round(y.ScotlandTotal, (int)DecimalPlaces.Eight).ToString()}%",
-                    Wales = $"{Math.Round(y.WalesTotal, (int)DecimalPlaces.Eight).ToString()}%",
-                    NorthernIreland = $"{Math.Round(y.NorthernIrelandTotal, (int)DecimalPlaces.Eight).ToString()}%",
-                    Total = CurrencyConverterUtils.ConvertToCurrency(y.Total)
-                }).SingleOrDefault() ?? new CalcResultOnePlusFourApportionmentDetailJson()
+                    England         = $"{Math.Round(calcResultOnePlusFourApportionment.OnePlusFourApportionment.EnglandTotal        , (int)DecimalPlaces.Eight)}%",
+                    Wales           = $"{Math.Round(calcResultOnePlusFourApportionment.OnePlusFourApportionment.WalesTotal          , (int)DecimalPlaces.Eight)}%",
+                    Scotland        = $"{Math.Round(calcResultOnePlusFourApportionment.OnePlusFourApportionment.ScotlandTotal       , (int)DecimalPlaces.Eight)}%",
+                    NorthernIreland = $"{Math.Round(calcResultOnePlusFourApportionment.OnePlusFourApportionment.NorthernIrelandTotal, (int)DecimalPlaces.Eight)}%",
+                    Total           = $"{Math.Round(calcResultOnePlusFourApportionment.OnePlusFourApportionment.Total               , (int)DecimalPlaces.Eight)}%",
+                }
             };
         }
     }
