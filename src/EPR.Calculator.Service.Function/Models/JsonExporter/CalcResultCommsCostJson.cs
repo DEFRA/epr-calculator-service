@@ -11,7 +11,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
         public static CalcResultCommsCostJson From(CalcResultCommsCost calcResultCommsCost)
         {
-            var onePlusFourApportionment = calcResultCommsCost.CalcResultCommsCostOnePlusFourApportionment.SingleOrDefault(x => x.Name == CalcResultCommsCostBuilder.OnePlusFourApportionment);
+            var onePlusFourApportionment = calcResultCommsCost.CalcResultCommsCostOnePlusFourApportionment;
 
             if (onePlusFourApportionment == null)
             {
@@ -48,20 +48,17 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         {
             string AppendPercent(decimal input)
             {
-                // TODO * 100?
                 return $"{input:0.00}%";
             }
 
             return new OnePlusFourCommsCostApportionmentPercentages
             {
-                England = AppendPercent(dataRow.England),
-                Wales = AppendPercent(dataRow.Wales),
-                Scotland = AppendPercent(dataRow.Scotland),
+                England         = AppendPercent(dataRow.England),
+                Wales           = AppendPercent(dataRow.Wales),
+                Scotland        = AppendPercent(dataRow.Scotland),
                 NorthernIreland = AppendPercent(dataRow.NorthernIreland),
-                Total = AppendPercent(dataRow.Total)
+                Total           = AppendPercent(dataRow.Total)
             };
         }
     }
-
-
 }

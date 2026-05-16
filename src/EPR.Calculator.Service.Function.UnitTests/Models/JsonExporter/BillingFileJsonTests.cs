@@ -217,17 +217,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                             ProducerReportedTotalTonnage = 0
                         }
                     },
-                    CalcResultCommsCostOnePlusFourApportionment = new List<CalcResultCommsCostOnePlusFourApportionment>
-                    {
-                        new CalcResultCommsCostCommsCostByMaterial { Name = CalcResultCommsCostBuilder.TwoBCommsCostUkWide, England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40, Total = 100, ProducerReportedHouseholdPackagingWasteTonnage = 50, ReportedPublicBinTonnage = 60, HouseholdDrinksContainers = 70, LateReportingTonnage = 80, ProducerReportedTotalTonnage = 90, CommsCostByMaterialPricePerTonne = 100 },
-                        new CalcResultCommsCostOnePlusFourApportionment { Name = CalcResultCommsCostBuilder.OnePlusFourApportionment, England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40, Total = 100 },
-                        new CalcResultCommsCostOnePlusFourApportionment { Name = CalcResultCommsCostBuilder.TwoCCommsCostByCountry, England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40, Total = 100 }
-                    },
-                    CommsCostByCountry = new List<CalcResultCommsCostOnePlusFourApportionment>
-                    {
-                        new CalcResultCommsCostOnePlusFourApportionment { Name = CalcResultCommsCostBuilder.TwoBCommsCostUkWide, England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40, Total = 100 },
-                        new CalcResultCommsCostOnePlusFourApportionment { Name = CalcResultCommsCostBuilder.TwoCCommsCostByCountry, England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40, Total = 100 }
-                    }
+                    CalcResultCommsCostOnePlusFourApportionment = new CalcResultCommsCostOnePlusFourApportionment { Name = CalcResultCommsCostBuilder.OnePlusFourApportionment, England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40, Total = 100 },
+                    CommsCostUkWide = new CalcResultCommsCostOnePlusFourApportionment { Name = CalcResultCommsCostBuilder.TwoBCommsCostUkWide, England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40, Total = 100 },
+                    CommsCostByCountry = new CalcResultCommsCostOnePlusFourApportionment { Name = CalcResultCommsCostBuilder.TwoCCommsCostByCountry, England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40, Total = 100 }
                 },
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData
                 {

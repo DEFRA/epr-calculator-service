@@ -8,5 +8,4 @@ public class CalcResultCommsCostOnePlusFourApportionment
     public decimal NorthernIreland { get; set; }
     public decimal Wales { get; set; }
     public decimal Total { get; set; }
-    public int OrderId { get; set; } // TODO remove this?
 }

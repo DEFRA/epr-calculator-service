@@ -391,13 +391,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         ProducerReportedTotalTonnage = 0
                     },
                 ],
-                CommsCostByCountry =
-                [
-                    new ()
-                    {
-                        Total = 2530,
-                    }
-                ]
+                CommsCostByCountry = new () { Total = 2530 }
             };
         }
 

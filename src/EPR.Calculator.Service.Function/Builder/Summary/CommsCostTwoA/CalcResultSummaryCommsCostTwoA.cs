@@ -79,10 +79,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
             CalcResult calcResult
         )
         {
-            // TODO was getting 4th? Also `calcResult.CalcResultCommsCostReportDetail.CommsCostByCountry.Last()` - should be Last for Total?
-            // Looks to be getting `CalcResultSummaryCommsCostTwoA.OnePlusFourApportionment` entry - should be in the model.
-            // Also `%s` is a UI thing - the values are actually coefficients
-            // TODO refactor like `CalcResultSummaryCommsCostTwoBTotalBill#GetRegionApportionment`
             var producerTotalCostwithBadDebtProvision = GetProducerTotalCostwithBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
             return producerTotalCostwithBadDebtProvision * calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment.EnglandTotal;
         }
