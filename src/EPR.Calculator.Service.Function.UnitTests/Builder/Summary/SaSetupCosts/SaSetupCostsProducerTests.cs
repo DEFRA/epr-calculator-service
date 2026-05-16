@@ -177,55 +177,39 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                 },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment
                 {
-                    CalcResultOnePlusFourApportionmentDetails =
-                    [
-                        new()
-                        {
-                            Name = "1 + 4 Apportionment %s",
-                            EnglandTotal = 14.53M,
-                            NorthernIrelandTotal = 0.15M,
-                            ScotlandTotal = 1.15M,
-                            WalesTotal = 020M,
-                            Total = 0.1M,
-                        },
-                        new()
-                        {
-                            Name = "Test",
-                            Total = 0.1M,
-                            EnglandTotal = 0.10M,
-                            NorthernIrelandTotal = 0.15M,
-                            ScotlandTotal = 0.15M,
-                            WalesTotal = 020M,
-                        },
-                        new()
-                        {
-                            Name = "Test",
-                            EnglandTotal = 0.10M,
-                            NorthernIrelandTotal = 0.15M,
-                            ScotlandTotal = 0.15M,
-                            WalesTotal = 020M,
-                            Total = 0.1M,
-                        },
-                        new()
-                        {
-                            Name = "Test",
-                            EnglandTotal = 14.53M,
-                            NorthernIrelandTotal = 0.15M,
-                            ScotlandTotal = 0.15M,
-                            WalesTotal = 020M,
-                            Total = 0.1M,
-                        },
-                        new()
-                        {
-                            Name = "Test",
-                            EnglandTotal = 14.53M,
-                            NorthernIrelandTotal = 0.15M,
-                            ScotlandTotal = 1.15M,
-                            WalesTotal = 020M,
-                            Total = 0.1M,
-                            OrderId = 4
-                        },
-                    ],
+                    LaDisposalCost = new()
+                    {
+                        Name = "",
+                        EnglandCost       = 0.10M,
+                        WalesCost         = 020M,
+                        NorthernIrelandCost = 0.15M,
+                        ScotlandCost        = 0.15M,
+                        TotalCost           = 0.1M
+                    },
+                    LADataPrepCharge = new()
+                    {
+                        England         = 0.10M,
+                        Wales           = 020M,
+                        Scotland        = 0.15M,
+                        NorthernIreland = 0.15M,
+                        Total           = 0.1M
+                    },
+                    TotalOnePlusFour =  new()
+                    {
+                        EnglandTotal         = 14.53M,
+                        WalesTotal           = 020M,
+                        ScotlandTotal        = 0.15M,
+                        NorthernIrelandTotal = 0.15M,
+                        Total                = 0.1M
+                    },
+                    OnePlusFourApportionment = new()
+                    {
+                        EnglandTotal         = 14M,
+                        WalesTotal           = 20M,
+                        ScotlandTotal        = 1M,
+                        NorthernIrelandTotal = 0.15M,
+                        Total                = 0.1M
+                    }
                 },
                 CalcResultParameterCommunicationCost = Fixture.Create<CalcResultParameterCommunicationCost>(),
                 CalcResultSummary = new CalcResultSummary

@@ -84,7 +84,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
             // Also `%s` is a UI thing - the values are actually coefficients
             // TODO refactor like `CalcResultSummaryCommsCostTwoBTotalBill#GetRegionApportionment`
             var producerTotalCostwithBadDebtProvision = GetProducerTotalCostwithBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
-            return producerTotalCostwithBadDebtProvision * calcResult.CalcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.Where(a => a.Name == CalcResultCommsCostBuilder.OnePlusFourApportionment).First().EnglandTotal;
+            return producerTotalCostwithBadDebtProvision * calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment.EnglandTotal;
         }
 
         public static decimal GetWalesWithBadDebtProvisionForComms(
@@ -95,7 +95,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
         )
         {
             var producerTotalCostwithBadDebtProvision = GetProducerTotalCostwithBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
-            return producerTotalCostwithBadDebtProvision * calcResult.CalcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.Where(a => a.Name == CalcResultCommsCostBuilder.OnePlusFourApportionment).First().WalesTotal;
+            return producerTotalCostwithBadDebtProvision * calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment.WalesTotal;
         }
 
         public static decimal GetScotlandWithBadDebtProvisionForComms(
@@ -106,7 +106,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
         )
         {
             var producerTotalCostwithBadDebtProvision = GetProducerTotalCostwithBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
-            return producerTotalCostwithBadDebtProvision * calcResult.CalcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.Where(a => a.Name == CalcResultCommsCostBuilder.OnePlusFourApportionment).First().ScotlandTotal;
+            return producerTotalCostwithBadDebtProvision * calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment.ScotlandTotal;
         }
 
         public static decimal GetNorthernIrelandWithBadDebtProvisionForComms(
@@ -117,7 +117,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
         )
         {
             var producerTotalCostwithBadDebtProvision = GetProducerTotalCostwithBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
-            return producerTotalCostwithBadDebtProvision * calcResult.CalcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.Where(a => a.Name == CalcResultCommsCostBuilder.OnePlusFourApportionment).First().NorthernIrelandTotal;
+            return producerTotalCostwithBadDebtProvision * calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment.NorthernIrelandTotal;
         }
 
         public static decimal GetPriceperTonneForComms(MaterialDetail material, CalcResult calcResult)
