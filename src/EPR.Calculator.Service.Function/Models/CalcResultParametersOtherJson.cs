@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Text.Json.Serialization;
+using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Models
 {
@@ -31,42 +32,18 @@ namespace EPR.Calculator.Service.Function.Models
 
         public static CalcResultParametersOtherJson From(CalcResultParameterOtherCost otherCost)
         {
-            (IEnumerable<CalcResultMateriality> materiality, IEnumerable<CalcResultMateriality> tonnageChange) SplitMaterialitySections(IEnumerable<CalcResultMateriality> materialities)
-            {
-                var allItems = materialities.ToList();
-
-                var tonnageHeader = EightTonnageChangeHeader;
-                int tonnageHeaderIndex = allItems.FindIndex(m => m.SevenMateriality == tonnageHeader);
-
-                if (tonnageHeaderIndex == -1)
-                {
-                    return (allItems, Enumerable.Empty<CalcResultMateriality>());
-                }
-
-                var materialitySection = allItems.Take(tonnageHeaderIndex);
-                var tonnageChangeSection = allItems.Skip(tonnageHeaderIndex + 1);
-
-                return (materialitySection, tonnageChangeSection);
-            }
-
-            var apportionmentDetail = otherCost.Details.FirstOrDefault(d => d.Name == FourCountryApportionmentPercentage);
-
-            var (materiality, tonnageChange) = SplitMaterialitySections(otherCost.Materiality);
-
             return new CalcResultParametersOtherJson
             {
-                ThreeSAOperatingCost = CountryAmountJson.From(otherCost.SaOperatingCost
-                    .OrderBy(sa => sa.OrderId)
-                    .FirstOrDefault()),
-                FourDataPreparationCharge = CountryAmountJson.From(otherCost.Details.OrderBy(sa => sa.OrderId).FirstOrDefault()),
-                FourCountryApportionmentPercentages = CountryAmountJson.From(apportionmentDetail),
+                ThreeSAOperatingCost = CountryAmountJson.From(otherCost.SaOperatingCost),
+                FourDataPreparationCharge = CountryAmountJson.From(otherCost.LaDataPrepCharge),
+                FourCountryApportionmentPercentages = CountryAmountJson.From(otherCost.CountryApportionment),
                 FiveSchemeSetupCost = CountryAmountJson.From(otherCost.SchemeSetupCost),
                 SixBadDebtProvision = new PercentageJson
                 {
-                    Percentage = otherCost.BadDebtProvision.Value
+                    Percentage = $"{otherCost.BadDebtValue:0.00}%"
                 },
-                SevenMateriality = ChangeJson.From(materiality),
-                EightTonnageChange = ChangeJson.From(tonnageChange),
+                SevenMateriality = ChangeJson.From(otherCost.MaterialityIncrease, otherCost.MaterialityDecrease),
+                EightTonnageChange = ChangeJson.From(otherCost.TonnageChangeIncrease, otherCost.TonnageChangeDecrease),
             };
         }
     }
@@ -120,13 +97,8 @@ namespace EPR.Calculator.Service.Function.Models
         [JsonPropertyName("decrease")]
         public ChangeDetailJson Decrease { get; set; } = new ChangeDetailJson();
 
-        public static ChangeJson From(IEnumerable<CalcResultMateriality> materialities)
+        public static ChangeJson From(Materiality increase, Materiality decrease)
         {
-            if (!materialities.Any()) return new ChangeJson();
-
-            var increase = materialities.FirstOrDefault(m => m.SevenMateriality == "Increase");
-            var decrease = materialities.FirstOrDefault(m => m.SevenMateriality == "Decrease");
-
             return new ChangeJson
             {
                 Increase = ChangeDetailJson.From(increase),
@@ -143,13 +115,12 @@ namespace EPR.Calculator.Service.Function.Models
         [JsonPropertyName("percentage")]
         public string Percentage { get; set; } = string.Empty;
 
-        public static ChangeDetailJson From(CalcResultMateriality? materiality)
+        public static ChangeDetailJson From(Materiality materiality)
         {
-            if (materiality == null) return new ChangeDetailJson();
             return new ChangeDetailJson
             {
-                Amount = materiality.Amount,
-                Percentage = materiality.Percentage,
+                Amount     = CurrencyConverterUtils.ConvertToCurrency(materiality.Amount),
+                Percentage = $"{materiality.Percentage:0.00}%"
             };
         }
     }

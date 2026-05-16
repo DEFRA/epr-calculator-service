@@ -4,6 +4,7 @@ using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.ParametersOther;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -94,37 +95,25 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             var otherCost = await builder.ConstructAsync(new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) });
 
-            Assert.IsNotNull(otherCost.SaOperatingCost);
-            Assert.AreEqual(1, otherCost.SaOperatingCost.Count());
-            /*var saOperatingheader = otherCost.SaOperatingCost.First();
-            Assert.AreEqual("England", saOperatingheader.England);
-            Assert.AreEqual("Northern Ireland", saOperatingheader.NorthernIreland);
-            Assert.AreEqual("Scotland", saOperatingheader.Scotland);
-            Assert.AreEqual("Wales", saOperatingheader.Wales);*/
-
-            var saOperatingData = otherCost.SaOperatingCost.Last();
-            Assert.AreEqual("3 SA Operating Costs", saOperatingData.Name);
-
-            Assert.AreEqual(40M, saOperatingData.England);
-            Assert.AreEqual(10, saOperatingData.NorthernIreland);
-            Assert.AreEqual(20, saOperatingData.Scotland);
-            Assert.AreEqual(30, saOperatingData.Wales);
+            Assert.AreEqual(40M, otherCost.SaOperatingCost.England);
+            Assert.AreEqual(10, otherCost.SaOperatingCost.NorthernIreland);
+            Assert.AreEqual(20, otherCost.SaOperatingCost.Scotland);
+            Assert.AreEqual(30, otherCost.SaOperatingCost.Wales);
 
 
-            var dataLa = otherCost.Details.First();
+            var dataLa = otherCost.LaDataPrepCharge;
             Assert.AreEqual(40M, dataLa.England);
             Assert.AreEqual(10M, dataLa.NorthernIreland);
             Assert.AreEqual(20M, dataLa.Scotland);
             Assert.AreEqual(30M, dataLa.Wales);
 
-            var counteyAppLa = otherCost.Details.Last();
+            var counteyAppLa = otherCost.CountryApportionment;
             Assert.AreEqual(40, counteyAppLa.England);
             Assert.AreEqual(10, counteyAppLa.NorthernIreland);
             Assert.AreEqual(20, counteyAppLa.Scotland);
             Assert.AreEqual(30, counteyAppLa.Wales);
 
-            Assert.AreEqual("6 Bad Debt Provision", otherCost.BadDebtProvision.Key);
-            Assert.AreEqual("10.00%", otherCost.BadDebtProvision.Value);
+            Assert.AreEqual(10, otherCost.BadDebtValue);
 
             var schemeSetup = otherCost.SchemeSetupCost;
             Assert.AreEqual(40, schemeSetup.England);
@@ -132,16 +121,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual(20, schemeSetup.Scotland);
             Assert.AreEqual(30, schemeSetup.Wales);
 
-            Assert.AreEqual(6, otherCost.Materiality.Count());
-
-            var header = otherCost.Materiality.First();
-            Assert.AreEqual("7 Materiality", header.SevenMateriality);
-            Assert.AreEqual("Amount £s", header.Amount);
-            Assert.AreEqual("%", header.Percentage);
-
-            Assert.IsTrue(
-                otherCost.Materiality.Where(x => x.SevenMateriality == "Increase" || x.SevenMateriality == "Decrease")
-                    .All(x => x.Amount == "£10.00" && x.Percentage == "10.00%"));
+            Assert.AreEqual(10, otherCost.MaterialityIncrease.Amount);
+            Assert.AreEqual(10, otherCost.MaterialityIncrease.Percentage);
+            Assert.AreEqual(10, otherCost.MaterialityDecrease.Amount);
+            Assert.AreEqual(10, otherCost.MaterialityDecrease.Percentage);
+            Assert.AreEqual(10, otherCost.TonnageChangeIncrease.Amount);
+            Assert.AreEqual(10, otherCost.TonnageChangeIncrease.Percentage);
+            Assert.AreEqual(10, otherCost.TonnageChangeDecrease.Amount);
+            Assert.AreEqual(10, otherCost.TonnageChangeDecrease.Percentage);
         }
 
         private static decimal GetValue(DefaultParameterTemplateMaster templateMaster)

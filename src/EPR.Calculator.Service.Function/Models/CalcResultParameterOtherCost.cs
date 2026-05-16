@@ -2,9 +2,9 @@
 {
     public class CalcResultParameterOtherCost
     {
-        public required string Name { get; set; }
-        public IEnumerable<CalcResultParameterOtherCostDetail> SaOperatingCost { get; set; } = new List<CalcResultParameterOtherCostDetail>();
-        public IEnumerable<CalcResultParameterOtherCostDetail> Details { get; set; } = new List<CalcResultParameterOtherCostDetail>();
+        public CalcResultParameterOtherCostDetail SaOperatingCost { get; set; } = new CalcResultParameterOtherCostDetail { England = 0, Wales = 0, Scotland = 0, NorthernIreland = 0, Total = 0 };
+        public CalcResultParameterOtherCostDetail LaDataPrepCharge { get; set; } = new CalcResultParameterOtherCostDetail { England = 0, Wales = 0, Scotland = 0, NorthernIreland = 0, Total = 0 };
+        public CalcResultParameterOtherCostDetail CountryApportionment { get; set; } = new CalcResultParameterOtherCostDetail { England = 0, Wales = 0, Scotland = 0, NorthernIreland = 0, Total = 0 };
         public CalcResultParameterOtherCostDetail SchemeSetupCost { get; set; } = new CalcResultParameterOtherCostDetail
         {
             England = 0m,
@@ -13,8 +13,16 @@
             NorthernIreland = 0m,
             Total = 0m
         };
-        public KeyValuePair<string, string> BadDebtProvision { get; set; }
-        public IEnumerable<CalcResultMateriality> Materiality { get; set; } = new List<CalcResultMateriality>();
+        public Materiality MaterialityIncrease { get; set; } = new Materiality { Amount = 0, Percentage = 0 };
+        public Materiality MaterialityDecrease { get; set; } = new Materiality { Amount = 0, Percentage = 0 };
+        public Materiality TonnageChangeIncrease { get; set; } = new Materiality { Amount = 0, Percentage = 0 };
+        public Materiality TonnageChangeDecrease { get; set; } = new Materiality { Amount = 0, Percentage = 0 };
         public decimal BadDebtValue { get; set; }
+    }
+
+    public class Materiality
+    {
+        public decimal Amount  { get; set; }
+        public decimal Percentage { get; set; }
     }
 }
