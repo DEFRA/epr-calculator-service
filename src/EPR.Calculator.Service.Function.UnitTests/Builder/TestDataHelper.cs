@@ -331,54 +331,39 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             return new CalcResultOnePlusFourApportionment
             {
-                CalcResultOnePlusFourApportionmentDetails = new List<CalcResultOnePlusFourApportionmentDetail>
+                LaDisposalCost = new()
                 {
-                    new CalcResultOnePlusFourApportionmentDetail
-                    {
-                        Name = "Test",
-                        EnglandTotal = 0.10M,
-                        NorthernIrelandTotal = 0.15M,
-                        ScotlandTotal = 0.15M,
-                        WalesTotal = 0.20M,
-                        Total = 0.65m
-                    },
-                    new CalcResultOnePlusFourApportionmentDetail
-                    {
-                        Name = "Test",
-                        EnglandTotal = 0.10M,
-                        NorthernIrelandTotal = 0.15M,
-                        ScotlandTotal = 0.15M,
-                        WalesTotal = 020M,
-                        Total = 0.1M,
-                    },
-                    new CalcResultOnePlusFourApportionmentDetail
-                    {
-                        Name = "Test",
-                        EnglandTotal = 0.10M,
-                        NorthernIrelandTotal = 0.15M,
-                        ScotlandTotal = 0.15M,
-                        WalesTotal = 020M,
-                        Total = 0.1M,
-                    },
-                    new CalcResultOnePlusFourApportionmentDetail
-                    {
-                        Name = "Test",
-                        EnglandTotal = 14.53M,
-                        NorthernIrelandTotal = 0.15M,
-                        ScotlandTotal = 0.15M,
-                        WalesTotal = 020M,
-                        Total = 0.1M,
-                    },
-                    new CalcResultOnePlusFourApportionmentDetail
-                    {
-                        Name = OnePlus4ApportionmentColumnHeaders.OnePluseFourApportionment,
-                        EnglandTotal = 0.80M,
-                        NorthernIrelandTotal = 0.70M,
-                        ScotlandTotal = 0.30M,
-                        WalesTotal = 0.20M,
-                        Total = 0.1M,
-                    },
+                    Name = "",
+                    EnglandCost       = 0.10M,
+                    WalesCost         = 020M,
+                    NorthernIrelandCost = 0.15M,
+                    ScotlandCost        = 0.15M,
+                    TotalCost           = 0.1M
                 },
+                LADataPrepCharge = new()
+                {
+                    England         = 0.10M,
+                    Wales           = 020M,
+                    Scotland        = 0.15M,
+                    NorthernIreland = 0.15M,
+                    Total           = 0.1M
+                },
+                TotalOnePlusFour =  new()
+                {
+                    EnglandTotal         = 14.53M,
+                    WalesTotal           = 020M,
+                    ScotlandTotal        = 0.15M,
+                    NorthernIrelandTotal = 0.15M,
+                    Total                = 0.1M
+                },
+                OnePlusFourApportionment = new()
+                {
+                    EnglandTotal         = 0.80M,
+                    WalesTotal           = 0.20M,
+                    ScotlandTotal        = 0.30M,
+                    NorthernIrelandTotal = 0.70M,
+                    Total                = 0.1M
+                }
             };
         }
 

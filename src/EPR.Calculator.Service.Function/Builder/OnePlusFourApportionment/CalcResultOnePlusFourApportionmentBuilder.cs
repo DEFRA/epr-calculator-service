@@ -15,92 +15,62 @@ namespace EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment
     {
         public CalcResultOnePlusFourApportionment Construct(CalcResultsRequestDto resultsRequestDto, CalcResult calcResult)
         {
-            const string totalLabel = "Total";
             var apportionmentDetails = new List<CalcResultOnePlusFourApportionmentDetail>();
-            int orderId = 1;
-
-            // Add the header row
-            //apportionmentDetails.Add(CreateHeaderRow(orderId));
 
             // Add disposal cost row
-            var totalLACost = GetTotalCost(calcResult, totalLabel);
-            apportionmentDetails.Add(CreateDisposalDetailRow(OnePlus4ApportionmentColumnHeaders.LADisposalCost, totalLACost, orderId++));
+            var laDisposalCost = GetTotalCost(calcResult);
 
             // Add data preparation charge row
-            var dataPrepCharge = calcResult.CalcResultParameterOtherCost.LaDataPrepCharge;
-
-            apportionmentDetails.Add(CreateDataPrepChargeRow(dataPrepCharge, orderId++));
+            var laDataPrepCharge = calcResult.CalcResultParameterOtherCost.LaDataPrepCharge;
 
             // Add total row
-            apportionmentDetails.Add(CreateTotalRow(totalLACost, dataPrepCharge, orderId++));
+            var totalOnePlusFour = CreateTotalRow(laDisposalCost, laDataPrepCharge);
 
             // Calculate apportionment
 #pragma warning disable S1854
-            var apportionmentData = CalculateApportionment(apportionmentDetails.First(x => x.OrderId == 3), orderId++);
+            var apportionmentData = CalculateApportionment(totalOnePlusFour);
 #pragma warning restore
-            apportionmentDetails.Add(apportionmentData);
 
-            return new CalcResultOnePlusFourApportionment { CalcResultOnePlusFourApportionmentDetails = apportionmentDetails };
+            return new CalcResultOnePlusFourApportionment {
+                LaDisposalCost           = laDisposalCost,
+                LADataPrepCharge         = laDataPrepCharge,
+                TotalOnePlusFour         = totalOnePlusFour,
+                OnePlusFourApportionment = apportionmentData
+            };
         }
 
-        private static CalcResultLapcapDataDetail GetTotalCost(CalcResult calcResult, string name)
+        private static CalcResultLapcapDataDetail GetTotalCost(CalcResult calcResult)
         {
+            // TODO store Total separately in model
             return calcResult.CalcResultLapcapData.CalcResultLapcapDataDetails
-                .Single(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+                .Single(p => p.Name.Equals("Total", StringComparison.OrdinalIgnoreCase));
         }
 
-        private static CalcResultOnePlusFourApportionmentDetail CreateDisposalDetailRow(string name, CalcResultLapcapDataDetail totalLACost, int orderId)
+        private static CalcResultOnePlusFourApportionmentDetail CreateDataPrepChargeRow(CalcResultParameterOtherCostDetail dataPrepCharge)
         {
             return new CalcResultOnePlusFourApportionmentDetail
             {
-                Name = name,
-                Total = totalLACost.TotalCost,
-                EnglandTotal = totalLACost.EnglandCost,
-                WalesTotal = totalLACost.WalesCost,
-                ScotlandTotal = totalLACost.ScotlandCost,
-                NorthernIrelandTotal = totalLACost.NorthernIrelandCost,
-                OrderId = orderId,
-            };
-        }
-
-        private static CalcResultOnePlusFourApportionmentDetail CreateDataPrepChargeRow(CalcResultParameterOtherCostDetail dataPrepCharge, int orderId)
-        {
-            return new CalcResultOnePlusFourApportionmentDetail
-            {
-                Name = OnePlus4ApportionmentColumnHeaders.LADataPrepCharge,
-                Total = dataPrepCharge.Total,
-                EnglandTotal = dataPrepCharge.England,
-                WalesTotal = dataPrepCharge.Wales,
-                ScotlandTotal = dataPrepCharge.Scotland,
+                EnglandTotal         = dataPrepCharge.England,
+                WalesTotal           = dataPrepCharge.Wales,
+                ScotlandTotal        = dataPrepCharge.Scotland,
                 NorthernIrelandTotal = dataPrepCharge.NorthernIreland,
-                OrderId = orderId
+                Total                = dataPrepCharge.Total
             };
         }
 
-        private static CalcResultOnePlusFourApportionmentDetail CreateTotalRow(CalcResultLapcapDataDetail totalLACost, CalcResultParameterOtherCostDetail dataPrepCharge, int orderId)
+        private static CalcResultOnePlusFourApportionmentDetail CreateTotalRow(CalcResultLapcapDataDetail totalLACost, CalcResultParameterOtherCostDetail dataPrepCharge)
         {
-            var culture = CultureInfo.CreateSpecificCulture("en-GB");
-            culture.NumberFormat.CurrencySymbol = "£";
-            culture.NumberFormat.CurrencyPositivePattern = 0;
-
             return new CalcResultOnePlusFourApportionmentDetail
             {
-                Name = OnePlus4ApportionmentColumnHeaders.TotalOnePlusFour,
-                EnglandTotal = totalLACost.EnglandCost + dataPrepCharge.England,
-                WalesTotal = totalLACost.WalesCost + dataPrepCharge.Wales,
-                ScotlandTotal = totalLACost.ScotlandCost + dataPrepCharge.Scotland,
+                EnglandTotal         = totalLACost.EnglandCost         + dataPrepCharge.England,
+                WalesTotal           = totalLACost.WalesCost           + dataPrepCharge.Wales,
+                ScotlandTotal        = totalLACost.ScotlandCost        + dataPrepCharge.Scotland,
                 NorthernIrelandTotal = totalLACost.NorthernIrelandCost + dataPrepCharge.NorthernIreland,
-                Total = totalLACost.TotalCost + dataPrepCharge.Total,
-                //Total = (totalLACost.TotalCost + dataPrepCharge.TotalValue).ToString("C", culture),
-                //EnglandDisposalTotal = (totalLACost.EnglandCost + dataPrepCharge.England).ToString("C", culture),
-                //WalesDisposalTotal = (totalLACost.WalesCost + dataPrepCharge.Wales).ToString("C", culture),
-                //ScotlandDisposalTotal = (totalLACost.ScotlandCost + dataPrepCharge.Scotland).ToString("C", culture),
-                //NorthernIrelandDisposalTotal = (totalLACost.NorthernIrelandCost + dataPrepCharge.NorthernIreland).ToString("C", culture),
-                OrderId = orderId
+                Total                = totalLACost.TotalCost           + dataPrepCharge.Total
             };
         }
 
-        private static CalcResultOnePlusFourApportionmentDetail CalculateApportionment(CalcResultOnePlusFourApportionmentDetail apportionmentData, int orderId)
+        private static CalcResultOnePlusFourApportionmentDetail CalculateApportionment(CalcResultOnePlusFourApportionmentDetail apportionmentData)
         {
             var englandTotal =
                 CalcResultLapcapDataBuilder.CalculateApportionment(apportionmentData.EnglandTotal, apportionmentData.Total);
@@ -112,13 +82,11 @@ namespace EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment
             var total = CalcResultLapcapDataBuilder.CalculateApportionment(apportionmentData.Total, apportionmentData.Total);
             return new CalcResultOnePlusFourApportionmentDetail
             {
-                Name = OnePlus4ApportionmentColumnHeaders.OnePluseFourApportionment,
-                ScotlandTotal = scotlandTotal,
-                EnglandTotal = englandTotal,
+                EnglandTotal         = englandTotal,
+                WalesTotal           = walesTotal,
+                ScotlandTotal        = scotlandTotal,
                 NorthernIrelandTotal = niTotal,
-                WalesTotal = walesTotal,
-                Total = total,
-                OrderId = orderId,
+                Total                = total
             };
         }
     }

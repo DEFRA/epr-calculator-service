@@ -133,8 +133,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoBTotalBill
 
         public static decimal GetRegionApportionment(CalcResult calcResult, string region)
         {
-            var apportionmentDetail = calcResult.CalcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails
-                .Single(x => x.Name == CalcResultCommsCostBuilder.OnePlusFourApportionment);
+            var apportionmentDetail = calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment;
 
             return region switch
             {

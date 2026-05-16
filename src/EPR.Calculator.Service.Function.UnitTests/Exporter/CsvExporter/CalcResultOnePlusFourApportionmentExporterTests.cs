@@ -14,47 +14,39 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         {
             calcResult1Plus4Apportionment = new CalcResultOnePlusFourApportionment
             {
-                CalcResultOnePlusFourApportionmentDetails = new List<CalcResultOnePlusFourApportionmentDetail>
+                LaDisposalCost = new()
                 {
-                    // TODO these should be modelled - fixed entries
-                    new CalcResultOnePlusFourApportionmentDetail
-                    {
-                        Name = "1 Fee for LA Disposal Costs",
-                        EnglandTotal         = 109800,
-                        WalesTotal           = 24750,
-                        ScotlandTotal        = 49300,
-                        NorthernIrelandTotal = 19300,
-                        Total                = 203150,
-                    },
-                    new CalcResultOnePlusFourApportionmentDetail
-                    {
-                        Name = "4 LA Data Prep Charge",
-                        EnglandTotal         = 16000,
-                        WalesTotal           = 7000,
-                        ScotlandTotal        = 9000,
-                        NorthernIrelandTotal = 4500,
-                        Total                = 36500
-                    },
-                    new CalcResultOnePlusFourApportionmentDetail
-                    {
-                        Name = "Total of 1 + 4",
-                        EnglandTotal         = 125800,
-                        WalesTotal           = 31750,
-                        ScotlandTotal        = 58300,
-                        NorthernIrelandTotal = 23800,
-                        Total                = 239650
-                    },
-                    // TODO reuse CountryApportionmentData
-                    new CalcResultOnePlusFourApportionmentDetail
-                    {
-                        Name = "1 + 4 Apportionment %s",
-                        EnglandTotal         = 0.5249321928m,
-                        WalesTotal           = 0.1324848738m,
-                        ScotlandTotal        = 0.2432714375m,
-                        NorthernIrelandTotal = 0.0993114959m,
-                        Total                = 1
-                    }
+                    Name = "",
+                    EnglandCost         = 109800,
+                    WalesCost           = 24750,
+                    ScotlandCost        = 49300,
+                    NorthernIrelandCost = 19300,
+                    TotalCost           = 203150
                 },
+                LADataPrepCharge = new()
+                {
+                    England         = 16000,
+                    Wales           = 7000,
+                    Scotland        = 9000,
+                    NorthernIreland = 4500,
+                    Total           = 36500
+                },
+                TotalOnePlusFour =  new()
+                {
+                    EnglandTotal         = 125800,
+                    WalesTotal           = 31750,
+                    ScotlandTotal        = 58300,
+                    NorthernIrelandTotal = 23800,
+                    Total                = 239650
+                },
+                OnePlusFourApportionment = new()
+                {
+                    EnglandTotal         = 0.5249321928m,
+                    WalesTotal           = 0.1324848738m,
+                    ScotlandTotal        = 0.2432714375m,
+                    NorthernIrelandTotal = 0.0993114959m,
+                    Total                = 1
+                }
             };
         }
 

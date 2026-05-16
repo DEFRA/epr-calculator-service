@@ -589,10 +589,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             CalcResult calcResult,
             Countries country)
         {
-            var onePlusFourApportionment = calcResult.CalcResultOnePlusFourApportionment
-                .CalcResultOnePlusFourApportionmentDetails
-                .Single(x => x.Name == CalcResultCommsCostBuilder.OnePlusFourApportionment);
-
+            var onePlusFourApportionment = calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment;
             switch (country)
             {
                 case Countries.England:

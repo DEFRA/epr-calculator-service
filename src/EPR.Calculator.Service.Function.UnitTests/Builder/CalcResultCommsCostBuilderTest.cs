@@ -51,17 +51,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) };
             var apportionment = new CalcResultOnePlusFourApportionment
             {
-                CalcResultOnePlusFourApportionmentDetails = new List<CalcResultOnePlusFourApportionmentDetail>
+                OnePlusFourApportionment = new CalcResultOnePlusFourApportionmentDetail
                 {
-                    new CalcResultOnePlusFourApportionmentDetail
-                    {
-                        Name = Fixture.Create<string>(),
-                        EnglandTotal = 40M,
-                        ScotlandTotal = 20M,
-                        WalesTotal = 20M,
-                        NorthernIrelandTotal = 20M,
-                        Total = 100
-                    },
+                    EnglandTotal         = 40M,
+                    WalesTotal           = 20M,
+                    ScotlandTotal        = 20M,
+                    NorthernIrelandTotal = 20M,
+                    Total                = 100
                 },
             };
             var result = await builder.ConstructAsync(materialDetails, resultsRequestDto, apportionment, calcResult.CalcResultLateReportingTonnageData);
