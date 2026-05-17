@@ -7,6 +7,11 @@ using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts
 {
+    public interface ICalcResultParameterOtherCostExporter
+    {
+        void Export(CalcResultParameterOtherCost otherCost, StringBuilder csvContent);
+    }
+
     public class CalcResultParameterOtherCostExporter : ICalcResultParameterOtherCostExporter
     {
         private CultureInfo culture = InitCulture();

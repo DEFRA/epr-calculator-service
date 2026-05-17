@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Utils;
 
@@ -65,21 +64,19 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         {
             return new CalcResult2ACommsDataDetails
             {
-                MaterialName = materialCost.Name,
-                ProducerHouseholdPackagingWasteTonnage = Math.Round(materialCost.ProducerReportedHouseholdPackagingWasteTonnage, 3), // TODO should rounding hae happened in the Builder?
-                PublicBinTonnage = Math.Round(materialCost.ReportedPublicBinTonnage, 3),
-                TotalTonnage = Math.Round(materialCost.ProducerReportedTotalTonnage, 3),
-                HouseholdDrinksContainersTonnage = Math.Round(materialCost.HouseholdDrinksContainers ?? 0m, 3),
-                CommsCostByMaterialPricePerTonne = $"£{materialCost.CommsCostByMaterialPricePerTonne?.ToString("N4", CultureInfo.CreateSpecificCulture("en-GB")) : 0m}",
-                EnglandCommsCost = CurrencyConverterUtils.ConvertToCurrency(materialCost.England),
-                WalesCommsCost = CurrencyConverterUtils.ConvertToCurrency(materialCost.Wales),
-                ScotlandCommsCost = CurrencyConverterUtils.ConvertToCurrency(materialCost.Scotland),
-                NorthernIrelandCommsCost = CurrencyConverterUtils.ConvertToCurrency(materialCost.NorthernIreland),
-                TotalCommsCost = CurrencyConverterUtils.ConvertToCurrency(materialCost.Total),
-                LateReportingTonnage = Math.Round(materialCost.LateReportingTonnage, 3)
+                MaterialName                           = materialCost.Name,
+                ProducerHouseholdPackagingWasteTonnage = Math.Round(materialCost.ProducerReportedHouseholdPackagingWasteTonnage, 3), // TODO should rounding have happened in the Builder?
+                PublicBinTonnage                       = Math.Round(materialCost.ReportedPublicBinTonnage, 3),
+                TotalTonnage                           = Math.Round(materialCost.ProducerReportedTotalTonnage, 3),
+                HouseholdDrinksContainersTonnage       = Math.Round(materialCost.HouseholdDrinksContainers ?? 0m, 3),
+                CommsCostByMaterialPricePerTonne       = CurrencyConverterUtils.ConvertToCurrency(materialCost.CommsCostByMaterialPricePerTonne ?? 0m, precision : 4),
+                EnglandCommsCost                       = CurrencyConverterUtils.ConvertToCurrency(materialCost.England),
+                WalesCommsCost                         = CurrencyConverterUtils.ConvertToCurrency(materialCost.Wales),
+                ScotlandCommsCost                      = CurrencyConverterUtils.ConvertToCurrency(materialCost.Scotland),
+                NorthernIrelandCommsCost               = CurrencyConverterUtils.ConvertToCurrency(materialCost.NorthernIreland),
+                TotalCommsCost                         = CurrencyConverterUtils.ConvertToCurrency(materialCost.Total),
+                LateReportingTonnage                   = Math.Round(materialCost.LateReportingTonnage, 3)
             };
         }
     }
-
-
 }

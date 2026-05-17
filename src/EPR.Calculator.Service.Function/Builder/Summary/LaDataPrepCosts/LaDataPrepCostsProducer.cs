@@ -60,13 +60,16 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts
 
         private static decimal GetLaDataPrepCostsBadDebtProvision(CalcResult calcResult)
         {
-            return GetLaDataPrepCostsWithoutBadDebtProvision(calcResult) * calcResult.CalcResultParameterOtherCost.BadDebtValue / 100;
+            return GetLaDataPrepCostsWithoutBadDebtProvision(calcResult)
+                * calcResult.CalcResultParameterOtherCost.BadDebtValue
+                / 100;
         }
 
         private static decimal GetBadDebtProvision(CalcResult calcResult, decimal totalProducerFeeWithoutBadDebtProvision)
         {
-            return (totalProducerFeeWithoutBadDebtProvision *
-                    calcResult.CalcResultParameterOtherCost.BadDebtValue) / 100;
+            return totalProducerFeeWithoutBadDebtProvision
+                * calcResult.CalcResultParameterOtherCost.BadDebtValue
+                / 100;
         }
 
         private static decimal GetLaDataPrepCostsWithBadDebtProvision(CalcResult calcResult)
@@ -76,7 +79,9 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts
 
         private static decimal GetTotalWithoutBadDebtProvision(CalcResultSummary result, CalcResultSummaryProducerDisposalFees fee)
         {
-            return (fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C * result.LaDataPrepCostsTitleSection4) / 100;
+            return fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C
+                * result.LaDataPrepCostsTitleSection4
+                / 100;
         }
 
         public static decimal GetCountryTotalWithBadDebtProvision(CalcResult calcResult,
@@ -86,16 +91,11 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts
         {
             var onePlusBadDebtProvision = 1 + (calcResult.CalcResultParameterOtherCost.BadDebtValue / 100);
 
-            if (producerOverallPercentageOfCostsForOnePlus2A2B2C == 0)
-            {
-                return 0;
-            }
-
-            var result = laDataPrepCostsTitleSection4 * onePlusBadDebtProvision *
-                         (producerOverallPercentageOfCostsForOnePlus2A2B2C / 100) *
-                         CalcResultSummaryUtil.GetParamsOtherFourCountryApportionmentPercentage(calcResult, country);
-
-            return result == 0 ? 0 : result / 100;
+            return laDataPrepCostsTitleSection4
+                * onePlusBadDebtProvision
+                * (producerOverallPercentageOfCostsForOnePlus2A2B2C / 100)
+                * CalcResultSummaryUtil.GetParamsOtherFourCountryApportionmentPercentage(calcResult, country)
+                / 100;
         }
     }
 }

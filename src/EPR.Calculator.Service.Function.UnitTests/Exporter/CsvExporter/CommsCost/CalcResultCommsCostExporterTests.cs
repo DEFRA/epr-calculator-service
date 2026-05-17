@@ -31,7 +31,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.CommsCo
             exporter.Export(communicationCost, csvContent);
 
             var result = csvContent.ToString().Split("\n").Select(s => s.TrimEnd(',')).ToArray();
-            //Console.WriteLine($">> {JsonConvert.SerializeObject(result, Formatting.Indented)}");
             Console.WriteLine(string.Join("\n", result));
 
             var expected = new[] {
@@ -43,9 +42,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.CommsCo
                 new string[] { },
                 new[] { "2a Comms Costs - by Material","England","Wales","Scotland","Northern Ireland","Total","Producer Household Packaging Tonnage","Late Reporting Tonnage","Public Bin Tonnage","Household Drinks Containers Tonnage","Producer Household Tonnage + Late Reporting Tonnage + Public Bin Tonnage + Household Drinks Containers Tonnage","Comms Cost - by Material Price Per Tonne" },
                 new[] { "Aluminium","£10.00","£20.00","£30.00","£40.00","£100.00","50.000","60.000","70.000","80.000","90.000","£100" },
-                new[] { "Total","£10.00","£20.00","£30.00","£40.00","£100.00","50.000","60.000","70.000","80.000","90.000","£100" },
+                new[] { "Total"    ,"£10.00","£20.00","£30.00","£40.00","£100.00","50.000","60.000","70.000","80.000","90.000","£100" },
                 new string[] { },
-                new [] {  "2b Comms Costs - UK wide","£10.00","£20.00","£30.00","£40.00","£100.00" },
+                new [] {  "2b Comms Costs - UK wide"   ,"£10.00","£20.00","£30.00","£40.00","£100.00" },
                 new [] {  "2c Comms Costs - by Country","£11.00","£21.00","£31.00","£41.00","£104.00" },
                 new string[] { }
             };

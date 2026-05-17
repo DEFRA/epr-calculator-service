@@ -371,6 +371,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             return new CalcResultCommsCost
             {
+                CalcResultCommsCostOnePlusFourApportionment = new CalcResultCommsCostOnePlusFourApportionment
+                {
+                    England         = 1.23m,
+                    Wales           = 2.34m,
+                    Scotland        = 3.45m,
+                    NorthernIreland = 4.56m,
+                    Total           = 11.58m
+                },
                 CalcResultCommsCostCommsCostByMaterial =
                 [
                     new ()
@@ -392,6 +400,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         ProducerReportedTotalTonnage = 0
                     },
                 ],
+                CommsCostUkWide = new () { Total = 2531 },
                 CommsCostByCountry = new () { Total = 2530 }
             };
         }
