@@ -48,11 +48,11 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             csvContent.AppendLine();
 
             csvContent.Append(CsvSanitiser.SanitiseData("1 + 4 Apportionment %s"));
-            csvContent.Append(CsvSanitiser.SanitiseData(100 * calcResult1Plus4Apportionment.OnePlusFourApportionment.EnglandTotal        , DecimalPlaces.Eight, null, isPercentage: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(100 * calcResult1Plus4Apportionment.OnePlusFourApportionment.WalesTotal          , DecimalPlaces.Eight, null, isPercentage: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(100 * calcResult1Plus4Apportionment.OnePlusFourApportionment.ScotlandTotal       , DecimalPlaces.Eight, null, isPercentage: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(100 * calcResult1Plus4Apportionment.OnePlusFourApportionment.NorthernIrelandTotal, DecimalPlaces.Eight, null, isPercentage: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(100                                                                              , DecimalPlaces.Eight, null, isPercentage: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(calcResult1Plus4Apportionment.OnePlusFourApportionment.England        , DecimalPlaces.Eight, null, isPercentage: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(calcResult1Plus4Apportionment.OnePlusFourApportionment.Wales          , DecimalPlaces.Eight, null, isPercentage: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(calcResult1Plus4Apportionment.OnePlusFourApportionment.Scotland       , DecimalPlaces.Eight, null, isPercentage: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(calcResult1Plus4Apportionment.OnePlusFourApportionment.NorthernIreland, DecimalPlaces.Eight, null, isPercentage: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(100                                                                   , DecimalPlaces.Eight, null, isPercentage: true));
             csvContent.AppendLine();
         }
 

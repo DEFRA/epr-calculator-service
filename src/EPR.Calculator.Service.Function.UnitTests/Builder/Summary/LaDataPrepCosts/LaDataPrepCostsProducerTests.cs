@@ -151,11 +151,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.LaDataPrepCo
                     },
                     OnePlusFourApportionment = new()
                     {
-                        EnglandTotal         = 0.10M,
-                        WalesTotal           = 020M,
-                        ScotlandTotal        = 0.15M,
-                        NorthernIrelandTotal = 0.15M,
-                        Total                = 0.1M
+                        England         = 40,
+                        Wales           = 30,
+                        Scotland        = 15,
+                        NorthernIreland = 15
                     }
                 },
                 CalcResultParameterCommunicationCost = Fixture.Create<CalcResultParameterCommunicationCost>(),

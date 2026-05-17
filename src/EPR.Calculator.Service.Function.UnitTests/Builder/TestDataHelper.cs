@@ -358,11 +358,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 },
                 OnePlusFourApportionment = new()
                 {
-                    EnglandTotal         = 0.80M,
-                    WalesTotal           = 0.20M,
-                    ScotlandTotal        = 0.30M,
-                    NorthernIrelandTotal = 0.70M,
-                    Total                = 0.1M
+                    England         = 40,
+                    Wales           = 10,
+                    Scotland        = 15,
+                    NorthernIreland = 35
                 }
             };
         }

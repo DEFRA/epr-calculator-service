@@ -51,11 +51,11 @@ namespace EPR.Calculator.Service.Function.Models
 
                 OnePlusFourApportionmentPercentages = new CalcResultOnePlusFourApportionmentDetailJson
                 {
-                    England         = $"{Math.Round(calcResultOnePlusFourApportionment.OnePlusFourApportionment.EnglandTotal        , (int)DecimalPlaces.Eight)}%",
-                    Wales           = $"{Math.Round(calcResultOnePlusFourApportionment.OnePlusFourApportionment.WalesTotal          , (int)DecimalPlaces.Eight)}%",
-                    Scotland        = $"{Math.Round(calcResultOnePlusFourApportionment.OnePlusFourApportionment.ScotlandTotal       , (int)DecimalPlaces.Eight)}%",
-                    NorthernIreland = $"{Math.Round(calcResultOnePlusFourApportionment.OnePlusFourApportionment.NorthernIrelandTotal, (int)DecimalPlaces.Eight)}%",
-                    Total           = $"{Math.Round(calcResultOnePlusFourApportionment.OnePlusFourApportionment.Total               , (int)DecimalPlaces.Eight)}%",
+                    England         = $"{Math.Round(calcResultOnePlusFourApportionment.OnePlusFourApportionment.England        , (int)DecimalPlaces.Eight)}%",
+                    Wales           = $"{Math.Round(calcResultOnePlusFourApportionment.OnePlusFourApportionment.Wales          , (int)DecimalPlaces.Eight)}%",
+                    Scotland        = $"{Math.Round(calcResultOnePlusFourApportionment.OnePlusFourApportionment.Scotland       , (int)DecimalPlaces.Eight)}%",
+                    NorthernIreland = $"{Math.Round(calcResultOnePlusFourApportionment.OnePlusFourApportionment.NorthernIreland, (int)DecimalPlaces.Eight)}%",
+                    Total           = $"{100}%"
                 }
             };
         }

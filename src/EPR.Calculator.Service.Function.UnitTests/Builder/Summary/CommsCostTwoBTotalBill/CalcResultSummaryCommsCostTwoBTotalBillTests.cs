@@ -165,7 +165,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsEnglandWithBadDebtTotalsRow(_calcResult, _producers, TotalPackagingTonnage);
 
             // Assert
-            Assert.AreEqual(139.1500m, result);
+            Assert.AreEqual(111.32m, result);
         }
 
         [TestMethod]
@@ -175,7 +175,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsNorthernIrelandWithBadDebtTotalsRow(_calcResult, _producers, TotalPackagingTonnage);
 
             // Assert
-            Assert.AreEqual(27.8300m, result);
+            Assert.AreEqual(41.745m, result);
         }
 
         [TestMethod]
@@ -185,7 +185,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsEnglandWithBadDebt(_calcResult, _producers[0], TotalPackagingTonnage);
 
             // Assert
-            Assert.AreEqual(139.1500m, result);
+            Assert.AreEqual(111.32m, result);
         }
 
         [TestMethod]
@@ -195,7 +195,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsWalesWithBadDebt(_calcResult, _producers[0], TotalPackagingTonnage);
 
             // Assert
-            Assert.AreEqual(55.6600m, result);
+            Assert.AreEqual(83.49m, result);
         }
 
         [TestMethod]
@@ -205,7 +205,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsScotlandWithBadDebt(_calcResult, _producers[0], TotalPackagingTonnage);
 
             // Assert
-            Assert.AreEqual(55.6600m, result);
+            Assert.AreEqual(41.745m, result);
         }
 
         [TestMethod]
@@ -215,7 +215,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsNorthernIrelandWithBadDebt(_calcResult, _producers[0], TotalPackagingTonnage);
 
             // Assert
-            Assert.AreEqual(27.8300m, result);
+            Assert.AreEqual(41.745m, result);
         }
 
         [TestMethod]
@@ -225,7 +225,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsWithBadDebt(_calcResult, _producers[0], TotalPackagingTonnage, "England");
 
             // Assert
-            Assert.AreEqual(139.1500m, result);
+            Assert.AreEqual(111.32m, result);
         }
 
         [TestMethod]
@@ -235,7 +235,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             var result = CalcResultSummaryCommsCostTwoBTotalBill.GetRegionApportionment(_calcResult, "England");
 
             // Assert
-            Assert.AreEqual(0.50m, result);
+            Assert.AreEqual(40, result);
         }
 
         [TestMethod]
@@ -320,11 +320,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
         {
             return new CalcResultOnePlusFourApportionment
             {
-                OnePlusFourApportionment = new CalcResultOnePlusFourApportionmentDetail {
-                    EnglandTotal         = 0.5m,
-                    WalesTotal           = 0.2m,
-                    ScotlandTotal        = 0.2m,
-                    NorthernIrelandTotal = 0.1m,
+                OnePlusFourApportionment = new CountryApportionmentData
+                {
+                    England         = 40,
+                    Wales           = 30,
+                    Scotland        = 15,
+                    NorthernIreland = 15
                 }
             };
         }

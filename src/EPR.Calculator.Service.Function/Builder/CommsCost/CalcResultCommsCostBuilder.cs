@@ -83,11 +83,11 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
                     + publicBinTonnage
                     + householdcontainers;
             var commsCost = new CalcResultCommsCostCommsCostByMaterial{
-                Name = materialDefault.ParameterCategory,
-                England = apportionmentDetail.EnglandTotal * total / 100,
-                Wales = apportionmentDetail.WalesTotal * total / 100,
-                NorthernIreland = apportionmentDetail.NorthernIrelandTotal * total / 100,
-                Scotland = apportionmentDetail.ScotlandTotal * total / 100,
+                Name            = materialDefault.ParameterCategory,
+                England         = apportionmentDetail.England         * total / 100,
+                Wales           = apportionmentDetail.Wales           * total / 100,
+                Scotland        = apportionmentDetail.Scotland        * total / 100,
+                NorthernIreland = apportionmentDetail.NorthernIreland * total / 100,
                 ProducerReportedHouseholdPackagingWasteTonnage = producerReportedTon,
                 ReportedPublicBinTonnage = publicBinTonnage,
                 HouseholdDrinksContainers = householdcontainers,
@@ -113,10 +113,10 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
         var ukCost = new CalcResultCommsCostOnePlusFourApportionment
         {
             Name = TwoBCommsCostUkWide,
-            England         = (commsCostByUk.ParameterValue * apportionmentDetail.EnglandTotal) / 100,
-            Wales           = (commsCostByUk.ParameterValue * apportionmentDetail.WalesTotal) / 100,
-            Scotland        = (commsCostByUk.ParameterValue * apportionmentDetail.ScotlandTotal) / 100,
-            NorthernIreland = (commsCostByUk.ParameterValue * apportionmentDetail.NorthernIrelandTotal) / 100,
+            England         = commsCostByUk.ParameterValue * apportionmentDetail.England         / 100,
+            Wales           = commsCostByUk.ParameterValue * apportionmentDetail.Wales           / 100,
+            Scotland        = commsCostByUk.ParameterValue * apportionmentDetail.Scotland        / 100,
+            NorthernIreland = commsCostByUk.ParameterValue * apportionmentDetail.NorthernIreland / 100,
             Total           = commsCostByUk.ParameterValue
         };
 
@@ -204,18 +204,18 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
     }
 
     private static CalcResultCommsCostOnePlusFourApportionment GetApportionment(
-        CalcResultOnePlusFourApportionmentDetail apportionmentDetail
+        CountryApportionmentData apportionmentDetail
     )
     {
-         // TODO just use CalcResultOnePlusFourApportionmentDetail?
+         // TODO just use CalcResultOnePlusFourApportionmentData?
         return new CalcResultCommsCostOnePlusFourApportionment
         {
             Name            = OnePlusFourApportionment,
-            England         = apportionmentDetail.EnglandTotal,
-            Wales           = apportionmentDetail.WalesTotal,
-            Scotland        = apportionmentDetail.ScotlandTotal,
-            NorthernIreland = apportionmentDetail.NorthernIrelandTotal,
-            Total           = apportionmentDetail.Total
+            England         = apportionmentDetail.England,
+            Wales           = apportionmentDetail.Wales,
+            Scotland        = apportionmentDetail.Scotland,
+            NorthernIreland = apportionmentDetail.NorthernIreland,
+            Total           = 100
         };
     }
 }

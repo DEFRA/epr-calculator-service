@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.Lapcap;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Misc;
@@ -70,7 +71,7 @@ namespace EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment
             };
         }
 
-        private static CalcResultOnePlusFourApportionmentDetail CalculateApportionment(CalcResultOnePlusFourApportionmentDetail apportionmentData)
+        private static CountryApportionmentData CalculateApportionment(CalcResultOnePlusFourApportionmentDetail apportionmentData)
         {
             var englandTotal =
                 CalcResultLapcapDataBuilder.CalculateApportionment(apportionmentData.EnglandTotal, apportionmentData.Total);
@@ -80,13 +81,12 @@ namespace EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment
                 CalcResultLapcapDataBuilder.CalculateApportionment(apportionmentData.ScotlandTotal, apportionmentData.Total);
             var niTotal = CalcResultLapcapDataBuilder.CalculateApportionment(apportionmentData.NorthernIrelandTotal, apportionmentData.Total);
             var total = CalcResultLapcapDataBuilder.CalculateApportionment(apportionmentData.Total, apportionmentData.Total);
-            return new CalcResultOnePlusFourApportionmentDetail
+            return new CountryApportionmentData
             {
-                EnglandTotal         = englandTotal,
-                WalesTotal           = walesTotal,
-                ScotlandTotal        = scotlandTotal,
-                NorthernIrelandTotal = niTotal,
-                Total                = total
+                England         = englandTotal,
+                Wales           = walesTotal,
+                Scotland        = scotlandTotal,
+                NorthernIreland = niTotal
             };
         }
     }

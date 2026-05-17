@@ -126,7 +126,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoBTotalBill
         {
             decimal commsCostHeaderWithoutBadDebtFor2bTitle = CalcResultSummaryUtil.GetCommsCostHeaderWithoutBadDebtFor2bTitle(calcResult);
             decimal percentageOfProducerReportedHHTonnagevsAllProducers = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducers(producer, hhTotalPackagingTonnage) / 100;
-            decimal regionApportionment = GetRegionApportionment(calcResult, region);
+            decimal regionApportionment = GetRegionApportionment(calcResult, region) / 100;
             decimal badDebtProvision = calcResult.CalcResultParameterOtherCost.BadDebtValue / 100;
             return commsCostHeaderWithoutBadDebtFor2bTitle * (1 + badDebtProvision) * percentageOfProducerReportedHHTonnagevsAllProducers * regionApportionment;
         }
@@ -137,10 +137,10 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoBTotalBill
 
             return region switch
             {
-                England         => apportionmentDetail.EnglandTotal,
-                Wales           => apportionmentDetail.WalesTotal,
-                Scotland        => apportionmentDetail.ScotlandTotal,
-                NorthernIreland => apportionmentDetail.NorthernIrelandTotal,
+                England         => apportionmentDetail.England,
+                Wales           => apportionmentDetail.Wales,
+                Scotland        => apportionmentDetail.Scotland,
+                NorthernIreland => apportionmentDetail.NorthernIreland,
                 _               => throw new ArgumentException("Invalid region specified")
             };
         }

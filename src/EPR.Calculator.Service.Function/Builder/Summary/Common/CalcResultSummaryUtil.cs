@@ -592,13 +592,13 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             switch (country)
             {
                 case Countries.England:
-                    return onePlusFourApportionment.EnglandTotal;
+                    return onePlusFourApportionment.England;
                 case Countries.Wales:
-                    return onePlusFourApportionment.WalesTotal;
+                    return onePlusFourApportionment.Wales;
                 case Countries.Scotland:
-                    return onePlusFourApportionment.ScotlandTotal;
+                    return onePlusFourApportionment.Scotland;
                 case Countries.NorthernIreland:
-                    return onePlusFourApportionment.NorthernIrelandTotal;
+                    return onePlusFourApportionment.NorthernIreland;
                 default:
                     return 0;
             }
