@@ -614,7 +614,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             }
         }
 
-        // TODO remove "Percentage" from name
         public static decimal GetParamsOtherFourCountryApportionmentPercentage(
             CalcResult calcResult,
             Countries country)

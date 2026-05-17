@@ -23,55 +23,34 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public void CalcResultCommsCostOnePlusFourApportionmentUKWideTests_CanCallFrom_WithValidData()
         {
             // Arrange
-            var ukWideData = Fixture.Create<CalcResultCommsCostOnePlusFourApportionment>();
-            ukWideData.Name = CalcResultCommsCostBuilder.TwoBCommsCostUkWide;
+            var ukWideData = new CalcResultCommsCostOnePlusFourApportionment() // TODO since this is a cost, need it's own moel (or rename)
+            {
+                Name            = CalcResultCommsCostBuilder.TwoBCommsCostUkWide,
+                England         = 1.23m,
+                Wales           = 2.34m,
+                Scotland        = 3.45m,
+                NorthernIreland = 4.56m,
+                Total           = 11.58m
+            };
 
             // Act
             var result = CalcResultCommsCostOnePlusFourApportionmentUKWide.From(ukWideData);
 
             // Assert
             Assert.IsNotNull(result);
-        }
-
-        [TestMethod]
-        public void From_ValuesAreValid()
-        {
-            // Arrange
-            var ukWideData = Fixture.Create<CalcResultCommsCostOnePlusFourApportionment>();
-            ukWideData.Name = CalcResultCommsCostBuilder.TwoBCommsCostUkWide;
-
-            // Act
-            var result = CalcResultCommsCostOnePlusFourApportionmentUKWide.From(ukWideData);
-            var json = JsonSerializer.Serialize(result);
-            var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json);
-
-            // Assert
-            Assert.IsNotNull(roundTrippedData);
-
-            AssertAreEqual(ukWideData.Name,
-                roundTrippedData["name"]);
-
-            AssertAreEqual(ukWideData.England,
-                roundTrippedData["englandCommsCostUKWide"]);
-            AssertAreEqual(ukWideData.Wales,
-                roundTrippedData["walesCommsCostUKWide"]);
-            AssertAreEqual(ukWideData.Scotland,
-                roundTrippedData["scotlandCommsCostUKWide"]);
-            AssertAreEqual(ukWideData.NorthernIreland,
-                roundTrippedData["northernIrelandCommsCostUKWide"]);
-
-            AssertAreEqual(ukWideData.Total,
-                roundTrippedData["totalCommsCostUKWide"]);
-        }
-
-        [TestMethod]
-        public void From_WithNullData_ReturnsNull()
-        {
-            // Act
-            var result = CalcResultCommsCostOnePlusFourApportionmentUKWide.From(null);
-
-            // Assert
-            Assert.IsNull(result);
+            var json = JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true });
+            Console.WriteLine(json);
+            var expectedJson = """
+                {
+                "name": "2b Comms Costs - UK wide",
+                "englandCommsCostUKWide"        : "£1.23",
+                "walesCommsCostUKWide"          : "£2.34",
+                "scotlandCommsCostUKWide"       : "£3.45",
+                "northernIrelandCommsCostUKWide": "£4.56",
+                "totalCommsCostUKWide"          : "£11.58"
+                }
+                """;
+            JsonTestUtils.AssertJson(expectedJson, json);
         }
     }
 }

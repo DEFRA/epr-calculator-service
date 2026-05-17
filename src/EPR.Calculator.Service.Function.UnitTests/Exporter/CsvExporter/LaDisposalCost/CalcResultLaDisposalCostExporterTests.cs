@@ -2,6 +2,7 @@ using System.Text;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Models.JsonExporter;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.LaDisposalCost
 {
@@ -16,10 +17,91 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.LaDispo
         }
 
         [TestMethod]
-        public void Export_ShouldIncludeLaDisposalCostData_WhenNotNull()
+        public void Export_ShouldIncludeLaDisposalCostData_PreModulation()
         {
             // Arrange
-            var calcResultLaDisposalCostData = new CalcResultLaDisposalCostData
+            var calcResultLaDisposalCostData = GetCalcResultLaDisposalCostData();
+
+            var csvContent = new StringBuilder();
+
+            // Act
+            exporter.Export(applyModulation: false, calcResultLaDisposalCostData, csvContent);
+
+            // Assert
+            var result = csvContent.ToString().Split("\n").Select(s => s.TrimEnd(',')).ToArray();
+            Console.WriteLine(string.Join("\n", result));
+
+            var expected = new[] {
+                new string[] {},
+                new string[] {},
+                new[] { "LA Disposal Cost Data" },
+                new[] { "Material",
+                        "England",
+                        "Wales",
+                        "Scotland",
+                        "Northern Ireland",
+                        "Total",
+                        "Producer Household Packaging Tonnage",
+                        "Public Bin Tonnage",
+                        "Household Drinks Containers Tonnage",
+                        "Late Reporting Tonnage",
+                        "Producer Household Tonnage + Late Reporting Tonnage + Public Bin Tonnage + Household Drinks Containers Tonnage",
+                        "Disposal Cost Price Per Tonne"
+                },
+                new[] { "Material1","0","0","0","0",  "0","0","0","100.123",null,"200.123","20" },
+                new[] { "Material2","0","0","0","0","100","0","0",      "0",null,      "0","10" },
+                new[] { "Total"    ,"0","0","0","0","100","0","0","100.123",null,      "0","10" },
+                new string[] { }
+            };
+
+            CsvTestUtils.AssertCsv(expected, result);
+        }
+
+                [TestMethod]
+        public void Export_ShouldIncludeLaDisposalCostData_Modulation()
+        {
+            // Arrange
+            var calcResultLaDisposalCostData = GetCalcResultLaDisposalCostData();
+
+            var csvContent = new StringBuilder();
+
+            // Act
+            exporter.Export(applyModulation: true, calcResultLaDisposalCostData, csvContent);
+
+            // Assert
+            var result = csvContent.ToString().Split("\n").Select(s => s.TrimEnd(',')).ToArray();
+            Console.WriteLine(string.Join("\n", result));
+
+            var expected = new[] {
+                new string[] {},
+                new string[] {},
+                new[] { "LA Disposal Cost Data" },
+                new[] { "Material",
+                        "England",
+                        "Wales",
+                        "Scotland",
+                        "Northern Ireland",
+                        "Total",
+                        "Producer Household Packaging Tonnage",
+                        "Public Bin Tonnage",
+                        "Household Drinks Containers Tonnage",
+                        "Late Reporting Tonnage",
+                        "Actioned Self Managed Consumer Waste",
+                        "Net Tonnage + Late Reporting Tonnage",
+                        "Disposal Cost Price Per Tonne"
+                },
+                new[] { "Material1","0","0","0","0",  "0","0","0","100.123",null,   "0","200.123","20" },
+                new[] { "Material2","0","0","0","0","100","0","0",      "0",null,"1.23",      "0","10" },
+                new[] { "Total"    ,"0","0","0","0","100","0","0","100.123",null,"1.23",      "0","10" },
+                new string[] { }
+            };
+
+            CsvTestUtils.AssertCsv(expected, result);
+        }
+
+        private CalcResultLaDisposalCostData GetCalcResultLaDisposalCostData()
+        {
+            return new CalcResultLaDisposalCostData
             {
                 CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>
                 {
@@ -66,43 +148,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.LaDispo
                     }
                 }
             };
-
-            var csvContent = new StringBuilder();
-
-            // Act
-            // TODO test applyModulation: true
-            exporter.Export(applyModulation: false, calcResultLaDisposalCostData, csvContent);
-
-            // Assert
-            var result = csvContent.ToString().Split("\n").Select(s => s.TrimEnd(',')).ToArray();
-            //Console.WriteLine($">> {JsonConvert.SerializeObject(result, Formatting.Indented)}");
-            Console.WriteLine(string.Join("\n", result));
-
-            var expected = new[] {
-                new string[] {},
-                new string[] {},
-                new[] { "LA Disposal Cost Data" },
-                new[] { "Material",
-                        "England",
-                        "Wales",
-                        "Scotland",
-                        "Northern Ireland",
-                        "Total",
-                        "Producer Household Packaging Tonnage",
-                        "Public Bin Tonnage",
-                        "Household Drinks Containers Tonnage",
-                        "Late Reporting Tonnage",
-                        "",
-                        "Producer Household Tonnage + Late Reporting Tonnage + Public Bin Tonnage + Household Drinks Containers Tonnage",
-                        "Disposal Cost Price Per Tonne"
-                },
-                new[] { "Material1","0","0","0","0","0","0","0","100.123",null,"200.123","20" },
-                new[] { "Material2","0","0","0","0","100","0","0","0",null,"1.23","0","10" },
-                new[] { "Total","0","0","0","0","100","0","0","100.123",null,"1.23","0","10" },
-                new string[] { }
-            };
-
-            CsvTestUtils.AssertCsv(expected, result);
         }
     }
 }

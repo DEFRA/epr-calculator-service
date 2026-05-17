@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using System.Globalization;
+using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
@@ -30,18 +31,14 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                 return null;
             }
 
-            var culture = CultureInfo.CreateSpecificCulture("en-GB");
-            culture.NumberFormat.CurrencySymbol = "£";
-            culture.NumberFormat.CurrencyPositivePattern = 0;
-
             return new CalcResultCommsCostOnePlusFourApportionmentUKWide
             {
                 Name = record.Name,
-                EnglandCommsCostUKWide = $"{record.England.ToString("C", culture)}",
-                WalesCommsCostUKWide = $"{record.Wales.ToString("C", culture)}",
-                ScotlandCommsCostUKWide = $"{record.Scotland.ToString("C", culture)}",
-                NorthernIrelandCommsCostUKWide = $"{record.NorthernIreland.ToString("C", culture)}",
-                TotalCommsCostUKWide = $"{record.Total.ToString("C", culture)}"
+                EnglandCommsCostUKWide         = CurrencyConverterUtils.ConvertToCurrency(record.England),
+                WalesCommsCostUKWide           = CurrencyConverterUtils.ConvertToCurrency(record.Wales),
+                ScotlandCommsCostUKWide        = CurrencyConverterUtils.ConvertToCurrency(record.Scotland),
+                NorthernIrelandCommsCostUKWide = CurrencyConverterUtils.ConvertToCurrency(record.NorthernIreland),
+                TotalCommsCostUKWide           = CurrencyConverterUtils.ConvertToCurrency(record.Total)
              };
          }
     }
