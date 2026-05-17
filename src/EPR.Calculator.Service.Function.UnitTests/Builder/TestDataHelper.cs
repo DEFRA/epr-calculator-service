@@ -79,144 +79,134 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             return new CalcResultLaDisposalCostData
             {
-                CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>
+                ByMaterial = new Dictionary<MaterialDetail, CalcResultLaDisposalCostDataDetail>
                 {
-                    new CalcResultLaDisposalCostDataDetail
-                    {
-                        Name = "Aluminium",
-                        England = 5000,
-                        Wales = 1750,
-                        Scotland = 2000,
-                        NorthernIreland = 1250,
-                        Total = 10000,
-                        ProducerReportedHouseholdPackagingWasteTonnage = 6980,
-                        ReportedPublicBinTonnage = 2000,
-                        LateReportingTonnage = 8000,
-                        ProducerReportedTotalTonnage = 14980,
-                        DisposalCostPricePerTonne = 0.6676m,
-                        OrderId = 2,
-                    },
-                    new CalcResultLaDisposalCostDataDetail
-                    {
-                        Name = "Fibre composite",
-                        England = 7500,
-                        Wales = 2100,
-                        Scotland = 3400,
-                        NorthernIreland = 1750,
-                        Total = 14750,
-                        ProducerReportedHouseholdPackagingWasteTonnage = 11850,
-                        ReportedPublicBinTonnage = 2000,
-                        LateReportingTonnage = 7000,
-                        ProducerReportedTotalTonnage = 18850,
-                        DisposalCostPricePerTonne = 0.7825m,
-                        OrderId = 3,
-                    },
-                    new CalcResultLaDisposalCostDataDetail
-                    {
-                        Name = "Glass",
-                        England = 45000,
-                        Wales = 0,
-                        Scotland = 20700,
-                        NorthernIreland = 4500,
-                        Total = 70200,
-                        ProducerReportedHouseholdPackagingWasteTonnage = 4900,
-                        ReportedPublicBinTonnage = 2000,
-                        LateReportingTonnage = 6000,
-                        ProducerReportedTotalTonnage = 10900,
-                        DisposalCostPricePerTonne = 6.4404m,
-                        OrderId = 4,
-                    },
-                    new CalcResultLaDisposalCostDataDetail
-                    {
-                        Name = "Paper or card",
-                        England = 12500,
-                        Wales = 2300,
-                        Scotland = 4500,
-                        NorthernIreland = 3400,
-                        Total = 22700,
-                        ProducerReportedHouseholdPackagingWasteTonnage = 4270,
-                        ReportedPublicBinTonnage = 2000,
-                        LateReportingTonnage = 5000,
-                        ProducerReportedTotalTonnage = 9270,
-                        DisposalCostPricePerTonne = 2.4488m,
-                        OrderId = 5,
-                    },
-                    new CalcResultLaDisposalCostDataDetail
-                    {
-                        Name = "Plastic",
-                        England = 23000,
-                        Wales = 4500,
-                        Scotland = 6700,
-                        NorthernIreland = 2100,
-                        Total = 36300,
-                        ProducerReportedHouseholdPackagingWasteTonnage = 12805,
-                        ReportedPublicBinTonnage = 2000,
-                        LateReportingTonnage = 4000,
-                        ProducerReportedTotalTonnage = 16805,
-                        DisposalCostPricePerTonne = 2.1601m,
-                        OrderId = 6,
-                    },
-                    new CalcResultLaDisposalCostDataDetail
-                    {
-                        Name = "Steel",
-                        England = 13400,
-                        Wales = 0,
-                        Scotland = 7800,
-                        NorthernIreland = 0,
-                        Total = 21200,
-                        ProducerReportedHouseholdPackagingWasteTonnage = 7700,
-                        ReportedPublicBinTonnage = 2000,
-                        LateReportingTonnage = 3000,
-                        ProducerReportedTotalTonnage = 10700,
-                        DisposalCostPricePerTonne = 19813,
-                        OrderId = 7,
-                    },
-                    new CalcResultLaDisposalCostDataDetail
-                    {
-                        Name = "Wood",
-                        England = 0,
-                        Wales = 12000,
-                        Scotland = 0,
-                        NorthernIreland = 5600,
-                        Total = 17600,
-                        ProducerReportedHouseholdPackagingWasteTonnage = 6800,
-                        ReportedPublicBinTonnage = 2000,
-                        LateReportingTonnage = 2000,
-                        ProducerReportedTotalTonnage = 8800,
-                        DisposalCostPricePerTonne = 2,
-                        OrderId = 8,
-                    },
-                    new CalcResultLaDisposalCostDataDetail
-                    {
-                        Name = "Other materials",
-                        England = 3400,
-                        Wales = 2100,
-                        Scotland = 4200,
-                        NorthernIreland = 700,
-                        Total = 10400,
-                        ProducerReportedHouseholdPackagingWasteTonnage = 7700,
-                        ReportedPublicBinTonnage = 2000,
-                        LateReportingTonnage = 1000,
-                        ProducerReportedTotalTonnage = 8700,
-                        DisposalCostPricePerTonne = 1.1954m,
-                        OrderId = 9,
-                    },
-                    new CalcResultLaDisposalCostDataDetail
-                    {
-                        Name = "Total",
-                        England = 109800,
-                        Wales = 24750,
-                        Scotland = 49300,
-                        NorthernIreland = 19300,
-                        Total = 203150,
-                        ProducerReportedHouseholdPackagingWasteTonnage = 63005,
-                        ReportedPublicBinTonnage = 2000,
-                        LateReportingTonnage = 36000,
-                        ProducerReportedTotalTonnage = 99005,
-                        DisposalCostPricePerTonne = null,
-                        OrderId = 10,
-                    },
-                }
+                    [new MaterialDetail { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" }] =
+                        new CalcResultLaDisposalCostDataDetail
+                        {
+                            England = 5000,
+                            Wales = 1750,
+                            Scotland = 2000,
+                            NorthernIreland = 1250,
+                            Total = 10000,
+                            ProducerReportedHouseholdPackagingWasteTonnage = 6980,
+                            ReportedPublicBinTonnage = 2000,
+                            LateReportingTonnage = 8000,
+                            ProducerReportedTotalTonnage = 14980,
+                            DisposalCostPricePerTonne = 0.6676m,
+                        },
+                    [new MaterialDetail { Id = 2, Code = "FC", Name = "Fibre composite", Description = "Fibre composite" }] =
+                        new CalcResultLaDisposalCostDataDetail
+                        {
+                            England = 7500,
+                            Wales = 2100,
+                            Scotland = 3400,
+                            NorthernIreland = 1750,
+                            Total = 14750,
+                            ProducerReportedHouseholdPackagingWasteTonnage = 11850,
+                            ReportedPublicBinTonnage = 2000,
+                            LateReportingTonnage = 7000,
+                            ProducerReportedTotalTonnage = 18850,
+                            DisposalCostPricePerTonne = 0.7825m,
+                        },
+                    [new MaterialDetail { Id = 3, Code = "GL", Name = "Glass", Description = "Glass" }] =
+                        new CalcResultLaDisposalCostDataDetail
+                        {
+                            England = 45000,
+                            Wales = 0,
+                            Scotland = 20700,
+                            NorthernIreland = 4500,
+                            Total = 70200,
+                            ProducerReportedHouseholdPackagingWasteTonnage = 4900,
+                            ReportedPublicBinTonnage = 2000,
+                            LateReportingTonnage = 6000,
+                            ProducerReportedTotalTonnage = 10900,
+                            DisposalCostPricePerTonne = 6.4404m,
+                        },
+                    [new MaterialDetail { Id = 4, Code = "PC", Name = "Paper or card", Description = "Paper or card" }] =
+                        new CalcResultLaDisposalCostDataDetail
+                        {
+                            England = 12500,
+                            Wales = 2300,
+                            Scotland = 4500,
+                            NorthernIreland = 3400,
+                            Total = 22700,
+                            ProducerReportedHouseholdPackagingWasteTonnage = 4270,
+                            ReportedPublicBinTonnage = 2000,
+                            LateReportingTonnage = 5000,
+                            ProducerReportedTotalTonnage = 9270,
+                            DisposalCostPricePerTonne = 2.4488m,
+                        },
+                    [new MaterialDetail { Id = 5, Code = "PL", Name = "Plastic", Description = "Plastic" }] =
+                        new CalcResultLaDisposalCostDataDetail
+                        {
+                            England = 23000,
+                            Wales = 4500,
+                            Scotland = 6700,
+                            NorthernIreland = 2100,
+                            Total = 36300,
+                            ProducerReportedHouseholdPackagingWasteTonnage = 12805,
+                            ReportedPublicBinTonnage = 2000,
+                            LateReportingTonnage = 4000,
+                            ProducerReportedTotalTonnage = 16805,
+                            DisposalCostPricePerTonne = 2.1601m,
+                        },
+                    [new MaterialDetail { Id = 6, Code = "ST", Name = "Steel", Description = "Steel" }] =
+                        new CalcResultLaDisposalCostDataDetail
+                        {
+                            England = 13400,
+                            Wales = 0,
+                            Scotland = 7800,
+                            NorthernIreland = 0,
+                            Total = 21200,
+                            ProducerReportedHouseholdPackagingWasteTonnage = 7700,
+                            ReportedPublicBinTonnage = 2000,
+                            LateReportingTonnage = 3000,
+                            ProducerReportedTotalTonnage = 10700,
+                            DisposalCostPricePerTonne = 19813,
+                        },
+                    [new MaterialDetail { Id = 7, Code = "WD", Name = "Wood", Description = "Wood" }] =
+                        new CalcResultLaDisposalCostDataDetail
+                        {
+                            England = 0,
+                            Wales = 12000,
+                            Scotland = 0,
+                            NorthernIreland = 5600,
+                            Total = 17600,
+                            ProducerReportedHouseholdPackagingWasteTonnage = 6800,
+                            ReportedPublicBinTonnage = 2000,
+                            LateReportingTonnage = 2000,
+                            ProducerReportedTotalTonnage = 8800,
+                            DisposalCostPricePerTonne = 2,
+                        },
+                    [new MaterialDetail { Id = 8, Code = "OT", Name = "Other materials", Description = "Other materials" }] =
+                        new CalcResultLaDisposalCostDataDetail
+                        {
+                            England = 3400,
+                            Wales = 2100,
+                            Scotland = 4200,
+                            NorthernIreland = 700,
+                            Total = 10400,
+                            ProducerReportedHouseholdPackagingWasteTonnage = 7700,
+                            ReportedPublicBinTonnage = 2000,
+                            LateReportingTonnage = 1000,
+                            ProducerReportedTotalTonnage = 8700,
+                            DisposalCostPricePerTonne = 1.1954m,
+                        },
+                },
+                Total = new CalcResultLaDisposalCostDataDetail
+                {
+                    England = 109800,
+                    Wales = 24750,
+                    Scotland = 49300,
+                    NorthernIreland = 19300,
+                    Total = 203150,
+                    ProducerReportedHouseholdPackagingWasteTonnage = 63005,
+                    ReportedPublicBinTonnage = 2000,
+                    LateReportingTonnage = 36000,
+                    ProducerReportedTotalTonnage = 99005,
+                    DisposalCostPricePerTonne = null,
+                },
             };
         }
 
@@ -224,99 +214,26 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             return new CalcResultLapcapData
             {
-                CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetail>
+                ByMaterial = new Dictionary<MaterialDetail, ByCountryValue>
                 {
-                    new CalcResultLapcapDataDetail
-                    {
-                        Name = "Aluminium",
-                        EnglandCost = 5000,
-                        WalesCost = 1750,
-                        ScotlandCost = 2000,
-                        NorthernIrelandCost = 1250,
-                        TotalCost = 10000,
-                        OrderId = 2,
-                    },
-                    new CalcResultLapcapDataDetail
-                    {
-                        Name = "Fibre composite",
-                        EnglandCost = 7500,
-                        WalesCost = 2100,
-                        ScotlandCost = 3400,
-                        NorthernIrelandCost = 1750,
-                        TotalCost = 14750,
-                        OrderId = 3,
-                    },
-                    new CalcResultLapcapDataDetail
-                    {
-                        Name = "Glass",
-                        EnglandCost = 45000,
-                        WalesCost = 0,
-                        ScotlandCost = 20700,
-                        NorthernIrelandCost = 4500,
-                        TotalCost = 70200,
-                        OrderId = 4,
-                    },
-                    new CalcResultLapcapDataDetail
-                    {
-                        Name = "Paper or card",
-                        EnglandCost = 12500,
-                        WalesCost = 2300,
-                        ScotlandCost = 4500,
-                        NorthernIrelandCost = 3400,
-                        TotalCost = 22700,
-                        OrderId = 5,
-                    },
-                    new CalcResultLapcapDataDetail
-                    {
-                        Name = "Plastic",
-                        EnglandCost = 23000,
-                        WalesCost = 4500,
-                        ScotlandCost = 6700,
-                        NorthernIrelandCost = 2100,
-                        TotalCost = 36300,
-                        OrderId = 6,
-                    },
-                    new CalcResultLapcapDataDetail
-                    {
-                        Name = "Steel",
-                        EnglandCost = 13400,
-                        WalesCost = 0,
-                        ScotlandCost = 7800,
-                        NorthernIrelandCost = 0,
-                        TotalCost = 21200,
-                        OrderId = 7,
-                    },
-                    new CalcResultLapcapDataDetail
-                    {
-                        Name = "Wood",
-                        EnglandCost = 0,
-                        WalesCost = 12000,
-                        ScotlandCost = 0,
-                        NorthernIrelandCost = 5600,
-                        TotalCost = 17600,
-                        OrderId = 8,
-                    },
-                    new CalcResultLapcapDataDetail
-                    {
-                        Name = "Other materials",
-                        EnglandCost = 3400,
-                        WalesCost = 2100,
-                        ScotlandCost = 4200,
-                        NorthernIrelandCost = 700,
-                        TotalCost = 10400,
-                        OrderId = 9
-                    },
-                    new CalcResultLapcapDataDetail
-                    {
-                        Name = "Total",
-                        EnglandCost = 109800,
-                        WalesCost = 24750,
-                        ScotlandCost = 49300,
-                        NorthernIrelandCost = 19300,
-                        TotalCost = 203150,
-                        OrderId = 10
-                    }
+                    [new MaterialDetail { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" }] =
+                        new ByCountryValue { England = 5000, Wales = 1750, Scotland = 2000, NorthernIreland = 1250, Total = 10000 },
+                    [new MaterialDetail { Id = 2, Code = "FC", Name = "Fibre composite", Description = "Fibre composite" }] =
+                        new ByCountryValue { England = 7500, Wales = 2100, Scotland = 3400, NorthernIreland = 1750, Total = 14750 },
+                    [new MaterialDetail { Id = 3, Code = "GL", Name = "Glass", Description = "Glass" }] =
+                        new ByCountryValue { England = 45000, Wales = 0, Scotland = 20700, NorthernIreland = 4500, Total = 70200 },
+                    [new MaterialDetail { Id = 4, Code = "PC", Name = "Paper or card", Description = "Paper or card" }] =
+                        new ByCountryValue { England = 12500, Wales = 2300, Scotland = 4500, NorthernIreland = 3400, Total = 22700 },
+                    [new MaterialDetail { Id = 5, Code = "PL", Name = "Plastic", Description = "Plastic" }] =
+                        new ByCountryValue { England = 23000, Wales = 4500, Scotland = 6700, NorthernIreland = 2100, Total = 36300 },
+                    [new MaterialDetail { Id = 6, Code = "ST", Name = "Steel", Description = "Steel" }] =
+                        new ByCountryValue { England = 13400, Wales = 0, Scotland = 7800, NorthernIreland = 0, Total = 21200 },
+                    [new MaterialDetail { Id = 7, Code = "WD", Name = "Wood", Description = "Wood" }] =
+                        new ByCountryValue { England = 0, Wales = 12000, Scotland = 0, NorthernIreland = 5600, Total = 17600 },
+                    [new MaterialDetail { Id = 8, Code = "OT", Name = "Other materials", Description = "Other materials" }] =
+                        new ByCountryValue { England = 3400, Wales = 2100, Scotland = 4200, NorthernIreland = 700, Total = 10400 },
                 },
+                Total = new ByCountryValue { England = 109800, Wales = 24750, Scotland = 49300, NorthernIreland = 19300, Total = 203150 },
                 CountryApportionment = new CountryApportionmentData
                 {
                     England         = 0.5404873246369677m,
@@ -333,12 +250,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             {
                 LaDisposalCost = new()
                 {
-                    Name = "",
-                    EnglandCost       = 0.10M,
-                    WalesCost         = 020M,
-                    NorthernIrelandCost = 0.15M,
-                    ScotlandCost        = 0.15M,
-                    TotalCost           = 0.1M
+                    England         = 0.10M,
+                    Wales           = 020M,
+                    NorthernIreland = 0.15M,
+                    Scotland        = 0.15M,
+                    Total           = 0.1M
                 },
                 LADataPrepCharge = new()
                 {

@@ -24,19 +24,11 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
         public static CalcResultLapcapDataJson From(CalcResultLapcapData data)
         {
-            IEnumerable<string> SeperatedRecords = [CalcResultLapcapDataBuilder.Total, "Material"];
-
             return new CalcResultLapcapDataJson
             {
                 Name = "LAPCAP Data",
-                //TODO total should be separate in record
-                CalcResultLapcapDataDetails =
-                    data.CalcResultLapcapDataDetails
-                    .Where(record => !SeperatedRecords.Contains(record.Name))
-                    .Select(details => CalcResultLapcapDataDetailJson.From(details)),
-                CalcResultLapcapDataTotal = CalcResultLapcapDataDetailTotalJson.From(
-                    data.CalcResultLapcapDataDetails.Single(record => record.Name == CalcResultLapcapDataBuilder.Total)
-                ),
+                CalcResultLapcapDataDetails        = data.ByMaterial.Select(detail => CalcResultLapcapDataDetailJson.From(detail.Key, detail.Value)),
+                CalcResultLapcapDataTotal          = CalcResultLapcapDataDetailTotalJson.From(data.Total),
                 OneCountryApportionmentPercentages = CalcResultLapcapDataDetailApportionmentJson.From(data.CountryApportionment)
             };
         }
@@ -62,16 +54,16 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("oneLaDisposalCostTotal")]
         public required string OneLaDisposalCostTotal { get; set; }
 
-        public static CalcResultLapcapDataDetailJson From(CalcResultLapcapDataDetail record)
+        public static CalcResultLapcapDataDetailJson From(MaterialDetail materialDetail, ByCountryValue record)
         {
             return new CalcResultLapcapDataDetailJson
             {
-                MaterialName                  = record.Name,
-                EnglandLaDisposalCost         = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.EnglandCost        , 2, ","),
-                WalesLaDisposalCost           = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.WalesCost          , 2, ","),
-                ScotlandLaDisposalCost        = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.ScotlandCost       , 2, ","),
-                NorthernIrelandLaDisposalCost = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.NorthernIrelandCost, 2, ","),
-                OneLaDisposalCostTotal        = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.TotalCost          , 2, ",")
+                MaterialName                  = materialDetail.Name,
+                EnglandLaDisposalCost         = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.England        , 2, ","),
+                WalesLaDisposalCost           = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Wales          , 2, ","),
+                ScotlandLaDisposalCost        = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Scotland       , 2, ","),
+                NorthernIrelandLaDisposalCost = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.NorthernIreland, 2, ","),
+                OneLaDisposalCostTotal        = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Total          , 2, ",")
             };
         }
     }
@@ -93,15 +85,15 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("totalLaDisposalCost")]
         public required string TotalLaDisposalCost { get; set; }
 
-        public static CalcResultLapcapDataDetailTotalJson From(CalcResultLapcapDataDetail record)
+        public static CalcResultLapcapDataDetailTotalJson From(ByCountryValue record)
         {
             return new CalcResultLapcapDataDetailTotalJson
             {
-                TotalEnglandLaDisposalCost         = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.EnglandCost        , 2, ","),
-                TotalWalesLaDisposalCost           = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.WalesCost          , 2, ","),
-                TotalScotlandLaDisposalCost        = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.ScotlandCost       , 2, ","),
-                TotalNorthernIrelandLaDisposalCost = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.NorthernIrelandCost, 2, ","),
-                TotalLaDisposalCost                = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.TotalCost          , 2, ",")
+                TotalEnglandLaDisposalCost         = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.England        , 2, ","),
+                TotalWalesLaDisposalCost           = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Wales          , 2, ","),
+                TotalScotlandLaDisposalCost        = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Scotland       , 2, ","),
+                TotalNorthernIrelandLaDisposalCost = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.NorthernIreland, 2, ","),
+                TotalLaDisposalCost                = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Total          , 2, ",")
             };
         }
     }

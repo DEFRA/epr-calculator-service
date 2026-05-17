@@ -59,7 +59,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                 CalcResult2aCommsDataByMaterial    = CalcResult2ACommsDataByMaterial.From(results.CalcResultCommsCostReportDetail.CalcResultCommsCostCommsCostByMaterial),
                 CalcResult2bCommsDataByUkWide      = CalcResultCommsCostOnePlusFourApportionmentUKWide.From(results.CalcResultCommsCostReportDetail.CommsCostUkWide),
                 CalcResult2cCommsDataByCountry     = CalcResultCommsCostOnePlusFourApportionmentCountryWide.From(results.CalcResultCommsCostReportDetail.CommsCostByCountry),
-                CalcResultLaDisposalCostData       = CalcResultLaDisposalCostDataJson.From(results.CalcResultLaDisposalCostData.CalcResultLaDisposalCostDetails),
+                CalcResultLaDisposalCostData       = CalcResultLaDisposalCostDataJson.From(results.CalcResultLaDisposalCostData.ByMaterial, results.CalcResultLaDisposalCostData.Total),
                 CancelledProducers                 = CancelledProducers.From(results.CalcResultCancelledProducers),
                 ScaleUpProducers                   = CalcResultScaledupProducersJson.From(results.CalcResultScaledupProducers, acceptedProducerIds, materials),
                 ModulationResults                  = results.ApplyModulation && results.CalcResultModulation is not null ? CalcResultModulationResults.From(results.CalcResultModulation) : null,

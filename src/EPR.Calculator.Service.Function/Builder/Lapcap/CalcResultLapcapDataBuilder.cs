@@ -37,9 +37,6 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
             CalcResultsRequestDto resultsRequestDto
         )
         {
-            var orderId = 1;
-            var data = new List<CalcResultLapcapDataDetail>();
-
             var results = await (
                 from run in dbContext.CalculatorRuns
                 join lapcapMaster in dbContext.LapcapDataMaster on run.LapcapDataMasterId equals lapcapMaster.Id
@@ -59,40 +56,32 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
             var costType = await dbContext.CostType.SingleAsync(x => x.Name == "Fee for LA Disposal Costs");
             var costTypeId = costType.Id;
 
-            foreach (var material in materialDetails.Select(m => m.Name))
-            {
-                var detail = new CalcResultLapcapDataDetail
+            var data = materialDetails.Select(material =>
+                (material, new ByCountryValue
                 {
-                    Name                = material,
-                    EnglandCost         = GetMaterialDisposalCostPerCountry(CountryConstants.England, material, results),
-                    NorthernIrelandCost = GetMaterialDisposalCostPerCountry(CountryConstants.NI, material, results),
-                    ScotlandCost        = GetMaterialDisposalCostPerCountry(CountryConstants.Scotland, material, results),
-                    WalesCost           = GetMaterialDisposalCostPerCountry(CountryConstants.Wales, material, results),
-                    TotalCost           = GetTotalMaterialDisposalCost(material, results),
-                    OrderId             = ++orderId
-                };
+                    England         = GetMaterialDisposalCostPerCountry(CountryConstants.England, material, results),
+                    NorthernIreland = GetMaterialDisposalCostPerCountry(CountryConstants.NI, material, results),
+                    Scotland        = GetMaterialDisposalCostPerCountry(CountryConstants.Scotland, material, results),
+                    Wales           = GetMaterialDisposalCostPerCountry(CountryConstants.Wales, material, results),
+                    Total           = GetTotalMaterialDisposalCost(material, results),
+                })
+            ).ToDictionary();
 
-                data.Add(detail);
-            }
-
-            var totalDetail = new CalcResultLapcapDataDetail
+            var total = new ByCountryValue
             {
-                Name                = Total,
-                EnglandCost         = data.Sum(x => x.EnglandCost),
-                NorthernIrelandCost = data.Sum(x => x.NorthernIrelandCost),
-                ScotlandCost        = data.Sum(x => x.ScotlandCost),
-                WalesCost           = data.Sum(x => x.WalesCost),
-                TotalCost           = data.Sum(x => x.TotalCost),
-                OrderId             = ++orderId,
+                England         = data.Values.Sum(x => x.England),
+                NorthernIreland = data.Values.Sum(x => x.NorthernIreland),
+                Scotland        = data.Values.Sum(x => x.Scotland),
+                Wales           = data.Values.Sum(x => x.Wales),
+                Total           = data.Values.Sum(x => x.Total)
             };
-            data.Add(totalDetail);
 
             var countryApportionment = new CountryApportionmentData
             {
-                England         = CalculateApportionment(totalDetail.EnglandCost, totalDetail.TotalCost),
-                NorthernIreland = CalculateApportionment(totalDetail.NorthernIrelandCost, totalDetail.TotalCost),
-                Scotland        = CalculateApportionment(totalDetail.ScotlandCost, totalDetail.TotalCost),
-                Wales           = CalculateApportionment(totalDetail.WalesCost, totalDetail.TotalCost)
+                England         = CalculateApportionment(total.England        , total.Total),
+                Wales           = CalculateApportionment(total.Wales          , total.Total),
+                Scotland        = CalculateApportionment(total.Scotland       , total.Total),
+                NorthernIreland = CalculateApportionment(total.NorthernIreland, total.Total)
             };
 
             if (!resultsRequestDto.IsBillingFile)
@@ -109,7 +98,11 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
                 });
             }
 
-            return new CalcResultLapcapData { CalcResultLapcapDataDetails = data, CountryApportionment = countryApportionment };
+            return new CalcResultLapcapData {
+                ByMaterial           = data,
+                Total                = total,
+                CountryApportionment = countryApportionment
+            };
         }
 #pragma warning restore
 
@@ -124,18 +117,19 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
             return 0;
         }
 
-        internal static decimal GetMaterialDisposalCostPerCountry(string country, string material, IEnumerable<ResultsClass> results)
+        internal static decimal GetMaterialDisposalCostPerCountry(string country, MaterialDetail material, IEnumerable<ResultsClass> results)
         {
-            var totalSum = results.Where(x => x.Country.Equals(country, StringComparison.OrdinalIgnoreCase) &&
-                x.Material.Equals(material, StringComparison.OrdinalIgnoreCase))
+            return
+                results.Where(x =>
+                    x.Country.Equals(country, StringComparison.OrdinalIgnoreCase)
+                    && x.Material.Equals(material.Name, StringComparison.OrdinalIgnoreCase)
+                )
                 .Sum(x => x.TotalCost);
-            return totalSum;
         }
 
-        internal static decimal GetTotalMaterialDisposalCost(string material, IEnumerable<ResultsClass> results)
+        internal static decimal GetTotalMaterialDisposalCost(MaterialDetail material, IEnumerable<ResultsClass> results)
         {
-            var totalSum = results.Where(x => x.Material.Equals(material, StringComparison.OrdinalIgnoreCase)).Sum(x => x.TotalCost);
-            return totalSum;
+            return results.Where(x => x.Material.Equals(material.Name, StringComparison.OrdinalIgnoreCase)).Sum(x => x.TotalCost);
         }
     }
 }

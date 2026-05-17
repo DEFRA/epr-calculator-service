@@ -94,34 +94,31 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var lapcapResults = await builder.ConstructAsync(materialDetails, resultsDto);
 
             Assert.IsNotNull(lapcapResults);
-            Assert.AreEqual(3, lapcapResults.CalcResultLapcapDataDetails.Count());
+            Assert.AreEqual(2, lapcapResults.ByMaterial.Count);
 
-            var aluminiumRow = lapcapResults.CalcResultLapcapDataDetails.Single(x => x.Name == aluminium);
-            Assert.IsNotNull(aluminiumRow);
-            Assert.AreEqual(aluminium, aluminiumRow.Name);
-            Assert.AreEqual(100, aluminiumRow.EnglandCost);
-            Assert.AreEqual(50, aluminiumRow.WalesCost);
-            Assert.AreEqual(75, aluminiumRow.ScotlandCost);
-            Assert.AreEqual(25, aluminiumRow.NorthernIrelandCost);
-            Assert.AreEqual(250, aluminiumRow.TotalCost);
+            var aluminiumKv = lapcapResults.ByMaterial.Single(kv => kv.Key.Name == aluminium);
+            Assert.AreEqual(aluminium, aluminiumKv.Key.Name);
+            Assert.AreEqual(100, aluminiumKv.Value.England);
+            Assert.AreEqual(50, aluminiumKv.Value.Wales);
+            Assert.AreEqual(75, aluminiumKv.Value.Scotland);
+            Assert.AreEqual(25, aluminiumKv.Value.NorthernIreland);
+            Assert.AreEqual(250, aluminiumKv.Value.Total);
 
-            var plasticRow = lapcapResults.CalcResultLapcapDataDetails.Single(x => x.Name == plastic);
-            Assert.IsNotNull(plasticRow);
-            Assert.AreEqual(plastic, plasticRow.Name);
-            Assert.AreEqual(100, plasticRow.EnglandCost);
-            Assert.AreEqual(50, plasticRow.WalesCost);
-            Assert.AreEqual(75, plasticRow.ScotlandCost);
-            Assert.AreEqual(25, plasticRow.NorthernIrelandCost);
-            Assert.AreEqual(250, plasticRow.TotalCost);
+            var plasticKv = lapcapResults.ByMaterial.Single(kv => kv.Key.Name == plastic);
+            Assert.AreEqual(plastic, plasticKv.Key.Name);
+            Assert.AreEqual(100, plasticKv.Value.England);
+            Assert.AreEqual(50, plasticKv.Value.Wales);
+            Assert.AreEqual(75, plasticKv.Value.Scotland);
+            Assert.AreEqual(25, plasticKv.Value.NorthernIreland);
+            Assert.AreEqual(250, plasticKv.Value.Total);
 
-            var totalRow = lapcapResults.CalcResultLapcapDataDetails.Single(x => x.OrderId == 4);
+            var totalRow = lapcapResults.Total;
             Assert.IsNotNull(totalRow);
-            Assert.AreEqual("Total", totalRow.Name);
-            Assert.AreEqual(200, totalRow.EnglandCost);
-            Assert.AreEqual(100, totalRow.WalesCost);
-            Assert.AreEqual(150, totalRow.ScotlandCost);
-            Assert.AreEqual(50, totalRow.NorthernIrelandCost);
-            Assert.AreEqual(500, totalRow.TotalCost);
+            Assert.AreEqual(200, totalRow.England);
+            Assert.AreEqual(100, totalRow.Wales);
+            Assert.AreEqual(150, totalRow.Scotland);
+            Assert.AreEqual(50, totalRow.NorthernIreland);
+            Assert.AreEqual(500, totalRow.Total);
 
             var countryApportionment = lapcapResults.CountryApportionment;
             Assert.IsNotNull(countryApportionment);

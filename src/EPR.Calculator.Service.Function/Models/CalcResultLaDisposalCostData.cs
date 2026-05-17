@@ -2,6 +2,8 @@
 {
     public class CalcResultLaDisposalCostData
     {
-        public IEnumerable<CalcResultLaDisposalCostDataDetail> CalcResultLaDisposalCostDetails { get; set; } = new List<CalcResultLaDisposalCostDataDetail>();
+        public Dictionary<MaterialDetail, CalcResultLaDisposalCostDataDetail> ByMaterial { get; set; }
+
+        public CalcResultLaDisposalCostDataDetail Total { get; set; }
     }
 }

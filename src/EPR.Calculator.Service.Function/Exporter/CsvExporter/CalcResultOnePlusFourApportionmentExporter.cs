@@ -24,11 +24,11 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             AppendHeaders(csvContent);
 
             csvContent.Append(CsvSanitiser.SanitiseData("1 Fee for LA Disposal Costs"));
-            csvContent.Append(CsvSanitiser.SanitiseData(calcResult1Plus4Apportionment.LaDisposalCost.EnglandCost        , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(calcResult1Plus4Apportionment.LaDisposalCost.WalesCost          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(calcResult1Plus4Apportionment.LaDisposalCost.ScotlandCost       , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(calcResult1Plus4Apportionment.LaDisposalCost.NorthernIrelandCost, DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(calcResult1Plus4Apportionment.LaDisposalCost.TotalCost          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(calcResult1Plus4Apportionment.LaDisposalCost.England        , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(calcResult1Plus4Apportionment.LaDisposalCost.Wales          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(calcResult1Plus4Apportionment.LaDisposalCost.Scotland       , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(calcResult1Plus4Apportionment.LaDisposalCost.NorthernIreland, DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(calcResult1Plus4Apportionment.LaDisposalCost.Total          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
             csvContent.AppendLine();
 
             csvContent.Append(CsvSanitiser.SanitiseData("4 LA Data Prep Charge"));
