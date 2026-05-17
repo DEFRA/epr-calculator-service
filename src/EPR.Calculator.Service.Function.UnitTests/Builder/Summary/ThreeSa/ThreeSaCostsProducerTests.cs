@@ -127,61 +127,66 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                 CalcResultDetail = new CalcResultDetail { RunId = 1, RelativeYear = new RelativeYear(2024) },
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData
                 {
-                    CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>
+                    ByMaterial = new Dictionary<MaterialDetail, CalcResultLaDisposalCostDataDetail>
                     {
-                        new CalcResultLaDisposalCostDataDetail
-                        {
-                            Name = "ScotlandTest",
-                            DisposalCostPricePerTonne = 20,
-                            England = 0,
-                            Wales = 0,
-                            Scotland = 0,
-                            NorthernIreland = 0,
-                            Total = 0,
-                            ProducerReportedHouseholdPackagingWasteTonnage = 0,
-                            ReportedPublicBinTonnage = 0
-                        },
-                        new CalcResultLaDisposalCostDataDetail
-                        {
-                            Name = "Material1",
-                            DisposalCostPricePerTonne = 20,
-                            England = 0,
-                            Wales = 0,
-                            Scotland = 0,
-                            NorthernIreland = 0,
-                            Total = 0,
-                            ProducerReportedHouseholdPackagingWasteTonnage = 0,
-                            ReportedPublicBinTonnage = 0
-                        },
-                        new CalcResultLaDisposalCostDataDetail
-                        {
-                            Name = "Material2",
-                            DisposalCostPricePerTonne = 10,
-                            England = 0,
-                            Wales = 0,
-                            Scotland = 0,
-                            NorthernIreland = 0,
-                            Total = 100,
-                            ProducerReportedHouseholdPackagingWasteTonnage = 0,
-                            ReportedPublicBinTonnage = 0
-                        },
+                        [new MaterialDetail { Id = 1, Code = "ScotlandTest", Name = "ScotlandTest", Description = "ScotlandTest" }] =
+                            new CalcResultLaDisposalCostDataDetail
+                            {
+                                DisposalCostPricePerTonne = 20,
+                                England = 0,
+                                Wales = 0,
+                                Scotland = 0,
+                                NorthernIreland = 0,
+                                Total = 0,
+                                ProducerReportedHouseholdPackagingWasteTonnage = 0,
+                                ReportedPublicBinTonnage = 0
+                            },
+                        [new MaterialDetail { Id = 2, Code = "Material1", Name = "Material1", Description = "Material1" }] =
+                            new CalcResultLaDisposalCostDataDetail
+                            {
+                                DisposalCostPricePerTonne = 20,
+                                England = 0,
+                                Wales = 0,
+                                Scotland = 0,
+                                NorthernIreland = 0,
+                                Total = 0,
+                                ProducerReportedHouseholdPackagingWasteTonnage = 0,
+                                ReportedPublicBinTonnage = 0
+                            },
+                        [new MaterialDetail { Id = 3, Code = "Material2", Name = "Material2", Description = "Material2" }] =
+                            new CalcResultLaDisposalCostDataDetail
+                            {
+                                DisposalCostPricePerTonne = 10,
+                                England = 0,
+                                Wales = 0,
+                                Scotland = 0,
+                                NorthernIreland = 0,
+                                Total = 100,
+                                ProducerReportedHouseholdPackagingWasteTonnage = 0,
+                                ReportedPublicBinTonnage = 0
+                            },
+                    },
+                    Total = new CalcResultLaDisposalCostDataDetail
+                    {
+                        England = 0, Wales = 0, Scotland = 0, NorthernIreland = 0, Total = 0,
+                        ProducerReportedHouseholdPackagingWasteTonnage = 0, ReportedPublicBinTonnage = 0
                     }
                 },
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
-                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetail>(),
+                    ByMaterial = new Dictionary<MaterialDetail, ByCountryValue>(),
+                    Total = new ByCountryValue(),
                     CountryApportionment = new CountryApportionmentData()
                 },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment
                 {
                     LaDisposalCost = new()
                     {
-                        Name = "",
-                        EnglandCost       = 0.10M,
-                        WalesCost         = 020M,
-                        NorthernIrelandCost = 0.15M,
-                        ScotlandCost        = 0.15M,
-                        TotalCost           = 0.1M
+                        England         = 0.10M,
+                        Wales           = 020M,
+                        NorthernIreland = 0.15M,
+                        Scotland        = 0.15M,
+                        Total           = 0.1M
                     },
                     LADataPrepCharge = new()
                     {

@@ -19,7 +19,7 @@ namespace EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment
             var apportionmentDetails = new List<CalcResultOnePlusFourApportionmentDetail>();
 
             // Add disposal cost row
-            var laDisposalCost = GetTotalCost(calcResult);
+            var laDisposalCost = calcResult.CalcResultLapcapData.Total;
 
             // Add data preparation charge row
             var laDataPrepCharge = calcResult.CalcResultParameterOtherCost.LaDataPrepCharge;
@@ -40,13 +40,6 @@ namespace EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment
             };
         }
 
-        private static CalcResultLapcapDataDetail GetTotalCost(CalcResult calcResult)
-        {
-            // TODO store Total separately in model
-            return calcResult.CalcResultLapcapData.CalcResultLapcapDataDetails
-                .Single(p => p.Name.Equals("Total", StringComparison.OrdinalIgnoreCase));
-        }
-
         private static CalcResultOnePlusFourApportionmentDetail CreateDataPrepChargeRow(CalcResultParameterOtherCostDetail dataPrepCharge)
         {
             return new CalcResultOnePlusFourApportionmentDetail
@@ -59,15 +52,15 @@ namespace EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment
             };
         }
 
-        private static CalcResultOnePlusFourApportionmentDetail CreateTotalRow(CalcResultLapcapDataDetail totalLACost, CalcResultParameterOtherCostDetail dataPrepCharge)
+        private static CalcResultOnePlusFourApportionmentDetail CreateTotalRow(ByCountryValue totalLACost, CalcResultParameterOtherCostDetail dataPrepCharge)
         {
             return new CalcResultOnePlusFourApportionmentDetail
             {
-                EnglandTotal         = totalLACost.EnglandCost         + dataPrepCharge.England,
-                WalesTotal           = totalLACost.WalesCost           + dataPrepCharge.Wales,
-                ScotlandTotal        = totalLACost.ScotlandCost        + dataPrepCharge.Scotland,
-                NorthernIrelandTotal = totalLACost.NorthernIrelandCost + dataPrepCharge.NorthernIreland,
-                Total                = totalLACost.TotalCost           + dataPrepCharge.Total
+                EnglandTotal         = totalLACost.England         + dataPrepCharge.England,
+                WalesTotal           = totalLACost.Wales           + dataPrepCharge.Wales,
+                ScotlandTotal        = totalLACost.Scotland        + dataPrepCharge.Scotland,
+                NorthernIrelandTotal = totalLACost.NorthernIreland + dataPrepCharge.NorthernIreland,
+                Total                = totalLACost.Total           + dataPrepCharge.Total
             };
         }
 

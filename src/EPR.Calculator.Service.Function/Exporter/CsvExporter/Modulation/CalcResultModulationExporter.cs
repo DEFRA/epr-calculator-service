@@ -82,7 +82,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation
                 var modulation = kv.Value;
                 append(material.Name); // A
 
-                var laDisposalCost = laDisposalCostData.CalcResultLaDisposalCostDetails.First(laDisposalCost => laDisposalCost.Name == material.Name);
+                var laDisposalCost = laDisposalCostData.ByMaterial[material];
                 appendd(laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3); // B
                 appendd(laDisposalCost.ReportedPublicBinTonnage, DecimalPlaces.Three, DecimalFormats.F3); // C
                 if (laDisposalCost.HouseholdDrinkContainers == null)
@@ -109,7 +109,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation
 
             {
                 append(CommonConstants.Total); // A
-                var laDisposalCost = laDisposalCostData.CalcResultLaDisposalCostDetails.First(laDisposalCost => laDisposalCost.Name == CommonConstants.Total);
+                var laDisposalCost = laDisposalCostData.Total;
                 appendd(laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3); // B
                 appendd(laDisposalCost.ReportedPublicBinTonnage, DecimalPlaces.Three, DecimalFormats.F3); // C
                 appendd(laDisposalCost.HouseholdDrinkContainers, DecimalPlaces.Three, DecimalFormats.F3); // D

@@ -13,40 +13,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public void CalcResultLapcapDataJsonTests_CanCallFrom_WithValidData()
         {
             // Arrange
-            var records = new List<CalcResultLapcapDataDetail>
-            {
-                new CalcResultLapcapDataDetail
-                {
-                    Name = "Paper",
-                    EnglandCost = 50,
-                    WalesCost = 60,
-                    ScotlandCost = 70,
-                    NorthernIrelandCost = 80,
-                    TotalCost = 260
-                },
-                new CalcResultLapcapDataDetail
-                {
-                    Name = "Plastics",
-                    EnglandCost = 100,
-                    WalesCost = 200,
-                    ScotlandCost = 300,
-                    NorthernIrelandCost = 400,
-                    TotalCost = 1000
-                },
-                new CalcResultLapcapDataDetail
-                {
-                    Name = CalcResultLapcapDataBuilder.Total,
-                    EnglandCost = 1,
-                    WalesCost = 2,
-                    ScotlandCost = 3,
-                    NorthernIrelandCost = 4,
-                    TotalCost = 10
-                }
-            };
-
             var data = new CalcResultLapcapData
             {
-                CalcResultLapcapDataDetails = records,
+                ByMaterial = new Dictionary<MaterialDetail, ByCountryValue>
+                {
+                    [new MaterialDetail { Name = "Paper",    Code = "PP", Description = "Paper"    }] = new ByCountryValue { England = 50,  Wales = 60,  Scotland = 70,  NorthernIreland = 80,  Total = 260  },
+                    [new MaterialDetail { Name = "Plastics", Code = "PL", Description = "Plastics" }] = new ByCountryValue { England = 100, Wales = 200, Scotland = 300, NorthernIreland = 400, Total = 1000 }
+                },
+                Total = new ByCountryValue { England = 1, Wales = 2, Scotland = 3, NorthernIreland = 4, Total = 10 },
                 CountryApportionment = new CountryApportionmentData
                 {
                     England         = 0.47123m,

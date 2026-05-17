@@ -2,7 +2,7 @@
 {
     public class CalcResultOnePlusFourApportionment
     {
-        public CalcResultLapcapDataDetail LaDisposalCost { get; set; }
+        public ByCountryValue LaDisposalCost { get; set; }
         public CalcResultParameterOtherCostDetail LADataPrepCharge { get; set; }
         public CalcResultOnePlusFourApportionmentDetail TotalOnePlusFour { get; set; }
         public CountryApportionmentData OnePlusFourApportionment { get; set; }

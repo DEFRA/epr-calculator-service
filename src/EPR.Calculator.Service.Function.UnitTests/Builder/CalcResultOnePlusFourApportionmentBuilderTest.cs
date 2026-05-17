@@ -25,17 +25,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
-                    CalcResultLapcapDataDetails = new[]
+                    ByMaterial = new Dictionary<MaterialDetail, ByCountryValue>(),
+                    Total = new ByCountryValue
                     {
-                        new CalcResultLapcapDataDetail
-                        {
-                            Name                = "Total",
-                            EnglandCost         = 13280.45m,
-                            WalesCost           = 210.28m,
-                            ScotlandCost        = 91.00m,
-                            NorthernIrelandCost = 91.00m,
-                            TotalCost           = 13742.80m
-                        }
+                        England         = 13280.45m,
+                        Wales           = 210.28m,
+                        Scotland        = 91.00m,
+                        NorthernIreland = 91.00m,
+                        Total           = 13742.80m
                     },
                     CountryApportionment = new CountryApportionmentData()
                 },
@@ -61,11 +58,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             // Check disposal cost row
             var disposalRow = resultCalc.LaDisposalCost;
-            Assert.AreEqual(13280.45m, disposalRow.EnglandCost);
-            Assert.AreEqual(210.28m, disposalRow.WalesCost);
-            Assert.AreEqual(91.00m, disposalRow.ScotlandCost);
-            Assert.AreEqual(91, disposalRow.NorthernIrelandCost);
-            Assert.AreEqual(13742.80m, disposalRow.TotalCost);
+            Assert.AreEqual(13280.45m, disposalRow.England);
+            Assert.AreEqual(210.28m, disposalRow.Wales);
+            Assert.AreEqual(91.00m, disposalRow.Scotland);
+            Assert.AreEqual(91, disposalRow.NorthernIreland);
+            Assert.AreEqual(13742.80m, disposalRow.Total);
 
             // Check data preparation charge row
             var prepchargeRow = resultCalc.LADataPrepCharge;

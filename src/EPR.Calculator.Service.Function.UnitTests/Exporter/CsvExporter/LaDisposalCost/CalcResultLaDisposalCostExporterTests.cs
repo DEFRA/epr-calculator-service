@@ -103,11 +103,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.LaDispo
         {
             return new CalcResultLaDisposalCostData
             {
-                CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>
+                ByMaterial = new Dictionary<MaterialDetail, CalcResultLaDisposalCostDataDetail>
                 {
-                    new CalcResultLaDisposalCostDataDetail
+                    [new MaterialDetail { Name = "Material1", Code = "M1", Description = "Material1" }] = new CalcResultLaDisposalCostDataDetail
                     {
-                        Name = "Material1",
                         DisposalCostPricePerTonne = 20,
                         England = 0m,
                         Wales = 0m,
@@ -119,9 +118,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.LaDispo
                         HouseholdDrinkContainers = 100.12345m,
                         ProducerReportedTotalTonnage = 200.12345m,
                     },
-                    new CalcResultLaDisposalCostDataDetail
+                    [new MaterialDetail { Name = "Material2", Code = "M2", Description = "Material2" }] = new CalcResultLaDisposalCostDataDetail
                     {
-                        Name = "Material2",
                         DisposalCostPricePerTonne = 10,
                         England = 0m,
                         Wales = 0m,
@@ -130,22 +128,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.LaDispo
                         Total = 100,
                         ProducerReportedHouseholdPackagingWasteTonnage = 0m,
                         ReportedPublicBinTonnage = 0m,
-                        ActionedSelfManagedConsumerWasteTonnage = 1.23m
-                    },
-                    new CalcResultLaDisposalCostDataDetail
-                    {
-                        Name = "Total",
-                        DisposalCostPricePerTonne = 10,
-                        England = 0m,
-                        Wales = 0m,
-                        Scotland = 0m,
-                        NorthernIreland = 0m,
-                        Total = 100,
-                        ProducerReportedHouseholdPackagingWasteTonnage = 0m,
-                        ReportedPublicBinTonnage = 0m,
-                        HouseholdDrinkContainers = 100.12345m,
                         ActionedSelfManagedConsumerWasteTonnage = 1.23m
                     }
+                },
+                Total = new CalcResultLaDisposalCostDataDetail
+                {
+                    DisposalCostPricePerTonne = 10,
+                    England = 0m,
+                    Wales = 0m,
+                    Scotland = 0m,
+                    NorthernIreland = 0m,
+                    Total = 100,
+                    ProducerReportedHouseholdPackagingWasteTonnage = 0m,
+                    ReportedPublicBinTonnage = 0m,
+                    HouseholdDrinkContainers = 100.12345m,
+                    ActionedSelfManagedConsumerWasteTonnage = 1.23m
                 }
             };
         }

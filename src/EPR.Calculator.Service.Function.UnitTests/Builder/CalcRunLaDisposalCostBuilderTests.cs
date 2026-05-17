@@ -125,7 +125,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             // Assert
             Assert.IsNotNull(lapcapDisposalCostResults);
-            Assert.AreEqual(9, lapcapDisposalCostResults.CalcResultLaDisposalCostDetails.Count());
+            Assert.AreEqual(8, lapcapDisposalCostResults.ByMaterial.Count);
         }
 
         [TestMethod]
@@ -140,21 +140,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var lapcapDisposalCostResults = await builder.ConstructAsync(resultsDto, TestDataHelper.GetMaterials(), calcResult.CalcResultLapcapData, calcResult.CalcResultLateReportingTonnageData, smcw, calcResult.ApplyModulation);
 
             // Assert
-            var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails.Single(x => x.Name == MaterialNames.Plastic);
+            var laDisposalCostKv = lapcapDisposalCostResults.ByMaterial.Single(kv => kv.Key.Name == MaterialNames.Plastic);
 
-            Assert.IsNotNull(laDisposalCost);
-            Assert.AreEqual(MaterialNames.Plastic, laDisposalCost.Name);
-            Assert.AreEqual(23000, laDisposalCost.England);
-            Assert.AreEqual(4500, laDisposalCost.Wales);
-            Assert.AreEqual(6700, laDisposalCost.Scotland);
-            Assert.AreEqual(2100, laDisposalCost.NorthernIreland);
-            Assert.AreEqual(36300, laDisposalCost.Total);
+            Assert.IsNotNull(laDisposalCostKv.Value);
+            Assert.AreEqual(MaterialNames.Plastic, laDisposalCostKv.Key.Name);
+            Assert.AreEqual(23000, laDisposalCostKv.Value.England);
+            Assert.AreEqual(4500, laDisposalCostKv.Value.Wales);
+            Assert.AreEqual(6700, laDisposalCostKv.Value.Scotland);
+            Assert.AreEqual(2100, laDisposalCostKv.Value.NorthernIreland);
+            Assert.AreEqual(36300, laDisposalCostKv.Value.Total);
 
-            Assert.AreEqual(400, laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage);
-            Assert.AreEqual(0, laDisposalCost.ReportedPublicBinTonnage);
-            Assert.AreEqual(null, laDisposalCost.HouseholdDrinkContainers);
-            Assert.AreEqual(2000, laDisposalCost.LateReportingTonnage);
-            Assert.AreEqual(2400, laDisposalCost.ProducerReportedTotalTonnage);
+            Assert.AreEqual(400, laDisposalCostKv.Value.ProducerReportedHouseholdPackagingWasteTonnage);
+            Assert.AreEqual(0, laDisposalCostKv.Value.ReportedPublicBinTonnage);
+            Assert.AreEqual(null, laDisposalCostKv.Value.HouseholdDrinkContainers);
+            Assert.AreEqual(2000, laDisposalCostKv.Value.LateReportingTonnage);
+            Assert.AreEqual(2400, laDisposalCostKv.Value.ProducerReportedTotalTonnage);
         }
 
         [TestMethod]
@@ -170,19 +170,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             // Assert
             var culture = CultureInfo.GetCultureInfo("en-GB");
-            var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails.Single(x => x.Name == MaterialNames.Glass);
-            Assert.IsNotNull(laDisposalCost);
-            Assert.AreEqual(MaterialNames.Glass, laDisposalCost.Name);
-            Assert.AreEqual(45000, laDisposalCost.England);
-            Assert.AreEqual(0, laDisposalCost.Wales);
-            Assert.AreEqual(20700, laDisposalCost.Scotland);
-            Assert.AreEqual(4500, laDisposalCost.NorthernIreland);
-            Assert.AreEqual(70200, laDisposalCost.Total);
-            Assert.AreEqual(0, laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage);
-            Assert.AreEqual(0, laDisposalCost.ReportedPublicBinTonnage);
-            Assert.AreEqual(500, laDisposalCost.HouseholdDrinkContainers);
-            Assert.AreEqual(10, laDisposalCost.LateReportingTonnage);
-            Assert.AreEqual(510, laDisposalCost.ProducerReportedTotalTonnage);
+            var glassKv = lapcapDisposalCostResults.ByMaterial.Single(kv => kv.Key.Name == MaterialNames.Glass);
+            Assert.IsNotNull(glassKv.Value);
+            Assert.AreEqual(MaterialNames.Glass, glassKv.Key.Name);
+            Assert.AreEqual(45000, glassKv.Value.England);
+            Assert.AreEqual(0, glassKv.Value.Wales);
+            Assert.AreEqual(20700, glassKv.Value.Scotland);
+            Assert.AreEqual(4500, glassKv.Value.NorthernIreland);
+            Assert.AreEqual(70200, glassKv.Value.Total);
+            Assert.AreEqual(0, glassKv.Value.ProducerReportedHouseholdPackagingWasteTonnage);
+            Assert.AreEqual(0, glassKv.Value.ReportedPublicBinTonnage);
+            Assert.AreEqual(500, glassKv.Value.HouseholdDrinkContainers);
+            Assert.AreEqual(10, glassKv.Value.LateReportingTonnage);
+            Assert.AreEqual(510, glassKv.Value.ProducerReportedTotalTonnage);
         }
 
         [TestMethod]
@@ -198,7 +198,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var lapcapDisposalCostResults = await builder.ConstructAsync(resultsDto, TestDataHelper.GetMaterials(), calcResult.CalcResultLapcapData, calcResult.CalcResultLateReportingTonnageData, smcw, calcResult.ApplyModulation);
 
             // Assert
-            var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails.Single(x => x.Name == CommonConstants.Total);
+            var laDisposalCost = lapcapDisposalCostResults.Total;
             Assert.IsNotNull(laDisposalCost);
             Assert.AreEqual(400, laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage);
         }
@@ -216,9 +216,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var lapcapDisposalCostResults = await builder.ConstructAsync(resultsDto, TestDataHelper.GetMaterials(), calcResult.CalcResultLapcapData, calcResult.CalcResultLateReportingTonnageData, smcw, calcResult.ApplyModulation);
 
             // Assert
-            var laDisposalCost = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails.Single(x => x.Name == MaterialNames.Plastic);
-            Assert.IsNotNull(laDisposalCost);
-            Assert.AreEqual(400, laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage);
+            var plasticKv = lapcapDisposalCostResults.ByMaterial.Single(kv => kv.Key.Name == MaterialNames.Plastic);
+            Assert.IsNotNull(plasticKv.Value);
+            Assert.AreEqual(400, plasticKv.Value.ProducerReportedHouseholdPackagingWasteTonnage);
         }
 
         private static void SeedDatabase(ApplicationDBContext context)

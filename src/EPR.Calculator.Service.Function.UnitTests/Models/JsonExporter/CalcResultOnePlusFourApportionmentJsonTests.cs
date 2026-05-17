@@ -44,10 +44,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                     "total"          : "£0.10"
                 },
                 "onePlusFourApportionmentPercentages": {
-                    "england"        : "30%",
-                    "wales"          : "20%",
-                    "scotland"       : "30%",
-                    "northernIreland": "70%",
+                    "england"        : "40%",
+                    "wales"          : "10%",
+                    "scotland"       : "15%",
+                    "northernIreland": "35%",
                     "total"          : "100%"
                 }
                 }
