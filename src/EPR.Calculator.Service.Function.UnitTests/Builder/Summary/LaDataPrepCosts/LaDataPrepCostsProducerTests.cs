@@ -72,66 +72,22 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.LaDataPrepCo
                     },
                 },
                 CalcResultDetail = new CalcResultDetail { RunId = 1, RelativeYear = new RelativeYear(2024) },
-                CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData
-                {
-                    CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>
-                    {
-                        new CalcResultLaDisposalCostDataDetail
-                        {
-                            Name = "",
-                            DisposalCostPricePerTonne= 20,
-                            England = 0,
-                            Wales = 0,
-                            Scotland = 0,
-                            NorthernIreland = 0,
-                            Total = 0,
-                            ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<decimal>(),
-                            ReportedPublicBinTonnage = Fixture.Create<decimal>(),
-                            ProducerReportedTotalTonnage = Fixture.Create<decimal>(),
-                        },
-                        new CalcResultLaDisposalCostDataDetail
-                        {
-                            Name="Material1",
-                            DisposalCostPricePerTonne=20,
-                            England = 0,
-                            Wales = 0,
-                            Scotland = 0,
-                            NorthernIreland = 0,
-                            Total = 0,
-                            ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<decimal>(),
-                            ReportedPublicBinTonnage = Fixture.Create<decimal>(),
-                            ProducerReportedTotalTonnage = Fixture.Create<decimal>(),
-                        },
-                        new CalcResultLaDisposalCostDataDetail
-                        {
-                            Name="Material2",
-                            DisposalCostPricePerTonne = 10,
-                            England = 0,
-                            Wales = 0,
-                            Scotland = 0,
-                            NorthernIreland = 0,
-                            Total = 0,
-                            ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<decimal>(),
-                            ReportedPublicBinTonnage = Fixture.Create<decimal>(),
-                            ProducerReportedTotalTonnage = Fixture.Create<decimal>(),
-                        },
-                    }
-                },
+                CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData(),
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
-                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetail>(),
+                    ByMaterial = new Dictionary<MaterialDetail, ByCountryValue>(),
+                    Total = new ByCountryValue(),
                     CountryApportionment = new CountryApportionmentData()
                 },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment
                 {
                     LaDisposalCost = new()
                     {
-                        Name = "",
-                        EnglandCost       = 0.10M,
-                        WalesCost         = 020M,
-                        NorthernIrelandCost = 0.15M,
-                        ScotlandCost        = 0.15M,
-                        TotalCost           = 0.1M
+                        England         = 0.10M,
+                        Wales           = 020M,
+                        NorthernIreland = 0.15M,
+                        Scotland        = 0.15M,
+                        Total           = 0.1M
                     },
                     LADataPrepCharge = new()
                     {

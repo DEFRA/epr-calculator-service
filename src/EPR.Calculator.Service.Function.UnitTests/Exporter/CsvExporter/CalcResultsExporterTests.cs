@@ -147,18 +147,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 ApplyModulation = false,
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
-                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetail>
+                    ByMaterial = new Dictionary<MaterialDetail, ByCountryValue>(),
+                    Total = new ByCountryValue
                     {
-                        new()
-                        {
-                            Name = "Total",
-                            EnglandCost = 13280.45m,
-                            WalesCost = 210.28m,
-                            ScotlandCost = 91.00m,
-                            NorthernIrelandCost = 91.00m,
-                            TotalCost = 13742.80m
-                        },
-
+                        England = 13280.45m,
+                        Wales = 210.28m,
+                        Scotland = 91.00m,
+                        NorthernIreland = 91.00m,
+                        Total = 13742.80m
                     },
                     CountryApportionment = new CountryApportionmentData()
                 },
@@ -227,12 +223,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 {
                     LaDisposalCost = new()
                     {
-                        Name = "",
-                        EnglandCost       = 0.10M,
-                        WalesCost         = 020M,
-                        NorthernIrelandCost = 0.15M,
-                        ScotlandCost        = 0.15M,
-                        TotalCost           = 0.1M
+                        England         = 0.10M,
+                        Wales           = 020M,
+                        NorthernIreland = 0.15M,
+                        Scotland        = 0.15M,
+                        Total           = 0.1M
                     },
                     LADataPrepCharge = new()
                     {
@@ -282,10 +277,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                         },
                     }
                 },
-                CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData
-                {
-                    CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>()
-                },
+                CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData(),
                 CalcResultScaledupProducers = new CalcResultScaledupProducers
                 {
                     ScaledupProducers = GetCalcResultScaledupProducerList(),

@@ -2,8 +2,6 @@
 {
     public class CalcResultLaDisposalCostDataDetail
     {
-        public required string Name { get; set; } // TODO this conflates MaterialName (for lookup) and Total label
-
         public required decimal England { get; set; }
 
         public required decimal Wales { get; set; }
@@ -29,7 +27,5 @@
         public decimal? ProducerReportedTotalTonnage { get; set; }
 
         public decimal? DisposalCostPricePerTonne { get; set; }
-
-        public int OrderId { get; set; }
     }
 }

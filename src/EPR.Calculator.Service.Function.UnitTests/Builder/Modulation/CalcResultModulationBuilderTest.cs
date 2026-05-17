@@ -37,11 +37,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
                 .ToDictionary(t => t.Item1, t => t.Item2);
         }
 
-        private CalcResultLaDisposalCostDataDetail mkLaDisposalCost(MaterialDetail material, decimal costPerTonnage)
+        private CalcResultLaDisposalCostDataDetail mkLaDisposalCost(decimal costPerTonnage)
         {
             return new CalcResultLaDisposalCostDataDetail
             {
-                Name = material.Name,
                 DisposalCostPricePerTonne = costPerTonnage,
                 England = 0,
                 Wales = 0,
@@ -53,8 +52,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
                 HouseholdDrinkContainers = 0,
                 LateReportingTonnage = 0,
                 TotalReportedTonnage = 0,
-                ProducerReportedTotalTonnage = 0,
-                OrderId = 0
+                ProducerReportedTotalTonnage = 0
             };
         }
 
@@ -89,16 +87,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
         {
             var laDisposalCostData = new CalcResultLaDisposalCostData
             {
-                CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>
+                ByMaterial = new Dictionary<MaterialDetail, CalcResultLaDisposalCostDataDetail>
                 {
-                    mkLaDisposalCost(al, 100),
-                    mkLaDisposalCost(fc, 130),
-                    mkLaDisposalCost(gl, 150),
-                    mkLaDisposalCost(pc, 200),
-                    mkLaDisposalCost(pl, 250),
-                    mkLaDisposalCost(st, 175),
-                    mkLaDisposalCost(wd, 150),
-                    mkLaDisposalCost(ot, 400)
+                    [al] = mkLaDisposalCost(100),
+                    [fc] = mkLaDisposalCost(130),
+                    [gl] = mkLaDisposalCost(150),
+                    [pc] = mkLaDisposalCost(200),
+                    [pl] = mkLaDisposalCost(250),
+                    [st] = mkLaDisposalCost(175),
+                    [wd] = mkLaDisposalCost(150),
+                    [ot] = mkLaDisposalCost(400)
                 }
             };
 
@@ -152,16 +150,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
         {
             var laDisposalCostData = new CalcResultLaDisposalCostData
             {
-                CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>
+                ByMaterial = new Dictionary<MaterialDetail, CalcResultLaDisposalCostDataDetail>
                 {
-                    mkLaDisposalCost(al, 0.1508m),
-                    mkLaDisposalCost(fc, 0.0045m),
-                    mkLaDisposalCost(gl, 0.4961m),
-                    mkLaDisposalCost(pc, 0.5788m),
-                    mkLaDisposalCost(pl, 0.0057m),
-                    mkLaDisposalCost(st, 0.2118m),
-                    mkLaDisposalCost(wd, 0.1134m),
-                    mkLaDisposalCost(ot, 0.0039m)
+                    [al] = mkLaDisposalCost(0.1508m),
+                    [fc] = mkLaDisposalCost(0.0045m),
+                    [gl] = mkLaDisposalCost(0.4961m),
+                    [pc] = mkLaDisposalCost(0.5788m),
+                    [pl] = mkLaDisposalCost(0.0057m),
+                    [st] = mkLaDisposalCost(0.2118m),
+                    [wd] = mkLaDisposalCost(0.1134m),
+                    [ot] = mkLaDisposalCost(0.0039m)
                 }
             };
 
@@ -215,16 +213,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
         {
             var laDisposalCostData = new CalcResultLaDisposalCostData
             {
-                CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>
+                ByMaterial = new Dictionary<MaterialDetail, CalcResultLaDisposalCostDataDetail>
                 {
-                    mkLaDisposalCost(al, 100),
-                    mkLaDisposalCost(fc, 130),
-                    mkLaDisposalCost(gl, 150),
-                    mkLaDisposalCost(pc, 200),
-                    mkLaDisposalCost(pl, 250),
-                    mkLaDisposalCost(st, 175),
-                    mkLaDisposalCost(wd, 150),
-                    mkLaDisposalCost(ot, 400)
+                    [al] = mkLaDisposalCost(100),
+                    [fc] = mkLaDisposalCost(130),
+                    [gl] = mkLaDisposalCost(150),
+                    [pc] = mkLaDisposalCost(200),
+                    [pl] = mkLaDisposalCost(250),
+                    [st] = mkLaDisposalCost(175),
+                    [wd] = mkLaDisposalCost(150),
+                    [ot] = mkLaDisposalCost(400)
                 }
             };
             var smcw = new SelfManagedConsumerWaste
@@ -251,7 +249,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
             Assert.AreEqual(1m, modulationResults.GreenFactor);
             foreach (var material in materials)
             {
-                var cost = laDisposalCostData.CalcResultLaDisposalCostDetails.First(d => d.Name == material.Name).DisposalCostPricePerTonne;
+                var cost = laDisposalCostData.ByMaterial[material].DisposalCostPricePerTonne;
 
                 var mm = modulationResults.MaterialModulation[material];
                 Assert.AreEqual(cost, mm.AmberMaterialDisposalCost);
@@ -265,16 +263,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
         {
             var laDisposalCostData = new CalcResultLaDisposalCostData
             {
-                CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>
+                ByMaterial = new Dictionary<MaterialDetail, CalcResultLaDisposalCostDataDetail>
                 {
-                    mkLaDisposalCost(al, 100),
-                    mkLaDisposalCost(fc, 130),
-                    mkLaDisposalCost(gl, 150),
-                    mkLaDisposalCost(pc, 200),
-                    mkLaDisposalCost(pl, 250),
-                    mkLaDisposalCost(st, 175),
-                    mkLaDisposalCost(wd, 150),
-                    mkLaDisposalCost(ot, 400)
+                    [al] = mkLaDisposalCost(100),
+                    [fc] = mkLaDisposalCost(130),
+                    [gl] = mkLaDisposalCost(150),
+                    [pc] = mkLaDisposalCost(200),
+                    [pl] = mkLaDisposalCost(250),
+                    [st] = mkLaDisposalCost(175),
+                    [wd] = mkLaDisposalCost(150),
+                    [ot] = mkLaDisposalCost(400)
                 }
             };
             var smcw = new SelfManagedConsumerWaste
@@ -309,7 +307,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
             Assert.AreEqual(1.0m, modulationResults.GreenFactor);
             foreach (var material in materials)
             {
-                var cost = laDisposalCostData.CalcResultLaDisposalCostDetails.First(d => d.Name == material.Name).DisposalCostPricePerTonne;
+                var cost = laDisposalCostData.ByMaterial[material].DisposalCostPricePerTonne;
 
                 var mm = modulationResults.MaterialModulation[material];
                 Assert.AreEqual(cost, mm.AmberMaterialDisposalCost);

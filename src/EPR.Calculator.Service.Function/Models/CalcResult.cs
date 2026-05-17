@@ -10,7 +10,8 @@ namespace EPR.Calculator.Service.Function.Models
 
         public required CalcResultLapcapData CalcResultLapcapData { get; set; } = new()
         {
-            CalcResultLapcapDataDetails = [],
+            ByMaterial           = [],
+            Total                = new ByCountryValue(),
             CountryApportionment = new CountryApportionmentData()
         };
 
@@ -50,7 +51,7 @@ namespace EPR.Calculator.Service.Function.Models
         public CalcResultLaDisposalCostData CalcResultLaDisposalCostData { get; set; }
             = new()
             {
-                CalcResultLaDisposalCostDetails = []
+                ByMaterial = []
             };
 
         public required CalcResultPartialObligations CalcResultPartialObligations { get; set; }

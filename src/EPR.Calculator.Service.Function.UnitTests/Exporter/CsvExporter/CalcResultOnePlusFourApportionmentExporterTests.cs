@@ -16,12 +16,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             {
                 LaDisposalCost = new()
                 {
-                    Name = "",
-                    EnglandCost         = 109800,
-                    WalesCost           = 24750,
-                    ScotlandCost        = 49300,
-                    NorthernIrelandCost = 19300,
-                    TotalCost           = 203150
+                    England         = 109800,
+                    Wales           = 24750,
+                    Scotland        = 49300,
+                    NorthernIreland = 19300,
+                    Total           = 203150
                 },
                 LADataPrepCharge = new()
                 {

@@ -3,6 +3,8 @@ using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Converter;
 using EPR.Calculator.Service.Function.Utils;
 using System.Globalization;
+using EPR.Calculator.Service.Function.Models.JsonExporter;
+using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
@@ -17,25 +19,19 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("calcResultLaDisposalCostDataDetailsTotal")]
         public required CalcResultLaDisposalCostDataDetailsTotal CalcResultLaDisposalCostDataDetailsTotal { get; set; }
 
-        public static CalcResultLaDisposalCostDataJson From(IEnumerable<CalcResultLaDisposalCostDataDetail> laDisposalCostDataDetail)
+        public static CalcResultLaDisposalCostDataJson From(
+            Dictionary<MaterialDetail, CalcResultLaDisposalCostDataDetail> detailsByMaterial,
+            CalcResultLaDisposalCostDataDetail total
+        )
         {
-            IEnumerable<CalcResultLaDisposalCostDetails> GetMaterialBreakdown(IEnumerable<CalcResultLaDisposalCostDataDetail> laDisposalCostDataDetail)
-            {
-                var commsByMaterialDataDetails = new List<CalcResultLaDisposalCostDetails>();
-
-                foreach (var item in laDisposalCostDataDetail.Where(t => t.Name != CommonConstants.Total && t.Name != "Material"))
-                {
-                    commsByMaterialDataDetails.Add(JsonExporter.CalcResultLaDisposalCostDetails.From(item));
-                }
-
-                return commsByMaterialDataDetails;
-            }
-
             return new CalcResultLaDisposalCostDataJson
             {
                 Name = CommonConstants.LADisposalCostData,
-                CalcResultLaDisposalCostDetails = GetMaterialBreakdown(laDisposalCostDataDetail),
-                CalcResultLaDisposalCostDataDetailsTotal = CalcResultLaDisposalCostDataDetailsTotal.From(laDisposalCostDataDetail),
+                CalcResultLaDisposalCostDetails =
+                    detailsByMaterial.Select(item =>
+                        JsonExporter.CalcResultLaDisposalCostDetails.From(item.Key, item.Value)
+                    ).ToList(),
+                CalcResultLaDisposalCostDataDetailsTotal = CalcResultLaDisposalCostDataDetailsTotal.From(total)
             };
         }
     }
@@ -63,11 +59,11 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("disposalCostPricePerTonne")]
         public required string? DisposalCostPricePerTonne { get; init; }
 
-        public static CalcResultLaDisposalCostDetails From(CalcResultLaDisposalCostDataDetail item)
+        public static CalcResultLaDisposalCostDetails From(MaterialDetail material, CalcResultLaDisposalCostDataDetail item)
         {
             return new CalcResultLaDisposalCostDetails
             {
-                MaterialName                           = item.Name,
+                MaterialName                           = material.Name,
                 EnglandLaDisposalCost                  = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(item.England        , 2, ","),
                 WalesLaDisposalCost                    = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(item.Wales          , 2, ","),
                 ScotlandLaDisposalCost                 = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(item.Scotland       , 2, ","),
@@ -123,10 +119,9 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonConverter(typeof(DecimalPrecision3Converter))]
         public required decimal? TotalTonnageTotal { get; init; }
 
-        public static CalcResultLaDisposalCostDataDetailsTotal From(IEnumerable<CalcResultLaDisposalCostDataDetail> laDisposalCostDataDetail)
+        public static CalcResultLaDisposalCostDataDetailsTotal From(CalcResultLaDisposalCostDataDetail total)
         {
-            var laDisposalCostDetailTotal = laDisposalCostDataDetail.SingleOrDefault(t => t.Name == CommonConstants.Total);
-            if (laDisposalCostDetailTotal == null)
+            if (total == null)
             {
                 return new CalcResultLaDisposalCostDataDetailsTotal
                 {
@@ -145,17 +140,17 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
             }
             return new CalcResultLaDisposalCostDataDetailsTotal
             {
-                Total                                       = laDisposalCostDetailTotal.Name,
-                EnglandLaDisposalCostTotal                  = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(laDisposalCostDetailTotal.England        , 2, ","),
-                WalesLaDisposalCostTotal                    = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(laDisposalCostDetailTotal.Wales          , 2, ","),
-                ScotlandLaDisposalCostTotal                 = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(laDisposalCostDetailTotal.Scotland       , 2, ","),
-                NorthernIrelandLaDisposalCostTotal          = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(laDisposalCostDetailTotal.NorthernIreland, 2, ","),
-                TotalLaDisposalCostTotal                    = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(laDisposalCostDetailTotal.Total          , 2, ","),
-                ProducerHouseholdPackagingWasteTonnageTotal = laDisposalCostDetailTotal.ProducerReportedHouseholdPackagingWasteTonnage,
-                PublicBinTonnage                            = laDisposalCostDetailTotal.ReportedPublicBinTonnage,
-                HouseholdDrinksContainersTonnageTotal       = laDisposalCostDetailTotal.HouseholdDrinkContainers ?? 0m,
-                LateReportingTonnageTotal                   = laDisposalCostDetailTotal.LateReportingTonnage ?? 0m,
-                TotalTonnageTotal                           = laDisposalCostDetailTotal.ProducerReportedTotalTonnage != null ? laDisposalCostDetailTotal.ProducerReportedTotalTonnage : 0m
+                Total                                       = "Total",
+                EnglandLaDisposalCostTotal                  = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(total.England        , 2, ","),
+                WalesLaDisposalCostTotal                    = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(total.Wales          , 2, ","),
+                ScotlandLaDisposalCostTotal                 = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(total.Scotland       , 2, ","),
+                NorthernIrelandLaDisposalCostTotal          = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(total.NorthernIreland, 2, ","),
+                TotalLaDisposalCostTotal                    = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(total.Total          , 2, ","),
+                ProducerHouseholdPackagingWasteTonnageTotal = total.ProducerReportedHouseholdPackagingWasteTonnage,
+                PublicBinTonnage                            = total.ReportedPublicBinTonnage,
+                HouseholdDrinksContainersTonnageTotal       = total.HouseholdDrinkContainers ?? 0m,
+                LateReportingTonnageTotal                   = total.LateReportingTonnage ?? 0m,
+                TotalTonnageTotal                           = total.ProducerReportedTotalTonnage != null ? total.ProducerReportedTotalTonnage : 0m
             };
 
         }

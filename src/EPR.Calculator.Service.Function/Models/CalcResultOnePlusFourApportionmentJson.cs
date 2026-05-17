@@ -24,11 +24,11 @@ namespace EPR.Calculator.Service.Function.Models
             {
                 OneFeeForLADisposalCosts = new CalcResultOnePlusFourApportionmentDetailJson
                 {
-                    England         = CurrencyConverterUtils.ConvertToCurrency(calcResultOnePlusFourApportionment.LaDisposalCost.EnglandCost),
-                    Wales           = CurrencyConverterUtils.ConvertToCurrency(calcResultOnePlusFourApportionment.LaDisposalCost.WalesCost),
-                    Scotland        = CurrencyConverterUtils.ConvertToCurrency(calcResultOnePlusFourApportionment.LaDisposalCost.ScotlandCost),
-                    NorthernIreland = CurrencyConverterUtils.ConvertToCurrency(calcResultOnePlusFourApportionment.LaDisposalCost.NorthernIrelandCost),
-                    Total           = CurrencyConverterUtils.ConvertToCurrency(calcResultOnePlusFourApportionment.LaDisposalCost.TotalCost)
+                    England         = CurrencyConverterUtils.ConvertToCurrency(calcResultOnePlusFourApportionment.LaDisposalCost.England),
+                    Wales           = CurrencyConverterUtils.ConvertToCurrency(calcResultOnePlusFourApportionment.LaDisposalCost.Wales),
+                    Scotland        = CurrencyConverterUtils.ConvertToCurrency(calcResultOnePlusFourApportionment.LaDisposalCost.Scotland),
+                    NorthernIreland = CurrencyConverterUtils.ConvertToCurrency(calcResultOnePlusFourApportionment.LaDisposalCost.NorthernIreland),
+                    Total           = CurrencyConverterUtils.ConvertToCurrency(calcResultOnePlusFourApportionment.LaDisposalCost.Total)
                 },
 
                 FourLADataPrepCharge = new CalcResultOnePlusFourApportionmentDetailJson
