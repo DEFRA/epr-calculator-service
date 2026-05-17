@@ -41,11 +41,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 },
                 OnePlusFourApportionment = new()
                 {
-                    EnglandTotal         = 0.5249321928m,
-                    WalesTotal           = 0.1324848738m,
-                    ScotlandTotal        = 0.2432714375m,
-                    NorthernIrelandTotal = 0.0993114959m,
-                    Total                = 1
+                    England         = 52.49321928m,
+                    Wales           = 13.24848738m,
+                    Scotland        = 24.32714375m,
+                    NorthernIreland = 9.93114959m
                 }
             };
         }

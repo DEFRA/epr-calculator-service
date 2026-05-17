@@ -156,11 +156,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                     },
                     OnePlusFourApportionment = new()
                     {
-                        EnglandTotal         = 0.10M,
-                        WalesTotal           = 020M,
-                        ScotlandTotal        = 0.15M,
-                        NorthernIrelandTotal = 0.15M,
-                        Total                = 0.1M
+                        England         = 40,
+                        Wales           = 20M,
+                        Scotland        = 25M,
+                        NorthernIreland = 15M
                     }
                 },
                 CalcResultCommsCostReportDetail = new CalcResultCommsCost

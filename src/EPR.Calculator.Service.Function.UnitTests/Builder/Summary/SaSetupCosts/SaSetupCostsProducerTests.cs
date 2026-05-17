@@ -204,11 +204,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                     },
                     OnePlusFourApportionment = new()
                     {
-                        EnglandTotal         = 14M,
-                        WalesTotal           = 20M,
-                        ScotlandTotal        = 1M,
-                        NorthernIrelandTotal = 0.15M,
-                        Total                = 0.1M
+                        England         = 40,
+                        Wales           = 30,
+                        Scotland        = 15,
+                        NorthernIreland = 15
                     }
                 },
                 CalcResultParameterCommunicationCost = Fixture.Create<CalcResultParameterCommunicationCost>(),
@@ -358,7 +357,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
             var result = SaSetupCostsProducer.GetCountryTotalWithBadDebtProvision(_calcResult, _calcResult.CalcResultSummary.SaSetupCostsTitleSection5, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.England);
 
             // Assert
-            Assert.AreEqual(0.15m, Math.Round(result, 2));
+            Assert.AreEqual(0.42m, Math.Round(result, 2));
         }
 
         [TestMethod]
@@ -370,7 +369,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
             var result = SaSetupCostsProducer.GetCountryTotalWithBadDebtProvision(_calcResult, _calcResult.CalcResultSummary.SaSetupCostsTitleSection5, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.Scotland);
 
             // Assert
-            Assert.AreEqual(0.01m, Math.Round(result, 2));
+            Assert.AreEqual(0.16m, Math.Round(result, 2));
         }
 
         [TestMethod]
@@ -382,7 +381,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
             var result = SaSetupCostsProducer.GetCountryTotalWithBadDebtProvision(_calcResult, _calcResult.CalcResultSummary.SaSetupCostsTitleSection5, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.Wales);
 
             // Assert
-            Assert.AreEqual(0.21m, Math.Round(result, 2));
+            Assert.AreEqual(0.32m, Math.Round(result, 2));
         }
 
         private void CreateMaterials()

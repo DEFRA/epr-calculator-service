@@ -346,7 +346,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var result = CalcResultSummaryUtil.GetCountryOnePlusFourApportionment(calcResult, Countries.England);
 
             // Assert
-            Assert.AreEqual(0.80m, result);
+            Assert.AreEqual(40m, result);
         }
 
         [TestMethod]
@@ -356,7 +356,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var result = CalcResultSummaryUtil.GetCountryOnePlusFourApportionment(calcResult, Countries.Wales);
 
             // Assert
-            Assert.AreEqual(0.20m, result);
+            Assert.AreEqual(10m, result);
         }
 
         [TestMethod]
@@ -366,7 +366,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var result = CalcResultSummaryUtil.GetCountryOnePlusFourApportionment(calcResult, Countries.Scotland);
 
             // Assert
-            Assert.AreEqual(0.30m, result);
+            Assert.AreEqual(15m, result);
         }
 
         [TestMethod]
@@ -376,7 +376,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var result = CalcResultSummaryUtil.GetCountryOnePlusFourApportionment(calcResult, Countries.NorthernIreland);
 
             // Assert
-            Assert.AreEqual(0.70m, result);
+            Assert.AreEqual(35m, result);
         }
 
         [TestMethod]

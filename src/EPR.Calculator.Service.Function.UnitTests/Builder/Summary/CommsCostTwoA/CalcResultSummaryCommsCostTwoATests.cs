@@ -85,7 +85,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal totalCost = CalcResultSummaryCommsCostTwoA.GetEnglandWithBadDebtProvisionForCommsTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material, calcResult);
 
             // Assert
-            Assert.AreEqual(1139.71200m, totalCost);
+            Assert.AreEqual(569.856m, totalCost);
         }
 
         [TestMethod]
@@ -95,7 +95,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal totalCost = CalcResultSummaryCommsCostTwoA.GetWalesWithBadDebtProvisionForCommsTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material, calcResult);
 
             // Assert
-            Assert.AreEqual(284.92800m, totalCost);
+            Assert.AreEqual(142.464m, totalCost);
         }
 
         [TestMethod]
@@ -105,7 +105,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal totalCost = CalcResultSummaryCommsCostTwoA.GetScotlandWithBadDebtProvisionForCommsTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material, calcResult);
 
             // Assert
-            Assert.AreEqual(427.39200m, totalCost);
+            Assert.AreEqual(213.696m, totalCost);
         }
 
         [TestMethod]
@@ -115,7 +115,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal totalCost = CalcResultSummaryCommsCostTwoA.GetNorthernIrelandWithBadDebtProvisionForCommsTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material, calcResult);
 
             // Assert
-            Assert.AreEqual(997.24800m, totalCost);
+            Assert.AreEqual(498.624m, totalCost);
         }
 
         [TestMethod]
@@ -145,7 +145,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal totalCost = CalcResultSummaryCommsCostTwoA.GetEnglandWithBadDebtProvisionForComms(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers[0], material, calcResult);
 
             // Assert
-            Assert.AreEqual(427.392m, totalCost);
+            Assert.AreEqual(213.696m, totalCost);
         }
 
         [TestMethod]
@@ -155,7 +155,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal totalCost = CalcResultSummaryCommsCostTwoA.GetWalesWithBadDebtProvisionForComms(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers[0], material, calcResult);
 
             // Assert
-            Assert.AreEqual(106.848m, totalCost);
+            Assert.AreEqual(53.424m, totalCost);
         }
 
         [TestMethod]
@@ -165,7 +165,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal totalCost = CalcResultSummaryCommsCostTwoA.GetScotlandWithBadDebtProvisionForComms(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers[0], material, calcResult);
 
             // Assert
-            Assert.AreEqual(160.272m, totalCost);
+            Assert.AreEqual(80.136m, totalCost);
         }
 
         [TestMethod]
@@ -175,7 +175,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             decimal totalCost = CalcResultSummaryCommsCostTwoA.GetNorthernIrelandWithBadDebtProvisionForComms(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers[0], material, calcResult);
 
             // Assert
-            Assert.AreEqual(373.96800m, totalCost);
+            Assert.AreEqual(186.984m, totalCost);
         }
 
         [TestMethod]
