@@ -36,7 +36,8 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost
                 csvContent.Append(CsvSanitiser.SanitiseData(d.ReportedPublicBinTonnage));
                 csvContent.Append(CsvSanitiser.SanitiseData(d.HouseholdDrinkContainers, DecimalPlaces.Three, null));
                 csvContent.Append(CsvSanitiser.SanitiseData(d.LateReportingTonnage));
-                if (d.ActionedSelfManagedConsumerWasteTonnage != null) {
+                if (applyModulation)
+                {
                     csvContent.Append(CsvSanitiser.SanitiseData(d.ActionedSelfManagedConsumerWasteTonnage, DecimalPlaces.Three, null));
                 }
                 csvContent.Append(CsvSanitiser.SanitiseData(d.ProducerReportedTotalTonnage, DecimalPlaces.Three, null));
@@ -57,8 +58,15 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.ReportedPublicBinTonnage));
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.HouseholdDrinkContainers));
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.LateReportingTonnage));
-            csvContent.Append(CsvSanitiser.SanitiseData(applyModulation ? CommonConstants.ActionedSelfManagedConsumerWasteTonnage : String.Empty));
-            csvContent.Append(CsvSanitiser.SanitiseData(applyModulation ? CommonConstants.ModulatedProducerReportedTotalTonnage : CommonConstants.ProducerReportedTotalTonnage));
+            if (applyModulation)
+            {
+                csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.ActionedSelfManagedConsumerWasteTonnage));
+                csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.ModulatedProducerReportedTotalTonnage));
+            }
+            else
+            {
+                csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.ProducerReportedTotalTonnage));
+            }
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.DisposalCostPricePerTonne));
             csvContent.AppendLine();
         }

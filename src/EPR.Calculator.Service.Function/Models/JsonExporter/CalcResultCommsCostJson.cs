@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using EPR.Calculator.Service.Function.Builder.CommsCost;
 using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
@@ -13,6 +14,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         {
             var onePlusFourApportionment = calcResultCommsCost.CalcResultCommsCostOnePlusFourApportionment;
 
+            // TODO there's a test for this, but it should be prevented
             if (onePlusFourApportionment == null)
             {
                 return new CalcResultCommsCostJson {
@@ -20,8 +22,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                 };
             }
 
-            return new CalcResultCommsCostJson
-            {
+            return new CalcResultCommsCostJson {
                 OnePlusFourCommsCostApportionmentPercentages = OnePlusFourCommsCostApportionmentPercentages.From(onePlusFourApportionment)
             };
         }

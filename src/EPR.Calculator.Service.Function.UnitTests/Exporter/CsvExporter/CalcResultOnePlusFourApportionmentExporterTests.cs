@@ -60,11 +60,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             _testClass.Export(calcResult1Plus4Apportionment, csvContent);
 
             // Assert
-            //var result = csvContent.ToString();
-            //var rows = result.Split(Environment.NewLine);
-            //Assert.AreEqual(7, rows.Length);
-            //Assert.AreEqual("Apportionment", rows[2]);
-
             var result = csvContent.ToString().Split("\n").Select(s => s.TrimEnd(',')).ToArray();
             Console.WriteLine(string.Join("\n", result));
 
