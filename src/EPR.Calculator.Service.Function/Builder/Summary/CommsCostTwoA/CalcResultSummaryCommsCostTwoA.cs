@@ -80,7 +80,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
         )
         {
             var producerTotalCostwithBadDebtProvision = GetProducerTotalCostwithBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
-            return producerTotalCostwithBadDebtProvision * calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment.EnglandTotal;
+            return producerTotalCostwithBadDebtProvision * calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment.England / 100;
         }
 
         public static decimal GetWalesWithBadDebtProvisionForComms(
@@ -91,7 +91,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
         )
         {
             var producerTotalCostwithBadDebtProvision = GetProducerTotalCostwithBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
-            return producerTotalCostwithBadDebtProvision * calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment.WalesTotal;
+            return producerTotalCostwithBadDebtProvision * calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment.Wales / 100;
         }
 
         public static decimal GetScotlandWithBadDebtProvisionForComms(
@@ -102,7 +102,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
         )
         {
             var producerTotalCostwithBadDebtProvision = GetProducerTotalCostwithBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
-            return producerTotalCostwithBadDebtProvision * calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment.ScotlandTotal;
+            return producerTotalCostwithBadDebtProvision * calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment.Scotland / 100;
         }
 
         public static decimal GetNorthernIrelandWithBadDebtProvisionForComms(
@@ -113,19 +113,14 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
         )
         {
             var producerTotalCostwithBadDebtProvision = GetProducerTotalCostwithBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
-            return producerTotalCostwithBadDebtProvision * calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment.NorthernIrelandTotal;
+            return producerTotalCostwithBadDebtProvision * calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment.NorthernIreland / 100;
         }
 
         public static decimal GetPriceperTonneForComms(MaterialDetail material, CalcResult calcResult)
         {
             var commsCostDataDetail = calcResult.CalcResultCommsCostReportDetail.CalcResultCommsCostCommsCostByMaterial.FirstOrDefault(la => la.Name == material.Name);
 
-            if (commsCostDataDetail == null)
-            {
-                return 0;
-            }
-
-            return commsCostDataDetail.CommsCostByMaterialPricePerTonne ?? 0m;
+            return commsCostDataDetail?.CommsCostByMaterialPricePerTonne ?? 0m;
         }
 
         public static decimal GetProducerTotalCostwithBadDebtProvision(

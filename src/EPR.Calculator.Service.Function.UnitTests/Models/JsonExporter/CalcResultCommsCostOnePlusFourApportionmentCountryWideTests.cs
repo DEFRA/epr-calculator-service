@@ -21,7 +21,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public void CalcResultCommsCostOnePlusFourApportionmentCountryWideTests_CanCallFrom_WithValidData()
         {
             // Arrange
-            var countryData = new CalcResultCommsCostOnePlusFourApportionment() // TODO since this is a cost, need it's own moel (or rename)
+            var countryData = new CalcResultCommsCostOnePlusFourApportionment() // TODO since this is a cost, need it's own model (or rename)
             {
                 Name            = CalcResultCommsCostBuilder.TwoCCommsCostByCountry,
                 England         = 1.23m,
