@@ -57,12 +57,12 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
             var costTypeId = costType.Id;
 
             var data = materialDetails.Select(material =>
-                (material, new ByCountryValue
+                (material.Code, new ByCountryValue
                 {
-                    England         = GetMaterialDisposalCostPerCountry(CountryConstants.England, material, results),
-                    NorthernIreland = GetMaterialDisposalCostPerCountry(CountryConstants.NI, material, results),
+                    England         = GetMaterialDisposalCostPerCountry(CountryConstants.England , material, results),
+                    Wales           = GetMaterialDisposalCostPerCountry(CountryConstants.Wales   , material, results),
                     Scotland        = GetMaterialDisposalCostPerCountry(CountryConstants.Scotland, material, results),
-                    Wales           = GetMaterialDisposalCostPerCountry(CountryConstants.Wales, material, results),
+                    NorthernIreland = GetMaterialDisposalCostPerCountry(CountryConstants.NI      , material, results),
                     Total           = GetTotalMaterialDisposalCost(material, results),
                 })
             ).ToDictionary();

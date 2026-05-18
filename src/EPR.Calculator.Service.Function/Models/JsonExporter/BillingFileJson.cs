@@ -48,7 +48,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         {
             return new BillingFileJson {
                 CalcResultDetail                   = CalcResultDetailJson.From(results.CalcResultDetail),
-                CalcResultLapcapData               = CalcResultLapcapDataJson.From(results.CalcResultLapcapData),
+                CalcResultLapcapData               = CalcResultLapcapDataJson.From(results.CalcResultLapcapData, materials),
                 CalcResultLateReportingTonnageData = CalcResultLateReportingTonnageJson.From(results.CalcResultLateReportingTonnageData),
                 ParametersOther                    = CalcResultParametersOtherJson.From(results.CalcResultParameterOtherCost),
                 OnePlusFourApportionment           = CalcResultOnePlusFourApportionmentJson.From(results.CalcResultOnePlusFourApportionment),
@@ -56,7 +56,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                 CalcResult2aCommsDataByMaterial    = CalcResult2ACommsDataByMaterial.From(results.CalcResultCommsCostReportDetail.CalcResultCommsCostCommsCostByMaterial),
                 CalcResult2bCommsDataByUkWide      = CalcResultCommsCostOnePlusFourApportionmentUKWide.From(results.CalcResultCommsCostReportDetail.CommsCostUkWide),
                 CalcResult2cCommsDataByCountry     = CalcResultCommsCostOnePlusFourApportionmentCountryWide.From(results.CalcResultCommsCostReportDetail.CommsCostByCountry),
-                CalcResultLaDisposalCostData       = CalcResultLaDisposalCostDataJson.From(results.CalcResultLaDisposalCostData.ByMaterial, results.CalcResultLaDisposalCostData.Total),
+                CalcResultLaDisposalCostData       = CalcResultLaDisposalCostDataJson.From(results.CalcResultLaDisposalCostData.ByMaterial, results.CalcResultLaDisposalCostData.Total, materials),
                 CancelledProducers                 = CancelledProducers.From(results.CalcResultCancelledProducers),
                 ScaleUpProducers                   = CalcResultScaledupProducersJson.From(results.CalcResultScaledupProducers, acceptedProducerIds, materials),
                 CalculationResults                 = CalculationResultsJson.From(results.CalcResultSummary, acceptedProducerIds, materials)

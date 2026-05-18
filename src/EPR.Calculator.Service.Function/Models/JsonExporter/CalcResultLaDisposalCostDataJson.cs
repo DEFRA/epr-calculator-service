@@ -5,6 +5,7 @@ using EPR.Calculator.Service.Function.Utils;
 using System.Globalization;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
@@ -14,14 +15,15 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         public required string Name { get; set; }
 
         [JsonPropertyName("calcResultLaDisposalCostDetails")]
-        public required IEnumerable<CalcResultLaDisposalCostDetails> CalcResultLaDisposalCostDetails { get; set; }
+        public required IEnumerable<CalcResultLaDisposalCostDetailsJson> CalcResultLaDisposalCostDetails { get; set; }
 
         [JsonPropertyName("calcResultLaDisposalCostDataDetailsTotal")]
         public required CalcResultLaDisposalCostDataDetailsTotal CalcResultLaDisposalCostDataDetailsTotal { get; set; }
 
         public static CalcResultLaDisposalCostDataJson From(
-            Dictionary<MaterialDetail, CalcResultLaDisposalCostDataDetail> detailsByMaterial,
-            CalcResultLaDisposalCostDataDetail total
+            Dictionary<string, CalcResultLaDisposalCostDataDetail> detailsByMaterial,
+            CalcResultLaDisposalCostDataDetail total,
+            IImmutableList<MaterialDetail> materials
         )
         {
             return new CalcResultLaDisposalCostDataJson
@@ -29,14 +31,17 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                 Name = CommonConstants.LADisposalCostData,
                 CalcResultLaDisposalCostDetails =
                     detailsByMaterial.Select(item =>
-                        JsonExporter.CalcResultLaDisposalCostDetails.From(item.Key, item.Value)
-                    ).ToList(),
+                    {
+                        Console.WriteLine($"Looking for {item.Key}");
+                        var material = materials.First(m => m.Code == item.Key);
+                        return CalcResultLaDisposalCostDetailsJson.From(material, item.Value);
+                    }).ToList(),
                 CalcResultLaDisposalCostDataDetailsTotal = CalcResultLaDisposalCostDataDetailsTotal.From(total)
             };
         }
     }
 
-    public class CalcResultLaDisposalCostDetails : BaseLaDisposalcostAnd2ACommsData
+    public class CalcResultLaDisposalCostDetailsJson : BaseLaDisposalcostAnd2ACommsData
     {
         [JsonPropertyName("materialName")]
         public required string MaterialName { get; init; }
@@ -59,9 +64,9 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("disposalCostPricePerTonne")]
         public required string? DisposalCostPricePerTonne { get; init; }
 
-        public static CalcResultLaDisposalCostDetails From(MaterialDetail material, CalcResultLaDisposalCostDataDetail item)
+        public static CalcResultLaDisposalCostDetailsJson From(MaterialDetail material, CalcResultLaDisposalCostDataDetail item)
         {
-            return new CalcResultLaDisposalCostDetails
+            return new CalcResultLaDisposalCostDetailsJson
             {
                 MaterialName                           = material.Name,
                 EnglandLaDisposalCost                  = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(item.England        , 2, ","),

@@ -4,17 +4,27 @@ using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Constants;
 using Microsoft.IdentityModel.Tokens;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost
 {
     public interface ICalcResultLaDisposalCostExporter
     {
-        void Export(bool applyModulation, CalcResultLaDisposalCostData calcResultLaDisposalCostData, StringBuilder csvContent);
+        void Export(
+            bool applyModulation,
+            IImmutableList<MaterialDetail> materialDetails,
+            CalcResultLaDisposalCostData calcResultLaDisposalCostData,
+            StringBuilder csvContent
+        );
     }
 
     public class CalcResultLaDisposalCostExporter : ICalcResultLaDisposalCostExporter
     {
-        public void Export(bool applyModulation, CalcResultLaDisposalCostData calcResultLaDisposalCostData, StringBuilder csvContent)
+        public void Export(bool applyModulation,
+            IImmutableList<MaterialDetail> materialDetails,
+            CalcResultLaDisposalCostData calcResultLaDisposalCostData,
+            StringBuilder csvContent
+        )
         {
             csvContent.AppendLine();
             csvContent.AppendLine();
@@ -22,9 +32,10 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost
             csvContent.AppendLine(CsvSanitiser.SanitiseData("LA Disposal Cost Data"));
 
             AppendHeader(applyModulation, csvContent);
-            foreach (var d in calcResultLaDisposalCostData.ByMaterial)
+            foreach (var disposalCostData in calcResultLaDisposalCostData.ByMaterial)
             {
-                AppendRow(applyModulation, d.Key.Name, d.Value, csvContent);
+                var material = materialDetails.First(m => m.Code == disposalCostData.Key);
+                AppendRow(applyModulation, material.Name, disposalCostData.Value, csvContent);
             }
             AppendRow(applyModulation, "Total", calcResultLaDisposalCostData.Total, csvContent);
         }

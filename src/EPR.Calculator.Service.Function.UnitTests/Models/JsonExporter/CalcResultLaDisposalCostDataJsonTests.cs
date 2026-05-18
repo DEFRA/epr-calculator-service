@@ -12,7 +12,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public void From_ConvertsLaDisposalDetailsAndTotal()
         {
             var la = TestDataHelper.GetCalcResultLaDisposalCostData();
-            var result = CalcResultLaDisposalCostDataJson.From(la.ByMaterial, la.Total);
+            var materials = TestDataHelper.GetMaterials();
+            var result = CalcResultLaDisposalCostDataJson.From(la.ByMaterial, la.Total, materials);
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.CalcResultLaDisposalCostDetails.Any());

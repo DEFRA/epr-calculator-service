@@ -3,6 +3,7 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
+using EPR.Calculator.Service.Function.UnitTests.Builder;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.LaDisposalCost
 {
@@ -25,7 +26,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.LaDispo
             var csvContent = new StringBuilder();
 
             // Act
-            exporter.Export(applyModulation: false, calcResultLaDisposalCostData, csvContent);
+            exporter.Export(applyModulation: false, TestDataHelper.GetMaterials(), calcResultLaDisposalCostData, csvContent);
 
             // Assert
             var result = csvContent.ToString().Split("\n").Select(s => s.TrimEnd(',')).ToArray();
@@ -48,16 +49,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.LaDispo
                         "Producer Household Tonnage + Late Reporting Tonnage + Public Bin Tonnage + Household Drinks Containers Tonnage",
                         "Disposal Cost Price Per Tonne"
                 },
-                new[] { "Material1","0","0","0","0",  "0","0","0","100.123",null,"200.123","20" },
-                new[] { "Material2","0","0","0","0","100","0","0",      "0",null,      "0","10" },
-                new[] { "Total"    ,"0","0","0","0","100","0","0","100.123",null,      "0","10" },
+                new[] { "Aluminium"      ,"0","0","0","0",  "0","0","0","100.123",null,"200.123","20" },
+                new[] { "Fibre composite","0","0","0","0","100","0","0",      "0",null,      "0","10" },
+                new[] { "Total"          ,"0","0","0","0","100","0","0","100.123",null,      "0","10" },
                 new string[] { }
             };
 
             CsvTestUtils.AssertCsv(expected, result);
         }
 
-                [TestMethod]
+        [TestMethod]
         public void Export_ShouldIncludeLaDisposalCostData_Modulation()
         {
             // Arrange
@@ -66,7 +67,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.LaDispo
             var csvContent = new StringBuilder();
 
             // Act
-            exporter.Export(applyModulation: true, calcResultLaDisposalCostData, csvContent);
+            exporter.Export(applyModulation: true, TestDataHelper.GetMaterials(), calcResultLaDisposalCostData, csvContent);
 
             // Assert
             var result = csvContent.ToString().Split("\n").Select(s => s.TrimEnd(',')).ToArray();
@@ -90,9 +91,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.LaDispo
                         "Net Tonnage + Late Reporting Tonnage",
                         "Disposal Cost Price Per Tonne"
                 },
-                new[] { "Material1","0","0","0","0",  "0","0","0","100.123",null,   "0","200.123","20" },
-                new[] { "Material2","0","0","0","0","100","0","0",      "0",null,"1.23",      "0","10" },
-                new[] { "Total"    ,"0","0","0","0","100","0","0","100.123",null,"1.23",      "0","10" },
+                new[] { "Aluminium"      ,"0","0","0","0",  "0","0","0","100.123",null,   "0","200.123","20" },
+                new[] { "Fibre composite","0","0","0","0","100","0","0",      "0",null,"1.23",      "0","10" },
+                new[] { "Total"          ,"0","0","0","0","100","0","0","100.123",null,"1.23",      "0","10" },
                 new string[] { }
             };
 
@@ -103,9 +104,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.LaDispo
         {
             return new CalcResultLaDisposalCostData
             {
-                ByMaterial = new Dictionary<MaterialDetail, CalcResultLaDisposalCostDataDetail>
+                ByMaterial = new Dictionary<string, CalcResultLaDisposalCostDataDetail>
                 {
-                    [new MaterialDetail { Name = "Material1", Code = "M1", Description = "Material1" }] = new CalcResultLaDisposalCostDataDetail
+                    ["AL"] = new CalcResultLaDisposalCostDataDetail
                     {
                         DisposalCostPricePerTonne = 20,
                         England = 0m,
@@ -118,7 +119,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.LaDispo
                         HouseholdDrinkContainers = 100.12345m,
                         ProducerReportedTotalTonnage = 200.12345m,
                     },
-                    [new MaterialDetail { Name = "Material2", Code = "M2", Description = "Material2" }] = new CalcResultLaDisposalCostDataDetail
+                    ["FC"] = new CalcResultLaDisposalCostDataDetail
                     {
                         DisposalCostPricePerTonne = 10,
                         England = 0m,

@@ -3,6 +3,7 @@ using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
 using EPR.Calculator.API.Data.DataModels;
 using System.Text.Json;
+using EPR.Calculator.Service.Function.UnitTests.Builder;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
 {
@@ -15,10 +16,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             // Arrange
             var data = new CalcResultLapcapData
             {
-                ByMaterial = new Dictionary<MaterialDetail, ByCountryValue>
+                ByMaterial = new Dictionary<string, ByCountryValue>
                 {
-                    [new MaterialDetail { Name = "Paper",    Code = "PP", Description = "Paper"    }] = new ByCountryValue { England = 50,  Wales = 60,  Scotland = 70,  NorthernIreland = 80,  Total = 260  },
-                    [new MaterialDetail { Name = "Plastics", Code = "PL", Description = "Plastics" }] = new ByCountryValue { England = 100, Wales = 200, Scotland = 300, NorthernIreland = 400, Total = 1000 }
+                    ["PC"] = new ByCountryValue { England = 50,  Wales = 60,  Scotland = 70,  NorthernIreland = 80,  Total = 260  },
+                    ["PL"] = new ByCountryValue { England = 100, Wales = 200, Scotland = 300, NorthernIreland = 400, Total = 1000 }
                 },
                 Total = new ByCountryValue { England = 1, Wales = 2, Scotland = 3, NorthernIreland = 4, Total = 10 },
                 CountryApportionment = new CountryApportionmentData
@@ -29,9 +30,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                     NorthernIreland = 0.14631m
                 }
             };
+            var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var result = CalcResultLapcapDataJson.From(data);
+            var result = CalcResultLapcapDataJson.From(data, materials);
 
 
             // Assert
@@ -39,22 +41,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             Assert.AreEqual("LAPCAP Data", result.Name);
             Assert.IsNotNull(result.CalcResultLapcapDataDetails);
             var details = result.CalcResultLapcapDataDetails.ToList();
-            Assert.IsTrue(details.Any(d => d.MaterialName == "Paper"));
-
-            Assert.IsNotNull(result.CalcResultLapcapDataTotal);
-            Assert.AreEqual("£1.00", result.CalcResultLapcapDataTotal!.TotalEnglandLaDisposalCost);
-            Assert.AreEqual("£2.00", result.CalcResultLapcapDataTotal.TotalWalesLaDisposalCost);
-            Assert.AreEqual("£3.00", result.CalcResultLapcapDataTotal.TotalScotlandLaDisposalCost);
-            Assert.AreEqual("£4.00", result.CalcResultLapcapDataTotal.TotalNorthernIrelandLaDisposalCost);
-            Assert.AreEqual("£10.00", result.CalcResultLapcapDataTotal.TotalLaDisposalCost);
-
-            Assert.IsNotNull(result.OneCountryApportionmentPercentages);
-            Assert.AreEqual("47.12300000%", result.OneCountryApportionmentPercentages!.EnglandApportionment);
-            Assert.AreEqual("13.12300000%", result.OneCountryApportionmentPercentages.WalesApportionment);
-            Assert.AreEqual("25.12300000%", result.OneCountryApportionmentPercentages.ScotlandApportionment);
-            Assert.AreEqual("14.63100000%", result.OneCountryApportionmentPercentages.NorthernIrelandApportionment);
-            Assert.AreEqual("100.00000000%", result.OneCountryApportionmentPercentages.TotalApportionment);
-
             var json = JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true });
             Console.WriteLine(json);
             var expectedJson = """
@@ -62,7 +48,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                     "name": "LAPCAP Data",
                     "calcResultLapcapDataDetails": [
                         {
-                            "materialName"                 : "Paper",
+                            "materialName"                 : "Paper or card",
                             "englandLaDisposalCost"        : "£50.00",
                             "walesLaDisposalCost"          : "£60.00",
                             "scotlandLaDisposalCost"       : "£70.00",
@@ -70,7 +56,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                             "oneLaDisposalCostTotal"       : "£260.00"
                         },
                         {
-                            "materialName"                 : "Plastics",
+                            "materialName"                 : "Plastic",
                             "englandLaDisposalCost"        : "£100.00",
                             "walesLaDisposalCost"          : "£200.00",
                             "scotlandLaDisposalCost"       : "£300.00",

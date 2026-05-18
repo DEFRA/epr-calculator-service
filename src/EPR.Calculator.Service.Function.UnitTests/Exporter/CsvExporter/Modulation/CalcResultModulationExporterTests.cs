@@ -26,9 +26,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
             // Arrange
             var calcResultLaDisposalCostData = new CalcResultLaDisposalCostData
             {
-                ByMaterial = new Dictionary<MaterialDetail, CalcResultLaDisposalCostDataDetail>
+                ByMaterial = new Dictionary<string, CalcResultLaDisposalCostDataDetail>
                 {
-                    [al] = new CalcResultLaDisposalCostDataDetail
+                    [al.Code] = new CalcResultLaDisposalCostDataDetail
                     {
                         England = 0m,
                         Wales = 0m,
@@ -40,7 +40,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
                         HouseholdDrinkContainers = null,
                         LateReportingTonnage = 3500
                     },
-                    [fc] = new CalcResultLaDisposalCostDataDetail
+                    [fc.Code] = new CalcResultLaDisposalCostDataDetail
                     {
                         England = 0m,
                         Wales = 0m,

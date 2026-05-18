@@ -61,7 +61,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 },
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
-                    ByMaterial = new Dictionary<MaterialDetail, ByCountryValue>(),
+                    ByMaterial = [],
                     Total = new ByCountryValue(),
                     CountryApportionment = new CountryApportionmentData()
                 },
@@ -147,7 +147,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 },
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
-                    ByMaterial = new Dictionary<MaterialDetail, ByCountryValue>(),
+                    ByMaterial = [],
                     Total = new ByCountryValue(),
                     CountryApportionment = new CountryApportionmentData()
                 },
@@ -204,7 +204,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 },
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
-                    ByMaterial = new Dictionary<MaterialDetail, ByCountryValue>(),
+                    ByMaterial = [],
                     Total = new ByCountryValue(),
                     CountryApportionment = new CountryApportionmentData()
                 },

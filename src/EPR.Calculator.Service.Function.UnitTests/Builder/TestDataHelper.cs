@@ -78,9 +78,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             return new CalcResultLaDisposalCostData
             {
-                ByMaterial = new Dictionary<MaterialDetail, CalcResultLaDisposalCostDataDetail>
+                ByMaterial = new Dictionary<string, CalcResultLaDisposalCostDataDetail>
                 {
-                    [new MaterialDetail { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" }] =
+                    ["AL"] =
                         new CalcResultLaDisposalCostDataDetail
                         {
                             England = 5000,
@@ -94,7 +94,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             ProducerReportedTotalTonnage = 14980,
                             DisposalCostPricePerTonne = 0.6676m,
                         },
-                    [new MaterialDetail { Id = 2, Code = "FC", Name = "Fibre composite", Description = "Fibre composite" }] =
+                    ["FC"] =
                         new CalcResultLaDisposalCostDataDetail
                         {
                             England = 7500,
@@ -108,7 +108,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             ProducerReportedTotalTonnage = 18850,
                             DisposalCostPricePerTonne = 0.7825m,
                         },
-                    [new MaterialDetail { Id = 3, Code = "GL", Name = "Glass", Description = "Glass" }] =
+                    ["GL"] =
                         new CalcResultLaDisposalCostDataDetail
                         {
                             England = 45000,
@@ -122,7 +122,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             ProducerReportedTotalTonnage = 10900,
                             DisposalCostPricePerTonne = 6.4404m,
                         },
-                    [new MaterialDetail { Id = 4, Code = "PC", Name = "Paper or card", Description = "Paper or card" }] =
+                    ["PC"] =
                         new CalcResultLaDisposalCostDataDetail
                         {
                             England = 12500,
@@ -136,7 +136,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             ProducerReportedTotalTonnage = 9270,
                             DisposalCostPricePerTonne = 2.4488m,
                         },
-                    [new MaterialDetail { Id = 5, Code = "PL", Name = "Plastic", Description = "Plastic" }] =
+                    ["PL"] =
                         new CalcResultLaDisposalCostDataDetail
                         {
                             England = 23000,
@@ -150,7 +150,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             ProducerReportedTotalTonnage = 16805,
                             DisposalCostPricePerTonne = 2.1601m,
                         },
-                    [new MaterialDetail { Id = 6, Code = "ST", Name = "Steel", Description = "Steel" }] =
+                    ["ST"] =
                         new CalcResultLaDisposalCostDataDetail
                         {
                             England = 13400,
@@ -164,7 +164,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             ProducerReportedTotalTonnage = 10700,
                             DisposalCostPricePerTonne = 19813,
                         },
-                    [new MaterialDetail { Id = 7, Code = "WD", Name = "Wood", Description = "Wood" }] =
+                    ["WD"] =
                         new CalcResultLaDisposalCostDataDetail
                         {
                             England = 0,
@@ -178,7 +178,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             ProducerReportedTotalTonnage = 8800,
                             DisposalCostPricePerTonne = 2,
                         },
-                    [new MaterialDetail { Id = 8, Code = "OT", Name = "Other materials", Description = "Other materials" }] =
+                    ["OT"] =
                         new CalcResultLaDisposalCostDataDetail
                         {
                             England = 3400,
@@ -213,24 +213,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             return new CalcResultLapcapData
             {
-                ByMaterial = new Dictionary<MaterialDetail, ByCountryValue>
+                ByMaterial = new Dictionary<string, ByCountryValue>
                 {
-                    [new MaterialDetail { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" }] =
-                        new ByCountryValue { England = 5000, Wales = 1750, Scotland = 2000, NorthernIreland = 1250, Total = 10000 },
-                    [new MaterialDetail { Id = 2, Code = "FC", Name = "Fibre composite", Description = "Fibre composite" }] =
-                        new ByCountryValue { England = 7500, Wales = 2100, Scotland = 3400, NorthernIreland = 1750, Total = 14750 },
-                    [new MaterialDetail { Id = 3, Code = "GL", Name = "Glass", Description = "Glass" }] =
-                        new ByCountryValue { England = 45000, Wales = 0, Scotland = 20700, NorthernIreland = 4500, Total = 70200 },
-                    [new MaterialDetail { Id = 4, Code = "PC", Name = "Paper or card", Description = "Paper or card" }] =
-                        new ByCountryValue { England = 12500, Wales = 2300, Scotland = 4500, NorthernIreland = 3400, Total = 22700 },
-                    [new MaterialDetail { Id = 5, Code = "PL", Name = "Plastic", Description = "Plastic" }] =
-                        new ByCountryValue { England = 23000, Wales = 4500, Scotland = 6700, NorthernIreland = 2100, Total = 36300 },
-                    [new MaterialDetail { Id = 6, Code = "ST", Name = "Steel", Description = "Steel" }] =
-                        new ByCountryValue { England = 13400, Wales = 0, Scotland = 7800, NorthernIreland = 0, Total = 21200 },
-                    [new MaterialDetail { Id = 7, Code = "WD", Name = "Wood", Description = "Wood" }] =
-                        new ByCountryValue { England = 0, Wales = 12000, Scotland = 0, NorthernIreland = 5600, Total = 17600 },
-                    [new MaterialDetail { Id = 8, Code = "OT", Name = "Other materials", Description = "Other materials" }] =
-                        new ByCountryValue { England = 3400, Wales = 2100, Scotland = 4200, NorthernIreland = 700, Total = 10400 },
+                    ["AL"] = new ByCountryValue { England =  5000, Wales =  1750, Scotland =  2000, NorthernIreland = 1250, Total = 10000 },
+                    ["FC"] = new ByCountryValue { England =  7500, Wales =  2100, Scotland =  3400, NorthernIreland = 1750, Total = 14750 },
+                    ["GL"] = new ByCountryValue { England = 45000, Wales =     0, Scotland = 20700, NorthernIreland = 4500, Total = 70200 },
+                    ["PC"] = new ByCountryValue { England = 12500, Wales =  2300, Scotland =  4500, NorthernIreland = 3400, Total = 22700 },
+                    ["PL"] = new ByCountryValue { England = 23000, Wales =  4500, Scotland =  6700, NorthernIreland = 2100, Total = 36300 },
+                    ["ST"] = new ByCountryValue { England = 13400, Wales =     0, Scotland =  7800, NorthernIreland =    0, Total = 21200 },
+                    ["WD"] = new ByCountryValue { England =     0, Wales = 12000, Scotland =     0, NorthernIreland = 5600, Total = 17600 },
+                    ["OT"] = new ByCountryValue { England =  3400, Wales =  2100, Scotland =  4200, NorthernIreland =  700, Total = 10400 }
                 },
                 Total = new ByCountryValue { England = 109800, Wales = 24750, Scotland = 49300, NorthernIreland = 19300, Total = 203150 },
                 CountryApportionment = new CountryApportionmentData

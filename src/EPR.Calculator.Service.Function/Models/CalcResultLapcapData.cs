@@ -4,7 +4,7 @@ namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResultLapcapData
     {
-        public required Dictionary<MaterialDetail, ByCountryValue> ByMaterial { get; set; }
+        public required Dictionary<string, ByCountryValue> ByMaterial { get; set; }
 
         public required ByCountryValue Total { get; set; }
 

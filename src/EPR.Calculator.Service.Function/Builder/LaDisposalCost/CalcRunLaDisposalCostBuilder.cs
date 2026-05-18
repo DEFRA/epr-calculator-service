@@ -63,14 +63,15 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
             var lapcapDetailsByMaterial =
                 lapcapData.ByMaterial.Select(detail =>
                 {
-                    var materialName = detail.Key.Name;
+                    var materialCode = detail.Key;
+                    var materialName = materialDetails.First(m => m.Code == materialCode).Name;
                     var lateReportingTonnageValue = lateReportingTonnage.CalcResultLateReportingTonnageDetails.Where(t => t.Name == materialName).Sum(t => t.TotalLateReportingTonnage);
                     var producerReportedHouseholdPackagingWasteTonnage = producerData.Where(t => t.MaterialName == materialName && t.PackagingType == PackagingTypes.Household).Sum(t => t.Tonnage);
                     var reportedPublicBinTonnage                       = producerData.Where(p => p.MaterialName == materialName && p.PackagingType == PackagingTypes.PublicBin).Sum(p => p.Tonnage);
                     decimal? householdDrinkContainers = materialName == "Glass"
                         ? producerData.Where(p => p.MaterialName == materialName && p.PackagingType == PackagingTypes.HouseholdDrinksContainers).Sum(p => p.Tonnage)
                         : null;
-                    decimal? actionedSelfManagedConsumerWasteTonnage = applyModulation ? smcw.OverallTotalPerMaterials[detail.Key.Code].ActionedSelfManagedConsumerWasteTonnage ?? 0 : null;
+                    decimal? actionedSelfManagedConsumerWasteTonnage = applyModulation ? smcw.OverallTotalPerMaterials[materialCode].ActionedSelfManagedConsumerWasteTonnage ?? 0 : null;
                     var producerReportedTotalTonnage =
                         lateReportingTonnageValue
                             + producerReportedHouseholdPackagingWasteTonnage
