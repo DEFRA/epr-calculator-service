@@ -5,11 +5,13 @@
     /// </summary>
     public class CalcResultCommsCost
     {
+        // TODO do we need this - it's lifted from LAPCAP data section
         public CalcResultCommsCostOnePlusFourApportionment CalcResultCommsCostOnePlusFourApportionment { get; set; }
-        public IEnumerable<CalcResultCommsCostCommsCostByMaterial> CalcResultCommsCostCommsCostByMaterial { get; set; }
+        public Dictionary<string, CalcResultCommsCostCommsCostByMaterial> CommsCostByMaterial { get; set; }
             = [];
+        public CalcResultCommsCostCommsCostByMaterial CommsCostByMaterialTotal { get; set; }
 
-        public CalcResultCommsCostOnePlusFourApportionment CommsCostUkWide { get; set; }
-        public CalcResultCommsCostOnePlusFourApportionment CommsCostByCountry { get; set; }
+        public ByCountryValue CommsCostUkWide { get; set; }
+        public ByCountryValue CommsCostByCountry { get; set; }
     }
 }

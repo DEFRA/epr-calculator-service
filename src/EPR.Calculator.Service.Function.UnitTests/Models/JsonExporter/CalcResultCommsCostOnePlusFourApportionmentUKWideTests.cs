@@ -7,8 +7,6 @@ using EPR.Calculator.Service.Function.UnitTests.Utils;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
 {
-    using static JsonNodeComparer;
-
     [TestClass]
     public class CalcResultCommsCostOnePlusFourApportionmentUKWideTests
     {
@@ -23,9 +21,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public void CalcResultCommsCostOnePlusFourApportionmentUKWideTests_CanCallFrom_WithValidData()
         {
             // Arrange
-            var ukWideData = new CalcResultCommsCostOnePlusFourApportionment() // TODO since this is a cost, need it's own model (or rename)
+            var ukWideData = new ByCountryValue()
             {
-                Name            = CalcResultCommsCostBuilder.TwoBCommsCostUkWide,
                 England         = 1.23m,
                 Wales           = 2.34m,
                 Scotland        = 3.45m,

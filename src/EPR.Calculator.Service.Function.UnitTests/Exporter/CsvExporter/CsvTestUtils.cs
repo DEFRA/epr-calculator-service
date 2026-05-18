@@ -39,7 +39,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                         .ToArray();
         }
 
-        public static void AssertCsv(string[][] expected, string[] actual)
+        public static void AssertCsv(string?[][] expected, string[] actual)
         {
             var expected2 =
                 expected.Select(row => string.Join(",", row.Select(cell => cell == null ? "" : $"\"{cell}\""))).ToArray();

@@ -15,24 +15,19 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("calcResult2aCommsDataDetailsTotal")]
         public required CalcResult2ACommsDataDetailsTotal CalcResult2aCommsDataDetailsTotal { get; set; }
 
-        public static CalcResult2ACommsDataByMaterial From(IEnumerable<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial)
+        public static CalcResult2ACommsDataByMaterial From(IImmutableList<MaterialDetail> materials, Dictionary<string, CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial, CalcResultCommsCostCommsCostByMaterial total)
         {
-            IEnumerable<CalcResult2ACommsDataDetails> GetMaterialBreakdown(IEnumerable<CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial)
+            var commsByMaterialDataDetails = new List<CalcResult2ACommsDataDetails>();
+            foreach (var item in commsCostByMaterial)
             {
-                var commsByMaterialDataDetails = new List<CalcResult2ACommsDataDetails>();
-
-                foreach (var item in commsCostByMaterial.Where(t => t.Name != CommonConstants.Total && t.Name != CommonConstants.TwoACommsCostsbyMaterial))
-                {
-                    commsByMaterialDataDetails.Add(CalcResult2ACommsDataDetails.From(item));
-                }
-
-                return commsByMaterialDataDetails;
+                var material = materials.First(m => m.Code == item.Key);
+                commsByMaterialDataDetails.Add(CalcResult2ACommsDataDetails.From(material, item.Value));
             }
 
             return new CalcResult2ACommsDataByMaterial
             {
-                CalcResult2aCommsDataDetails = GetMaterialBreakdown(commsCostByMaterial),
-                CalcResult2aCommsDataDetailsTotal = CalcResult2ACommsDataDetailsTotal.From(commsCostByMaterial.Single(t => t.Name == CommonConstants.Total)),
+                CalcResult2aCommsDataDetails      = commsByMaterialDataDetails,
+                CalcResult2aCommsDataDetailsTotal = CalcResult2ACommsDataDetailsTotal.From(total)
             };
         }
     }
@@ -60,22 +55,22 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("commsCostByMaterialPricePerTonne")]
         public required string CommsCostByMaterialPricePerTonne { get; init; }
 
-        public static CalcResult2ACommsDataDetails From(CalcResultCommsCostCommsCostByMaterial materialCost)
+        public static CalcResult2ACommsDataDetails From(MaterialDetail material, CalcResultCommsCostCommsCostByMaterial commsCost)
         {
             return new CalcResult2ACommsDataDetails
             {
-                MaterialName                           = materialCost.Name,
-                ProducerHouseholdPackagingWasteTonnage = Math.Round(materialCost.ProducerReportedHouseholdPackagingWasteTonnage, 3), // TODO should rounding have happened in the Builder?
-                PublicBinTonnage                       = Math.Round(materialCost.ReportedPublicBinTonnage, 3),
-                TotalTonnage                           = Math.Round(materialCost.ProducerReportedTotalTonnage, 3),
-                HouseholdDrinksContainersTonnage       = Math.Round(materialCost.HouseholdDrinksContainers ?? 0m, 3),
-                CommsCostByMaterialPricePerTonne       = CurrencyConverterUtils.ConvertToCurrency(materialCost.CommsCostByMaterialPricePerTonne ?? 0m, precision : 4),
-                EnglandCommsCost                       = CurrencyConverterUtils.ConvertToCurrency(materialCost.England),
-                WalesCommsCost                         = CurrencyConverterUtils.ConvertToCurrency(materialCost.Wales),
-                ScotlandCommsCost                      = CurrencyConverterUtils.ConvertToCurrency(materialCost.Scotland),
-                NorthernIrelandCommsCost               = CurrencyConverterUtils.ConvertToCurrency(materialCost.NorthernIreland),
-                TotalCommsCost                         = CurrencyConverterUtils.ConvertToCurrency(materialCost.Total),
-                LateReportingTonnage                   = Math.Round(materialCost.LateReportingTonnage, 3)
+                MaterialName                           = material.Name,
+                ProducerHouseholdPackagingWasteTonnage = Math.Round(commsCost.ProducerReportedHouseholdPackagingWasteTonnage, 3), // TODO should rounding have happened in the Builder?
+                PublicBinTonnage                       = Math.Round(commsCost.ReportedPublicBinTonnage, 3),
+                TotalTonnage                           = Math.Round(commsCost.ProducerReportedTotalTonnage, 3),
+                HouseholdDrinksContainersTonnage       = Math.Round(commsCost.HouseholdDrinksContainers ?? 0m, 3),
+                CommsCostByMaterialPricePerTonne       = CurrencyConverterUtils.ConvertToCurrency(commsCost.CommsCostByMaterialPricePerTonne ?? 0m, precision : 4),
+                EnglandCommsCost                       = CurrencyConverterUtils.ConvertToCurrency(commsCost.England),
+                WalesCommsCost                         = CurrencyConverterUtils.ConvertToCurrency(commsCost.Wales),
+                ScotlandCommsCost                      = CurrencyConverterUtils.ConvertToCurrency(commsCost.Scotland),
+                NorthernIrelandCommsCost               = CurrencyConverterUtils.ConvertToCurrency(commsCost.NorthernIreland),
+                TotalCommsCost                         = CurrencyConverterUtils.ConvertToCurrency(commsCost.Total),
+                LateReportingTonnage                   = Math.Round(commsCost.LateReportingTonnage, 3)
             };
         }
     }
