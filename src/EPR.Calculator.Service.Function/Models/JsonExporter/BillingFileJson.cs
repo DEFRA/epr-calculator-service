@@ -53,7 +53,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                 ParametersOther                    = CalcResultParametersOtherJson.From(results.CalcResultParameterOtherCost),
                 OnePlusFourApportionment           = CalcResultOnePlusFourApportionmentJson.From(results.CalcResultOnePlusFourApportionment),
                 ParametersCommsCost                = CalcResultCommsCostJson.From(results.CalcResultCommsCostReportDetail),
-                CalcResult2aCommsDataByMaterial    = CalcResult2ACommsDataByMaterial.From(results.CalcResultCommsCostReportDetail.CalcResultCommsCostCommsCostByMaterial),
+                CalcResult2aCommsDataByMaterial    = CalcResult2ACommsDataByMaterial.From(materials, results.CalcResultCommsCostReportDetail.CommsCostByMaterial, results.CalcResultCommsCostReportDetail.CommsCostByMaterialTotal),
                 CalcResult2bCommsDataByUkWide      = CalcResultCommsCostOnePlusFourApportionmentUKWide.From(results.CalcResultCommsCostReportDetail.CommsCostUkWide),
                 CalcResult2cCommsDataByCountry     = CalcResultCommsCostOnePlusFourApportionmentCountryWide.From(results.CalcResultCommsCostReportDetail.CommsCostByCountry),
                 CalcResultLaDisposalCostData       = CalcResultLaDisposalCostDataJson.From(results.CalcResultLaDisposalCostData.ByMaterial, results.CalcResultLaDisposalCostData.Total, materials),

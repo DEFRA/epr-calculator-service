@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
@@ -53,15 +54,15 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         {
             return new CalcResult2ACommsDataDetailsTotal
             {
+                Total = "Total",
                 EnglandCommsCostTotal = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.England),
-                HouseholdDrinksContainersTonnageTotal = Math.Round(commsCostByMaterial.HouseholdDrinksContainers ?? 0m, 3),
-                LateReportingTonnageTotal = Math.Round(commsCostByMaterial.LateReportingTonnage, 3),
-                NorthernIrelandCommsCostTotal = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.NorthernIreland),
-                ScotlandCommsCostTotal = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.Scotland),
                 WalesCommsCostTotal = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.Wales),
+                ScotlandCommsCostTotal = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.Scotland),
+                NorthernIrelandCommsCostTotal = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.NorthernIreland),
                 ProducerHouseholdPackagingWasteTonnageTotal = Math.Round(commsCostByMaterial.ProducerReportedHouseholdPackagingWasteTonnage, 3),
                 PublicBinTonnage = Math.Round(commsCostByMaterial.ReportedPublicBinTonnage, 3),
-                Total = commsCostByMaterial.Name,
+                HouseholdDrinksContainersTonnageTotal = Math.Round(commsCostByMaterial.HouseholdDrinksContainers ?? 0m, 3),
+                LateReportingTonnageTotal = Math.Round(commsCostByMaterial.LateReportingTonnage, 3),
                 TotalCommsCostTotal = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.Total),
                 TotalTonnageTotal = Math.Round(commsCostByMaterial.ProducerReportedTotalTonnage, 3)
             };

@@ -2,7 +2,7 @@
 
 public class CalcResultCommsCostOnePlusFourApportionment
 {
-    public string Name { get; set; } = string.Empty;
+    //public string Name { get; set; } = string.Empty;
     public decimal England { get; set; }
     public decimal Wales { get; set; }
     public decimal Scotland { get; set; }

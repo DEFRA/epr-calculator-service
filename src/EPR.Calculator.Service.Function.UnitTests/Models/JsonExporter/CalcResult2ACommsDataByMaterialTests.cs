@@ -1,5 +1,6 @@
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
+using EPR.Calculator.Service.Function.UnitTests.Builder;
 using System.Text.Json;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
@@ -11,10 +12,36 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public void From_MapsMaterialsAndTotal()
         {
             // Arrange
-            var comms = GetCalcResultCommsCostCommsCostByMaterials();
+            var comms = new Dictionary<string, CalcResultCommsCostCommsCostByMaterial>
+            {
+                ["AL"] = new CalcResultCommsCostCommsCostByMaterial
+                    {
+                        CommsCostByMaterialPricePerTonne = 1.23m,
+                        ProducerReportedHouseholdPackagingWasteTonnage = 2.34m,
+                        LateReportingTonnage = 3.45m,
+                        ReportedPublicBinTonnage = 4.56m,
+                        ProducerReportedTotalTonnage = 5.67m
+                    },
+                ["GL"] = new CalcResultCommsCostCommsCostByMaterial
+                {
+                    CommsCostByMaterialPricePerTonne = 2.34m,
+                    ProducerReportedHouseholdPackagingWasteTonnage = 3.45m,
+                    LateReportingTonnage = 4.56m,
+                    ReportedPublicBinTonnage = 5.67m,
+                    ProducerReportedTotalTonnage = 6.78m
+                }
+            };
+            var total = new CalcResultCommsCostCommsCostByMaterial
+            {
+                ProducerReportedHouseholdPackagingWasteTonnage = 5.79m,
+                LateReportingTonnage = 8.01m,
+                ReportedPublicBinTonnage = 10.23m,
+                ProducerReportedTotalTonnage = 12.45m
+            };
+            var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var result = CalcResult2ACommsDataByMaterial.From(comms);
+            var result = CalcResult2ACommsDataByMaterial.From(materials, comms, total);
 
             // Assert
             Assert.IsNotNull(result);
@@ -69,39 +96,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                 }
                 """;
             JsonTestUtils.AssertJson(expectedJson, json);
-        }
-
-        private static List<CalcResultCommsCostCommsCostByMaterial> GetCalcResultCommsCostCommsCostByMaterials()
-        {
-            return new List<CalcResultCommsCostCommsCostByMaterial>
-            {
-                new CalcResultCommsCostCommsCostByMaterial
-                {
-                    Name = "Aluminium",
-                    CommsCostByMaterialPricePerTonne = 1.23m,
-                    ProducerReportedHouseholdPackagingWasteTonnage = 2.34m,
-                    LateReportingTonnage = 3.45m,
-                    ReportedPublicBinTonnage = 4.56m,
-                    ProducerReportedTotalTonnage = 5.67m
-                },
-                new CalcResultCommsCostCommsCostByMaterial
-                {
-                    Name = "Glass",
-                    CommsCostByMaterialPricePerTonne = 2.34m,
-                    ProducerReportedHouseholdPackagingWasteTonnage = 3.45m,
-                    LateReportingTonnage = 4.56m,
-                    ReportedPublicBinTonnage = 5.67m,
-                    ProducerReportedTotalTonnage = 6.78m
-                },
-                new CalcResultCommsCostCommsCostByMaterial
-                {
-                    Name = "Total",
-                    ProducerReportedHouseholdPackagingWasteTonnage = 5.79m,
-                    LateReportingTonnage = 8.01m,
-                    ReportedPublicBinTonnage = 10.23m,
-                    ProducerReportedTotalTonnage = 12.45m
-                }
-            };
         }
     }
 }

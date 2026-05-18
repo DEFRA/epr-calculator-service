@@ -67,11 +67,8 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
             telemetryClient.TrackTrace("Getting producer reported materials...");
             var producerReportedMaterials = await GetProducerReportedMaterials(context, runId);
 
-            var calcResultCommsCostCommsCostByMaterial = new List<CalcResultCommsCostCommsCostByMaterial>();
-
             telemetryClient.TrackTrace($"Generating comms costs for {materialDetails.Count} materials...");
-            Console.WriteLine($"materialDetails={materialDetails.Count}");
-            foreach (var material in materialDetails)
+            var commsCostByMaterial = materialDetails.Select(material =>
             {
                 telemetryClient.TrackTrace($"Generating comms cost for {material.Name}...");
 
@@ -91,7 +88,6 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
                         + publicBinTonnage
                         + householdcontainers;
                 var commsCost = new CalcResultCommsCostCommsCostByMaterial{
-                    Name            = materialDefault.ParameterCategory,
                     England         = apportionmentDetail.England         * total / 100,
                     Wales           = apportionmentDetail.Wales           * total / 100,
                     Scotland        = apportionmentDetail.Scotland        * total / 100,
@@ -108,21 +104,18 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
                     CommsCostByMaterialPricePerTonne = producerReportedTotalTonnage != 0
                             ? total / producerReportedTotalTonnage : 0
                 };
-                calcResultCommsCostCommsCostByMaterial.Add(commsCost);
-            }
+                return (material.Code, commsCost);
+            }).ToDictionary();
 
             telemetryClient.TrackTrace("Generating total row...");
-            var totalRow = GetTotalRow(calcResultCommsCostCommsCostByMaterial);
-
-            calcResultCommsCostCommsCostByMaterial.Add(totalRow);
+            var commsCostByMaterialTotal = GetTotalRow(commsCostByMaterial.Values);
 
             var commsCostByUk =
                 allDefaultResults.Single(x =>
                     x.ParameterType == CommunicationCostByCountry && x.ParameterCategory == Uk);
 
-            var ukCost = new CalcResultCommsCostOnePlusFourApportionment
+            var ukCost = new ByCountryValue
             {
-                Name = TwoBCommsCostUkWide,
                 England         = commsCostByUk.ParameterValue * apportionmentDetail.England         / 100,
                 Wales           = commsCostByUk.ParameterValue * apportionmentDetail.Wales           / 100,
                 Scotland        = commsCostByUk.ParameterValue * apportionmentDetail.Scotland        / 100,
@@ -131,12 +124,13 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
             };
 
             telemetryClient.TrackTrace("Getting comms cost by country...");
-            var commsCostByCountryList = GetCommsCostByCountryList(allDefaultResults);
+            var commsCostByCountryList = GetCommsCostByCountry(allDefaultResults);
 
             return new CalcResultCommsCost()
             {
                 CalcResultCommsCostOnePlusFourApportionment = calcResultCommsCostOnePlusFourApportionment,
-                CalcResultCommsCostCommsCostByMaterial      = calcResultCommsCostCommsCostByMaterial,
+                CommsCostByMaterial                         = commsCostByMaterial,
+                CommsCostByMaterialTotal                    = commsCostByMaterialTotal,
                 CommsCostUkWide                             = ukCost,
                 CommsCostByCountry                          = commsCostByCountryList
             };
@@ -167,21 +161,20 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
             // TODO move total row to Exporter?
             return new CalcResultCommsCostCommsCostByMaterial
             {
-                Name            = "Total",
                 England         = list.Sum(x => x.England),
                 Wales           = list.Sum(x => x.Wales),
                 NorthernIreland = list.Sum(x => x.NorthernIreland),
                 Scotland        = list.Sum(x => x.Scotland),
                 Total           = list.Sum(x => x.Total),
                 ProducerReportedHouseholdPackagingWasteTonnage = list.Sum(x => x.ProducerReportedHouseholdPackagingWasteTonnage),
-                ProducerReportedTotalTonnage   = list.Sum(x => x.ProducerReportedTotalTonnage),
-                LateReportingTonnage      = list.Sum(x => x.LateReportingTonnage),
-                ReportedPublicBinTonnage  = list.Sum(x => x.ReportedPublicBinTonnage),
-                HouseholdDrinksContainers = list.Sum(x => x.HouseholdDrinksContainers),
+                ProducerReportedTotalTonnage                   = list.Sum(x => x.ProducerReportedTotalTonnage),
+                LateReportingTonnage                           = list.Sum(x => x.LateReportingTonnage),
+                ReportedPublicBinTonnage                       = list.Sum(x => x.ReportedPublicBinTonnage),
+                HouseholdDrinksContainers                      = list.Sum(x => x.HouseholdDrinksContainers),
             };
         }
 
-        private static CalcResultCommsCostOnePlusFourApportionment GetCommsCostByCountryList(
+        private static ByCountryValue GetCommsCostByCountry(
             IEnumerable<CalcCommsBuilderResult> allDefaultResults
         )
         {
@@ -202,14 +195,13 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
                     x.ParameterType == CommunicationCostByCountry &&
                     x.ParameterCategory == "Scotland").ParameterValue;
 
-            return new CalcResultCommsCostOnePlusFourApportionment
+            return new ByCountryValue
             {
                 England         = englandValue,
                 Wales           = walesValue,
                 Scotland        = scotlandValue,
                 NorthernIreland = niValue,
-                Total           = englandValue + walesValue + scotlandValue + niValue,
-                Name            = TwoCCommsCostByCountry
+                Total           = englandValue + walesValue + scotlandValue + niValue
             };
         }
 
@@ -220,7 +212,6 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
             // TODO just use CountryApportionmentData?
             return new CalcResultCommsCostOnePlusFourApportionment
             {
-                Name            = OnePlusFourApportionment,
                 England         = apportionmentDetail.England,
                 Wales           = apportionmentDetail.Wales,
                 Scotland        = apportionmentDetail.Scotland,

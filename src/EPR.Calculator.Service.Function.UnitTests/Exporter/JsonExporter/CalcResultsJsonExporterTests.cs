@@ -160,38 +160,36 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                 },
                 CalcResultCommsCostReportDetail = new CalcResultCommsCost
                 {
-                    CalcResultCommsCostCommsCostByMaterial = new List<CalcResultCommsCostCommsCostByMaterial>
+                    CommsCostByMaterial =
                     {
-                        new CalcResultCommsCostCommsCostByMaterial
+                        ["AL"] = new()
+                            {
+                                CommsCostByMaterialPricePerTonne = 0.42m,
+                                ProducerReportedHouseholdPackagingWasteTonnage = 0,
+                                LateReportingTonnage  = 0,
+                                ReportedPublicBinTonnage  = 0,
+                                ProducerReportedTotalTonnage  = 0
+                            },
+                        ["GL"] = new()
+                            {
+                                CommsCostByMaterialPricePerTonne = 0.3m,
+                                ProducerReportedHouseholdPackagingWasteTonnage = 0,
+                                LateReportingTonnage  = 0,
+                                ReportedPublicBinTonnage  = 0,
+                                ProducerReportedTotalTonnage  = 0
+                            }
+                    },
+                    CommsCostByMaterialTotal =
+                        new()
                         {
-                            Name = "Aluminium",
-                            CommsCostByMaterialPricePerTonne = 0.42m,
-                            ProducerReportedHouseholdPackagingWasteTonnage = 0,
-                            LateReportingTonnage  = 0,
-                            ReportedPublicBinTonnage  = 0,
-                            ProducerReportedTotalTonnage  = 0
-                        },
-                        new CalcResultCommsCostCommsCostByMaterial
-                        {
-                            Name = "Glass",
-                            CommsCostByMaterialPricePerTonne = 0.3m,
-                            ProducerReportedHouseholdPackagingWasteTonnage = 0,
-                            LateReportingTonnage  = 0,
-                            ReportedPublicBinTonnage  = 0,
-                            ProducerReportedTotalTonnage  = 0
-                        },
-                        new CalcResultCommsCostCommsCostByMaterial
-                        {
-                            Name = "Total",
                             CommsCostByMaterialPricePerTonne = 0.51m,
                             ProducerReportedHouseholdPackagingWasteTonnage = 0,
                             LateReportingTonnage  = 0,
                             ReportedPublicBinTonnage  = 0,
                             ProducerReportedTotalTonnage  = 0
-                        }
-                    },
-                    CalcResultCommsCostOnePlusFourApportionment = new CalcResultCommsCostCommsCostByMaterial { Name = CalcResultCommsCostBuilder.TwoBCommsCostUkWide, England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40, Total = 100, ProducerReportedHouseholdPackagingWasteTonnage = 50, ReportedPublicBinTonnage = 60, HouseholdDrinksContainers = 70, LateReportingTonnage = 80, ProducerReportedTotalTonnage = 90, CommsCostByMaterialPricePerTonne = 100 },
-                    CommsCostByCountry = new CalcResultCommsCostOnePlusFourApportionment { Name = CalcResultCommsCostBuilder.TwoCCommsCostByCountry, England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40, Total = 100 }
+                        },
+                    CalcResultCommsCostOnePlusFourApportionment = new CalcResultCommsCostCommsCostByMaterial { England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40, Total = 100, ProducerReportedHouseholdPackagingWasteTonnage = 50, ReportedPublicBinTonnage = 60, HouseholdDrinksContainers = 70, LateReportingTonnage = 80, ProducerReportedTotalTonnage = 90, CommsCostByMaterialPricePerTonne = 100 },
+                    CommsCostByCountry = new ByCountryValue { England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40, Total = 100 }
                 },
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData
                 {

@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using System.Globalization;
 using EPR.Calculator.Service.Function.Utils;
+using EPR.Calculator.Service.Function.Builder.CommsCost;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
@@ -24,7 +25,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("totalCommsCostByCountry")]
         public required string TotalCommsCostByCountry { get; set; }
 
-        public static CalcResultCommsCostOnePlusFourApportionmentCountryWide? From(CalcResultCommsCostOnePlusFourApportionment? record)
+        public static CalcResultCommsCostOnePlusFourApportionmentCountryWide? From(ByCountryValue? record)
         {
             if (record == null)
             {
@@ -33,7 +34,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
             return new CalcResultCommsCostOnePlusFourApportionmentCountryWide
             {
-                Name = record.Name,
+                Name                              = CalcResultCommsCostBuilder.TwoCCommsCostByCountry,
                 EnglandCommsCostByCountry         = CurrencyConverterUtils.ConvertToCurrency(record.England),
                 WalesCommsCostByCountry           = CurrencyConverterUtils.ConvertToCurrency(record.Wales),
                 ScotlandCommsCostByCountry        = CurrencyConverterUtils.ConvertToCurrency(record.Scotland),
