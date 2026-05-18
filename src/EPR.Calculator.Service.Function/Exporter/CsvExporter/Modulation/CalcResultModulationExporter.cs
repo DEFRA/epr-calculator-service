@@ -82,7 +82,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation
                 var modulation = kv.Value;
                 append(material.Name); // A
 
-                var laDisposalCost = laDisposalCostData.ByMaterial[material];
+                var laDisposalCost = laDisposalCostData.ByMaterial[material.Code];
                 appendd(laDisposalCost.ProducerReportedHouseholdPackagingWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3); // B
                 appendd(laDisposalCost.ReportedPublicBinTonnage, DecimalPlaces.Three, DecimalFormats.F3); // C
                 if (laDisposalCost.HouseholdDrinkContainers == null)

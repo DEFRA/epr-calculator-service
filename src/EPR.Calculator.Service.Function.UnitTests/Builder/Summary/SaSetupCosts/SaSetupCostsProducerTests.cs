@@ -127,9 +127,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                 CalcResultDetail = new CalcResultDetail { RunId = 1, RelativeYear = new RelativeYear(2024) },
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData
                 {
-                    ByMaterial = new Dictionary<MaterialDetail, CalcResultLaDisposalCostDataDetail>
+                    ByMaterial = new Dictionary<string, CalcResultLaDisposalCostDataDetail>
                     {
-                        [new MaterialDetail { Id = 1, Code = "Material1", Name = "Material1", Description = "Material1" }] =
+                        ["Material1"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
                                 DisposalCostPricePerTonne = 20,
@@ -142,7 +142,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                                 ReportedPublicBinTonnage = Fixture.Create<decimal>(),
                                 ProducerReportedTotalTonnage = Fixture.Create<decimal>(),
                             },
-                        [new MaterialDetail { Id = 2, Code = "Material2", Name = "Material2", Description = "Material2" }] =
+                        ["Material2"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
                                 DisposalCostPricePerTonne = 10,
@@ -164,7 +164,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                 },
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
-                    ByMaterial = new Dictionary<MaterialDetail, ByCountryValue>(),
+                    ByMaterial = [],
                     Total = new ByCountryValue(),
                     CountryApportionment = new CountryApportionmentData()
                 },

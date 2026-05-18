@@ -8,12 +8,20 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap
 {
     public interface ICalcResultLapcapDataExporter
     {
-        void Export(CalcResultLapcapData calcResultLapcapData, StringBuilder csvContent);
+        void Export(
+            CalcResultLapcapData calcResultLapcapData,
+            IImmutableList<MaterialDetail> materialDetails,
+            StringBuilder csvContent
+        );
     }
 
     public class CalcResultLapcapDataExporter : ICalcResultLapcapDataExporter
     {
-        public void Export(CalcResultLapcapData calcResultLapcapData, StringBuilder csvContent)
+        public void Export(
+            CalcResultLapcapData calcResultLapcapData,
+            IImmutableList<MaterialDetail> materialDetails,
+            StringBuilder csvContent
+        )
         {
             csvContent.AppendLine();
             csvContent.AppendLine();
@@ -21,9 +29,10 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap
             csvContent.AppendLine(CsvSanitiser.SanitiseData("LAPCAP Data"));
 
             AppendHeaders(csvContent);
-            foreach (var lapcapData in calcResultLapcapData.ByMaterial)
+            foreach (var material in materialDetails)
             {
-                AppendRow(lapcapData.Key.Name, lapcapData.Value, csvContent);
+                var lapcapDta = calcResultLapcapData.ByMaterial[material.Code];
+                AppendRow(material.Name, lapcapDta, csvContent);
             }
             AppendRow("Total", calcResultLapcapData.Total, csvContent);
 
