@@ -117,8 +117,16 @@ public class ProducerDataTransposer(
         logger.LogInformation("Transpose produced {ProducerDetailCount} producer details and {ReportedMaterialCount} reported materials",
             newProducerDetails.Count, totalReportedMaterials);
 
-        // Must include graph for EF navigation properties to be set on the inserted entities.
-        await bulkOps.BulkInsertAsync(dbContext, newProducerDetails, cfg => cfg.IncludeGraph = true, cancellationToken);
+        await bulkOps.BulkInsertAsync(dbContext, newProducerDetails, cfg =>
+        {
+            // Must set IncludeGraph for EF navigational properties to be correctly set on the inserted entities.
+            cfg.IncludeGraph = true;
+
+            // When IncludeGraph is true, the bulk insert creates/drops tables before a final MERGE.
+            // Set UseTempDB to use temp tables instead of 'proper' tables since they don't require permissions.
+            cfg.UseTempDB = true;
+
+        }, cancellationToken);
     }
 
     private static IEnumerable<ProducerReportedMaterial> GetProducerReportedMaterials(ImmutableList<Material> materials, ImmutableDictionary<string, ImmutableList<CalculatorRunPomDataDetail>> pomsByMaterial)
