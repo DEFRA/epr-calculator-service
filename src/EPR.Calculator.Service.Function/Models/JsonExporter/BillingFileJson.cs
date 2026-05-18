@@ -52,7 +52,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
             return new BillingFileJson {
                 CalcResultDetail                   = CalcResultDetailJson.From(results.CalcResultDetail),
                 CalcResultLapcapData               = CalcResultLapcapDataJson.From(results.CalcResultLapcapData, materials),
-                CalcResultLateReportingTonnageData = CalcResultLateReportingTonnageJson.From(results.CalcResultLateReportingTonnageData),
+                CalcResultLateReportingTonnageData = CalcResultLateReportingTonnageJson.From(results.CalcResultLateReportingTonnageData, materials),
                 ParametersOther                    = CalcResultParametersOtherJson.From(results.CalcResultParameterOtherCost),
                 OnePlusFourApportionment           = CalcResultOnePlusFourApportionmentJson.From(results.CalcResultOnePlusFourApportionment),
                 ParametersCommsCost                = CalcResultCommsCostJson.From(results.CalcResultCommsCostReportDetail),

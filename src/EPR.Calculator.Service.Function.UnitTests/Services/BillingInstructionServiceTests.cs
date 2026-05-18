@@ -70,10 +70,7 @@ public class BillingInstructionServiceTests
             },
             CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
             {
-                Name = string.Empty,
-                CalcResultLateReportingTonnageDetails = new List<CalcResultLateReportingTonnageDetail>(),
-                MaterialHeading = string.Empty,
-                TonnageHeading = string.Empty
+                LateReportingTonnageByMaterial = []
             },
             CalcResultSummary = new CalcResultSummary
             {
@@ -150,10 +147,7 @@ public class BillingInstructionServiceTests
             },
             CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
             {
-                Name = string.Empty,
-                CalcResultLateReportingTonnageDetails = new List<CalcResultLateReportingTonnageDetail>(),
-                MaterialHeading = string.Empty,
-                TonnageHeading = string.Empty
+                LateReportingTonnageByMaterial = []
             },
             CalcResultSummary = new CalcResultSummary { ProducerDisposalFees = null! },
             CalcResultProjectedProducers = new CalcResultProjectedProducers()
@@ -201,10 +195,7 @@ public class BillingInstructionServiceTests
             },
             CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
             {
-                Name = string.Empty,
-                CalcResultLateReportingTonnageDetails = new List<CalcResultLateReportingTonnageDetail>(),
-                MaterialHeading = string.Empty,
-                TonnageHeading = string.Empty
+                LateReportingTonnageByMaterial = []
             },
             CalcResultSummary = new CalcResultSummary
             {

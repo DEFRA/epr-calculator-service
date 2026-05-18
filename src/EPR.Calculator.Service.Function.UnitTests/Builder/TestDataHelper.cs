@@ -314,82 +314,62 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             return new CalcResultLateReportingTonnage
             {
-                Name = "Late Reporting Tonnage",
-                CalcResultLateReportingTonnageDetails = new[]
+                LateReportingTonnageByMaterial = new Dictionary<string, CalcResultLateReportingTonnageDetail>
                 {
-                    new CalcResultLateReportingTonnageDetail
-                        {
-                            Name = "Aluminium",
-                            RedLateReportingTonnage = 1000.00m,
-                            AmberLateReportingTonnage = 2000.00m,
-                            GreenLateReportingTonnage = 5000.00m,
-                            TotalLateReportingTonnage = 8000.00m,
-                        },
-                        new CalcResultLateReportingTonnageDetail
-                        {
-                            Name = "Fibre composite",
-                            RedLateReportingTonnage = 5.00m,
-                            AmberLateReportingTonnage = 0m,
-                            GreenLateReportingTonnage = 5.00m,
-                            TotalLateReportingTonnage = 10.00m,
-                        },
-                        new CalcResultLateReportingTonnageDetail
-                        {
-                            Name = "Glass",
-                            RedLateReportingTonnage = 10.00m,
-                            AmberLateReportingTonnage = 0m,
-                            GreenLateReportingTonnage = 0m,
-                            TotalLateReportingTonnage = 10.00m,
-                        },
-                        new CalcResultLateReportingTonnageDetail
-                        {
-                            Name = "Paper or card",
-                            RedLateReportingTonnage = 0m,
-                            AmberLateReportingTonnage = 0m,
-                            GreenLateReportingTonnage = 0m,
-                            TotalLateReportingTonnage = 0m,
-                        },
-                        new CalcResultLateReportingTonnageDetail
-                        {
-                            Name = "Plastic",
-                            RedLateReportingTonnage = 1000.00m,
-                            AmberLateReportingTonnage = 500.00m,
-                            GreenLateReportingTonnage = 500.00m,
-                            TotalLateReportingTonnage = 2000.00m,
-                        },
-                        new CalcResultLateReportingTonnageDetail
-                        {
-                            Name = "Steel",
-                            RedLateReportingTonnage = 0m,
-                            AmberLateReportingTonnage = 0m,
-                            GreenLateReportingTonnage = 0m,
-                            TotalLateReportingTonnage = 0m,
-                        },
-                        new CalcResultLateReportingTonnageDetail
-                        {
-                            Name = "Wood",
-                            RedLateReportingTonnage = 0m,
-                            AmberLateReportingTonnage = 0m,
-                            GreenLateReportingTonnage = 0m,
-                            TotalLateReportingTonnage = 0m,
-                        },
-                        new CalcResultLateReportingTonnageDetail
-                        {
-                            Name = "Other materials",
-                            RedLateReportingTonnage = 0m,
-                            AmberLateReportingTonnage = 0m,
-                            GreenLateReportingTonnage = 0m,
-                            TotalLateReportingTonnage = 0m,
-                        },
-                        new CalcResultLateReportingTonnageDetail
-                        {
-                            Name = "Total",
-                            RedLateReportingTonnage = 2015.00m,
-                            AmberLateReportingTonnage = 2500.00m,
-                            GreenLateReportingTonnage = 5505.00m,
-                            TotalLateReportingTonnage = 10020.00m,
-                        },
+                    ["AL"] = new() {
+                        RedLateReportingTonnage = 1000.00m,
+                        AmberLateReportingTonnage = 2000.00m,
+                        GreenLateReportingTonnage = 5000.00m,
+                        TotalLateReportingTonnage = 8000.00m
+                    },
+                    ["FC"] = new() {
+                        RedLateReportingTonnage = 5.00m,
+                        AmberLateReportingTonnage = 0m,
+                        GreenLateReportingTonnage = 5.00m,
+                        TotalLateReportingTonnage = 10.00m
+                    },
+                    ["GL"] = new() {
+                        RedLateReportingTonnage = 10.00m,
+                        AmberLateReportingTonnage = 0m,
+                        GreenLateReportingTonnage = 0m,
+                        TotalLateReportingTonnage = 10.00m
+                    },
+                    ["PC"] = new() {
+                        RedLateReportingTonnage = 0m,
+                        AmberLateReportingTonnage = 0m,
+                        GreenLateReportingTonnage = 0m,
+                        TotalLateReportingTonnage = 0m
+                    },
+                    ["PL"] = new() { RedLateReportingTonnage = 1000.00m,
+                        AmberLateReportingTonnage = 500.00m,
+                        GreenLateReportingTonnage = 500.00m,
+                        TotalLateReportingTonnage = 2000.00m
+                    },
+                    ["ST"] = new() {
+                        RedLateReportingTonnage = 0m,
+                        AmberLateReportingTonnage = 0m,
+                        GreenLateReportingTonnage = 0m,
+                        TotalLateReportingTonnage = 0m
+                    },
+                    ["WD"] = new() {
+                        RedLateReportingTonnage = 0m,
+                        AmberLateReportingTonnage = 0m,
+                        GreenLateReportingTonnage = 0m,
+                        TotalLateReportingTonnage = 0m
+                    },
+                    ["OT"] = new() {
+                        RedLateReportingTonnage = 0m,
+                        AmberLateReportingTonnage = 0m,
+                        GreenLateReportingTonnage = 0m,
+                        TotalLateReportingTonnage = 0m
+                    },
                 },
+                LateReportingTonnageTotal = new() {
+                    RedLateReportingTonnage = 2015.00m,
+                    AmberLateReportingTonnage = 2500.00m,
+                    GreenLateReportingTonnage = 5505.00m,
+                    TotalLateReportingTonnage = 10020.00m
+                }
             };
         }
 
@@ -863,13 +843,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                                 }
                             : new(),
                         NetReportedTonnage = applyModulation
-                            ?(total: 1860, red: 860, amber: 0, green: 1000)
+                            ?(total: 1860, red:  860, amber:    0, green: 1000)
                             :(total: 1860, red: null, amber: null, green: null),
                         PricePerTonne = applyModulation
-                            ? (total: 0.7825m, red: 1, amber: 2, green: 3)
+                            ? (total: 0.7825m, red:    1, amber:    2, green:    3)
                             : (total: 0.7825m, red: null, amber: null, green: null),
                         ProducerDisposalFee = applyModulation
-                            ? (total: 1455.45m, red: 4, amber: 5, green: 6)
+                            ? (total: 1455.45m, red:    4, amber:    5, green:    6)
                             : (total: 1455.45m, red: null, amber: null, green: null),
                         BadDebtProvision = 87.33m,
                         ProducerDisposalFeeWithBadDebtProvision = 1542.78m,
@@ -900,13 +880,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                                 }
                             : new(),
                         NetReportedTonnage = applyModulation
-                            ?(total: 350, red: 300, amber: 50, green: 0)
+                            ?(total: 350, red:  300, amber:   50, green:    0)
                             :(total: 350, red: null, amber: null, green: null),
                         PricePerTonne = applyModulation
-                            ? (total: 6.4404m, red: 1, amber: 2, green: 3)
+                            ? (total: 6.4404m, red:    1, amber:    2, green:    3)
                             : (total: 6.4404m, red: null, amber: null, green: null),
                         ProducerDisposalFee = applyModulation
-                            ? (total: 2254.14m, red: 4, amber: 5, green: 6)
+                            ? (total: 2254.14m, red:    4, amber:    5, green:    6)
                             : (total: 2254.14m, red: null, amber: null, green: null),
                         BadDebtProvision = 135.25m,
                         ProducerDisposalFeeWithBadDebtProvision = 2389.39m,
@@ -938,13 +918,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                                 }
                             : new(),
                         NetReportedTonnage = applyModulation
-                            ?(total: 17.800m, red: 0, amber: 0, green: 0)
+                            ?(total: 17.800m, red:    0, amber:    0, green:    0)
                             :(total: 17.800m, red: null, amber: null, green: null),
                         PricePerTonne = applyModulation
-                            ? (total: 2.4488m, red: 1, amber: 2, green: 3)
+                            ? (total: 2.4488m, red:    1, amber:    2, green:    3)
                             : (total: 2.4488m, red: null, amber: null, green: null),
                         ProducerDisposalFee = applyModulation
-                            ? (total: 43.59m, red: 4, amber: 5, green: 6)
+                            ? (total: 43.59m, red:    4, amber:    5, green:    6)
                             : (total: 43.59m, red: null, amber: null, green: null),
                         BadDebtProvision = 2.62m,
                         ProducerDisposalFeeWithBadDebtProvision = 46.20m,
@@ -975,13 +955,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                                 }
                             : new(),
                         NetReportedTonnage = applyModulation
-                            ?(total: 4.400m, red: 4.400m, amber: 0, green: 0)
-                            :(total: 4.400m, red: null, amber: null, green: null),
+                            ?(total: 4.400m, red: 4.400m, amber:    0, green:    0)
+                            :(total: 4.400m, red:   null, amber: null, green: null),
                         PricePerTonne = applyModulation
-                            ? (total: 2.1601m, red: 1, amber: 2, green: 3)
+                            ? (total: 2.1601m, red:    1, amber:    2, green:    3)
                             : (total: 2.1601m, red: null, amber: null, green: null),
                         ProducerDisposalFee = applyModulation
-                            ? (total: 9.50m, red: 4, amber: 5, green: 6)
+                            ? (total: 9.50m, red:    4, amber:    5, green:    6)
                             : (total: 9.50m, red: null, amber: null, green: null),
                         BadDebtProvision = 0.57m,
                         ProducerDisposalFeeWithBadDebtProvision = 10.07m,
@@ -1012,13 +992,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                                 }
                             : new(),
                         NetReportedTonnage = applyModulation
-                            ?(total: 0, red: 0, amber: 0, green: 0)
+                            ?(total: 0, red:    0, amber:    0, green:    0)
                             :(total: 0, red: null, amber: null, green: null),
                         PricePerTonne = applyModulation
-                            ? (total: 1.9813m, red: 1, amber: 2, green: 3)
+                            ? (total: 1.9813m, red:    1, amber:    2, green:    3)
                             : (total: 1.9813m, red: null, amber: null, green: null),
                         ProducerDisposalFee = applyModulation
-                            ? (total: 0.00m, red: 4, amber: 5, green: 6)
+                            ? (total: 0.00m, red:    4, amber:    5, green:    6)
                             : (total: 0.00m, red: null, amber: null, green: null),
                         BadDebtProvision = 0.00m,
                         ProducerDisposalFeeWithBadDebtProvision = 0.00m,
@@ -1049,13 +1029,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                                 }
                             : new(),
                         NetReportedTonnage = applyModulation
-                            ?(total: 405.000m, red: 300, amber: 100, green: 5)
+                            ?(total: 405.000m, red:  300, amber:  100, green:    5)
                             :(total: 405.000m, red: null, amber: null, green: null),
                         PricePerTonne = applyModulation
-                            ? (total: 2.0000m, red: 1, amber: 2, green: 3)
+                            ? (total: 2.0000m, red:    1, amber:    2, green:    3)
                             : (total: 2.0000m, red: null, amber: null, green: null),
                         ProducerDisposalFee = applyModulation
-                            ? (total: 810.00m, red: 4, amber: 5, green: 6)
+                            ? (total: 810.00m, red:    4, amber:    5, green:    6)
                             : (total: 810.00m, red: null, amber: null, green: null),
                         BadDebtProvision = 48.60m,
                         ProducerDisposalFeeWithBadDebtProvision = 858.60m,
@@ -1086,13 +1066,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                                 }
                             : new(),
                         NetReportedTonnage = applyModulation
-                            ?(total: 44.500m, red: 0, amber: 44.500m, green: 0)
-                            :(total: 44.500m, red: null, amber: null, green: null),
+                            ?(total: 44.500m, red:    0, amber: 44.500m, green:    0)
+                            :(total: 44.500m, red: null, amber:    null, green: null),
                         PricePerTonne = applyModulation
-                            ? (total: 1.1954m, red: 1, amber: 2, green: 3)
+                            ? (total: 1.1954m, red:    1, amber:    2, green:    3)
                             : (total: 1.1954m, red: null, amber: null, green: null),
                         ProducerDisposalFee = applyModulation
-                            ? (total: 53.20m, red: 4, amber: 5, green: 6)
+                            ? (total: 53.20m, red:    4, amber:    5, green:    6)
                             : (total: 53.20m, red: null, amber: null, green: null),
                         BadDebtProvision = 3.19m,
                         ProducerDisposalFeeWithBadDebtProvision = 56.39m,
@@ -1471,6 +1451,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 prodMats.AddRange(new[]{
                     new ProducerReportedMaterial
                     {
+                        // TODO this is virtual - does it need populating?
                         Material = new Material { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
                         PackagingTonnage = 500.00m,
                         PackagingType = "HH",
@@ -2208,8 +2189,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public static void SeedDatabaseForInitialRun(ApplicationDBContext context)
         {
             //calculator runs
-            var runs = new List<CalculatorRun> { new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=7, Name = "CalculatorRunTest1" },
-             new CalculatorRun { Id = 2, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest2" }};
+            var runs = new List<CalculatorRun> {
+                new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=7, Name = "CalculatorRunTest1" },
+                new CalculatorRun { Id = 2, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest2" }
+            };
             context.CalculatorRuns.AddRange(runs);
 
             context.CalculatorRunOrganisationDataMaster.AddRange(GetCalculatorRunOrganisationDataMaster());
@@ -2237,20 +2220,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
 
             var producerDetails = new List<ProducerDetail>
-            {  new ProducerDetail { Id =1 , CalculatorRunId = 1, ProducerName="Test1", ProducerId = 1, TradingName = "TN1"},
-             new ProducerDetail { Id =2 , CalculatorRunId = 1, ProducerName="Test2", ProducerId = 2, TradingName = "TN2"},
-              new ProducerDetail { Id =3 , CalculatorRunId = 2, ProducerName="Test1", ProducerId = 1, TradingName = "TN3"},
-               new ProducerDetail { Id =4 , CalculatorRunId = 1, ProducerName="Test3", ProducerId = 3, TradingName = "TN4"},
+            {
+                new ProducerDetail { Id =1 , CalculatorRunId = 1, ProducerName="Test1", ProducerId = 1, TradingName = "TN1"},
+                new ProducerDetail { Id =2 , CalculatorRunId = 1, ProducerName="Test2", ProducerId = 2, TradingName = "TN2"},
+                new ProducerDetail { Id =3 , CalculatorRunId = 2, ProducerName="Test1", ProducerId = 1, TradingName = "TN3"},
+                new ProducerDetail { Id =4 , CalculatorRunId = 1, ProducerName="Test3", ProducerId = 3, TradingName = "TN4"},
             };
 
             context.ProducerDetail.AddRange(producerDetails);
 
             var materials = new List<Material>
-        {
-            new Material { Id = 5, Name = "Plastic", Code = MaterialCodes.Plastic },
-            new Material { Id = 6, Name = "Steel", Code = MaterialCodes.Steel },
-            new Material { Id = 3, Name = "Glass", Code = MaterialCodes.Glass },
-        };
+            {
+                new Material { Id = 5, Name = "Plastic", Code = MaterialCodes.Plastic },
+                new Material { Id = 6, Name = "Steel", Code = MaterialCodes.Steel },
+                new Material { Id = 3, Name = "Glass", Code = MaterialCodes.Glass },
+            };
             context.Material.AddRange(materials);
 
             var producerReportedMaterials = new List<ProducerReportedMaterial>
@@ -2274,7 +2258,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
 
             var designatedRunInvoice = new List<ProducerDesignatedRunInvoiceInstruction>
-            { new ProducerDesignatedRunInvoiceInstruction
+            {
+                new ProducerDesignatedRunInvoiceInstruction
                 {
                     BillingInstructionId = "1_1",
                     CalculatorRunId = 1,
@@ -2303,7 +2288,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
 
             var billingInstructionList = new List<ProducerResultFileSuggestedBillingInstruction>
-            {  new ProducerResultFileSuggestedBillingInstruction
+            {
+                new ProducerResultFileSuggestedBillingInstruction
                 {
                     MaterialPercentageThresholdBreached = "1%",
                     MaterialPoundThresholdBreached = "1",
@@ -2313,8 +2299,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     CalculatorRunId = 1,
                     BillingInstructionAcceptReject = "Accepted"
                 },
-            new ProducerResultFileSuggestedBillingInstruction
-            {
+                new ProducerResultFileSuggestedBillingInstruction
+                {
                     MaterialPercentageThresholdBreached = "1%",
                     MaterialPoundThresholdBreached = "1",
                     ProducerId = 2,
@@ -2323,8 +2309,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     CalculatorRunId = 1,
                     BillingInstructionAcceptReject = "Accepted"
                 },
-             new ProducerResultFileSuggestedBillingInstruction
-             {
+                new ProducerResultFileSuggestedBillingInstruction
+                {
                     MaterialPercentageThresholdBreached = "1%",
                     MaterialPoundThresholdBreached = "1",
                     ProducerId = 3,
@@ -2357,9 +2343,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                       ProducerId =1,
                     Id=2
 
-                 },
-            new ProducerInvoicedMaterialNetTonnage
-            {
+                },
+                new ProducerInvoicedMaterialNetTonnage
+                {
                       CalculatorRunId =1,
                       MaterialId= 1,
                       InvoicedNetTonnage = 100,
@@ -2374,11 +2360,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                       ProducerId =2,
                     Id=4
 
-                 }};
+                }
+            };
 
             context.ProducerInvoicedMaterialNetTonnage.AddRange(materialInvoiceTonnage);
-
-
 
             context.SaveChanges();
         }
@@ -2386,51 +2371,52 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public static void SeedDatabaseForUnclassified(ApplicationDBContext context)
         {
             //calculator runs
-            var runs = new List<CalculatorRun> { new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest1" },
-             new CalculatorRun { Id = 2, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest2" }};
+            var runs = new List<CalculatorRun> {
+                new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest1" },
+                new CalculatorRun { Id = 2, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest2" }
+            };
             context.CalculatorRuns.AddRange(runs);
 
 
-
             var producerDetails = new List<ProducerDetail>
-            {  new ProducerDetail { Id =1 , CalculatorRunId = 1, ProducerName="Test1", ProducerId = 1, TradingName = "TN1"},
-             new ProducerDetail { Id =2 , CalculatorRunId = 1, ProducerName="Test2", ProducerId = 2, TradingName = "TN2"},
-              new ProducerDetail { Id =3 , CalculatorRunId = 2, ProducerName="Test1", ProducerId = 1, TradingName = "TN3"},
-               new ProducerDetail { Id =4 , CalculatorRunId = 1, ProducerName="Test3", ProducerId = 3, TradingName = "TN4"},
+            {
+                new ProducerDetail { Id =1 , CalculatorRunId = 1, ProducerName="Test1", ProducerId = 1, TradingName = "TN1"},
+                new ProducerDetail { Id =2 , CalculatorRunId = 1, ProducerName="Test2", ProducerId = 2, TradingName = "TN2"},
+                new ProducerDetail { Id =3 , CalculatorRunId = 2, ProducerName="Test1", ProducerId = 1, TradingName = "TN3"},
+                new ProducerDetail { Id =4 , CalculatorRunId = 1, ProducerName="Test3", ProducerId = 3, TradingName = "TN4"},
             };
 
             context.ProducerDetail.AddRange(producerDetails);
 
             var materials = new List<Material>
-        {
-            new Material { Id = 5, Name = "Plastic", Code = MaterialCodes.Plastic },
-            new Material { Id = 6, Name = "Steel", Code = MaterialCodes.Steel },
-            new Material { Id = 3, Name = "Glass", Code = MaterialCodes.Glass },
-        };
+            {
+                new Material { Id = 5, Name = "Plastic", Code = MaterialCodes.Plastic },
+                new Material { Id = 6, Name = "Steel", Code = MaterialCodes.Steel },
+                new Material { Id = 3, Name = "Glass", Code = MaterialCodes.Glass },
+            };
             context.Material.AddRange(materials);
 
             var producerReportedMaterials = new List<ProducerReportedMaterial>
-        {
-            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 1, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
-            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 1, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
-            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 2, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
-            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 2, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
-            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 3, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
-            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 3, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
-            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 1, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
-            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 1, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
-            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 2, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
-            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 2, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
-            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 3, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
-            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 3, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
-
-        };
+            {
+                new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 1, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
+                new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 1, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
+                new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 2, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
+                new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 2, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
+                new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 3, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
+                new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 3, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
+                new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 1, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
+                new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 1, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
+                new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 2, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
+                new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 2, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
+                new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 3, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
+                new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 3, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
+            };
             context.ProducerReportedMaterial.AddRange(producerReportedMaterials);
 
 
-
             var designatedRunInvoice = new List<ProducerDesignatedRunInvoiceInstruction>
-            { new ProducerDesignatedRunInvoiceInstruction
+            {
+                new ProducerDesignatedRunInvoiceInstruction
                 {
                     BillingInstructionId = "1_1",
                     CalculatorRunId = 1,
@@ -2453,13 +2439,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
                 },
             };
-
-
             context.ProducerDesignatedRunInvoiceInstruction.AddRange(designatedRunInvoice);
 
 
             var billingInstructionList = new List<ProducerResultFileSuggestedBillingInstruction>
-            {  new ProducerResultFileSuggestedBillingInstruction
+            {
+                new ProducerResultFileSuggestedBillingInstruction
                 {
                     MaterialPercentageThresholdBreached = "1%",
                     MaterialPoundThresholdBreached = "1",
@@ -2469,8 +2454,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     CalculatorRunId = 1,
                     BillingInstructionAcceptReject = "Accepted"
                 },
-            new ProducerResultFileSuggestedBillingInstruction
-            {
+                new ProducerResultFileSuggestedBillingInstruction
+                {
                     MaterialPercentageThresholdBreached = "1%",
                     MaterialPoundThresholdBreached = "1",
                     ProducerId = 2,
@@ -2479,8 +2464,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     CalculatorRunId = 1,
                     BillingInstructionAcceptReject = "Accepted"
                 },
-             new ProducerResultFileSuggestedBillingInstruction
-             {
+                new ProducerResultFileSuggestedBillingInstruction
+                {
                     MaterialPercentageThresholdBreached = "1%",
                     MaterialPoundThresholdBreached = "1",
                     ProducerId = 3,
@@ -2490,54 +2475,46 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     BillingInstructionAcceptReject = "Accepted"
                 }
             };
-
-
-
             context.ProducerResultFileSuggestedBillingInstruction.AddRange(billingInstructionList);
 
             var materialInvoiceTonnage = new List<ProducerInvoicedMaterialNetTonnage>
             {
-                 new ProducerInvoicedMaterialNetTonnage
-                 {
-                      CalculatorRunId =1,
-                      MaterialId= 1,
-                      InvoicedNetTonnage = 100,
-                      ProducerId =1, Id=1
-
-                 },
                 new ProducerInvoicedMaterialNetTonnage
                 {
-                      CalculatorRunId =1,
-                      MaterialId= 2,
-                      InvoicedNetTonnage = 100,
-                      ProducerId =1,
-                    Id=2
-
-                 },
-            new ProducerInvoicedMaterialNetTonnage
-            {
-                      CalculatorRunId =1,
-                      MaterialId= 1,
-                      InvoicedNetTonnage = 100,
-                      ProducerId =2, Id=3
-
-                 },
+                    Id = 1,
+                    CalculatorRunId = 1,
+                    MaterialId = 1,
+                    InvoicedNetTonnage = 100,
+                    ProducerId = 1
+                },
                 new ProducerInvoicedMaterialNetTonnage
                 {
-                      CalculatorRunId =1,
-                      MaterialId= 2,
-                      InvoicedNetTonnage = 100,
-                      ProducerId =2,
-                    Id=4
-
-                 }};
-
+                    Id = 2,
+                    CalculatorRunId = 1,
+                    MaterialId = 2,
+                    InvoicedNetTonnage = 100,
+                    ProducerId = 1
+                },
+                new ProducerInvoicedMaterialNetTonnage
+                {
+                    Id = 3,
+                    CalculatorRunId = 1,
+                    MaterialId = 1,
+                    InvoicedNetTonnage = 100,
+                    ProducerId = 2,
+                },
+                new ProducerInvoicedMaterialNetTonnage
+                {
+                    Id = 4,
+                    CalculatorRunId = 1,
+                    MaterialId = 2,
+                    InvoicedNetTonnage = 100,
+                    ProducerId = 2
+                }
+            };
             context.ProducerInvoicedMaterialNetTonnage.AddRange(materialInvoiceTonnage);
-
-
 
             context.SaveChanges();
         }
-
     }
 }

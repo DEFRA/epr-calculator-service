@@ -73,13 +73,7 @@ public class ProducerInvoiceNetTonnageServiceTests
                     Total = 0
                 }
             },
-            CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
-            {
-                Name = string.Empty,
-                CalcResultLateReportingTonnageDetails = new List<CalcResultLateReportingTonnageDetail>(),
-                MaterialHeading = string.Empty,
-                TonnageHeading = string.Empty
-            },
+            CalcResultLateReportingTonnageData = new() { LateReportingTonnageByMaterial = [] },
             CalcResultProjectedProducers = new CalcResultProjectedProducers()
         };
 

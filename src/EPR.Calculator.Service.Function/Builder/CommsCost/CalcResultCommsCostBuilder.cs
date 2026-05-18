@@ -69,7 +69,7 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
             var producerReportedTon = producerReportedMaterials.Where(x => x.MaterialId == material.Id && x.PackagingType != PackagingTypes.PublicBin && x.PackagingType != PackagingTypes.HouseholdDrinksContainers)
                 .Sum(x => x.PackagingTonnage);
 
-            var lateReportingTonnage = calcResultLateReportingTonnage.CalcResultLateReportingTonnageDetails.Single(x => x.Name == material.Name);
+            var lateReportingTonnage = calcResultLateReportingTonnage.LateReportingTonnageByMaterial[material.Code];
             var publicBinTonnage = producerReportedMaterials.Where(p => p.MaterialId == material.Id && p.PackagingType == PackagingTypes.PublicBin).Sum(p => p.PackagingTonnage);
             var householdcontainers = producerReportedMaterials.Where(p => p.MaterialId == material.Id && p.PackagingType == PackagingTypes.HouseholdDrinksContainers).Sum(p => p.PackagingTonnage);
 
