@@ -85,7 +85,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 
             onePlusFourApportionmentExporterCsv.Export(calcResult.CalcResultOnePlusFourApportionment, csvContent);
 
-            commsCostExporterCsv.Export(calcResult.CalcResultCommsCostReportDetail, csvContent);
+            commsCostExporterCsv.Export(calcResult.CalcResultCommsCostReportDetail, materials, csvContent);
 
             laDisposalCostExporterCsv.Export(calcResult.ApplyModulation, materials, calcResult.CalcResultLaDisposalCostData, csvContent);
 

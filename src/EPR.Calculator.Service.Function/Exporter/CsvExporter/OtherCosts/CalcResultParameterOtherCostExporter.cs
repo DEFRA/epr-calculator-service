@@ -106,7 +106,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts
 
         public void SaOperatingCosts(CalcResultParameterOtherCost otherCost, StringBuilder csvContent)
         {
-            csvContent.Append(CsvSanitiser.SanitiseData((string)null));
+            csvContent.Append(CsvSanitiser.SanitiseData((string?)null));
             csvContent.Append(CsvSanitiser.SanitiseData("England"));
             csvContent.Append(CsvSanitiser.SanitiseData("Wales"));
             csvContent.Append(CsvSanitiser.SanitiseData("Scotland"));

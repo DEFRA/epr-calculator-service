@@ -183,39 +183,36 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                 },
                 CalcResultCommsCostReportDetail = new CalcResultCommsCost
                 {
-                    CalcResultCommsCostCommsCostByMaterial = new List<CalcResultCommsCostCommsCostByMaterial>
+                    CommsCostByMaterial =
                     {
-                        new CalcResultCommsCostCommsCostByMaterial
-                        {
-                            Name = "Aluminium",
-                            CommsCostByMaterialPricePerTonne = 0.42m,
-                            ProducerReportedHouseholdPackagingWasteTonnage = 0,
-                            LateReportingTonnage = 0,
-                            ReportedPublicBinTonnage = 0,
-                            ProducerReportedTotalTonnage = 0
-                        },
-                        new CalcResultCommsCostCommsCostByMaterial
-                        {
-                            Name = "Glass",
-                            CommsCostByMaterialPricePerTonne = 0.3m,
-                            ProducerReportedHouseholdPackagingWasteTonnage = 0,
-                            LateReportingTonnage = 0,
-                            ReportedPublicBinTonnage = 0,
-                            ProducerReportedTotalTonnage = 0
-                        },
-                        new CalcResultCommsCostCommsCostByMaterial
-                        {
-                            Name = "Total",
-                            CommsCostByMaterialPricePerTonne = 0.51m,
-                            ProducerReportedHouseholdPackagingWasteTonnage = 0,
-                            LateReportingTonnage = 0,
-                            ReportedPublicBinTonnage = 0,
-                            ProducerReportedTotalTonnage = 0
-                        }
+                        ["AL"] = new()
+                            {
+                                CommsCostByMaterialPricePerTonne = 0.42m,
+                                ProducerReportedHouseholdPackagingWasteTonnage = 0,
+                                LateReportingTonnage = 0,
+                                ReportedPublicBinTonnage = 0,
+                                ProducerReportedTotalTonnage = 0
+                            },
+                        ["GL"] = new()
+                            {
+                                CommsCostByMaterialPricePerTonne = 0.3m,
+                                ProducerReportedHouseholdPackagingWasteTonnage = 0,
+                                LateReportingTonnage = 0,
+                                ReportedPublicBinTonnage = 0,
+                                ProducerReportedTotalTonnage = 0
+                            }
                     },
-                    CalcResultCommsCostOnePlusFourApportionment = new CalcResultCommsCostOnePlusFourApportionment { Name = CalcResultCommsCostBuilder.OnePlusFourApportionment, England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40, Total = 100 },
-                    CommsCostUkWide = new CalcResultCommsCostOnePlusFourApportionment { Name = CalcResultCommsCostBuilder.TwoBCommsCostUkWide, England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40, Total = 100 },
-                    CommsCostByCountry = new CalcResultCommsCostOnePlusFourApportionment { Name = CalcResultCommsCostBuilder.TwoCCommsCostByCountry, England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40, Total = 100 }
+                    CommsCostByMaterialTotal = new ()
+                    {
+                        CommsCostByMaterialPricePerTonne = 0.51m,
+                        ProducerReportedHouseholdPackagingWasteTonnage = 0,
+                        LateReportingTonnage = 0,
+                        ReportedPublicBinTonnage = 0,
+                        ProducerReportedTotalTonnage = 0
+                    },
+                    CalcResultCommsCostOnePlusFourApportionment = new CalcResultCommsCostOnePlusFourApportionment { England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40, Total = 100 },
+                    CommsCostUkWide = new ByCountryValue { England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40, Total = 100 },
+                    CommsCostByCountry = new ByCountryValue { England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40, Total = 100 }
                 },
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData
                 {

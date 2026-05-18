@@ -64,9 +64,7 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
 
         var producerReportedMaterials = await GetProducerReportedMaterials(context, runId);
 
-        var calcResultCommsCostCommsCostByMaterial = new List<CalcResultCommsCostCommsCostByMaterial>();
-
-        foreach (var material in materialDetails)
+        var commsCostByMaterial = materialDetails.Select(material =>
         {
             var producerReportedTon = producerReportedMaterials.Where(x => x.MaterialId == material.Id && x.PackagingType != PackagingTypes.PublicBin && x.PackagingType != PackagingTypes.HouseholdDrinksContainers)
                 .Sum(x => x.PackagingTonnage);
@@ -83,7 +81,6 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
                     + publicBinTonnage
                     + householdcontainers;
             var commsCost = new CalcResultCommsCostCommsCostByMaterial{
-                Name            = materialDefault.ParameterCategory,
                 England         = apportionmentDetail.England         * total / 100,
                 Wales           = apportionmentDetail.Wales           * total / 100,
                 Scotland        = apportionmentDetail.Scotland        * total / 100,
@@ -99,20 +96,17 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
                         ? total / producerReportedTotalTonnage : 0
             };
 
-            calcResultCommsCostCommsCostByMaterial.Add(commsCost);
-        }
+            return (material.Code, commsCost);
+        }).ToDictionary();
 
-        var totalRow = GetTotalRow(calcResultCommsCostCommsCostByMaterial);
-
-        calcResultCommsCostCommsCostByMaterial.Add(totalRow);
+        var commsCostByMaterialTotal = GetTotalRow(commsCostByMaterial.Values);
 
         var commsCostByUk =
             allDefaultResults.Single(x =>
                 x.ParameterType == CommunicationCostByCountry && x.ParameterCategory == Uk);
 
-        var ukCost = new CalcResultCommsCostOnePlusFourApportionment
+        var ukCost = new ByCountryValue
         {
-            Name = TwoBCommsCostUkWide,
             England         = commsCostByUk.ParameterValue * apportionmentDetail.England         / 100,
             Wales           = commsCostByUk.ParameterValue * apportionmentDetail.Wales           / 100,
             Scotland        = commsCostByUk.ParameterValue * apportionmentDetail.Scotland        / 100,
@@ -120,12 +114,13 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
             Total           = commsCostByUk.ParameterValue
         };
 
-        var commsCostByCountryList = GetCommsCostByCountryList(allDefaultResults);
+        var commsCostByCountryList = GetCommsCostByCountry(allDefaultResults);
 
         return new CalcResultCommsCost()
         {
             CalcResultCommsCostOnePlusFourApportionment = calcResultCommsCostOnePlusFourApportionment,
-            CalcResultCommsCostCommsCostByMaterial      = calcResultCommsCostCommsCostByMaterial,
+            CommsCostByMaterial                         = commsCostByMaterial,
+            CommsCostByMaterialTotal                    = commsCostByMaterialTotal,
             CommsCostUkWide                             = ukCost,
             CommsCostByCountry                          = commsCostByCountryList
         };
@@ -156,22 +151,21 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
         // TODO move total row to Exporter?
         return new CalcResultCommsCostCommsCostByMaterial
         {
-            Name            = "Total",
             England         = list.Sum(x => x.England),
             Wales           = list.Sum(x => x.Wales),
             NorthernIreland = list.Sum(x => x.NorthernIreland),
             Scotland        = list.Sum(x => x.Scotland),
             Total           = list.Sum(x => x.Total),
             ProducerReportedHouseholdPackagingWasteTonnage = list.Sum(x => x.ProducerReportedHouseholdPackagingWasteTonnage),
-            ProducerReportedTotalTonnage   = list.Sum(x => x.ProducerReportedTotalTonnage),
-            LateReportingTonnage      = list.Sum(x => x.LateReportingTonnage),
-            ReportedPublicBinTonnage  = list.Sum(x => x.ReportedPublicBinTonnage),
-            HouseholdDrinksContainers = list.Sum(x => x.HouseholdDrinksContainers),
+            ProducerReportedTotalTonnage                   = list.Sum(x => x.ProducerReportedTotalTonnage),
+            LateReportingTonnage                           = list.Sum(x => x.LateReportingTonnage),
+            ReportedPublicBinTonnage                       = list.Sum(x => x.ReportedPublicBinTonnage),
+            HouseholdDrinksContainers                      = list.Sum(x => x.HouseholdDrinksContainers),
         };
     }
 
 
-    private static CalcResultCommsCostOnePlusFourApportionment GetCommsCostByCountryList(
+    private static ByCountryValue GetCommsCostByCountry(
         IEnumerable<CalcCommsBuilderResult> allDefaultResults
     )
     {
@@ -192,14 +186,13 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
                 x.ParameterType == CommunicationCostByCountry &&
                 x.ParameterCategory == "Scotland").ParameterValue;
 
-        return new CalcResultCommsCostOnePlusFourApportionment
+        return new ByCountryValue
         {
             England         = englandValue,
             Wales           = walesValue,
             Scotland        = scotlandValue,
             NorthernIreland = niValue,
-            Total           = englandValue + walesValue + scotlandValue + niValue,
-            Name            = TwoCCommsCostByCountry
+            Total           = englandValue + walesValue + scotlandValue + niValue
         };
     }
 
@@ -210,7 +203,6 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
          // TODO just use CalcResultOnePlusFourApportionmentData?
         return new CalcResultCommsCostOnePlusFourApportionment
         {
-            Name            = OnePlusFourApportionment,
             England         = apportionmentDetail.England,
             Wales           = apportionmentDetail.Wales,
             Scotland        = apportionmentDetail.Scotland,

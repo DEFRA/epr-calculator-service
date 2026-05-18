@@ -104,7 +104,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             MockLapcapDataExporter.Verify(x => x.Export(It.IsAny<CalcResultLapcapData>(), It.IsAny<ImmutableList<MaterialDetail>>(), It.IsAny<StringBuilder>()));
             MockResultDetailexporter.Verify(x => x.Export(It.IsAny<CalcResultDetail>(), It.IsAny<StringBuilder>()));
             MockLaDisposalCostDataExporter.Verify(x => x.Export(It.IsAny<bool>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<CalcResultLaDisposalCostData>(), It.IsAny<StringBuilder>()));
-            MockCommsCostExporter.Verify(x => x.Export(It.IsAny<CalcResultCommsCost>(), It.IsAny<StringBuilder>()));
+            MockCommsCostExporter.Verify(x => x.Export(It.IsAny<CalcResultCommsCost>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<StringBuilder>()));
             MockOnePlusFourExporter.Verify(x => x.Export(It.IsAny<CalcResultOnePlusFourApportionment>(), It.IsAny<StringBuilder>()));
             MockScaledupProducersExporter.Verify(x => x.Export(It.IsAny<CalcResultScaledupProducers>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<bool>(), It.IsAny<StringBuilder>()));
             MockPartialObligationsExporter.Verify(x => x.Export(It.IsAny<CalcResultPartialObligations>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<StringBuilder>(), It.IsAny<bool>()));
@@ -256,26 +256,24 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 },
                 CalcResultCommsCostReportDetail = new CalcResultCommsCost
                 {
-                    CalcResultCommsCostCommsCostByMaterial = new List<CalcResultCommsCostCommsCostByMaterial>
+                    CommsCostByMaterial = new Dictionary<string, CalcResultCommsCostCommsCostByMaterial>
                     {
-                        new CalcResultCommsCostCommsCostByMaterial
+                        ["AL"] = new()
                         {
-                            Name = "Aluminium",
                             CommsCostByMaterialPricePerTonne = 0.42m,
                             ProducerReportedHouseholdPackagingWasteTonnage = 0m,
                             LateReportingTonnage = 0m,
                             ReportedPublicBinTonnage = 0m,
                             ProducerReportedTotalTonnage = 0m
                         },
-                        new CalcResultCommsCostCommsCostByMaterial
+                        ["GL"] = new()
                         {
-                            Name = "Glass",
                             CommsCostByMaterialPricePerTonne = 0.3m,
                             ProducerReportedHouseholdPackagingWasteTonnage = 0m,
                             LateReportingTonnage = 0m,
                             ReportedPublicBinTonnage = 0m,
                             ProducerReportedTotalTonnage = 0m
-                        },
+                        }
                     }
                 },
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData(),

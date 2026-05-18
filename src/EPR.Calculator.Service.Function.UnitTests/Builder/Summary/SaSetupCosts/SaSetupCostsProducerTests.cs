@@ -222,11 +222,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                 },
                 CalcResultCommsCostReportDetail = new CalcResultCommsCost
                 {
-                    CalcResultCommsCostCommsCostByMaterial =
-                    [
-                        new ()
+                    CommsCostByMaterial =
+                    {
+                        ["AL"] = new ()
                         {
-                            Name = "Aluminium",
                             CommsCostByMaterialPricePerTonne = 0.42m,
                             England = 0,
                             Scotland = 0,
@@ -238,9 +237,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                             ReportedPublicBinTonnage = 0,
                             ProducerReportedTotalTonnage = 0
                         },
-                        new ()
+                        ["GL"] = new ()
                         {
-                            Name = "Glass",
                             CommsCostByMaterialPricePerTonne = 0.3m,
                             England = 0,
                             Scotland = 0,
@@ -252,7 +250,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                             ReportedPublicBinTonnage = 0,
                             ProducerReportedTotalTonnage = 0
                         }
-                    ],
+                    }
                 },
                 CalcResultLateReportingTonnageData = Fixture.Create<CalcResultLateReportingTonnage>(),
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),

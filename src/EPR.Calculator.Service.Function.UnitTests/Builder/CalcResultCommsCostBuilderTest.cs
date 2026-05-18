@@ -66,19 +66,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var onePlusFourApp = result.CalcResultCommsCostOnePlusFourApportionment;
             Assert.IsNotNull(onePlusFourApp);
 
-            Assert.AreEqual("1 + 4 Apportionment %s", onePlusFourApp.Name);
             Assert.AreEqual(40 , onePlusFourApp.England);
             Assert.AreEqual(20 , onePlusFourApp.Wales);
             Assert.AreEqual(20 , onePlusFourApp.NorthernIreland);
             Assert.AreEqual(20 , onePlusFourApp.Scotland);
             Assert.AreEqual(100, onePlusFourApp.Total);
 
-            var materialCosts = result.CalcResultCommsCostCommsCostByMaterial.ToList();
+            var materialCosts = result.CommsCostByMaterial;
             Assert.IsNotNull(materialCosts);
-            Assert.AreEqual(9, materialCosts.Count);
+            Assert.HasCount(8, materialCosts);
 
-            var aluminiumCost = materialCosts[0];
-            Assert.AreEqual("Aluminium", aluminiumCost.Name);
+            var aluminiumCost = materialCosts["AL"];
             Assert.AreEqual(4, aluminiumCost.England);
             Assert.AreEqual(2, aluminiumCost.Wales);
             Assert.AreEqual(2, aluminiumCost.Scotland);
@@ -90,8 +88,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             // TODO this rounding should happen in the builder
             Assert.AreEqual(0.0011m, Math.Round(aluminiumCost.CommsCostByMaterialPricePerTonne!.Value, 4));
 
-            var fibreCompositeCost = materialCosts[1];
-            Assert.AreEqual("Fibre composite", fibreCompositeCost.Name);
+            var fibreCompositeCost = materialCosts["FC"];
             Assert.AreEqual(4, fibreCompositeCost.England);
             Assert.AreEqual(2, fibreCompositeCost.Wales);
             Assert.AreEqual(2, fibreCompositeCost.Scotland);
@@ -102,8 +99,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual(2210, fibreCompositeCost.ProducerReportedTotalTonnage);
             Assert.AreEqual(0.0045m, Math.Round(fibreCompositeCost.CommsCostByMaterialPricePerTonne!.Value, 4));
 
-            var glassCost = materialCosts[2];
-            Assert.AreEqual("Glass", glassCost.Name);
+            var glassCost = materialCosts["GL"];
             Assert.AreEqual(4, glassCost.England);
             Assert.AreEqual(2, glassCost.Wales);
             Assert.AreEqual(2, glassCost.Scotland);
@@ -115,8 +111,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual(0.0031m, Math.Round(glassCost.CommsCostByMaterialPricePerTonne!.Value, 4));
             Assert.AreEqual(200, glassCost.HouseholdDrinksContainers);
 
-            var totalMaterialCost = materialCosts.Last();
-            Assert.AreEqual("Total", totalMaterialCost.Name);
+            var totalMaterialCost = result.CommsCostByMaterialTotal;
             Assert.AreEqual(32, totalMaterialCost.England);
             Assert.AreEqual(16, totalMaterialCost.Wales);
             Assert.AreEqual(16, totalMaterialCost.Scotland);

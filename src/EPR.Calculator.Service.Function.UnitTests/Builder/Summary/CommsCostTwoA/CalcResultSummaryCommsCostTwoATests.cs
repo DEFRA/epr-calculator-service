@@ -192,35 +192,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
         public void GetPriceperTonneForComms_WhenNoMaterialMatch_ShouldReturn0()
         {
             // Arrange
-            material.Name = "Aluminium";
-
-            // Act
-            decimal totalCost = CalcResultSummaryCommsCostTwoA.GetPriceperTonneForComms(material, calcResult);
-
-            // Assert
-            Assert.AreEqual(0m, totalCost);
-        }
-
-        [TestMethod]
-        public void GetPriceperTonneForComms_WhenCostIsNotDecimal_ShouldReturn0()
-        {
-            // Arrange
-            calcResult.CalcResultCommsCostReportDetail.CalcResultCommsCostCommsCostByMaterial = [
-                new ()
-                {
-                    Name = "Household",
-                    CommsCostByMaterialPricePerTonne = 0.42m,
-                    England = 0,
-                    Scotland = 0,
-                    NorthernIreland = 0,
-                    Wales = 0,
-                    Total = 0,
-                    ProducerReportedHouseholdPackagingWasteTonnage = 0,
-                    LateReportingTonnage = 0,
-                    ReportedPublicBinTonnage = 0,
-                    ProducerReportedTotalTonnage = 0
-                }
-            ];
+            material.Code = "Aluminium";
 
             // Act
             decimal totalCost = CalcResultSummaryCommsCostTwoA.GetPriceperTonneForComms(material, calcResult);

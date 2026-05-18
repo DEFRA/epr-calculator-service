@@ -118,8 +118,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
 
         public static decimal GetPriceperTonneForComms(MaterialDetail material, CalcResult calcResult)
         {
-            var commsCostDataDetail = calcResult.CalcResultCommsCostReportDetail.CalcResultCommsCostCommsCostByMaterial.FirstOrDefault(la => la.Name == material.Name);
-
+            var commsCostDataDetail = calcResult.CalcResultCommsCostReportDetail.CommsCostByMaterial.GetValueOrDefault(material.Code);
             return commsCostDataDetail?.CommsCostByMaterialPricePerTonne ?? 0m;
         }
 

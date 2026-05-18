@@ -286,27 +286,25 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     NorthernIreland = 4.56m,
                     Total           = 11.58m
                 },
-                CalcResultCommsCostCommsCostByMaterial =
-                [
-                    new ()
-                    {
-                        Name = "Material1",
-                        CommsCostByMaterialPricePerTonne = 0.42m,
-                        ProducerReportedHouseholdPackagingWasteTonnage = 0,
-                        LateReportingTonnage = 0,
-                        ReportedPublicBinTonnage = 0,
-                        ProducerReportedTotalTonnage = 0
-                    },
-                    new ()
-                    {
-                        Name = "Material2",
-                        CommsCostByMaterialPricePerTonne = 0.3m,
-                        ProducerReportedHouseholdPackagingWasteTonnage = 0,
-                        LateReportingTonnage = 0,
-                        ReportedPublicBinTonnage = 0,
-                        ProducerReportedTotalTonnage = 0
-                    },
-                ],
+                CommsCostByMaterial =
+                {
+                    ["AL"] = new ()
+                        {
+                            CommsCostByMaterialPricePerTonne = 0.42m,
+                            ProducerReportedHouseholdPackagingWasteTonnage = 0,
+                            LateReportingTonnage = 0,
+                            ReportedPublicBinTonnage = 0,
+                            ProducerReportedTotalTonnage = 0
+                        },
+                    ["GL"] = new ()
+                        {
+                            CommsCostByMaterialPricePerTonne = 0.3m,
+                            ProducerReportedHouseholdPackagingWasteTonnage = 0,
+                            LateReportingTonnage = 0,
+                            ReportedPublicBinTonnage = 0,
+                            ProducerReportedTotalTonnage = 0
+                        }
+                },
                 CommsCostUkWide = new () { Total = 2531 },
                 CommsCostByCountry = new () { Total = 2530 }
             };
