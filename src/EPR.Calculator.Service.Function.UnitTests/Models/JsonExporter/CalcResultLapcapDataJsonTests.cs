@@ -38,46 +38,44 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual("LAPCAP Data", result.Name);
-            Assert.IsNotNull(result.CalcResultLapcapDataDetails);
             var details = result.CalcResultLapcapDataDetails.ToList();
             var json = JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true });
             Console.WriteLine(json);
             var expectedJson = """
                 {
-                    "name": "LAPCAP Data",
-                    "calcResultLapcapDataDetails": [
-                        {
-                            "materialName"                 : "Paper or card",
-                            "englandLaDisposalCost"        : "£50.00",
-                            "walesLaDisposalCost"          : "£60.00",
-                            "scotlandLaDisposalCost"       : "£70.00",
-                            "northernIrelandLaDisposalCost": "£80.00",
-                            "oneLaDisposalCostTotal"       : "£260.00"
-                        },
-                        {
-                            "materialName"                 : "Plastic",
-                            "englandLaDisposalCost"        : "£100.00",
-                            "walesLaDisposalCost"          : "£200.00",
-                            "scotlandLaDisposalCost"       : "£300.00",
-                            "northernIrelandLaDisposalCost": "£400.00",
-                            "oneLaDisposalCostTotal"       : "£1,000.00"
-                        }
-                    ],
-                    "calcResultLapcapDataTotal": {
-                        "totalEnglandLaDisposalCost"        : "£1.00",
-                        "totalWalesLaDisposalCost"          : "£2.00",
-                        "totalScotlandLaDisposalCost"       : "£3.00",
-                        "totalNorthernIrelandLaDisposalCost": "£4.00",
-                        "totalLaDisposalCost"               : "£10.00"
+                  "name": "LAPCAP Data",
+                  "calcResultLapcapDataDetails": [
+                    {
+                      "materialName"                 : "Paper or card",
+                      "englandLaDisposalCost"        : "£50.00",
+                      "walesLaDisposalCost"          : "£60.00",
+                      "scotlandLaDisposalCost"       : "£70.00",
+                      "northernIrelandLaDisposalCost": "£80.00",
+                      "oneLaDisposalCostTotal"       : "£260.00"
                     },
-                    "oneCountryApportionmentPercentages": {
-                        "englandApportionment"        : "47.12300000%",
-                        "walesApportionment"          : "13.12300000%",
-                        "scotlandApportionment"       : "25.12300000%",
-                        "northernIrelandApportionment": "14.63100000%",
-                        "totalApportionment"          : "100.00000000%"
+                    {
+                      "materialName"                 : "Plastic",
+                      "englandLaDisposalCost"        : "£100.00",
+                      "walesLaDisposalCost"          : "£200.00",
+                      "scotlandLaDisposalCost"       : "£300.00",
+                      "northernIrelandLaDisposalCost": "£400.00",
+                      "oneLaDisposalCostTotal"       : "£1,000.00"
                     }
+                  ],
+                  "calcResultLapcapDataTotal": {
+                    "totalEnglandLaDisposalCost"        : "£1.00",
+                    "totalWalesLaDisposalCost"          : "£2.00",
+                    "totalScotlandLaDisposalCost"       : "£3.00",
+                    "totalNorthernIrelandLaDisposalCost": "£4.00",
+                    "totalLaDisposalCost"               : "£10.00"
+                  },
+                  "oneCountryApportionmentPercentages": {
+                    "englandApportionment"        : "47.12300000%",
+                    "walesApportionment"          : "13.12300000%",
+                    "scotlandApportionment"       : "25.12300000%",
+                    "northernIrelandApportionment": "14.63100000%",
+                    "totalApportionment"          : "100.00000000%"
+                  }
                 }
                 """;
             JsonTestUtils.AssertJson(expectedJson, json);

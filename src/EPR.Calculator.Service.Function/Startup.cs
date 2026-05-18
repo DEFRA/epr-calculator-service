@@ -193,13 +193,13 @@ internal static class ServiceRegistration
         services.AddTransient<ICalcResultPartialObligationsExporter, CalcResultPartialObligationsExporter>();
         services.AddTransient<ICalcResultRejectedProducersExporter, CalcResultRejectedProducersExporter>();
         services.AddTransient<ICalcResultProjectedProducersExporter, CalcResultProjectedProducersExporter>();
-        services.AddTransient<LateReportingExporter, LateReportingExporter>();
+        services.AddTransient<CalcResultLateReportingExporter, CalcResultLateReportingExporter>();
         services.AddTransient<ICalcResultParameterOtherCostExporter, CalcResultParameterOtherCostExporter>();
         services.AddTransient<ICalcResultModulationExporter, CalcResultModulationExporter>();
         services.AddTransient<ICalcResultCommsCostExporter, CalcResultCommsCostExporter>();
         services.AddTransient<ICalcResultSummaryExporter, CalcResultSummaryExporter>();
         services.AddTransient<ICalcBillingJsonExporter, CalcResultsJsonExporter>();
-        services.AddTransient<ILateReportingExporter, LateReportingExporter>();
+        services.AddTransient<ICalcResultLateReportingExporter, CalcResultLateReportingExporter>();
         services.AddTransient<IRunNameService, RunNameService>();
         services.AddTransient<IClassificationService, ClassificationService>();
         services.AddTransient<IMaterialService, MaterialService>();

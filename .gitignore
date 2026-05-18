@@ -371,3 +371,6 @@ local.settings.json
 .idea
 .DS_Store
 .vscode
+
+.claude
+

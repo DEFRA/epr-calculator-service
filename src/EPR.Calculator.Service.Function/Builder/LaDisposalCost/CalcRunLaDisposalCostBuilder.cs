@@ -65,7 +65,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
                 {
                     var materialCode = detail.Key;
                     var materialName = materialDetails.First(m => m.Code == materialCode).Name;
-                    var lateReportingTonnageValue = lateReportingTonnage.CalcResultLateReportingTonnageDetails.Where(t => t.Name == materialName).Sum(t => t.TotalLateReportingTonnage);
+                    var lateReportingTonnageValue = lateReportingTonnage.LateReportingTonnageByMaterial[materialCode].TotalLateReportingTonnage;
                     var producerReportedHouseholdPackagingWasteTonnage = producerData.Where(t => t.MaterialName == materialName && t.PackagingType == PackagingTypes.Household).Sum(t => t.Tonnage);
                     var reportedPublicBinTonnage                       = producerData.Where(p => p.MaterialName == materialName && p.PackagingType == PackagingTypes.PublicBin).Sum(p => p.Tonnage);
                     decimal? householdDrinkContainers = materialName == "Glass"
@@ -100,7 +100,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
                     return (detail.Key, laDisposalDetail);
                 }).ToDictionary();
 
-            var totalLateReportingTonnageValue = lateReportingTonnage.CalcResultLateReportingTonnageDetails.Where(t => t.Name == "Total").Sum(t => t.TotalLateReportingTonnage);
+            var totalLateReportingTonnageValue = lateReportingTonnage.LateReportingTonnageTotal.TotalLateReportingTonnage;
             var totalProducerReportedHouseholdPackagingWasteTonnage = producerData.Where(t => t.PackagingType == PackagingTypes.Household                ).Sum(t => t.Tonnage);
             var totalReportedPublicBinTonnage                       = producerData.Where(p => p.PackagingType == PackagingTypes.PublicBin                ).Sum(p => p.Tonnage);
             var totalHouseholdDrinkContainers                       = producerData.Where(p => p.PackagingType == PackagingTypes.HouseholdDrinksContainers).Sum(p => p.Tonnage);

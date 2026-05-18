@@ -2,8 +2,7 @@
 {
     public record CalcResultLateReportingTonnageDetail
     {
-        required public string Name { get; init; }
-
+        // TODO rename these Red, Amber, Green Total
         required public decimal TotalLateReportingTonnage { get; init; }
 
         required public decimal RedLateReportingTonnage { get; init; }

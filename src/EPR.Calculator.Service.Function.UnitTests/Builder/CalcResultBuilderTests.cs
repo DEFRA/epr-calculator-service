@@ -166,7 +166,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             mockCommsCostReportBuilder
                 .Setup(m => m.ConstructAsync(It.IsAny<IImmutableList<MaterialDetail>>(), resultsRequestDto, It.IsAny<CalcResultOnePlusFourApportionment>(), It.IsAny<CalcResultLateReportingTonnage>()))
                 .ReturnsAsync(mockCalcResultCommsCost.Object);
-            mockLateReportingBuilder.Setup(m => m.ConstructAsync(resultsRequestDto))
+            mockLateReportingBuilder.Setup(m => m.ConstructAsync(It.IsAny<IImmutableList<MaterialDetail>>(), resultsRequestDto))
                 .ReturnsAsync(mockCalcResultLateReportingTonnage);
             mockCalcRunLaDisposalCostBuilder.Setup(m => m.ConstructAsync(resultsRequestDto, It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<CalcResultLapcapData>(), It.IsAny<CalcResultLateReportingTonnage>(), It.IsAny<SelfManagedConsumerWaste>(), It.IsAny<bool>()))
                 .ReturnsAsync(mockCalcResultLaDisposalCostData.Object);

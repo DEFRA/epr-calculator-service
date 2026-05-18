@@ -78,10 +78,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 },
                 CalcResultLateReportingTonnageData = new()
                 {
-                    Name = string.Empty,
-                    CalcResultLateReportingTonnageDetails = new List<CalcResultLateReportingTonnageDetail>(),
-                    MaterialHeading = string.Empty,
-                    TonnageHeading = string.Empty,
+                    LateReportingTonnageByMaterial = []
                 },
                 CalcResultSummary = new CalcResultSummary
                 {
@@ -164,10 +161,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 },
                 CalcResultLateReportingTonnageData = new()
                 {
-                    Name = string.Empty,
-                    CalcResultLateReportingTonnageDetails = new List<CalcResultLateReportingTonnageDetail>(),
-                    MaterialHeading = string.Empty,
-                    TonnageHeading = string.Empty,
+                    LateReportingTonnageByMaterial = []
                 },
                 CalcResultSummary  = new() {  ProducerDisposalFees = null! },
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
@@ -221,10 +215,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 },
                 CalcResultLateReportingTonnageData = new()
                 {
-                    Name = string.Empty,
-                    CalcResultLateReportingTonnageDetails = new List<CalcResultLateReportingTonnageDetail>(),
-                    MaterialHeading = string.Empty,
-                    TonnageHeading = string.Empty,
+                    LateReportingTonnageByMaterial = []
                 },
                 CalcResultSummary = new()
                 {
@@ -259,9 +250,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Act
             var result = await _sut.CreateBillingInstructions(calcResult);
 
-
             Assert.IsTrue(result);
         }
-
     }
 }

@@ -67,55 +67,55 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             var expectedJson = """
                 {
                 "threeSAOperatingCost": {
-                    "england": "£25,000.00",
-                    "wales": "£14,000.00",
-                    "scotland": "£17,000.00",
-                    "northernIreland": "£9,000.00",
-                    "total": "£65,000.00"
+                  "england"        : "£25,000.00",
+                  "wales"          : "£14,000.00",
+                  "scotland"       : "£17,000.00",
+                  "northernIreland": "£9,000.00",
+                  "total"          : "£65,000.00"
                 },
                 "fourDataPreparationCharge": {
-                    "england": "£40.00",
-                    "wales": "£30.00",
-                    "scotland": "£20.00",
-                    "northernIreland": "£10.00",
-                    "total": "£100.00"
+                  "england"        : "£40.00",
+                  "wales"          : "£30.00",
+                  "scotland"       : "£20.00",
+                  "northernIreland": "£10.00",
+                  "total"          : "£100.00"
                 },
                 "fourCountryApportionmentPercentages": {
-                    "england": "£43.84",
-                    "wales": "£19.18",
-                    "scotland": "£24.66",
-                    "northernIreland": "£12.33",
-                    "total": "£100.00"
+                  "england"        : "£43.84",
+                  "wales"          : "£19.18",
+                  "scotland"       : "£24.66",
+                  "northernIreland": "£12.33",
+                  "total"          : "£100.00"
                 },
                 "fiveSchemeSetupCost": {
-                    "england": "£17,500.00",
-                    "wales": "£23,400.00",
-                    "scotland": "£12,400.00",
-                    "northernIreland": "£9,450.00",
-                    "total": "£62,750.00"
+                  "england"        : "£17,500.00",
+                  "wales"          : "£23,400.00",
+                  "scotland"       : "£12,400.00",
+                  "northernIreland": "£9,450.00",
+                  "total"          : "£62,750.00"
                 },
                 "sixBadDebtProvision": {
-                    "percentage": "6.00%"
+                  "percentage": "6.00%"
                 },
                 "sevenMateriality": {
-                    "increase": {
-                    "amount": "£5000.00",
+                  "increase": {
+                    "amount"    : "£5000.00",
                     "percentage": "2.00%"
-                    },
-                    "decrease": {
-                    "amount": "-£1000.00",
+                  },
+                  "decrease": {
+                    "amount"    : "-£1000.00",
                     "percentage": "-1.00%"
-                    }
+                  }
                 },
                 "eightTonnageChange": {
-                    "increase": {
-                    "amount": "£50.00",
+                  "increase": {
+                    "amount"    : "£50.00",
                     "percentage": "2.00%"
-                    },
-                    "decrease": {
-                    "amount": "-£10.00",
+                  },
+                  "decrease": {
+                    "amount"    : "-£10.00",
                     "percentage": "-0.50%"
-                    }
+                  }
                 }
                 }
                 """;

@@ -20,7 +20,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
     public class BillingFileExporterTests
     {
         private BillingFileExporter testClass;
-        private Mock<ILateReportingExporter> _lateReportingExporter;
+        private Mock<ICalcResultLateReportingExporter> _lateReportingExporter;
         private Mock<ICalcResultDetailExporter> _resultDetailexporter;
         private Mock<ICalcResultOnePlusFourApportionmentExporter> _onePlusFourApportionmentExporter;
         private Mock<ICalcResultLaDisposalCostExporter> _laDisposalCostExporter;
@@ -37,7 +37,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 
         public BillingFileExporterTests()
         {
-            _lateReportingExporter = new Mock<ILateReportingExporter>();
+            _lateReportingExporter = new Mock<ICalcResultLateReportingExporter>();
             _resultDetailexporter = new Mock<ICalcResultDetailExporter>();
             _onePlusFourApportionmentExporter = new Mock<ICalcResultOnePlusFourApportionmentExporter>();
             _laDisposalCostExporter = new Mock<ICalcResultLaDisposalCostExporter>();
@@ -104,7 +104,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 
             _resultDetailexporter.Setup(mock => mock.Export(It.IsAny<CalcResultDetail>(), It.IsAny<StringBuilder>())).Verifiable();
             _onePlusFourApportionmentExporter.Setup(mock => mock.Export(It.IsAny<CalcResultOnePlusFourApportionment>(), It.IsAny<StringBuilder>())).Verifiable();
-            _lateReportingExporter.Setup(mock => mock.Export(It.IsAny<CalcResultLateReportingTonnage>())).Returns(fixture.Create<string>());
+            _lateReportingExporter.Setup(mock => mock.Export(It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<CalcResultLateReportingTonnage>(), It.IsAny<StringBuilder>()));
             _calcResultScaledupProducersExporter.Setup(mock => mock.Export(It.IsAny<CalcResultScaledupProducers>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<StringBuilder>())).Verifiable();
             _calcResultPartialObligationsExporter.Setup(mock => mock.Export(It.IsAny<CalcResultPartialObligations>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<StringBuilder>(), It.IsAny<bool>())).Verifiable();
             _lapcapDataExporter.Setup(mock => mock.Export(It.IsAny<CalcResultLapcapData>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<StringBuilder>())).Verifiable();
@@ -120,7 +120,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             // Assert
             _resultDetailexporter.Verify(mock => mock.Export(It.IsAny<CalcResultDetail>(), It.IsAny<StringBuilder>()));
             _onePlusFourApportionmentExporter.Verify(mock => mock.Export(It.IsAny<CalcResultOnePlusFourApportionment>(), It.IsAny<StringBuilder>()));
-            _lateReportingExporter.Verify(mock => mock.Export(It.IsAny<CalcResultLateReportingTonnage>()));
+            _lateReportingExporter.Verify(mock => mock.Export(It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<CalcResultLateReportingTonnage>(), It.IsAny<StringBuilder>()));
             _calcResultScaledupProducersExporter.Verify(mock => mock.Export(It.IsAny<CalcResultScaledupProducers>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<StringBuilder>()));
             _calcResultPartialObligationsExporter.Verify(mock => mock.Export(It.IsAny<CalcResultPartialObligations>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<StringBuilder>(), It.IsAny<bool>()));
             _calcResultProjectedProducersExporter.Verify(mock => mock.Export(It.IsAny<CalcResultProjectedProducers>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<StringBuilder>()), Times.Never);
@@ -146,7 +146,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 
             _resultDetailexporter.Setup(mock => mock.Export(It.IsAny<CalcResultDetail>(), It.IsAny<StringBuilder>())).Verifiable();
             _onePlusFourApportionmentExporter.Setup(mock => mock.Export(It.IsAny<CalcResultOnePlusFourApportionment>(), It.IsAny<StringBuilder>())).Verifiable();
-            _lateReportingExporter.Setup(mock => mock.Export(It.IsAny<CalcResultLateReportingTonnage>())).Returns(fixture.Create<string>());
+            _lateReportingExporter.Setup(mock => mock.Export(It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<CalcResultLateReportingTonnage>(), It.IsAny<StringBuilder>()));
             _calcResultScaledupProducersExporter.Setup(mock => mock.Export(It.IsAny<CalcResultScaledupProducers>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<StringBuilder>())).Verifiable();
             _calcResultPartialObligationsExporter.Setup(mock => mock.Export(It.IsAny<CalcResultPartialObligations>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<StringBuilder>(), It.IsAny<bool>())).Verifiable();
             _calcResultProjectedProducersExporter.Setup(mock => mock.Export(It.IsAny<CalcResultProjectedProducers>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<StringBuilder>())).Verifiable();
@@ -163,7 +163,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             // Assert
             _resultDetailexporter.Verify(mock => mock.Export(It.IsAny<CalcResultDetail>(), It.IsAny<StringBuilder>()));
             _onePlusFourApportionmentExporter.Verify(mock => mock.Export(It.IsAny<CalcResultOnePlusFourApportionment>(), It.IsAny<StringBuilder>()));
-            _lateReportingExporter.Verify(mock => mock.Export(It.IsAny<CalcResultLateReportingTonnage>()));
+            _lateReportingExporter.Verify(mock => mock.Export(It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<CalcResultLateReportingTonnage>(), It.IsAny<StringBuilder>()));
             _calcResultScaledupProducersExporter.Verify(mock => mock.Export(It.IsAny<CalcResultScaledupProducers>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<StringBuilder>()), Times.Never);
             _calcResultPartialObligationsExporter.Verify(mock => mock.Export(It.IsAny<CalcResultPartialObligations>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<StringBuilder>(), It.IsAny<bool>()));
             _calcResultProjectedProducersExporter.Verify(mock => mock.Export(It.IsAny<CalcResultProjectedProducers>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<StringBuilder>()));

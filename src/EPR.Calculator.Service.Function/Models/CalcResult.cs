@@ -20,10 +20,7 @@ namespace EPR.Calculator.Service.Function.Models
         public required CalcResultLateReportingTonnage CalcResultLateReportingTonnageData { get; set; } =
             new()
             {
-                Name = string.Empty,
-                CalcResultLateReportingTonnageDetails = new List<CalcResultLateReportingTonnageDetail>(),
-                MaterialHeading = string.Empty,
-                TonnageHeading = string.Empty
+                LateReportingTonnageByMaterial = []
             };
 
         public CalcResultParameterCommunicationCost CalcResultParameterCommunicationCost { get; set; }

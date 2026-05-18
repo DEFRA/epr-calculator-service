@@ -23,32 +23,32 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             var expectedJson = """
                 {
                 "oneFeeForLADisposalCosts": {
-                    "england"        : "£0.10",
-                    "wales"          : "£20.00",
-                    "scotland"       : "£0.15",
-                    "northernIreland": "£0.15",
-                    "total"          : "£0.10"
+                  "england"        : "£0.10",
+                  "wales"          : "£20.00",
+                  "scotland"       : "£0.15",
+                  "northernIreland": "£0.15",
+                  "total"          : "£0.10"
                 },
                 "fourLADataPrepCharge": {
-                    "england"        : "£0.10",
-                    "wales"          : "£20.00",
-                    "scotland"       : "£0.15",
-                    "northernIreland": "£0.15",
-                    "total"          : "£0.10"
+                  "england"        : "£0.10",
+                  "wales"          : "£20.00",
+                  "scotland"       : "£0.15",
+                  "northernIreland": "£0.15",
+                  "total"          : "£0.10"
                 },
                 "totalOfonePlusFour": {
-                    "england"        : "£14.53",
-                    "wales"          : "£20.00",
-                    "scotland"       : "£0.15",
-                    "northernIreland": "£0.15",
-                    "total"          : "£0.10"
+                  "england"        : "£14.53",
+                  "wales"          : "£20.00",
+                  "scotland"       : "£0.15",
+                  "northernIreland": "£0.15",
+                  "total"          : "£0.10"
                 },
                 "onePlusFourApportionmentPercentages": {
-                    "england"        : "40%",
-                    "wales"          : "10%",
-                    "scotland"       : "15%",
-                    "northernIreland": "35%",
-                    "total"          : "100%"
+                  "england"        : "40%",
+                  "wales"          : "10%",
+                  "scotland"       : "15%",
+                  "northernIreland": "35%",
+                  "total"          : "100%"
                 }
                 }
                 """;

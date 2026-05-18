@@ -29,7 +29,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         private readonly ICalcResultOnePlusFourApportionmentExporter onePlusFourApportionmentExporterCsv;
         private readonly ICalcResultLapcapDataExporter lapcapDataExporterCsv;
         private readonly ICalcResultParameterOtherCostExporter parameterOtherCostsCsv;
-        private readonly ILateReportingExporter lateReportingExporterCsv;
+        private readonly ICalcResultLateReportingExporter lateReportingExporterCsv;
         private readonly ICalcResultScaledupProducersExporter calcResultScaledupProducersExporterCsv;
         private readonly ICalcResultPartialObligationsExporter calcResultPartialObligationsExporterCsv;
         private readonly ICalcResultProjectedProducersExporter calcResultProjectedProducersExporterCsv;
@@ -41,7 +41,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 
         [SuppressMessage("Constructor has 8 parameters, which is greater than the 7 authorized.", "S107", Justification = "This is suppressed for now and will be refactored later")]
         public BillingFileExporter(
-            ILateReportingExporter lateReportingExporter,
+            ICalcResultLateReportingExporter lateReportingExporter,
             ICalcResultDetailExporter resultDetailexporter,
             ICalcResultOnePlusFourApportionmentExporter onePlusFourApportionmentExporter,
             ICalcResultLaDisposalCostExporter laDisposalCostExporter,
@@ -79,7 +79,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 
             lapcapDataExporterCsv.Export(calcResult.CalcResultLapcapData, materials, csvContent);
 
-            csvContent.Append(lateReportingExporterCsv.Export(calcResult.CalcResultLateReportingTonnageData));
+            lateReportingExporterCsv.Export(materials, calcResult.CalcResultLateReportingTonnageData, csvContent);
 
             parameterOtherCostsCsv.Export(calcResult.CalcResultParameterOtherCost, csvContent);
 
@@ -222,7 +222,10 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 
         private StringBuilder ResetTotals(string sb)
         {
-            var exceptTotals = sb.Substring(0, sb.LastIndexOf(CommonConstants.Totals) + (CommonConstants.Totals.Length + 2));
+            var idx = sb.LastIndexOf(CommonConstants.Totals);
+            if (idx < 0)
+                return new StringBuilder(sb);
+            var exceptTotals = sb.Substring(0, idx + CommonConstants.Totals.Length + 2);
             return new StringBuilder().Append(exceptTotals);
         }
 

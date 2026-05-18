@@ -1,9 +1,10 @@
-﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.LateReportingTonnages;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -15,13 +16,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public required CalcResultLateReportingBuilder builder;
         protected ApplicationDBContext? dbContext;
 
+        private static readonly IImmutableList<MaterialDetail> Materials = ImmutableList.Create(
+            new MaterialDetail { Id = 1, Code = "AL", Name = "Aluminium",       Description = "Aluminium"       },
+            new MaterialDetail { Id = 2, Code = "FC", Name = "Fibre composite", Description = "Fibre composite" }
+        );
+
         [TestInitialize]
         public void DataSetup()
         {
-            var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
-                                    .UseInMemoryDatabase(databaseName: "PayCal")
-                                    .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-                                                .Options;
+            var dbContextOptions =
+                new DbContextOptionsBuilder<ApplicationDBContext>()
+                    .UseInMemoryDatabase(databaseName: "PayCal")
+                    .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
+                    .Options;
 
             dbContext = new ApplicationDBContext(dbContextOptions);
             dbContext.Database.EnsureCreated();
@@ -61,48 +68,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             var defaultParameterSettingDetails = new List<DefaultParameterSettingDetail>
             {
-                new()
-                {
-                    DefaultParameterSettingMasterId = 1,
-                    ParameterUniqueReferenceId = "1",
-                    ParameterValue = 100,
-                    DefaultParameterSettingMaster = defaultParameterSettings[0],
-                },
-                new()
-                {
-                    DefaultParameterSettingMasterId = 1,
-                    ParameterUniqueReferenceId = "2",
-                    ParameterValue = 200,
-                    DefaultParameterSettingMaster = defaultParameterSettings[0],
-                },
-                new()
-                {
-                    DefaultParameterSettingMasterId = 1,
-                    ParameterUniqueReferenceId = "3",
-                    ParameterValue = 300,
-                    DefaultParameterSettingMaster = defaultParameterSettings[0],
-                },
-                new()
-                {
-                    DefaultParameterSettingMasterId = 1,
-                    ParameterUniqueReferenceId = "4",
-                    ParameterValue = 400,
-                    DefaultParameterSettingMaster = defaultParameterSettings[0],
-                },
-                new()
-                {
-                    DefaultParameterSettingMasterId = 1,
-                    ParameterUniqueReferenceId = "5",
-                    ParameterValue = 500,
-                    DefaultParameterSettingMaster = defaultParameterSettings[0],
-                },
-                new()
-                {
-                    DefaultParameterSettingMasterId = 1,
-                    ParameterUniqueReferenceId = "6",
-                    ParameterValue = 600,
-                    DefaultParameterSettingMaster = defaultParameterSettings[0],
-                },
+                new() { DefaultParameterSettingMasterId = 1, ParameterUniqueReferenceId = "1", ParameterValue = 100, DefaultParameterSettingMaster = defaultParameterSettings[0] },
+                new() { DefaultParameterSettingMasterId = 1, ParameterUniqueReferenceId = "2", ParameterValue = 200, DefaultParameterSettingMaster = defaultParameterSettings[0] },
+                new() { DefaultParameterSettingMasterId = 1, ParameterUniqueReferenceId = "3", ParameterValue = 300, DefaultParameterSettingMaster = defaultParameterSettings[0] },
+                new() { DefaultParameterSettingMasterId = 1, ParameterUniqueReferenceId = "4", ParameterValue = 400, DefaultParameterSettingMaster = defaultParameterSettings[0] },
+                new() { DefaultParameterSettingMasterId = 1, ParameterUniqueReferenceId = "5", ParameterValue = 500, DefaultParameterSettingMaster = defaultParameterSettings[0] },
+                new() { DefaultParameterSettingMasterId = 1, ParameterUniqueReferenceId = "6", ParameterValue = 600, DefaultParameterSettingMaster = defaultParameterSettings[0] },
             };
 
             dbContext.CalculatorRuns.AddRange(calculatorRuns);
@@ -114,47 +85,35 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             builder = new CalcResultLateReportingBuilder(dbContext);
         }
 
-        public ApplicationDBContext? GetDbContext()
-        {
-            return dbContext;
-        }
+        public ApplicationDBContext? GetDbContext() => dbContext;
 
         [TestMethod]
         public async Task Construct_ShouldReturnCorrectResults()
         {
             var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) };
 
-            var result = await builder.ConstructAsync(requestDto);
+            var result = await builder.ConstructAsync(Materials, requestDto);
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(CalcResultLateReportingBuilder.LateReportingHeader, result.Name);
-            Assert.AreEqual(CalcResultLateReportingBuilder.MaterialHeading, result.MaterialHeading);
-            Assert.AreEqual(CalcResultLateReportingBuilder.TonnageHeading, result.TonnageHeading);
-            Assert.AreEqual(CalcResultLateReportingBuilder.RedTonnageHeading, result.RedTonnageHeading);
-            Assert.AreEqual(CalcResultLateReportingBuilder.AmberTonnageHeading, result.AmberTonnageHeading);
-            Assert.AreEqual(CalcResultLateReportingBuilder.GreenTonnageHeading, result.GreenTonnageHeading);
-            Assert.AreEqual(3, result.CalcResultLateReportingTonnageDetails.Count());
+            Assert.AreEqual(2, result.LateReportingTonnageByMaterial.Count);
 
-            var material1 = result.CalcResultLateReportingTonnageDetails.SingleOrDefault(x => x.Name == "Aluminium");
-            Assert.IsNotNull(material1);
-            Assert.AreEqual(100.000M, material1.RedLateReportingTonnage);
-            Assert.AreEqual(200.000M, material1.AmberLateReportingTonnage);
-            Assert.AreEqual(300.000M, material1.GreenLateReportingTonnage);
-            Assert.AreEqual(600.000M, material1.TotalLateReportingTonnage);
+            var aluminium = result.LateReportingTonnageByMaterial["AL"];
+            Assert.AreEqual(100m, aluminium.RedLateReportingTonnage);
+            Assert.AreEqual(200m, aluminium.AmberLateReportingTonnage);
+            Assert.AreEqual(300m, aluminium.GreenLateReportingTonnage);
+            Assert.AreEqual(600m, aluminium.TotalLateReportingTonnage);
 
-            var material2 = result.CalcResultLateReportingTonnageDetails.SingleOrDefault(x => x.Name == "Fibre composite");
-            Assert.IsNotNull(material2);
-            Assert.AreEqual(400.000M, material2.RedLateReportingTonnage);
-            Assert.AreEqual(500.000M, material2.AmberLateReportingTonnage);
-            Assert.AreEqual(600.000M, material2.GreenLateReportingTonnage);
-            Assert.AreEqual(1500.000M, material2.TotalLateReportingTonnage);
+            var fibre = result.LateReportingTonnageByMaterial["FC"];
+            Assert.AreEqual(400m, fibre.RedLateReportingTonnage);
+            Assert.AreEqual(500m, fibre.AmberLateReportingTonnage);
+            Assert.AreEqual(600m, fibre.GreenLateReportingTonnage);
+            Assert.AreEqual(1500m, fibre.TotalLateReportingTonnage);
 
-            var total = result.CalcResultLateReportingTonnageDetails.SingleOrDefault(x => x.Name == CalcResultLateReportingBuilder.Total);
-            Assert.IsNotNull(total);
-            Assert.AreEqual(500.000M, total.RedLateReportingTonnage);
-            Assert.AreEqual(700.000M, total.AmberLateReportingTonnage);
-            Assert.AreEqual(900.000M, total.GreenLateReportingTonnage);
-            Assert.AreEqual(2100.000M, total.TotalLateReportingTonnage);
+            var total = result.LateReportingTonnageTotal;
+            Assert.AreEqual(500m,  total.RedLateReportingTonnage);
+            Assert.AreEqual(700m,  total.AmberLateReportingTonnage);
+            Assert.AreEqual(900m,  total.GreenLateReportingTonnage);
+            Assert.AreEqual(2100m, total.TotalLateReportingTonnage);
         }
     }
 }
