@@ -96,21 +96,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.IsNotNull(lapcapResults);
             Assert.AreEqual(2, lapcapResults.ByMaterial.Count);
 
-            var aluminiumKv = lapcapResults.ByMaterial.Single(kv => kv.Key.Name == aluminium);
-            Assert.AreEqual(aluminium, aluminiumKv.Key.Name);
-            Assert.AreEqual(100, aluminiumKv.Value.England);
-            Assert.AreEqual(50, aluminiumKv.Value.Wales);
-            Assert.AreEqual(75, aluminiumKv.Value.Scotland);
-            Assert.AreEqual(25, aluminiumKv.Value.NorthernIreland);
-            Assert.AreEqual(250, aluminiumKv.Value.Total);
+            var alRow = lapcapResults.ByMaterial["AL"];
+            Assert.AreEqual(100, alRow.England);
+            Assert.AreEqual(50, alRow.Wales);
+            Assert.AreEqual(75, alRow.Scotland);
+            Assert.AreEqual(25, alRow.NorthernIreland);
+            Assert.AreEqual(250, alRow.Total);
 
-            var plasticKv = lapcapResults.ByMaterial.Single(kv => kv.Key.Name == plastic);
-            Assert.AreEqual(plastic, plasticKv.Key.Name);
-            Assert.AreEqual(100, plasticKv.Value.England);
-            Assert.AreEqual(50, plasticKv.Value.Wales);
-            Assert.AreEqual(75, plasticKv.Value.Scotland);
-            Assert.AreEqual(25, plasticKv.Value.NorthernIreland);
-            Assert.AreEqual(250, plasticKv.Value.Total);
+            var plRow = lapcapResults.ByMaterial["PL"];
+            Assert.AreEqual(100, plRow.England);
+            Assert.AreEqual(50, plRow.Wales);
+            Assert.AreEqual(75, plRow.Scotland);
+            Assert.AreEqual(25, plRow.NorthernIreland);
+            Assert.AreEqual(250, plRow.Total);
 
             var totalRow = lapcapResults.Total;
             Assert.IsNotNull(totalRow);

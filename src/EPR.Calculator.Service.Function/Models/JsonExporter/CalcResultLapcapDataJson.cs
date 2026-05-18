@@ -22,12 +22,18 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("oneCountryApportionmentPercentages")]
         public CalcResultLapcapDataDetailApportionmentJson? OneCountryApportionmentPercentages { get; set; }
 
-        public static CalcResultLapcapDataJson From(CalcResultLapcapData data)
+        public static CalcResultLapcapDataJson From(
+            CalcResultLapcapData data,
+            IImmutableList<MaterialDetail> materials
+        )
         {
             return new CalcResultLapcapDataJson
             {
                 Name = "LAPCAP Data",
-                CalcResultLapcapDataDetails        = data.ByMaterial.Select(detail => CalcResultLapcapDataDetailJson.From(detail.Key, detail.Value)),
+                CalcResultLapcapDataDetails        = data.ByMaterial.Select(detail => {
+                    var material = materials.First(m => m.Code == detail.Key);
+                    return CalcResultLapcapDataDetailJson.From(material, detail.Value);
+                }),
                 CalcResultLapcapDataTotal          = CalcResultLapcapDataDetailTotalJson.From(data.Total),
                 OneCountryApportionmentPercentages = CalcResultLapcapDataDetailApportionmentJson.From(data.CountryApportionment)
             };

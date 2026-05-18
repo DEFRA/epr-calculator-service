@@ -101,9 +101,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 
             MockLateReportingExporter.Verify(x => x.Export(calcResult.CalcResultLateReportingTonnageData));
             MockCalcResultSummaryExporter.Verify(x => x.Export(It.IsAny<CalcResultSummary>(), It.IsAny<StringBuilder>(), It.IsAny<bool>()));
-            MockLapcapDataExporter.Verify(x => x.Export(It.IsAny<CalcResultLapcapData>(), It.IsAny<StringBuilder>()));
+            MockLapcapDataExporter.Verify(x => x.Export(It.IsAny<CalcResultLapcapData>(), It.IsAny<ImmutableList<MaterialDetail>>(), It.IsAny<StringBuilder>()));
             MockResultDetailexporter.Verify(x => x.Export(It.IsAny<CalcResultDetail>(), It.IsAny<StringBuilder>()));
-            MockLaDisposalCostDataExporter.Verify(x => x.Export(It.IsAny<bool>(), It.IsAny<CalcResultLaDisposalCostData>(), It.IsAny<StringBuilder>()));
+            MockLaDisposalCostDataExporter.Verify(x => x.Export(It.IsAny<bool>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<CalcResultLaDisposalCostData>(), It.IsAny<StringBuilder>()));
             MockCommsCostExporter.Verify(x => x.Export(It.IsAny<CalcResultCommsCost>(), It.IsAny<StringBuilder>()));
             MockOnePlusFourExporter.Verify(x => x.Export(It.IsAny<CalcResultOnePlusFourApportionment>(), It.IsAny<StringBuilder>()));
             MockScaledupProducersExporter.Verify(x => x.Export(It.IsAny<CalcResultScaledupProducers>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<bool>(), It.IsAny<StringBuilder>()));
@@ -119,6 +119,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var calcResult = CreateCalcResult();
             var materials = TestDataHelper.GetMaterials();
             calcResult.ApplyModulation = true;
+            var materialDetails = TestDataHelper.GetMaterials();
 
             // Act
             var result = TestClass.Export(calcResult, materials);
@@ -147,14 +148,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 ApplyModulation = false,
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
-                    ByMaterial = new Dictionary<MaterialDetail, ByCountryValue>(),
+                    ByMaterial = [],
                     Total = new ByCountryValue
                     {
-                        England = 13280.45m,
-                        Wales = 210.28m,
-                        Scotland = 91.00m,
+                        England         = 13280.45m,
+                        Wales           = 210.28m,
+                        Scotland        = 91.00m,
                         NorthernIreland = 91.00m,
-                        Total = 13742.80m
+                        Total           = 13742.80m
                     },
                     CountryApportionment = new CountryApportionmentData()
                 },

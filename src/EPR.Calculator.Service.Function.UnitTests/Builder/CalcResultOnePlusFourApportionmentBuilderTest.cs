@@ -25,7 +25,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
-                    ByMaterial = new Dictionary<MaterialDetail, ByCountryValue>(),
+                    ByMaterial = [],
                     Total = new ByCountryValue
                     {
                         England         = 13280.45m,

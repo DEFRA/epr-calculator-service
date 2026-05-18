@@ -140,7 +140,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             MaterialDetail material,
             CalcResult calcResult)
         {
-            var laDisposalCostDataDetail = calcResult.CalcResultLaDisposalCostData.ByMaterial.GetValueOrDefault(material);
+            var laDisposalCostDataDetail = calcResult.CalcResultLaDisposalCostData.ByMaterial.GetValueOrDefault(material.Code);
 
             if (laDisposalCostDataDetail == null)
             {

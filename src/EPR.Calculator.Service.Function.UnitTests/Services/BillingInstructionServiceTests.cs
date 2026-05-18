@@ -53,7 +53,7 @@ public class BillingInstructionServiceTests
             },
             CalcResultLapcapData = new CalcResultLapcapData
             {
-                ByMaterial = new Dictionary<MaterialDetail, ByCountryValue>(),
+                ByMaterial = [],
                 Total = new ByCountryValue(),
                 CountryApportionment = new CountryApportionmentData()
             },
@@ -133,7 +133,7 @@ public class BillingInstructionServiceTests
             },
             CalcResultLapcapData = new CalcResultLapcapData
             {
-                ByMaterial = new Dictionary<MaterialDetail, ByCountryValue>(),
+                ByMaterial = [],
                 Total = new ByCountryValue(),
                 CountryApportionment = new CountryApportionmentData()
             },
@@ -184,7 +184,7 @@ public class BillingInstructionServiceTests
             },
             CalcResultLapcapData = new CalcResultLapcapData
             {
-                ByMaterial = new Dictionary<MaterialDetail, ByCountryValue>(),
+                ByMaterial = [],
                 Total = new ByCountryValue(),
                 CountryApportionment = new CountryApportionmentData()
             },

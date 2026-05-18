@@ -53,14 +53,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                 },
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
-                    ByMaterial = new Dictionary<MaterialDetail, ByCountryValue>(),
+                    ByMaterial = [],
                     Total = new ByCountryValue
                     {
                         England         = 13280.45m,
                         Wales           = 210.28m,
                         Scotland        = 91.00m,
                         NorthernIreland = 91.00m,
-                        Total           = 13742.80m,
+                        Total           = 13742.80m
                     },
                     CountryApportionment = new CountryApportionmentData()
                 },
@@ -77,7 +77,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                             RedLateReportingTonnage = 1000.00m,
                             AmberLateReportingTonnage = 2000.00m,
                             GreenLateReportingTonnage = 5000.00m,
-                            TotalLateReportingTonnage = 8000.00m,
+                            TotalLateReportingTonnage = 8000.00m
                         },
                         new CalcResultLateReportingTonnageDetail
                         {
@@ -85,7 +85,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                             RedLateReportingTonnage = 1000.00m,
                             AmberLateReportingTonnage = 500.00m,
                             GreenLateReportingTonnage = 500.00m,
-                            TotalLateReportingTonnage = 2000.00m,
+                            TotalLateReportingTonnage = 2000.00m
                         },
                         new CalcResultLateReportingTonnageDetail
                         {
@@ -93,7 +93,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                             RedLateReportingTonnage = 2000.00m,
                             AmberLateReportingTonnage = 2500.00m,
                             GreenLateReportingTonnage = 5500.00m,
-                            TotalLateReportingTonnage = 10000.00m,
+                            TotalLateReportingTonnage = 10000.00m
                         },
                     },
                 },
@@ -102,27 +102,27 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                     BadDebtValue = 6m,
                     LaDataPrepCharge = new CalcResultParameterOtherCostDetail
                     {
-                        England = 40,
-                        Wales = 30,
-                        Scotland = 20,
+                        England         = 40,
+                        Wales           = 30,
+                        Scotland        = 20,
                         NorthernIreland = 10,
-                        Total = 100,
+                        Total           = 100
                     },
                     SaOperatingCost = new CalcResultParameterOtherCostDetail
                     {
-                        England = 40,
-                        Wales = 30,
-                        Scotland = 20,
+                        England         = 40,
+                        Wales           = 30,
+                        Scotland        = 20,
                         NorthernIreland = 10,
-                        Total = 100
+                        Total           = 100
                     },
                     SchemeSetupCost = new CalcResultParameterOtherCostDetail
                     {
-                        England = 40,
-                        Wales = 30,
-                        Scotland = 20,
+                        England         = 40,
+                        Wales           = 30,
+                        Scotland        = 20,
                         NorthernIreland = 10,
-                        Total = 100
+                        Total           = 100
                     },
                 },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment
@@ -196,9 +196,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                 },
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData
                 {
-                    ByMaterial = new Dictionary<MaterialDetail, CalcResultLaDisposalCostDataDetail>
+                    ByMaterial = new Dictionary<string, CalcResultLaDisposalCostDataDetail>
                     {
-                        [new MaterialDetail { Id = 1, Code = "ScotlandTest", Name = "ScotlandTest", Description = "ScotlandTest" }] =
+                        ["AL"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
                                 DisposalCostPricePerTonne = 20,
@@ -210,7 +210,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                                 ReportedPublicBinTonnage = 0m,
                                 Total = 0m
                             },
-                        [new MaterialDetail { Id = 2, Code = "Material1", Name = "Material1", Description = "Material1" }] =
+                        ["PL"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
                                 DisposalCostPricePerTonne = 20,
@@ -222,7 +222,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                                 ReportedPublicBinTonnage = 0,
                                 Total = 0
                             },
-                        [new MaterialDetail { Id = 3, Code = "Material2", Name = "Material2", Description = "Material2" }] =
+                        ["GL"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
                                 DisposalCostPricePerTonne = 10,
@@ -233,7 +233,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                                 ProducerReportedHouseholdPackagingWasteTonnage = 0,
                                 ReportedPublicBinTonnage = 0,
                                 Total = 100
-                            },
+                            }
                     },
                     Total = new CalcResultLaDisposalCostDataDetail
                     {

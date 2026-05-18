@@ -58,7 +58,7 @@ public class ProducerInvoiceNetTonnageServiceTests
             },
             CalcResultLapcapData = new CalcResultLapcapData
             {
-                ByMaterial = new Dictionary<MaterialDetail, ByCountryValue>(),
+                ByMaterial = [],
                 Total = new ByCountryValue(),
                 CountryApportionment = new CountryApportionmentData()
             },

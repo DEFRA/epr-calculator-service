@@ -77,7 +77,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             var csvContent = new StringBuilder();
             resultDetailexporterCsv.Export(calcResult.CalcResultDetail, csvContent);
 
-            lapcapDataExporterCsv.Export(calcResult.CalcResultLapcapData, csvContent);
+            lapcapDataExporterCsv.Export(calcResult.CalcResultLapcapData, materials, csvContent);
 
             csvContent.Append(lateReportingExporterCsv.Export(calcResult.CalcResultLateReportingTonnageData));
 
@@ -87,7 +87,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 
             commsCostExporterCsv.Export(calcResult.CalcResultCommsCostReportDetail, csvContent);
 
-            laDisposalCostExporterCsv.Export(calcResult.ApplyModulation, calcResult.CalcResultLaDisposalCostData, csvContent);
+            laDisposalCostExporterCsv.Export(calcResult.ApplyModulation, materials, calcResult.CalcResultLaDisposalCostData, csvContent);
 
             if (calcResult.Smcw is not null && calcResult.CalcResultModulation is not null) {
                 modulationExporterCsv.Export(calcResult.CalcResultLaDisposalCostData, calcResult.Smcw, calcResult.CalcResultModulation, csvContent);

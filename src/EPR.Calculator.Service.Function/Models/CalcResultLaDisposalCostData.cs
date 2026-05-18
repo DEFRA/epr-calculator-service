@@ -2,7 +2,7 @@
 {
     public class CalcResultLaDisposalCostData
     {
-        public Dictionary<MaterialDetail, CalcResultLaDisposalCostDataDetail> ByMaterial { get; set; }
+        public Dictionary<string, CalcResultLaDisposalCostDataDetail> ByMaterial { get; set; }
 
         public CalcResultLaDisposalCostDataDetail Total { get; set; }
     }

@@ -17,7 +17,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Lapcap
             var csvContent = new StringBuilder();
 
             // Act
-            lapcapDataExporter.Export(TestDataHelper.GetCalcResultLapcapData(), csvContent);
+            lapcapDataExporter.Export(TestDataHelper.GetCalcResultLapcapData(), TestDataHelper.GetMaterials(), csvContent);
 
             // Assert
             var result = csvContent.ToString().Split("\n").Select(s => s.TrimEnd(',')).ToArray();

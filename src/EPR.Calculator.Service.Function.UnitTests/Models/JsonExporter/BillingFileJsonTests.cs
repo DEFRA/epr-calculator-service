@@ -75,7 +75,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                 },
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
-                    ByMaterial = new Dictionary<MaterialDetail, ByCountryValue>(),
+                    ByMaterial = [],
                     Total = new ByCountryValue
                     {
                         England         = 13280.45m,
@@ -124,27 +124,27 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                     BadDebtValue = 6m,
                     LaDataPrepCharge = new CalcResultParameterOtherCostDetail
                     {
-                        England = 40,
-                        Wales = 30,
-                        Scotland = 20,
+                        England         = 40,
+                        Wales           = 30,
+                        Scotland        = 20,
                         NorthernIreland = 10,
-                        Total = 100,
+                        Total           = 100
                     },
                     SaOperatingCost = new CalcResultParameterOtherCostDetail
                     {
-                        England = 40,
-                        Wales = 30,
-                        Scotland = 20,
+                        England         = 40,
+                        Wales           = 30,
+                        Scotland        = 20,
                         NorthernIreland = 10,
-                        Total = 100,
+                        Total           = 100
                     },
                     SchemeSetupCost = new CalcResultParameterOtherCostDetail
                     {
-                        England = 40,
-                        Wales = 30,
-                        Scotland = 20,
+                        England         = 40,
+                        Wales           = 30,
+                        Scotland        = 20,
                         NorthernIreland = 10,
-                        Total = 100
+                        Total           = 100
                     }
                 },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment
@@ -219,9 +219,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                 },
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData
                 {
-                    ByMaterial = new Dictionary<MaterialDetail, CalcResultLaDisposalCostDataDetail>
+                    ByMaterial = new Dictionary<string, CalcResultLaDisposalCostDataDetail>
                     {
-                        [new MaterialDetail { Id = 1, Code = "ScotlandTest", Name = "ScotlandTest", Description = "ScotlandTest" }] =
+                        ["AL"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
                                 DisposalCostPricePerTonne = 20,
@@ -233,7 +233,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                                 ReportedPublicBinTonnage = 0,
                                 Total = 0
                             },
-                        [new MaterialDetail { Id = 2, Code = "Material1", Name = "Material1", Description = "Material1" }] =
+                        ["PL"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
                                 DisposalCostPricePerTonne = 20,
@@ -245,7 +245,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                                 ReportedPublicBinTonnage = 0,
                                 Total = 0
                             },
-                        [new MaterialDetail { Id = 3, Code = "Material2", Name = "Material2", Description = "Material2" }] =
+                        ["GL"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
                                 DisposalCostPricePerTonne = 10,

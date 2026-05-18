@@ -12,6 +12,7 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 {
@@ -82,7 +83,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             var csvContent = new StringBuilder();
             resultDetailexporter.Export(calcResult.CalcResultDetail, csvContent);
 
-            lapcapDataExporter.Export(calcResult.CalcResultLapcapData, csvContent);
+            lapcapDataExporter.Export(calcResult.CalcResultLapcapData, materials, csvContent);
 
             csvContent.Append(lateReportingExporter.Export(calcResult.CalcResultLateReportingTonnageData));
 
@@ -92,7 +93,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 
             commsCostExporter.Export(calcResult.CalcResultCommsCostReportDetail, csvContent);
 
-            laDisposalCostExporter.Export(calcResult.ApplyModulation, calcResult.CalcResultLaDisposalCostData, csvContent);
+            laDisposalCostExporter.Export(calcResult.ApplyModulation, materials, calcResult.CalcResultLaDisposalCostData, csvContent);
 
             if (calcResult.Smcw is not null && calcResult.CalcResultModulation is not null) {
                 modulationExporter.Export(calcResult.CalcResultLaDisposalCostData, calcResult.Smcw, calcResult.CalcResultModulation, csvContent);
