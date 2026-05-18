@@ -109,7 +109,7 @@ namespace EPR.Calculator.Service.Function.Builder
                 },
                 CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
                 {
-                    CalcResultLateReportingTonnageDetails = new List<CalcResultLateReportingTonnageDetail>(),
+                    LateReportingTonnageByMaterial = []
                 },
                 CalcResultParameterOtherCost = new CalcResultParameterOtherCost(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
@@ -127,7 +127,7 @@ namespace EPR.Calculator.Service.Function.Builder
             telemetryClient.TrackTrace("lapcapBuilder end...");
 
             telemetryClient.TrackTrace("lateReportingBuilder started...");
-            result.CalcResultLateReportingTonnageData = await lateReportingBuilder.ConstructAsync(resultsRequestDto);
+            result.CalcResultLateReportingTonnageData = await lateReportingBuilder.ConstructAsync(materialDetails, resultsRequestDto);
             telemetryClient.TrackTrace("lateReportingBuilder end...");
 
             telemetryClient.TrackTrace("calcResultParameterOtherCostBuilder started...");

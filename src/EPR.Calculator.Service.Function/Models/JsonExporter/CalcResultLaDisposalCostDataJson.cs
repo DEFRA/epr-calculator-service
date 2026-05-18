@@ -32,7 +32,6 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                 CalcResultLaDisposalCostDetails =
                     detailsByMaterial.Select(item =>
                     {
-                        Console.WriteLine($"Looking for {item.Key}");
                         var material = materials.First(m => m.Code == item.Key);
                         return CalcResultLaDisposalCostDetailsJson.From(material, item.Value);
                     }).ToList(),

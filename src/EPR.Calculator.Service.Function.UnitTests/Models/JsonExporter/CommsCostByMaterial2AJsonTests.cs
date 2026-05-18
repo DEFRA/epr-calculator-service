@@ -2,6 +2,7 @@ using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
 using EPR.Calculator.Service.Function.UnitTests.Builder;
 using EPR.Calculator.Service.Function.Utils;
+using System.Text.Json;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
 {
@@ -11,6 +12,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         [TestMethod]
         public void From_MapsDictionaryToMaterialBreakdown_AndSetsGlassDrinksContainers()
         {
+            // Arrange
             var materials = TestDataHelper.GetMaterials();
 
             var comms = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>
@@ -47,35 +49,52 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                 }
             };
 
+            // Act
             var result = CalcResultCommsCostByMaterial2AJson.From(comms, materials);
-            var list = result.MaterialBreakdown.ToList();
 
-            var aluminium = list.Single(x => x.MaterialName == "Aluminium");
-            Assert.AreEqual(100.25m, aluminium.HouseholdPackagingWasteTonnage);
-            Assert.AreEqual(50.50m, aluminium.PublicBinTonnage);
-            Assert.AreEqual(150.75m, aluminium.TotalTonnage);
-            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(0.42m, 4), aluminium.PricePerTonne);
-            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(10m), aluminium.ProducerTotalCostWithoutBadDebtProvision);
-            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(1m), aluminium.BadDebtProvision);
-            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(11m), aluminium.ProducerTotalCostwithBadDebtProvision);
-            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(4m), aluminium.EnglandWithBadDebtProvision);
-            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(3m), aluminium.WalesWithBadDebtProvision);
-            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(2m), aluminium.ScotlandWithBadDebtProvision);
-            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(1m), aluminium.NorthernIrelandWithBadDebtProvision);
+             // Assert
+            Assert.IsNotNull(result);
 
-            var glass = list.Single(x => x.MaterialName == "Glass");
-            Assert.AreEqual(200m, glass.HouseholdPackagingWasteTonnage);
-            Assert.AreEqual(80m, glass.PublicBinTonnage);
-            Assert.AreEqual(280m, glass.TotalTonnage);
-            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(0.3m, 4), glass.PricePerTonne);
-            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(20m), glass.ProducerTotalCostWithoutBadDebtProvision);
-            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(2m), glass.BadDebtProvision);
-            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(22m), glass.ProducerTotalCostwithBadDebtProvision);
-            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(8m), glass.EnglandWithBadDebtProvision);
-            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(7m), glass.WalesWithBadDebtProvision);
-            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(6m), glass.ScotlandWithBadDebtProvision);
-            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(5m), glass.NorthernIrelandWithBadDebtProvision);
-            Assert.AreEqual(12.34m, glass.HouseholdDrinksContainersTonnageGlass);
+            var json = JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true });
+            Console.WriteLine(json);
+
+            var expectedJson = """
+                {
+                "materialBreakdown": [
+                  {
+                    "materialName": "Aluminium",
+                    "householdPackagingWasteTonnage": 100.25,
+                    "publicBinTonnage": 50.50,
+                    "totalTonnage": 150.75,
+                    "pricePerTonne": "£0.4200",
+                    "producerTotalCostWithoutBadDebtProvision": "£10.00",
+                    "badDebtProvision": "£1.00",
+                    "producerTotalCostWithBadDebtProvision": "£11.00",
+                    "englandWithBadDebtProvision": "£4.00",
+                    "walesWithBadDebtProvision": "£3.00",
+                    "scotlandWithBadDebtProvision": "£2.00",
+                    "northernIrelandWithBadDebtProvision": "£1.00"
+                  },
+                  {
+                    "materialName": "Glass",
+                    "householdPackagingWasteTonnage": 200,
+                    "publicBinTonnage": 80,
+                    "totalTonnage": 280,
+                    "householdDrinksContainersTonnageGlass": 12.34,
+                    "pricePerTonne": "£0.3000",
+                    "producerTotalCostWithoutBadDebtProvision": "£20.00",
+                    "badDebtProvision": "£2.00",
+                    "producerTotalCostWithBadDebtProvision": "£22.00",
+                    "englandWithBadDebtProvision": "£8.00",
+                    "walesWithBadDebtProvision": "£7.00",
+                    "scotlandWithBadDebtProvision": "£6.00",
+                    "northernIrelandWithBadDebtProvision": "£5.00"
+                  }
+                ]
+                }
+                """;
+
+            JsonTestUtils.AssertJson(expectedJson, json);
         }
     }
 }

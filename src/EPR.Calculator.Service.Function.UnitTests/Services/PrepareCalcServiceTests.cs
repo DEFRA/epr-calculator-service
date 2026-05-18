@@ -79,13 +79,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                         Total = 0
                     }
                 },
-                CalcResultLateReportingTonnageData = new()
-                {
-                    Name = string.Empty,
-                    CalcResultLateReportingTonnageDetails = new List<CalcResultLateReportingTonnageDetail>(),
-                    MaterialHeading = string.Empty,
-                    TonnageHeading = string.Empty,
-                },
+                CalcResultLateReportingTonnageData = new() { LateReportingTonnageByMaterial = [] },
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
             };
 

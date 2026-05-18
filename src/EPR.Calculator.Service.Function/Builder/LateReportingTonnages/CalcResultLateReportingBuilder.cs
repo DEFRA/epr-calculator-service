@@ -7,36 +7,30 @@ namespace EPR.Calculator.Service.Function.Builder.LateReportingTonnages
 {
     public interface ICalcResultLateReportingBuilder
     {
-        Task<CalcResultLateReportingTonnage> ConstructAsync(CalcResultsRequestDto resultsRequestDto);
+        Task<CalcResultLateReportingTonnage> ConstructAsync(IImmutableList<MaterialDetail> materials, CalcResultsRequestDto resultsRequestDto);
     }
 
     public class CalcResultLateReportingBuilder : ICalcResultLateReportingBuilder
     {
-        public const string LateReportingHeader = "Parameters - Late Reporting Tonnages";
-        public const string Total = "Total";
-        public const string MaterialHeading = "Material";
-        public const string TonnageHeading = "Late Reporting Tonnage";
-        public const string RedTonnageHeading = "Red + Red Medical Late Reporting Tonnage";
-        public const string AmberTonnageHeading = "Amber + Amber Medical Late Reporting Tonnage";
-        public const string GreenTonnageHeading = "Green + Green Medical Late Reporting Tonnage";
-        private readonly ApplicationDBContext context;
+        private readonly ApplicationDBContext dbContext;
 
-        public CalcResultLateReportingBuilder(ApplicationDBContext context)
+        public CalcResultLateReportingBuilder(ApplicationDBContext dbContext)
         {
-            this.context = context;
+            this.dbContext = dbContext;
         }
 
-        public async Task<CalcResultLateReportingTonnage> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
+        public async Task<CalcResultLateReportingTonnage> ConstructAsync(IImmutableList<MaterialDetail> materials, CalcResultsRequestDto resultsRequestDto)
         {
             var result = await (
-                from run in context.CalculatorRuns
-                join master in context.DefaultParameterSettings
-                on run.DefaultParameterSettingMasterId equals master.Id
-                join detail in context.DefaultParameterSettingDetail on master.Id equals detail.DefaultParameterSettingMasterId
-                join template in context.DefaultParameterTemplateMasterList on detail.ParameterUniqueReferenceId equals template.ParameterUniqueReferenceId
-                where run.Id == resultsRequestDto.RunId && template.ParameterType == TonnageHeading
+                from run in dbContext.CalculatorRuns.AsNoTracking()
+                join master in dbContext.DefaultParameterSettings.AsNoTracking() on run.DefaultParameterSettingMasterId equals master.Id
+                join detail in dbContext.DefaultParameterSettingDetail.AsNoTracking() on master.Id equals detail.DefaultParameterSettingMasterId
+                join template in dbContext.DefaultParameterTemplateMasterList.AsNoTracking() on detail.ParameterUniqueReferenceId equals template.ParameterUniqueReferenceId
+                where run.Id == resultsRequestDto.RunId && template.ParameterType == "Late Reporting Tonnage"
                 select new { template.ParameterCategory, detail.ParameterValue}
             ).ToListAsync();
+
+            var materialByName = materials.ToDictionary(m => m.Name, m => m.Code);
 
             var tonnageDetails = result
                 .GroupBy(x => RemoveSuffix(x.ParameterCategory))
@@ -46,35 +40,29 @@ namespace EPR.Calculator.Service.Function.Builder.LateReportingTonnages
                     var amber = GetParameterValueBySuffix(g, "-A");
                     var green = GetParameterValueBySuffix(g, "-G");
 
-                    return new CalcResultLateReportingTonnageDetail
+                    var materialCode = materialByName[g.Key];
+                    return (materialCode, new CalcResultLateReportingTonnageDetail
                     {
-                        Name = g.Key,
                         RedLateReportingTonnage   = red,
                         AmberLateReportingTonnage = amber,
                         GreenLateReportingTonnage = green,
                         TotalLateReportingTonnage = red + amber + green
-                    };
+                    });
                 }
-            ).ToList();
+            ).ToDictionary();
 
-            tonnageDetails.Add(new CalcResultLateReportingTonnageDetail
+            var total = new CalcResultLateReportingTonnageDetail
             {
-                Name = Total,
-                RedLateReportingTonnage   = tonnageDetails.Sum(r => r.RedLateReportingTonnage),
-                AmberLateReportingTonnage = tonnageDetails.Sum(r => r.AmberLateReportingTonnage),
-                GreenLateReportingTonnage = tonnageDetails.Sum(r => r.GreenLateReportingTonnage),
-                TotalLateReportingTonnage = tonnageDetails.Sum(r => r.TotalLateReportingTonnage)
-            });
+                RedLateReportingTonnage   = tonnageDetails.Values.Sum(r => r.RedLateReportingTonnage),
+                AmberLateReportingTonnage = tonnageDetails.Values.Sum(r => r.AmberLateReportingTonnage),
+                GreenLateReportingTonnage = tonnageDetails.Values.Sum(r => r.GreenLateReportingTonnage),
+                TotalLateReportingTonnage = tonnageDetails.Values.Sum(r => r.TotalLateReportingTonnage)
+            };
 
             return new CalcResultLateReportingTonnage
             {
-                Name = LateReportingHeader,
-                MaterialHeading = MaterialHeading,
-                TonnageHeading = TonnageHeading,
-                RedTonnageHeading = RedTonnageHeading,
-                AmberTonnageHeading = AmberTonnageHeading,
-                GreenTonnageHeading = GreenTonnageHeading,
-                CalcResultLateReportingTonnageDetails = tonnageDetails,
+                LateReportingTonnageByMaterial = tonnageDetails,
+                LateReportingTonnageTotal = total
             };
         }
 

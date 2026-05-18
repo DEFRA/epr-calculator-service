@@ -28,7 +28,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         private readonly ICalcResultOnePlusFourApportionmentExporter onePlusFourApportionmentExporter;
         private readonly ICalcResultLapcapDataExporter lapcapDataExporter;
         private readonly ICalcResultParameterOtherCostExporter parameterOtherCosts;
-        private readonly ILateReportingExporter lateReportingExporter;
+        private readonly ICalcResultLateReportingExporter lateReportingExporter;
         private readonly ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter;
         private readonly ICalcResultPartialObligationsExporter calcResultPartialObligationsExporter;
         private readonly ICalcResultProjectedProducersExporter calcResultProjectedProducersExporter;
@@ -41,7 +41,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         // Suppress SonarQube warning for constructor parameter count
         [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         public CalcResultsExporter(
-            ILateReportingExporter lateReporting,
+            ICalcResultLateReportingExporter lateReporting,
             ICalcResultDetailExporter resultDetail,
             ICalcResultOnePlusFourApportionmentExporter onePlusFourApportionment,
             ICalcResultLaDisposalCostExporter laDisposalCost,
@@ -85,7 +85,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 
             lapcapDataExporter.Export(calcResult.CalcResultLapcapData, materials, csvContent);
 
-            csvContent.Append(lateReportingExporter.Export(calcResult.CalcResultLateReportingTonnageData));
+            lateReportingExporter.Export(materials, calcResult.CalcResultLateReportingTonnageData, csvContent);
 
             parameterOtherCosts.Export(calcResult.CalcResultParameterOtherCost, csvContent);
 
