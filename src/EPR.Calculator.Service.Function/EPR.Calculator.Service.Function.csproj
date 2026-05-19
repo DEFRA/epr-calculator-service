@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -60,6 +60,8 @@
 
       FunctionsPreservedDependencies instructs the SDK not to delete these specific assemblies.
     -->
+    <FunctionsPreservedDependencies Include="Microsoft.Extensions.DependencyModel.dll"/>
+    <FunctionsPreservedDependencies Include="Microsoft.Extensions.Options.dll"/>
     <FunctionsPreservedDependencies Include="System.Memory.Data.dll"/>
   </ItemGroup>
 
