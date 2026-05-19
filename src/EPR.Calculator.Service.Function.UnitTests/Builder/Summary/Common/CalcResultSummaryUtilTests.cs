@@ -300,8 +300,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         [TestMethod]
         public void GetCountryBadDebtProvision()
         {
-            Assert.AreEqual(57.291656411518576200m, CalcResultSummaryUtil.GetCountryBadDebtProvision(calcResult, Countries.England, 100m));
-            Assert.AreEqual(12.9141028796455817000m, CalcResultSummaryUtil.GetCountryBadDebtProvision(calcResult, Countries.Wales  , 100m));
+            Assert.AreEqual(57.291656411518582328328821072m, CalcResultSummaryUtil.GetCountryBadDebtProvision(calcResult, Countries.England, 100m));
+            Assert.AreEqual(12.914102879645582082205267049m, CalcResultSummaryUtil.GetCountryBadDebtProvision(calcResult, Countries.Wales  , 100m));
         }
 
         [TestMethod]
@@ -396,7 +396,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var result = CalcResultSummaryUtil.GetParamsOtherFourCountryApportionmentPercentage(calcResult, Countries.England);
 
             // Assert
-            Assert.AreEqual(0.4383561643835616m, result);
+            Assert.AreEqual(43.83561643835616m, result);
         }
 
         [TestMethod]
@@ -406,7 +406,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var result = CalcResultSummaryUtil.GetParamsOtherFourCountryApportionmentPercentage(calcResult, Countries.Wales);
 
             // Assert
-            Assert.AreEqual(0.1917808219178082m, result);
+            Assert.AreEqual(19.17808219178082m, result);
         }
 
         [TestMethod]
@@ -416,7 +416,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var result = CalcResultSummaryUtil.GetParamsOtherFourCountryApportionmentPercentage(calcResult, Countries.Scotland);
 
             // Assert
-            Assert.AreEqual(0.2465753424657534m, result);
+            Assert.AreEqual(24.65753424657534m, result);
         }
 
         [TestMethod]
@@ -426,7 +426,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var result = CalcResultSummaryUtil.GetParamsOtherFourCountryApportionmentPercentage(calcResult, Countries.NorthernIreland);
 
             // Assert
-            Assert.AreEqual(0.1232876712328767m, result);
+            Assert.AreEqual(12.32876712328767m, result);
         }
 
         [TestMethod]

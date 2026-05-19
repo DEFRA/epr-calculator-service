@@ -20,9 +20,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                 {
                     ["PC"] = new() { England = 50,  Wales = 60,  Scotland = 70,  NorthernIreland =  80 },
                     ["PL"] = new() { England = 100, Wales = 200, Scotland = 300, NorthernIreland = 400 }
-                },
-                Total = new() { England = 1, Wales = 2, Scotland = 3, NorthernIreland = 4 },
-                CountryApportionment = new() { England = 0.47123m, Wales = 0.13123m, Scotland = 0.25123m, NorthernIreland = 0.14631m }
+                }
             };
             var materials = TestDataHelper.GetMaterials();
 
@@ -57,17 +55,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                     }
                   ],
                   "calcResultLapcapDataTotal": {
-                    "totalEnglandLaDisposalCost"        : "£1.00",
-                    "totalWalesLaDisposalCost"          : "£2.00",
-                    "totalScotlandLaDisposalCost"       : "£3.00",
-                    "totalNorthernIrelandLaDisposalCost": "£4.00",
-                    "totalLaDisposalCost"               : "£10.00"
+                    "totalEnglandLaDisposalCost"        : "£150.00",
+                    "totalWalesLaDisposalCost"          : "£260.00",
+                    "totalScotlandLaDisposalCost"       : "£370.00",
+                    "totalNorthernIrelandLaDisposalCost": "£480.00",
+                    "totalLaDisposalCost"               : "£1,260.00"
                   },
                   "oneCountryApportionmentPercentages": {
-                    "englandApportionment"        : "47.12300000%",
-                    "walesApportionment"          : "13.12300000%",
-                    "scotlandApportionment"       : "25.12300000%",
-                    "northernIrelandApportionment": "14.63100000%",
+                    "englandApportionment"        : "11.90476190%",
+                    "walesApportionment"          : "20.63492063%",
+                    "scotlandApportionment"       : "29.36507937%",
+                    "northernIrelandApportionment": "38.09523810%",
                     "totalApportionment"          : "100.00000000%"
                   }
                 }

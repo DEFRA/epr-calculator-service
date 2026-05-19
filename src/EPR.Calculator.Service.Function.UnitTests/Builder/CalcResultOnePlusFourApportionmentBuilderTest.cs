@@ -25,15 +25,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
-                    ByMaterial = [],
-                    Total = new ByCountryCost
-                    {
-                        England         = 13280.45m,
-                        Wales           = 210.28m,
-                        Scotland        = 91.00m,
-                        NorthernIreland = 91.00m
-                    },
-                    CountryApportionment = new ByCountryApportionment()
+                    ByMaterial = new() {
+                        ["AL"] = new()
+                        {
+                            England         = 13280.45m,
+                            Wales           = 210.28m,
+                            Scotland        = 91.00m,
+                            NorthernIreland = 91.00m
+                        }
+                    }
                 },
 
                 CalcResultParameterOtherCost = new CalcResultParameterOtherCost

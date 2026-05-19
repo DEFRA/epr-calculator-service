@@ -64,9 +64,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 },
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
-                    ByMaterial = [],
-                    Total = new ByCountryCost(),
-                    CountryApportionment = new ByCountryApportionment()
+                    ByMaterial = []
                 },
                 CalcResultParameterOtherCost = new()
                 {

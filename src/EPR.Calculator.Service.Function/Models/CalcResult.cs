@@ -10,9 +10,7 @@ namespace EPR.Calculator.Service.Function.Models
 
         public required CalcResultLapcapData CalcResultLapcapData { get; set; } = new()
         {
-            ByMaterial           = [],
-            Total                = new ByCountryCost(),
-            CountryApportionment = new ByCountryApportionment()
+            ByMaterial = []
         };
 
         public CalcResultCommsCost CalcResultCommsCostReportDetail { get; set; } = new();

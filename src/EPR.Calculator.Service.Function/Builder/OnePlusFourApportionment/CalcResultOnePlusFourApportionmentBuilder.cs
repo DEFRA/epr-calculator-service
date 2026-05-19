@@ -53,12 +53,14 @@ namespace EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment
 
         private static ByCountryApportionment CalculateApportionment(ByCountryCost apportionmentData)
         {
-            return new ByCountryApportionment
+            return apportionmentData.Total == 0
+            ? ByCountryApportionment.Empty
+            : new ByCountryApportionment
             {
-                England         = CalcResultLapcapDataBuilder.CalculateApportionment(apportionmentData.England        , apportionmentData.Total),
-                Wales           = CalcResultLapcapDataBuilder.CalculateApportionment(apportionmentData.Wales          , apportionmentData.Total),
-                Scotland        = CalcResultLapcapDataBuilder.CalculateApportionment(apportionmentData.Scotland       , apportionmentData.Total),
-                NorthernIreland = CalcResultLapcapDataBuilder.CalculateApportionment(apportionmentData.NorthernIreland, apportionmentData.Total)
+                England         = 100 * apportionmentData.England         / apportionmentData.Total,
+                Wales           = 100 * apportionmentData.Wales           / apportionmentData.Total,
+                Scotland        = 100 * apportionmentData.Scotland        / apportionmentData.Total,
+                NorthernIreland = 100 * apportionmentData.NorthernIreland / apportionmentData.Total
             };
         }
     }

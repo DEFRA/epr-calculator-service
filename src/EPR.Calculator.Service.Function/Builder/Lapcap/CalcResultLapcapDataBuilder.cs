@@ -21,9 +21,6 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
         private readonly ICalcCountryApportionmentService calcCountryApportionmentService;
         private readonly ApplicationDBContext dbContext;
 
-        //public const string CountryApportionment = "1 Country Apportionment %s";
-        public const string Total = "Total";
-
         public CalcResultLapcapDataBuilder(ApplicationDBContext dbContext,
             ICalcCountryApportionmentService calcCountryApportionmentService)
         {
@@ -66,20 +63,8 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
                 })
             ).ToDictionary();
 
-            var total = new ByCountryCost
-            {
-                England         = data.Values.Sum(x => x.England),
-                NorthernIreland = data.Values.Sum(x => x.NorthernIreland),
-                Scotland        = data.Values.Sum(x => x.Scotland),
-                Wales           = data.Values.Sum(x => x.Wales)
-            };
-
-            var countryApportionment = new ByCountryApportionment
-            {
-                England         = CalculateApportionment(total.England        , total.Total),
-                Wales           = CalculateApportionment(total.Wales          , total.Total),
-                Scotland        = CalculateApportionment(total.Scotland       , total.Total),
-                NorthernIreland = CalculateApportionment(total.NorthernIreland, total.Total)
+            var lapcapData = new CalcResultLapcapData {
+                ByMaterial = data
             };
 
             if (!resultsRequestDto.IsBillingFile)
@@ -89,31 +74,16 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
                     RunId               = resultsRequestDto.RunId,
                     Countries           = countries,
                     CostTypeId          = costTypeId,
-                    EnglandCost         = countryApportionment.England,
-                    NorthernIrelandCost = countryApportionment.NorthernIreland,
-                    ScotlandCost        = countryApportionment.Scotland,
-                    WalesCost           = countryApportionment.Wales
+                    EnglandCost         = lapcapData.CountryApportionment.England,
+                    NorthernIrelandCost = lapcapData.CountryApportionment.NorthernIreland,
+                    ScotlandCost        = lapcapData.CountryApportionment.Scotland,
+                    WalesCost           = lapcapData.CountryApportionment.Wales
                 });
             }
 
-            return new CalcResultLapcapData {
-                ByMaterial           = data,
-                Total                = total,
-                CountryApportionment = countryApportionment
-            };
+            return lapcapData;
         }
 #pragma warning restore
-
-        internal static decimal CalculateApportionment(decimal countryCost, decimal totalCost)
-        {
-            if (totalCost != 0)
-            {
-                var total = (countryCost / totalCost);
-                return total * 100;
-            }
-
-            return 0;
-        }
 
         internal static decimal GetMaterialDisposalCostPerCountry(string country, MaterialDetail material, IEnumerable<ResultsClass> results)
         {
