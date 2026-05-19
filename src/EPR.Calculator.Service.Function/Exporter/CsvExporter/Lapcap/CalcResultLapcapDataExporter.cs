@@ -57,7 +57,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap
             csvContent.AppendLine();
         }
 
-        private void AppendRow(string name, ByCountryValue value, StringBuilder csvContent)
+        private void AppendRow(string name, ByCountryCost value, StringBuilder csvContent)
         {
             csvContent.Append(CsvSanitiser.SanitiseData(name));
             csvContent.Append(CsvSanitiser.SanitiseData(value.England        , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));

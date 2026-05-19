@@ -22,11 +22,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             var expectedJson = """
                 {
                   "onePlusFourCommsCostApportionmentPercentages": {
-                    "england"        : "1.23%",
-                    "wales"          : "2.34%",
-                    "scotland"       : "3.45%",
-                    "northernIreland": "4.56%",
-                    "total"          : "11.58%"
+                    "england"        : "50.23%",
+                    "wales"          : "30.34%",
+                    "scotland"       : "10.45%",
+                    "northernIreland": "8.98%",
+                    "total"          : "100.00%"
                   }
                 }
                 """;

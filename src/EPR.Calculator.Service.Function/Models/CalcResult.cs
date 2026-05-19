@@ -11,8 +11,8 @@ namespace EPR.Calculator.Service.Function.Models
         public required CalcResultLapcapData CalcResultLapcapData { get; set; } = new()
         {
             ByMaterial           = [],
-            Total                = new ByCountryValue(),
-            CountryApportionment = new CountryApportionmentData()
+            Total                = new ByCountryCost(),
+            CountryApportionment = new ByCountryApportionment()
         };
 
         public CalcResultCommsCost CalcResultCommsCostReportDetail { get; set; } = new();
@@ -32,14 +32,7 @@ namespace EPR.Calculator.Service.Function.Models
         public required CalcResultParameterOtherCost CalcResultParameterOtherCost { get; set; } =
             new()
             {
-                SchemeSetupCost  = new CalcResultParameterOtherCostDetail
-                {
-                    England         = 0m,
-                    Wales           = 0m,
-                    Scotland        = 0m,
-                    NorthernIreland = 0m,
-                    Total           = 0m
-                }
+                SchemeSetupCost  = new ByCountryCost { England = 0, Wales = 0, Scotland = 0, NorthernIreland = 0 }
             };
 
         public CalcResultOnePlusFourApportionment CalcResultOnePlusFourApportionment { get; set; }

@@ -30,37 +30,33 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             return new CalcResultParameterOtherCost
             {
-                SaOperatingCost = new CalcResultParameterOtherCostDetail
+                SaOperatingCost = new ByCountryCost
                 {
-                    England = 25000,
-                    Wales = 14000,
-                    Scotland = 17000,
-                    NorthernIreland = 9000,
-                    Total = 65000,
+                    England         = 25000,
+                    Wales           = 14000,
+                    Scotland        = 17000,
+                    NorthernIreland = 9000
                 },
-                LaDataPrepCharge = new CalcResultParameterOtherCostDetail
+                LaDataPrepCharge = new ByCountryCost
                 {
-                    England = 16000,
-                    Wales = 7000,
-                    Scotland = 9000,
-                    NorthernIreland = 4500,
-                    Total = 36500,
+                    England         = 16000,
+                    Wales           = 7000,
+                    Scotland        = 9000,
+                    NorthernIreland = 4500
                 },
-                CountryApportionment = new CalcResultParameterOtherCostDetail
+                CountryApportionment = new ByCountryApportionment
                 {
-                    England = 0.4383561643835616m,
-                    Wales = 0.1917808219178082m,
-                    Scotland = 0.2465753424657534m,
-                    NorthernIreland = 0.1232876712328767m,
-                    Total = 1,
+                    England         = 0.4383561643835616m,
+                    Wales           = 0.1917808219178082m,
+                    Scotland        = 0.2465753424657534m,
+                    NorthernIreland = 0.1232876712328767m
                 },
-                SchemeSetupCost =
+                SchemeSetupCost = new ByCountryCost
                 {
                     England         = 17500,
                     Wales           = 23400,
                     Scotland        = 12400,
-                    NorthernIreland = 9450,
-                    Total           = 62750,
+                    NorthernIreland = 9450
                 },
                 BadDebtValue = 6,
                 MaterialityIncrease   = new Materiality { Amount = 5000, Percentage = 2 },
@@ -214,19 +210,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             return new CalcResultLapcapData
             {
-                ByMaterial = new Dictionary<string, ByCountryValue>
+                ByMaterial = new Dictionary<string, ByCountryCost>
                 {
-                    ["AL"] = new ByCountryValue { England =  5000, Wales =  1750, Scotland =  2000, NorthernIreland = 1250, Total = 10000 },
-                    ["FC"] = new ByCountryValue { England =  7500, Wales =  2100, Scotland =  3400, NorthernIreland = 1750, Total = 14750 },
-                    ["GL"] = new ByCountryValue { England = 45000, Wales =     0, Scotland = 20700, NorthernIreland = 4500, Total = 70200 },
-                    ["PC"] = new ByCountryValue { England = 12500, Wales =  2300, Scotland =  4500, NorthernIreland = 3400, Total = 22700 },
-                    ["PL"] = new ByCountryValue { England = 23000, Wales =  4500, Scotland =  6700, NorthernIreland = 2100, Total = 36300 },
-                    ["ST"] = new ByCountryValue { England = 13400, Wales =     0, Scotland =  7800, NorthernIreland =    0, Total = 21200 },
-                    ["WD"] = new ByCountryValue { England =     0, Wales = 12000, Scotland =     0, NorthernIreland = 5600, Total = 17600 },
-                    ["OT"] = new ByCountryValue { England =  3400, Wales =  2100, Scotland =  4200, NorthernIreland =  700, Total = 10400 }
+                    ["AL"] = new ByCountryCost { England =  5000, Wales =  1750, Scotland =  2000, NorthernIreland = 1250 },
+                    ["FC"] = new ByCountryCost { England =  7500, Wales =  2100, Scotland =  3400, NorthernIreland = 1750 },
+                    ["GL"] = new ByCountryCost { England = 45000, Wales =     0, Scotland = 20700, NorthernIreland = 4500 },
+                    ["PC"] = new ByCountryCost { England = 12500, Wales =  2300, Scotland =  4500, NorthernIreland = 3400 },
+                    ["PL"] = new ByCountryCost { England = 23000, Wales =  4500, Scotland =  6700, NorthernIreland = 2100 },
+                    ["ST"] = new ByCountryCost { England = 13400, Wales =     0, Scotland =  7800, NorthernIreland =    0 },
+                    ["WD"] = new ByCountryCost { England =     0, Wales = 12000, Scotland =     0, NorthernIreland = 5600 },
+                    ["OT"] = new ByCountryCost { England =  3400, Wales =  2100, Scotland =  4200, NorthernIreland =  700 }
                 },
-                Total = new ByCountryValue { England = 109800, Wales = 24750, Scotland = 49300, NorthernIreland = 19300, Total = 203150 },
-                CountryApportionment = new CountryApportionmentData
+                Total = new ByCountryCost { England = 109800, Wales = 24750, Scotland = 49300, NorthernIreland = 19300 },
+                CountryApportionment = new ByCountryApportionment
                 {
                     England         = 0.5404873246369677m,
                     Wales           = 0.12183115924193945m,
@@ -245,24 +241,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     England         = 0.10M,
                     Wales           = 020M,
                     NorthernIreland = 0.15M,
-                    Scotland        = 0.15M,
-                    Total           = 0.1M
+                    Scotland        = 0.15M
                 },
                 LADataPrepCharge = new()
                 {
                     England         = 0.10M,
                     Wales           = 020M,
                     Scotland        = 0.15M,
-                    NorthernIreland = 0.15M,
-                    Total           = 0.1M
+                    NorthernIreland = 0.15M
                 },
                 TotalOnePlusFour =  new()
                 {
-                    EnglandTotal         = 14.53M,
-                    WalesTotal           = 020M,
-                    ScotlandTotal        = 0.15M,
-                    NorthernIrelandTotal = 0.15M,
-                    Total                = 0.1M
+                    England         = 14.53M,
+                    Wales           = 020M,
+                    Scotland        = 0.15M,
+                    NorthernIreland = 0.15M
                 },
                 OnePlusFourApportionment = new()
                 {
@@ -278,13 +271,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             return new CalcResultCommsCost
             {
-                CalcResultCommsCostOnePlusFourApportionment = new CalcResultCommsCostOnePlusFourApportionment
+                CalcResultCommsCostOnePlusFourApportionment = new ByCountryApportionment
                 {
-                    England         = 1.23m,
-                    Wales           = 2.34m,
-                    Scotland        = 3.45m,
-                    NorthernIreland = 4.56m,
-                    Total           = 11.58m
+                    England         = 50.23m,
+                    Wales           = 30.34m,
+                    Scotland        = 10.45m,
+                    NorthernIreland =  8.98m
                 },
                 CommsCostByMaterial =
                 {
@@ -305,8 +297,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             ProducerReportedTotalTonnage = 0
                         }
                 },
-                CommsCostUkWide = new () { Total = 2531 },
-                CommsCostByCountry = new () { Total = 2530 }
+                CommsCostUkWide = new () { England = 1500, Wales = 200, Scotland = 500, NorthernIreland = 331 },
+                CommsCostByCountry = new () { England = 1400, Wales = 250, Scotland = 600, NorthernIreland = 280 }
             };
         }
 

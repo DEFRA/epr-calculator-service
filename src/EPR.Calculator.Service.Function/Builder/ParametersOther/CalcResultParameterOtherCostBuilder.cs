@@ -114,32 +114,30 @@ namespace EPR.Calculator.Service.Function.Builder.ParametersOther
             };
         }
 
-        private static CalcResultParameterOtherCostDetail GetCountryApportionment(CalcResultParameterOtherCostDetail laDataPrep)
+        private static ByCountryApportionment GetCountryApportionment(ByCountryCost laDataPrep)
         {
             var total = laDataPrep.England + laDataPrep.NorthernIreland + laDataPrep.Wales + laDataPrep.Scotland;
-            return new CalcResultParameterOtherCostDetail
+            return new ByCountryApportionment
             {
                 England         = total != 0 ? (laDataPrep.England         / total) * 100 : 0M,
                 NorthernIreland = total != 0 ? (laDataPrep.NorthernIreland / total) * 100 : 0M,
                 Scotland        = total != 0 ? (laDataPrep.Scotland        / total) * 100 : 0M,
-                Wales           = total != 0 ? (laDataPrep.Wales           / total) * 100 : 0M,
-                Total           = 100M
+                Wales           = total != 0 ? (laDataPrep.Wales           / total) * 100 : 0M
             };
         }
 
-        private static CalcResultParameterOtherCostDetail GetPrepCharge(IEnumerable<DefaultParamResultsClass> lapPrepCharges)
+        private static ByCountryCost GetPrepCharge(IEnumerable<DefaultParamResultsClass> lapPrepCharges)
         {
-            var e  = lapPrepCharges.Single(cost => cost.ParameterCategory == "England").ParameterValue;
-            var w  = lapPrepCharges.Single(cost => cost.ParameterCategory == "Wales").ParameterValue;
-            var s  = lapPrepCharges.Single(cost => cost.ParameterCategory == "Scotland").ParameterValue;
+            var e  = lapPrepCharges.Single(cost => cost.ParameterCategory == "England"         ).ParameterValue;
+            var w  = lapPrepCharges.Single(cost => cost.ParameterCategory == "Wales"           ).ParameterValue;
+            var s  = lapPrepCharges.Single(cost => cost.ParameterCategory == "Scotland"        ).ParameterValue;
             var ni = lapPrepCharges.Single(cost => cost.ParameterCategory == "Northern Ireland").ParameterValue;
-            return new CalcResultParameterOtherCostDetail
+            return new ByCountryCost
             {
                 England         = e,
                 Wales           = w,
                 Scotland        = s,
-                NorthernIreland = ni,
-                Total           = e + w + s + ni, // TODO a derived field?
+                NorthernIreland = ni
             };
         }
     }

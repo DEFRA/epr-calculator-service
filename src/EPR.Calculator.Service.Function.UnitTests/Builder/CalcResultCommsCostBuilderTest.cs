@@ -55,7 +55,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) };
             var apportionment = new CalcResultOnePlusFourApportionment
             {
-                OnePlusFourApportionment = new CountryApportionmentData
+                OnePlusFourApportionment = new ByCountryApportionment
                 {
                     England         = 40M,
                     Wales           = 20M,

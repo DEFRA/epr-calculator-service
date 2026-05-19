@@ -16,19 +16,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             // Arrange
             var data = new CalcResultLapcapData
             {
-                ByMaterial = new Dictionary<string, ByCountryValue>
+                ByMaterial = new Dictionary<string, ByCountryCost>
                 {
-                    ["PC"] = new ByCountryValue { England = 50,  Wales = 60,  Scotland = 70,  NorthernIreland = 80,  Total = 260  },
-                    ["PL"] = new ByCountryValue { England = 100, Wales = 200, Scotland = 300, NorthernIreland = 400, Total = 1000 }
+                    ["PC"] = new() { England = 50,  Wales = 60,  Scotland = 70,  NorthernIreland =  80 },
+                    ["PL"] = new() { England = 100, Wales = 200, Scotland = 300, NorthernIreland = 400 }
                 },
-                Total = new ByCountryValue { England = 1, Wales = 2, Scotland = 3, NorthernIreland = 4, Total = 10 },
-                CountryApportionment = new CountryApportionmentData
-                {
-                    England         = 0.47123m,
-                    Wales           = 0.13123m,
-                    Scotland        = 0.25123m,
-                    NorthernIreland = 0.14631m
-                }
+                Total = new() { England = 1, Wales = 2, Scotland = 3, NorthernIreland = 4 },
+                CountryApportionment = new() { England = 0.47123m, Wales = 0.13123m, Scotland = 0.25123m, NorthernIreland = 0.14631m }
             };
             var materials = TestDataHelper.GetMaterials();
 
