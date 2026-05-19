@@ -2,10 +2,13 @@
 
 public class CalcResultCommsCostOnePlusFourApportionment
 {
-    //public string Name { get; set; } = string.Empty;
-    public decimal England { get; set; }
-    public decimal Wales { get; set; }
-    public decimal Scotland { get; set; }
-    public decimal NorthernIreland { get; set; }
-    public decimal Total { get; set; }
+    public decimal EnglandCost { get; set; }
+    public decimal WalesCost { get; set; }
+    public decimal ScotlandCost { get; set; }
+    public decimal NorthernIrelandCost { get; set; }
+
+    private decimal? totalCost;
+    public decimal TotalCost =>
+        totalCost ??=
+            EnglandCost + WalesCost + ScotlandCost + NorthernIrelandCost;
 }

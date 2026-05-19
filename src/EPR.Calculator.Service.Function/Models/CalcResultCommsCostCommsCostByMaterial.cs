@@ -2,11 +2,22 @@
 
 public class CalcResultCommsCostCommsCostByMaterial : CalcResultCommsCostOnePlusFourApportionment
 {
-    public required decimal ProducerReportedHouseholdPackagingWasteTonnage { get; set; }
+    public required decimal HouseholdPackagingWasteTonnage { get; set; }
+    public required decimal PublicBinTonnage { get; set; }
+    public decimal? HouseholdDrinksContainersTonnage { get; set; }
     public required decimal LateReportingTonnage { get; set; }
-    public decimal? CommsCostByMaterialPricePerTonne { get; set; }
-    public required decimal ReportedPublicBinTonnage { get; set; }
-    public decimal? HouseholdDrinksContainers { get; set; }
-    public required decimal ProducerReportedTotalTonnage { get; set; }
-    public decimal? TotalReportedTonnage { get; set; }
+
+    private decimal? totalTonnage;
+    public decimal TotalTonnage =>
+        totalTonnage ??=
+            HouseholdPackagingWasteTonnage
+            + LateReportingTonnage
+            + PublicBinTonnage
+            + (HouseholdDrinksContainersTonnage ?? 0);
+
+
+    private decimal? commsCostByMaterialPricePerTonne;
+    public decimal CommsCostByMaterialPricePerTonne =>
+        commsCostByMaterialPricePerTonne ??=
+            TotalTonnage != 0 ? TotalCost / TotalTonnage : 0;
 }

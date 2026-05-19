@@ -86,39 +86,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                     TotalOnePlusFour =  new() { England = 14.53M, Wales = 20M, Scotland = 0.15M, NorthernIreland = 0.15M },
                     OnePlusFourApportionment = new() { England = 40, Wales = 20M, Scotland = 25M, NorthernIreland = 15M }
                 },
-                CalcResultCommsCostReportDetail = new CalcResultCommsCost
-                {
-                    CommsCostByMaterial =
-                    {
-                        ["AL"] = new()
-                            {
-                                CommsCostByMaterialPricePerTonne = 0.42m,
-                                ProducerReportedHouseholdPackagingWasteTonnage = 0,
-                                LateReportingTonnage  = 0,
-                                ReportedPublicBinTonnage  = 0,
-                                ProducerReportedTotalTonnage  = 0
-                            },
-                        ["GL"] = new()
-                            {
-                                CommsCostByMaterialPricePerTonne = 0.3m,
-                                ProducerReportedHouseholdPackagingWasteTonnage = 0,
-                                LateReportingTonnage  = 0,
-                                ReportedPublicBinTonnage  = 0,
-                                ProducerReportedTotalTonnage  = 0
-                            }
-                    },
-                    CommsCostByMaterialTotal =
-                        new()
-                        {
-                            CommsCostByMaterialPricePerTonne = 0.51m,
-                            ProducerReportedHouseholdPackagingWasteTonnage = 0,
-                            LateReportingTonnage  = 0,
-                            ReportedPublicBinTonnage  = 0,
-                            ProducerReportedTotalTonnage  = 0
-                        },
-                    CalcResultCommsCostOnePlusFourApportionment = new ByCountryApportionment { England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40 },
-                    CommsCostByCountry = new ByCountryCost { England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40 }
-                },
+                CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData
                 {
                     ByMaterial = new Dictionary<string, CalcResultLaDisposalCostDataDetail>
