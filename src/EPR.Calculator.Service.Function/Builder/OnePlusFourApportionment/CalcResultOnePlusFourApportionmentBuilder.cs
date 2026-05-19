@@ -40,19 +40,6 @@ namespace EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment
             };
         }
 
-        // TODO where was this used?
-        /*private static CalcResultOnePlusFourApportionmentDetail CreateDataPrepChargeRow(CalcResultParameterOtherCostDetail dataPrepCharge)
-        {
-            return new CalcResultOnePlusFourApportionmentDetail
-            {
-                EnglandTotal         = dataPrepCharge.England,
-                WalesTotal           = dataPrepCharge.Wales,
-                ScotlandTotal        = dataPrepCharge.Scotland,
-                NorthernIrelandTotal = dataPrepCharge.NorthernIreland,
-                Total                = dataPrepCharge.Total
-            };
-        }*/
-
         private static ByCountryCost CreateTotalOnePlusFour(ByCountryCost totalLACost, ByCountryCost dataPrepCharge)
         {
             return new ByCountryCost

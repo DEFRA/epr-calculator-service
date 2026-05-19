@@ -80,19 +80,14 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
                     + publicBinTonnage
                     + householdcontainers;
             var commsCost = new CalcResultCommsCostCommsCostByMaterial{
-                England         = apportionmentDetail.England         * total / 100,
-                Wales           = apportionmentDetail.Wales           * total / 100,
-                Scotland        = apportionmentDetail.Scotland        * total / 100,
-                NorthernIreland = apportionmentDetail.NorthernIreland * total / 100,
-                ProducerReportedHouseholdPackagingWasteTonnage = producerReportedTon,
-                ReportedPublicBinTonnage = publicBinTonnage,
-                HouseholdDrinksContainers = householdcontainers,
-                LateReportingTonnage = lateReportingTonnage.Total,
-                // TODO derived fields?
-                Total = total,
-                ProducerReportedTotalTonnage = producerReportedTotalTonnage,
-                CommsCostByMaterialPricePerTonne = producerReportedTotalTonnage != 0
-                        ? total / producerReportedTotalTonnage : 0
+                EnglandCost         = total * apportionmentDetail.England         / 100,
+                WalesCost           = total * apportionmentDetail.Wales           / 100,
+                ScotlandCost        = total * apportionmentDetail.Scotland        / 100,
+                NorthernIrelandCost = total * apportionmentDetail.NorthernIreland / 100,
+                HouseholdPackagingWasteTonnage = producerReportedTon,
+                PublicBinTonnage = publicBinTonnage,
+                HouseholdDrinksContainersTonnage = householdcontainers,
+                LateReportingTonnage = lateReportingTonnage.Total
             };
 
             return (material.Code, commsCost);
@@ -149,16 +144,14 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
         // TODO move total row to Exporter?
         return new CalcResultCommsCostCommsCostByMaterial
         {
-            England         = list.Sum(x => x.England),
-            Wales           = list.Sum(x => x.Wales),
-            NorthernIreland = list.Sum(x => x.NorthernIreland),
-            Scotland        = list.Sum(x => x.Scotland),
-            Total           = list.Sum(x => x.Total),
-            ProducerReportedHouseholdPackagingWasteTonnage = list.Sum(x => x.ProducerReportedHouseholdPackagingWasteTonnage),
-            ProducerReportedTotalTonnage                   = list.Sum(x => x.ProducerReportedTotalTonnage),
-            LateReportingTonnage                           = list.Sum(x => x.LateReportingTonnage),
-            ReportedPublicBinTonnage                       = list.Sum(x => x.ReportedPublicBinTonnage),
-            HouseholdDrinksContainers                      = list.Sum(x => x.HouseholdDrinksContainers),
+            EnglandCost         = list.Sum(x => x.EnglandCost),
+            WalesCost           = list.Sum(x => x.WalesCost),
+            NorthernIrelandCost = list.Sum(x => x.NorthernIrelandCost),
+            ScotlandCost        = list.Sum(x => x.ScotlandCost),
+            HouseholdPackagingWasteTonnage   = list.Sum(x => x.HouseholdPackagingWasteTonnage),
+            PublicBinTonnage                 = list.Sum(x => x.PublicBinTonnage),
+            HouseholdDrinksContainersTonnage = list.Sum(x => x.HouseholdDrinksContainersTonnage),
+            LateReportingTonnage             = list.Sum(x => x.LateReportingTonnage)
         };
     }
 

@@ -98,25 +98,25 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost
         private void AppendRow(string name, CalcResultCommsCostCommsCostByMaterial commCost, StringBuilder csvContent)
         {
             csvContent.Append(CsvSanitiser.SanitiseData(name));
-            csvContent.Append(CsvSanitiser.SanitiseData(commCost.England        , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(commCost.Wales          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(commCost.Scotland       , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(commCost.NorthernIreland, DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(commCost.Total          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(commCost.ProducerReportedHouseholdPackagingWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-            csvContent.Append(CsvSanitiser.SanitiseData(commCost.ReportedPublicBinTonnage                      , DecimalPlaces.Three, DecimalFormats.F3));
-            csvContent.Append(CsvSanitiser.SanitiseData(commCost.HouseholdDrinksContainers                     , DecimalPlaces.Three, DecimalFormats.F3));
-            csvContent.Append(CsvSanitiser.SanitiseData(commCost.LateReportingTonnage                          , DecimalPlaces.Three, DecimalFormats.F3));
-            csvContent.Append(CsvSanitiser.SanitiseData(commCost.ProducerReportedTotalTonnage                  , DecimalPlaces.Three, DecimalFormats.F3));
-
-            if (commCost.CommsCostByMaterialPricePerTonne == null)
+            csvContent.Append(CsvSanitiser.SanitiseData(commCost.EnglandCost        , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(commCost.WalesCost          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(commCost.ScotlandCost       , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(commCost.NorthernIrelandCost, DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(commCost.TotalCost          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(commCost.HouseholdPackagingWasteTonnage  , DecimalPlaces.Three, DecimalFormats.F3));
+            csvContent.Append(CsvSanitiser.SanitiseData(commCost.PublicBinTonnage                , DecimalPlaces.Three, DecimalFormats.F3));
+            csvContent.Append(CsvSanitiser.SanitiseData(commCost.HouseholdDrinksContainersTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+            csvContent.Append(CsvSanitiser.SanitiseData(commCost.LateReportingTonnage            , DecimalPlaces.Three, DecimalFormats.F3));
+            csvContent.Append(CsvSanitiser.SanitiseData(commCost.TotalTonnage                    , DecimalPlaces.Three, DecimalFormats.F3));
+            if (name == "Total")
             {
-                csvContent.AppendLine(CsvSanitiser.SanitiseData(commCost.CommsCostByMaterialPricePerTonne));
+                csvContent.Append((string?)null);
             }
             else
             {
-                csvContent.AppendLine(CsvSanitiser.SanitiseData(commCost.CommsCostByMaterialPricePerTonne, DecimalPlaces.Four, null, isCurrency: true));
+                csvContent.Append(CsvSanitiser.SanitiseData(commCost.CommsCostByMaterialPricePerTonne, DecimalPlaces.Four, null, isCurrency: true));
             }
+            csvContent.AppendLine();
         }
     }
 }

@@ -282,20 +282,23 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 {
                     ["AL"] = new ()
                         {
-                            CommsCostByMaterialPricePerTonne = 0.42m,
-                            ProducerReportedHouseholdPackagingWasteTonnage = 0,
-                            LateReportingTonnage = 0,
-                            ReportedPublicBinTonnage = 0,
-                            ProducerReportedTotalTonnage = 0
+                            EnglandCost = 4.347m,
+                            HouseholdPackagingWasteTonnage = 2.34m,
+                            PublicBinTonnage = 4.56m,
+                            LateReportingTonnage = 3.45m
                         },
                     ["GL"] = new ()
                         {
-                            CommsCostByMaterialPricePerTonne = 0.3m,
-                            ProducerReportedHouseholdPackagingWasteTonnage = 0,
-                            LateReportingTonnage = 0,
-                            ReportedPublicBinTonnage = 0,
-                            ProducerReportedTotalTonnage = 0
+                            HouseholdPackagingWasteTonnage = 3.45m,
+                            PublicBinTonnage = 5.67m,
+                            LateReportingTonnage = 4.56m
                         }
+                },
+                CommsCostByMaterialTotal = new ()
+                {
+                    HouseholdPackagingWasteTonnage = 5.79m,
+                    PublicBinTonnage = 10.23m,
+                    LateReportingTonnage = 8.01m
                 },
                 CommsCostUkWide = new () { England = 1500, Wales = 200, Scotland = 500, NorthernIreland = 331 },
                 CommsCostByCountry = new () { England = 1400, Wales = 250, Scotland = 600, NorthernIreland = 280 }

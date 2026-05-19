@@ -181,28 +181,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                     TotalOnePlusFour =  new() { England = 14.53M, Wales = 020M, Scotland = 0.15M, NorthernIreland = 0.15M },
                     OnePlusFourApportionment = new() { England = 40, Wales = 30, Scotland = 15, NorthernIreland = 15 }
                 },
-                CalcResultCommsCostReportDetail = new CalcResultCommsCost
-                {
-                    CommsCostByMaterial = new Dictionary<string, CalcResultCommsCostCommsCostByMaterial>
-                    {
-                        ["AL"] = new()
-                        {
-                            CommsCostByMaterialPricePerTonne = 0.42m,
-                            ProducerReportedHouseholdPackagingWasteTonnage = 0m,
-                            LateReportingTonnage = 0m,
-                            ReportedPublicBinTonnage = 0m,
-                            ProducerReportedTotalTonnage = 0m
-                        },
-                        ["GL"] = new()
-                        {
-                            CommsCostByMaterialPricePerTonne = 0.3m,
-                            ProducerReportedHouseholdPackagingWasteTonnage = 0m,
-                            LateReportingTonnage = 0m,
-                            ReportedPublicBinTonnage = 0m,
-                            ProducerReportedTotalTonnage = 0m
-                        }
-                    }
-                },
+                CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData(),
                 CalcResultScaledupProducers = new CalcResultScaledupProducers
                 {

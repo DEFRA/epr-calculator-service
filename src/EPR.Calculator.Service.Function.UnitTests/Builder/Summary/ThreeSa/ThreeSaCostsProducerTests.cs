@@ -175,38 +175,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                         },
                     },
                 },
-                CalcResultCommsCostReportDetail = new CalcResultCommsCost
-                {
-                    CommsCostByMaterial =
-                    {
-                        ["AL"] = new()
-                        {
-                            CommsCostByMaterialPricePerTonne = 0.42m,
-                            England = 0,
-                            Scotland = 0,
-                            NorthernIreland = 0,
-                            Wales = 0,
-                            Total = 0,
-                            ProducerReportedHouseholdPackagingWasteTonnage = 0,
-                            LateReportingTonnage = 0,
-                            ReportedPublicBinTonnage = 0,
-                            ProducerReportedTotalTonnage = 0
-                        },
-                        ["GL"] = new()
-                        {
-                            CommsCostByMaterialPricePerTonne = 0.3m,
-                            England = 0,
-                            Scotland = 0,
-                            NorthernIreland = 0,
-                            Wales = 0,
-                            Total = 0,
-                            ProducerReportedHouseholdPackagingWasteTonnage = 0,
-                            LateReportingTonnage = 0,
-                            ReportedPublicBinTonnage = 0,
-                            ProducerReportedTotalTonnage = 0
-                        }
-                    }
-                },
+                CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
                 CalcResultLateReportingTonnageData = new() { LateReportingTonnageByMaterial = [] },
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
             };
