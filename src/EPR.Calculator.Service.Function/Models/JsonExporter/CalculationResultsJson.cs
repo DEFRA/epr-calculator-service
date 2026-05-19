@@ -15,15 +15,15 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         public CalcResultProducerCalculationResultsTotal? ProducerCalculationResultsTotal { get; set; }
 
         public static CalculationResultsJson From(
-            CalcResultSummary summary,
+            CalcResult result,
             IEnumerable<int> acceptedProducerIds,
             IImmutableList<MaterialDetail> materials)
         {
             return new CalculationResultsJson
             {
-                ProducerCalculationResultsSummary = ArrangeSummary(summary),
-                ProducerCalculationResults = ArrangeProducerCalculationResult(summary, acceptedProducerIds, materials),
-                ProducerCalculationResultsTotal = ArrangeProducerCalculationResultsTotal(summary),
+                ProducerCalculationResultsSummary = ArrangeSummary(result.CalcResultSummary),
+                ProducerCalculationResults = ArrangeProducerCalculationResult(result, acceptedProducerIds, materials),
+                ProducerCalculationResultsTotal = ArrangeProducerCalculationResultsTotal(result.CalcResultSummary),
             };
         }
 
@@ -68,17 +68,17 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         }
 
         private static List<CalcSummaryProducerCalculationResults> ArrangeProducerCalculationResult(
-            CalcResultSummary calcResultSummary,
+            CalcResult calcResult,
             IEnumerable<int> acceptedProducerIds,
             IImmutableList<MaterialDetail> materials)
         {
             var results = new List<CalcSummaryProducerCalculationResults>();
 
-            var filteredProducers = calcResultSummary.ProducerDisposalFees.Where(producer => acceptedProducerIds.Contains(producer.ProducerIdInt) && !string.IsNullOrWhiteSpace(producer.Level));
+            var filteredProducers = calcResult.CalcResultSummary.ProducerDisposalFees.Where(producer => acceptedProducerIds.Contains(producer.ProducerIdInt) && !string.IsNullOrWhiteSpace(producer.Level));
 
             foreach (var producer in filteredProducers)
             {
-                results.Add(CalcSummaryProducerCalculationResults.From(producer, materials));
+                results.Add(CalcSummaryProducerCalculationResults.From(producer, materials, calcResult.ApplyModulation));
             }
 
             return results;

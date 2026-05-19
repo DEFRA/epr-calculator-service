@@ -167,7 +167,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
                 return smcw
                     .OverallTotalPerMaterials
                     .Values
-                    .Sum(x => x.ActionedSelfManagedConsumerWasteTonnage ?? 0);
+                    .Sum(x => x.ActionedSelfManagedConsumerWasteTonnage.total ?? 0);
             }
 
             if (materialCode == null)
@@ -175,7 +175,8 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
 
             return smcw
                 .OverallTotalPerMaterials[materialCode]
-                .ActionedSelfManagedConsumerWasteTonnage ?? 0;
+                .ActionedSelfManagedConsumerWasteTonnage
+                .total ?? 0;
         }
 
         private static string CalculateDisposalCostPricePerTonne(CalcResultLaDisposalCostDataDetail detail)

@@ -151,14 +151,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         {
             // Arrange
             var csvContent = new StringBuilder();
-            var producer = TestDataHelper.GetProducerDisposalFees()[0];
+            var producer = TestDataHelper.GetProducerDisposalFees(applyModulation: true)[0];
 
             // Act
             _testClass.AddNewRow(csvContent, producer, applyModulation: true);
             var results = csvContent.ToString().Split(",");
 
             // Assert
-            Assert.AreEqual(386, results.Length);
+            Assert.AreEqual(482, results.Length);
         }
 
         [TestMethod]

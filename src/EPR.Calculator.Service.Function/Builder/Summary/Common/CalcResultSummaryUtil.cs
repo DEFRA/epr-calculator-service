@@ -136,25 +136,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
                 : previousInvoicedNetTonnage;
         }
 
-        public static decimal? GetActionedSelfManagedConsumerWasteTonnage(
-            decimal totalReportedTonnage,
-            decimal selfManagedConsumerWasteTonnage,
-            int level = CommonConstants.LevelOne)
-        {
-            return level == CommonConstants.LevelOne
-                ? Math.Min(totalReportedTonnage, selfManagedConsumerWasteTonnage):
-                null;
-        }
-
-        public static decimal? GetActionedSelfManagedConsumerWasteTonnageOverallTotal(
-            IReadOnlyList<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
-            MaterialDetail material)
-        {
-            return producerDisposalFees
-                .Where(fee => fee.Level == CommonConstants.LevelOne.ToString())
-                .Sum(row => row?.ProducerDisposalFeesByMaterial.GetValueOrDefault(material.Code)?.ActionedSelfManagedConsumerWasteTonnage ?? 0);
-        }
-
         public static (decimal? total, decimal? red,  decimal? amber, decimal? green) GetPricePerTonne(
             MaterialDetail material,
             CalcResult calcResult)
@@ -270,16 +251,16 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             result.ResultSummaryHeader = new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.CalculationResult, ColumnIndex = 1 };
             result.NotesHeader         = new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.Notes, ColumnIndex = 1 };
 
-            int section1MaterialsIdx           = 1                             + startingHeaders().Count();
-            int section1DisposalFeeIdx         = section1MaterialsIdx          + section1Materials(materials, applyModulation).Count();
-            int section2aMaterialsIdx          = section1DisposalFeeIdx        + section1DisposalFee().Count();
-            int section2aCommsIdx              = section2aMaterialsIdx         + section2aMaterials(materials).Count();
-            int section1DisposalIdx            = section2aCommsIdx             + section1Disposal().Count();
-            int section2aComms2aIdx            = section1DisposalIdx           + section2aComms().Count();
-            int commsCost2aPercentageIdx       = section2aComms2aIdx           + commsCost2aPercentage().Count();
-            int commsCost2bIdx                 = commsCost2aPercentageIdx      + commsCost2b().Count();
-            int commsCost2cIdx                 = commsCost2bIdx                + commsCost2c().Count();
-            int onePlus2A2B2CProducerIdx       = commsCost2cIdx                + commsCost2c().Count();
+            int section1MaterialsIdx           = 1                             + StartingHeaders().Count();
+            int section1DisposalFeeIdx         = section1MaterialsIdx          + Section1Materials(materials, applyModulation).Count();
+            int section2aMaterialsIdx          = section1DisposalFeeIdx        + Section1DisposalFee().Count();
+            int section2aCommsIdx              = section2aMaterialsIdx         + Section2aMaterials(materials).Count();
+            int section1DisposalIdx            = section2aCommsIdx             + Section1Disposal().Count();
+            int section2aComms2aIdx            = section1DisposalIdx           + Section2aComms().Count();
+            int commsCost2aPercentageIdx       = section2aComms2aIdx           + CommsCost2aPercentage().Count();
+            int commsCost2bIdx                 = commsCost2aPercentageIdx      + CommsCost2b().Count();
+            int commsCost2cIdx                 = commsCost2bIdx                + CommsCost2c().Count();
+            int onePlus2A2B2CProducerIdx       = commsCost2cIdx                + CommsCost2c().Count();
             int threeSaCostsSummaryIdx         = onePlus2A2B2CProducerIdx      + OnePlus2A2B2CProducer.GetHeaders().Count;
             int laDataPrepCostsProducerIdx     = threeSaCostsSummaryIdx        + ThreeSaCostsProducer.GetHeaders().Count;
             int saSetupCostsSummaryIdx         = laDataPrepCostsProducerIdx    + LaDataPrepCostsProducer.GetHeaders().Count;
@@ -316,7 +297,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             foreach (var material in materials)
             {
                 materialsBreakdownHeaders.Add(new CalcResultSummaryHeader { Name = $"{material.Name} Breakdown", ColumnIndex = columnIndex});
-                columnIndex += section1Materials([material], applyModulation).Count();
+                columnIndex += Section1Materials([material], applyModulation).Count();
             }
             materialsBreakdownHeaders.Add(new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.DisposalFeeSummary, ColumnIndex = section1DisposalFeeIdx });
 
@@ -324,7 +305,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             foreach (var material in materials)
             {
                 materialsBreakdownHeaders.Add(new CalcResultSummaryHeader { Name = $"{material.Name} Breakdown", ColumnIndex = commsCostColumnIndex });
-                commsCostColumnIndex += section2aMaterials([material]).Count();
+                commsCostColumnIndex += Section2aMaterials([material]).Count();
             }
             materialsBreakdownHeaders.Add(new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.CommsCostSummaryHeader, ColumnIndex = commsCostColumnIndex});
             materialsBreakdownHeaders.AddRange(CreateMoneyHeaders(section1DisposalIdx, result.TotalFeeforLADisposalCostswoBadDebtprovision1, result.BadDebtProvisionFor1, result.TotalFeeforLADisposalCostswithBadDebtprovision1));
@@ -338,16 +319,16 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             result.MaterialBreakdownHeaders = materialsBreakdownHeaders;
 
             var columnHeaders = new List<CalcResultSummaryHeader>();
-            columnHeaders.AddRange(startingHeaders());
-            columnHeaders.AddRange(section1Materials(materials, applyModulation));
-            columnHeaders.AddRange(section1DisposalFee());
-            columnHeaders.AddRange(section2aMaterials(materials));
-            columnHeaders.AddRange(section2aComms());
-            columnHeaders.AddRange(section1Disposal());
-            columnHeaders.AddRange(section2aComms2a());
-            columnHeaders.AddRange(commsCost2aPercentage());
-            columnHeaders.AddRange(commsCost2b());
-            columnHeaders.AddRange(commsCost2c());
+            columnHeaders.AddRange(StartingHeaders());
+            columnHeaders.AddRange(Section1Materials(materials, applyModulation));
+            columnHeaders.AddRange(Section1DisposalFee());
+            columnHeaders.AddRange(Section2aMaterials(materials));
+            columnHeaders.AddRange(Section2aComms());
+            columnHeaders.AddRange(Section1Disposal());
+            columnHeaders.AddRange(Section2aComms2a());
+            columnHeaders.AddRange(CommsCost2aPercentage());
+            columnHeaders.AddRange(CommsCost2b());
+            columnHeaders.AddRange(CommsCost2c());
             columnHeaders.AddRange(OnePlus2A2B2CProducer.GetHeaders());
             columnHeaders.AddRange(ThreeSaCostsProducer.GetHeaders());
             columnHeaders.AddRange(LaDataPrepCostsProducer.GetHeaders());
@@ -367,7 +348,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             return names.Select((name, i) => new CalcResultSummaryHeader { Name = name});
         }
 
-        private static IEnumerable<CalcResultSummaryHeader> startingHeaders()
+        private static IEnumerable<CalcResultSummaryHeader> StartingHeaders()
         {
             return CreateHeaders(
                 CalcResultSummaryHeaders.ProducerId,
@@ -382,7 +363,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
                 CalcResultSummaryHeaders.LeaversDate);
         }
 
-        private static IEnumerable<CalcResultSummaryHeader> section1Materials(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
+        private static IEnumerable<CalcResultSummaryHeader> Section1Materials(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
         {
             return materials.SelectMany(material =>
             {
@@ -431,11 +412,20 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
                 if (applyModulation) {
                     headers.AddRange(CreateHeaders(
                         CalcResultSummaryHeaders.TotalTonnage,
+                        CalcResultSummaryHeaders.RedTotalTonnage,
+                        CalcResultSummaryHeaders.AmberTotalTonnage,
+                        CalcResultSummaryHeaders.GreenTotalTonnage,
+                        CalcResultSummaryHeaders.RedMedicalTotalTonnage,
+                        CalcResultSummaryHeaders.AmberMedicalTotalTonnage,
+                        CalcResultSummaryHeaders.GreenMedicalTotalTonnage,
                         CalcResultSummaryHeaders.RedPlusRedMedicalTotalTonnage,
                         CalcResultSummaryHeaders.AmberPlusAmberMedicalTotalTonnage,
                         CalcResultSummaryHeaders.GreenPlusGreenMedicalTotalTonnage,
                         CalcResultSummaryHeaders.SelfManagedConsumerWasteTonnage,
                         CalcResultSummaryHeaders.ActionedSelfManagedConsumerWasteTonnage,
+                        CalcResultSummaryHeaders.RedActionedSelfManagedConsumerWasteTonnage,
+                        CalcResultSummaryHeaders.AmberActionedSelfManagedConsumerWasteTonnage,
+                        CalcResultSummaryHeaders.GreenActionedSelfManagedConsumerWasteTonnage,
                         CalcResultSummaryHeaders.NetTonnage,
                         CalcResultSummaryHeaders.RedPlusRedMedicalNetTonnage,
                         CalcResultSummaryHeaders.AmberPlusAmberMedicalNetTonnage,
@@ -476,7 +466,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             });
         }
 
-        private static IEnumerable<CalcResultSummaryHeader> section1DisposalFee()
+        private static IEnumerable<CalcResultSummaryHeader> Section1DisposalFee()
         {
             return CreateHeaders(
                 CalcResultSummaryHeaders.TotalProducerDisposalFee,
@@ -490,7 +480,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
                 CalcResultSummaryHeaders.TonnageChangeAdvice);
         }
 
-        private static IEnumerable<CalcResultSummaryHeader> section2aMaterials(IReadOnlyList<MaterialDetail> materials)
+        private static IEnumerable<CalcResultSummaryHeader> Section2aMaterials(IReadOnlyList<MaterialDetail> materials)
         {
             return materials.SelectMany(material =>
             {
@@ -520,7 +510,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             });
         }
 
-        private static IEnumerable<CalcResultSummaryHeader> section2aComms()
+        private static IEnumerable<CalcResultSummaryHeader> Section2aComms()
         {
             return CreateHeaders(
                 CalcResultSummaryHeaders.TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision,
@@ -532,7 +522,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
                 CalcResultSummaryHeaders.NorthernIrelandTotalwithBadDebtprovision);
         }
 
-        private static IEnumerable<CalcResultSummaryHeader> section1Disposal()
+        private static IEnumerable<CalcResultSummaryHeader> Section1Disposal()
         {
             return CreateHeaders(
                 CalcResultSummaryHeaders.TotalProducerFeeforLADisposalCostswoBadDebtprovision,
@@ -544,7 +534,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
                 CalcResultSummaryHeaders.NorthernIrelandTotalwithBadDebtprovision);
         }
 
-        private static IEnumerable<CalcResultSummaryHeader> section2aComms2a()
+        private static IEnumerable<CalcResultSummaryHeader> Section2aComms2a()
         {
             return CreateHeaders(
                 CalcResultSummaryHeaders.TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision2A,
@@ -556,12 +546,12 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
                 CalcResultSummaryHeaders.NorthernIrelandTotalwithBadDebtprovision);
         }
 
-        private static IEnumerable<CalcResultSummaryHeader> commsCost2aPercentage()
+        private static IEnumerable<CalcResultSummaryHeader> CommsCost2aPercentage()
         {
             return CreateHeaders(CalcResultSummaryHeaders.PercentageofProducerTonnagevsAllProducers);
         }
 
-        private static IEnumerable<CalcResultSummaryHeader> commsCost2b()
+        private static IEnumerable<CalcResultSummaryHeader> CommsCost2b()
         {
             return CreateHeaders(
                 CalcResultSummaryHeaders.ProducerFeeWithoutBadDebtForComms2b,
@@ -573,7 +563,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
                 CalcResultSummaryHeaders.NorthernIrelandTotalWithBadDebtProvisionForComms2b);
         }
 
-        private static IEnumerable<CalcResultSummaryHeader> commsCost2c()
+        private static IEnumerable<CalcResultSummaryHeader> CommsCost2c()
         {
             return CreateHeaders(
                 TwoCCommsCostSubColumnHeader.TwoCCommsCostCountryInPropertionWithoutBadDebt,

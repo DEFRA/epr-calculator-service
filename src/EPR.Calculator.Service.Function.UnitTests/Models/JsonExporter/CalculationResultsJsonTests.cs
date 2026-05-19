@@ -18,11 +18,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public void From_ValuesAreValid()
         {
             // Arrange
-            var data = TestDataHelper.GetCalcResultSummary();
+            var calcResult = TestDataHelper.GetCalcResult();
+            var data = calcResult.CalcResultSummary;
             var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = CalculationResultsJson.From(data, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!["producerCalculationResultsSummary"];
@@ -95,11 +96,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public void From_ProducerDisposalFeesWithBadDebtProvision1_ReturnsValidValues()
         {
             // Arrange
-            var data = TestDataHelper.GetCalcResultSummary();
-            var materials = TestDataHelper.GetMaterials();
+            var calcResult = TestDataHelper.GetCalcResult();
+            var materials  = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = CalculationResultsJson.From(data, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
@@ -109,7 +110,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             Assert.IsNotNull(roundTrippedData);
 
             var actual = roundTrippedData[0]!["producerDisposalFeesWithBadDebtProvision1"]!["materialBreakdown"]![0]!;
-            var producer = data.ProducerDisposalFees.SingleOrDefault(t => !string.IsNullOrEmpty(t.Level))!;
+            var producer = calcResult.CalcResultSummary.ProducerDisposalFees.SingleOrDefault(t => !string.IsNullOrEmpty(t.Level))!;
             var expected = producer.ProducerDisposalFeesByMaterial.First();
 
             decimal? actualValue = 0;
@@ -145,11 +146,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public void From_TotalProducerFeeWithBadDebtProvisionFor2con_1_2a_2b_2c_ReturnsValidValues()
         {
             // Arrange
-            var data = TestDataHelper.GetCalcResultSummary();
+            var calcResult = TestDataHelper.GetCalcResult();
+            var data = calcResult.CalcResultSummary;
             var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = CalculationResultsJson.From(data, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
@@ -168,11 +170,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public void From_CommsCost2AValues_AreValid()
         {
             // Arrange
-            var data = TestDataHelper.GetCalcResultSummary();
+            var calcResult = TestDataHelper.GetCalcResult();
+            var data = calcResult.CalcResultSummary;
             var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = CalculationResultsJson.From(data, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
@@ -196,11 +199,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public void From_FeeForSASetUpCostsWithBadDebtProvision_5_ReturnsValidValues()
         {
             // Arrange
-            var data = TestDataHelper.GetCalcResultSummary();
+            var calcResult = TestDataHelper.GetCalcResult();
+            var data = calcResult.CalcResultSummary;
             var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = CalculationResultsJson.From(data, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["producerCalculationResults"];
@@ -223,11 +227,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public void From_CommsCost3SA_Operating_Costs_AreValid()
         {
             // Arrange
-            var data = TestDataHelper.GetCalcResultSummary();
+            var calcResult = TestDataHelper.GetCalcResult();
+            var data = calcResult.CalcResultSummary;
             var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = CalculationResultsJson.From(data, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
@@ -252,11 +257,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public void From_FeeForCommsCostsWithBadDebtProvision2a_AreValid()
         {
             // Arrange
-            var data = TestDataHelper.GetCalcResultSummary();
+            var calcResult = TestDataHelper.GetCalcResult();
+            var data = calcResult.CalcResultSummary;
             var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = CalculationResultsJson.From(data, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["producerCalculationResults"];
@@ -280,11 +286,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public void From_FeeForCommsCostsWithBadDebtProvision2b_AreValid()
         {
             // Arrange
-            var data = TestDataHelper.GetCalcResultSummary();
+            var calcResult = TestDataHelper.GetCalcResult();
+            var data = calcResult.CalcResultSummary;
             var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = CalculationResultsJson.From(data, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["producerCalculationResults"];
@@ -308,11 +315,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public void From_CommsCost2CValues_AreValid()
         {
             // Arrange
-            var data = TestDataHelper.GetCalcResultSummary();
+            var calcResult = TestDataHelper.GetCalcResult();
+            var data = calcResult.CalcResultSummary;
             var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = CalculationResultsJson.From(data, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["producerCalculationResults"];
@@ -336,11 +344,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public void From_DisposalFeeSummary1()
         {
             // Arrange
-            var data = TestDataHelper.GetCalcResultSummary();
+            var calcResult = TestDataHelper.GetCalcResult();
+            var data = calcResult.CalcResultSummary;
             var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = CalculationResultsJson.From(data, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["producerCalculationResults"];
@@ -380,11 +389,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public void From_BillingInstructions_AreValid()
         {
             // Arrange
-            var data = TestDataHelper.GetCalcResultSummary();
+            var calcResult = TestDataHelper.GetCalcResult();
+            var data = calcResult.CalcResultSummary;
             var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = CalculationResultsJson.From(data, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
             var options = new JsonSerializerOptions
             {
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
@@ -405,11 +415,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public void From_FeeForLADisposalCost1_AreValid()
         {
             // Arrange
-            var data = TestDataHelper.GetCalcResultSummary();
+            var calcResult = TestDataHelper.GetCalcResult();
+            var data = calcResult.CalcResultSummary;
             var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = CalculationResultsJson.From(data, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
             var node = JsonNode.Parse(json);
             var roundTrippedData = node?["producerCalculationResults"]?.AsArray();
@@ -436,11 +447,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public void From_ProducerIdSubsidiaryId_AreValid()
         {
             // Arrange
-            var data = TestDataHelper.GetCalcResultSummary();
+            var calcResult = TestDataHelper.GetCalcResult();
+            var data = calcResult.CalcResultSummary;
             var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = CalculationResultsJson.From(data, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["producerCalculationResults"];
@@ -465,11 +477,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public void From_ProducerCalculationResultsTotal_CanBeNull()
         {
             // Arrange
-            var data = TestDataHelper.GetCalcResultSummary();
+            var calcResult = TestDataHelper.GetCalcResult();
+            var data = calcResult.CalcResultSummary;
             var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = CalculationResultsJson.From(data, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
             var producerCalculationResultsTotal = JsonSerializer.Deserialize<JsonObject>(json)!["producerCalculationResultsTotal"]!;
 
@@ -481,11 +494,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public void From_FeeForLADataPrepCostsWithBadDebtProvision_4_AreValid()
         {
             // Arrange
-            var data = TestDataHelper.GetCalcResultSummary();
+            var calcResult = TestDataHelper.GetCalcResult();
+            var data = calcResult.CalcResultSummary;
             var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = CalculationResultsJson.From(data, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["producerCalculationResults"];
@@ -512,11 +526,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public void From_CalculationResultsJson_AreValid()
         {
             // Arrange
-            var data = TestDataHelper.GetCalcResultSummary();
+            var calcResult = TestDataHelper.GetCalcResult();
+            var data = calcResult.CalcResultSummary;
             var materials = TestDataHelper.GetMaterials();
 
             // Act
-            var obj = CalculationResultsJson.From(data, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                     ["producerCalculationResults"]!;
@@ -568,14 +583,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public void From_ProducerCalculationResult_Level1_AreDisplayed()
         {
             // Arrange
-            var data = TestDataHelper.GetCalcResultSummary();
+            var calcResult = TestDataHelper.GetCalcResult();
+            var data = calcResult.CalcResultSummary;
             var materials = TestDataHelper.GetMaterials();
 
             data.ProducerDisposalFees.First().isTotalRow = true;
             data.ProducerDisposalFees.First().Level = "1";
 
             // Act
-            var obj = CalculationResultsJson.From(data, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)![
                     "producerCalculationResults"]!;

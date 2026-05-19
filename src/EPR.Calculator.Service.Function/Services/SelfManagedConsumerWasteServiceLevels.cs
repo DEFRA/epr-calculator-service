@@ -48,6 +48,7 @@ namespace EPR.Calculator.Service.Function.Services
         decimal? NetA,
         decimal? NetG,
         decimal? Residual,
+        decimal? ActionedSmcwTotal,
         decimal? ActionedSmcwR,
         decimal? ActionedSmcwA,
         decimal? ActionedSmcwG
@@ -83,6 +84,7 @@ namespace EPR.Calculator.Service.Function.Services
                     NetA: netA,
                     NetG: netG,
                     Residual: l1.Smcw - (actionedA + actionedR + actionedG),
+                    ActionedSmcwTotal: actionedA + actionedR + actionedG,
                     ActionedSmcwR: actionedR,
                     ActionedSmcwA: actionedA,
                     ActionedSmcwG: actionedG
@@ -100,6 +102,7 @@ namespace EPR.Calculator.Service.Function.Services
                     NetA: null,
                     NetG: null,
                     Residual: null,
+                    ActionedSmcwTotal: null,
                     ActionedSmcwR: null,
                     ActionedSmcwA: null,
                     ActionedSmcwG: null
@@ -145,6 +148,7 @@ namespace EPR.Calculator.Service.Function.Services
                         NetA: netA,
                         NetG: netG,
                         Residual: sub.Smcw - (actionedA + actionedR + actionedG),
+                        ActionedSmcwTotal: actionedA + actionedR + actionedG,
                         ActionedSmcwR: actionedR,
                         ActionedSmcwA: actionedA,
                         ActionedSmcwG: actionedG
@@ -164,6 +168,7 @@ namespace EPR.Calculator.Service.Function.Services
                         NetA: null,
                         NetG: null,
                         Residual: null,
+                        ActionedSmcwTotal: null,
                         ActionedSmcwR: null,
                         ActionedSmcwA: null,
                         ActionedSmcwG: null

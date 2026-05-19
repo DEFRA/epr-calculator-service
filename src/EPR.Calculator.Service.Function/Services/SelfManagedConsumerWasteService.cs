@@ -138,7 +138,12 @@ namespace EPR.Calculator.Service.Function.Services
             return new SelfManagedConsumerWasteData
             {
                 SelfManagedConsumerWasteTonnage         = r.Smcw,
-                ActionedSelfManagedConsumerWasteTonnage = r.ActionedSmcwR + r.ActionedSmcwA + r.ActionedSmcwG,
+                ActionedSelfManagedConsumerWasteTonnage = (
+                    total: r.ActionedSmcwTotal,
+                    red  : r.ActionedSmcwR,
+                    amber: r.ActionedSmcwA,
+                    green: r.ActionedSmcwG
+                ),
                 ResidualSelfManagedConsumerWasteTonnage = r.Residual,
                 NetReportedTonnage = (
                     total: r.NetTotal,
@@ -167,16 +172,16 @@ namespace EPR.Calculator.Service.Function.Services
     public record SelfManagedConsumerWasteData
     {
         public required decimal SelfManagedConsumerWasteTonnage { get; init; }
-        public required decimal? ActionedSelfManagedConsumerWasteTonnage { get; init; }
+        public required (decimal? total, decimal? red, decimal? amber, decimal? green) ActionedSelfManagedConsumerWasteTonnage { get; init; }
         public required decimal? ResidualSelfManagedConsumerWasteTonnage { get; init; }
         public required (decimal? total, decimal? red, decimal? amber, decimal? green) NetReportedTonnage { get; init; }
 
         public static SelfManagedConsumerWasteData Zero => new()
         {
-            SelfManagedConsumerWasteTonnage = 0,
-            ActionedSelfManagedConsumerWasteTonnage = 0,
+            SelfManagedConsumerWasteTonnage         = 0,
+            ActionedSelfManagedConsumerWasteTonnage = (0, 0, 0, 0),
             ResidualSelfManagedConsumerWasteTonnage = 0,
-            NetReportedTonnage = (0, 0, 0, 0)
+            NetReportedTonnage                      = (0, 0, 0, 0)
         };
 
         public static SelfManagedConsumerWasteData operator +(
@@ -188,9 +193,12 @@ namespace EPR.Calculator.Service.Function.Services
                 SelfManagedConsumerWasteTonnage =
                     a.SelfManagedConsumerWasteTonnage + b.SelfManagedConsumerWasteTonnage,
 
-                ActionedSelfManagedConsumerWasteTonnage =
-                    (a.ActionedSelfManagedConsumerWasteTonnage ?? 0) +
-                    (b.ActionedSelfManagedConsumerWasteTonnage ?? 0),
+                ActionedSelfManagedConsumerWasteTonnage = (
+                    (a.ActionedSelfManagedConsumerWasteTonnage.total ?? 0) + (b.ActionedSelfManagedConsumerWasteTonnage.total ?? 0),
+                    (a.ActionedSelfManagedConsumerWasteTonnage.red   ?? 0) + (b.ActionedSelfManagedConsumerWasteTonnage.red   ?? 0),
+                    (a.ActionedSelfManagedConsumerWasteTonnage.amber ?? 0) + (b.ActionedSelfManagedConsumerWasteTonnage.amber ?? 0),
+                    (a.ActionedSelfManagedConsumerWasteTonnage.green ?? 0) + (b.ActionedSelfManagedConsumerWasteTonnage.green ?? 0)
+                ),
 
                 ResidualSelfManagedConsumerWasteTonnage =
                     (a.ResidualSelfManagedConsumerWasteTonnage ?? 0) +

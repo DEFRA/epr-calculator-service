@@ -71,14 +71,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
                 Name = ""
             };
 
-            SelfManagedConsumerWasteData mkSmcwData(decimal red, decimal amber, decimal green, decimal? actionedSmcw, decimal? residualSmcw)
+            SelfManagedConsumerWasteData mkSmcwData(decimal netR, decimal netA, decimal netG, decimal? actionedSmcwR, decimal? actionedSmcwA, decimal? actionedSmcwG, decimal? residualSmcw)
             {
                 return new SelfManagedConsumerWasteData
                 {
                     SelfManagedConsumerWasteTonnage = 0m,
-                    ActionedSelfManagedConsumerWasteTonnage = actionedSmcw,
+                    ActionedSelfManagedConsumerWasteTonnage = (total: (actionedSmcwR + actionedSmcwA + actionedSmcwG), red: actionedSmcwR, amber: actionedSmcwA, green: actionedSmcwG),
                     ResidualSelfManagedConsumerWasteTonnage = residualSmcw,
-                    NetReportedTonnage = (total: null, red: red, amber: amber, green: green)
+                    NetReportedTonnage = (total: (netR + netA + netG), red: netR, amber: netA, green: netG)
                 };
             };
 
@@ -87,8 +87,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
                 ProducerTotals = new List<ProducerSelfManagedConsumerWaste>(),
                 OverallTotalPerMaterials = new Dictionary<string, SelfManagedConsumerWasteData>
                 {
-                    [al.Code] = mkSmcwData(red: 21000000.123m, amber: 5000000.234m, green: 209863.182m, actionedSmcw: 123.456m, residualSmcw: 654.321m),
-                    [fc.Code] = mkSmcwData(red:     3001.333m, amber:  400000.222m, green:    706.332m, actionedSmcw: null    , residualSmcw: null    )
+                    [al.Code] = mkSmcwData(netR: 21000000.123m, netA: 5000000.234m, netG: 209863.182m, actionedSmcwR: 1000, actionedSmcwA: 2000, actionedSmcwG: 3000, residualSmcw: 654.321m),
+                    [fc.Code] = mkSmcwData(netR:     3001.333m, netA:  400000.222m, netG:    706.332m, actionedSmcwR: null, actionedSmcwA: null, actionedSmcwG: null, residualSmcw: null    )
                 }
             };
 
@@ -155,9 +155,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
                     "Amber Material Disposal Cost = Material Disposal Cost per Tonne",
                     "Green Material Disposal Cost = Green Modulation Factor * Amber Material Disposal Cost"
                 },
-                new[] { "Aluminium"      , "26181753.110", "24610.429", "", "3500", "123.456", "26209863.530", "21000000.120", "5000000.230", "209863.180",  "£6280704.41",  "£4955297.80",   "£0.7612",  "£0.6312",  "£0.4712" },
+                new[] { "Aluminium"      , "26181753.110", "24610.429", "", "3500", "6000.000", "26209863.530", "21000000.120", "5000000.230", "209863.180",  "£6280704.41",  "£4955297.80",   "£0.7612",  "£0.6312",  "£0.4712" },
                 new[] { "Fibre composite",   "401772.341",  "1146.546", "",  "789",   "0.000",   "403707.880",     "3001.330",  "400000.220",    "706.330", "£14817325.23", "£11697888.16", "£115.9012", "£96.5912", "£72.5512" },
-                new[] { "Total"          , "26583525.451", "25756.975", "", "4289", "123.456", "26613571.410", "21003001.450", "5400000.450", "210569.510", "£21098029.64", "£16653185.96" },
+                new[] { "Total"          , "26583525.451", "25756.975", "", "4289", "6000.000", "26613571.410", "21003001.450", "5400000.450", "210569.510", "£21098029.64", "£16653185.96" },
                 new string[] { }
             };
 
