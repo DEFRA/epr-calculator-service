@@ -27,29 +27,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             {
                 LateReportingTonnageByMaterial = new Dictionary<string, CalcResultLateReportingTonnageDetail>
                 {
-                    ["AL"] = new()
-                    {
-                        TotalLateReportingTonnage = 1.23m,
-                        RedLateReportingTonnage   = 2.34m,
-                        AmberLateReportingTonnage = 3.45m,
-                        GreenLateReportingTonnage = 4.56m
-                    },
-                    ["GL"] = new()
-                    {
-                        TotalLateReportingTonnage = 1.34m,
-                        RedLateReportingTonnage   = 2.45m,
-                        AmberLateReportingTonnage = 3.56m,
-                        GreenLateReportingTonnage = 4.67m
-                    }
-
+                    ["AL"] = new() { Total = 1.23m, Red = 2.34m, Amber = 3.45m, Green = 4.56m },
+                    ["GL"] = new() { Total = 1.34m, Red = 2.45m, Amber = 3.56m, Green = 4.67m }
                 },
-                LateReportingTonnageTotal = new CalcResultLateReportingTonnageDetail
-                {
-                    TotalLateReportingTonnage = 2.57m,
-                    RedLateReportingTonnage   = 4.79m,
-                    AmberLateReportingTonnage = 7.01m,
-                    GreenLateReportingTonnage = 9.23m
-                }
+                LateReportingTonnageTotal =
+                    new () { Total = 2.57m, Red = 4.79m, Amber = 7.01m, Green = 9.23m }
             };
             var materials = TestDataHelper.GetMaterials();
 

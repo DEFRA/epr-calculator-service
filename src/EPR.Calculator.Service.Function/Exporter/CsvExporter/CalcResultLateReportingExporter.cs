@@ -47,10 +47,10 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         private void AppendRow(string name, CalcResultLateReportingTonnageDetail lateReportingData, StringBuilder csvContent)
         {
             csvContent.Append(CsvSanitiser.SanitiseData(name));
-            csvContent.Append(CsvSanitiser.SanitiseData(lateReportingData.TotalLateReportingTonnage, Enums.DecimalPlaces.Three, null));
-            csvContent.Append(CsvSanitiser.SanitiseData(lateReportingData.RedLateReportingTonnage, Enums.DecimalPlaces.Three, null));
-            csvContent.Append(CsvSanitiser.SanitiseData(lateReportingData.AmberLateReportingTonnage, Enums.DecimalPlaces.Three, null));
-            csvContent.Append(CsvSanitiser.SanitiseData(lateReportingData.GreenLateReportingTonnage, Enums.DecimalPlaces.Three, null));
+            csvContent.Append(CsvSanitiser.SanitiseData(lateReportingData.Total, Enums.DecimalPlaces.Three, null));
+            csvContent.Append(CsvSanitiser.SanitiseData(lateReportingData.Red  , Enums.DecimalPlaces.Three, null));
+            csvContent.Append(CsvSanitiser.SanitiseData(lateReportingData.Amber, Enums.DecimalPlaces.Three, null));
+            csvContent.Append(CsvSanitiser.SanitiseData(lateReportingData.Green, Enums.DecimalPlaces.Three, null));
             csvContent.AppendLine();
         }
     }
