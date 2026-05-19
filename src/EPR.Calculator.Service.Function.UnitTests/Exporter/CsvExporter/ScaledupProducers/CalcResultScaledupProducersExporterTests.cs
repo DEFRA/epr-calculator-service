@@ -1,9 +1,9 @@
-﻿using System.Text;
+using System.Text;
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
-using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Mappers;
+using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.ScaledupProducers
 {

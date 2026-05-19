@@ -6,7 +6,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 {
     public static class H1ProjectedProducersBuilderUtils
     {
-        public static List<CalcResultH1ProjectedProducer> GetProjectedProducers(List<ProducerDetail> producerDetails, List<CalcResultH2ProjectedProducer> h2ProjectedProducers, IImmutableList<MaterialDetail> materials, string submissionPeriod)
+        public static List<CalcResultH1ProjectedProducer> GetProjectedProducers(List<ProducerDetail> producerDetails, List<CalcResultH2ProjectedProducer> h2ProjectedProducers, IReadOnlyCollection<MaterialDetail> materials, string submissionPeriod)
         {
             CalcResultH2ProjectedProducer? GetH2Producer(ProducerDetail rm)
             {
@@ -29,7 +29,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             }).ToList();
         }
 
-        private static Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage> GetProjectedTonnages(IImmutableList<MaterialDetail> materials, List<ProducerReportedMaterial> reportedMaterials, CalcResultH2ProjectedProducer? h2ProjectedProducer)
+        private static Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage> GetProjectedTonnages(IReadOnlyCollection<MaterialDetail> materials, List<ProducerReportedMaterial> reportedMaterials, CalcResultH2ProjectedProducer? h2ProjectedProducer)
         {
             return materials.ToDictionary(m => m.Code, m => GetProjectedTonnage(m, reportedMaterials.Where(rm => rm.MaterialId == m.Id).ToList(), h2ProjectedProducer));
         }

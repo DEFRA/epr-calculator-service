@@ -16,7 +16,7 @@ namespace EPR.Calculator.Service.Function.Builder.ErrorReport
             this.context = context;
         }
 
-        public IEnumerable<CalcResultErrorReport> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
+        public IEnumerable<CalcResultErrorReport> Construct(CalcResultsRequestDto resultsRequestDto)
         {
             var runId = resultsRequestDto.RunId;
 

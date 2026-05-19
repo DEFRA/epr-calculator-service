@@ -6,8 +6,6 @@ using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
-using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -28,9 +26,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             dbContext = new ApplicationDBContext(dbContextOptions);
             dbContext.Database.EnsureCreated();
-            builder = new CalcResultCommsCostBuilder(
-                dbContext,
-                new TelemetryClient(new TelemetryConfiguration{ ConnectionString = "InstrumentationKey=00000000-0000-0000-0000-000000000000" }));
+            builder = new CalcResultCommsCostBuilder(dbContext);
         }
 
         private Fixture Fixture { get; init; } = new Fixture();

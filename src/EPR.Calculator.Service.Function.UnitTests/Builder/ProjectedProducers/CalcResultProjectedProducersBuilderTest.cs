@@ -597,7 +597,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         private string[][] FillGaps(string[][] given)
         {
             var (materialDetails, requestDto) = InsertData(given);
-            return ConvertResult(builder.ConstructAsync(materialDetails, ToL1Producers(given), requestDto));
+            return ConvertResult(builder.Construct(materialDetails, ToL1Producers(given), requestDto));
         }
 
         private string[][] ConvertResultPrevious(CalcResultProjectedProducers given)
@@ -662,7 +662,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         private string[][] FillGapsPrevious(string[][] given)
         {
             var (materialDetails, requestDto) = InsertData(given);
-            return ConvertResultPrevious((builder.ConstructAsync(materialDetails, ToL1Producers(given), requestDto)).Item2);
+            return ConvertResultPrevious((builder.Construct(materialDetails, ToL1Producers(given), requestDto)).Item2);
         }
 
         private string ToPrintable(string[] arr) =>

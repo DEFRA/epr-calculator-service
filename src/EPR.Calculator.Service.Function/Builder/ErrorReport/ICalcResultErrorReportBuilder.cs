@@ -5,6 +5,6 @@ namespace EPR.Calculator.Service.Function.Builder.ErrorReport
 {
     public interface ICalcResultErrorReportBuilder
     {
-        public IEnumerable<CalcResultErrorReport> ConstructAsync(CalcResultsRequestDto resultsRequestDto);
+        public IEnumerable<CalcResultErrorReport> Construct(CalcResultsRequestDto resultsRequestDto);
     }
 }

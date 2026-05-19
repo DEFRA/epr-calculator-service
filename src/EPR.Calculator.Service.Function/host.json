@@ -1,5 +1,6 @@
 {
   "version": "2.0",
+  "functionTimeout": "00:55:00",
   "extensions": {
     "serviceBus": {
       "messageHandlerOptions": {
@@ -10,19 +11,18 @@
       "prefetchCount": 1
     }
   },
-  "functionTimeout": "00:55:00",
   "logging": {
     "fileLoggingMode": "always",
     "logLevel": {
       "default": "Warning",
-      "Host.Results": "Error",
-      "Function": "Information",
-      "Microsoft.AspNetCore.Hosting": "Information"
+      "EPR.Calculator": "Debug",
+      "Host.Aggregator": "Error",
+      "Host.Results": "Information",
+      "Function": "Information"
     },
     "applicationInsights": {
       "samplingSettings": {
-        "isEnabled": true,
-        "excludedTypes": "Request"
+        "isEnabled": false
       },
       "enableLiveMetricsFilters": true
     }

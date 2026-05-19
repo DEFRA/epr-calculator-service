@@ -1,98 +1,73 @@
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
-using EPR.Calculator.Service.Function.Telemetry;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
-namespace EPR.Calculator.Service.Function.UnitTests.Services
+namespace EPR.Calculator.Service.Function.UnitTests.Services;
+
+[TestClass]
+public class PrepareProducerDataInsertServiceTests
 {
-    [TestClass]
-    public class PrepareProducerDataInsertServiceTests
+    private IFixture fixture = null!;
+    private Mock<IBillingInstructionService> billingInstructionService = null!;
+    private Mock<IProducerInvoiceNetTonnageService> producerInvoiceNetTonnageService = null!;
+    private PrepareProducerDataInsertService sut = null!;
+
+    [TestInitialize]
+    public void Init()
     {
-        public PrepareProducerDataInsertServiceTests()
-        {
-            _billingInstructionService = new Mock<IBillingInstructionService>();
-            _producerInvoiceNetTonnageService = new Mock<IProducerInvoiceNetTonnageService>();
-            _telemetryLogger = new Mock<ICalculatorTelemetryLogger>();
-            testClass = new PrepareProducerDataInsertService(_billingInstructionService.Object, _producerInvoiceNetTonnageService.Object, _telemetryLogger.Object);
-        }
+        fixture = TestFixtures.New();
+        billingInstructionService = fixture.Freeze<Mock<IBillingInstructionService>>();
+        producerInvoiceNetTonnageService = fixture.Freeze<Mock<IProducerInvoiceNetTonnageService>>();
 
-        private PrepareProducerDataInsertService testClass { get; init; }
-        private Mock<IBillingInstructionService> _billingInstructionService { get; init; }
-        private Mock<IProducerInvoiceNetTonnageService> _producerInvoiceNetTonnageService { get; init; }
-        private Mock<ICalculatorTelemetryLogger> _telemetryLogger { get; init; }
+        sut = fixture.Create<PrepareProducerDataInsertService>();
+    }
 
-        [TestMethod]
-        public void CanConstruct()
-        {
-            // Act
-            var instance = new PrepareProducerDataInsertService(_billingInstructionService.Object, _producerInvoiceNetTonnageService.Object, _telemetryLogger.Object);
+    [TestMethod]
+    public async Task CanCallInsertProducerDataToDatabase()
+    {
+        // Arrange
+        var calcResult = fixture.Create<CalcResult>();
+        var materials = fixture.Create<IImmutableList<MaterialDetail>>();
 
-            // Assert
-            Assert.IsNotNull(instance);
-        }
+        // Act
+        var result = await sut.InsertProducerDataToDatabase(calcResult, materials);
 
+        // Assert
+        Assert.IsFalse(result);
+    }
 
-        [TestMethod]
-        public async Task CanCallInsertProducerDataToDatabase()
-        {
-            // Arrange
-            var fixture = new Fixture().Customize(new ImmutableCollectionsCustomization());
-            var calcResult = fixture.Create<CalcResult>();
-            var materials = fixture.Create<IImmutableList<MaterialDetail>>();
-            
+    [TestMethod]
+    public async Task CanCallInsertProducerDataToDatabaseWith()
+    {
+        // Arrange
+        var calcResult = fixture.Create<CalcResult>();
+        var materials = fixture.Create<IImmutableList<MaterialDetail>>();
 
-            _telemetryLogger.Setup(mock => mock.LogInformation(It.IsAny<TrackMessage>())).Verifiable();
+        billingInstructionService.Setup(m => m.CreateBillingInstructions(It.IsAny<CalcResult>())).ReturnsAsync(true);
+        producerInvoiceNetTonnageService.Setup(m => m.CreateProducerInvoiceNetTonnage(It.IsAny<CalcResult>(), It.IsAny<IImmutableList<MaterialDetail>>())).ReturnsAsync(true);
 
-            // Act
-            var result = await testClass.InsertProducerDataToDatabase(calcResult, materials);
+        // Act
+        var result = await sut.InsertProducerDataToDatabase(calcResult, materials);
 
-            // Assert
-            _telemetryLogger.Verify(mock => mock.LogInformation(It.IsAny<TrackMessage>()));
+        // Assert
+        Assert.IsTrue(result);
+    }
 
-            Assert.IsFalse(result);
-        }
+    [TestMethod]
+    public async Task CannotCallInsertProducerDataToDatabaseWithNullCalcResult()
 
-        [TestMethod]
-        public async Task CanCallInsertProducerDataToDatabaseWith()
-        {
-            // Arrange
-            var fixture = new Fixture().Customize(new ImmutableCollectionsCustomization());
-            var calcResult = fixture.Create<CalcResult>();
-            var materials = fixture.Create<IImmutableList<MaterialDetail>>();
+    {
+        // Arrange
+        var calcResult = fixture.Create<CalcResult>();
+        var materials = fixture.Create<IImmutableList<MaterialDetail>>();
 
-            _telemetryLogger.Setup(mock => mock.LogInformation(It.IsAny<TrackMessage>())).Verifiable();
-            _billingInstructionService.Setup(m => m.CreateBillingInstructions(It.IsAny<CalcResult>())).ReturnsAsync(true);
-            _producerInvoiceNetTonnageService.Setup(m => m.CreateProducerInvoiceNetTonnage(It.IsAny<CalcResult>(), It.IsAny<IImmutableList<MaterialDetail>>())).ReturnsAsync(true);
+        billingInstructionService.Setup(m => m.CreateBillingInstructions(It.IsAny<CalcResult>())).ThrowsAsync(new Exception());
+        producerInvoiceNetTonnageService.Setup(m => m.CreateProducerInvoiceNetTonnage(It.IsAny<CalcResult>(), It.IsAny<IImmutableList<MaterialDetail>>())).ReturnsAsync(true);
 
-            // Act
-            var result = await testClass.InsertProducerDataToDatabase(calcResult, materials);
+        // Act
+        var result = await sut.InsertProducerDataToDatabase(calcResult, materials);
 
-            // Assert
-            _telemetryLogger.Verify(mock => mock.LogInformation(It.IsAny<TrackMessage>()));
-
-            Assert.IsTrue(result);
-        }
-
-
-        [TestMethod]
-        public async Task CannotCallInsertProducerDataToDatabaseWithNullCalcResult()
-
-        {
-            // Arrange
-            var fixture = new Fixture().Customize(new ImmutableCollectionsCustomization());
-            var calcResult = fixture.Create<CalcResult>();
-            var materials = fixture.Create<IImmutableList<MaterialDetail>>();
-            _telemetryLogger.Setup(mock => mock.LogInformation(It.IsAny<TrackMessage>())).Verifiable();
-            _billingInstructionService.Setup(m => m.CreateBillingInstructions(It.IsAny<CalcResult>())).ThrowsAsync(new Exception());
-            _producerInvoiceNetTonnageService.Setup(m => m.CreateProducerInvoiceNetTonnage(It.IsAny<CalcResult>(), It.IsAny<IImmutableList<MaterialDetail>>())).ReturnsAsync(true);
-
-            // Act
-            var result = await testClass.InsertProducerDataToDatabase(calcResult, materials);
-
-            // Assert
-            _telemetryLogger.Verify(mock => mock.LogError(It.IsAny<ErrorMessage>()));
-
-            Assert.IsFalse(result);
-
-        }
+        // Assert
+        Assert.IsFalse(result);
     }
 }

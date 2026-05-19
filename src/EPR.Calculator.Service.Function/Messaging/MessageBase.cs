@@ -1,22 +1,29 @@
-﻿namespace EPR.Calculator.Service.Function.Messaging
+﻿using System.Diagnostics.CodeAnalysis;
+using EPR.Calculator.Service.Function.Enums;
+
+namespace EPR.Calculator.Service.Function.Messaging;
+
+/// <summary>
+///     Represents the base class for all message types.
+/// </summary>
+[ExcludeFromCodeCoverage]
+public abstract record MessageBase
 {
     /// <summary>
-    /// Represents the base class for all message types.
+    ///     Gets or sets the type identifier of the message.
+    ///     This value is typically used to determine the specific message subclass during deserialization.
     /// </summary>
-    public abstract class MessageBase
-    {
-        public const string Billing = "Billing";
-        public const string Result = "Result";
+    public required string MessageType { get; init; }
 
-        /// <summary>
-        /// Gets or sets the type identifier of the message.
-        /// This value is typically used to determine the specific message subclass during deserialization.
-        /// </summary>
-        required public string MessageType { get; set; }
+    /// <summary>
+    ///     Gets or sets the identifier for the calculator run.
+    /// </summary>
+    public int CalculatorRunId { get; init; }
 
-        /// <summary>
-        /// Gets or sets the identifier for the calculator run.
-        /// </summary>
-        public int CalculatorRunId { get; set; }
-    }
+    public abstract RunType RunType { get; }
+
+    public ImmutableDictionary<string, object?> Summary => ImmutableDictionary.CreateRange<string, object?>([
+        new KeyValuePair<string, object?>("RunType", RunType),
+        new KeyValuePair<string, object?>("RunId", CalculatorRunId)
+    ]);
 }

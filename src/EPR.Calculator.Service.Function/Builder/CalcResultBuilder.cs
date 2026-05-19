@@ -14,215 +14,152 @@ using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
 using EPR.Calculator.Service.Function.Builder.RejectedProducers;
 using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
 using EPR.Calculator.Service.Function.Builder.Summary;
+using EPR.Calculator.Service.Function.Logging;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
-using Microsoft.ApplicationInsights;
 
-namespace EPR.Calculator.Service.Function.Builder
+namespace EPR.Calculator.Service.Function.Builder;
+
+public interface ICalcResultBuilder
 {
-    public interface ICalcResultBuilder
+    Task<CalcResult> BuildAsync(CalcResultsRequestDto resultsRequestDto, IImmutableList<MaterialDetail> materials);
+}
+
+[SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
+public class CalcResultBuilder(
+    IParameterService parameterService,
+    ICalcResultLapcapDataBuilder lapcapData,
+    ICalcResultLateReportingBuilder lateReportingTonnage,
+    ICalcResultParameterOtherCostBuilder otherCosts,
+    ICalcResultOnePlusFourApportionmentBuilder onePlusFourApportionment,
+    ICalcResultCancelledProducersBuilder cancelledProducers,
+    IReportedProducerService reportedProducers,
+    ICalcResultProjectedProducersBuilder projectedProducers,
+    ICalcResultScaledupProducersBuilder scaledUpProducers,
+    ICalcResultDetailBuilder calcResultDetailBuilder,
+    ICalcResultCommsCostBuilder commsCosts,
+    ICalcRunLaDisposalCostBuilder laDisposalCosts,
+    ICalcResultPartialObligationBuilder partialObligations,
+    ICalcResultSummaryBuilder summary,
+    ICalcResultRejectedProducersBuilder rejectedProducers,
+    ICalcResultErrorReportBuilder errorReport,
+    IProjectedProducersService projectedProducersService,
+    ISelfManagedConsumerWasteService selfManagedConsumerWaste,
+    ICalcResultModulationBuilder modulation,
+    ILogger<CalcResultBuilder> logger)
+    : ICalcResultBuilder
+{
+    public async Task<CalcResult> BuildAsync(CalcResultsRequestDto resultsRequestDto, IImmutableList<MaterialDetail> materials)
     {
-        Task<CalcResult> BuildAsync(CalcResultsRequestDto resultsRequestDto, IImmutableList<MaterialDetail> materialDetails);
-    }
-
-    public class CalcResultBuilder : ICalcResultBuilder
-    {
-        private readonly IParameterService parameterService;
-        private readonly ICalcResultParameterOtherCostBuilder calcResultParameterOtherCostBuilder;
-        private readonly ICalcResultDetailBuilder calcResultDetailBuilder;
-        private readonly ICalcResultLapcapDataBuilder lapcapBuilder;
-        private readonly ICalcResultSummaryBuilder summaryBuilder;
-        private readonly ICalcResultOnePlusFourApportionmentBuilder lapcapplusFourApportionmentBuilder;
-        private readonly ICalcResultCommsCostBuilder commsCostReportBuilder;
-        private readonly ICalcResultLateReportingBuilder lateReportingBuilder;
-        private readonly ICalcRunLaDisposalCostBuilder laDisposalCostBuilder;
-        private readonly ICalcResultScaledupProducersBuilder calcResultScaledupProducersBuilder;
-        private readonly ICalcResultProjectedProducersBuilder calcResultProjectedProducersBuilder;
-        private readonly ICalcResultPartialObligationBuilder calcResultPartialObligationBuilder;
-        public readonly ICalcResultCancelledProducersBuilder calcResultCancelledProducersBuilder;
-        public readonly ICalcResultRejectedProducersBuilder calcResultRejectedProducersBuilder;
-        public readonly ICalcResultErrorReportBuilder calcResultErrorReportBuilder;
-        public readonly IProjectedProducersService projectedProducersService;
-        public readonly ISelfManagedConsumerWasteService selfManagedConsumerWasteService;
-        private readonly ICalcResultModulationBuilder modulationBuilder;
-        public readonly IReportedProducerService reportedProducerService;
-        private readonly TelemetryClient telemetryClient;
-
-
-        [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
-        public CalcResultBuilder(
-            IParameterService parameterService,
-            ICalcResultDetailBuilder calcResultDetailBuilder,
-            ICalcResultLapcapDataBuilder lapcapBuilder,
-            ICalcResultParameterOtherCostBuilder calcResultParameterOtherCostBuilder,
-            ICalcResultOnePlusFourApportionmentBuilder calcResultOnePlusFourApportionmentBuilder,
-            ICalcResultCommsCostBuilder commsCostReportBuilder,
-            ICalcResultLateReportingBuilder lateReportingBuilder,
-            ICalcRunLaDisposalCostBuilder calcRunLaDisposalCostBuilder,
-            ICalcResultScaledupProducersBuilder calcResultScaledupProducersBuilder,
-            ICalcResultPartialObligationBuilder calcResultPartialObligationBuilder,
-            ICalcResultProjectedProducersBuilder calcResultProjectedProducersBuilder,
-            ICalcResultSummaryBuilder summaryBuilder,
-            ICalcResultCancelledProducersBuilder calcResultCancelledProducersBuilder,
-            ICalcResultRejectedProducersBuilder calcResultRejectedProducersBuilder,
-            ICalcResultErrorReportBuilder calcResultErrorReportBuilder,
-            IProjectedProducersService projectedProducersService,
-            ISelfManagedConsumerWasteService selfManagedConsumerWasteService,
-            ICalcResultModulationBuilder modulationBuilder,
-            IReportedProducerService reportedProducerService,
-            TelemetryClient telemetryClient)
+        var result = new CalcResult
         {
-            this.parameterService = parameterService;
-            this.calcResultDetailBuilder = calcResultDetailBuilder;
-            this.lapcapBuilder = lapcapBuilder;
-            this.commsCostReportBuilder = commsCostReportBuilder;
-            this.lateReportingBuilder = lateReportingBuilder;
-            this.calcResultParameterOtherCostBuilder = calcResultParameterOtherCostBuilder;
-            this.laDisposalCostBuilder = calcRunLaDisposalCostBuilder;
-            this.lapcapplusFourApportionmentBuilder = calcResultOnePlusFourApportionmentBuilder;
-            this.calcResultScaledupProducersBuilder = calcResultScaledupProducersBuilder;
-            this.calcResultProjectedProducersBuilder = calcResultProjectedProducersBuilder;
-            this.calcResultPartialObligationBuilder = calcResultPartialObligationBuilder;
-            this.summaryBuilder = summaryBuilder;
-            this.calcResultCancelledProducersBuilder = calcResultCancelledProducersBuilder;
-            this.calcResultRejectedProducersBuilder = calcResultRejectedProducersBuilder;
-            this.calcResultErrorReportBuilder = calcResultErrorReportBuilder;
-            this.projectedProducersService = projectedProducersService;
-            this.selfManagedConsumerWasteService = selfManagedConsumerWasteService;
-            this.modulationBuilder = modulationBuilder;
-            this.reportedProducerService = reportedProducerService;
-            this.telemetryClient = telemetryClient;
+            ApplyModulation = resultsRequestDto.RelativeYear.Value >= 2026,
+            CalcResultDetail = await calcResultDetailBuilder.ConstructAsync(resultsRequestDto),
+            CalcResultLapcapData = new CalcResultLapcapData
+            {
+                CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetail>()
+            },
+            CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
+            {
+                CalcResultLateReportingTonnageDetails = new List<CalcResultLateReportingTonnageDetail>()
+            },
+            CalcResultParameterOtherCost = new CalcResultParameterOtherCost
+            {
+                Name = string.Empty
+            },
+            CalcResultPartialObligations = new CalcResultPartialObligations(),
+            CalcResultProjectedProducers = new CalcResultProjectedProducers(),
+            CalcResultScaledupProducers = new CalcResultScaledupProducers(),
+            CalcResultCancelledProducers = new CalcResultCancelledProducersResponse(),
+            CalcResultRejectedProducers = new List<CalcResultRejectedProducer>()
+        };
+
+        var defaultParams = await parameterService.GetDefaultParameters(resultsRequestDto.RunId);
+
+        result.CalcResultLapcapData = await logger.LogDuration(() =>
+                lapcapData.ConstructAsync(materials, resultsRequestDto),
+            nameof(lapcapData));
+
+        result.CalcResultLateReportingTonnageData = await logger.LogDuration(() =>
+                lateReportingTonnage.ConstructAsync(resultsRequestDto),
+            nameof(lateReportingTonnage));
+
+        result.CalcResultParameterOtherCost = await logger.LogDuration(() =>
+                otherCosts.ConstructAsync(resultsRequestDto),
+            nameof(otherCosts));
+
+        result.CalcResultOnePlusFourApportionment = logger.LogDuration(() =>
+                onePlusFourApportionment.Construct(resultsRequestDto, result),
+            nameof(onePlusFourApportionment));
+
+        result.CalcResultCancelledProducers = await logger.LogDuration(() =>
+                cancelledProducers.ConstructAsync(resultsRequestDto, materials),
+            nameof(cancelledProducers));
+
+        // ReSharper disable AccessToModifiedClosure - LogDuration always immediately invokes the delegate
+        var producers = await reportedProducers.GetProducers(resultsRequestDto.RunId);
+
+        if (result.ApplyModulation)
+        {
+            (producers, result.CalcResultProjectedProducers) = logger.LogDuration(() =>
+                    projectedProducers.Construct(materials, producers, resultsRequestDto),
+                nameof(projectedProducers));
         }
 
-        public async Task<CalcResult> BuildAsync(CalcResultsRequestDto resultsRequestDto, IImmutableList<MaterialDetail> materialDetails)
+        if (resultsRequestDto.RelativeYear.Value == 2025)
         {
-            var result = new CalcResult
-            {
-                ApplyModulation = resultsRequestDto.RelativeYear.Value >= 2026,
-                CalcResultDetail = await calcResultDetailBuilder.ConstructAsync(resultsRequestDto),
-                CalcResultLapcapData = new CalcResultLapcapData
-                {
-                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetail>(),
-                },
-                CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
-                {
-                    CalcResultLateReportingTonnageDetails = new List<CalcResultLateReportingTonnageDetail>(),
-                },
-                CalcResultParameterOtherCost = new CalcResultParameterOtherCost
-                {
-                    Name = string.Empty,
-                },
-                CalcResultPartialObligations = new CalcResultPartialObligations(),
-                CalcResultProjectedProducers = new CalcResultProjectedProducers(),
-                CalcResultScaledupProducers = new CalcResultScaledupProducers(),
-                CalcResultCancelledProducers = new CalcResultCancelledProducersResponse(),
-                CalcResultRejectedProducers = new List<CalcResultRejectedProducer>(),
-            };
-
-            var defaultParams =
-                await parameterService.GetDefaultParameters(resultsRequestDto.RunId);
-
-            telemetryClient.TrackTrace("lapcapBuilder started...");
-            result.CalcResultLapcapData = await lapcapBuilder.ConstructAsync(materialDetails, resultsRequestDto);
-            telemetryClient.TrackTrace("lapcapBuilder end...");
-
-            telemetryClient.TrackTrace("lateReportingBuilder started...");
-            result.CalcResultLateReportingTonnageData = await lateReportingBuilder.ConstructAsync(resultsRequestDto);
-            telemetryClient.TrackTrace("lateReportingBuilder end...");
-
-            telemetryClient.TrackTrace("calcResultParameterOtherCostBuilder started...");
-            result.CalcResultParameterOtherCost = await calcResultParameterOtherCostBuilder.ConstructAsync(resultsRequestDto);
-            telemetryClient.TrackTrace("calcResultParameterOtherCostBuilder end...");
-
-            telemetryClient.TrackTrace("lapcapplusFourApportionmentBuilder started...");
-            result.CalcResultOnePlusFourApportionment = lapcapplusFourApportionmentBuilder.ConstructAsync(resultsRequestDto, result);
-            telemetryClient.TrackTrace("lapcapplusFourApportionmentBuilder end...");
-
-            telemetryClient.TrackTrace("calcResultCancelledProducersBuilder started...");
-            result.CalcResultCancelledProducers = await calcResultCancelledProducersBuilder.ConstructAsync(resultsRequestDto, materialDetails);
-            telemetryClient.TrackTrace("calcResultCancelledProducersBuilder end...");
-
-            List<L1Producer> producers1 = await reportedProducerService.GetProducers(resultsRequestDto.RunId);
-
-            List<L1Producer> producers2;
-            if (result.ApplyModulation)
-            {
-                telemetryClient.TrackTrace("calcResultProjectedProducerBuilder started...");
-                var calcResultProjectedProducers = calcResultProjectedProducersBuilder.ConstructAsync(materialDetails, producers1, resultsRequestDto);
-                producers2 = calcResultProjectedProducers.Item1;
-                result.CalcResultProjectedProducers = calcResultProjectedProducers.Item2;
-                telemetryClient.TrackTrace("calcResultProjectedProducerBuilder end...");
-            } else
-            {
-                producers2 = producers1;
-            }
-
-            List<L1Producer> producers3;
-            if (resultsRequestDto.RelativeYear.Value == 2025)
-            {
-                telemetryClient.TrackTrace("calcResultScaledupProducersBuilder started...");
-                var scaledupProducersResult = await calcResultScaledupProducersBuilder.ConstructAsync(materialDetails, producers2, resultsRequestDto);
-                result.CalcResultScaledupProducers = scaledupProducersResult.Item2;
-                producers3 = scaledupProducersResult.Item1;
-                telemetryClient.TrackTrace("calcResultScaledupProducersBuilder end...");
-            } else
-            {
-                producers3 = producers2;
-            }
-
-            telemetryClient.TrackTrace("calcResultPartialObligationBuilder started...");
-            var partialObligationsResult = await calcResultPartialObligationBuilder.ConstructAsync(materialDetails, producers3, resultsRequestDto, result.ApplyModulation);
-            result.CalcResultPartialObligations = partialObligationsResult.Item2;
-            List<L1Producer> producers4 = partialObligationsResult.Item1;
-            telemetryClient.TrackTrace("calcResultPartialObligationBuilder end...");
-
-            if (!resultsRequestDto.IsBillingFile)
-            {
-                telemetryClient.TrackTrace("Storing projected producers started...");
-                await projectedProducersService.StoreProjectedProducers(
-                    resultsRequestDto.RunId,
-                    producers4
-                );
-                telemetryClient.TrackTrace("Storing projected producers ended...");
-            }
-
-            if (resultsRequestDto.IsBillingFile)
-            {
-                telemetryClient.TrackTrace("CalcResultRejectedProducersBuilder started...");
-                result.CalcResultRejectedProducers = await calcResultRejectedProducersBuilder.ConstructAsync(resultsRequestDto);
-                telemetryClient.TrackTrace("CalcResultRejectedProducersBuilder end...");
-            }
-
-            telemetryClient.TrackTrace("selfManagedConsumerWasteService started...");
-            var smcw = await selfManagedConsumerWasteService.Calculate(resultsRequestDto, materialDetails, result.ApplyModulation);
-            result.Smcw = smcw;
-            telemetryClient.TrackTrace("selfManagedConsumerWasteService ended...");
-
-            telemetryClient.TrackTrace("laDisposalCostBuilder started...");
-            result.CalcResultLaDisposalCostData = await laDisposalCostBuilder.ConstructAsync(resultsRequestDto, materialDetails, result.CalcResultLapcapData, result.CalcResultLateReportingTonnageData, smcw, result.ApplyModulation);
-            telemetryClient.TrackTrace("laDisposalCostBuilder end...");
-
-            telemetryClient.TrackTrace("commsCostReportBuilder started...");
-            result.CalcResultCommsCostReportDetail = await commsCostReportBuilder.ConstructAsync(materialDetails, resultsRequestDto, result.CalcResultOnePlusFourApportionment, result.CalcResultLateReportingTonnageData);
-            telemetryClient.TrackTrace("commsCostReportBuilder end...");
-
-            if (result.ApplyModulation)
-            {
-                telemetryClient.TrackTrace("modulationBuilder started...");
-                result.CalcResultModulation = await modulationBuilder.ConstructAsync(defaultParams, materialDetails, result.CalcResultLaDisposalCostData, smcw);
-                telemetryClient.TrackTrace("modulationBuilder end...");
-            }
-
-            telemetryClient.TrackTrace("summaryBuilder started...");
-            result.CalcResultSummary = await summaryBuilder.ConstructAsync(materialDetails, resultsRequestDto.RunId, resultsRequestDto.RelativeYear, resultsRequestDto.IsBillingFile, result, smcw);
-            telemetryClient.TrackTrace("summaryBuilder end...");
-
-            telemetryClient.TrackTrace("Error report builder started...");
-            result.CalcResultErrorReports = calcResultErrorReportBuilder.ConstructAsync(resultsRequestDto);
-            telemetryClient.TrackTrace("Error report builder end...");
-
-            return result;
+            (producers, result.CalcResultScaledupProducers) = await logger.LogDuration(() =>
+                    scaledUpProducers.ConstructAsync(materials, producers, resultsRequestDto),
+                nameof(scaledUpProducers));
         }
+
+        (producers, result.CalcResultPartialObligations) = await logger.LogDuration(() =>
+                partialObligations.ConstructAsync(materials, producers, resultsRequestDto, result.ApplyModulation),
+            nameof(partialObligations));
+        // ReSharper restore AccessToModifiedClosure
+
+        if (!resultsRequestDto.IsBillingFile)
+        {
+            await logger.LogDuration(() =>
+                    projectedProducersService.StoreProjectedProducers(resultsRequestDto.RunId, producers),
+                nameof(projectedProducersService.StoreProjectedProducers));
+        }
+
+        if (resultsRequestDto.IsBillingFile)
+        {
+            result.CalcResultRejectedProducers = await logger.LogDuration(() =>
+                    rejectedProducers.ConstructAsync(resultsRequestDto),
+                nameof(rejectedProducers));
+        }
+
+        result.Smcw = await logger.LogDuration(() =>
+                selfManagedConsumerWaste.Calculate(resultsRequestDto, materials, result.ApplyModulation),
+            nameof(selfManagedConsumerWaste));
+
+        result.CalcResultLaDisposalCostData = await logger.LogDuration(() =>
+                laDisposalCosts.ConstructAsync(resultsRequestDto, materials, result.CalcResultLapcapData, result.CalcResultLateReportingTonnageData, result.Smcw, result.ApplyModulation),
+            nameof(laDisposalCosts));
+
+        result.CalcResultCommsCostReportDetail = await logger.LogDuration(() =>
+                commsCosts.ConstructAsync(materials, resultsRequestDto, result.CalcResultOnePlusFourApportionment, result.CalcResultLateReportingTonnageData),
+            nameof(commsCosts));
+
+        if (result.ApplyModulation)
+        {
+            result.CalcResultModulation = await logger.LogDuration(() =>
+                    modulation.ConstructAsync(defaultParams, materials, result.CalcResultLaDisposalCostData, result.Smcw),
+                nameof(modulation));
+        }
+
+        result.CalcResultSummary = await logger.LogDuration(() =>
+                summary.ConstructAsync(materials, resultsRequestDto.RunId, resultsRequestDto.RelativeYear, resultsRequestDto.IsBillingFile, result, result.Smcw),
+            nameof(summary));
+
+        result.CalcResultErrorReports = logger.LogDuration(() =>
+                errorReport.Construct(resultsRequestDto),
+            nameof(errorReport));
+
+        return result;
     }
 }
