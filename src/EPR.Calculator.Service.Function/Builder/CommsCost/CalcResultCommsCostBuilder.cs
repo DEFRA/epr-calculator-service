@@ -77,7 +77,7 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
             var total = Math.Round(materialDefault.ParameterValue, 2);
             var producerReportedTotalTonnage =
                     producerReportedTon
-                    + lateReportingTonnage.TotalLateReportingTonnage
+                    + lateReportingTonnage.Total
                     + publicBinTonnage
                     + householdcontainers;
             var commsCost = new CalcResultCommsCostCommsCostByMaterial{
@@ -88,7 +88,7 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
                 ProducerReportedHouseholdPackagingWasteTonnage = producerReportedTon,
                 ReportedPublicBinTonnage = publicBinTonnage,
                 HouseholdDrinksContainers = householdcontainers,
-                LateReportingTonnage = lateReportingTonnage.TotalLateReportingTonnage,
+                LateReportingTonnage = lateReportingTonnage.Total,
                 // TODO derived fields?
                 Total = total,
                 ProducerReportedTotalTonnage = producerReportedTotalTonnage,

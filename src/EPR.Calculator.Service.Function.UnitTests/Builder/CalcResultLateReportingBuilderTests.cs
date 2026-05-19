@@ -98,22 +98,22 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual(2, result.LateReportingTonnageByMaterial.Count);
 
             var aluminium = result.LateReportingTonnageByMaterial["AL"];
-            Assert.AreEqual(100m, aluminium.RedLateReportingTonnage);
-            Assert.AreEqual(200m, aluminium.AmberLateReportingTonnage);
-            Assert.AreEqual(300m, aluminium.GreenLateReportingTonnage);
-            Assert.AreEqual(600m, aluminium.TotalLateReportingTonnage);
+            Assert.AreEqual(100m, aluminium.Red);
+            Assert.AreEqual(200m, aluminium.Amber);
+            Assert.AreEqual(300m, aluminium.Green);
+            Assert.AreEqual(600m, aluminium.Total);
 
             var fibre = result.LateReportingTonnageByMaterial["FC"];
-            Assert.AreEqual(400m, fibre.RedLateReportingTonnage);
-            Assert.AreEqual(500m, fibre.AmberLateReportingTonnage);
-            Assert.AreEqual(600m, fibre.GreenLateReportingTonnage);
-            Assert.AreEqual(1500m, fibre.TotalLateReportingTonnage);
+            Assert.AreEqual(400m, fibre.Red);
+            Assert.AreEqual(500m, fibre.Amber);
+            Assert.AreEqual(600m, fibre.Green);
+            Assert.AreEqual(1500m, fibre.Total);
 
             var total = result.LateReportingTonnageTotal;
-            Assert.AreEqual(500m,  total.RedLateReportingTonnage);
-            Assert.AreEqual(700m,  total.AmberLateReportingTonnage);
-            Assert.AreEqual(900m,  total.GreenLateReportingTonnage);
-            Assert.AreEqual(2100m, total.TotalLateReportingTonnage);
+            Assert.AreEqual(500m,  total.Red);
+            Assert.AreEqual(700m,  total.Amber);
+            Assert.AreEqual(900m,  total.Green);
+            Assert.AreEqual(2100m, total.Total);
         }
     }
 }

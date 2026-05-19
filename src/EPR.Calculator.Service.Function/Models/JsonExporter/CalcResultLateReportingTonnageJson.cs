@@ -25,10 +25,10 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                     .Select(kv => new CalcResultLateReportingTonnageDetailsJson
                     {
                         MaterialName = materials.First(m => m.Code == kv.Key).Name,
-                        TotalLateReportingTonnage = kv.Value.TotalLateReportingTonnage
+                        TotalLateReportingTonnage = kv.Value.Total
                     })
                     .ToList(),
-                CalcResultLateReportingTonnageTotal = calcResultLateReportingTonnage.LateReportingTonnageTotal.TotalLateReportingTonnage
+                CalcResultLateReportingTonnageTotal = calcResultLateReportingTonnage.LateReportingTonnageTotal.Total
             };
         }
     }

@@ -85,7 +85,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual(1000, aluminiumCost.ProducerReportedHouseholdPackagingWasteTonnage);
             Assert.AreEqual(8000, aluminiumCost.LateReportingTonnage);
             Assert.AreEqual(9000, aluminiumCost.ProducerReportedTotalTonnage);
-            // TODO this rounding should happen in the builder
             Assert.AreEqual(0.0011m, Math.Round(aluminiumCost.CommsCostByMaterialPricePerTonne!.Value, 4));
 
             var fibreCompositeCost = materialCosts["FC"];

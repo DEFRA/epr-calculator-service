@@ -316,60 +316,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             {
                 LateReportingTonnageByMaterial = new Dictionary<string, CalcResultLateReportingTonnageDetail>
                 {
-                    ["AL"] = new() {
-                        RedLateReportingTonnage = 1000.00m,
-                        AmberLateReportingTonnage = 2000.00m,
-                        GreenLateReportingTonnage = 5000.00m,
-                        TotalLateReportingTonnage = 8000.00m
-                    },
-                    ["FC"] = new() {
-                        RedLateReportingTonnage = 5.00m,
-                        AmberLateReportingTonnage = 0m,
-                        GreenLateReportingTonnage = 5.00m,
-                        TotalLateReportingTonnage = 10.00m
-                    },
-                    ["GL"] = new() {
-                        RedLateReportingTonnage = 10.00m,
-                        AmberLateReportingTonnage = 0m,
-                        GreenLateReportingTonnage = 0m,
-                        TotalLateReportingTonnage = 10.00m
-                    },
-                    ["PC"] = new() {
-                        RedLateReportingTonnage = 0m,
-                        AmberLateReportingTonnage = 0m,
-                        GreenLateReportingTonnage = 0m,
-                        TotalLateReportingTonnage = 0m
-                    },
-                    ["PL"] = new() { RedLateReportingTonnage = 1000.00m,
-                        AmberLateReportingTonnage = 500.00m,
-                        GreenLateReportingTonnage = 500.00m,
-                        TotalLateReportingTonnage = 2000.00m
-                    },
-                    ["ST"] = new() {
-                        RedLateReportingTonnage = 0m,
-                        AmberLateReportingTonnage = 0m,
-                        GreenLateReportingTonnage = 0m,
-                        TotalLateReportingTonnage = 0m
-                    },
-                    ["WD"] = new() {
-                        RedLateReportingTonnage = 0m,
-                        AmberLateReportingTonnage = 0m,
-                        GreenLateReportingTonnage = 0m,
-                        TotalLateReportingTonnage = 0m
-                    },
-                    ["OT"] = new() {
-                        RedLateReportingTonnage = 0m,
-                        AmberLateReportingTonnage = 0m,
-                        GreenLateReportingTonnage = 0m,
-                        TotalLateReportingTonnage = 0m
-                    },
+                    ["AL"] = new() { Red = 1000.00m, Amber = 2000.00m, Green = 5000.00m, Total = 8000.00m },
+                    ["FC"] = new() { Red =    5.00m, Amber =       0m, Green =    5.00m, Total =   10.00m },
+                    ["GL"] = new() { Red =   10.00m, Amber =       0m, Green =    0.00m, Total =   10.00m },
+                    ["PC"] = new() { Red =    0.00m, Amber =       0m, Green =    0.00m, Total =    0.00m },
+                    ["PL"] = new() { Red = 1000.00m, Amber =  500.00m, Green =  500.00m, Total = 2000.00m },
+                    ["ST"] = new() { Red =    0.00m, Amber =    0.00m, Green =    0.00m, Total =    0.00m },
+                    ["WD"] = new() { Red =    0.00m, Amber =    0.00m, Green =    0.00m, Total =    0.00m },
+                    ["OT"] = new() { Red =    0.00m, Amber =    0.00m, Green =    0.00m, Total =    0.00m }
                 },
-                LateReportingTonnageTotal = new() {
-                    RedLateReportingTonnage = 2015.00m,
-                    AmberLateReportingTonnage = 2500.00m,
-                    GreenLateReportingTonnage = 5505.00m,
-                    TotalLateReportingTonnage = 10020.00m
-                }
+                LateReportingTonnageTotal = new() { Red = 2015.00m, Amber = 2500.00m, Green = 5505.00m, Total = 10020.00m }
             };
         }
 
@@ -1451,56 +1407,49 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 prodMats.AddRange(new[]{
                     new ProducerReportedMaterial
                     {
-                        // TODO this is virtual - does it need populating?
-                        Material = new Material { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
+                        MaterialId = 1,
                         PackagingTonnage = 500.00m,
                         PackagingType = "HH",
                         SubmissionPeriod = subPeriod,
-                        MaterialId = 1,
                         ProducerDetail = null,
                     },
                     new ProducerReportedMaterial
                     {
-                        Material = new Material { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
+                        MaterialId = 1,
                         PackagingTonnage = 10.00m,
                         PackagingType = "CW",
-                        MaterialId = 1,
                         SubmissionPeriod = subPeriod,
                         ProducerDetail = null,
                     },
                     new ProducerReportedMaterial
                     {
-                        Material = new Material { Id = 5, Code = "PL", Name = "Plastic", Description = "Plastic" },
+                        MaterialId = 5,
                         PackagingTonnage = 10.00m,
                         PackagingType = "PB",
-                        MaterialId = 5,
                         SubmissionPeriod = subPeriod,
                         ProducerDetail = null,
                     },
                     new ProducerReportedMaterial
                     {
-                        Material = new Material { Id = 3, Code = "GL", Name = "Glass", Description = "Glass" },
+                        MaterialId = 3,
                         PackagingTonnage = 20.00m,
                         PackagingType = "HH",
-                        MaterialId = 3,
                         SubmissionPeriod = subPeriod,
                         ProducerDetail = null,
                     },
                     new ProducerReportedMaterial
                     {
-                        Material = new Material { Id = 3, Code = "GL", Name = "Glass", Description = "Glass" },
+                        MaterialId = 3,
                         PackagingTonnage = 10.00m,
                         PackagingType = "HDC",
-                        MaterialId = 3,
                         SubmissionPeriod = subPeriod,
                         ProducerDetail = null,
                     },
                     new ProducerReportedMaterial
                     {
-                        Material = new Material { Id = 3, Code = "GL", Name = "Glass", Description = "Glass" },
+                        MaterialId = 3,
                         PackagingTonnage = 50.00m,
                         PackagingType = "CW",
-                        MaterialId = 3,
                         SubmissionPeriod = subPeriod,
                         ProducerDetail = null,
                     }
