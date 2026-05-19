@@ -44,9 +44,6 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
 
             var apportionmentDetail = apportionment.OnePlusFourApportionment;
 
-            telemetryClient.TrackTrace("Calculating apportionment...");
-            var calcResultCommsCostOnePlusFourApportionment = GetApportionment(apportionmentDetail);
-
             telemetryClient.TrackTrace("Getting material defaults...");
             var allDefaultResults = await (
                 from run in context.CalculatorRuns
@@ -114,13 +111,12 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
                 allDefaultResults.Single(x =>
                     x.ParameterType == CommunicationCostByCountry && x.ParameterCategory == Uk);
 
-            var ukCost = new ByCountryValue
+            var ukCost = new ByCountryCost
             {
                 England         = commsCostByUk.ParameterValue * apportionmentDetail.England         / 100,
                 Wales           = commsCostByUk.ParameterValue * apportionmentDetail.Wales           / 100,
                 Scotland        = commsCostByUk.ParameterValue * apportionmentDetail.Scotland        / 100,
-                NorthernIreland = commsCostByUk.ParameterValue * apportionmentDetail.NorthernIreland / 100,
-                Total           = commsCostByUk.ParameterValue
+                NorthernIreland = commsCostByUk.ParameterValue * apportionmentDetail.NorthernIreland / 100
             };
 
             telemetryClient.TrackTrace("Getting comms cost by country...");
@@ -128,7 +124,7 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
 
             return new CalcResultCommsCost()
             {
-                CalcResultCommsCostOnePlusFourApportionment = calcResultCommsCostOnePlusFourApportionment,
+                CalcResultCommsCostOnePlusFourApportionment = apportionmentDetail,
                 CommsCostByMaterial                         = commsCostByMaterial,
                 CommsCostByMaterialTotal                    = commsCostByMaterialTotal,
                 CommsCostUkWide                             = ukCost,
@@ -174,7 +170,7 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
             };
         }
 
-        private static ByCountryValue GetCommsCostByCountry(
+        private static ByCountryCost GetCommsCostByCountry(
             IEnumerable<CalcCommsBuilderResult> allDefaultResults
         )
         {
@@ -195,28 +191,12 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
                     x.ParameterType == CommunicationCostByCountry &&
                     x.ParameterCategory == "Scotland").ParameterValue;
 
-            return new ByCountryValue
+            return new ByCountryCost
             {
                 England         = englandValue,
                 Wales           = walesValue,
                 Scotland        = scotlandValue,
-                NorthernIreland = niValue,
-                Total           = englandValue + walesValue + scotlandValue + niValue
-            };
-        }
-
-        private static CalcResultCommsCostOnePlusFourApportionment GetApportionment(
-            CountryApportionmentData apportionmentDetail
-        )
-        {
-            // TODO just use CountryApportionmentData?
-            return new CalcResultCommsCostOnePlusFourApportionment
-            {
-                England         = apportionmentDetail.England,
-                Wales           = apportionmentDetail.Wales,
-                Scotland        = apportionmentDetail.Scotland,
-                NorthernIreland = apportionmentDetail.NorthernIreland,
-                Total           = 100
+                NorthernIreland = niValue
             };
         }
     }

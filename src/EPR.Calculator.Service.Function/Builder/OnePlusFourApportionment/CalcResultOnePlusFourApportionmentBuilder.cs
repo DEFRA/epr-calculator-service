@@ -25,7 +25,7 @@ namespace EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment
             var laDataPrepCharge = calcResult.CalcResultParameterOtherCost.LaDataPrepCharge;
 
             // Add total row
-            var totalOnePlusFour = CreateTotalRow(laDisposalCost, laDataPrepCharge);
+            var totalOnePlusFour = CreateTotalOnePlusFour(laDisposalCost, laDataPrepCharge);
 
             // Calculate apportionment
 #pragma warning disable S1854
@@ -40,7 +40,8 @@ namespace EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment
             };
         }
 
-        private static CalcResultOnePlusFourApportionmentDetail CreateDataPrepChargeRow(CalcResultParameterOtherCostDetail dataPrepCharge)
+        // TODO where was this used?
+        /*private static CalcResultOnePlusFourApportionmentDetail CreateDataPrepChargeRow(CalcResultParameterOtherCostDetail dataPrepCharge)
         {
             return new CalcResultOnePlusFourApportionmentDetail
             {
@@ -50,36 +51,27 @@ namespace EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment
                 NorthernIrelandTotal = dataPrepCharge.NorthernIreland,
                 Total                = dataPrepCharge.Total
             };
-        }
+        }*/
 
-        private static CalcResultOnePlusFourApportionmentDetail CreateTotalRow(ByCountryValue totalLACost, CalcResultParameterOtherCostDetail dataPrepCharge)
+        private static ByCountryCost CreateTotalOnePlusFour(ByCountryCost totalLACost, ByCountryCost dataPrepCharge)
         {
-            return new CalcResultOnePlusFourApportionmentDetail
+            return new ByCountryCost
             {
-                EnglandTotal         = totalLACost.England         + dataPrepCharge.England,
-                WalesTotal           = totalLACost.Wales           + dataPrepCharge.Wales,
-                ScotlandTotal        = totalLACost.Scotland        + dataPrepCharge.Scotland,
-                NorthernIrelandTotal = totalLACost.NorthernIreland + dataPrepCharge.NorthernIreland,
-                Total                = totalLACost.Total           + dataPrepCharge.Total
+                England         = totalLACost.England         + dataPrepCharge.England,
+                Wales           = totalLACost.Wales           + dataPrepCharge.Wales,
+                Scotland        = totalLACost.Scotland        + dataPrepCharge.Scotland,
+                NorthernIreland = totalLACost.NorthernIreland + dataPrepCharge.NorthernIreland
             };
         }
 
-        private static CountryApportionmentData CalculateApportionment(CalcResultOnePlusFourApportionmentDetail apportionmentData)
+        private static ByCountryApportionment CalculateApportionment(ByCountryCost apportionmentData)
         {
-            var englandTotal =
-                CalcResultLapcapDataBuilder.CalculateApportionment(apportionmentData.EnglandTotal, apportionmentData.Total);
-            var walesTotal =
-                CalcResultLapcapDataBuilder.CalculateApportionment(apportionmentData.WalesTotal, apportionmentData.Total);
-            var scotlandTotal =
-                CalcResultLapcapDataBuilder.CalculateApportionment(apportionmentData.ScotlandTotal, apportionmentData.Total);
-            var niTotal = CalcResultLapcapDataBuilder.CalculateApportionment(apportionmentData.NorthernIrelandTotal, apportionmentData.Total);
-            var total = CalcResultLapcapDataBuilder.CalculateApportionment(apportionmentData.Total, apportionmentData.Total);
-            return new CountryApportionmentData
+            return new ByCountryApportionment
             {
-                England         = englandTotal,
-                Wales           = walesTotal,
-                Scotland        = scotlandTotal,
-                NorthernIreland = niTotal
+                England         = CalcResultLapcapDataBuilder.CalculateApportionment(apportionmentData.England        , apportionmentData.Total),
+                Wales           = CalcResultLapcapDataBuilder.CalculateApportionment(apportionmentData.Wales          , apportionmentData.Total),
+                Scotland        = CalcResultLapcapDataBuilder.CalculateApportionment(apportionmentData.Scotland       , apportionmentData.Total),
+                NorthernIreland = CalcResultLapcapDataBuilder.CalculateApportionment(apportionmentData.NorthernIreland, apportionmentData.Total)
             };
         }
     }

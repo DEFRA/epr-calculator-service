@@ -21,13 +21,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public void CalcResultCommsCostOnePlusFourApportionmentUKWideTests_CanCallFrom_WithValidData()
         {
             // Arrange
-            var ukWideData = new ByCountryValue()
+            var ukWideData = new ByCountryCost()
             {
                 England         = 1.23m,
                 Wales           = 2.34m,
                 Scotland        = 3.45m,
-                NorthernIreland = 4.56m,
-                Total           = 11.58m
+                NorthernIreland = 4.56m
             };
 
             // Act

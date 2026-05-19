@@ -2,9 +2,9 @@
 {
     public class CalcResultOnePlusFourApportionment
     {
-        public ByCountryValue LaDisposalCost { get; set; }
-        public CalcResultParameterOtherCostDetail LADataPrepCharge { get; set; }
-        public CalcResultOnePlusFourApportionmentDetail TotalOnePlusFour { get; set; }
-        public CountryApportionmentData OnePlusFourApportionment { get; set; }
+        public ByCountryCost LaDisposalCost { get; set; }
+        public ByCountryCost LADataPrepCharge { get; set; }
+        public ByCountryCost TotalOnePlusFour { get; set; }
+        public ByCountryApportionment OnePlusFourApportionment { get; set; }
     }
 }

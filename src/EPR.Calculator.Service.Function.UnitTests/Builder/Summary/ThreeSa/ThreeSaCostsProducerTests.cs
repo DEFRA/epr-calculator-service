@@ -99,30 +99,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                 CalcResultParameterOtherCost = new CalcResultParameterOtherCost
                 {
                     BadDebtValue = 6m,
-                    LaDataPrepCharge = new CalcResultParameterOtherCostDetail
-                    {
-                        England = 40,
-                        Wales = 30,
-                        Scotland = 20,
-                        NorthernIreland = 10,
-                        Total = 100
-                    },
-                    SaOperatingCost = new CalcResultParameterOtherCostDetail
-                    {
-                        England = 40,
-                        Wales = 30,
-                        Scotland = 20,
-                        NorthernIreland = 10,
-                        Total = 100
-                    },
-                    SchemeSetupCost =
-                    {
-                        England = 40,
-                        Wales = 30,
-                        Scotland = 20,
-                        NorthernIreland = 10,
-                        Total = 100
-                    }
+                    LaDataPrepCharge = new() { England = 40, Wales = 30, Scotland = 20, NorthernIreland = 10 },
+                    SaOperatingCost = new() { England = 40, Wales = 30, Scotland = 20, NorthernIreland = 10 },
+                    SchemeSetupCost = new() { England = 40, Wales = 30, Scotland = 20, NorthernIreland = 10 }
                 },
                 CalcResultDetail = new CalcResultDetail { RunId = 1, RelativeYear = new RelativeYear(2024) },
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData
@@ -163,42 +142,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
                     ByMaterial = [],
-                    Total = new ByCountryValue(),
-                    CountryApportionment = new CountryApportionmentData()
+                    Total = new ByCountryCost(),
+                    CountryApportionment = new ByCountryApportionment()
                 },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment
                 {
-                    LaDisposalCost = new()
-                    {
-                        England         = 0.10M,
-                        Wales           = 020M,
-                        NorthernIreland = 0.15M,
-                        Scotland        = 0.15M,
-                        Total           = 0.1M
-                    },
-                    LADataPrepCharge = new()
-                    {
-                        England         = 0.10M,
-                        Wales           = 020M,
-                        Scotland        = 0.15M,
-                        NorthernIreland = 0.15M,
-                        Total           = 0.1M
-                    },
-                    TotalOnePlusFour =  new()
-                    {
-                        EnglandTotal         = 14.53M,
-                        WalesTotal           = 020M,
-                        ScotlandTotal        = 0.15M,
-                        NorthernIrelandTotal = 0.15M,
-                        Total                = 0.1M
-                    },
-                    OnePlusFourApportionment = new()
-                    {
-                        England         = 40,
-                        Wales           = 30,
-                        Scotland        = 15,
-                        NorthernIreland = 15
-                    }
+                    LaDisposalCost = new() { England = 0.10M, Wales = 20M, NorthernIreland = 0.15M, Scotland = 0.15M },
+                    LADataPrepCharge = new() { England = 0.10M, Wales = 20M, Scotland = 0.15M, NorthernIreland = 0.15M },
+                    TotalOnePlusFour =  new() { England = 14.53M, Wales = 20M, Scotland = 0.15M, NorthernIreland = 0.15M },
+                    OnePlusFourApportionment = new() { England = 40, Wales = 30, Scotland = 15, NorthernIreland = 15 }
                 },
                 CalcResultParameterCommunicationCost = new CalcResultParameterCommunicationCost
                 {

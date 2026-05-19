@@ -26,26 +26,24 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
                     ByMaterial = [],
-                    Total = new ByCountryValue
+                    Total = new ByCountryCost
                     {
                         England         = 13280.45m,
                         Wales           = 210.28m,
                         Scotland        = 91.00m,
-                        NorthernIreland = 91.00m,
-                        Total           = 13742.80m
+                        NorthernIreland = 91.00m
                     },
-                    CountryApportionment = new CountryApportionmentData()
+                    CountryApportionment = new ByCountryApportionment()
                 },
 
                 CalcResultParameterOtherCost = new CalcResultParameterOtherCost
                 {
-                    LaDataPrepCharge = new CalcResultParameterOtherCostDetail
+                    LaDataPrepCharge = new ByCountryCost
                     {
                         England         = 115.45m,
                         Wales           = 114.00m,
                         Scotland        = 117.00m,
-                        NorthernIreland = 19.00m,
-                        Total           = 365.45m
+                        NorthernIreland = 19.00m
                     }
                 },
                 CalcResultLateReportingTonnageData = Fixture.Create<CalcResultLateReportingTonnage>(),
@@ -62,7 +60,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual(210.28m, disposalRow.Wales);
             Assert.AreEqual(91.00m, disposalRow.Scotland);
             Assert.AreEqual(91, disposalRow.NorthernIreland);
-            Assert.AreEqual(13742.80m, disposalRow.Total);
+            Assert.AreEqual(13672.73m, disposalRow.Total);
 
             // Check data preparation charge row
             var prepchargeRow = resultCalc.LADataPrepCharge;
@@ -74,18 +72,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             // Check total row
             var totalRow = resultCalc.TotalOnePlusFour;
-            Assert.AreEqual(14108.25m, totalRow.Total); // 13,742.80 + 365.45
-            Assert.AreEqual(13395.90m, totalRow.EnglandTotal); // 13,280.45 + 115.45
-            Assert.AreEqual(324.28m, totalRow.WalesTotal); // 210 + 114.00
-            Assert.AreEqual(208.00m, totalRow.ScotlandTotal); // 91.00 + 117.00
-            Assert.AreEqual(110.00m, totalRow.NorthernIrelandTotal); // 91.00 + 19.00
+            Assert.AreEqual(13395.90m, totalRow.England);
+            Assert.AreEqual(324.28m, totalRow.Wales);
+            Assert.AreEqual(208.00m, totalRow.Scotland);
+            Assert.AreEqual(110.00m, totalRow.NorthernIreland);
+            Assert.AreEqual(14038.18m, totalRow.Total);
 
             // Check apportionment row
             var apportionmentRow = resultCalc.OnePlusFourApportionment;
-            Assert.AreEqual(94.95082664m, Math.Round(apportionmentRow.England, 8));
-            Assert.AreEqual(2.29851328m, Math.Round(apportionmentRow.Wales, 8));
-            Assert.AreEqual(1.47431467m, Math.Round(apportionmentRow.Scotland, 8));
-            Assert.AreEqual(0.77968564m, Math.Round(apportionmentRow.NorthernIreland, 8));
+            Assert.AreEqual(95.42476304m, Math.Round(apportionmentRow.England, 8));
+            Assert.AreEqual(2.30998605m, Math.Round(apportionmentRow.Wales, 8));
+            Assert.AreEqual(1.48167355m, Math.Round(apportionmentRow.Scotland, 8));
+            Assert.AreEqual(0.78357736m, Math.Round(apportionmentRow.NorthernIreland, 8));
         }
     }
 }

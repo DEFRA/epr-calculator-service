@@ -53,15 +53,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
                     ByMaterial = [],
-                    Total = new ByCountryValue
+                    Total = new ByCountryCost
                     {
                         England         = 13280.45m,
                         Wales           = 210.28m,
                         Scotland        = 91.00m,
-                        NorthernIreland = 91.00m,
-                        Total           = 13742.80m
+                        NorthernIreland = 91.00m
                     },
-                    CountryApportionment = new CountryApportionmentData()
+                    CountryApportionment = new ByCountryApportionment()
                 },
                 CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
                 {
@@ -75,64 +74,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                 CalcResultParameterOtherCost = new CalcResultParameterOtherCost
                 {
                     BadDebtValue = 6m,
-                    LaDataPrepCharge = new CalcResultParameterOtherCostDetail
-                    {
-                        England         = 40,
-                        Wales           = 30,
-                        Scotland        = 20,
-                        NorthernIreland = 10,
-                        Total           = 100
-                    },
-                    SaOperatingCost = new CalcResultParameterOtherCostDetail
-                    {
-                        England         = 40,
-                        Wales           = 30,
-                        Scotland        = 20,
-                        NorthernIreland = 10,
-                        Total           = 100
-                    },
-                    SchemeSetupCost = new CalcResultParameterOtherCostDetail
-                    {
-                        England         = 40,
-                        Wales           = 30,
-                        Scotland        = 20,
-                        NorthernIreland = 10,
-                        Total           = 100
-                    },
+                    LaDataPrepCharge = new() { England = 40, Wales = 30, Scotland = 20, NorthernIreland = 10 },
+                    SaOperatingCost = new() { England = 40, Wales = 30, Scotland = 20, NorthernIreland = 10 },
+                    SchemeSetupCost = new() { England = 40, Wales = 30, Scotland = 20, NorthernIreland = 10 }
                 },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment
                 {
-                    LaDisposalCost = new()
-                    {
-                        England         = 0.10M,
-                        Wales           = 020M,
-                        NorthernIreland = 0.15M,
-                        Scotland        = 0.15M,
-                        Total           = 0.1M
-                    },
-                    LADataPrepCharge = new()
-                    {
-                        England         = 0.10M,
-                        Wales           = 020M,
-                        Scotland        = 0.15M,
-                        NorthernIreland = 0.15M,
-                        Total           = 0.1M
-                    },
-                    TotalOnePlusFour =  new()
-                    {
-                        EnglandTotal         = 14.53M,
-                        WalesTotal           = 020M,
-                        ScotlandTotal        = 0.15M,
-                        NorthernIrelandTotal = 0.15M,
-                        Total                = 0.1M
-                    },
-                    OnePlusFourApportionment = new()
-                    {
-                        England         = 40,
-                        Wales           = 20M,
-                        Scotland        = 25M,
-                        NorthernIreland = 15M
-                    }
+                    LaDisposalCost = new() { England = 0.10M, Wales = 20M, NorthernIreland = 0.15M, Scotland = 0.15M },
+                    LADataPrepCharge = new() { England = 0.10M, Wales = 20M, Scotland = 0.15M, NorthernIreland = 0.15M },
+                    TotalOnePlusFour =  new() { England = 14.53M, Wales = 20M, Scotland = 0.15M, NorthernIreland = 0.15M },
+                    OnePlusFourApportionment = new() { England = 40, Wales = 20M, Scotland = 25M, NorthernIreland = 15M }
                 },
                 CalcResultCommsCostReportDetail = new CalcResultCommsCost
                 {
@@ -164,8 +115,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                             ReportedPublicBinTonnage  = 0,
                             ProducerReportedTotalTonnage  = 0
                         },
-                    CalcResultCommsCostOnePlusFourApportionment = new CalcResultCommsCostCommsCostByMaterial { England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40, Total = 100, ProducerReportedHouseholdPackagingWasteTonnage = 50, ReportedPublicBinTonnage = 60, HouseholdDrinksContainers = 70, LateReportingTonnage = 80, ProducerReportedTotalTonnage = 90, CommsCostByMaterialPricePerTonne = 100 },
-                    CommsCostByCountry = new ByCountryValue { England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40, Total = 100 }
+                    CalcResultCommsCostOnePlusFourApportionment = new ByCountryApportionment { England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40 },
+                    CommsCostByCountry = new ByCountryCost { England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40 }
                 },
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData
                 {

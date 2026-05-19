@@ -60,7 +60,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("oneLaDisposalCostTotal")]
         public required string OneLaDisposalCostTotal { get; set; }
 
-        public static CalcResultLapcapDataDetailJson From(MaterialDetail materialDetail, ByCountryValue record)
+        public static CalcResultLapcapDataDetailJson From(MaterialDetail materialDetail, ByCountryCost record)
         {
             return new CalcResultLapcapDataDetailJson
             {
@@ -91,7 +91,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("totalLaDisposalCost")]
         public required string TotalLaDisposalCost { get; set; }
 
-        public static CalcResultLapcapDataDetailTotalJson From(ByCountryValue record)
+        public static CalcResultLapcapDataDetailTotalJson From(ByCountryCost record)
         {
             return new CalcResultLapcapDataDetailTotalJson
             {
@@ -121,7 +121,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("totalApportionment")]
         public required string TotalApportionment { get; set; }
 
-        public static CalcResultLapcapDataDetailApportionmentJson From(CountryApportionmentData record)
+        public static CalcResultLapcapDataDetailApportionmentJson From(ByCountryApportionment record)
         {
             return new CalcResultLapcapDataDetailApportionmentJson
             {

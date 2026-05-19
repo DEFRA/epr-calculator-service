@@ -17,13 +17,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.CommsCo
             // Arrange
             var communicationCost = new CalcResultCommsCost
             {
-                CalcResultCommsCostOnePlusFourApportionment = new CalcResultCommsCostOnePlusFourApportionment { England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40, Total = 100 },
+                CalcResultCommsCostOnePlusFourApportionment = new () { England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40 },
                 CommsCostByMaterial = new Dictionary<string, CalcResultCommsCostCommsCostByMaterial>
                     { ["AL"] = new() { England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40, Total = 100, ProducerReportedHouseholdPackagingWasteTonnage = 50, ReportedPublicBinTonnage = 60, HouseholdDrinksContainers = 70, LateReportingTonnage = 80, ProducerReportedTotalTonnage = 90, CommsCostByMaterialPricePerTonne = 100 }
                     },
                 CommsCostByMaterialTotal = new CalcResultCommsCostCommsCostByMaterial { England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40, Total = 100, ProducerReportedHouseholdPackagingWasteTonnage = 50, ReportedPublicBinTonnage = 60, HouseholdDrinksContainers = 70, LateReportingTonnage = 80, ProducerReportedTotalTonnage = 90, CommsCostByMaterialPricePerTonne = 100 },
-                CommsCostUkWide    = new ByCountryValue { England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40, Total = 100 },
-                CommsCostByCountry = new ByCountryValue { England = 11, Wales = 21, Scotland = 31, NorthernIreland = 41, Total = 104 }
+                CommsCostUkWide    = new ByCountryCost { England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40 },
+                CommsCostByCountry = new ByCountryCost { England = 11, Wales = 21, Scotland = 31, NorthernIreland = 41 }
             };
             var materials = TestDataHelper.GetMaterials();
 
