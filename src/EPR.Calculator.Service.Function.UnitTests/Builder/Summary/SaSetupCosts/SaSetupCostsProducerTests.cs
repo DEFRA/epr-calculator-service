@@ -112,34 +112,32 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                         ["Material1"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
+                                EnglandCost = 0m,
+                                WalesCost = 0m,
+                                ScotlandCost = 0m,
+                                NorthernIrelandCost = 0m,
+                                HouseholdPackagingWasteTonnage = Fixture.Create<decimal>(),
+                                PublicBinTonnage = Fixture.Create<decimal>(),
+                                TotalTonnage = Fixture.Create<decimal>(),
                                 DisposalCostPricePerTonne = 20,
-                                England = 0m,
-                                Wales = 0m,
-                                Scotland = 0m,
-                                NorthernIreland = 0m,
-                                Total = 0m,
-                                ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<decimal>(),
-                                ReportedPublicBinTonnage = Fixture.Create<decimal>(),
-                                ProducerReportedTotalTonnage = Fixture.Create<decimal>(),
                             },
                         ["Material2"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
+                                EnglandCost = 0m,
+                                WalesCost = 0m,
+                                ScotlandCost = 0m,
+                                NorthernIrelandCost = 0m,
+                                HouseholdPackagingWasteTonnage = Fixture.Create<decimal>(),
+                                PublicBinTonnage = Fixture.Create<decimal>(),
+                                TotalTonnage = Fixture.Create<decimal>(),
                                 DisposalCostPricePerTonne = 10,
-                                England = 0m,
-                                Wales = 0m,
-                                Scotland = 0m,
-                                NorthernIreland = 0m,
-                                Total = 0m,
-                                ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<decimal>(),
-                                ReportedPublicBinTonnage = Fixture.Create<decimal>(),
-                                ProducerReportedTotalTonnage = Fixture.Create<decimal>(),
                             },
                     },
                     Total = new CalcResultLaDisposalCostDataDetail
                     {
-                        England = 0m, Wales = 0m, Scotland = 0m, NorthernIreland = 0m, Total = 0m,
-                        ProducerReportedHouseholdPackagingWasteTonnage = 0m, ReportedPublicBinTonnage = 0m
+                        EnglandCost = 0m, WalesCost = 0m, ScotlandCost = 0m, NorthernIrelandCost = 0m,
+                        HouseholdPackagingWasteTonnage = 0m, PublicBinTonnage = 0m, TotalTonnage = 0
                     }
                 },
                 CalcResultLapcapData = new CalcResultLapcapData

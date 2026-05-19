@@ -111,32 +111,32 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                         ["AL"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
-                                DisposalCostPricePerTonne = 20,
-                                England = 0,
-                                Wales = 0,
-                                Scotland = 0,
-                                NorthernIreland = 0,
-                                Total = 0,
-                                ProducerReportedHouseholdPackagingWasteTonnage = 0,
-                                ReportedPublicBinTonnage = 0
+                                EnglandCost = 0,
+                                WalesCost = 0,
+                                ScotlandCost = 0,
+                                NorthernIrelandCost = 0,
+                                HouseholdPackagingWasteTonnage = 0,
+                                PublicBinTonnage = 0,
+                                TotalTonnage = 0,
+                                DisposalCostPricePerTonne = 20
                             },
                         ["PL"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
+                                EnglandCost = 0,
+                                WalesCost = 0,
+                                ScotlandCost = 0,
+                                NorthernIrelandCost = 0,
+                                HouseholdPackagingWasteTonnage = 0,
+                                PublicBinTonnage = 0,
+                                TotalTonnage = 0,
                                 DisposalCostPricePerTonne = 20,
-                                England = 0,
-                                Wales = 0,
-                                Scotland = 0,
-                                NorthernIreland = 0,
-                                Total = 0,
-                                ProducerReportedHouseholdPackagingWasteTonnage = 0,
-                                ReportedPublicBinTonnage = 0
                             }
                     },
                     Total = new CalcResultLaDisposalCostDataDetail
                     {
-                        England = 0, Wales = 0, Scotland = 0, NorthernIreland = 0, Total = 0,
-                        ProducerReportedHouseholdPackagingWasteTonnage = 0, ReportedPublicBinTonnage = 0
+                        EnglandCost = 0, WalesCost = 0, ScotlandCost = 0, NorthernIrelandCost = 0,
+                        HouseholdPackagingWasteTonnage = 0, PublicBinTonnage = 0, TotalTonnage = 0
                     }
                 },
                 CalcResultLapcapData = new CalcResultLapcapData

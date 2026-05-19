@@ -2,30 +2,33 @@
 {
     public class CalcResultLaDisposalCostDataDetail
     {
-        public required decimal England { get; set; }
+        public required decimal EnglandCost { get; set; }
 
-        public required decimal Wales { get; set; }
+        public required decimal WalesCost { get; set; }
 
-        public required decimal Scotland { get; set; }
+        public required decimal ScotlandCost { get; set; }
 
-        public required decimal NorthernIreland { get; set; }
+        public required decimal NorthernIrelandCost { get; set; }
 
-        public required decimal Total { get; set; }
+        private decimal? totalCost;
+        public decimal TotalCost =>
+            totalCost ??=
+                EnglandCost + WalesCost + ScotlandCost + NorthernIrelandCost;
 
-        public required decimal ProducerReportedHouseholdPackagingWasteTonnage { get; set; }
+        public required decimal HouseholdPackagingWasteTonnage { get; set; }
 
-        public required decimal ReportedPublicBinTonnage { get; set; }
+        public required decimal PublicBinTonnage { get; set; }
 
-        public decimal? HouseholdDrinkContainers { get; set; }
+        public decimal? HouseholdDrinkContainersTonnage { get; set; }
 
         public decimal? LateReportingTonnage { get; set; }
 
-        public decimal? TotalReportedTonnage { get; set; }
-
         public decimal? ActionedSelfManagedConsumerWasteTonnage { get; set; }
 
-        public decimal? ProducerReportedTotalTonnage { get; set; }
+        // This is not derived since the rule changed for modulation
+        public required decimal TotalTonnage { get; set; }
 
+        // This is not derived since the rule changed for modulation
         public decimal? DisposalCostPricePerTonne { get; set; }
     }
 }
