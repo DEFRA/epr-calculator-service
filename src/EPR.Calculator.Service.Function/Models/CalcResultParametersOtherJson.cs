@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Text.Json.Serialization;
+using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Models
@@ -65,20 +66,31 @@ namespace EPR.Calculator.Service.Function.Models
         [JsonPropertyName("total")]
         public string Total { get; set; } = string.Empty;
 
-        public static CountryAmountJson From(CalcResultParameterOtherCostDetail? costDetail)
+        public static CountryAmountJson From(ByCountryCost? costDetail)
         {
             if (costDetail == null) return new CountryAmountJson();
 
-            var culture = CultureInfo.CreateSpecificCulture("en-GB");
-            culture.NumberFormat.CurrencySymbol = "£";
-            culture.NumberFormat.CurrencyPositivePattern = 0;
             return new CountryAmountJson
             {
-                England = costDetail.England.ToString("C", culture),
-                Wales = costDetail.Wales.ToString("C", culture),
-                Scotland = costDetail.Scotland.ToString("C", culture),
-                NorthernIreland = costDetail.NorthernIreland.ToString("C", culture),
-                Total = costDetail.Total.ToString("C", culture),
+                England         = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(costDetail.England        , 2, ","),
+                Wales           = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(costDetail.Wales          , 2, ","),
+                Scotland        = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(costDetail.Scotland       , 2, ","),
+                NorthernIreland = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(costDetail.NorthernIreland, 2, ","),
+                Total           = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(costDetail.Total          , 2, ",")
+            };
+        }
+
+        public static CountryAmountJson From(ByCountryApportionment? apportionment)
+        {
+            if (apportionment == null) return new CountryAmountJson();
+
+            return new CountryAmountJson
+            {
+                England         = $"{Math.Round(apportionment.England        , (int)DecimalPlaces.Eight)}%",
+                Wales           = $"{Math.Round(apportionment.Wales          , (int)DecimalPlaces.Eight)}%",
+                Scotland        = $"{Math.Round(apportionment.Scotland       , (int)DecimalPlaces.Eight)}%",
+                NorthernIreland = $"{Math.Round(apportionment.NorthernIreland, (int)DecimalPlaces.Eight)}%",
+                Total           = $"{100}%"
             };
         }
     }

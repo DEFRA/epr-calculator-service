@@ -59,8 +59,8 @@ public class CalcResultBuilder(
             CalcResultLapcapData = new CalcResultLapcapData
             {
                 ByMaterial = [],
-                Total = new ByCountryValue(),
-                CountryApportionment = new CountryApportionmentData()
+                Total = new ByCountryCost(),
+                CountryApportionment = new ByCountryApportionment()
             },
             CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
             {

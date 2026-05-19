@@ -2,17 +2,10 @@
 {
     public class CalcResultParameterOtherCost
     {
-        public CalcResultParameterOtherCostDetail SaOperatingCost { get; set; } = new CalcResultParameterOtherCostDetail { England = 0, Wales = 0, Scotland = 0, NorthernIreland = 0, Total = 0 };
-        public CalcResultParameterOtherCostDetail LaDataPrepCharge { get; set; } = new CalcResultParameterOtherCostDetail { England = 0, Wales = 0, Scotland = 0, NorthernIreland = 0, Total = 0 };
-        public CalcResultParameterOtherCostDetail CountryApportionment { get; set; } = new CalcResultParameterOtherCostDetail { England = 0, Wales = 0, Scotland = 0, NorthernIreland = 0, Total = 0 };
-        public CalcResultParameterOtherCostDetail SchemeSetupCost { get; set; } = new CalcResultParameterOtherCostDetail
-        {
-            England = 0m,
-            Wales = 0m,
-            Scotland = 0m,
-            NorthernIreland = 0m,
-            Total = 0m
-        };
+        public ByCountryCost SaOperatingCost { get; set; } = new ByCountryCost { England = 0, Wales = 0, Scotland = 0, NorthernIreland = 0 };
+        public ByCountryCost LaDataPrepCharge { get; set; } = new ByCountryCost { England = 0, Wales = 0, Scotland = 0, NorthernIreland = 0 };
+        public ByCountryApportionment CountryApportionment { get; set; } = new ByCountryApportionment { England = 0, Wales = 0, Scotland = 0, NorthernIreland = 0 }; // TODO default is inconsistent - i.e. doesn't add to 100%
+        public ByCountryCost SchemeSetupCost { get; set; } = new ByCountryCost { England = 0, Wales = 0, Scotland = 0, NorthernIreland = 0 };
         public Materiality MaterialityIncrease { get; set; } = new Materiality { Amount = 0, Percentage = 0 };
         public Materiality MaterialityDecrease { get; set; } = new Materiality { Amount = 0, Percentage = 0 };
         public Materiality TonnageChangeIncrease { get; set; } = new Materiality { Amount = 0, Percentage = 0 };

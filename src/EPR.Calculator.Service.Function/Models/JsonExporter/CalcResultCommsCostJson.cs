@@ -45,7 +45,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("total")]
         public string? Total { get; set; }
 
-        public static OnePlusFourCommsCostApportionmentPercentages From(CalcResultCommsCostOnePlusFourApportionment dataRow)
+        public static OnePlusFourCommsCostApportionmentPercentages From(ByCountryApportionment dataRow)
         {
             string AppendPercent(decimal input)
             {

@@ -15,38 +15,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             // Arrange
             var otherCost = new CalcResultParameterOtherCost
             {
-                SaOperatingCost = new CalcResultParameterOtherCostDetail
-                {
-                    England         = 25000,
-                    Wales           = 14000,
-                    Scotland        = 17000,
-                    NorthernIreland = 9000,
-                    Total           = 65000
-                },
-                LaDataPrepCharge = new CalcResultParameterOtherCostDetail
-                {
-                    England         = 40,
-                    Wales           = 30,
-                    Scotland        = 20,
-                    NorthernIreland = 10,
-                    Total           = 100
-                },
-                CountryApportionment = new CalcResultParameterOtherCostDetail
-                {
-                    England         = 43.83561644m,
-                    Wales           = 19.17808219m,
-                    Scotland        = 24.65753425m,
-                    NorthernIreland = 12.32876712m,
-                    Total           = 100
-                },
-                SchemeSetupCost =
-                {
-                    England         = 17500,
-                    Wales           = 23400,
-                    Scotland        = 12400,
-                    NorthernIreland = 9450,
-                    Total           = 62750
-                },
+                SaOperatingCost      = new() { England = 25000, Wales = 14000, Scotland = 17000, NorthernIreland = 9000 },
+                LaDataPrepCharge     = new() { England = 40, Wales = 30, Scotland = 20, NorthernIreland = 10 },
+                SchemeSetupCost      = new() { England = 17500, Wales = 23400, Scotland = 12400, NorthernIreland = 9450 },
+                CountryApportionment = new() { England = 43.83561644m, Wales = 19.17808219m, Scotland = 24.65753425m, NorthernIreland = 12.32876712m },
                 BadDebtValue = 6,
                 MaterialityIncrease = new Materiality { Amount = 5000, Percentage = 2 },
                 MaterialityDecrease = new Materiality { Amount = -1000, Percentage = -1 },
@@ -81,11 +53,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                   "total"          : "£100.00"
                 },
                 "fourCountryApportionmentPercentages": {
-                  "england"        : "£43.84",
-                  "wales"          : "£19.18",
-                  "scotland"       : "£24.66",
-                  "northernIreland": "£12.33",
-                  "total"          : "£100.00"
+                  "england"        : "43.83561644%",
+                  "wales"          : "19.17808219%",
+                  "scotland"       : "24.65753425%",
+                  "northernIreland": "12.32876712%",
+                  "total"          : "100%"
                 },
                 "fiveSchemeSetupCost": {
                   "england"        : "£17,500.00",

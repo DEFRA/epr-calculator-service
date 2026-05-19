@@ -59,18 +59,17 @@ public class ProducerInvoiceNetTonnageServiceTests
             CalcResultLapcapData = new CalcResultLapcapData
             {
                 ByMaterial = [],
-                Total = new ByCountryValue(),
-                CountryApportionment = new CountryApportionmentData()
+                Total = new ByCountryCost(),
+                CountryApportionment = new ByCountryApportionment()
             },
             CalcResultParameterOtherCost = new CalcResultParameterOtherCost
             {
-                SchemeSetupCost = new CalcResultParameterOtherCostDetail
+                SchemeSetupCost = new ByCountryCost
                 {
                     England = 0,
                     Wales = 0,
                     Scotland = 0,
-                    NorthernIreland = 0,
-                    Total = 0
+                    NorthernIreland = 0
                 }
             },
             CalcResultLateReportingTonnageData = new() { LateReportingTonnageByMaterial = [] },

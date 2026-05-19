@@ -27,28 +27,28 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                   "wales"          : "£20.00",
                   "scotland"       : "£0.15",
                   "northernIreland": "£0.15",
-                  "total"          : "£0.10"
+                  "total"          : "£20.40"
                 },
                 "fourLADataPrepCharge": {
                   "england"        : "£0.10",
                   "wales"          : "£20.00",
                   "scotland"       : "£0.15",
                   "northernIreland": "£0.15",
-                  "total"          : "£0.10"
+                  "total"          : "£20.40"
                 },
                 "totalOfonePlusFour": {
                   "england"        : "£14.53",
                   "wales"          : "£20.00",
                   "scotland"       : "£0.15",
                   "northernIreland": "£0.15",
-                  "total"          : "£0.10"
+                  "total"          : "£34.83"
                 },
                 "onePlusFourApportionmentPercentages": {
-                  "england"        : "40%",
-                  "wales"          : "10%",
-                  "scotland"       : "15%",
-                  "northernIreland": "35%",
-                  "total"          : "100%"
+                  "england"        : "40.00000000%",
+                  "wales"          : "10.00000000%",
+                  "scotland"       : "15.00000000%",
+                  "northernIreland": "35.00000000%",
+                  "total"          : "100.00000000%"
                 }
                 }
                 """;

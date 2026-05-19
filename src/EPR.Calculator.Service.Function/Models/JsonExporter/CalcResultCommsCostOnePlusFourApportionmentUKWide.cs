@@ -25,7 +25,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("totalCommsCostUKWide")]
         public required string TotalCommsCostUKWide { get; set; }
 
-        public static CalcResultCommsCostOnePlusFourApportionmentUKWide? From(ByCountryValue? record)
+        public static CalcResultCommsCostOnePlusFourApportionmentUKWide? From(ByCountryCost? record)
         {
             if (record == null)
             {
