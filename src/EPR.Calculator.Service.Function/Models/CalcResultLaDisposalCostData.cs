@@ -4,6 +4,7 @@
     {
         public Dictionary<string, CalcResultLaDisposalCostDataDetail> ByMaterial { get; set; }
 
+        // TODO derive
         public CalcResultLaDisposalCostDataDetail Total { get; set; }
     }
 }

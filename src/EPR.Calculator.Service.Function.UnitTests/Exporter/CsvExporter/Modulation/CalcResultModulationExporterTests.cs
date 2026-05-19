@@ -30,40 +30,40 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
                 {
                     [al.Code] = new CalcResultLaDisposalCostDataDetail
                     {
-                        England = 0m,
-                        Wales = 0m,
-                        Scotland = 0m,
-                        NorthernIreland = 0m,
-                        Total = 0m,
-                        ProducerReportedHouseholdPackagingWasteTonnage = 26181753.110m,
-                        ReportedPublicBinTonnage = 24610.429m,
-                        HouseholdDrinkContainers = null,
-                        LateReportingTonnage = 3500
+                        EnglandCost = 0m,
+                        WalesCost = 0m,
+                        ScotlandCost = 0m,
+                        NorthernIrelandCost = 0m,
+                        HouseholdPackagingWasteTonnage = 26181753.110m,
+                        PublicBinTonnage = 24610.429m,
+                        HouseholdDrinkContainersTonnage = null,
+                        LateReportingTonnage = 3500,
+                        TotalTonnage = 26209863.539m
                     },
                     [fc.Code] = new CalcResultLaDisposalCostDataDetail
                     {
-                        England = 0m,
-                        Wales = 0m,
-                        Scotland = 0m,
-                        NorthernIreland = 0m,
-                        Total = 0m,
-                        ProducerReportedHouseholdPackagingWasteTonnage = 401772.341m,
-                        ReportedPublicBinTonnage = 1146.546m,
-                        HouseholdDrinkContainers = null,
-                        LateReportingTonnage = 789
+                        EnglandCost = 0m,
+                        WalesCost = 0m,
+                        ScotlandCost = 0m,
+                        NorthernIrelandCost = 0m,
+                        HouseholdPackagingWasteTonnage = 401772.341m,
+                        PublicBinTonnage = 1146.546m,
+                        HouseholdDrinkContainersTonnage = null,
+                        LateReportingTonnage = 789,
+                        TotalTonnage = 403707.887m
                     }
                 },
                 Total = new CalcResultLaDisposalCostDataDetail
                 {
-                    England = 0m,
-                    Wales = 0m,
-                    Scotland = 0m,
-                    NorthernIreland = 0m,
-                    Total = 0m,
-                    ProducerReportedHouseholdPackagingWasteTonnage = 26583525.451m,
-                    ReportedPublicBinTonnage = 25756.975m,
-                    HouseholdDrinkContainers = null,
-                    LateReportingTonnage = 4289
+                    EnglandCost = 0m,
+                    WalesCost = 0m,
+                    ScotlandCost = 0m,
+                    NorthernIrelandCost = 0m,
+                    HouseholdPackagingWasteTonnage = 26583525.451m,
+                    PublicBinTonnage = 25756.975m,
+                    HouseholdDrinkContainersTonnage = null,
+                    LateReportingTonnage = 4289,
+                    TotalTonnage = 26613571.426m
                 }
             };
 

@@ -1,6 +1,7 @@
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
 using EPR.Calculator.Service.Function.UnitTests.Builder;
+using System.Text.Json.Nodes;
 using System.Text.Json;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
@@ -13,7 +14,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         {
             var la = TestDataHelper.GetCalcResultLaDisposalCostData();
             var materials = TestDataHelper.GetMaterials();
-            var result = CalcResultLaDisposalCostDataJson.From(la.ByMaterial, la.Total, materials);
+            var result = CalcResultLaDisposalCostDataJson.From(la.ByMaterial, la.Total, materials, applyModulation: false);
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.CalcResultLaDisposalCostDetails.Any());
@@ -41,7 +42,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                     "publicBinTonnage"                      : 2000.000,
                     "householdDrinksContainersTonnage"      : 0,
                     "lateReportingTonnage"                  : 8000.000,
-                    "totalTonnage"                          : 14980.000
+                    "totalTonnage"                          : 17980.000
                   },
                   {
                     "materialName"                          : "Fibre composite",
@@ -55,7 +56,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                     "publicBinTonnage"                      : 2000.000,
                     "householdDrinksContainersTonnage"      : 0,
                     "lateReportingTonnage"                  : 7000.000,
-                    "totalTonnage"                          : 18850.000
+                    "totalTonnage"                          : 20850.000
                   },
                   {
                     "materialName"                          : "Glass",
@@ -69,7 +70,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                     "publicBinTonnage"                      : 2000.000,
                     "householdDrinksContainersTonnage"      : 0,
                     "lateReportingTonnage"                  : 6000.000,
-                    "totalTonnage"                          : 10900.000
+                    "totalTonnage"                          : 12900.000
                   },
                   {
                     "materialName"                          : "Paper or card",
@@ -83,7 +84,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                     "publicBinTonnage"                      : 2000.000,
                     "householdDrinksContainersTonnage"      : 0,
                     "lateReportingTonnage"                  : 5000.000,
-                    "totalTonnage"                          : 9270.000
+                    "totalTonnage"                          : 11270.000
                   },
                   {
                     "materialName"                          : "Plastic",
@@ -97,7 +98,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                     "publicBinTonnage"                      : 2000.000,
                     "householdDrinksContainersTonnage"      : 0,
                     "lateReportingTonnage"                  : 4000.000,
-                    "totalTonnage"                          : 16805.000
+                    "totalTonnage"                          : 14805.000
                   },
                   {
                     "materialName"                          : "Steel",
@@ -111,7 +112,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                     "publicBinTonnage"                      : 2000.000,
                     "householdDrinksContainersTonnage"      : 0,
                     "lateReportingTonnage"                  : 3000.000,
-                    "totalTonnage"                          : 10700.000
+                    "totalTonnage"                          : 12700.000
                   },
                   {
                     "materialName"                          : "Wood",
@@ -125,7 +126,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                     "publicBinTonnage"                      : 2000.000,
                     "householdDrinksContainersTonnage"      : 0,
                     "lateReportingTonnage"                  : 2000.000,
-                    "totalTonnage"                          : 8800.000
+                    "totalTonnage"                          : 10800.000
                   },
                   {
                     "materialName"                          : "Other materials",
@@ -139,7 +140,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                     "publicBinTonnage"                      : 2000.000,
                     "householdDrinksContainersTonnage"      : 0,
                     "lateReportingTonnage"                  : 1000.000,
-                    "totalTonnage"                          : 8700.000
+                    "totalTonnage"                          : 10700.000
                   }
                 ],
                 "calcResultLaDisposalCostDataDetailsTotal": {
@@ -153,7 +154,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                   "publicBinTonnage"                           : 2000.000,
                   "householdDrinksContainersTonnageTotal"      : 0,
                   "lateReportingTonnageTotal"                  : 36000.000,
-                  "totalTonnageTotal"                          : 99005.000
+                  "totalTonnageTotal"                          : 101005.000
                 }
                 }
                 """;

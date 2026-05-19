@@ -115,44 +115,44 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                         ["AL"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
-                                DisposalCostPricePerTonne = 20,
-                                England = 0,
-                                Wales = 0,
-                                Scotland = 0,
-                                NorthernIreland = 0,
-                                ProducerReportedHouseholdPackagingWasteTonnage = 0,
-                                ReportedPublicBinTonnage = 0,
-                                Total = 0
+                                EnglandCost = 0,
+                                WalesCost = 0,
+                                ScotlandCost = 0,
+                                NorthernIrelandCost = 0,
+                                HouseholdPackagingWasteTonnage = 0,
+                                PublicBinTonnage = 0,
+                                TotalTonnage = 0,
+                                DisposalCostPricePerTonne = 20
                             },
                         ["PL"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
-                                DisposalCostPricePerTonne = 20,
-                                England = 0,
-                                Wales = 0,
-                                Scotland = 0,
-                                NorthernIreland = 0,
-                                ProducerReportedHouseholdPackagingWasteTonnage = 0,
-                                ReportedPublicBinTonnage = 0,
-                                Total = 0
+                                EnglandCost = 0,
+                                WalesCost = 0,
+                                ScotlandCost = 0,
+                                NorthernIrelandCost = 0,
+                                HouseholdPackagingWasteTonnage = 0,
+                                PublicBinTonnage = 0,
+                                TotalTonnage = 0,
+                                DisposalCostPricePerTonne = 20
                             },
                         ["GL"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
-                                DisposalCostPricePerTonne = 10,
-                                England = 0,
-                                Wales = 0,
-                                Scotland = 0,
-                                NorthernIreland = 0,
-                                ProducerReportedHouseholdPackagingWasteTonnage = 0,
-                                ReportedPublicBinTonnage = 0,
-                                Total = 100
+                                EnglandCost = 0,
+                                WalesCost = 0,
+                                ScotlandCost = 0,
+                                NorthernIrelandCost = 0,
+                                HouseholdPackagingWasteTonnage = 0,
+                                PublicBinTonnage = 0,
+                                TotalTonnage = 0,
+                                DisposalCostPricePerTonne = 10
                             },
                     },
                     Total = new CalcResultLaDisposalCostDataDetail
                     {
-                        England = 0, Wales = 0, Scotland = 0, NorthernIreland = 0, Total = 0,
-                        ProducerReportedHouseholdPackagingWasteTonnage = 0, ReportedPublicBinTonnage = 0
+                        EnglandCost = 0, WalesCost = 0, ScotlandCost = 0, NorthernIrelandCost = 0,
+                        HouseholdPackagingWasteTonnage = 0, PublicBinTonnage = 0, TotalTonnage = 0,
                     }
                 },
                 CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers(),

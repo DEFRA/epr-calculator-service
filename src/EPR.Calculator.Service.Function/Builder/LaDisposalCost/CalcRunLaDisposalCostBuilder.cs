@@ -72,30 +72,27 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
                         ? producerData.Where(p => p.MaterialName == materialName && p.PackagingType == PackagingTypes.HouseholdDrinksContainers).Sum(p => p.Tonnage)
                         : null;
                     decimal? actionedSelfManagedConsumerWasteTonnage = applyModulation ? smcw.OverallTotalPerMaterials[materialCode].ActionedSelfManagedConsumerWasteTonnage.total ?? 0 : null;
-                    var producerReportedTotalTonnage =
+                    var totalTonnage =
                         lateReportingTonnageValue
                             + producerReportedHouseholdPackagingWasteTonnage
                             + reportedPublicBinTonnage
-                            + householdDrinkContainers ?? 0m
-                            - actionedSelfManagedConsumerWasteTonnage ?? 0m;
+                            + (householdDrinkContainers ?? 0)
+                            - (actionedSelfManagedConsumerWasteTonnage ?? 0);
+                    var disposalCostPricePerTonne =
+                       totalTonnage == 0 ? (decimal?)null : Math.Round(detail.Value.Total / totalTonnage, 4);
                     var laDisposalDetail = new CalcResultLaDisposalCostDataDetail
                     {
-                        England                  = detail.Value.England,
-                        Wales                    = detail.Value.Wales,
-                        Scotland                 = detail.Value.Scotland,
-                        NorthernIreland          = detail.Value.NorthernIreland,
-                        Total                    = detail.Value.Total,
-                        ProducerReportedHouseholdPackagingWasteTonnage = producerReportedHouseholdPackagingWasteTonnage,
-                        ReportedPublicBinTonnage = reportedPublicBinTonnage,
-                        HouseholdDrinkContainers = householdDrinkContainers,
-                        LateReportingTonnage     = lateReportingTonnageValue,
+                        EnglandCost                  = detail.Value.England,
+                        WalesCost                    = detail.Value.Wales,
+                        ScotlandCost                 = detail.Value.Scotland,
+                        NorthernIrelandCost          = detail.Value.NorthernIreland,
+                        HouseholdPackagingWasteTonnage          = producerReportedHouseholdPackagingWasteTonnage,
+                        PublicBinTonnage                        = reportedPublicBinTonnage,
+                        HouseholdDrinkContainersTonnage         = householdDrinkContainers,
+                        LateReportingTonnage                    = lateReportingTonnageValue,
                         ActionedSelfManagedConsumerWasteTonnage = actionedSelfManagedConsumerWasteTonnage,
-                        ProducerReportedTotalTonnage = lateReportingTonnageValue
-                                                    + producerReportedHouseholdPackagingWasteTonnage
-                                                    + reportedPublicBinTonnage
-                                                    + (householdDrinkContainers ?? 0m)
-                                                    - (actionedSelfManagedConsumerWasteTonnage ?? 0m),
-                        DisposalCostPricePerTonne = CalculateDisposalCostPricePerTonne(producerReportedTotalTonnage, detail.Value.Total)
+                        TotalTonnage                            = totalTonnage,
+                        DisposalCostPricePerTonne               = disposalCostPricePerTonne
                     };
                     return (detail.Key, laDisposalDetail);
                 }).ToDictionary();
@@ -104,42 +101,30 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
             var totalProducerReportedHouseholdPackagingWasteTonnage = producerData.Where(t => t.PackagingType == PackagingTypes.Household                ).Sum(t => t.Tonnage);
             var totalReportedPublicBinTonnage                       = producerData.Where(p => p.PackagingType == PackagingTypes.PublicBin                ).Sum(p => p.Tonnage);
             var totalHouseholdDrinkContainers                       = producerData.Where(p => p.PackagingType == PackagingTypes.HouseholdDrinksContainers).Sum(p => p.Tonnage);
-            decimal? totalActionedSelfManagedConsumerWasteTonnage = applyModulation ? smcw.OverallTotalPerMaterials.Values.Sum(x => x.ActionedSelfManagedConsumerWasteTonnage.total ?? 0) : null;
+            var totalActionedSmwc                                   = applyModulation ? smcw.OverallTotalPerMaterials.Values.Sum(x => x.ActionedSelfManagedConsumerWasteTonnage.total ?? 0) : (decimal?)null;
             var total = new CalcResultLaDisposalCostDataDetail
-                {
-                    England                  = lapcapData.Total.England,
-                    Wales                    = lapcapData.Total.Wales,
-                    Scotland                 = lapcapData.Total.Scotland,
-                    NorthernIreland          = lapcapData.Total.NorthernIreland,
-                    Total                    = lapcapData.Total.Total,
-                    ProducerReportedHouseholdPackagingWasteTonnage = totalProducerReportedHouseholdPackagingWasteTonnage,
-                    ReportedPublicBinTonnage  = totalReportedPublicBinTonnage,
-                    HouseholdDrinkContainers  = totalHouseholdDrinkContainers,
-                    LateReportingTonnage      = totalLateReportingTonnageValue,
-                    ActionedSelfManagedConsumerWasteTonnage = applyModulation ? smcw.OverallTotalPerMaterials.Values.Sum(x => x.ActionedSelfManagedConsumerWasteTonnage.total ?? 0) : null,
-                    ProducerReportedTotalTonnage = totalLateReportingTonnageValue
-                                                + totalProducerReportedHouseholdPackagingWasteTonnage
-                                                + totalReportedPublicBinTonnage
-                                                + totalHouseholdDrinkContainers
-                                                - totalActionedSelfManagedConsumerWasteTonnage ?? 0m
-                };
+            {
+                EnglandCost                  = lapcapData.Total.England,
+                WalesCost                    = lapcapData.Total.Wales,
+                ScotlandCost                 = lapcapData.Total.Scotland,
+                NorthernIrelandCost          = lapcapData.Total.NorthernIreland,
+                HouseholdPackagingWasteTonnage          = totalProducerReportedHouseholdPackagingWasteTonnage,
+                PublicBinTonnage                        = totalReportedPublicBinTonnage,
+                HouseholdDrinkContainersTonnage         = totalHouseholdDrinkContainers,
+                LateReportingTonnage                    = totalLateReportingTonnageValue,
+                ActionedSelfManagedConsumerWasteTonnage = totalActionedSmwc,
+                TotalTonnage                            = totalProducerReportedHouseholdPackagingWasteTonnage
+                                                        + totalReportedPublicBinTonnage
+                                                        + totalHouseholdDrinkContainers
+                                                        + totalLateReportingTonnageValue
+                                                        - (applyModulation ? totalActionedSmwc ?? 0 : 0)
+            };
 
             return new CalcResultLaDisposalCostData
             {
                 ByMaterial = lapcapDetailsByMaterial,
                 Total      = total
             };
-        }
-
-        private static decimal? CalculateDisposalCostPricePerTonne(decimal? producerReportedTotalTonnage, decimal total)
-        {
-            var householdTonnagePlusLateReportingTonnage = producerReportedTotalTonnage ?? 0m;
-
-            if (householdTonnagePlusLateReportingTonnage == 0m)
-            {
-                return null;
-            }
-            return Math.Round(total / householdTonnagePlusLateReportingTonnage, 4);
         }
 
         private async Task<List<ProducerData>> GetProducerData(CalcResultsRequestDto resultsRequestDto)

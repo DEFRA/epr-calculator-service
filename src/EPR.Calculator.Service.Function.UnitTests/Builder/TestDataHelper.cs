@@ -80,129 +80,120 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     ["AL"] =
                         new CalcResultLaDisposalCostDataDetail
                         {
-                            England = 5000,
-                            Wales = 1750,
-                            Scotland = 2000,
-                            NorthernIreland = 1250,
-                            Total = 10000,
-                            ProducerReportedHouseholdPackagingWasteTonnage = 6980,
-                            ReportedPublicBinTonnage = 2000,
+                            EnglandCost = 5000,
+                            WalesCost = 1750,
+                            ScotlandCost = 2000,
+                            NorthernIrelandCost = 1250,
+                            HouseholdPackagingWasteTonnage = 6980,
+                            PublicBinTonnage = 2000,
                             LateReportingTonnage = 8000,
-                            ProducerReportedTotalTonnage = 14980,
-                            DisposalCostPricePerTonne = 0.6676m,
+                            TotalTonnage = 17980,
+                            DisposalCostPricePerTonne = 0.6676m
                         },
                     ["FC"] =
                         new CalcResultLaDisposalCostDataDetail
                         {
-                            England = 7500,
-                            Wales = 2100,
-                            Scotland = 3400,
-                            NorthernIreland = 1750,
-                            Total = 14750,
-                            ProducerReportedHouseholdPackagingWasteTonnage = 11850,
-                            ReportedPublicBinTonnage = 2000,
+                            EnglandCost = 7500,
+                            WalesCost = 2100,
+                            ScotlandCost = 3400,
+                            NorthernIrelandCost = 1750,
+                            HouseholdPackagingWasteTonnage = 11850,
+                            PublicBinTonnage = 2000,
                             LateReportingTonnage = 7000,
-                            ProducerReportedTotalTonnage = 18850,
-                            DisposalCostPricePerTonne = 0.7825m,
+                            TotalTonnage = 20850,
+                            DisposalCostPricePerTonne = 0.7825m
                         },
                     ["GL"] =
                         new CalcResultLaDisposalCostDataDetail
                         {
-                            England = 45000,
-                            Wales = 0,
-                            Scotland = 20700,
-                            NorthernIreland = 4500,
-                            Total = 70200,
-                            ProducerReportedHouseholdPackagingWasteTonnage = 4900,
-                            ReportedPublicBinTonnage = 2000,
+                            EnglandCost = 45000,
+                            WalesCost = 0,
+                            ScotlandCost = 20700,
+                            NorthernIrelandCost = 4500,
+                            HouseholdPackagingWasteTonnage = 4900,
+                            PublicBinTonnage = 2000,
                             LateReportingTonnage = 6000,
-                            ProducerReportedTotalTonnage = 10900,
-                            DisposalCostPricePerTonne = 6.4404m,
+                            TotalTonnage = 12900,
+                            DisposalCostPricePerTonne = 6.4404m
                         },
                     ["PC"] =
                         new CalcResultLaDisposalCostDataDetail
                         {
-                            England = 12500,
-                            Wales = 2300,
-                            Scotland = 4500,
-                            NorthernIreland = 3400,
-                            Total = 22700,
-                            ProducerReportedHouseholdPackagingWasteTonnage = 4270,
-                            ReportedPublicBinTonnage = 2000,
+                            EnglandCost = 12500,
+                            WalesCost = 2300,
+                            ScotlandCost = 4500,
+                            NorthernIrelandCost = 3400,
+                            HouseholdPackagingWasteTonnage = 4270,
+                            PublicBinTonnage = 2000,
                             LateReportingTonnage = 5000,
-                            ProducerReportedTotalTonnage = 9270,
-                            DisposalCostPricePerTonne = 2.4488m,
+                            TotalTonnage = 11270,
+                            DisposalCostPricePerTonne = 2.4488m
                         },
                     ["PL"] =
                         new CalcResultLaDisposalCostDataDetail
                         {
-                            England = 23000,
-                            Wales = 4500,
-                            Scotland = 6700,
-                            NorthernIreland = 2100,
-                            Total = 36300,
-                            ProducerReportedHouseholdPackagingWasteTonnage = 12805,
-                            ReportedPublicBinTonnage = 2000,
+                            EnglandCost = 23000,
+                            WalesCost = 4500,
+                            ScotlandCost = 6700,
+                            NorthernIrelandCost = 2100,
+                            HouseholdPackagingWasteTonnage = 12805,
+                            PublicBinTonnage = 2000,
                             LateReportingTonnage = 4000,
-                            ProducerReportedTotalTonnage = 16805,
-                            DisposalCostPricePerTonne = 2.1601m,
+                            TotalTonnage = 14805,
+                            DisposalCostPricePerTonne = 2.1601m
                         },
                     ["ST"] =
                         new CalcResultLaDisposalCostDataDetail
                         {
-                            England = 13400,
-                            Wales = 0,
-                            Scotland = 7800,
-                            NorthernIreland = 0,
-                            Total = 21200,
-                            ProducerReportedHouseholdPackagingWasteTonnage = 7700,
-                            ReportedPublicBinTonnage = 2000,
+                            EnglandCost = 13400,
+                            WalesCost = 0,
+                            ScotlandCost = 7800,
+                            NorthernIrelandCost = 0,
+                            HouseholdPackagingWasteTonnage = 7700,
+                            PublicBinTonnage = 2000,
                             LateReportingTonnage = 3000,
-                            ProducerReportedTotalTonnage = 10700,
-                            DisposalCostPricePerTonne = 19813,
+                            TotalTonnage = 12700,
+                            DisposalCostPricePerTonne = 19813
                         },
                     ["WD"] =
                         new CalcResultLaDisposalCostDataDetail
                         {
-                            England = 0,
-                            Wales = 12000,
-                            Scotland = 0,
-                            NorthernIreland = 5600,
-                            Total = 17600,
-                            ProducerReportedHouseholdPackagingWasteTonnage = 6800,
-                            ReportedPublicBinTonnage = 2000,
+                            EnglandCost = 0,
+                            WalesCost = 12000,
+                            ScotlandCost = 0,
+                            NorthernIrelandCost = 5600,
+                            HouseholdPackagingWasteTonnage = 6800,
+                            PublicBinTonnage = 2000,
                             LateReportingTonnage = 2000,
-                            ProducerReportedTotalTonnage = 8800,
-                            DisposalCostPricePerTonne = 2,
+                            TotalTonnage = 10800,
+                            DisposalCostPricePerTonne = 2
                         },
                     ["OT"] =
                         new CalcResultLaDisposalCostDataDetail
                         {
-                            England = 3400,
-                            Wales = 2100,
-                            Scotland = 4200,
-                            NorthernIreland = 700,
-                            Total = 10400,
-                            ProducerReportedHouseholdPackagingWasteTonnage = 7700,
-                            ReportedPublicBinTonnage = 2000,
+                            EnglandCost = 3400,
+                            WalesCost = 2100,
+                            ScotlandCost = 4200,
+                            NorthernIrelandCost = 700,
+                            HouseholdPackagingWasteTonnage = 7700,
+                            PublicBinTonnage = 2000,
                             LateReportingTonnage = 1000,
-                            ProducerReportedTotalTonnage = 8700,
-                            DisposalCostPricePerTonne = 1.1954m,
-                        },
+                            TotalTonnage = 10700,
+                            DisposalCostPricePerTonne = 1.1954m
+                        }
                 },
                 Total = new CalcResultLaDisposalCostDataDetail
                 {
-                    England = 109800,
-                    Wales = 24750,
-                    Scotland = 49300,
-                    NorthernIreland = 19300,
-                    Total = 203150,
-                    ProducerReportedHouseholdPackagingWasteTonnage = 63005,
-                    ReportedPublicBinTonnage = 2000,
+                    EnglandCost = 109800,
+                    WalesCost = 24750,
+                    ScotlandCost = 49300,
+                    NorthernIrelandCost = 19300,
+                    HouseholdPackagingWasteTonnage = 63005,
+                    PublicBinTonnage = 2000,
                     LateReportingTonnage = 36000,
-                    ProducerReportedTotalTonnage = 99005,
+                    TotalTonnage = 101005,
                     DisposalCostPricePerTonne = null,
-                },
+                }
             };
         }
 
