@@ -63,7 +63,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
             return new SelfManagedConsumerWasteData
             {
                 SelfManagedConsumerWasteTonnage = 0m,
-                ActionedSelfManagedConsumerWasteTonnage = null,
+                ActionedSelfManagedConsumerWasteTonnage = (total: null, red: null, amber: null, green: null),
                 ResidualSelfManagedConsumerWasteTonnage = null,
                 NetReportedTonnage = (total: null, red: red, amber: amber, green: green)
             };

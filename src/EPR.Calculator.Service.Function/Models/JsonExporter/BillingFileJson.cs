@@ -41,6 +41,9 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("scaleUpProducers")]
         public CalcResultScaledupProducersJson? ScaleUpProducers { get; set; }
 
+        [JsonPropertyName("modulationResults")]
+        public CalcResultModulationResults? ModulationResults { get; set; }
+
         [JsonPropertyName("calculationResults")]
         public object? CalculationResults { get; set; }
 
@@ -59,7 +62,8 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                 CalcResultLaDisposalCostData = CalcResultLaDisposalCostDataJson.From(results.CalcResultLaDisposalCostData.CalcResultLaDisposalCostDetails),
                 CancelledProducers = CancelledProducers.From(results.CalcResultCancelledProducers),
                 ScaleUpProducers = CalcResultScaledupProducersJson.From(results.CalcResultScaledupProducers, acceptedProducerIds, materials),
-                CalculationResults = CalculationResultsJson.From(results.CalcResultSummary, acceptedProducerIds, materials)
+                ModulationResults = results.ApplyModulation && results.CalcResultModulation is not null ? CalcResultModulationResults.From(results.CalcResultModulation) : null,
+                CalculationResults = CalculationResultsJson.From(results, acceptedProducerIds, materials)
             };
         }
     }

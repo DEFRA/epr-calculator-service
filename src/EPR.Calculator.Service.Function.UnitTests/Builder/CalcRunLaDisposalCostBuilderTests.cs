@@ -185,6 +185,64 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual("2400.00", laDisposalCost.ProducerReportedTotalTonnage);
         }
 
+
+        [TestMethod]
+        public async Task Should_Apply_Modulations()
+        {
+            // Assign
+            var resultsDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
+            var calcResult = TestDataHelper.GetCalcResult(applyModulation: true);
+            SeedDatabase(dbContext);
+
+            static SelfManagedConsumerWasteData MkSelfManagedConsumerWasteData(decimal red, decimal amber, decimal green)
+            {
+                return new SelfManagedConsumerWasteData
+                {
+                    SelfManagedConsumerWasteTonnage         = amber,
+                    ActionedSelfManagedConsumerWasteTonnage = (total: amber      , red: 0, amber   , green: 0),
+                    ResidualSelfManagedConsumerWasteTonnage = 0,
+                    NetReportedTonnage                      = (total: red + green, red   , amber: 0, green)
+                };
+            }
+
+            var smcw = new SelfManagedConsumerWaste
+                {
+                    ProducerTotals = [],
+                    OverallTotalPerMaterials = new Dictionary<string, SelfManagedConsumerWasteData>
+                    {
+                        [MaterialCodes.Aluminium]      = MkSelfManagedConsumerWasteData(red:  220, amber:  330, green:  550),
+                        [MaterialCodes.FibreComposite] = MkSelfManagedConsumerWasteData(red:  275, amber:   55, green:   55),
+                        [MaterialCodes.Glass]          = MkSelfManagedConsumerWasteData(red:  110, amber:  220, green:  220),
+                        [MaterialCodes.Plastic]        = MkSelfManagedConsumerWasteData(red:  400, amber: 1050, green: 2400),
+                        [MaterialCodes.PaperOrCard]    = MkSelfManagedConsumerWasteData(red: 2150, amber:  275, green:  270),
+                        [MaterialCodes.Steel]          = MkSelfManagedConsumerWasteData(red:   33, amber:   40, green:   74),
+                        [MaterialCodes.Wood]           = MkSelfManagedConsumerWasteData(red:  265, amber:    0, green:    0),
+                        [MaterialCodes.OtherMaterials] = MkSelfManagedConsumerWasteData(red:   30, amber:    0, green:    0)
+                    }
+                };
+            // Act
+            var lapcapDisposalCostResults = await builder.ConstructAsync(resultsDto, TestDataHelper.GetMaterials(), calcResult.CalcResultLapcapData, calcResult.CalcResultLateReportingTonnageData, smcw, calcResult.ApplyModulation);
+
+            // Assert
+            var plastic = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails.Single(x => x.Name == MaterialNames.Plastic);
+            Assert.IsNotNull(plastic);
+            Assert.AreEqual(MaterialNames.Plastic, plastic.Name);
+            Assert.AreEqual("1050"               , plastic.ActionedSelfManagedConsumerWasteTonnage);
+            Assert.AreEqual("1350.00"            , plastic.ProducerReportedTotalTonnage);
+
+            var steel = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails.Single(x => x.Name == MaterialNames.Steel);
+            Assert.IsNotNull(steel);
+            Assert.AreEqual(MaterialNames.Steel, steel.Name);
+            Assert.AreEqual("40"               , steel.ActionedSelfManagedConsumerWasteTonnage);
+            Assert.AreEqual("360"              , steel.ProducerReportedTotalTonnage);
+
+            var glass = lapcapDisposalCostResults.CalcResultLaDisposalCostDetails.Single(x => x.Name == MaterialNames.Glass);
+            Assert.IsNotNull(glass);
+            Assert.AreEqual(MaterialNames.Glass, glass.Name);
+            Assert.AreEqual("220"              , glass.ActionedSelfManagedConsumerWasteTonnage);
+            Assert.AreEqual("290.00"           , glass.ProducerReportedTotalTonnage);
+        }
+
         [TestMethod]
         public async Task Should_Return_Material_Data_With_Household_Drink_Containers()
         {

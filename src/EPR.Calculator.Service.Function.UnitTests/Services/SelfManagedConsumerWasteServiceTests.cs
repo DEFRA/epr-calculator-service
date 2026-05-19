@@ -82,15 +82,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new()
                 {
                     SelfManagedConsumerWasteTonnage = 10,
-                    ActionedSelfManagedConsumerWasteTonnage = 5,
+                    ActionedSelfManagedConsumerWasteTonnage = (6,1,2,3),
                     ResidualSelfManagedConsumerWasteTonnage = 5,
-                    NetReportedTonnage = (1,1,1,1)
+                    NetReportedTonnage = (3,1,1,1)
                 },
                 null,
                 new()
                 {
                     SelfManagedConsumerWasteTonnage = 20,
-                    ActionedSelfManagedConsumerWasteTonnage = null,
+                    ActionedSelfManagedConsumerWasteTonnage = (null,null,null,null),
                     ResidualSelfManagedConsumerWasteTonnage = -5,
                     NetReportedTonnage = (2,2,2,2)
                 }
@@ -99,9 +99,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var result = items.Sum();
 
             Assert.AreEqual(30, result.SelfManagedConsumerWasteTonnage);
-            Assert.AreEqual(5 , result.ActionedSelfManagedConsumerWasteTonnage);
+            Assert.AreEqual(6 , result.ActionedSelfManagedConsumerWasteTonnage.total);
+            Assert.AreEqual(1 , result.ActionedSelfManagedConsumerWasteTonnage.red);
+            Assert.AreEqual(2 , result.ActionedSelfManagedConsumerWasteTonnage.amber);
+            Assert.AreEqual(3 , result.ActionedSelfManagedConsumerWasteTonnage.green);
             Assert.AreEqual(0 , result.ResidualSelfManagedConsumerWasteTonnage);
-            Assert.AreEqual(3 , result.NetReportedTonnage.total);
+            Assert.AreEqual(5 , result.NetReportedTonnage.total);
             Assert.AreEqual(3 , result.NetReportedTonnage.red);
             Assert.AreEqual(3 , result.NetReportedTonnage.amber);
             Assert.AreEqual(3 , result.NetReportedTonnage.green);
@@ -113,7 +116,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var result = new List<SelfManagedConsumerWasteData?>().Sum();
 
             Assert.AreEqual(0, result.SelfManagedConsumerWasteTonnage);
-            Assert.AreEqual(0, result.ActionedSelfManagedConsumerWasteTonnage);
+            Assert.AreEqual(0, result.ActionedSelfManagedConsumerWasteTonnage.total);
             Assert.AreEqual(0, result.NetReportedTonnage.total);
         }
 
@@ -149,7 +152,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var total = result.OverallTotalPerMaterials[MaterialCodes.Aluminium];
 
             Assert.AreEqual(40, total.SelfManagedConsumerWasteTonnage);
-            Assert.AreEqual( 0, total.ActionedSelfManagedConsumerWasteTonnage);
+            Assert.AreEqual( 0, total.ActionedSelfManagedConsumerWasteTonnage.total);
+            Assert.AreEqual( 0, total.ActionedSelfManagedConsumerWasteTonnage.red);
+            Assert.AreEqual( 0, total.ActionedSelfManagedConsumerWasteTonnage.amber);
+            Assert.AreEqual( 0, total.ActionedSelfManagedConsumerWasteTonnage.green);
             Assert.AreEqual(60, total.NetReportedTonnage.total);
         }
 
@@ -180,7 +186,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var total = result.OverallTotalPerMaterials["NOT_EXIST"];
 
             Assert.AreEqual(0, total.SelfManagedConsumerWasteTonnage, "SelfManagedConsumerWasteTonnage mismatch");
-            Assert.AreEqual(0, total.ActionedSelfManagedConsumerWasteTonnage, "ActionedSelfManagedConsumerWasteTonnage mismatch");
+            Assert.AreEqual(0, total.ActionedSelfManagedConsumerWasteTonnage.total, "ActionedSelfManagedConsumerWasteTonnage mismatch");
             Assert.AreEqual(0, total.NetReportedTonnage.total, "NetReportedTonnage total mismatch");
         }
 
@@ -282,12 +288,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var x = result.ProducerTotals.First().SelfManagedConsumerWasteDataPerMaterials[MaterialCodes.Aluminium];
 
-            Assert.AreEqual(expected.total  , x.NetReportedTonnage.total               , "Net Total mismatch");
-            Assert.AreEqual(expected.red    , x.NetReportedTonnage.red                 , "Net Red mismatch");
-            Assert.AreEqual(expected.amber  , x.NetReportedTonnage.amber               , "Net Amber mismatch");
-            Assert.AreEqual(expected.green  , x.NetReportedTonnage.green               , "Net Green mismatch");
-            Assert.AreEqual(cw              , x.SelfManagedConsumerWasteTonnage        , "SelfManagedConsumerWasteTonnage mismatch");
-            Assert.AreEqual(Math.Min(hh, cw), x.ActionedSelfManagedConsumerWasteTonnage, "ActionedSelfManagedConsumerWasteTonnage mismatch");
+            Assert.AreEqual(expected.total  , x.NetReportedTonnage.total                     , "Net Total mismatch");
+            Assert.AreEqual(expected.red    , x.NetReportedTonnage.red                       , "Net Red mismatch");
+            Assert.AreEqual(expected.amber  , x.NetReportedTonnage.amber                     , "Net Amber mismatch");
+            Assert.AreEqual(expected.green  , x.NetReportedTonnage.green                     , "Net Green mismatch");
+            Assert.AreEqual(cw              , x.SelfManagedConsumerWasteTonnage              , "SelfManagedConsumerWasteTonnage mismatch");
+            Assert.AreEqual(Math.Min(hh, cw), x.ActionedSelfManagedConsumerWasteTonnage.total, "ActionedSelfManagedConsumerWasteTonnage mismatch");
         }
     }
 }

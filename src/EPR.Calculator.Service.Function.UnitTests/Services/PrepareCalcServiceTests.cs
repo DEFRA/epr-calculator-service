@@ -26,13 +26,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         private Mock<IRpdStatusDataValidator> _rpdStatusDataValidator;
         private Mock<IMaterialService> _materialService;
         private Mock<ICalcResultBuilder> _builder;
-        private Mock<ICalcResultsExporter> _exporter;
         private Mock<IProducerDataTransposer> _transposePomAndOrgDataService;
         private Mock<IStorageService> _storageService;
         private CalculatorRunValidator _validationRules;
         private Mock<ICalculatorTelemetryLogger> _telemetryLogger;
-        private Mock<ICalcBillingJsonExporter> _jsonExporter;
-        private Mock<IBillingFileExporter> _billingFileExporter;
+        private Mock<ICalcResultsExporter> _csvResultsExporter;
+        private Mock<IBillingFileExporter> _csvBillingExporter;
+        private Mock<ICalcBillingJsonExporter> _jsonResultsExporter;
         private Mock<IPrepareProducerDataInsertService> _prepareProducerDataInsertService;
 
         public PrepareCalcServiceTests()
@@ -90,13 +90,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             _rpdStatusDataValidator = new Mock<IRpdStatusDataValidator>();
             _builder = new Mock<ICalcResultBuilder>();
             _builder.Setup(b => b.BuildAsync(It.IsAny<CalcResultsRequestDto>(), It.IsAny<IImmutableList<MaterialDetail>>())).ReturnsAsync(calcResult);
-            _exporter = new Mock<ICalcResultsExporter>();
-            _exporter.Setup(x => x.Export(It.IsAny<CalcResult>(), It.IsAny<IImmutableList<MaterialDetail>>())).Returns("Some value");
             _transposePomAndOrgDataService = new Mock<IProducerDataTransposer>();
             _storageService = new Mock<IStorageService>();
             _validationRules = fixture.Create<CalculatorRunValidator>();
-            _jsonExporter = new Mock<ICalcBillingJsonExporter>();
-            _billingFileExporter = new Mock<IBillingFileExporter>();
+            _csvResultsExporter = new Mock<ICalcResultsExporter>();
+            _csvResultsExporter.Setup(x => x.Export(It.IsAny<CalcResult>(), It.IsAny<IImmutableList<MaterialDetail>>())).Returns("Some value");
+            _csvBillingExporter = new Mock<IBillingFileExporter>();
+            _jsonResultsExporter = new Mock<ICalcBillingJsonExporter>();
             _prepareProducerDataInsertService = new Mock<IPrepareProducerDataInsertService>();
             _materialService = new Mock<IMaterialService>();
 
@@ -104,12 +104,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 _context,
                 _materialService.Object,
                 _builder.Object,
-                _exporter.Object,
                 _storageService.Object,
                 _validationRules,
                 new Mock<ICalculatorTelemetryLogger>().Object,
-                _jsonExporter.Object,
-                _billingFileExporter.Object,
+                _csvResultsExporter.Object,
+                _csvBillingExporter.Object,
+                _jsonResultsExporter.Object,
                 _prepareProducerDataInsertService.Object,
                 new OptionsWrapper<BlobStorageOptions>(new BlobStorageOptions())
             );
@@ -165,8 +165,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Arrange
             var fixture = new Fixture();
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
-            _exporter.Setup(x => x.Export(It.IsAny<CalcResult>(), It.IsAny<IImmutableList<MaterialDetail>>())).Throws(new Exception("Custom exception message"));
-            var runName = fixture.Create<string>();
+            _csvResultsExporter.Setup(x => x.Export(It.IsAny<CalcResult>(), It.IsAny<IImmutableList<MaterialDetail>>())).Throws(new Exception("Custom exception message"));
+
+           var runName = fixture.Create<string>();
 
             // Act
             var result = await _testClass.PrepareCalcResultsAsync(resultsRequestDto, runName, CancellationToken.None);
@@ -181,7 +182,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             // Arrange
             var fixture = new Fixture();
             var resultsRequestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
-            _exporter.Setup(x => x.Export(It.IsAny<CalcResult>(), It.IsAny<IImmutableList<MaterialDetail>>())).Throws(new OperationCanceledException("Operation canceled exception message"));
+            _csvResultsExporter.Setup(x => x.Export(It.IsAny<CalcResult>(), It.IsAny<IImmutableList<MaterialDetail>>())).Throws(new OperationCanceledException("Operation canceled exception message"));
             var runName = fixture.Create<string>();
 
             // Act
@@ -228,8 +229,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             await _context.SaveChangesAsync();
 
             _materialService.Setup(m => m.GetMaterials()).ReturnsAsync(fixture.Create<List<MaterialDetail>>().ToImmutableList());
-            _jsonExporter.Setup(t => t.Export(It.IsAny<CalcResult>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<int>>())).Returns(fixture.Create<string>());
-            _billingFileExporter.Setup(t => t.Export(It.IsAny<CalcResult>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<ImmutableHashSet<int>>())).Returns(fixture.Create<string>());
+            _jsonResultsExporter.Setup(t => t.Export(It.IsAny<CalcResult>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<int>>())).Returns(fixture.Create<string>());
+            _csvBillingExporter.Setup(t => t.Export(It.IsAny<CalcResult>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<ImmutableHashSet<int>>())).Returns(fixture.Create<string>());
+
             _storageService.Setup(x => x.UploadFileContentAsync(
                It.IsAny<(string, string, string, string, bool)>()))
                .ReturnsAsync("fileName");

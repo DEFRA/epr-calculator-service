@@ -29,12 +29,12 @@ namespace EPR.Calculator.Service.Function.Services
         ApplicationDBContext dbContext,
         IMaterialService materialService,
         ICalcResultBuilder builder,
-        ICalcResultsExporter exporter,
         IStorageService storageService,
         CalculatorRunValidator validator,
         ICalculatorTelemetryLogger telemetryLogger,
-        ICalcBillingJsonExporter jsonExporter,
-        IBillingFileExporter billingFileExporter,
+        ICalcResultsExporter csvResultsExporter,
+        IBillingFileExporter csvBillingExporter,
+        ICalcBillingJsonExporter jsonBillingExporter,
         IPrepareProducerDataInsertService producerDataInsertService,
         IOptions<BlobStorageOptions> blobStorageOptions)
         : IPrepareCalcService
@@ -114,15 +114,15 @@ namespace EPR.Calculator.Service.Function.Services
                 {
                     RunId = resultsRequestDto.RunId,
                     RunName = runName,
-                    Message = "Exporter started...",
+                    Message = "Csv results exporter started...",
                 });
 
-                var exportedResults = exporter.Export(results, materials);
+                var csvResults = csvResultsExporter.Export(results, materials);
                 telemetryLogger.LogInformation(new TrackMessage
                 {
                     RunId = resultsRequestDto.RunId,
                     RunName = runName,
-                    Message = "Exporter end...",
+                    Message = "Csv results exporter end...",
                 });
                 telemetryLogger.LogInformation(new TrackMessage
                 {
@@ -140,7 +140,7 @@ namespace EPR.Calculator.Service.Function.Services
 
                 var blobUri = await storageService.UploadFileContentAsync(
                     (FileName: fileName,
-                    Content: exportedResults,
+                    Content: csvResults,
                     RunName: runName ?? string.Empty,
                     ContainerName: containerName,
                     Overwrite: OverwriteCsvFile));
@@ -269,7 +269,7 @@ namespace EPR.Calculator.Service.Function.Services
                 Message = $"Billing file JSON file name only is created {billingFileJsonName}",
             });
 
-            var jsonResponse = jsonExporter.Export(calcResults, materials, resultsRequestDto.AcceptedProducerIds);
+            var jsonBilling = jsonBillingExporter.Export(calcResults, materials, resultsRequestDto.AcceptedProducerIds);
 
             telemetryLogger.LogInformation(new TrackMessage
             {
@@ -278,7 +278,7 @@ namespace EPR.Calculator.Service.Function.Services
                 Message = "Billing file JSON content is now created",
             });
 
-            var exportedResults = billingFileExporter.Export(calcResults, materials, resultsRequestDto.AcceptedProducerIds);
+            var csvBilling = csvBillingExporter.Export(calcResults, materials, resultsRequestDto.AcceptedProducerIds);
 
             telemetryLogger.LogInformation(new TrackMessage
             {
@@ -289,7 +289,7 @@ namespace EPR.Calculator.Service.Function.Services
 
             var csvBlobUri = await storageService.UploadFileContentAsync((
                  FileName: billingFileCsvName,
-                 Content: exportedResults,
+                 Content: csvBilling,
                  RunName: runName,
                  ContainerName: blobStorageOptions.Value.BillingFileCsvContainer,
                  Overwrite: OverwriteCsvFile));
@@ -310,7 +310,7 @@ namespace EPR.Calculator.Service.Function.Services
 
             await storageService.UploadFileContentAsync((
                 FileName: billingFileJsonName,
-                Content: jsonResponse,
+                Content: jsonBilling,
                 RunName: runName,
                 ContainerName: blobStorageOptions.Value.BillingFileJsonContainer,
                 Overwrite: OverwriteJsonFile));

@@ -12,7 +12,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
     }
     public class CalcResultsJsonExporter : ICalcBillingJsonExporter
     {
-        private const int decimalPrecision = 3;
+        private const int DecimalPrecision = 3;
 
         public string Export(CalcResult results, IImmutableList<MaterialDetail> materials, IEnumerable<int> acceptedProducerIds)
         {
@@ -30,7 +30,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                     WriteIndented = true,
                     Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                    Converters = { new DecimalPrecisionConverter(decimalPrecision), },
+                    Converters = { new DecimalPrecisionConverter(DecimalPrecision), },
                 });
         }
     }
