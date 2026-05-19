@@ -19,6 +19,7 @@ using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
 using EPR.Calculator.Service.Function.Builder.RejectedProducers;
 using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
 using EPR.Calculator.Service.Function.Builder.Summary;
+using EPR.Calculator.Service.Function.Logging;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
@@ -33,7 +34,6 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.RejectedProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter;
-using EPR.Calculator.Service.Function.Logging;
 using EPR.Calculator.Service.Function.Mappers;
 using EPR.Calculator.Service.Function.Messaging;
 using EPR.Calculator.Service.Function.Misc;
@@ -46,6 +46,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Serilog;
+using Serilog.Filters;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -57,6 +59,8 @@ namespace EPR.Calculator.Service.Function;
 [ExcludeFromCodeCoverage]
 public class Startup : FunctionsStartup
 {
+    private static readonly bool IsRunningLocally = string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WEBSITE_INSTANCE_ID"));
+
     public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
     {
         builder.ConfigurationBuilder
@@ -66,7 +70,37 @@ public class Startup : FunctionsStartup
             .Build();
     }
 
-    public override void Configure(IFunctionsHostBuilder builder) => builder.Services.AddAppDependencies();
+    public override void Configure(IFunctionsHostBuilder builder)
+    {
+        if (IsRunningLocally)
+            ConfigureLocalLogging(builder);
+
+        builder.Services.AddAppDependencies();
+    }
+
+    private static void ConfigureLocalLogging(IFunctionsHostBuilder builder)
+    {
+        var cfg = builder.GetContext().Configuration;
+
+        if (!cfg.GetSection("Serilog").Exists())
+            return;
+
+        var telemetrySource = Matching.FromSource(typeof(LoggerTelemetryClient).FullName!);
+
+        var loggerConfig = new LoggerConfiguration()
+            .ReadFrom.Configuration(cfg)
+            .Enrich.FromLogContext()
+            .WriteTo.Logger(lc => lc
+                .Filter.ByExcluding(telemetrySource)
+                .WriteTo.Console(DevConsole.Logger()))
+            .WriteTo.Logger(lc => lc
+                .Filter.ByIncludingOnly(telemetrySource)
+                .MinimumLevel.Verbose()
+                .WriteTo.Console(DevConsole.Telemetry()));
+
+        Log.Logger = loggerConfig.CreateLogger();
+        builder.Services.AddLogging(logging => logging.AddSerilog(Log.Logger, true));
+    }
 }
 
 [ExcludeFromCodeCoverage]
