@@ -141,9 +141,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                 },
                 CalcResultLapcapData = new CalcResultLapcapData
                 {
-                    ByMaterial = [],
-                    Total = new ByCountryCost(),
-                    CountryApportionment = new ByCountryApportionment()
+                    ByMaterial = []
                 },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment
                 {

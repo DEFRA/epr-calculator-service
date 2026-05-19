@@ -16,16 +16,18 @@
 
     public class ByCountryApportionment
     {
-        public decimal England { get; set; }
+        public decimal England { get; init; }
 
-        public decimal Wales { get; set; }
+        public decimal Wales { get; init; }
 
-        public decimal Scotland { get; set; }
+        public decimal Scotland { get; init; }
 
-        public decimal NorthernIreland { get; set; }
+        public decimal NorthernIreland { get; init; }
 
         // TODO This should always be 100%
         private decimal? total;
         public decimal Total => total ??= England + Wales + Scotland + NorthernIreland;
+
+        public static readonly ByCountryApportionment Empty = new();
     }
 }

@@ -58,9 +58,7 @@ public class ProducerInvoiceNetTonnageServiceTests
             },
             CalcResultLapcapData = new CalcResultLapcapData
             {
-                ByMaterial = [],
-                Total = new ByCountryCost(),
-                CountryApportionment = new ByCountryApportionment()
+                ByMaterial = []
             },
             CalcResultParameterOtherCost = new CalcResultParameterOtherCost
             {

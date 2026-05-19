@@ -125,10 +125,10 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         {
             return new CalcResultLapcapDataDetailApportionmentJson
             {
-                EnglandApportionment         = $"{(100 * record.England        ).ToString("N", new NumberFormatInfo { NumberDecimalDigits = 8 })}%",
-                WalesApportionment           = $"{(100 * record.Wales          ).ToString("N", new NumberFormatInfo { NumberDecimalDigits = 8 })}%",
-                ScotlandApportionment        = $"{(100 * record.Scotland       ).ToString("N", new NumberFormatInfo { NumberDecimalDigits = 8 })}%",
-                NorthernIrelandApportionment = $"{(100 * record.NorthernIreland).ToString("N", new NumberFormatInfo { NumberDecimalDigits = 8 })}%",
+                EnglandApportionment         = $"{record.England        .ToString("N", new NumberFormatInfo { NumberDecimalDigits = 8 })}%",
+                WalesApportionment           = $"{record.Wales          .ToString("N", new NumberFormatInfo { NumberDecimalDigits = 8 })}%",
+                ScotlandApportionment        = $"{record.Scotland       .ToString("N", new NumberFormatInfo { NumberDecimalDigits = 8 })}%",
+                NorthernIrelandApportionment = $"{record.NorthernIreland.ToString("N", new NumberFormatInfo { NumberDecimalDigits = 8 })}%",
                 TotalApportionment           = $"{(100                         ).ToString("N", new NumberFormatInfo { NumberDecimalDigits = 8 })}%"
             };
         }

@@ -58,9 +58,7 @@ public class CalcResultBuilder(
             CalcResultDetail = await calcResultDetailBuilder.ConstructAsync(resultsRequestDto),
             CalcResultLapcapData = new CalcResultLapcapData
             {
-                ByMaterial = [],
-                Total = new ByCountryCost(),
-                CountryApportionment = new ByCountryApportionment()
+                ByMaterial = []
             },
             CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
             {

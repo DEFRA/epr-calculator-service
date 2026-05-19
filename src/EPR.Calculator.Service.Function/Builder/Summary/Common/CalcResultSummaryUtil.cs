@@ -206,10 +206,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             var producerDisposalFeeWithBadDebtProvision = GetProducerDisposalFeeWithBadDebtProvision(calcResult, producerDisposalFeeTotal);
 
             var countryApportionment = calcResult.CalcResultLapcapData.CountryApportionment;
-            if (countryApportionment == null)
-            {
-                return 0;
-            }
 
             decimal? disposalCostPercentage;
             switch (country)
@@ -231,7 +227,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
                     break;
             }
 
-            return producerDisposalFeeWithBadDebtProvision * (disposalCostPercentage ?? 0m);
+            return producerDisposalFeeWithBadDebtProvision * (disposalCostPercentage ?? 0m) / 100;
         }
 
         public static void SetHeaders(CalcResultSummary result, IReadOnlyList<MaterialDetail> materials, bool applyModulation)

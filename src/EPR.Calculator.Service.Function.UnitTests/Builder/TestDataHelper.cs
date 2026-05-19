@@ -46,10 +46,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 },
                 CountryApportionment = new ByCountryApportionment
                 {
-                    England         = 0.4383561643835616m,
-                    Wales           = 0.1917808219178082m,
-                    Scotland        = 0.2465753424657534m,
-                    NorthernIreland = 0.1232876712328767m
+                    England         = 43.83561643835616m,
+                    Wales           = 19.17808219178082m,
+                    Scotland        = 24.65753424657534m,
+                    NorthernIreland = 12.32876712328767m
                 },
                 SchemeSetupCost = new ByCountryCost
                 {
@@ -59,10 +59,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     NorthernIreland = 9450
                 },
                 BadDebtValue = 6,
-                MaterialityIncrease   = new Materiality { Amount = 5000, Percentage = 2 },
-                MaterialityDecrease   = new Materiality { Amount = -1000, Percentage = -1 },
-                TonnageChangeIncrease = new Materiality { Amount = 50, Percentage = 2 },
-                TonnageChangeDecrease = new Materiality { Amount = -10, Percentage = -0.5m }
+                MaterialityIncrease   = new Materiality { Amount =  5000, Percentage =    2m },
+                MaterialityDecrease   = new Materiality { Amount = -1000, Percentage =   -1m },
+                TonnageChangeIncrease = new Materiality { Amount =    50, Percentage =    2m },
+                TonnageChangeDecrease = new Materiality { Amount =   -10, Percentage = -0.5m }
             };
         }
 
@@ -220,14 +220,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     ["ST"] = new ByCountryCost { England = 13400, Wales =     0, Scotland =  7800, NorthernIreland =    0 },
                     ["WD"] = new ByCountryCost { England =     0, Wales = 12000, Scotland =     0, NorthernIreland = 5600 },
                     ["OT"] = new ByCountryCost { England =  3400, Wales =  2100, Scotland =  4200, NorthernIreland =  700 }
-                },
-                Total = new ByCountryCost { England = 109800, Wales = 24750, Scotland = 49300, NorthernIreland = 19300 },
-                CountryApportionment = new ByCountryApportionment
-                {
-                    England         = 0.5404873246369677m,
-                    Wales           = 0.12183115924193945m,
-                    Scotland        = 0.24267782426778243m,
-                    NorthernIreland = 0.09500369185331037m
                 }
             };
         }

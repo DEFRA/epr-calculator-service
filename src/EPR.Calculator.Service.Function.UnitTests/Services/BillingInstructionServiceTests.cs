@@ -53,9 +53,7 @@ public class BillingInstructionServiceTests
             },
             CalcResultLapcapData = new CalcResultLapcapData
             {
-                ByMaterial = [],
-                Total = new ByCountryCost(),
-                CountryApportionment = new ByCountryApportionment()
+                ByMaterial = []
             },
             CalcResultParameterOtherCost = new CalcResultParameterOtherCost
             {
@@ -129,9 +127,7 @@ public class BillingInstructionServiceTests
             },
             CalcResultLapcapData = new CalcResultLapcapData
             {
-                ByMaterial = [],
-                Total = new ByCountryCost(),
-                CountryApportionment = new ByCountryApportionment()
+                ByMaterial = []
             },
             CalcResultParameterOtherCost = new CalcResultParameterOtherCost
             {
@@ -176,9 +172,7 @@ public class BillingInstructionServiceTests
             },
             CalcResultLapcapData = new CalcResultLapcapData
             {
-                ByMaterial = [],
-                Total = new ByCountryCost(),
-                CountryApportionment = new ByCountryApportionment()
+                ByMaterial = []
             },
             CalcResultParameterOtherCost = new CalcResultParameterOtherCost
             {
