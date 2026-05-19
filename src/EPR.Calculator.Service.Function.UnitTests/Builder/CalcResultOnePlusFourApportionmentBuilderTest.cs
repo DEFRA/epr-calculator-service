@@ -82,7 +82,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             // Check apportionment row
             var apportionmentRow = resultCalc.OnePlusFourApportionment;
-            // TODO should we round to 8 d.p in the Builder (i.e. precision to store in db eventually)
             Assert.AreEqual(94.95082664m, Math.Round(apportionmentRow.England, 8));
             Assert.AreEqual(2.29851328m, Math.Round(apportionmentRow.Wales, 8));
             Assert.AreEqual(1.47431467m, Math.Round(apportionmentRow.Scotland, 8));

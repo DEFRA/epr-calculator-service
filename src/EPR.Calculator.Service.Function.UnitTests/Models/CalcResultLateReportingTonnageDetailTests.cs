@@ -8,35 +8,35 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
         public CalcResultLateReportingTonnageDetailTests()
         {
             Fixture = new Fixture();
-            TotalLateReportingTonnage = Fixture.Create<decimal>();
-            RedLateReportingTonnage   = Fixture.Create<decimal>();
-            AmberLateReportingTonnage = Fixture.Create<decimal>();
-            GreenLateReportingTonnage = Fixture.Create<decimal>();
+            Total = Fixture.Create<decimal>();
+            Red   = Fixture.Create<decimal>();
+            Amber = Fixture.Create<decimal>();
+            Green = Fixture.Create<decimal>();
             TestClass = new CalcResultLateReportingTonnageDetail
             {
-                TotalLateReportingTonnage = TotalLateReportingTonnage,
-                RedLateReportingTonnage   = RedLateReportingTonnage,
-                AmberLateReportingTonnage = AmberLateReportingTonnage,
-                GreenLateReportingTonnage = GreenLateReportingTonnage,
+                Total = Total,
+                Red   = Red,
+                Amber = Amber,
+                Green = Green
             };
         }
 
         private CalcResultLateReportingTonnageDetail TestClass { get; init; }
         private IFixture Fixture { get; init; }
-        private decimal TotalLateReportingTonnage { get; init; }
-        private decimal RedLateReportingTonnage { get; init; }
-        private decimal AmberLateReportingTonnage { get; init; }
-        private decimal GreenLateReportingTonnage { get; init; }
+        private decimal Total { get; init; }
+        private decimal Red { get; init; }
+        private decimal Amber { get; init; }
+        private decimal Green { get; init; }
 
         [TestMethod]
         public void CanInitialize()
         {
             var instance = new CalcResultLateReportingTonnageDetail
             {
-                TotalLateReportingTonnage = TotalLateReportingTonnage,
-                RedLateReportingTonnage   = RedLateReportingTonnage,
-                AmberLateReportingTonnage = AmberLateReportingTonnage,
-                GreenLateReportingTonnage = GreenLateReportingTonnage,
+                Total = Total,
+                Red   = Red,
+                Amber = Amber,
+                Green = Green
             };
             Assert.IsNotNull(instance);
         }
@@ -46,10 +46,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
         {
             var same = new CalcResultLateReportingTonnageDetail
             {
-                TotalLateReportingTonnage = TotalLateReportingTonnage,
-                RedLateReportingTonnage   = RedLateReportingTonnage,
-                AmberLateReportingTonnage = AmberLateReportingTonnage,
-                GreenLateReportingTonnage = GreenLateReportingTonnage,
+                Total = Total,
+                Red   = Red,
+                Amber = Amber,
+                Green = Green
             };
             var different = Fixture.Create<CalcResultLateReportingTonnageDetail>();
 
@@ -69,6 +69,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
 
         [TestMethod]
         public void TotalLateReportingTonnageIsInitializedCorrectly()
-            => Assert.AreEqual(TotalLateReportingTonnage, TestClass.TotalLateReportingTonnage);
+            => Assert.AreEqual(Total, TestClass.Total);
     }
 }
