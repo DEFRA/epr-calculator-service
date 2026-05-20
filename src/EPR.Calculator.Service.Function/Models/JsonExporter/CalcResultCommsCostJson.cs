@@ -12,18 +12,8 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
         public static CalcResultCommsCostJson From(CalcResultCommsCost calcResultCommsCost)
         {
-            var onePlusFourApportionment = calcResultCommsCost.CalcResultCommsCostOnePlusFourApportionment;
-
-            // TODO there's a test for this, but it should be prevented
-            if (onePlusFourApportionment == null)
-            {
-                return new CalcResultCommsCostJson {
-                    OnePlusFourCommsCostApportionmentPercentages = new OnePlusFourCommsCostApportionmentPercentages()
-                };
-            }
-
             return new CalcResultCommsCostJson {
-                OnePlusFourCommsCostApportionmentPercentages = OnePlusFourCommsCostApportionmentPercentages.From(onePlusFourApportionment)
+                OnePlusFourCommsCostApportionmentPercentages = OnePlusFourCommsCostApportionmentPercentages.From(calcResultCommsCost.OnePlusFourApportionment)
             };
         }
     }

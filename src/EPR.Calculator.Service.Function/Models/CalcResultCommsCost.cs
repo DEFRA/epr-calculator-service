@@ -6,7 +6,7 @@ namespace EPR.Calculator.Service.Function.Models
     /// </summary>
     public class CalcResultCommsCost
     {
-        public ByCountryApportionment CalcResultCommsCostOnePlusFourApportionment { get; set; }
+        public required ByCountryApportionment OnePlusFourApportionment { get; init; }
 
         public required Dictionary<string, CalcResultCommsCostCommsCostByMaterial> ByMaterial { get; init; }
             = [];
@@ -26,8 +26,8 @@ namespace EPR.Calculator.Service.Function.Models
                     LateReportingTonnage             = ByMaterial.Values.Sum(v => v.LateReportingTonnage)
                 };
 
-        public ByCountryCost CommsCostUkWide { get; set; }
+        public required ByCountryCost CommsCostUkWide { get; init; }
 
-        public ByCountryCost CommsCostByCountry { get; set; }
+        public required ByCountryCost CommsCostByCountry { get; init; }
     }
 }

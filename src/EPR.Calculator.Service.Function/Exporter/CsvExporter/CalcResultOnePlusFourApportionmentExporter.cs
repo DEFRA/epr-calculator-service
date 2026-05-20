@@ -53,11 +53,11 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         private void AppendByCountryApportionment(string name, ByCountryApportionment byCountryApportionment, StringBuilder csvContent)
         {
             csvContent.Append(CsvSanitiser.SanitiseData(name));
-            csvContent.Append(CsvSanitiser.SanitiseData(byCountryApportionment.England        , DecimalPlaces.Eight, null, isPercentage: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(byCountryApportionment.Wales          , DecimalPlaces.Eight, null, isPercentage: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(byCountryApportionment.Scotland       , DecimalPlaces.Eight, null, isPercentage: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(byCountryApportionment.NorthernIreland, DecimalPlaces.Eight, null, isPercentage: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(100                                   , DecimalPlaces.Eight, null, isPercentage: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(byCountryApportionment.England        , DecimalPlaces.Eight, DecimalFormats.F8, isPercentage: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(byCountryApportionment.Wales          , DecimalPlaces.Eight, DecimalFormats.F8, isPercentage: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(byCountryApportionment.Scotland       , DecimalPlaces.Eight, DecimalFormats.F8, isPercentage: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(byCountryApportionment.NorthernIreland, DecimalPlaces.Eight, DecimalFormats.F8, isPercentage: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(100                                   , DecimalPlaces.Eight, DecimalFormats.F8, isPercentage: true));
             csvContent.AppendLine();
         }
     }

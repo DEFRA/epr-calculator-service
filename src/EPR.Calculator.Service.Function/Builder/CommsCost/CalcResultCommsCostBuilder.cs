@@ -107,10 +107,10 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
 
         return new CalcResultCommsCost()
         {
-            CalcResultCommsCostOnePlusFourApportionment = apportionmentDetail,
-            ByMaterial                                  = commsCostByMaterial,
-            CommsCostUkWide                             = ukCost,
-            CommsCostByCountry                          = commsCostByCountryList
+            OnePlusFourApportionment = apportionmentDetail,
+            ByMaterial               = commsCostByMaterial,
+            CommsCostUkWide          = ukCost,
+            CommsCostByCountry       = commsCostByCountryList
         };
     }
 

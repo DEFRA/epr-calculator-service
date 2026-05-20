@@ -28,15 +28,16 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost
             csvContent.AppendLine();
             csvContent.AppendLine(CsvSanitiser.SanitiseData("Parameters - Comms Costs"));
 
-            var onePlusFourApportionment = communicationCost.CalcResultCommsCostOnePlusFourApportionment;
+            var onePlusFourApportionment = communicationCost.OnePlusFourApportionment;
 
             AppendHeaderApportionmentHeaders(csvContent);
             csvContent.Append(CsvSanitiser.SanitiseData("1 + 4 Apportionment %s"));
-            csvContent.Append(CsvSanitiser.SanitiseData($"{onePlusFourApportionment.England : 0.00000000}%"));
-            csvContent.Append(CsvSanitiser.SanitiseData($"{onePlusFourApportionment.Wales : 0.00000000}%"));
-            csvContent.Append(CsvSanitiser.SanitiseData($"{onePlusFourApportionment.Scotland : 0.00000000}%"));
-            csvContent.Append(CsvSanitiser.SanitiseData($"{onePlusFourApportionment.NorthernIreland : 0.00000000}%"));
-            csvContent.AppendLine(CsvSanitiser.SanitiseData($"{onePlusFourApportionment.Total : 0.00000000}%"));
+            csvContent.Append(CsvSanitiser.SanitiseData(onePlusFourApportionment.England        , DecimalPlaces.Eight, DecimalFormats.F8, isPercentage: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(onePlusFourApportionment.Wales          , DecimalPlaces.Eight, DecimalFormats.F8, isPercentage: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(onePlusFourApportionment.Scotland       , DecimalPlaces.Eight, DecimalFormats.F8, isPercentage: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(onePlusFourApportionment.NorthernIreland, DecimalPlaces.Eight, DecimalFormats.F8, isPercentage: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(onePlusFourApportionment.Total          , DecimalPlaces.Eight, DecimalFormats.F8, isPercentage: true));
+            csvContent.AppendLine();
 
             csvContent.AppendLine();
             AppendHeader(csvContent);

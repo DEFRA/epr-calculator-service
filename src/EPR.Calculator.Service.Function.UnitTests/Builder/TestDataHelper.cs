@@ -216,7 +216,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             return new CalcResultCommsCost
             {
-                CalcResultCommsCostOnePlusFourApportionment = new ByCountryApportionment
+                OnePlusFourApportionment = new ByCountryApportionment
                 {
                     England         = 50.23m,
                     Wales           = 30.34m,

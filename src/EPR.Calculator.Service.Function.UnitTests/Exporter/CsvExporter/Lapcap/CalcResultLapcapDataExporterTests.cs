@@ -38,7 +38,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Lapcap
                 new string[] { "Wood"                      ,                   "£0.00",             "£12000.00",                    "£0.00",                         "£5600.00",               "£17600.00" },
                 new string[] { "Other materials"           ,                "£3400.00",              "£2100.00",                 "£4200.00",                          "£700.00",               "£10400.00" },
                 new string[] { "Total"                     ,              "£109800.00",             "£24750.00",                "£49300.00",                        "£19300.00",              "£203150.00" },
-                new string[] { "1 Country Apportionment %s",            "54.04873246%",          "12.18311592%",             "24.26778243%",                      "9.50036919%",                    "100%" },
+                new string[] { "1 Country Apportionment %s",            "54.04873246%",          "12.18311592%",             "24.26778243%",                      "9.50036919%",           "100.00000000%" },
                 new string[] {}
             };
 
