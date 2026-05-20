@@ -25,14 +25,14 @@ namespace EPR.Calculator.Service.Function.Models
         public required CalcResultParameterOtherCost CalcResultParameterOtherCost { get; set; } =
             new()
             {
-                SchemeSetupCost  = new ByCountryCost { England = 0, Wales = 0, Scotland = 0, NorthernIreland = 0 }
+                SchemeSetupCost  = ByCountryCost.Empty
             };
 
         public CalcResultOnePlusFourApportionment CalcResultOnePlusFourApportionment { get; set; }
             = new()
             {
-                LADataPrepCharge = new(),
-                LaDisposalCost   = new()
+                LADataPrepCharge = ByCountryCost.Empty,
+                LaDisposalCost   = ByCountryCost.Empty
             };
 
         public CalcResultLaDisposalCostData CalcResultLaDisposalCostData { get; set; }

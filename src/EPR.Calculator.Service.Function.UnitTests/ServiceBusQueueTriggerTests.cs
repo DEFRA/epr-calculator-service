@@ -83,7 +83,7 @@ namespace EPR.Calculator.Service.Function.UnitTests
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [TestMethod]
-        public async Task ServiceBusTrigger_ValidMessageRun_BiilingTest()
+        public async Task ServiceBusTrigger_ValidMessageRun_BillingTest()
         {
             // Arrange
             var myQueueItem = @"{ Id: 678767, ApprovedBy: 'Test User', MessageType: 'Billing'}";

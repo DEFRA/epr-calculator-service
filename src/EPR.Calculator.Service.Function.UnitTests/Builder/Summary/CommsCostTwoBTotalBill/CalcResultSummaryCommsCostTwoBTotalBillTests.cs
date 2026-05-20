@@ -321,7 +321,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
                     Scotland        = 15,
                     NorthernIreland = 15
                 },
-                LADataPrepCharge = new()
+                LADataPrepCharge = ByCountryCost.Empty
             };
         }
     }
