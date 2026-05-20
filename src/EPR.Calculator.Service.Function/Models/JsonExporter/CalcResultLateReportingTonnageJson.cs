@@ -21,14 +21,14 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
             return new CalcResultLateReportingTonnageJson
             {
                 Name = "Late Reporting Tonnage",
-                calcResultLateReportingTonnageDetails = calcResultLateReportingTonnage.LateReportingTonnageByMaterial
+                calcResultLateReportingTonnageDetails = calcResultLateReportingTonnage.ByMaterial
                     .Select(kv => new CalcResultLateReportingTonnageDetailsJson
                     {
                         MaterialName = materials.First(m => m.Code == kv.Key).Name,
                         TotalLateReportingTonnage = kv.Value.Total
                     })
                     .ToList(),
-                CalcResultLateReportingTonnageTotal = calcResultLateReportingTonnage.LateReportingTonnageTotal.Total
+                CalcResultLateReportingTonnageTotal = calcResultLateReportingTonnage.Total.Total
             };
         }
     }

@@ -72,7 +72,7 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
                 var producerReportedTon = producerReportedMaterials.Where(x => x.MaterialId == material.Id && x.PackagingType != PackagingTypes.PublicBin && x.PackagingType != PackagingTypes.HouseholdDrinksContainers)
                     .Sum(x => x.PackagingTonnage);
 
-                var lateReportingTonnage = calcResultLateReportingTonnage.LateReportingTonnageByMaterial[material.Code];
+                var lateReportingTonnage = calcResultLateReportingTonnage.ByMaterial[material.Code];
                 var publicBinTonnage = producerReportedMaterials.Where(p => p.MaterialId == material.Id && p.PackagingType == PackagingTypes.PublicBin).Sum(p => p.PackagingTonnage);
                 var householdcontainers = producerReportedMaterials.Where(p => p.MaterialId == material.Id && p.PackagingType == PackagingTypes.HouseholdDrinksContainers).Sum(p => p.PackagingTonnage);
 

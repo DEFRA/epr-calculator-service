@@ -14,7 +14,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             };
             TestClass = new CalcResultLateReportingTonnage
             {
-                LateReportingTonnageByMaterial = LateReportingTonnageByMaterial
+                ByMaterial = LateReportingTonnageByMaterial
             };
         }
 
@@ -27,7 +27,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
         {
             var instance = new CalcResultLateReportingTonnage
             {
-                LateReportingTonnageByMaterial = LateReportingTonnageByMaterial
+                ByMaterial = LateReportingTonnageByMaterial
             };
             Assert.IsNotNull(instance);
         }
@@ -37,11 +37,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
         {
             var same = new CalcResultLateReportingTonnage
             {
-                LateReportingTonnageByMaterial = LateReportingTonnageByMaterial
+                ByMaterial = LateReportingTonnageByMaterial
             };
             var different = new CalcResultLateReportingTonnage
             {
-                LateReportingTonnageByMaterial = new Dictionary<string, CalcResultLateReportingTonnageDetail>
+                ByMaterial = new Dictionary<string, CalcResultLateReportingTonnageDetail>
                 {
                     [Fixture.Create<string>()] = Fixture.Create<CalcResultLateReportingTonnageDetail>()
                 }
@@ -62,6 +62,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
 
         [TestMethod]
         public void LateReportingTonnageByMaterialIsInitializedCorrectly()
-            => Assert.AreSame(LateReportingTonnageByMaterial, TestClass.LateReportingTonnageByMaterial);
+            => Assert.AreSame(LateReportingTonnageByMaterial, TestClass.ByMaterial);
     }
 }

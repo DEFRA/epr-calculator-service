@@ -280,7 +280,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             return new CalcResultLateReportingTonnage
             {
-                LateReportingTonnageByMaterial = new Dictionary<string, CalcResultLateReportingTonnageDetail>
+                ByMaterial = new Dictionary<string, CalcResultLateReportingTonnageDetail>
                 {
                     ["AL"] = new() { Red = 1000.00m, Amber = 2000.00m, Green = 5000.00m, Total = 8000.00m },
                     ["FC"] = new() { Red =    5.00m, Amber =       0m, Green =    5.00m, Total =   10.00m },
@@ -290,8 +290,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     ["ST"] = new() { Red =    0.00m, Amber =    0.00m, Green =    0.00m, Total =    0.00m },
                     ["WD"] = new() { Red =    0.00m, Amber =    0.00m, Green =    0.00m, Total =    0.00m },
                     ["OT"] = new() { Red =    0.00m, Amber =    0.00m, Green =    0.00m, Total =    0.00m }
-                },
-                LateReportingTonnageTotal = new() { Red = 2015.00m, Amber = 2500.00m, Green = 5505.00m, Total = 10020.00m }
+                }
             };
         }
 

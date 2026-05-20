@@ -107,7 +107,7 @@ namespace EPR.Calculator.Service.Function.Builder
                 },
                 CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
                 {
-                    LateReportingTonnageByMaterial = []
+                    ByMaterial = []
                 },
                 CalcResultParameterOtherCost = new CalcResultParameterOtherCost(),
                 CalcResultPartialObligations = new CalcResultPartialObligations(),

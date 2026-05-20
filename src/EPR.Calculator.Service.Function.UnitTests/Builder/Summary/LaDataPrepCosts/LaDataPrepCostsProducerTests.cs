@@ -45,11 +45,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.LaDataPrepCo
                     SchemeSetupCost = new() { England = 40, Wales = 30, Scotland = 20, NorthernIreland = 10 }
                 },
                 CalcResultDetail = new CalcResultDetail { RunId = 1, RelativeYear = new RelativeYear(2024) },
-                CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData(),
-                CalcResultLapcapData = new CalcResultLapcapData
-                {
-                    ByMaterial = []
-                },
+                CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData() { ByMaterial = [] },
+                CalcResultLapcapData = new CalcResultLapcapData { ByMaterial = [] },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment
                 {
                     LaDisposalCost = new() { England = 0.10M, Wales = 20M, Scotland = 0.15M, NorthernIreland = 0.15M },

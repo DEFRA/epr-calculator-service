@@ -169,7 +169,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                     },
                 },
                 CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
-                CalcResultLateReportingTonnageData = new() { LateReportingTonnageByMaterial = [] },
+                CalcResultLateReportingTonnageData = new() { ByMaterial = [] },
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
             };
 

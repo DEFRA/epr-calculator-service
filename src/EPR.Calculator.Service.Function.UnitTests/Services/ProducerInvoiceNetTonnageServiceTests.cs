@@ -80,7 +80,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                         NorthernIreland = 0
                     }
                 },
-                CalcResultLateReportingTonnageData = new() { LateReportingTonnageByMaterial = [] },
+                CalcResultLateReportingTonnageData = new() { ByMaterial = [] },
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
             };
 

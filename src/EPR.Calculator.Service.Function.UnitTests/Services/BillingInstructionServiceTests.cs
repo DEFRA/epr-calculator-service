@@ -75,7 +75,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 },
                 CalcResultLateReportingTonnageData = new()
                 {
-                    LateReportingTonnageByMaterial = []
+                    ByMaterial = []
                 },
                 CalcResultSummary = new CalcResultSummary
                 {
@@ -155,7 +155,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 },
                 CalcResultLateReportingTonnageData = new()
                 {
-                    LateReportingTonnageByMaterial = []
+                    ByMaterial = []
                 },
                 CalcResultSummary  = new() {  ProducerDisposalFees = null! },
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
@@ -206,7 +206,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 },
                 CalcResultLateReportingTonnageData = new()
                 {
-                    LateReportingTonnageByMaterial = []
+                    ByMaterial = []
                 },
                 CalcResultSummary = new()
                 {
