@@ -20,7 +20,6 @@ namespace EPR.Calculator.Service.Function;
 [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
 public class ServiceBusQueueTrigger(
     ICalculatorRunService calculatorRunService,
-    ICalculatorRunParameterMapper calculatorRunParameterMapper,
     IRunNameService runNameService,
     IMessageTypeService messageTypeService,
     IPrepareBillingFileService prepareBillingFileService,
@@ -78,15 +77,13 @@ public class ServiceBusQueueTrigger(
         if (runContext is CreateResultFileMessage calculatorContext)
         {
             logger.LogInformation("Processing calculator run");
-            var calculatorRunParameter = calculatorRunParameterMapper.Map(calculatorContext);
-            return await calculatorRunService.PrepareResultsFileAsync(calculatorRunParameter, runName);
+            return await calculatorRunService.PrepareResultsFileAsync(calculatorContext, runName);
         }
 
         if (runContext is CreateBillingFileMessage billingContext)
         {
             logger.LogInformation("Processing billing run");
-            var billingFileMessage = calculatorRunParameterMapper.Map(billingContext);
-            return await prepareBillingFileService.PrepareBillingFileAsync(billingFileMessage.Id, runName, billingFileMessage.ApprovedBy);
+            return await prepareBillingFileService.PrepareBillingFileAsync(billingContext.CalculatorRunId, runName, billingContext.ApprovedBy);
         }
 
         throw new ArgumentException($"Invalid message type: {runContext.GetType().Name}", nameof(runContext));
