@@ -21,11 +21,6 @@ namespace EPR.Calculator.Service.Function.Models
                 ByMaterial = []
             };
 
-        public CalcResultParameterCommunicationCost CalcResultParameterCommunicationCost { get; set; }
-            = new()
-            {
-                Name = string.Empty
-            };
 
         public required CalcResultParameterOtherCost CalcResultParameterOtherCost { get; set; } =
             new()
