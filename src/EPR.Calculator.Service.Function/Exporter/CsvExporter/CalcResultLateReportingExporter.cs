@@ -35,13 +35,13 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             csvContent.Append(CsvSanitiser.SanitiseData("Green + Green Medical Late Reporting Tonnage"));
             csvContent.AppendLine();
 
-            foreach (var kv in calcResultLateReportingData.LateReportingTonnageByMaterial)
+            foreach (var kv in calcResultLateReportingData.ByMaterial)
             {
                 var lateReportingData = kv.Value;
                 var material = materials.First(m => m.Code == kv.Key);
                 AppendRow(material.Name, lateReportingData, csvContent);
             }
-            AppendRow("Total", calcResultLateReportingData.LateReportingTonnageTotal, csvContent);
+            AppendRow("Total", calcResultLateReportingData.Total, csvContent);
         }
 
         private void AppendRow(string name, CalcResultLateReportingTonnageDetail lateReportingData, StringBuilder csvContent)

@@ -2,7 +2,17 @@
 {
     public record CalcResultLateReportingTonnage
     {
-        required public Dictionary<string, CalcResultLateReportingTonnageDetail> LateReportingTonnageByMaterial { get; init; }
-        public CalcResultLateReportingTonnageDetail LateReportingTonnageTotal { get; set; }
+        required public Dictionary<string, CalcResultLateReportingTonnageDetail> ByMaterial { get; init; }
+
+        private CalcResultLateReportingTonnageDetail? total;
+        public CalcResultLateReportingTonnageDetail Total =>
+            total ??=
+                new CalcResultLateReportingTonnageDetail
+                {
+                     Total = ByMaterial.Values.Sum(v => v.Total),
+                     Red   = ByMaterial.Values.Sum(v => v.Red),
+                     Amber = ByMaterial.Values.Sum(v => v.Amber),
+                     Green = ByMaterial.Values.Sum(v => v.Green)
+                };
     }
 }

@@ -67,7 +67,7 @@ public class BillingInstructionServiceTests
             },
             CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
             {
-                LateReportingTonnageByMaterial = []
+                ByMaterial = []
             },
             CalcResultSummary = new CalcResultSummary
             {
@@ -141,7 +141,7 @@ public class BillingInstructionServiceTests
             },
             CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
             {
-                LateReportingTonnageByMaterial = []
+                ByMaterial = []
             },
             CalcResultSummary = new CalcResultSummary { ProducerDisposalFees = null! },
             CalcResultProjectedProducers = new CalcResultProjectedProducers()
@@ -186,7 +186,7 @@ public class BillingInstructionServiceTests
             },
             CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
             {
-                LateReportingTonnageByMaterial = []
+                ByMaterial = []
             },
             CalcResultSummary = new CalcResultSummary
             {

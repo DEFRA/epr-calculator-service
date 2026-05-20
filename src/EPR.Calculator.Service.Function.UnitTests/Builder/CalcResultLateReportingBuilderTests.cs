@@ -95,21 +95,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var result = await builder.ConstructAsync(Materials, requestDto);
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(2, result.LateReportingTonnageByMaterial.Count);
+            Assert.AreEqual(2, result.ByMaterial.Count);
 
-            var aluminium = result.LateReportingTonnageByMaterial["AL"];
+            var aluminium = result.ByMaterial["AL"];
             Assert.AreEqual(100m, aluminium.Red);
             Assert.AreEqual(200m, aluminium.Amber);
             Assert.AreEqual(300m, aluminium.Green);
             Assert.AreEqual(600m, aluminium.Total);
 
-            var fibre = result.LateReportingTonnageByMaterial["FC"];
+            var fibre = result.ByMaterial["FC"];
             Assert.AreEqual(400m, fibre.Red);
             Assert.AreEqual(500m, fibre.Amber);
             Assert.AreEqual(600m, fibre.Green);
             Assert.AreEqual(1500m, fibre.Total);
 
-            var total = result.LateReportingTonnageTotal;
+            var total = result.Total;
             Assert.AreEqual(500m,  total.Red);
             Assert.AreEqual(700m,  total.Amber);
             Assert.AreEqual(900m,  total.Green);

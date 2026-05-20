@@ -51,18 +51,9 @@ namespace EPR.Calculator.Service.Function.Builder.LateReportingTonnages
                 }
             ).ToDictionary();
 
-            var total = new CalcResultLateReportingTonnageDetail
-            {
-                Red   = tonnageDetails.Values.Sum(r => r.Red),
-                Amber = tonnageDetails.Values.Sum(r => r.Amber),
-                Green = tonnageDetails.Values.Sum(r => r.Green),
-                Total = tonnageDetails.Values.Sum(r => r.Total)
-            };
-
             return new CalcResultLateReportingTonnage
             {
-                LateReportingTonnageByMaterial = tonnageDetails,
-                LateReportingTonnageTotal = total
+                ByMaterial = tonnageDetails
             };
         }
 

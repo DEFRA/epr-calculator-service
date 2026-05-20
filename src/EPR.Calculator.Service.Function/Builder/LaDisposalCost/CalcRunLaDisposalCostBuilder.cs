@@ -65,7 +65,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
                 {
                     var materialCode = detail.Key;
                     var materialName = materialDetails.First(m => m.Code == materialCode).Name;
-                    var lateReportingTonnageValue = lateReportingTonnage.LateReportingTonnageByMaterial[materialCode].Total;
+                    var lateReportingTonnageValue = lateReportingTonnage.ByMaterial[materialCode].Total;
                     var producerReportedHouseholdPackagingWasteTonnage = producerData.Where(t => t.MaterialName == materialName && t.PackagingType == PackagingTypes.Household).Sum(t => t.Tonnage);
                     var reportedPublicBinTonnage                       = producerData.Where(p => p.MaterialName == materialName && p.PackagingType == PackagingTypes.PublicBin).Sum(p => p.Tonnage);
                     decimal? householdDrinkContainers = materialName == "Glass"

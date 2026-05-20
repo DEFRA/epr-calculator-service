@@ -70,7 +70,7 @@ public class ProducerInvoiceNetTonnageServiceTests
                     NorthernIreland = 0
                 }
             },
-            CalcResultLateReportingTonnageData = new() { LateReportingTonnageByMaterial = [] },
+            CalcResultLateReportingTonnageData = new() { ByMaterial = [] },
             CalcResultProjectedProducers = new CalcResultProjectedProducers()
         };
 

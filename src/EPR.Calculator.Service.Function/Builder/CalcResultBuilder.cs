@@ -62,7 +62,7 @@ public class CalcResultBuilder(
             },
             CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
             {
-                LateReportingTonnageByMaterial = []
+                ByMaterial = []
             },
             CalcResultParameterOtherCost = new CalcResultParameterOtherCost(),
             CalcResultPartialObligations = new CalcResultPartialObligations(),

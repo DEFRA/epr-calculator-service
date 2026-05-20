@@ -86,12 +86,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                 },
                 CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
                 {
-                    LateReportingTonnageByMaterial = new Dictionary<string, CalcResultLateReportingTonnageDetail>
+                    ByMaterial = new Dictionary<string, CalcResultLateReportingTonnageDetail>
                     {
                         ["AL"] = new() { Red = 1000.00m, Amber = 2000.00m, Green = 5000.00m, Total = 8000.00m },
                         ["PL"] = new() { Red = 1000.00m, Amber =  500.00m, Green =  500.00m, Total = 2000.00m }
-                    },
-                    LateReportingTonnageTotal = new() { Red = 2000.00m, Amber = 2500.00m, Green = 5500.00m, Total = 10000.00m }
+                    }
                 },
                 CalcResultParameterOtherCost = new CalcResultParameterOtherCost
                 {

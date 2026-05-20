@@ -2,7 +2,7 @@
 {
     public class CalcResultLaDisposalCostData
     {
-        public Dictionary<string, CalcResultLaDisposalCostDataDetail> ByMaterial { get; set; }
+        public required Dictionary<string, CalcResultLaDisposalCostDataDetail> ByMaterial { get; init; }
 
         private CalcResultLaDisposalCostDataDetail? total;
         public CalcResultLaDisposalCostDataDetail Total =>
@@ -19,6 +19,8 @@
                     PublicBinTonnage                        = ByMaterial.Values.Sum(v => v.PublicBinTonnage),
                     HouseholdDrinkContainersTonnage         = ByMaterial.Values.Sum(v => v.HouseholdDrinkContainersTonnage ?? 0),
                     LateReportingTonnage                    = ByMaterial.Values.Sum(v => v.LateReportingTonnage ?? 0),
+                    // TODO this used to be null when not applyModulation
+                    // For modulation, can we
                     ActionedSelfManagedConsumerWasteTonnage = ByMaterial.Values.Sum(v => v.ActionedSelfManagedConsumerWasteTonnage ?? 0),
 
                     TotalTonnage = ByMaterial.Values.Sum(v => v.TotalTonnage),
