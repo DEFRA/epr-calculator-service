@@ -58,7 +58,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     Scotland        = 20M,
                     NorthernIreland = 20M
                 },
-                LADataPrepCharge = new()
+                LADataPrepCharge = ByCountryCost.Empty
             };
             var result = await builder.ConstructAsync(materialDetails, resultsRequestDto, apportionment, calcResult.CalcResultLateReportingTonnageData);
 

@@ -101,8 +101,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                 {
                     BadDebtValue = 6m,
                     LaDataPrepCharge = new() { England = 40, Wales = 30, Scotland = 20, NorthernIreland = 10 },
-                    SaOperatingCost = new() { England = 0, Wales = 0, Scotland = 0, NorthernIreland = 0 },
-                    SchemeSetupCost = { England = 40, Wales = 30, Scotland = 20, NorthernIreland = 10 }
+                    SaOperatingCost  = new() { England =  0, Wales =  0, Scotland =  0, NorthernIreland =  0 },
+                    SchemeSetupCost  = new() { England = 40, Wales = 30, Scotland = 20, NorthernIreland = 10 }
                 },
                 CalcResultDetail = new CalcResultDetail { RunId = 1, RelativeYear = new RelativeYear(2024) },
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData

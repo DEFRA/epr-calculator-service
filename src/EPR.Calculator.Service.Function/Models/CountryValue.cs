@@ -1,33 +1,37 @@
 ﻿namespace EPR.Calculator.Service.Function.Models
 {
-    public class ByCountryCost
+    public class  ByCountryCost
     {
-        public decimal England { get; set; }
+        public required decimal England { get; init; }
 
-        public decimal Wales { get; set; }
+        public required decimal Wales { get; init; }
 
-        public decimal Scotland { get; set; }
+        public required decimal Scotland { get; init; }
 
-        public decimal NorthernIreland { get; set; }
+        public required decimal NorthernIreland { get; init; }
 
         private decimal? total;
         public decimal Total => total ??= England + Wales + Scotland + NorthernIreland;
+
+        public static readonly ByCountryCost Empty =
+            new(){ England = 0, Wales = 0, Scotland = 0, NorthernIreland = 0 };
     }
 
     public class ByCountryApportionment
     {
-        public decimal England { get; init; }
+        public required decimal England { get; init; }
 
-        public decimal Wales { get; init; }
+        public required decimal Wales { get; init; }
 
-        public decimal Scotland { get; init; }
+        public required decimal Scotland { get; init; }
 
-        public decimal NorthernIreland { get; init; }
+        public required decimal NorthernIreland { get; init; }
 
         // TODO This should always be 100%
         private decimal? total;
         public decimal Total => total ??= England + Wales + Scotland + NorthernIreland;
 
-        public static readonly ByCountryApportionment Empty = new();
+        public static readonly ByCountryApportionment Empty =
+            new(){ England = 0, Wales = 0, Scotland = 0, NorthernIreland = 0 };
     }
 }
