@@ -52,18 +52,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
                         LateReportingTonnage = 789,
                         TotalTonnage = 403707.887m
                     }
-                },
-                Total = new CalcResultLaDisposalCostDataDetail
-                {
-                    EnglandCost = 0m,
-                    WalesCost = 0m,
-                    ScotlandCost = 0m,
-                    NorthernIrelandCost = 0m,
-                    HouseholdPackagingWasteTonnage = 26583525.451m,
-                    PublicBinTonnage = 25756.975m,
-                    HouseholdDrinkContainersTonnage = null,
-                    LateReportingTonnage = 4289,
-                    TotalTonnage = 26613571.426m
                 }
             };
 

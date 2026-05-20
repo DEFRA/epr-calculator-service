@@ -181,18 +181,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             TotalTonnage = 10700,
                             DisposalCostPricePerTonne = 1.1954m
                         }
-                },
-                Total = new CalcResultLaDisposalCostDataDetail
-                {
-                    EnglandCost = 109800,
-                    WalesCost = 24750,
-                    ScotlandCost = 49300,
-                    NorthernIrelandCost = 19300,
-                    HouseholdPackagingWasteTonnage = 63005,
-                    PublicBinTonnage = 2000,
-                    LateReportingTonnage = 36000,
-                    TotalTonnage = 101005,
-                    DisposalCostPricePerTonne = null,
                 }
             };
         }

@@ -51,7 +51,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.LaDispo
                 },
                 new[] { "Aluminium"      ,"£100.00", "£50.00","£0.00","£0.00","£150.00","0","0","100.123","0","100.123","£20.0000" },
                 new[] { "Fibre composite","£100.00", "£50.00","£0.00","£0.00","£150.00","2","0",      "0","0",   "0.77","£10.0000" },
-                new[] { "Total"          ,  "£0.00",  "£0.00","£0.00","£0.00",  "£0.00","0","0","100.123","0","98.893" },
+                new[] { "Total"          ,"£200.00","£100.00","£0.00","£0.00","£300.00","2","0","100.123","0","100.893" },
                 new string[] { }
             };
 
@@ -91,9 +91,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.LaDispo
                         "Net Tonnage + Late Reporting Tonnage",
                         "Disposal Cost Price Per Tonne"
                 },
-                new[] { "Aluminium"      ,"£100.00","£50.00","£0.00","£0.00","£150.00","0","0","100.123","0",   "0","100.123","£20.0000" },
-                new[] { "Fibre composite","£100.00","£50.00","£0.00","£0.00","£150.00","2","0",      "0","0","1.23",   "0.77","£10.0000" },
-                new[] { "Total"          ,  "£0.00", "£0.00","£0.00","£0.00",  "£0.00","0","0","100.123","0","1.23", "98.893" },
+                new[] { "Aluminium"      ,"£100.00", "£50.00","£0.00","£0.00","£150.00","0","0","100.123","0",   "0","100.123","£20.0000" },
+                new[] { "Fibre composite","£100.00", "£50.00","£0.00","£0.00","£150.00","2","0",      "0","0","1.23",   "0.77","£10.0000" },
+                new[] { "Total"          ,"£200.00","£100.00","£0.00","£0.00","£300.00","2","0","100.123","0","1.23", "100.893" },
                 new string[] { }
             };
 
@@ -130,19 +130,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.LaDispo
                         TotalTonnage = 0.77m,
                         DisposalCostPricePerTonne = 10,
                     }
-                },
-                Total = new CalcResultLaDisposalCostDataDetail
-                {
-                    DisposalCostPricePerTonne = 10,
-                    EnglandCost = 0m,
-                    WalesCost = 0m,
-                    ScotlandCost = 0m,
-                    NorthernIrelandCost = 0m,
-                    HouseholdPackagingWasteTonnage = 0m,
-                    PublicBinTonnage = 0m,
-                    HouseholdDrinkContainersTonnage = 100.12345m,
-                    ActionedSelfManagedConsumerWasteTonnage = 1.23m,
-                    TotalTonnage = 98.89345m
                 }
             };
         }

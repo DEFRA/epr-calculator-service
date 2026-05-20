@@ -148,11 +148,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                                 TotalTonnage = 0,
                                 DisposalCostPricePerTonne = 10
                             },
-                    },
-                    Total = new CalcResultLaDisposalCostDataDetail
-                    {
-                        EnglandCost = 0, WalesCost = 0, ScotlandCost = 0, NorthernIrelandCost = 0,
-                        HouseholdPackagingWasteTonnage = 0, PublicBinTonnage = 0, TotalTonnage = 0,
                     }
                 },
                 CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers(),

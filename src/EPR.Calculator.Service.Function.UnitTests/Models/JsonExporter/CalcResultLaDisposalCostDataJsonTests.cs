@@ -151,10 +151,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                   "northernIrelandLaDisposalCostTotal"         : "£19,300.00",
                   "totalLaDisposalCostTotal"                   : "£203,150.00",
                   "producerHouseholdPackagingWasteTonnageTotal": 63005.000,
-                  "publicBinTonnage"                           : 2000.000,
+                  "publicBinTonnage"                           : 16000.000,
                   "householdDrinksContainersTonnageTotal"      : 0,
                   "lateReportingTonnageTotal"                  : 36000.000,
-                  "totalTonnageTotal"                          : 101005.000
+                  "totalTonnageTotal"                          : 112005.000
                 }
                 }
                 """;
