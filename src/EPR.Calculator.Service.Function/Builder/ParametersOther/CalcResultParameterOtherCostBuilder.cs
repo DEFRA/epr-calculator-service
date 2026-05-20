@@ -33,10 +33,6 @@ namespace EPR.Calculator.Service.Function.Builder.ParametersOther
 
         public async Task<CalcResultParameterOtherCost> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
         {
-            var culture = CultureInfo.CreateSpecificCulture("en-GB");
-            culture.NumberFormat.CurrencySymbol = "£";
-            culture.NumberFormat.CurrencyPositivePattern = 0;
-
             //TODO inject params
             var results = await (
                 from run in dbContext.CalculatorRuns
@@ -65,8 +61,6 @@ namespace EPR.Calculator.Service.Function.Builder.ParametersOther
             var schemeSetupCharge = GetPrepCharge(schemeSetUpCharges);
 
             var badDebtValue = results.Single(x => x.ParameterType == BadDebtProvision).ParameterValue;
-
-            //var badDebtProvision = new KeyValuePair<string, string> (BadDebtProvisionHeader, $"{badDebtValue:0.00}%");
 
             var materialityResults = results.Where(x => x.ParameterType == "Materiality threshold");
 

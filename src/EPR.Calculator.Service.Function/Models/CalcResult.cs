@@ -12,7 +12,12 @@ namespace EPR.Calculator.Service.Function.Models
             new() { ByMaterial = [] };
 
         public CalcResultCommsCost CalcResultCommsCostReportDetail { get; set; } =
-            new() { ByMaterial = [] };
+            new() {
+                OnePlusFourApportionment = ByCountryApportionment.Empty,
+                ByMaterial               = [],
+                CommsCostUkWide          = ByCountryCost.Empty,
+                CommsCostByCountry       = ByCountryCost.Empty
+            };
 
         public required CalcResultLateReportingTonnage CalcResultLateReportingTonnageData { get; set; } =
             new() { ByMaterial = [] };

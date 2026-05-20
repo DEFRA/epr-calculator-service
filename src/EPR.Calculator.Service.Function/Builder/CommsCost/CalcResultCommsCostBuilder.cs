@@ -115,10 +115,10 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
 
             return new CalcResultCommsCost()
             {
-                CalcResultCommsCostOnePlusFourApportionment = apportionmentDetail,
-                ByMaterial                                  = commsCostByMaterial,
-                CommsCostUkWide                             = ukCost,
-                CommsCostByCountry                          = commsCostByCountryList
+                OnePlusFourApportionment = apportionmentDetail,
+                ByMaterial               = commsCostByMaterial,
+                CommsCostUkWide          = ukCost,
+                CommsCostByCountry       = commsCostByCountryList
             };
         }
 

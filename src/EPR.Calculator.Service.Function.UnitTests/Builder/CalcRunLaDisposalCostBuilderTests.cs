@@ -220,18 +220,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             var lapcapDisposalCostResults = await builder.ConstructAsync(resultsDto, TestDataHelper.GetMaterials(), calcResult.CalcResultLapcapData, calcResult.CalcResultLateReportingTonnageData, smcw, calcResult.ApplyModulation);
 
             // Assert
-            var culture = CultureInfo.GetCultureInfo("en-GB");
             var laDisposalCost = lapcapDisposalCostResults.ByMaterial["GL"];
             Assert.AreEqual(45000, laDisposalCost.EnglandCost);
-            Assert.AreEqual(0, laDisposalCost.WalesCost);
+            Assert.AreEqual(    0, laDisposalCost.WalesCost);
             Assert.AreEqual(20700, laDisposalCost.ScotlandCost);
-            Assert.AreEqual(4500, laDisposalCost.NorthernIrelandCost);
+            Assert.AreEqual( 4500, laDisposalCost.NorthernIrelandCost);
             Assert.AreEqual(70200, laDisposalCost.TotalCost);
-            Assert.AreEqual(0, laDisposalCost.HouseholdPackagingWasteTonnage);
-            Assert.AreEqual(0, laDisposalCost.PublicBinTonnage);
-            Assert.AreEqual(500, laDisposalCost.HouseholdDrinkContainersTonnage);
-            Assert.AreEqual(10, laDisposalCost.LateReportingTonnage);
-            Assert.AreEqual(510, laDisposalCost.TotalTonnage);
+            Assert.AreEqual(    0, laDisposalCost.HouseholdPackagingWasteTonnage);
+            Assert.AreEqual(    0, laDisposalCost.PublicBinTonnage);
+            Assert.AreEqual(  500, laDisposalCost.HouseholdDrinkContainersTonnage);
+            Assert.AreEqual(   10, laDisposalCost.LateReportingTonnage);
+            Assert.AreEqual(  510, laDisposalCost.TotalTonnage);
         }
 
         [TestMethod]

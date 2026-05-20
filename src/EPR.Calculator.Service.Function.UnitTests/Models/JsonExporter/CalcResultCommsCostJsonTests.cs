@@ -32,27 +32,5 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                 """;
             JsonTestUtils.AssertJson(expectedJson, json);
         }
-
-        [TestMethod]
-        public void CalcResultCommsCost_From_Empty()
-        {
-            var data = new CalcResultCommsCost() { ByMaterial = [] };
-
-            var result = CalcResultCommsCostJson.From(data);
-            var json = JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true });
-            Console.WriteLine(json);
-            var expectedJson = """
-                {
-                  "onePlusFourCommsCostApportionmentPercentages": {
-                    "england"        : null,
-                    "wales"          : null,
-                    "scotland"       : null,
-                    "northernIreland": null,
-                    "total"          : null
-                  }
-                }
-                """;
-            JsonTestUtils.AssertJson(expectedJson, json);
-        }
     }
 }

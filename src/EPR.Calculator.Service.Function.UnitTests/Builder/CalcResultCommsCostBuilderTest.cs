@@ -69,7 +69,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             Assert.IsNotNull(result);
 
-            var onePlusFourApp = result.CalcResultCommsCostOnePlusFourApportionment;
+            var onePlusFourApp = result.OnePlusFourApportionment;
             Assert.IsNotNull(onePlusFourApp);
 
             Assert.AreEqual(40 , onePlusFourApp.England);

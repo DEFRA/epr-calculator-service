@@ -17,7 +17,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.CommsCo
             // Arrange
             var communicationCost = new CalcResultCommsCost
             {
-                CalcResultCommsCostOnePlusFourApportionment = new () { England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40 },
+                OnePlusFourApportionment = new () { England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40 },
                 ByMaterial = new Dictionary<string, CalcResultCommsCostCommsCostByMaterial>
                 {
                      ["AL"] = new() { EnglandCost = 10, WalesCost = 20, ScotlandCost = 30, NorthernIrelandCost = 40, HouseholdPackagingWasteTonnage = 50, PublicBinTonnage = 60, HouseholdDrinksContainersTonnage = 70, LateReportingTonnage = 80 }
