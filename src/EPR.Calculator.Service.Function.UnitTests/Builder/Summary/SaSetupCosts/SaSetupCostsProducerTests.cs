@@ -133,11 +133,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                                 TotalTonnage = Fixture.Create<decimal>(),
                                 DisposalCostPricePerTonne = 10,
                             },
-                    },
-                    Total = new CalcResultLaDisposalCostDataDetail
-                    {
-                        EnglandCost = 0m, WalesCost = 0m, ScotlandCost = 0m, NorthernIrelandCost = 0m,
-                        HouseholdPackagingWasteTonnage = 0m, PublicBinTonnage = 0m, TotalTonnage = 0
                     }
                 },
                 CalcResultLapcapData = new CalcResultLapcapData

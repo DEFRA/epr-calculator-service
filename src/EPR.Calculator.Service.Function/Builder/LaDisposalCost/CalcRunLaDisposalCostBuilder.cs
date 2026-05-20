@@ -97,33 +97,9 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
                     return (detail.Key, laDisposalDetail);
                 }).ToDictionary();
 
-            var totalLateReportingTonnageValue = lateReportingTonnage.LateReportingTonnageTotal.Total;
-            var totalProducerReportedHouseholdPackagingWasteTonnage = producerData.Where(t => t.PackagingType == PackagingTypes.Household                ).Sum(t => t.Tonnage);
-            var totalReportedPublicBinTonnage                       = producerData.Where(p => p.PackagingType == PackagingTypes.PublicBin                ).Sum(p => p.Tonnage);
-            var totalHouseholdDrinkContainers                       = producerData.Where(p => p.PackagingType == PackagingTypes.HouseholdDrinksContainers).Sum(p => p.Tonnage);
-            var totalActionedSmwc                                   = applyModulation ? smcw.OverallTotalPerMaterials.Values.Sum(x => x.ActionedSelfManagedConsumerWasteTonnage.total ?? 0) : (decimal?)null;
-            var total = new CalcResultLaDisposalCostDataDetail
-            {
-                EnglandCost                  = lapcapData.Total.England,
-                WalesCost                    = lapcapData.Total.Wales,
-                ScotlandCost                 = lapcapData.Total.Scotland,
-                NorthernIrelandCost          = lapcapData.Total.NorthernIreland,
-                HouseholdPackagingWasteTonnage          = totalProducerReportedHouseholdPackagingWasteTonnage,
-                PublicBinTonnage                        = totalReportedPublicBinTonnage,
-                HouseholdDrinkContainersTonnage         = totalHouseholdDrinkContainers,
-                LateReportingTonnage                    = totalLateReportingTonnageValue,
-                ActionedSelfManagedConsumerWasteTonnage = totalActionedSmwc,
-                TotalTonnage                            = totalProducerReportedHouseholdPackagingWasteTonnage
-                                                        + totalReportedPublicBinTonnage
-                                                        + totalHouseholdDrinkContainers
-                                                        + totalLateReportingTonnageValue
-                                                        - (applyModulation ? totalActionedSmwc ?? 0 : 0)
-            };
-
             return new CalcResultLaDisposalCostData
             {
-                ByMaterial = lapcapDetailsByMaterial,
-                Total      = total
+                ByMaterial = lapcapDetailsByMaterial
             };
         }
 
