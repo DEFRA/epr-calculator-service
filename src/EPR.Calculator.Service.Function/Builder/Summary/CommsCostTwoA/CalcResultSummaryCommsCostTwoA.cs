@@ -119,7 +119,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
         public static decimal GetPriceperTonneForComms(MaterialDetail material, CalcResult calcResult)
         {
             var commsCostDataDetail = calcResult.CalcResultCommsCostReportDetail.ByMaterial.GetValueOrDefault(material.Code);
-            return commsCostDataDetail?.CommsCostByMaterialPricePerTonne ?? 0m;
+            return commsCostDataDetail?.PricePerTonne ?? 0m;
         }
 
         public static decimal GetProducerTotalCostwithBadDebtProvision(

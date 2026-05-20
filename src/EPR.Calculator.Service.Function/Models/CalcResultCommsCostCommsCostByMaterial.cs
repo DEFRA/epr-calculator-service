@@ -16,8 +16,8 @@ public class CalcResultCommsCostCommsCostByMaterial : CalcResultCommsCostOnePlus
             + (HouseholdDrinksContainersTonnage ?? 0);
 
 
-    private decimal? commsCostByMaterialPricePerTonne;
-    public decimal CommsCostByMaterialPricePerTonne =>
-        commsCostByMaterialPricePerTonne ??=
+    private decimal? pricePerTonne;
+    public decimal PricePerTonne =>
+        pricePerTonne ??=
             TotalTonnage != 0 ? TotalCost / TotalTonnage : 0;
 }

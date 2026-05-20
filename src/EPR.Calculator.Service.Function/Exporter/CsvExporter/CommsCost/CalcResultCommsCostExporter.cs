@@ -51,6 +51,14 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost
 
             csvContent.AppendLine();
 
+            csvContent.Append(CsvSanitiser.SanitiseData((string?)null));
+            csvContent.Append(CsvSanitiser.SanitiseData("England"));
+            csvContent.Append(CsvSanitiser.SanitiseData("Wales"));
+            csvContent.Append(CsvSanitiser.SanitiseData("Scotland"));
+            csvContent.Append(CsvSanitiser.SanitiseData("Northern Ireland"));
+            csvContent.Append(CsvSanitiser.SanitiseData("Total"));
+            csvContent.AppendLine();
+
             csvContent.Append(CsvSanitiser.SanitiseData("2b Comms Costs - UK wide"));
             csvContent.Append(CsvSanitiser.SanitiseData(communicationCost.CommsCostUkWide.England        , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
             csvContent.Append(CsvSanitiser.SanitiseData(communicationCost.CommsCostUkWide.Wales          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
@@ -115,7 +123,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost
             }
             else
             {
-                csvContent.Append(CsvSanitiser.SanitiseData(commCost.CommsCostByMaterialPricePerTonne, DecimalPlaces.Four, null, isCurrency: true));
+                csvContent.Append(CsvSanitiser.SanitiseData(commCost.PricePerTonne, DecimalPlaces.Four, null, isCurrency: true));
             }
             csvContent.AppendLine();
         }

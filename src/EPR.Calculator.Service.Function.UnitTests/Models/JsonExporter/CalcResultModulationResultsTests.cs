@@ -20,16 +20,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                 MaterialModulation = new Dictionary<MaterialDetail, MaterialModulation>()
             });
 
-            var actualJson = JsonNode.Parse(JsonSerializer.Serialize(result));
+            var actualJson = JsonSerializer.Serialize(result);
 
-            var expectedJson = JsonNode.Parse("""
+            var expectedJson = """
             {
                 "redFactor": 1.25,
                 "greenDiscountFactor": 0.750000
             }
-            """);
+            """;
 
-            Assert.IsTrue(JsonNode.DeepEquals(expectedJson, actualJson));
+            JsonTestUtils.AssertJson(expectedJson, actualJson);
         }
     }
 }

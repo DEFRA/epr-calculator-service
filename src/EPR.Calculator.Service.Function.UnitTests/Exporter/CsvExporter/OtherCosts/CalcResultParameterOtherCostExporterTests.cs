@@ -51,11 +51,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.OtherCo
                 new[] { "6 Bad Debt Provision","6.00%" },
                 new string[] {},
                 new[] { "7 Materiality","Amount £s","%" },
-                new[] { "Increase","£5000.00","2" },
-                new[] { "Decrease","£-1000.00","-1" },
+                new[] { "Increase","£5000.00","2.00%" },
+                new[] { "Decrease","-£1000.00","-1.00%" },
                 new[] { "8 Tonnage Change","Amount £s","%" },
-                new[] { "Increase","£50.00","2" },
-                new[] { "Decrease","£-10.00","-0.5" }
+                new[] { "Increase","£50.00","2.00%" },
+                new[] { "Decrease","-£10.00","-0.50%" }
             };
 
             CsvTestUtils.AssertCsv(expected, result);

@@ -45,6 +45,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.CommsCo
                 new[] { "Aluminium","£10.00","£20.00","£30.00","£40.00","£100.00","50.000","60.000","70.000","80.000","260.000","£0.3846" },
                 new[] { "Total"    ,"£10.00","£20.00","£30.00","£40.00","£100.00","50.000","60.000","70.000","80.000","260.000" },
                 new string[] { },
+                new[] { null, "England","Wales","Scotland","Northern Ireland","Total" },
                 new [] {  "2b Comms Costs - UK wide"   ,"£10.00","£20.00","£30.00","£40.00","£100.00" },
                 new [] {  "2c Comms Costs - by Country","£11.00","£21.00","£31.00","£41.00","£104.00" },
                 new string[] { }

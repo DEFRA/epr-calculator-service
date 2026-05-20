@@ -1,8 +1,7 @@
 ﻿using System.Text;
-using System.Globalization;
+using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.Enums;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts
 {
@@ -30,7 +29,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts
 
             csvContent.AppendLine();
             csvContent.Append(CsvSanitiser.SanitiseData("6 Bad Debt Provision"));
-            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.BadDebtValue, Enums.DecimalPlaces.Two, Enums.DecimalFormats.F2, isPercentage: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.BadDebtValue, DecimalPlaces.Two, DecimalFormats.F2, isPercentage: true));
             csvContent.AppendLine();
 
             csvContent.AppendLine();
@@ -40,34 +39,34 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts
             csvContent.Append(CsvSanitiser.SanitiseData("%"));
             csvContent.AppendLine();
             csvContent.Append(CsvSanitiser.SanitiseData("Increase"));
-            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.MaterialityIncrease.Amount, Enums.DecimalPlaces.Two, Enums.DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.MaterialityIncrease.Percentage));
+            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.MaterialityIncrease.Amount, DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.MaterialityIncrease.Percentage, DecimalPlaces.Two, DecimalFormats.F2, isPercentage: true));
             csvContent.AppendLine();
             csvContent.Append(CsvSanitiser.SanitiseData("Decrease"));
-            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.MaterialityDecrease.Amount, Enums.DecimalPlaces.Two, Enums.DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.MaterialityDecrease.Percentage));
+            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.MaterialityDecrease.Amount, DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.MaterialityDecrease.Percentage, DecimalPlaces.Two, DecimalFormats.F2, isPercentage: true));
             csvContent.AppendLine();
             csvContent.Append(CsvSanitiser.SanitiseData("8 Tonnage Change"));
             csvContent.Append(CsvSanitiser.SanitiseData("Amount £s"));
             csvContent.Append(CsvSanitiser.SanitiseData("%"));
             csvContent.AppendLine();
             csvContent.Append(CsvSanitiser.SanitiseData("Increase"));
-            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.TonnageChangeIncrease.Amount, Enums.DecimalPlaces.Two, Enums.DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.TonnageChangeIncrease.Percentage));
+            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.TonnageChangeIncrease.Amount, DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.TonnageChangeIncrease.Percentage, DecimalPlaces.Two, DecimalFormats.F2, isPercentage: true));
             csvContent.AppendLine();
             csvContent.Append(CsvSanitiser.SanitiseData("Decrease"));
-            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.TonnageChangeDecrease.Amount, Enums.DecimalPlaces.Two, Enums.DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.TonnageChangeDecrease.Percentage));
+            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.TonnageChangeDecrease.Amount, DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.TonnageChangeDecrease.Percentage, DecimalPlaces.Two, DecimalFormats.F2, isPercentage: true));
         }
 
         public void SchemeSetupCost(CalcResultParameterOtherCost otherCost, StringBuilder csvContent)
         {
             csvContent.Append(CsvSanitiser.SanitiseData("5 Scheme set up cost Yearly Cost"));
-            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.SchemeSetupCost.England        , Enums.DecimalPlaces.Two, Enums.DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.SchemeSetupCost.Wales          , Enums.DecimalPlaces.Two, Enums.DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.SchemeSetupCost.Scotland       , Enums.DecimalPlaces.Two, Enums.DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.SchemeSetupCost.NorthernIreland, Enums.DecimalPlaces.Two, Enums.DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.SchemeSetupCost.Total          , Enums.DecimalPlaces.Two, Enums.DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.SchemeSetupCost.England        , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.SchemeSetupCost.Wales          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.SchemeSetupCost.Scotland       , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.SchemeSetupCost.NorthernIreland, DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.SchemeSetupCost.Total          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
             csvContent.AppendLine();
         }
 
@@ -104,11 +103,11 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts
             csvContent.AppendLine();
 
             csvContent.Append(CsvSanitiser.SanitiseData("3 SA Operating Costs"));
-            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.SaOperatingCost.England        , Enums.DecimalPlaces.Two, Enums.DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.SaOperatingCost.Wales          , Enums.DecimalPlaces.Two, Enums.DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.SaOperatingCost.Scotland       , Enums.DecimalPlaces.Two, Enums.DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.SaOperatingCost.NorthernIreland, Enums.DecimalPlaces.Two, Enums.DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.SaOperatingCost.Total          , Enums.DecimalPlaces.Two, Enums.DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.SaOperatingCost.England        , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.SaOperatingCost.Wales          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.SaOperatingCost.Scotland       , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.SaOperatingCost.NorthernIreland, DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.SaOperatingCost.Total          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
             csvContent.AppendLine();
         }
     }

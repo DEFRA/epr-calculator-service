@@ -1,5 +1,6 @@
 ﻿namespace EPR.Calculator.Service.Function.Models;
 
+// TODO reuse ByCountryApportionment
 public class CalcResultCommsCostOnePlusFourApportionment
 {
     public decimal EnglandCost { get; set; }
