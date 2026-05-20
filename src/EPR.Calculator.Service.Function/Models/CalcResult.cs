@@ -8,18 +8,14 @@ namespace EPR.Calculator.Service.Function.Models
         public required bool ApplyModulation {get; set;}
         public required CalcResultDetail CalcResultDetail { get; set; }
 
-        public required CalcResultLapcapData CalcResultLapcapData { get; set; } = new()
-        {
-            ByMaterial = []
-        };
+        public required CalcResultLapcapData CalcResultLapcapData { get; set; } =
+            new() { ByMaterial = [] };
 
-        public CalcResultCommsCost CalcResultCommsCostReportDetail { get; set; } = new();
+        public CalcResultCommsCost CalcResultCommsCostReportDetail { get; set; } =
+            new() { ByMaterial = [] };
 
         public required CalcResultLateReportingTonnage CalcResultLateReportingTonnageData { get; set; } =
-            new()
-            {
-                ByMaterial = []
-            };
+            new() { ByMaterial = [] };
 
 
         public required CalcResultParameterOtherCost CalcResultParameterOtherCost { get; set; } =
@@ -36,10 +32,7 @@ namespace EPR.Calculator.Service.Function.Models
             };
 
         public CalcResultLaDisposalCostData CalcResultLaDisposalCostData { get; set; }
-            = new()
-            {
-                ByMaterial = []
-            };
+            = new() { ByMaterial = [] };
 
         public required CalcResultPartialObligations CalcResultPartialObligations { get; set; }
 

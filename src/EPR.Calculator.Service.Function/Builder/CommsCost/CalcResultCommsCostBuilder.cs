@@ -43,8 +43,6 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
 
         var apportionmentDetail = apportionment.OnePlusFourApportionment;
 
-        var result = new CalcResultCommsCost();
-
         var allDefaultResults = await (
             from run in context.CalculatorRuns
             join defaultMaster in context.DefaultParameterSettings on run.DefaultParameterSettingMasterId equals defaultMaster.Id
@@ -93,8 +91,6 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
             return (material.Code, commsCost);
         }).ToDictionary();
 
-        var commsCostByMaterialTotal = GetTotalRow(commsCostByMaterial.Values);
-
         var commsCostByUk =
             allDefaultResults.Single(x =>
                 x.ParameterType == CommunicationCostByCountry && x.ParameterCategory == Uk);
@@ -112,8 +108,7 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
         return new CalcResultCommsCost()
         {
             CalcResultCommsCostOnePlusFourApportionment = apportionmentDetail,
-            CommsCostByMaterial                         = commsCostByMaterial,
-            CommsCostByMaterialTotal                    = commsCostByMaterialTotal,
+            ByMaterial                                  = commsCostByMaterial,
             CommsCostUkWide                             = ukCost,
             CommsCostByCountry                          = commsCostByCountryList
         };
@@ -136,25 +131,6 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
             select mat
         ).Distinct().ToListAsync();
     }
-
-    private static CalcResultCommsCostCommsCostByMaterial GetTotalRow(
-        IEnumerable<CalcResultCommsCostCommsCostByMaterial> list
-    )
-    {
-        // TODO move total row to Exporter?
-        return new CalcResultCommsCostCommsCostByMaterial
-        {
-            EnglandCost         = list.Sum(x => x.EnglandCost),
-            WalesCost           = list.Sum(x => x.WalesCost),
-            NorthernIrelandCost = list.Sum(x => x.NorthernIrelandCost),
-            ScotlandCost        = list.Sum(x => x.ScotlandCost),
-            HouseholdPackagingWasteTonnage   = list.Sum(x => x.HouseholdPackagingWasteTonnage),
-            PublicBinTonnage                 = list.Sum(x => x.PublicBinTonnage),
-            HouseholdDrinksContainersTonnage = list.Sum(x => x.HouseholdDrinksContainersTonnage),
-            LateReportingTonnage             = list.Sum(x => x.LateReportingTonnage)
-        };
-    }
-
 
     private static ByCountryCost GetCommsCostByCountry(
         IEnumerable<CalcCommsBuilderResult> allDefaultResults
