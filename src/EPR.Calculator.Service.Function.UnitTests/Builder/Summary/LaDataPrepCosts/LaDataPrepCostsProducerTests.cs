@@ -49,10 +49,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.LaDataPrepCo
                 CalcResultLapcapData = new CalcResultLapcapData { ByMaterial = [] },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment
                 {
-                    LaDisposalCost = new() { England = 0.10M, Wales = 20M, Scotland = 0.15M, NorthernIreland = 0.15M },
-                    LADataPrepCharge = new() { England = 0.10M, Wales = 20M, Scotland = 0.15M, NorthernIreland = 0.15M },
-                    TotalOnePlusFour =  new() { England = 14.53M, Wales = 20M, Scotland = 0.15M, NorthernIreland = 0.15M },
-                    OnePlusFourApportionment = new() { England = 40, Wales = 30, Scotland = 15, NorthernIreland = 15 }
+                    LaDisposalCost   = new() { England = 0.10M, Wales = 20M, Scotland = 0.15M, NorthernIreland = 0.15M },
+                    LADataPrepCharge = new() { England = 0.10M, Wales = 20M, Scotland = 0.15M, NorthernIreland = 0.15M }
                 },
                 CalcResultParameterCommunicationCost = Fixture.Create<CalcResultParameterCommunicationCost>(),
                 CalcResultSummary = new CalcResultSummary

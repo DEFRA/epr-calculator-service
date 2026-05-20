@@ -80,10 +80,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                 },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment
                 {
-                    LaDisposalCost = new() { England = 0.10M, Wales = 20M, NorthernIreland = 0.15M, Scotland = 0.15M },
-                    LADataPrepCharge = new() { England = 0.10M, Wales = 20M, Scotland = 0.15M, NorthernIreland = 0.15M },
-                    TotalOnePlusFour =  new() { England = 14.53M, Wales = 20M, Scotland = 0.15M, NorthernIreland = 0.15M },
-                    OnePlusFourApportionment = new() { England = 40, Wales = 20M, Scotland = 25M, NorthernIreland = 15M }
+                    LaDisposalCost   = new() { England = 0.10M, Wales = 20M, Scotland = 0.15M, NorthernIreland = 0.15M },
+                    LADataPrepCharge = new() { England = 0.10M, Wales = 20M, Scotland = 0.15M, NorthernIreland = 0.15M }
                 },
                 CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData

@@ -34,7 +34,11 @@ namespace EPR.Calculator.Service.Function.Models
             };
 
         public CalcResultOnePlusFourApportionment CalcResultOnePlusFourApportionment { get; set; }
-            = new();
+            = new()
+            {
+                LADataPrepCharge = new(),
+                LaDisposalCost   = new()
+            };
 
         public CalcResultLaDisposalCostData CalcResultLaDisposalCostData { get; set; }
             = new()

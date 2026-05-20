@@ -139,13 +139,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                 {
                     ByMaterial = []
                 },
-                CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment
-                {
-                    LaDisposalCost = new() { England = 0.10M, Wales = 20M, NorthernIreland = 0.15M, Scotland = 0.15M },
-                    LADataPrepCharge = new() { England = 0.10M, Wales = 20M, Scotland = 0.15M, NorthernIreland = 0.15M },
-                    TotalOnePlusFour =  new() { England = 14.53M, Wales = 20M, Scotland = 0.15M, NorthernIreland = 0.15M },
-                    OnePlusFourApportionment = new() { England = 40, Wales = 30, Scotland = 15, NorthernIreland = 15 }
-                },
+                CalcResultOnePlusFourApportionment = TestDataHelper.GetCalcResultOnePlusFourApportionment(),
                 CalcResultParameterCommunicationCost = Fixture.Create<CalcResultParameterCommunicationCost>(),
                 CalcResultSummary = new CalcResultSummary
                 {
@@ -284,7 +278,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
             var result = SaSetupCostsProducer.GetCountryTotalWithBadDebtProvision(_calcResult, _calcResult.CalcResultSummary.SaSetupCostsTitleSection5, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.Wales);
 
             // Assert
-            Assert.AreEqual(0.32m, Math.Round(result, 2));
+            Assert.AreEqual(0.11m, Math.Round(result, 2));
         }
 
         private void CreateMaterials()

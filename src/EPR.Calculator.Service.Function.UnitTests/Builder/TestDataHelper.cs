@@ -207,34 +207,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             return new CalcResultOnePlusFourApportionment
             {
-                LaDisposalCost = new()
-                {
-                    England         = 0.10M,
-                    Wales           = 020M,
-                    NorthernIreland = 0.15M,
-                    Scotland        = 0.15M
-                },
-                LADataPrepCharge = new()
-                {
-                    England         = 0.10M,
-                    Wales           = 020M,
-                    Scotland        = 0.15M,
-                    NorthernIreland = 0.15M
-                },
-                TotalOnePlusFour =  new()
-                {
-                    England         = 14.53M,
-                    Wales           = 020M,
-                    Scotland        = 0.15M,
-                    NorthernIreland = 0.15M
-                },
-                OnePlusFourApportionment = new()
-                {
-                    England         = 40,
-                    Wales           = 10,
-                    Scotland        = 15,
-                    NorthernIreland = 35
-                }
+                LaDisposalCost   = new() { England = 30, Wales = 5, Scotland = 15, NorthernIreland = 35 },
+                LADataPrepCharge = new() { England = 10, Wales = 5, Scotland =  0, NorthernIreland =  0 }
             };
         }
 
