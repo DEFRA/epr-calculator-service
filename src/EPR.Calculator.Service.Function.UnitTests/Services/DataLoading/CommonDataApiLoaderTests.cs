@@ -64,7 +64,7 @@ public class CommonDataApiLoaderTests
         var loader = CreateLoader(false, handler);
 
         // Act
-        await loader.LoadData(CreateRunParams(), "TestRun");
+        await loader.LoadData(new RelativeYear(2024));
 
         // Assert
         VerifyLogContains(LogLevel.Information, "Disabled", Times.Once(), "Logger should record it is disabled.");
@@ -85,7 +85,7 @@ public class CommonDataApiLoaderTests
         var loader = CreateLoader(true, ServerErrorHandler());
 
         // Act & Assert
-        await Should.ThrowAsync<HttpRequestException>(async () => await loader.LoadData(CreateRunParams(), "TestRun"));
+        await Should.ThrowAsync<HttpRequestException>(async () => await loader.LoadData(new RelativeYear(2024)));
     }
 
     /// <summary>
@@ -104,7 +104,7 @@ public class CommonDataApiLoaderTests
         var loader = CreateLoader(true, handler);
 
         // Act & Assert
-        await Should.ThrowAsync<HttpRequestException>(async () => await loader.LoadData(CreateRunParams(), "TestRun"));
+        await Should.ThrowAsync<HttpRequestException>(async () => await loader.LoadData(new RelativeYear(2024)));
     }
 
     /// <summary>
@@ -123,7 +123,7 @@ public class CommonDataApiLoaderTests
         var loader = CreateLoader(true, handler);
 
         // Act & Assert
-        await Should.ThrowAsync<HttpRequestException>(async () => await loader.LoadData(CreateRunParams(), "TestRun"));
+        await Should.ThrowAsync<HttpRequestException>(async () => await loader.LoadData(new RelativeYear(2024)));
     }
 
     // ─────────────────────────── LoadData – cancellation ───────────────────────────
@@ -142,7 +142,7 @@ public class CommonDataApiLoaderTests
         await cts.CancelAsync();
 
         // Act & Assert
-        await Should.ThrowAsync<TaskCanceledException>(async () => await loader.LoadData(CreateRunParams(), "TestRun", cts.Token));
+        await Should.ThrowAsync<TaskCanceledException>(async () => await loader.LoadData(new RelativeYear(2024), cts.Token));
     }
 
     // ─────────────────────────── Run – try-catch-finally ───────────────────────────
@@ -165,7 +165,7 @@ public class CommonDataApiLoaderTests
         var loader = CreateLoader(true, new UrlDispatchHandler(_ => OkNdJson(string.Empty)));
 
         // Act & Assert
-        await Should.ThrowAsync<InvalidOperationException>(async () => await loader.LoadData(CreateRunParams(), "TestRun"));
+        await Should.ThrowAsync<InvalidOperationException>(async () => await loader.LoadData(new RelativeYear(2024)));
     }
 
     // ─────────────────────────── Helpers ───────────────────────────
@@ -196,15 +196,6 @@ public class CommonDataApiLoaderTests
             mockTelemetry,
             mockLogger.Object);
     }
-
-    private static CalculatorRunParameter CreateRunParams() =>
-        new()
-        {
-            Id = 1,
-            User = "test-user",
-            RelativeYear = new RelativeYear(2024),
-            MessageType = "ignored"
-        };
 
     private static HttpResponseMessage OkNdJson(string content) =>
         new(HttpStatusCode.OK)

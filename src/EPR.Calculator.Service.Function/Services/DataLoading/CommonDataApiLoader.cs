@@ -28,7 +28,7 @@ public class CommonDataApiLoader(
     : IDataLoader
 {
     /// <inheritdoc />
-    public async Task LoadData(CalculatorRunParameter runParams, string runName,
+    public async Task LoadData(RelativeYear relativeYear,
         CancellationToken cancellationToken = default)
     {
         var opts = options.Value;
@@ -39,7 +39,7 @@ public class CommonDataApiLoader(
             return;
         }
 
-        await telemetry.TrackDuration("DataStream", () => Run(runParams.RelativeYear, timeProvider.GetUtcNow(), cancellationToken));
+        await telemetry.TrackDuration("DataStream", () => Run(relativeYear, timeProvider.GetUtcNow(), cancellationToken));
     }
 
     private async Task<(long totalPoms, long totalOrgs)> Run(
