@@ -98,9 +98,6 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
                 return (material.Code, commsCost);
             }).ToDictionary();
 
-            telemetryClient.TrackTrace("Generating total row...");
-            var commsCostByMaterialTotal = GetTotalRow(commsCostByMaterial.Values);
-
             var commsCostByUk =
                 allDefaultResults.Single(x =>
                     x.ParameterType == CommunicationCostByCountry && x.ParameterCategory == Uk);
@@ -119,8 +116,7 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
             return new CalcResultCommsCost()
             {
                 CalcResultCommsCostOnePlusFourApportionment = apportionmentDetail,
-                CommsCostByMaterial                         = commsCostByMaterial,
-                CommsCostByMaterialTotal                    = commsCostByMaterialTotal,
+                ByMaterial                                  = commsCostByMaterial,
                 CommsCostUkWide                             = ukCost,
                 CommsCostByCountry                          = commsCostByCountryList
             };
@@ -142,23 +138,6 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost
                         material.Code == MaterialCodes.Glass))
                 select mat
             ).Distinct().ToListAsync();
-        }
-
-        private static CalcResultCommsCostCommsCostByMaterial GetTotalRow(
-            IEnumerable<CalcResultCommsCostCommsCostByMaterial> list
-        )
-        {
-            return new CalcResultCommsCostCommsCostByMaterial
-            {
-                EnglandCost         = list.Sum(x => x.EnglandCost),
-                WalesCost           = list.Sum(x => x.WalesCost),
-                NorthernIrelandCost = list.Sum(x => x.NorthernIrelandCost),
-                ScotlandCost        = list.Sum(x => x.ScotlandCost),
-                HouseholdPackagingWasteTonnage    = list.Sum(x => x.HouseholdPackagingWasteTonnage),
-                PublicBinTonnage                  = list.Sum(x => x.PublicBinTonnage),
-                HouseholdDrinksContainersTonnage  = list.Sum(x => x.HouseholdDrinksContainersTonnage),
-                LateReportingTonnage              = list.Sum(x => x.LateReportingTonnage)
-            };
         }
 
         private static ByCountryCost GetCommsCostByCountry(

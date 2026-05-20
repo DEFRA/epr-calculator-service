@@ -78,7 +78,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual(20 , onePlusFourApp.Scotland);
             Assert.AreEqual(100, onePlusFourApp.Total);
 
-            var materialCosts = result.CommsCostByMaterial;
+            var materialCosts = result.ByMaterial;
             Assert.IsNotNull(materialCosts);
             Assert.HasCount(8, materialCosts);
 
@@ -116,7 +116,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual(0.0031m, Math.Round(glassCost.CommsCostByMaterialPricePerTonne, 4));
             Assert.AreEqual(200, glassCost.HouseholdDrinksContainersTonnage);
 
-            var totalMaterialCost = result.CommsCostByMaterialTotal;
+            var totalMaterialCost = result.Total;
             Assert.AreEqual(32, totalMaterialCost.EnglandCost);
             Assert.AreEqual(16, totalMaterialCost.WalesCost);
             Assert.AreEqual(16, totalMaterialCost.ScotlandCost);

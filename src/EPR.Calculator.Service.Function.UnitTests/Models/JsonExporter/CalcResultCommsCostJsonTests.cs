@@ -36,7 +36,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         [TestMethod]
         public void CalcResultCommsCost_From_Empty()
         {
-            var data = new CalcResultCommsCost();
+            var data = new CalcResultCommsCost() { ByMaterial = [] };
 
             var result = CalcResultCommsCostJson.From(data);
             var json = JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true });

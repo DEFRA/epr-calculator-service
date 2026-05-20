@@ -40,13 +40,13 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost
 
             csvContent.AppendLine();
             AppendHeader(csvContent);
-            foreach (var commCostByMaterial in communicationCost.CommsCostByMaterial)
+            foreach (var commCostByMaterial in communicationCost.ByMaterial)
             {
                 var material = materials.First(m => m.Code == commCostByMaterial.Key);
                 var commCost = commCostByMaterial.Value;
                 AppendRow(material.Name, commCost, csvContent);
             }
-            AppendRow("Total", communicationCost.CommsCostByMaterialTotal, csvContent);
+            AppendRow("Total", communicationCost.Total, csvContent);
 
             csvContent.AppendLine();
 
