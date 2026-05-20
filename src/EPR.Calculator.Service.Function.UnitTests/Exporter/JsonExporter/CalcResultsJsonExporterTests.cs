@@ -96,9 +96,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                                 ScotlandCost = 0m,
                                 NorthernIrelandCost = 0m,
                                 HouseholdPackagingWasteTonnage = 0m,
-                                PublicBinTonnage = 0m,
-                                TotalTonnage = 0,
-                                DisposalCostPricePerTonne = 20
+                                PublicBinTonnage = 0m
                             },
                         ["PL"] =
                             new CalcResultLaDisposalCostDataDetail
@@ -108,9 +106,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                                 ScotlandCost = 0,
                                 NorthernIrelandCost = 0,
                                 HouseholdPackagingWasteTonnage = 0,
-                                PublicBinTonnage = 0,
-                                TotalTonnage = 0,
-                                DisposalCostPricePerTonne = 20
+                                PublicBinTonnage = 0
                             },
                         ["GL"] =
                             new CalcResultLaDisposalCostDataDetail
@@ -120,9 +116,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                                 ScotlandCost = 0,
                                 NorthernIrelandCost = 0,
                                 HouseholdPackagingWasteTonnage = 0,
-                                PublicBinTonnage = 0,
-                                TotalTonnage = 0,
-                                DisposalCostPricePerTonne = 10
+                                PublicBinTonnage = 0
                             }
                     },
                 },

@@ -77,7 +77,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                 ProducerHouseholdPackagingWasteTonnage = item.HouseholdPackagingWasteTonnage,
                 PublicBinTonnage                       = item.PublicBinTonnage,
                 HouseholdDrinksContainersTonnage       = item.HouseholdDrinkContainersTonnage ?? 0,
-                LateReportingTonnage                   = item.LateReportingTonnage ?? 0,
+                LateReportingTonnage                   = item.LateReportingTonnage,
                 TotalTonnage                           = item.TotalTonnage,
                 DisposalCostPricePerTonne              = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(item.DisposalCostPricePerTonne == null ? 0 : item.DisposalCostPricePerTonne.Value, 4, ",")
             };
@@ -154,7 +154,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                 ProducerHouseholdPackagingWasteTonnageTotal = total.HouseholdPackagingWasteTonnage,
                 PublicBinTonnage                            = total.PublicBinTonnage,
                 HouseholdDrinksContainersTonnageTotal       = total.HouseholdDrinkContainersTonnage ?? 0,
-                LateReportingTonnageTotal                   = total.LateReportingTonnage ?? 0,
+                LateReportingTonnageTotal                   = total.LateReportingTonnage,
                 TotalTonnageTotal                           = total.TotalTonnage
             };
 

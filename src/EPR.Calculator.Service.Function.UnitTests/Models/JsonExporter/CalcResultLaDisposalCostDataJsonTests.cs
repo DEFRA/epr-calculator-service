@@ -37,12 +37,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                     "scotlandLaDisposalCost"                : "£2,000.00",
                     "northernIrelandLaDisposalCost"         : "£1,250.00",
                     "totalLaDisposalCost"                   : "£10,000.00",
-                    "disposalCostPricePerTonne"             : "£0.6676",
+                    "disposalCostPricePerTonne"             : "£0.5889",
                     "producerHouseholdPackagingWasteTonnage": 6980.000,
                     "publicBinTonnage"                      : 2000.000,
                     "householdDrinksContainersTonnage"      : 0,
                     "lateReportingTonnage"                  : 8000.000,
-                    "totalTonnage"                          : 17980.000
+                    "totalTonnage"                          : 16980.000
                   },
                   {
                     "materialName"                          : "Fibre composite",
@@ -51,7 +51,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                     "scotlandLaDisposalCost"                : "£3,400.00",
                     "northernIrelandLaDisposalCost"         : "£1,750.00",
                     "totalLaDisposalCost"                   : "£14,750.00",
-                    "disposalCostPricePerTonne"             : "£0.7825",
+                    "disposalCostPricePerTonne"             : "£0.7074",
                     "producerHouseholdPackagingWasteTonnage": 11850.000,
                     "publicBinTonnage"                      : 2000.000,
                     "householdDrinksContainersTonnage"      : 0,
@@ -65,7 +65,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                     "scotlandLaDisposalCost"                : "£20,700.00",
                     "northernIrelandLaDisposalCost"         : "£4,500.00",
                     "totalLaDisposalCost"                   : "£70,200.00",
-                    "disposalCostPricePerTonne"             : "£6.4404",
+                    "disposalCostPricePerTonne"             : "£5.4419",
                     "producerHouseholdPackagingWasteTonnage": 4900.000,
                     "publicBinTonnage"                      : 2000.000,
                     "householdDrinksContainersTonnage"      : 0,
@@ -79,7 +79,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                     "scotlandLaDisposalCost"                : "£4,500.00",
                     "northernIrelandLaDisposalCost"         : "£3,400.00",
                     "totalLaDisposalCost"                   : "£22,700.00",
-                    "disposalCostPricePerTonne"             : "£2.4488",
+                    "disposalCostPricePerTonne"             : "£2.0142",
                     "producerHouseholdPackagingWasteTonnage": 4270.000,
                     "publicBinTonnage"                      : 2000.000,
                     "householdDrinksContainersTonnage"      : 0,
@@ -93,12 +93,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                     "scotlandLaDisposalCost"                : "£6,700.00",
                     "northernIrelandLaDisposalCost"         : "£2,100.00",
                     "totalLaDisposalCost"                   : "£36,300.00",
-                    "disposalCostPricePerTonne"             : "£2.1601",
+                    "disposalCostPricePerTonne"             : "£1.9303",
                     "producerHouseholdPackagingWasteTonnage": 12805.000,
                     "publicBinTonnage"                      : 2000.000,
                     "householdDrinksContainersTonnage"      : 0,
                     "lateReportingTonnage"                  : 4000.000,
-                    "totalTonnage"                          : 14805.000
+                    "totalTonnage"                          : 18805.000
                   },
                   {
                     "materialName"                          : "Steel",
@@ -107,7 +107,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                     "scotlandLaDisposalCost"                : "£7,800.00",
                     "northernIrelandLaDisposalCost"         : "£0.00",
                     "totalLaDisposalCost"                   : "£21,200.00",
-                    "disposalCostPricePerTonne"             : "£19,813.0000",
+                    "disposalCostPricePerTonne"             : "£1.6693",
                     "producerHouseholdPackagingWasteTonnage": 7700.000,
                     "publicBinTonnage"                      : 2000.000,
                     "householdDrinksContainersTonnage"      : 0,
@@ -121,7 +121,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                     "scotlandLaDisposalCost"                : "£0.00",
                     "northernIrelandLaDisposalCost"         : "£5,600.00",
                     "totalLaDisposalCost"                   : "£17,600.00",
-                    "disposalCostPricePerTonne"             : "£2.0000",
+                    "disposalCostPricePerTonne"             : "£1.6296",
                     "producerHouseholdPackagingWasteTonnage": 6800.000,
                     "publicBinTonnage"                      : 2000.000,
                     "householdDrinksContainersTonnage"      : 0,
@@ -135,7 +135,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                     "scotlandLaDisposalCost"                : "£4,200.00",
                     "northernIrelandLaDisposalCost"         : "£700.00",
                     "totalLaDisposalCost"                   : "£10,400.00",
-                    "disposalCostPricePerTonne"             : "£1.1954",
+                    "disposalCostPricePerTonne"             : "£0.9720",
                     "producerHouseholdPackagingWasteTonnage": 7700.000,
                     "publicBinTonnage"                      : 2000.000,
                     "householdDrinksContainersTonnage"      : 0,
@@ -154,7 +154,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                   "publicBinTonnage"                           : 16000.000,
                   "householdDrinksContainersTonnageTotal"      : 0,
                   "lateReportingTonnageTotal"                  : 36000.000,
-                  "totalTonnageTotal"                          : 112005.000
+                  "totalTonnageTotal"                          : 115005.000
                 }
                 }
                 """;

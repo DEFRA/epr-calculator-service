@@ -237,7 +237,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var result = CalcResultSummaryUtil.GetPricePerTonne(material, calcResult);
 
             // Assert
-            Assert.AreEqual((total: 0.6676m, red: null, amber: null, green: null), result);
+            Assert.AreEqual((total: 0.5889m, red: null, amber: null, green: null), result);
         }
 
         [TestMethod]

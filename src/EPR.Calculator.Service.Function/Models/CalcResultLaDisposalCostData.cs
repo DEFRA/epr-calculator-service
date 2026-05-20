@@ -18,13 +18,8 @@
                     HouseholdPackagingWasteTonnage          = ByMaterial.Values.Sum(v => v.HouseholdPackagingWasteTonnage),
                     PublicBinTonnage                        = ByMaterial.Values.Sum(v => v.PublicBinTonnage),
                     HouseholdDrinkContainersTonnage         = ByMaterial.Values.Sum(v => v.HouseholdDrinkContainersTonnage ?? 0),
-                    LateReportingTonnage                    = ByMaterial.Values.Sum(v => v.LateReportingTonnage ?? 0),
-                    // TODO this used to be null when not applyModulation
-                    // For modulation, can we
-                    ActionedSelfManagedConsumerWasteTonnage = ByMaterial.Values.Sum(v => v.ActionedSelfManagedConsumerWasteTonnage ?? 0),
-
-                    TotalTonnage = ByMaterial.Values.Sum(v => v.TotalTonnage),
-                    DisposalCostPricePerTonne = null
+                    LateReportingTonnage                    = ByMaterial.Values.Sum(v => v.LateReportingTonnage),
+                    ActionedSelfManagedConsumerWasteTonnage = ByMaterial.Values.Sum(v => v.ActionedSelfManagedConsumerWasteTonnage ?? 0)
                 };
     }
 }

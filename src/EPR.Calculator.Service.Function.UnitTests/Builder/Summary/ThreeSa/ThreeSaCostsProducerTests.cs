@@ -57,9 +57,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                                 ScotlandCost = 0,
                                 NorthernIrelandCost = 0,
                                 HouseholdPackagingWasteTonnage = 0,
-                                PublicBinTonnage = 0,
-                                TotalTonnage = 0,
-                                DisposalCostPricePerTonne = 20
+                                PublicBinTonnage = 0
                             },
                         ["PL"] =
                             new CalcResultLaDisposalCostDataDetail
@@ -69,9 +67,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                                 ScotlandCost = 0,
                                 NorthernIrelandCost = 0,
                                 HouseholdPackagingWasteTonnage = 0,
-                                PublicBinTonnage = 0,
-                                TotalTonnage = 0,
-                                DisposalCostPricePerTonne = 20,
+                                PublicBinTonnage = 0
                             }
                     }
                 },
