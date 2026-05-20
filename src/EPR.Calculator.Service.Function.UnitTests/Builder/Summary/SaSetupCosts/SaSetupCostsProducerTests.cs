@@ -118,8 +118,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                                 NorthernIrelandCost = 0m,
                                 HouseholdPackagingWasteTonnage = Fixture.Create<decimal>(),
                                 PublicBinTonnage = Fixture.Create<decimal>(),
-                                TotalTonnage = Fixture.Create<decimal>(),
-                                DisposalCostPricePerTonne = 20,
                             },
                         ["Material2"] =
                             new CalcResultLaDisposalCostDataDetail
@@ -129,10 +127,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                                 ScotlandCost = 0m,
                                 NorthernIrelandCost = 0m,
                                 HouseholdPackagingWasteTonnage = Fixture.Create<decimal>(),
-                                PublicBinTonnage = Fixture.Create<decimal>(),
-                                TotalTonnage = Fixture.Create<decimal>(),
-                                DisposalCostPricePerTonne = 10,
-                            },
+                                PublicBinTonnage = Fixture.Create<decimal>()
+                            }
                     }
                 },
                 CalcResultLapcapData = new CalcResultLapcapData

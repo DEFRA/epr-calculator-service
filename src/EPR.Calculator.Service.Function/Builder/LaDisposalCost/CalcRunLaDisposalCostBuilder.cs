@@ -72,14 +72,6 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
                         ? producerData.Where(p => p.MaterialName == materialName && p.PackagingType == PackagingTypes.HouseholdDrinksContainers).Sum(p => p.Tonnage)
                         : null;
                     decimal? actionedSelfManagedConsumerWasteTonnage = applyModulation ? smcw.OverallTotalPerMaterials[materialCode].ActionedSelfManagedConsumerWasteTonnage.total ?? 0 : null;
-                    var totalTonnage =
-                        lateReportingTonnageValue
-                            + producerReportedHouseholdPackagingWasteTonnage
-                            + reportedPublicBinTonnage
-                            + (householdDrinkContainers ?? 0)
-                            - (actionedSelfManagedConsumerWasteTonnage ?? 0);
-                    var disposalCostPricePerTonne =
-                       totalTonnage == 0 ? (decimal?)null : Math.Round(detail.Value.Total / totalTonnage, 4);
                     var laDisposalDetail = new CalcResultLaDisposalCostDataDetail
                     {
                         EnglandCost                  = detail.Value.England,
@@ -91,8 +83,6 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
                         HouseholdDrinkContainersTonnage         = householdDrinkContainers,
                         LateReportingTonnage                    = lateReportingTonnageValue,
                         ActionedSelfManagedConsumerWasteTonnage = actionedSelfManagedConsumerWasteTonnage,
-                        TotalTonnage                            = totalTonnage,
-                        DisposalCostPricePerTonne               = disposalCostPricePerTonne
                     };
                     return (detail.Key, laDisposalDetail);
                 }).ToDictionary();

@@ -86,9 +86,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             NorthernIrelandCost = 1250,
                             HouseholdPackagingWasteTonnage = 6980,
                             PublicBinTonnage = 2000,
-                            LateReportingTonnage = 8000,
-                            TotalTonnage = 17980,
-                            DisposalCostPricePerTonne = 0.6676m
+                            LateReportingTonnage = 8000
                         },
                     ["FC"] =
                         new CalcResultLaDisposalCostDataDetail
@@ -99,9 +97,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             NorthernIrelandCost = 1750,
                             HouseholdPackagingWasteTonnage = 11850,
                             PublicBinTonnage = 2000,
-                            LateReportingTonnage = 7000,
-                            TotalTonnage = 20850,
-                            DisposalCostPricePerTonne = 0.7825m
+                            LateReportingTonnage = 7000
                         },
                     ["GL"] =
                         new CalcResultLaDisposalCostDataDetail
@@ -112,9 +108,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             NorthernIrelandCost = 4500,
                             HouseholdPackagingWasteTonnage = 4900,
                             PublicBinTonnage = 2000,
-                            LateReportingTonnage = 6000,
-                            TotalTonnage = 12900,
-                            DisposalCostPricePerTonne = 6.4404m
+                            LateReportingTonnage = 6000
                         },
                     ["PC"] =
                         new CalcResultLaDisposalCostDataDetail
@@ -125,9 +119,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             NorthernIrelandCost = 3400,
                             HouseholdPackagingWasteTonnage = 4270,
                             PublicBinTonnage = 2000,
-                            LateReportingTonnage = 5000,
-                            TotalTonnage = 11270,
-                            DisposalCostPricePerTonne = 2.4488m
+                            LateReportingTonnage = 5000
                         },
                     ["PL"] =
                         new CalcResultLaDisposalCostDataDetail
@@ -138,9 +130,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             NorthernIrelandCost = 2100,
                             HouseholdPackagingWasteTonnage = 12805,
                             PublicBinTonnage = 2000,
-                            LateReportingTonnage = 4000,
-                            TotalTonnage = 14805,
-                            DisposalCostPricePerTonne = 2.1601m
+                            LateReportingTonnage = 4000
                         },
                     ["ST"] =
                         new CalcResultLaDisposalCostDataDetail
@@ -151,9 +141,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             NorthernIrelandCost = 0,
                             HouseholdPackagingWasteTonnage = 7700,
                             PublicBinTonnage = 2000,
-                            LateReportingTonnage = 3000,
-                            TotalTonnage = 12700,
-                            DisposalCostPricePerTonne = 19813
+                            LateReportingTonnage = 3000
                         },
                     ["WD"] =
                         new CalcResultLaDisposalCostDataDetail
@@ -164,9 +152,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             NorthernIrelandCost = 5600,
                             HouseholdPackagingWasteTonnage = 6800,
                             PublicBinTonnage = 2000,
-                            LateReportingTonnage = 2000,
-                            TotalTonnage = 10800,
-                            DisposalCostPricePerTonne = 2
+                            LateReportingTonnage = 2000
                         },
                     ["OT"] =
                         new CalcResultLaDisposalCostDataDetail
@@ -177,9 +163,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             NorthernIrelandCost = 700,
                             HouseholdPackagingWasteTonnage = 7700,
                             PublicBinTonnage = 2000,
-                            LateReportingTonnage = 1000,
-                            TotalTonnage = 10700,
-                            DisposalCostPricePerTonne = 1.1954m
+                            LateReportingTonnage = 1000
                         }
                 }
             };

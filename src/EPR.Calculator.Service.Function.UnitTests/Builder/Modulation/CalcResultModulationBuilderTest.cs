@@ -41,15 +41,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
         {
             return new CalcResultLaDisposalCostDataDetail
             {
-                DisposalCostPricePerTonne = costPerTonnage,
-                EnglandCost = 0,
+                EnglandCost = 100 * costPerTonnage,
                 WalesCost = 0,
                 ScotlandCost = 0,
                 NorthernIrelandCost = 0,
-                HouseholdPackagingWasteTonnage = 0,
+                HouseholdPackagingWasteTonnage = 100,
                 PublicBinTonnage = 0,
-                HouseholdDrinkContainersTonnage = 0,
-                TotalTonnage = 0
+                HouseholdDrinkContainersTonnage = 0
             };
         }
 

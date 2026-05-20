@@ -96,8 +96,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                 {
                     BadDebtValue = 6m,
                     LaDataPrepCharge = new() { England = 40, Wales = 30, Scotland = 20, NorthernIreland = 10 },
-                    SaOperatingCost = new() { England = 40, Wales = 30, Scotland = 20, NorthernIreland = 10 },
-                    SchemeSetupCost = new() { England = 40, Wales = 30, Scotland = 20, NorthernIreland = 10 }
+                    SaOperatingCost  = new() { England = 40, Wales = 30, Scotland = 20, NorthernIreland = 10 },
+                    SchemeSetupCost  = new() { England = 40, Wales = 30, Scotland = 20, NorthernIreland = 10 }
                 },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment
                 {
@@ -112,38 +112,32 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                         ["AL"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
-                                EnglandCost = 0,
-                                WalesCost = 0,
-                                ScotlandCost = 0,
+                                EnglandCost         = 2000,
+                                WalesCost           = 0,
+                                ScotlandCost        = 0,
                                 NorthernIrelandCost = 0,
-                                HouseholdPackagingWasteTonnage = 0,
-                                PublicBinTonnage = 0,
-                                TotalTonnage = 0,
-                                DisposalCostPricePerTonne = 20
+                                HouseholdPackagingWasteTonnage = 100,
+                                PublicBinTonnage               = 0
                             },
                         ["PL"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
-                                EnglandCost = 0,
-                                WalesCost = 0,
-                                ScotlandCost = 0,
+                                EnglandCost         = 0,
+                                WalesCost           = 0,
+                                ScotlandCost        = 0,
                                 NorthernIrelandCost = 0,
                                 HouseholdPackagingWasteTonnage = 0,
-                                PublicBinTonnage = 0,
-                                TotalTonnage = 0,
-                                DisposalCostPricePerTonne = 20
+                                PublicBinTonnage               = 0
                             },
                         ["GL"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
-                                EnglandCost = 0,
-                                WalesCost = 0,
-                                ScotlandCost = 0,
+                                EnglandCost         = 0,
+                                WalesCost           = 0,
+                                ScotlandCost        = 0,
                                 NorthernIrelandCost = 0,
                                 HouseholdPackagingWasteTonnage = 0,
-                                PublicBinTonnage = 0,
-                                TotalTonnage = 0,
-                                DisposalCostPricePerTonne = 10
+                                PublicBinTonnage               = 0
                             },
                     }
                 },
