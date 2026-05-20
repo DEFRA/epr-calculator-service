@@ -37,6 +37,57 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         }
     }
 
+    public abstract record ValueOrModulated<TValue, TModulated>
+    {
+        public TValue? Value { get; init; }
+
+        public TModulated? Modulated { get; init; }
+
+        protected static TWrapper FromValue<TWrapper>(TValue value)
+            where TWrapper : ValueOrModulated<TValue, TModulated>, new()
+            => new() { Value = value };
+
+        protected static TWrapper FromModulated<TWrapper>(TModulated value)
+            where TWrapper : ValueOrModulated<TValue, TModulated>, new()
+            => new() { Modulated = value };
+    }
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Major Code Smell",
+        "S2436:Types and methods should not have too many generic parameters",
+        Justification = "Strongly typed JsonConverter requires wrapper, value, and modulated types for reusable serialization.")]
+    public abstract class ValueOrModulatedConverter<TWrapper, TValue, TModulated>: JsonConverter<TWrapper>
+        where TWrapper : ValueOrModulated<TValue, TModulated>
+    {
+        public override TWrapper Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            => throw new NotImplementedException();
+
+        public override void Write(Utf8JsonWriter writer, TWrapper value, JsonSerializerOptions options)
+        {
+            if (value.Modulated is not null)
+            {
+                JsonSerializer.Serialize(writer, value.Modulated, options);
+                return;
+            }
+
+            JsonSerializer.Serialize(writer, value.Value, options);
+        }
+    }
+
+    public class DecimalOrModulatedTonnageBreakdownConverter
+        : ValueOrModulatedConverter<DecimalOrModulatedTonnageBreakdown, decimal, ModulatedTonnageBreakdown>{}
+
+    [JsonConverter(typeof(DecimalOrModulatedTonnageBreakdownConverter))]
+    public record DecimalOrModulatedTonnageBreakdown
+        : ValueOrModulated<decimal, ModulatedTonnageBreakdown>
+    {
+        public static implicit operator DecimalOrModulatedTonnageBreakdown(decimal value)
+            => FromValue<DecimalOrModulatedTonnageBreakdown>(value);
+
+        public static implicit operator DecimalOrModulatedTonnageBreakdown(ModulatedTonnageBreakdown value)
+            => FromModulated<DecimalOrModulatedTonnageBreakdown>(value);
+    }
+
     public record ModulatedTonnageBreakdown
     {
         [JsonPropertyName("total")]
@@ -82,60 +133,8 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         }
     }
 
-    public abstract record ValueOrModulated<TValue, TModulated>
-    {
-        public TValue? Value { get; init; }
-
-        public TModulated? Modulated { get; init; }
-
-        protected static TWrapper FromValue<TWrapper>(TValue value)
-            where TWrapper : ValueOrModulated<TValue, TModulated>, new()
-            => new() { Value = value };
-
-        protected static TWrapper FromModulated<TWrapper>(TModulated value)
-            where TWrapper : ValueOrModulated<TValue, TModulated>, new()
-            => new() { Modulated = value };
-    }
-
-    [System.Diagnostics.CodeAnalysis.SuppressMessage(
-        "Major Code Smell",
-        "S2436:Types and methods should not have too many generic parameters",
-        Justification = "Strongly typed JsonConverter requires wrapper, value, and modulated types for reusable serialization.")]
-    public abstract class ValueOrModulatedConverter<TWrapper, TValue, TModulated>: JsonConverter<TWrapper>
-        where TWrapper : ValueOrModulated<TValue, TModulated>
-    {
-        public override TWrapper Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-            => throw new NotImplementedException();
-
-        public override void Write(Utf8JsonWriter writer, TWrapper value, JsonSerializerOptions options)
-        {
-            if (value.Modulated is not null)
-            {
-                JsonSerializer.Serialize(writer, value.Modulated, options);
-                return;
-            }
-
-            JsonSerializer.Serialize(writer, value.Value, options);
-        }
-    }
-
-    public class DecimalOrModulatedTonnageBreakdownConverter
-        : ValueOrModulatedConverter<DecimalOrModulatedTonnageBreakdown        , decimal, ModulatedTonnageBreakdown>{}
     public class DecimalOrCombinedModulatedTonnageBreakdownConverter
         : ValueOrModulatedConverter<DecimalOrCombinedModulatedTonnageBreakdown, decimal, CombinedModulatedTonnageBreakdown> {}
-    public class StringOrCombinedModulatedCurrencyBreakdownConverter
-        : ValueOrModulatedConverter<StringOrCombinedModulatedCurrencyBreakdown, string , CombinedModulatedCurrencyBreakdown> {}
-
-    [JsonConverter(typeof(DecimalOrModulatedTonnageBreakdownConverter))]
-    public record DecimalOrModulatedTonnageBreakdown
-        : ValueOrModulated<decimal, ModulatedTonnageBreakdown>
-    {
-        public static implicit operator DecimalOrModulatedTonnageBreakdown(decimal value)
-            => FromValue<DecimalOrModulatedTonnageBreakdown>(value);
-
-        public static implicit operator DecimalOrModulatedTonnageBreakdown(ModulatedTonnageBreakdown value)
-            => FromModulated<DecimalOrModulatedTonnageBreakdown>(value);
-    }
 
     [JsonConverter(typeof(DecimalOrCombinedModulatedTonnageBreakdownConverter))]
     public record DecimalOrCombinedModulatedTonnageBreakdown
@@ -146,17 +145,6 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
         public static implicit operator DecimalOrCombinedModulatedTonnageBreakdown(CombinedModulatedTonnageBreakdown value)
             => FromModulated<DecimalOrCombinedModulatedTonnageBreakdown>(value);
-    }
-
-    [JsonConverter(typeof(StringOrCombinedModulatedCurrencyBreakdownConverter))]
-    public record StringOrCombinedModulatedCurrencyBreakdown
-        : ValueOrModulated<string, CombinedModulatedCurrencyBreakdown>
-    {
-        public static implicit operator StringOrCombinedModulatedCurrencyBreakdown(string value)
-            => FromValue<StringOrCombinedModulatedCurrencyBreakdown>(value);
-
-        public static implicit operator StringOrCombinedModulatedCurrencyBreakdown(CombinedModulatedCurrencyBreakdown value)
-            => FromModulated<StringOrCombinedModulatedCurrencyBreakdown>(value);
     }
 
     public record CombinedModulatedTonnageBreakdown
@@ -178,11 +166,50 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         public decimal GreenAndGreenMedical { get; init; }
     }
 
-    public record CombinedModulatedCurrencyBreakdown
+    public class StringOrCombinedModulatedCostBreakdownConverter
+        : ValueOrModulatedConverter<StringOrCombinedModulatedCostBreakdown, string , CombinedModulatedCostBreakdown> {}
+
+    [JsonConverter(typeof(StringOrCombinedModulatedCostBreakdownConverter))]
+    public record StringOrCombinedModulatedCostBreakdown
+        : ValueOrModulated<string, CombinedModulatedCostBreakdown>
+    {
+        public static implicit operator StringOrCombinedModulatedCostBreakdown(string value)
+            => FromValue<StringOrCombinedModulatedCostBreakdown>(value);
+
+        public static implicit operator StringOrCombinedModulatedCostBreakdown(CombinedModulatedCostBreakdown value)
+            => FromModulated<StringOrCombinedModulatedCostBreakdown>(value);
+    }
+
+    public record CombinedModulatedCostBreakdown
     {
         [JsonPropertyName("total")]
         public required string Total { get; init; }
 
+        [JsonPropertyName("redAndRedMedical")]
+        public string RedAndRedMedical { get; init; } = default!;
+
+        [JsonPropertyName("amberAndAmberMedical")]
+        public string AmberAndAmberMedical { get; init; } = default!;
+
+        [JsonPropertyName("greenAndGreenMedical")]
+        public string GreenAndGreenMedical { get; init; } = default!;
+    }
+
+    public class StringOrCombinedModulatedPriceBreakdownConverter
+        : ValueOrModulatedConverter<StringOrCombinedModulatedPriceBreakdown, string , CombinedModulatedPriceBreakdown> {}
+    [JsonConverter(typeof(StringOrCombinedModulatedPriceBreakdownConverter))]
+    public record StringOrCombinedModulatedPriceBreakdown
+        : ValueOrModulated<string, CombinedModulatedPriceBreakdown>
+    {
+        public static implicit operator StringOrCombinedModulatedPriceBreakdown(string value)
+            => FromValue<StringOrCombinedModulatedPriceBreakdown>(value);
+
+        public static implicit operator StringOrCombinedModulatedPriceBreakdown(CombinedModulatedPriceBreakdown value)
+            => FromModulated<StringOrCombinedModulatedPriceBreakdown>(value);
+    }
+
+    public record CombinedModulatedPriceBreakdown
+    {
         [JsonPropertyName("redAndRedMedical")]
         public string RedAndRedMedical { get; init; } = default!;
 
@@ -231,10 +258,10 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         public decimal? ResidualSelfManagedConsumerWasteTonnage { get; init; }
 
         [JsonPropertyName("pricePerTonne")]
-        public required StringOrCombinedModulatedCurrencyBreakdown PricePerTonne { get; init; }
+        public required StringOrCombinedModulatedPriceBreakdown PricePerTonne { get; init; }
 
         [JsonPropertyName("producerDisposalFeeWithoutBadDebtProvision")]
-        public required StringOrCombinedModulatedCurrencyBreakdown ProducerDisposalFeeWithoutBadDebtProvision { get; init; }
+        public required StringOrCombinedModulatedCostBreakdown ProducerDisposalFeeWithoutBadDebtProvision { get; init; }
 
         [JsonPropertyName("tonnageChange")]
         public required string TonnageChange { get; init; }
@@ -282,8 +309,8 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                     TotalTonnage                               = producerTonnage.TotalReportedTonnage,
                     SelfManagedConsumerWasteTonnage            = producerTonnage.SelfManagedConsumerWasteTonnage,
                     NetTonnage                                 = producerTonnage.NetReportedTonnage.total ?? 0,
-                    PricePerTonne                              = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.PricePerTonne.total ?? 0, 4),
-                    ProducerDisposalFeeWithoutBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.ProducerDisposalFee.total ?? 0)
+                    PricePerTonne                              = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.PricePerTonne.total       ?? 0, 4),
+                    ProducerDisposalFeeWithoutBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.ProducerDisposalFee.total ?? 0, 2)
                 };
             }
 
@@ -320,19 +347,18 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                     GreenAndGreenMedical = producerTonnage.NetReportedTonnage.green ?? 0
                 },
                 ResidualSelfManagedConsumerWasteTonnage    = producerTonnage.ResidualSelfManagedConsumerWasteTonnage,
-                PricePerTonne                              = new CombinedModulatedCurrencyBreakdown
+                PricePerTonne                              = new CombinedModulatedPriceBreakdown
                 {
-                    Total                = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.PricePerTonne.total ?? 0, 4),
                     RedAndRedMedical     = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.PricePerTonne.red   ?? 0, 4),
                     AmberAndAmberMedical = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.PricePerTonne.amber ?? 0, 4),
                     GreenAndGreenMedical = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.PricePerTonne.green ?? 0, 4)
                 },
-                ProducerDisposalFeeWithoutBadDebtProvision = new CombinedModulatedCurrencyBreakdown
+                ProducerDisposalFeeWithoutBadDebtProvision = new CombinedModulatedCostBreakdown
                 {
-                    Total                = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.ProducerDisposalFee.total ?? 0, 4),
-                    RedAndRedMedical     = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.ProducerDisposalFee.red   ?? 0, 4),
-                    AmberAndAmberMedical = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.ProducerDisposalFee.amber ?? 0, 4),
-                    GreenAndGreenMedical = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.ProducerDisposalFee.green ?? 0, 4)
+                    Total                = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.ProducerDisposalFee.total ?? 0, 2),
+                    RedAndRedMedical     = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.ProducerDisposalFee.red   ?? 0, 2),
+                    AmberAndAmberMedical = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.ProducerDisposalFee.amber ?? 0, 2),
+                    GreenAndGreenMedical = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.ProducerDisposalFee.green ?? 0, 2)
                 }
             };
         }

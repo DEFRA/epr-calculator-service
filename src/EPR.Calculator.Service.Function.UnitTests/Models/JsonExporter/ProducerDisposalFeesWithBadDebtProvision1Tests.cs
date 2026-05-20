@@ -29,7 +29,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         [TestMethod]
         public void From_MapsMaterialBreakdown_Modulated()
         {
-            var byMaterial = TestDataHelper.GetProducerDisposalFeesByMaterial();
+            var byMaterial = TestDataHelper.GetProducerDisposalFeesByMaterial(applyModulation: true);
             var materials = TestDataHelper.GetMaterials();
 
             var result = ProducerDisposalFeesWithBadDebtProvision1.From(byMaterial, materials, "1", applyModulation: true);
@@ -38,7 +38,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             var list = result.MaterialBreakdown.ToList();
             var al = list.Single(m => m.MaterialName == "Aluminium");
             Assert.AreEqual(1000m, al.HouseholdPackagingWasteTonnage.Modulated!.Total);
-            Assert.AreEqual("£0.6676", al.PricePerTonne.Modulated!.Total);
+            Assert.AreEqual("£1.0000", al.PricePerTonne.Modulated!.RedAndRedMedical);
+            Assert.AreEqual("£2.0000", al.PricePerTonne.Modulated!.AmberAndAmberMedical);
+            Assert.AreEqual("£3.0000", al.PricePerTonne.Modulated!.GreenAndGreenMedical);
             Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(643.97m), al.ProducerDisposalFeeWithBadDebtProvision);
 
             var gl = list.Single(m => m.MaterialName == "Glass");
