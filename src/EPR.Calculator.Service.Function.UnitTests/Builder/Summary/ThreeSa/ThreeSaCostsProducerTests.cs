@@ -32,65 +32,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
             CreateMaterials();
             CreateProducerDetail();
 
-            _materials = [
-                new MaterialDetail
-                {
-                    Id = 1,
-                    Code = "AL",
-                    Name = "Aluminium",
-                    Description = "Aluminium"
-                },
-                new MaterialDetail
-                {
-                    Id = 2,
-                    Code = "FC",
-                    Name = "Fibre composite",
-                    Description = "Fibre composite"
-                },
-                new MaterialDetail
-                {
-                    Id = 3,
-                    Code = "GL",
-                    Name = "Glass",
-                    Description = "Glass"
-                },
-                new MaterialDetail
-                {
-                    Id = 4,
-                    Code = "PC",
-                    Name = "Paper or card",
-                    Description = "Paper or card"
-                },
-                new MaterialDetail
-                {
-                    Id = 5,
-                    Code = "PL",
-                    Name = "Plastic",
-                    Description = "Plastic"
-                },
-                new MaterialDetail
-                {
-                    Id = 6,
-                    Code = "ST",
-                    Name = "Steel",
-                    Description = "Steel"
-                },
-                new MaterialDetail
-                {
-                    Id = 7,
-                    Code = "WD",
-                    Name = "Wood",
-                    Description = "Wood"
-                },
-                new MaterialDetail
-                {
-                    Id = 8,
-                    Code = "OT",
-                    Name = "Other materials",
-                    Description = "Other materials"
-                }
-            ];
-
             _calcResult = new CalcResult
             {
                 ApplyModulation = false,
@@ -100,8 +41,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                 {
                     BadDebtValue = 6m,
                     LaDataPrepCharge = new() { England = 40, Wales = 30, Scotland = 20, NorthernIreland = 10 },
-                    SaOperatingCost = new() { England = 40, Wales = 30, Scotland = 20, NorthernIreland = 10 },
-                    SchemeSetupCost = new() { England = 40, Wales = 30, Scotland = 20, NorthernIreland = 10 }
+                    SaOperatingCost  = new() { England = 40, Wales = 30, Scotland = 20, NorthernIreland = 10 },
+                    SchemeSetupCost  = new() { England = 40, Wales = 30, Scotland = 20, NorthernIreland = 10 }
                 },
                 CalcResultDetail = new CalcResultDetail { RunId = 1, RelativeYear = new RelativeYear(2024) },
                 CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData
@@ -138,13 +79,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                 {
                     ByMaterial = []
                 },
-                CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment
-                {
-                    LaDisposalCost = new() { England = 0.10M, Wales = 20M, NorthernIreland = 0.15M, Scotland = 0.15M },
-                    LADataPrepCharge = new() { England = 0.10M, Wales = 20M, Scotland = 0.15M, NorthernIreland = 0.15M },
-                    TotalOnePlusFour =  new() { England = 14.53M, Wales = 20M, Scotland = 0.15M, NorthernIreland = 0.15M },
-                    OnePlusFourApportionment = new() { England = 40, Wales = 30, Scotland = 15, NorthernIreland = 15 }
-                },
+                CalcResultOnePlusFourApportionment = TestDataHelper.GetCalcResultOnePlusFourApportionment(),
                 CalcResultParameterCommunicationCost = new CalcResultParameterCommunicationCost
                 {
                     Name = "some test",
@@ -308,32 +243,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
             );
 
             // Assert
-            Assert.AreEqual(0.32m, Math.Round(result, 2));
+            Assert.AreEqual(0.11m, Math.Round(result, 2));
         }
 
         private void CreateMaterials()
         {
-            var materialDictionary = new Dictionary<string, string>();
-            materialDictionary.Add("AL", "Aluminium");
-            materialDictionary.Add("FC", "Fibre composite");
-            materialDictionary.Add("GL", "Glass");
-            materialDictionary.Add("PC", "Paper or card");
-            materialDictionary.Add("PL", "Plastic");
-            materialDictionary.Add("ST", "Steel");
-            materialDictionary.Add("WD", "Wood");
-            materialDictionary.Add("OT", "Other materials");
+            _materials = TestDataHelper.GetMaterials();
 
-            foreach (var materialKv in materialDictionary)
+            _dbContext?.Material.AddRange(_materials.Select(m => new Material
             {
-                _dbContext?.Material.Add(new Material
-                {
-                    Name = materialKv.Value,
-                    Code = materialKv.Key,
-                    Description = "Some",
-                });
-            }
-
-            _dbContext?.SaveChanges();
+                Name = m.Name,
+                Code = m.Code,
+                Description = m.Description,
+            }));
         }
 
         private void CreateProducerDetail()

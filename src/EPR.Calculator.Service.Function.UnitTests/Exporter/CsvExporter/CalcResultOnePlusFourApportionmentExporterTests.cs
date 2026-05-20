@@ -14,10 +14,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         {
             calcResult1Plus4Apportionment = new CalcResultOnePlusFourApportionment
             {
-                LaDisposalCost = new() { England = 109800, Wales = 24750, Scotland = 49300, NorthernIreland = 19300 },
-                LADataPrepCharge = new() { England = 16000, Wales = 7000, Scotland = 9000, NorthernIreland = 4500 },
-                TotalOnePlusFour =  new() { England = 125800, Wales = 31750, Scotland = 58300, NorthernIreland = 23800 },
-                OnePlusFourApportionment = new() { England = 52.49321928m, Wales = 13.24848738m, Scotland = 24.32714375m, NorthernIreland = 9.93114959m }
+                LaDisposalCost   = new() { England = 109800, Wales = 24750, Scotland = 49300, NorthernIreland = 19300 },
+                LADataPrepCharge = new() { England =  16000, Wales =  7000, Scotland =  9000, NorthernIreland =  4500 }
             };
         }
 

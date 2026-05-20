@@ -320,13 +320,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
         {
             return new CalcResultOnePlusFourApportionment
             {
-                OnePlusFourApportionment = new ByCountryApportionment
+                LaDisposalCost = new()
                 {
                     England         = 40,
                     Wales           = 30,
                     Scotland        = 15,
                     NorthernIreland = 15
-                }
+                },
+                LADataPrepCharge = new()
             };
         }
     }
