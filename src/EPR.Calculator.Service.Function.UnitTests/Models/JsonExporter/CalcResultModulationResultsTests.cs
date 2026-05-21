@@ -25,7 +25,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             var expectedJson = JsonNode.Parse("""
             {
                 "redFactor": 1.25,
-                "greenDiscountFactor": 0.75
+                "greenDiscountFactor": 0.750000
             }
             """);
 
