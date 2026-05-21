@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Messaging;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.Services.DataLoading;
@@ -37,7 +38,6 @@ public class CalculatorRunServiceTests
         statusService.Setup(s => s.UpdateRpdStatus(
                 It.IsAny<int>(),
                 It.IsAny<string>(),
-                It.IsAny<string>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(RunClassification.RUNNING);
 
@@ -48,19 +48,17 @@ public class CalculatorRunServiceTests
     public async Task StartProcessReturnsFalseWhenCalculatorTimesOut()
     {
         // Arrange
-        var calculatorRunParameters = fixture.Create<CalculatorRunParameter>();
-        calculatorRunParameters.RelativeYear = new RelativeYear(2024);
+        var message = fixture.Create<CreateResultFileMessage>();
         var runName = "Test Run Name";
 
         statusService.Setup(s => s.UpdateRpdStatus(
                 It.IsAny<int>(),
                 It.IsAny<string>(),
-                It.IsAny<string>(),
                 It.IsAny<CancellationToken>()))
             .ThrowsAsync(new TaskCanceledException("Timed out!"));
 
         // Act
-        var result = await sut.PrepareResultsFileAsync(calculatorRunParameters, runName);
+        var result = await sut.PrepareResultsFileAsync(message, runName);
 
         // Assert
         Assert.IsFalse(result);
@@ -70,15 +68,15 @@ public class CalculatorRunServiceTests
     public async Task StartProcess_ShouldReturnFalseOn_TaskCanceledException()
     {
         // Arrange
-        var calculatorRunParameter = new CalculatorRunParameter
-            { Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = "ignored" };
+        var message = new CreateResultFileMessage
+            { CalculatorRunId = 1, CreatedBy = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = "ignored" };
         var runName = "TestRun";
 
         transposeService.Setup(t => t.Transpose(It.IsAny<int>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new TaskCanceledException());
 
         // Act
-        var result = await sut.PrepareResultsFileAsync(calculatorRunParameter, runName);
+        var result = await sut.PrepareResultsFileAsync(message, runName);
 
         // Assert
         Assert.IsFalse(result);
@@ -88,15 +86,15 @@ public class CalculatorRunServiceTests
     public async Task StartProcess_ShouldReturnFalseOn_Exception()
     {
         // Arrange
-        var calculatorRunParameter = new CalculatorRunParameter
-            { Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = "ignored" };
+        var message = new CreateResultFileMessage
+            { CalculatorRunId = 1, CreatedBy = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = "ignored" };
         var runName = "TestRun";
 
         transposeService.Setup(t => t.Transpose(It.IsAny<int>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception("Test Exception"));
 
         // Act
-        var result = await sut.PrepareResultsFileAsync(calculatorRunParameter, runName);
+        var result = await sut.PrepareResultsFileAsync(message, runName);
 
         // Assert
         Assert.IsFalse(result);
@@ -106,17 +104,17 @@ public class CalculatorRunServiceTests
     public async Task PrepareResultsFileAsync_WhenAllStepsSucceed_ReturnsTrue()
     {
         // Arrange
-        var runParams = new CalculatorRunParameter
+        var message = new CreateResultFileMessage
         {
-            Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = "ignored"
+            CalculatorRunId = 1, CreatedBy = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = "ignored"
         };
 
         // Act
-        var result = await sut.PrepareResultsFileAsync(runParams, "TestRun");
+        var result = await sut.PrepareResultsFileAsync(message, "TestRun");
 
         // Assert
         Assert.IsTrue(result);
-        dataLoader.Verify(d => d.LoadData(runParams, "TestRun", It.IsAny<CancellationToken>()), Times.Once);
+        dataLoader.Verify(d => d.LoadData(message.RelativeYear, It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [TestMethod]
@@ -124,16 +122,16 @@ public class CalculatorRunServiceTests
     {
         // Arrange
         statusService.Setup(s => s.UpdateRpdStatus(
-                It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(RunClassification.UNCLASSIFIED);
 
-        var runParams = new CalculatorRunParameter
+        var message = new CreateResultFileMessage
         {
-            Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = "ignored"
+            CalculatorRunId = 1, CreatedBy = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = "ignored"
         };
 
         // Act
-        var result = await sut.PrepareResultsFileAsync(runParams, "TestRun");
+        var result = await sut.PrepareResultsFileAsync(message, "TestRun");
 
         // Assert
         Assert.IsFalse(result);
@@ -150,13 +148,13 @@ public class CalculatorRunServiceTests
                 It.IsAny<CalcResultsRequestDto>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
-        var runParams = new CalculatorRunParameter
+        var message = new CreateResultFileMessage
         {
-            Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = "ignored"
+            CalculatorRunId = 1, CreatedBy = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = "ignored"
         };
 
         // Act
-        var result = await sut.PrepareResultsFileAsync(runParams, "TestRun");
+        var result = await sut.PrepareResultsFileAsync(message, "TestRun");
 
         // Assert
         Assert.IsFalse(result);
@@ -167,22 +165,22 @@ public class CalculatorRunServiceTests
     {
         // Arrange
         dataLoader.Setup(d => d.LoadData(
-                It.IsAny<CalculatorRunParameter>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                It.IsAny<RelativeYear>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception("API failure"));
 
-        var runParams = new CalculatorRunParameter
+        var message = new CreateResultFileMessage
         {
-            Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = "ignored"
+            CalculatorRunId = 1, CreatedBy = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = "ignored"
         };
 
         // Act
-        var result = await sut.PrepareResultsFileAsync(runParams, "TestRun");
+        var result = await sut.PrepareResultsFileAsync(message, "TestRun");
 
         // Assert
         Assert.IsFalse(result);
         statusService.Verify(
             s => s.UpdateRpdStatus(
-                It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
+                It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
             Times.Never);
     }
 
@@ -191,36 +189,18 @@ public class CalculatorRunServiceTests
     {
         // Arrange
         dataLoader.Setup(d => d.LoadData(
-                It.IsAny<CalculatorRunParameter>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                It.IsAny<RelativeYear>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new TaskCanceledException("Cancelled"));
 
-        var runParams = new CalculatorRunParameter
+        var message = new CreateResultFileMessage
         {
-            Id = 1, User = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = "ignored"
+            CalculatorRunId = 1, CreatedBy = "TestUser", RelativeYear = new RelativeYear(2024), MessageType = "ignored"
         };
 
         // Act
-        var result = await sut.PrepareResultsFileAsync(runParams, "TestRun");
+        var result = await sut.PrepareResultsFileAsync(message, "TestRun");
 
         // Assert
         Assert.IsFalse(result);
-    }
-
-    [TestMethod]
-    public async Task GetCalcResultMessage_ShouldReturnCorrect_StringContent()
-    {
-        // Arrange
-        var calculatorRunId = 123;
-        var expectedJson = JsonSerializer.Serialize(new { runId = calculatorRunId });
-        var expectedContent = new StringContent(expectedJson, Encoding.UTF8, "application/json");
-
-        // Act
-        var result = CalculatorRunService.GetCalcResultMessage(calculatorRunId);
-
-        // Assert
-        Assert.IsNotNull(result);
-        Assert.AreEqual(expectedContent.Headers.ContentType?.MediaType, result.Headers.ContentType?.MediaType);
-        Assert.AreEqual(expectedContent.Headers.ContentType?.CharSet, result.Headers.ContentType?.CharSet);
-        Assert.AreEqual(expectedJson, await result.ReadAsStringAsync());
     }
 }
