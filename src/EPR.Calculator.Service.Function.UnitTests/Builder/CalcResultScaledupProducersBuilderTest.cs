@@ -322,6 +322,47 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual(pcId, pomEntry.MaterialId);
         }
 
+        /// <summary>
+        /// When any submission period for a producer requires scaling, all submission periods
+        /// for that producer should appear in the scaled-up producers summary.
+        /// </summary>
+        [TestMethod]
+        public async Task Construct_AllPeriodsIncluded_WhenAnyPeriodRequiresScaling()
+        {
+            // Arrange - producer 12 with one scaled period ("2024-P2") and one normal period ("2024-P3")
+            var producers = PrepareScaledUpProducer();
+
+            dbContext.CalculatorRunPomDataDetails.Add(new CalculatorRunPomDataDetail
+            {
+                LoadTimeStamp = DateTime.UtcNow,
+                SubmissionPeriod = "2024-P3",
+                SubmissionPeriodDesc = "desc",
+                CalculatorRunPomDataMaster = dbContext.CalculatorRunPomDataMaster.First(),
+                OrganisationId = 12,
+            });
+            dbContext.SubmissionPeriodLookup.Add(new SubmissionPeriodLookup
+            {
+                DaysInSubmissionPeriod = 0,
+                DaysInWholePeriod = 0,
+                EndDate = DateTime.UtcNow,
+                StartDate = DateTime.UtcNow,
+                ScaleupFactor = 1.0M,
+                SubmissionPeriod = "2024-P3",
+                SubmissionPeriodDesc = string.Empty,
+            });
+            dbContext.SaveChanges();
+
+            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
+
+            // Act
+            var result = (await builder.ConstructAsync(materialDetails, producers, requestDto)).Item2;
+
+            // Assert - both the scaled and non-scaled period rows should appear
+            Assert.AreEqual(2, result.ScaledupProducers!.Count());
+            Assert.IsTrue(result.ScaledupProducers!.Any(p => p.SubmissionPeriodCode == "2024-P2" && p.ScaleupFactor == 2.999M));
+            Assert.IsTrue(result.ScaledupProducers!.Any(p => p.SubmissionPeriodCode == "2024-P3" && p.ScaleupFactor == 1.0M));
+        }
+
         [TestMethod]
         public async Task Construct_ReturnsModifiedProducerData()
         {
@@ -372,6 +413,121 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             // Assert
             Assert.AreEqual(0, result.ScaledupProducers?.Count());
+        }
+
+        /// <summary>
+        /// A producer that has subsidiaries should appear with Level 2 (as should each
+        /// subsidiary), and an additional Level 1 subtotal row should be generated for the
+        /// producer's submission period.
+        /// </summary>
+        [TestMethod]
+        public async Task Construct_ProducerWithSubsidiaries_HasLevel2RowsAndLevel1Subtotal()
+        {
+            // Arrange
+            var producers = PrepareProducerWithSubsidiaries();
+            var requestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
+
+            // Act
+            var result = (await builder.ConstructAsync(materialDetails, producers, requestDto)).Item2;
+
+            // Assert – one row per entity (parent + subsidiary) plus one subtotal
+            Assert.AreEqual(3, result.ScaledupProducers!.Count());
+
+            var level2Rows = result.ScaledupProducers!
+                .Where(p => p.Level == CommonConstants.LevelTwo.ToString())
+                .ToList();
+            Assert.AreEqual(2, level2Rows.Count, "Expected parent and subsidiary to be Level 2");
+            Assert.IsTrue(level2Rows.Any(p => string.IsNullOrEmpty(p.SubsidiaryId) && !p.IsSubtotalRow), "Parent should be Level 2");
+            Assert.IsTrue(level2Rows.Any(p => p.SubsidiaryId == "Sub1"), "Subsidiary should be Level 2");
+
+            var level1Rows = result.ScaledupProducers!
+                .Where(p => p.Level == CommonConstants.LevelOne.ToString())
+                .ToList();
+            Assert.AreEqual(1, level1Rows.Count, "Expected one Level 1 subtotal row");
+            Assert.IsTrue(level1Rows.Single().IsSubtotalRow, "Level 1 row should be marked as a subtotal");
+        }
+
+        private List<L1Producer> PrepareProducerWithSubsidiaries()
+        {
+            const int producerId = 20;
+            const string subsidiaryId = "Sub1";
+            const string submissionPeriod = "2025-P1";
+
+            dbContext.SubmissionPeriodLookup.Add(new SubmissionPeriodLookup
+            {
+                SubmissionPeriod = submissionPeriod,
+                SubmissionPeriodDesc = string.Empty,
+                ScaleupFactor = 2.0M,
+                DaysInSubmissionPeriod = 184,
+                DaysInWholePeriod = 365,
+                StartDate = DateTime.UtcNow,
+                EndDate = DateTime.UtcNow,
+            });
+
+            dbContext.CalculatorRunPomDataDetails.Add(new CalculatorRunPomDataDetail
+            {
+                LoadTimeStamp = DateTime.UtcNow,
+                SubmissionPeriod = submissionPeriod,
+                SubmissionPeriodDesc = "desc",
+                CalculatorRunPomDataMaster = calcRunPomDataMaster,
+                OrganisationId = producerId,
+            });
+
+            dbContext.CalculatorRunOrganisationDataDetails.AddRange(
+                new CalculatorRunOrganisationDataDetail
+                {
+                    OrganisationId = producerId,
+                    SubsidiaryId = null,
+                    OrganisationName = "Parent Corp",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    CalculatorRunOrganisationDataMaster = calcRunOrganisationDataMaster,
+                    ObligationStatus = ObligationStates.Obligated,
+                },
+                new CalculatorRunOrganisationDataDetail
+                {
+                    OrganisationId = producerId,
+                    SubsidiaryId = subsidiaryId,
+                    OrganisationName = "Sub Corp",
+                    LoadTimeStamp = DateTime.UtcNow,
+                    CalculatorRunOrganisationDataMaster = calcRunOrganisationDataMaster,
+                    ObligationStatus = ObligationStates.Obligated,
+                }
+            );
+
+            var parentPd = new ProducerDetail
+            {
+                CalculatorRunId = runId,
+                ProducerId = producerId,
+                SubsidiaryId = null,
+                ProducerName = "Parent Corp",
+            };
+            parentPd.ProducerReportedMaterials.Add(new ProducerReportedMaterial
+            {
+                PackagingType = PackagingTypes.Household,
+                SubmissionPeriod = submissionPeriod,
+                MaterialId = pcId,
+                PackagingTonnage = 10M,
+            });
+
+            var subsidiaryPd = new ProducerDetail
+            {
+                CalculatorRunId = runId,
+                ProducerId = producerId,
+                SubsidiaryId = subsidiaryId,
+                ProducerName = "Sub Corp",
+            };
+            subsidiaryPd.ProducerReportedMaterials.Add(new ProducerReportedMaterial
+            {
+                PackagingType = PackagingTypes.Household,
+                SubmissionPeriod = submissionPeriod,
+                MaterialId = pcId,
+                PackagingTonnage = 5M,
+            });
+
+            dbContext.ProducerDetail.AddRange(parentPd, subsidiaryPd);
+            dbContext.SaveChanges();
+
+            return [new L1Producer(producerId, [parentPd, subsidiaryPd])];
         }
 
         [TestMethod]
@@ -476,6 +632,5 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.IsTrue(extraRows.All(x => x.IsSubtotalRow));
             Assert.AreEqual(2, runProducerMaterialDetails.Count(x => x.IsSubtotalRow));
         }
-
     }
 }
