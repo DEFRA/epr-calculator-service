@@ -218,6 +218,17 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
 
         private async Task<(List<CalcResultScaledupProducer> producers, IEnumerable<Organisation> organisations)> GetScaledUpDataAsync(int runId)
         {
+            var scaledProducerIds = await (
+                from run in dbContext.CalculatorRuns.AsNoTracking()
+                join crpdd in dbContext.CalculatorRunPomDataDetails.AsNoTracking() on run.CalculatorRunPomDataMasterId equals crpdd.CalculatorRunPomDataMasterId
+                join spl in dbContext.SubmissionPeriodLookup.AsNoTracking() on crpdd.SubmissionPeriod equals spl.SubmissionPeriod
+                where run.Id == runId && spl.ScaleupFactor > NormalScaleup
+                select crpdd.OrganisationId
+            ).Distinct().ToListAsync();
+
+            if (scaledProducerIds.Count == 0)
+                return ([], []);
+
             var rows = await (
                 from run in dbContext.CalculatorRuns.AsNoTracking()
                 join crpdd in dbContext.CalculatorRunPomDataDetails.AsNoTracking() on run.CalculatorRunPomDataMasterId equals crpdd.CalculatorRunPomDataMasterId
@@ -227,7 +238,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                 join org in dbContext.CalculatorRunOrganisationDataDetails.AsNoTracking()
                   on new { crodm.Id, pd.ProducerId, pd.SubsidiaryId, crpdd.SubmitterId }
                     equals new { Id = org.CalculatorRunOrganisationDataMasterId, ProducerId = org.OrganisationId, org.SubsidiaryId, org.SubmitterId }
-                where run.Id == runId && spl.ScaleupFactor > NormalScaleup
+                where run.Id == runId && scaledProducerIds.Contains(crpdd.OrganisationId)
                   && pd.CalculatorRunId == runId && org.ObligationStatus == ObligationStates.Obligated
                 select new
                 {
@@ -253,7 +264,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                 SubmissionPeriodCode   = r.SubmissionPeriodCode,
                 DaysInSubmissionPeriod = r.DaysInSubmissionPeriod,
                 DaysInWholePeriod      = r.DaysInWholePeriod,
-                Level                  = r.SubsidiaryId != "" ? CommonConstants.LevelTwo.ToString() : CommonConstants.LevelOne.ToString(),
+                Level                  = string.IsNullOrEmpty(r.SubsidiaryId) ? CommonConstants.LevelOne.ToString() : CommonConstants.LevelTwo.ToString(),
             }).ToList();
 
             var organisations = rows
