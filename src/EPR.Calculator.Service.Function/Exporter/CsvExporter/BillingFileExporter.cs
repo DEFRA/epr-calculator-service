@@ -101,7 +101,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
                 calcResultProjectedProducersExporterCsv.Export(accepted, materials, csvContent);
             } else {
                 var acceptedProducers = GetScaledUpProducersForExport(calcResult.CalcResultScaledupProducers, acceptedProducerIds);
-                calcResultScaledupProducersExporterCsv.Export(acceptedProducers, materials, csvContent);
+                calcResultScaledupProducersExporterCsv.Export(acceptedProducers, materials, showTotal : false, csvContent);
             }
 
             calcResultPartialObligationsExporterCsv.Export(GetPartialObligationsForExport(calcResult.CalcResultPartialObligations, acceptedProducerIds), materials, csvContent, calcResult.ApplyModulation);
@@ -187,7 +187,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             ImmutableHashSet<int> acceptedProducerIds)
         {
             return scaledupProducers?
-                .Where(x => acceptedProducerIds.Contains(x.ProducerId) || x.ProducerId == 0)
+                .Where(x => acceptedProducerIds.Contains(x.ProducerId) || x.ProducerId == 0) // TODO why would ProducerId ever be 0?
                 .ToImmutableList() ?? [];
         }
 

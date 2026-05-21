@@ -30,7 +30,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
             var csvContent = new StringBuilder();
 
             // Act
-            exporter.Export(scaledupProducers, materials, csvContent);
+            exporter.Export(scaledupProducers, materials, showTotal: true, csvContent);
 
             var result = csvContent.ToString().Split("\n").Select(s => s.TrimEnd(',')).ToArray();
             //Console.WriteLine($">> {JsonConvert.SerializeObject(result, Formatting.Indented)}");
@@ -92,6 +92,26 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
         }
 
         [TestMethod]
+        public void Export_ScaledUpProducer_ShouldNotContainTotalWhenIndicated()
+        {
+            // Arrange
+            var materials = GetMaterials();
+            var scaledupProducers = new CalcResultScaledupProducers
+            {
+                ScaledupProducers = null!,
+            };
+
+            var csvContent = new StringBuilder();
+
+            // Act
+            exporter.Export(scaledupProducers, materials, showTotal: false, csvContent);
+            var result = csvContent.ToString();
+
+            // Assert
+            Assert.IsFalse(result.Contains("Totals"));
+        }
+
+        [TestMethod]
         public void Export_ScaledUpProducer_ShouldIncludeHeadersAndDisplayNone_WhenNoScaledUpProducer()
         {
             // Arrange
@@ -104,7 +124,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
             var csvContent = new StringBuilder();
 
             // Act
-            exporter.Export(scaledupProducers, materials, csvContent);
+            exporter.Export(scaledupProducers, materials, showTotal: true, csvContent);
             var result = csvContent.ToString();
 
             // Assert
@@ -129,7 +149,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
             var csvContent = new StringBuilder();
 
             // Act
-            exporter.Export(scaledupProducers, materials, csvContent);
+            exporter.Export(scaledupProducers, materials, showTotal: true, csvContent);
             var result = csvContent.ToString();
 
             // Assert
