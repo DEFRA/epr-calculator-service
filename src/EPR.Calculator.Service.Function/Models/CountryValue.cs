@@ -1,6 +1,6 @@
 ﻿namespace EPR.Calculator.Service.Function.Models
 {
-    public class  ByCountryCost
+    public record ByCountryCost
     {
         public required decimal England { get; init; }
 
@@ -10,14 +10,24 @@
 
         public required decimal NorthernIreland { get; init; }
 
-        private decimal? total;
-        public decimal Total => total ??= England + Wales + Scotland + NorthernIreland;
+        public decimal Total => England + Wales + Scotland + NorthernIreland;
 
         public static readonly ByCountryCost Empty =
             new(){ England = 0, Wales = 0, Scotland = 0, NorthernIreland = 0 };
+
+        public static ByCountryCost Sum(IEnumerable<ByCountryCost> costs)
+        {
+            return new ByCountryCost
+            {
+                England          = costs.Sum(x => x.England),
+                Wales            = costs.Sum(x => x.Wales),
+                NorthernIreland  = costs.Sum(x => x.NorthernIreland),
+                Scotland         = costs.Sum(x => x.Scotland),
+            };
+        }
     }
 
-    public class ByCountryApportionment
+    public record ByCountryApportionment
     {
         public required decimal England { get; init; }
 
@@ -27,9 +37,7 @@
 
         public required decimal NorthernIreland { get; init; }
 
-        // TODO This should always be 100%
-        private decimal? total;
-        public decimal Total => total ??= England + Wales + Scotland + NorthernIreland;
+        public decimal Total => England + Wales + Scotland + NorthernIreland;
 
         public static readonly ByCountryApportionment Empty =
             new(){ England = 0, Wales = 0, Scotland = 0, NorthernIreland = 0 };

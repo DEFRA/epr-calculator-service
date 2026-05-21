@@ -112,30 +112,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                         ["AL"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
-                                EnglandCost         = 2000,
-                                WalesCost           = 0,
-                                ScotlandCost        = 0,
-                                NorthernIrelandCost = 0,
+                                Cost = ByCountryCost.Empty with { England = 2000 },
                                 HouseholdPackagingWasteTonnage = 100,
                                 PublicBinTonnage               = 0
                             },
                         ["PL"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
-                                EnglandCost         = 0,
-                                WalesCost           = 0,
-                                ScotlandCost        = 0,
-                                NorthernIrelandCost = 0,
+                                Cost = ByCountryCost.Empty,
                                 HouseholdPackagingWasteTonnage = 0,
                                 PublicBinTonnage               = 0
                             },
                         ["GL"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
-                                EnglandCost         = 0,
-                                WalesCost           = 0,
-                                ScotlandCost        = 0,
-                                NorthernIrelandCost = 0,
+                                Cost = ByCountryCost.Empty,
                                 HouseholdPackagingWasteTonnage = 0,
                                 PublicBinTonnage               = 0
                             },

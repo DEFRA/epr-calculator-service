@@ -112,20 +112,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                         ["Material1"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
-                                EnglandCost = 0m,
-                                WalesCost = 0m,
-                                ScotlandCost = 0m,
-                                NorthernIrelandCost = 0m,
+                                Cost = ByCountryCost.Empty,
                                 HouseholdPackagingWasteTonnage = Fixture.Create<decimal>(),
                                 PublicBinTonnage = Fixture.Create<decimal>(),
                             },
                         ["Material2"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
-                                EnglandCost = 0m,
-                                WalesCost = 0m,
-                                ScotlandCost = 0m,
-                                NorthernIrelandCost = 0m,
+                                Cost = ByCountryCost.Empty,
                                 HouseholdPackagingWasteTonnage = Fixture.Create<decimal>(),
                                 PublicBinTonnage = Fixture.Create<decimal>()
                             }

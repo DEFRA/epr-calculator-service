@@ -108,20 +108,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.LaDispo
                 {
                     ["AL"] = new CalcResultLaDisposalCostDataDetail
                     {
-                        EnglandCost = 100m,
-                        WalesCost = 50m,
-                        ScotlandCost = 0m,
-                        NorthernIrelandCost = 0m,
+                        Cost = new() { England = 100m, Wales = 50m, Scotland = 0m, NorthernIreland = 0m },
                         HouseholdPackagingWasteTonnage = 0m,
                         PublicBinTonnage = 0m,
                         HouseholdDrinkContainersTonnage = 100.12345m
                     },
                     ["FC"] = new CalcResultLaDisposalCostDataDetail
                     {
-                        EnglandCost = 100m,
-                        WalesCost = 50m,
-                        ScotlandCost = 0m,
-                        NorthernIrelandCost = 0m,
+                        Cost = new() { England = 100m, Wales = 50m, Scotland = 0m, NorthernIreland = 0m },
                         HouseholdPackagingWasteTonnage = 2m,
                         PublicBinTonnage = 0m,
                         ActionedSelfManagedConsumerWasteTonnage = 1.23m

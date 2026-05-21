@@ -13,7 +13,7 @@
         public decimal BadDebtValue { get; set; }
     }
 
-    public class Materiality
+    public record Materiality
     {
         public required decimal Amount  { get; init; }
         public required decimal Percentage { get; init; }

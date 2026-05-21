@@ -52,20 +52,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                         ["AL"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
-                                EnglandCost = 0,
-                                WalesCost = 0,
-                                ScotlandCost = 0,
-                                NorthernIrelandCost = 0,
+                                Cost = ByCountryCost.Empty,
                                 HouseholdPackagingWasteTonnage = 0,
                                 PublicBinTonnage = 0
                             },
                         ["PL"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
-                                EnglandCost = 0,
-                                WalesCost = 0,
-                                ScotlandCost = 0,
-                                NorthernIrelandCost = 0,
+                                Cost = ByCountryCost.Empty,
                                 HouseholdPackagingWasteTonnage = 0,
                                 PublicBinTonnage = 0
                             }

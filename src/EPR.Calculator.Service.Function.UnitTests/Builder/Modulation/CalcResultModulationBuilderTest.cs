@@ -41,10 +41,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Modulation
         {
             return new CalcResultLaDisposalCostDataDetail
             {
-                EnglandCost = 100 * costPerTonnage,
-                WalesCost = 0,
-                ScotlandCost = 0,
-                NorthernIrelandCost = 0,
+                Cost = ByCountryCost.Empty with { England = 100 * costPerTonnage },
                 HouseholdPackagingWasteTonnage = 100,
                 PublicBinTonnage = 0,
                 HouseholdDrinkContainersTonnage = 0

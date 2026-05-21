@@ -54,17 +54,17 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         {
             return new CalcResult2ACommsDataDetailsTotal
             {
-                Total                         = "Total",
-                EnglandCommsCostTotal         = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.EnglandCost),
-                WalesCommsCostTotal           = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.WalesCost),
-                ScotlandCommsCostTotal        = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.ScotlandCost),
-                NorthernIrelandCommsCostTotal = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.NorthernIrelandCost),
-                HouseholdPackagingWasteTonnageTotal   = Math.Round(commsCostByMaterial.HouseholdPackagingWasteTonnage, 3),
-                PublicBinTonnageTotal                 = Math.Round(commsCostByMaterial.PublicBinTonnage, 3),
+                Total                                 = "Total",
+                EnglandCommsCostTotal                 = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.Cost.England),
+                WalesCommsCostTotal                   = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.Cost.Wales),
+                ScotlandCommsCostTotal                = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.Cost.Scotland),
+                NorthernIrelandCommsCostTotal         = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.Cost.NorthernIreland),
+                TotalCommsCostTotal                   = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.Cost.Total),
+                HouseholdPackagingWasteTonnageTotal   = Math.Round(commsCostByMaterial.HouseholdPackagingWasteTonnage        , 3),
+                PublicBinTonnageTotal                 = Math.Round(commsCostByMaterial.PublicBinTonnage                      , 3),
                 HouseholdDrinksContainersTonnageTotal = Math.Round(commsCostByMaterial.HouseholdDrinksContainersTonnage ?? 0m, 3),
-                LateReportingTonnageTotal             = Math.Round(commsCostByMaterial.LateReportingTonnage, 3),
-                TotalCommsCostTotal                   = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.TotalCost),
-                TotalTonnageTotal                     = Math.Round(commsCostByMaterial.TotalTonnage, 3)
+                LateReportingTonnageTotal             = Math.Round(commsCostByMaterial.LateReportingTonnage                  , 3),
+                TotalTonnageTotal                     = Math.Round(commsCostByMaterial.TotalTonnage                          , 3)
             };
         }
     }

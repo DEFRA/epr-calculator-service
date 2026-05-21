@@ -207,27 +207,16 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
             var countryApportionment = calcResult.CalcResultLapcapData.CountryApportionment;
 
-            decimal? disposalCostPercentage;
-            switch (country)
+            var disposalCostPercentage = country switch
             {
-                case Countries.England:
-                    disposalCostPercentage = countryApportionment.England;
-                    break;
-                case Countries.Wales:
-                    disposalCostPercentage = countryApportionment.Wales;
-                    break;
-                case Countries.Scotland:
-                    disposalCostPercentage = countryApportionment.Scotland;
-                    break;
-                case Countries.NorthernIreland:
-                    disposalCostPercentage = countryApportionment.NorthernIreland;
-                    break;
-                default:
-                    disposalCostPercentage = 0m;
-                    break;
-            }
+                Countries.England         => countryApportionment.England,
+                Countries.Wales           => countryApportionment.Wales,
+                Countries.Scotland        => countryApportionment.Scotland,
+                Countries.NorthernIreland => countryApportionment.NorthernIreland,
+                _                         => throw new ArgumentOutOfRangeException(nameof(country), country, null),
+            };
 
-            return producerDisposalFeeWithBadDebtProvision * (disposalCostPercentage ?? 0m) / 100;
+            return producerDisposalFeeWithBadDebtProvision * disposalCostPercentage / 100;
         }
 
         public static void SetHeaders(CalcResultSummary result, IReadOnlyList<MaterialDetail> materials, bool applyModulation)

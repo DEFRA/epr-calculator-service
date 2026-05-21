@@ -65,11 +65,11 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                 HouseholdDrinksContainersTonnage       = Math.Round(commsCost.HouseholdDrinksContainersTonnage ?? 0m, 3),
                 TotalTonnage                           = Math.Round(commsCost.TotalTonnage, 3),
                 CommsCostByMaterialPricePerTonne       = CurrencyConverterUtils.ConvertToCurrency(commsCost.PricePerTonne, precision : 4),
-                EnglandCommsCost                       = CurrencyConverterUtils.ConvertToCurrency(commsCost.EnglandCost),
-                WalesCommsCost                         = CurrencyConverterUtils.ConvertToCurrency(commsCost.WalesCost),
-                ScotlandCommsCost                      = CurrencyConverterUtils.ConvertToCurrency(commsCost.ScotlandCost),
-                NorthernIrelandCommsCost               = CurrencyConverterUtils.ConvertToCurrency(commsCost.NorthernIrelandCost),
-                TotalCommsCost                         = CurrencyConverterUtils.ConvertToCurrency(commsCost.TotalCost),
+                EnglandCommsCost                       = CurrencyConverterUtils.ConvertToCurrency(commsCost.Cost.England),
+                WalesCommsCost                         = CurrencyConverterUtils.ConvertToCurrency(commsCost.Cost.Wales),
+                ScotlandCommsCost                      = CurrencyConverterUtils.ConvertToCurrency(commsCost.Cost.Scotland),
+                NorthernIrelandCommsCost               = CurrencyConverterUtils.ConvertToCurrency(commsCost.Cost.NorthernIreland),
+                TotalCommsCost                         = CurrencyConverterUtils.ConvertToCurrency(commsCost.Cost.Total),
                 LateReportingTonnage                   = Math.Round(commsCost.LateReportingTonnage, 3)
             };
         }

@@ -143,11 +143,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             // Assert
             var laDisposalCost = lapcapDisposalCostResults.ByMaterial["PL"];
 
-            Assert.AreEqual(23000, laDisposalCost.EnglandCost);
-            Assert.AreEqual(4500, laDisposalCost.WalesCost);
-            Assert.AreEqual(6700, laDisposalCost.ScotlandCost);
-            Assert.AreEqual(2100, laDisposalCost.NorthernIrelandCost);
-            Assert.AreEqual(36300, laDisposalCost.TotalCost);
+            Assert.AreEqual(23000, laDisposalCost.Cost.England);
+            Assert.AreEqual(4500, laDisposalCost.Cost.Wales);
+            Assert.AreEqual(6700, laDisposalCost.Cost.Scotland);
+            Assert.AreEqual(2100, laDisposalCost.Cost.NorthernIreland);
+            Assert.AreEqual(36300, laDisposalCost.Cost.Total);
 
             Assert.AreEqual(400, laDisposalCost.HouseholdPackagingWasteTonnage);
             Assert.AreEqual(0, laDisposalCost.PublicBinTonnage);
@@ -221,11 +221,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             // Assert
             var laDisposalCost = lapcapDisposalCostResults.ByMaterial["GL"];
-            Assert.AreEqual(45000, laDisposalCost.EnglandCost);
-            Assert.AreEqual(    0, laDisposalCost.WalesCost);
-            Assert.AreEqual(20700, laDisposalCost.ScotlandCost);
-            Assert.AreEqual( 4500, laDisposalCost.NorthernIrelandCost);
-            Assert.AreEqual(70200, laDisposalCost.TotalCost);
+            Assert.AreEqual(45000, laDisposalCost.Cost.England);
+            Assert.AreEqual(    0, laDisposalCost.Cost.Wales);
+            Assert.AreEqual(20700, laDisposalCost.Cost.Scotland);
+            Assert.AreEqual( 4500, laDisposalCost.Cost.NorthernIreland);
+            Assert.AreEqual(70200, laDisposalCost.Cost.Total);
             Assert.AreEqual(    0, laDisposalCost.HouseholdPackagingWasteTonnage);
             Assert.AreEqual(    0, laDisposalCost.PublicBinTonnage);
             Assert.AreEqual(  500, laDisposalCost.HouseholdDrinkContainersTonnage);

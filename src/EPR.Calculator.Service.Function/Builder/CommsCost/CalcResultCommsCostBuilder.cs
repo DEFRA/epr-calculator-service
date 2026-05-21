@@ -78,10 +78,13 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
                     + publicBinTonnage
                     + householdcontainers;
             var commsCost = new CalcResultCommsCostCommsCostByMaterial{
-                EnglandCost         = total * apportionmentDetail.England         / 100,
-                WalesCost           = total * apportionmentDetail.Wales           / 100,
-                ScotlandCost        = total * apportionmentDetail.Scotland        / 100,
-                NorthernIrelandCost = total * apportionmentDetail.NorthernIreland / 100,
+                Cost = new ByCountryCost
+                {
+                    England         = total * apportionmentDetail.England         / 100,
+                    Wales           = total * apportionmentDetail.Wales           / 100,
+                    Scotland        = total * apportionmentDetail.Scotland        / 100,
+                    NorthernIreland = total * apportionmentDetail.NorthernIreland / 100
+                },
                 HouseholdPackagingWasteTonnage = producerReportedTon,
                 PublicBinTonnage = publicBinTonnage,
                 HouseholdDrinksContainersTonnage = householdcontainers,

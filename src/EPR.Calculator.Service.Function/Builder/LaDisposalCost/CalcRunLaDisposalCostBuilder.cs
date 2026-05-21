@@ -74,10 +74,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
                     decimal? actionedSelfManagedConsumerWasteTonnage = applyModulation ? smcw.OverallTotalPerMaterials[materialCode].ActionedSelfManagedConsumerWasteTonnage.total ?? 0 : null;
                     var laDisposalDetail = new CalcResultLaDisposalCostDataDetail
                     {
-                        EnglandCost                  = detail.Value.England,
-                        WalesCost                    = detail.Value.Wales,
-                        ScotlandCost                 = detail.Value.Scotland,
-                        NorthernIrelandCost          = detail.Value.NorthernIreland,
+                        Cost                                    = detail.Value,
                         HouseholdPackagingWasteTonnage          = producerReportedHouseholdPackagingWasteTonnage,
                         PublicBinTonnage                        = reportedPublicBinTonnage,
                         HouseholdDrinkContainersTonnage         = householdDrinkContainers,

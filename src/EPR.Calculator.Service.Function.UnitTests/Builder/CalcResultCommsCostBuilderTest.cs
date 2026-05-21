@@ -78,33 +78,33 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.HasCount(8, materialCosts);
 
             var aluminiumCost = materialCosts["AL"];
-            Assert.AreEqual(4, aluminiumCost.EnglandCost);
-            Assert.AreEqual(2, aluminiumCost.WalesCost);
-            Assert.AreEqual(2, aluminiumCost.ScotlandCost);
-            Assert.AreEqual(2, aluminiumCost.NorthernIrelandCost);
-            Assert.AreEqual(10, aluminiumCost.TotalCost);
+            Assert.AreEqual(4, aluminiumCost.Cost.England);
+            Assert.AreEqual(2, aluminiumCost.Cost.Wales);
+            Assert.AreEqual(2, aluminiumCost.Cost.Scotland);
+            Assert.AreEqual(2, aluminiumCost.Cost.NorthernIreland);
+            Assert.AreEqual(10, aluminiumCost.Cost.Total);
             Assert.AreEqual(1000, aluminiumCost.HouseholdPackagingWasteTonnage);
             Assert.AreEqual(8000, aluminiumCost.LateReportingTonnage);
             Assert.AreEqual(9000, aluminiumCost.TotalTonnage);
             Assert.AreEqual(0.0011m, Math.Round(aluminiumCost.PricePerTonne, 4));
 
             var fibreCompositeCost = materialCosts["FC"];
-            Assert.AreEqual(4, fibreCompositeCost.EnglandCost);
-            Assert.AreEqual(2, fibreCompositeCost.WalesCost);
-            Assert.AreEqual(2, fibreCompositeCost.ScotlandCost);
-            Assert.AreEqual(2, fibreCompositeCost.NorthernIrelandCost);
-            Assert.AreEqual(10, fibreCompositeCost.TotalCost);
+            Assert.AreEqual(4, fibreCompositeCost.Cost.England);
+            Assert.AreEqual(2, fibreCompositeCost.Cost.Wales);
+            Assert.AreEqual(2, fibreCompositeCost.Cost.Scotland);
+            Assert.AreEqual(2, fibreCompositeCost.Cost.NorthernIreland);
+            Assert.AreEqual(10, fibreCompositeCost.Cost.Total);
             Assert.AreEqual(2000, fibreCompositeCost.HouseholdPackagingWasteTonnage);
             Assert.AreEqual(10, fibreCompositeCost.LateReportingTonnage);
             Assert.AreEqual(2210, fibreCompositeCost.TotalTonnage);
             Assert.AreEqual(0.0045m, Math.Round(fibreCompositeCost.PricePerTonne, 4));
 
             var glassCost = materialCosts["GL"];
-            Assert.AreEqual(4, glassCost.EnglandCost);
-            Assert.AreEqual(2, glassCost.WalesCost);
-            Assert.AreEqual(2, glassCost.ScotlandCost);
-            Assert.AreEqual(2, glassCost.NorthernIrelandCost);
-            Assert.AreEqual(10, glassCost.TotalCost);
+            Assert.AreEqual(4, glassCost.Cost.England);
+            Assert.AreEqual(2, glassCost.Cost.Wales);
+            Assert.AreEqual(2, glassCost.Cost.Scotland);
+            Assert.AreEqual(2, glassCost.Cost.NorthernIreland);
+            Assert.AreEqual(10, glassCost.Cost.Total);
             Assert.AreEqual(3000, glassCost.HouseholdPackagingWasteTonnage);
             Assert.AreEqual(10, glassCost.LateReportingTonnage);
             Assert.AreEqual(3210, glassCost.TotalTonnage);
@@ -112,11 +112,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
             Assert.AreEqual(200, glassCost.HouseholdDrinksContainersTonnage);
 
             var totalMaterialCost = result.Total;
-            Assert.AreEqual(32, totalMaterialCost.EnglandCost);
-            Assert.AreEqual(16, totalMaterialCost.WalesCost);
-            Assert.AreEqual(16, totalMaterialCost.ScotlandCost);
-            Assert.AreEqual(16, totalMaterialCost.NorthernIrelandCost);
-            Assert.AreEqual(80, totalMaterialCost.TotalCost);
+            Assert.AreEqual(32, totalMaterialCost.Cost.England);
+            Assert.AreEqual(16, totalMaterialCost.Cost.Wales);
+            Assert.AreEqual(16, totalMaterialCost.Cost.Scotland);
+            Assert.AreEqual(16, totalMaterialCost.Cost.NorthernIreland);
+            Assert.AreEqual(80, totalMaterialCost.Cost.Total);
             Assert.AreEqual(36000, totalMaterialCost.HouseholdPackagingWasteTonnage);
             Assert.AreEqual(10020, totalMaterialCost.LateReportingTonnage);
             Assert.AreEqual(46420, totalMaterialCost.TotalTonnage);

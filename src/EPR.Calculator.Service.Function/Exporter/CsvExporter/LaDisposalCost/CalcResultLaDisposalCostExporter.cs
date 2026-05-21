@@ -68,11 +68,11 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost
         private static void AppendRow(bool applyModulation, string name, CalcResultLaDisposalCostDataDetail data, StringBuilder csvContent)
         {
             csvContent.Append(CsvSanitiser.SanitiseData(name));
-            csvContent.Append(CsvSanitiser.SanitiseData(data.EnglandCost        , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(data.WalesCost          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(data.ScotlandCost       , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(data.NorthernIrelandCost, DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(data.TotalCost          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(data.Cost.England        , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(data.Cost.Wales          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(data.Cost.Scotland       , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(data.Cost.NorthernIreland, DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(data.Cost.Total          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
             csvContent.Append(CsvSanitiser.SanitiseData(data.HouseholdPackagingWasteTonnage , DecimalPlaces.Three, null));
             csvContent.Append(CsvSanitiser.SanitiseData(data.PublicBinTonnage               , DecimalPlaces.Three, null));
             csvContent.Append(CsvSanitiser.SanitiseData(data.HouseholdDrinkContainersTonnage, DecimalPlaces.Three, null));

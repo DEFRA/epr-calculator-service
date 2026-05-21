@@ -16,14 +16,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             {
                 ["AL"] = new CalcResultCommsCostCommsCostByMaterial
                     {
-                        EnglandCost = 12.7305m,
+                        Cost = ByCountryCost.Empty with { England = 12.7305m },
                         HouseholdPackagingWasteTonnage = 2.34m,
                         PublicBinTonnage = 4.56m,
                         LateReportingTonnage = 3.45m
                     },
                 ["GL"] = new CalcResultCommsCostCommsCostByMaterial
                 {
-                    EnglandCost = 32.0112m,
+                    Cost = ByCountryCost.Empty with { England = 32.0112m },
                     HouseholdPackagingWasteTonnage = 3.45m,
                     PublicBinTonnage = 5.67m,
                     LateReportingTonnage = 4.56m
@@ -31,6 +31,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             };
             var total = new CalcResultCommsCostCommsCostByMaterial
             {
+                Cost = ByCountryCost.Empty,
                 HouseholdPackagingWasteTonnage = 5.79m,
                 PublicBinTonnage = 10.23m,
                 LateReportingTonnage = 8.01m

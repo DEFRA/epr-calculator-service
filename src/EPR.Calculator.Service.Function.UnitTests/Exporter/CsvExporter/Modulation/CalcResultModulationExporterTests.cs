@@ -30,10 +30,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
                 {
                     [al.Code] = new CalcResultLaDisposalCostDataDetail
                     {
-                        EnglandCost = 0m,
-                        WalesCost = 0m,
-                        ScotlandCost = 0m,
-                        NorthernIrelandCost = 0m,
+                        Cost = ByCountryCost.Empty,
                         HouseholdPackagingWasteTonnage = 26181753.110m,
                         PublicBinTonnage = 24610.429m,
                         HouseholdDrinkContainersTonnage = null,
@@ -41,10 +38,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
                     },
                     [fc.Code] = new CalcResultLaDisposalCostDataDetail
                     {
-                        EnglandCost = 0m,
-                        WalesCost = 0m,
-                        ScotlandCost = 0m,
-                        NorthernIrelandCost = 0m,
+                        Cost = ByCountryCost.Empty,
                         HouseholdPackagingWasteTonnage = 401772.341m,
                         PublicBinTonnage = 1146.546m,
                         HouseholdDrinkContainersTonnage = null,

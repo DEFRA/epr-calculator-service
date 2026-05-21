@@ -107,11 +107,11 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost
         private void AppendRow(string name, CalcResultCommsCostCommsCostByMaterial commCost, StringBuilder csvContent)
         {
             csvContent.Append(CsvSanitiser.SanitiseData(name));
-            csvContent.Append(CsvSanitiser.SanitiseData(commCost.EnglandCost        , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(commCost.WalesCost          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(commCost.ScotlandCost       , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(commCost.NorthernIrelandCost, DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(commCost.TotalCost          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(commCost.Cost.England        , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(commCost.Cost.Wales          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(commCost.Cost.Scotland       , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(commCost.Cost.NorthernIreland, DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(commCost.Cost.Total          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
             csvContent.Append(CsvSanitiser.SanitiseData(commCost.HouseholdPackagingWasteTonnage  , DecimalPlaces.Three, DecimalFormats.F3));
             csvContent.Append(CsvSanitiser.SanitiseData(commCost.PublicBinTonnage                , DecimalPlaces.Three, DecimalFormats.F3));
             csvContent.Append(CsvSanitiser.SanitiseData(commCost.HouseholdDrinksContainersTonnage, DecimalPlaces.Three, DecimalFormats.F3));

@@ -80,10 +80,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     ["AL"] =
                         new CalcResultLaDisposalCostDataDetail
                         {
-                            EnglandCost = 5000,
-                            WalesCost = 1750,
-                            ScotlandCost = 2000,
-                            NorthernIrelandCost = 1250,
+                            Cost = new() { England = 5000, Wales = 1750, Scotland = 2000, NorthernIreland = 1250 },
                             HouseholdPackagingWasteTonnage = 6980,
                             PublicBinTonnage = 2000,
                             LateReportingTonnage = 8000
@@ -91,10 +88,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     ["FC"] =
                         new CalcResultLaDisposalCostDataDetail
                         {
-                            EnglandCost = 7500,
-                            WalesCost = 2100,
-                            ScotlandCost = 3400,
-                            NorthernIrelandCost = 1750,
+                            Cost = new() { England = 7500, Wales = 2100, Scotland = 3400, NorthernIreland = 1750 },
                             HouseholdPackagingWasteTonnage = 11850,
                             PublicBinTonnage = 2000,
                             LateReportingTonnage = 7000
@@ -102,10 +96,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     ["GL"] =
                         new CalcResultLaDisposalCostDataDetail
                         {
-                            EnglandCost = 45000,
-                            WalesCost = 0,
-                            ScotlandCost = 20700,
-                            NorthernIrelandCost = 4500,
+                            Cost = new() { England = 45000, Wales = 0, Scotland = 20700, NorthernIreland = 4500 },
                             HouseholdPackagingWasteTonnage = 4900,
                             PublicBinTonnage = 2000,
                             LateReportingTonnage = 6000
@@ -113,10 +104,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     ["PC"] =
                         new CalcResultLaDisposalCostDataDetail
                         {
-                            EnglandCost = 12500,
-                            WalesCost = 2300,
-                            ScotlandCost = 4500,
-                            NorthernIrelandCost = 3400,
+                            Cost = new() { England = 12500, Wales = 2300, Scotland = 4500, NorthernIreland = 3400 },
                             HouseholdPackagingWasteTonnage = 4270,
                             PublicBinTonnage = 2000,
                             LateReportingTonnage = 5000
@@ -124,10 +112,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     ["PL"] =
                         new CalcResultLaDisposalCostDataDetail
                         {
-                            EnglandCost = 23000,
-                            WalesCost = 4500,
-                            ScotlandCost = 6700,
-                            NorthernIrelandCost = 2100,
+                            Cost = new() { England = 23000, Wales = 4500, Scotland = 6700, NorthernIreland = 2100 },
                             HouseholdPackagingWasteTonnage = 12805,
                             PublicBinTonnage = 2000,
                             LateReportingTonnage = 4000
@@ -135,10 +120,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     ["ST"] =
                         new CalcResultLaDisposalCostDataDetail
                         {
-                            EnglandCost = 13400,
-                            WalesCost = 0,
-                            ScotlandCost = 7800,
-                            NorthernIrelandCost = 0,
+                            Cost = new() { England = 13400, Wales = 0, Scotland = 7800, NorthernIreland = 0 },
                             HouseholdPackagingWasteTonnage = 7700,
                             PublicBinTonnage = 2000,
                             LateReportingTonnage = 3000
@@ -146,10 +128,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     ["WD"] =
                         new CalcResultLaDisposalCostDataDetail
                         {
-                            EnglandCost = 0,
-                            WalesCost = 12000,
-                            ScotlandCost = 0,
-                            NorthernIrelandCost = 5600,
+                            Cost = new() { England = 0, Wales = 12000, Scotland = 0, NorthernIreland = 5600 },
                             HouseholdPackagingWasteTonnage = 6800,
                             PublicBinTonnage = 2000,
                             LateReportingTonnage = 2000
@@ -157,10 +136,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     ["OT"] =
                         new CalcResultLaDisposalCostDataDetail
                         {
-                            EnglandCost = 3400,
-                            WalesCost = 2100,
-                            ScotlandCost = 4200,
-                            NorthernIrelandCost = 700,
+                            Cost = new() { England = 3400, Wales = 2100, Scotland = 4200, NorthernIreland = 700 },
                             HouseholdPackagingWasteTonnage = 7700,
                             PublicBinTonnage = 2000,
                             LateReportingTonnage = 1000
@@ -211,13 +187,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 {
                     ["AL"] = new ()
                     {
-                        EnglandCost = 4.347m,
+                        Cost = ByCountryCost.Empty with { England = 4.347m },
                         HouseholdPackagingWasteTonnage = 2.34m,
                         PublicBinTonnage = 4.56m,
                         LateReportingTonnage = 3.45m
                     },
                     ["GL"] = new ()
                     {
+                        Cost = ByCountryCost.Empty,
                         HouseholdPackagingWasteTonnage = 3.45m,
                         PublicBinTonnage = 5.67m,
                         LateReportingTonnage = 4.56m
