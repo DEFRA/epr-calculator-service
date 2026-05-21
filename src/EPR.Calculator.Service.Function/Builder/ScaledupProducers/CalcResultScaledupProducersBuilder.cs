@@ -223,17 +223,18 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                 join crpdd in dbContext.CalculatorRunPomDataDetails.AsNoTracking() on run.CalculatorRunPomDataMasterId equals crpdd.CalculatorRunPomDataMasterId
                 join spl in dbContext.SubmissionPeriodLookup.AsNoTracking() on crpdd.SubmissionPeriod equals spl.SubmissionPeriod
                 join pd in dbContext.ProducerDetail.AsNoTracking() on crpdd.OrganisationId equals pd.ProducerId
+                join crodm in dbContext.CalculatorRunOrganisationDataMaster.AsNoTracking() on run.CalculatorRunOrganisationDataMasterId equals crodm.Id
                 join org in dbContext.CalculatorRunOrganisationDataDetails.AsNoTracking()
-                  on new { pd.ProducerId, pd.SubsidiaryId, crpdd.SubmitterId }
-                    equals new { ProducerId = org.OrganisationId, org.SubsidiaryId, org.SubmitterId }
+                  on new { crodm.Id, pd.ProducerId, pd.SubsidiaryId, crpdd.SubmitterId }
+                    equals new { Id = org.CalculatorRunOrganisationDataMasterId, ProducerId = org.OrganisationId, org.SubsidiaryId, org.SubmitterId }
                 where run.Id == runId && spl.ScaleupFactor > NormalScaleup
                   && pd.CalculatorRunId == runId && org.ObligationStatus == ObligationStates.Obligated
                 select new
                 {
                     ProducerId             = pd.ProducerId,
-                    SubsidiaryId           = pd.SubsidiaryId!,
-                    ProducerName           = pd.ProducerName!,
-                    TradingName            = pd.TradingName!,
+                    SubsidiaryId           = pd.SubsidiaryId,
+                    ProducerName           = pd.ProducerName,
+                    TradingName            = pd.TradingName,
                     OrgName                = org.OrganisationName,
                     ScaleupFactor          = spl.ScaleupFactor,
                     SubmissionPeriodCode   = spl.SubmissionPeriod,
@@ -257,8 +258,8 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
 
             var organisations = rows
                 .Where(r => string.IsNullOrEmpty(r.SubsidiaryId))
-                .Select(r => new Organisation { OrganisationId = r.ProducerId, OrganisationName = r.OrgName, TradingName = r.TradingName })
-                .DistinctBy(o => o.OrganisationId);
+                .DistinctBy(o => o.ProducerId)
+                .Select(r => new Organisation { OrganisationId = r.ProducerId, OrganisationName = r.OrgName, TradingName = r.TradingName });
 
             return (producers, organisations);
         }

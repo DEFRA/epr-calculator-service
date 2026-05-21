@@ -28,11 +28,11 @@ namespace EPR.Calculator.Service.Function.Services
         ApplicationDBContext dbContext,
         IMaterialService materialService,
         ICalcResultBuilder builder,
-        ICalcResultsExporter exporter,
         IStorageService storageService,
         CalculatorRunValidator validator,
-        ICalcBillingJsonExporter jsonExporter,
-        IBillingFileExporter billingFileExporter,
+        ICalcResultsExporter csvResultsExporter,
+        IBillingFileExporter csvBillingExporter,
+        ICalcBillingJsonExporter jsonBillingExporter,
         IPrepareProducerDataInsertService producerDataInsertService,
         IOptions<BlobStorageOptions> blobStorageOptions,
         ITelemetryClient telemetry,
@@ -67,7 +67,7 @@ namespace EPR.Calculator.Service.Function.Services
                 var materials = await materialService.GetMaterials();
                 var results = await telemetry.TrackDuration("CalculatorRunBuilder", () => builder.BuildAsync(resultsRequestDto, materials));
                 await logger.LogDuration(() => producerDataInsertService.InsertProducerDataToDatabase(results, materials), "Insert producer data");
-                var exportedResults = logger.LogDuration(() => exporter.Export(results, materials), "Export results");
+                var csvResults = logger.LogDuration(() => csvResultsExporter.Export(results, materials), "Export results");
 
                 var fileName = new CalcResultsAndBillingFileName(
                     results.CalcResultDetail.RunId,
@@ -78,7 +78,7 @@ namespace EPR.Calculator.Service.Function.Services
 
                 var blobUri = await storageService.UploadFileContentAsync(
                     (FileName: fileName,
-                    Content: exportedResults,
+                    Content: csvResults,
                     RunName: runName ?? string.Empty,
                     ContainerName: containerName,
                     Overwrite: OverwriteCsvFile));
@@ -121,7 +121,7 @@ namespace EPR.Calculator.Service.Function.Services
 
             // Get File name for the billing json file
             var csvName = new CalcResultsAndBillingFileName(resultsRequestDto.RunId, runName, DateTime.UtcNow, true);
-            var csvContent = billingFileExporter.Export(results, materials, resultsRequestDto.AcceptedProducerIds);
+            var csvContent = csvBillingExporter.Export(results, materials, resultsRequestDto.AcceptedProducerIds);
 
             var csvBlobUri = await storageService.UploadFileContentAsync((
                  FileName: csvName,
@@ -142,7 +142,7 @@ namespace EPR.Calculator.Service.Function.Services
             logger.LogInformation("Exported Billing CSV {BillingCsvFile}", csvName);
 
             var jsonName = new CalcResultsAndBillingFileName(resultsRequestDto.RunId, true, true);
-            var jsonContent = jsonExporter.Export(results, materials, resultsRequestDto.AcceptedProducerIds);
+            var jsonContent = jsonBillingExporter.Export(results, materials, resultsRequestDto.AcceptedProducerIds);
 
             await storageService.UploadFileContentAsync((
                 FileName: jsonName,

@@ -17,10 +17,10 @@ public class PrepareCalcServiceTests
 {
     private IFixture fixture = null!;
     private ApplicationDBContext dbContext = null!;
-    private Mock<IBillingFileExporter> billingFileExporter = null!;
     private Mock<ICalcResultBuilder> builder = null!;
-    private Mock<ICalcResultsExporter> exporter = null!;
-    private Mock<ICalcBillingJsonExporter> jsonExporter = null!;
+    private Mock<ICalcResultsExporter> csvResultsExporter = null!;
+    private Mock<IBillingFileExporter> csvBillingExporter = null!;
+    private Mock<ICalcBillingJsonExporter> jsonBillingExporter = null!;
     private Mock<IStorageService> storageService = null!;
     private PrepareCalcService sut = null!;
 
@@ -31,8 +31,8 @@ public class PrepareCalcServiceTests
         dbContext = fixture.Freeze<ApplicationDBContext>();
         builder = fixture.Freeze<Mock<ICalcResultBuilder>>();
 
-        exporter = fixture.Freeze<Mock<ICalcResultsExporter>>();
-        exporter
+        csvResultsExporter = fixture.Freeze<Mock<ICalcResultsExporter>>();
+        csvResultsExporter
             .Setup(x => x.Export(It.IsAny<CalcResult>(), It.IsAny<IImmutableList<MaterialDetail>>()))
             .Returns("Some value");
 
@@ -41,8 +41,8 @@ public class PrepareCalcServiceTests
             .Setup(x => x.UploadFileContentAsync(It.IsAny<(string, string, string, string, bool)>()))
             .ReturnsAsync("http://testuri");
 
-        jsonExporter = fixture.Freeze<Mock<ICalcBillingJsonExporter>>();
-        billingFileExporter = fixture.Freeze<Mock<IBillingFileExporter>>();
+        csvBillingExporter = fixture.Freeze<Mock<IBillingFileExporter>>();
+        jsonBillingExporter = fixture.Freeze<Mock<ICalcBillingJsonExporter>>();
 
         SeedDatabase();
 
@@ -121,7 +121,7 @@ public class PrepareCalcServiceTests
     {
         // Arrange
         var resultsRequestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
-        exporter.Setup(x => x.Export(It.IsAny<CalcResult>(), It.IsAny<IImmutableList<MaterialDetail>>())).Throws(new Exception("Custom exception message"));
+        csvResultsExporter.Setup(x => x.Export(It.IsAny<CalcResult>(), It.IsAny<IImmutableList<MaterialDetail>>())).Throws(new Exception("Custom exception message"));
         var runName = fixture.Create<string>();
 
         // Act
@@ -136,7 +136,7 @@ public class PrepareCalcServiceTests
     {
         // Arrange
         var resultsRequestDto = new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) };
-        exporter.Setup(x => x.Export(It.IsAny<CalcResult>(), It.IsAny<IImmutableList<MaterialDetail>>())).Throws(new OperationCanceledException("Operation canceled exception message"));
+        csvResultsExporter.Setup(x => x.Export(It.IsAny<CalcResult>(), It.IsAny<IImmutableList<MaterialDetail>>())).Throws(new OperationCanceledException("Operation canceled exception message"));
         var runName = fixture.Create<string>();
 
         // Act
@@ -181,11 +181,11 @@ public class PrepareCalcServiceTests
         calcRun.IsBillingFileGenerating = true;
         await dbContext.SaveChangesAsync();
 
-        jsonExporter
+        jsonBillingExporter
             .Setup(t => t.Export(It.IsAny<CalcResult>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<int>>()))
             .Returns(fixture.Create<string>());
 
-        billingFileExporter
+        csvBillingExporter
             .Setup(t => t.Export(It.IsAny<CalcResult>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<ImmutableHashSet<int>>()))
             .Returns(fixture.Create<string>());
 

@@ -505,14 +505,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             return result;
         }
 
-        private static RagRating GroupedRagRating(RagRating rating) => rating switch
-        {
-            RagRating.Red or RagRating.RedMedical => RagRating.Red,
-            RagRating.Amber or RagRating.AmberMedical => RagRating.Amber,
-            RagRating.Green or RagRating.GreenMedical => RagRating.Green,
-            _ => throw new ArgumentOutOfRangeException(nameof(rating))
-        };
-
         [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         private CalcResultSummaryProducerDisposalFeesByMaterial BuildProducerDisposalFeesByMaterial(
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
@@ -566,9 +558,9 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
                 TotalReportedTonnage = totalReportedTonnage,
                 TotalReportedTonnageRagRating = calcResult.ApplyModulation
-                    ? Enum.GetValues<RagRating>().GroupBy(GroupedRagRating).ToDictionary(
-                        grp => grp.Key,
-                        grp => grp.Sum(r => CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, producer, material, r)))
+                    ? Enum.GetValues<RagRating>().ToDictionary(
+                        rag => rag,
+                        rag => CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, producer, material, rag))
                     : new(),
 
                 SelfManagedConsumerWasteTonnage = selfManagedConsumerWasteData.SelfManagedConsumerWasteTonnage,
@@ -725,9 +717,9 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
                     TotalReportedTonnage = CalcResultSummaryUtil.GetReportedTonnageTotal(projectedMaterialsLookup, producersAndSubsidiaries, material),
                     TotalReportedTonnageRagRating = calcResult.ApplyModulation
-                        ? Enum.GetValues<RagRating>().GroupBy(GroupedRagRating).ToDictionary(
-                            grp => grp.Key,
-                            grp => grp.Sum(r => CalcResultSummaryUtil.GetReportedTonnageTotal(projectedMaterialsLookup, producersAndSubsidiaries, material, r)))
+                        ? Enum.GetValues<RagRating>().ToDictionary(
+                            rag => rag,
+                            rag => CalcResultSummaryUtil.GetReportedTonnageTotal(projectedMaterialsLookup, producersAndSubsidiaries, material, rag))
                         : new(),
 
                     SelfManagedConsumerWasteTonnage = selfManagedConsumerWasteData.SelfManagedConsumerWasteTonnage,

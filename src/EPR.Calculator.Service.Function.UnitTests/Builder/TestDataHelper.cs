@@ -1,5 +1,6 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
@@ -1120,6 +1121,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     {
                         HouseholdPackagingWasteTonnage = 1000,
                         SelfManagedConsumerWasteTonnage = 90,
+                        TotalReportedTonnageRagRating = applyModulation
+                            ? new Dictionary<RagRating, decimal>
+                                {
+                                    [RagRating.Red]          = 1,
+                                    [RagRating.Amber]        = 2,
+                                    [RagRating.Green]        = 3,
+                                    [RagRating.RedMedical]   = 4,
+                                    [RagRating.AmberMedical] = 5,
+                                    [RagRating.GreenMedical] = 6
+                                }
+                            : new(),
                         NetReportedTonnage = applyModulation
                             ?(total: 910, red: 300, amber: 200, green: 410)
                             :(total: 910, red: null, amber: null, green: null),
@@ -1137,7 +1149,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         NorthernIrelandWithBadDebtProvision = 61.18m,
                         PreviousInvoicedTonnage = null,
                         TonnageChange = 0,
-                        ActionedSelfManagedConsumerWasteTonnage = 90
+                        ActionedSelfManagedConsumerWasteTonnage = (total: 90, red: 0, amber: 90, green: 0)
                     }
                 },
                 {
@@ -1146,6 +1158,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     {
                         HouseholdPackagingWasteTonnage = 2000,
                         SelfManagedConsumerWasteTonnage = 140,
+                        TotalReportedTonnageRagRating = applyModulation
+                            ? new Dictionary<RagRating, decimal>
+                                {
+                                    [RagRating.Red]          = 1,
+                                    [RagRating.Amber]        = 2,
+                                    [RagRating.Green]        = 3,
+                                    [RagRating.RedMedical]   = 4,
+                                    [RagRating.AmberMedical] = 5,
+                                    [RagRating.GreenMedical] = 6
+                                }
+                            : new(),
                         NetReportedTonnage = applyModulation
                             ?(total: 1860, red: 860, amber: 0, green: 1000)
                             :(total: 1860, red: null, amber: null, green: null),
@@ -1163,7 +1186,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         NorthernIrelandWithBadDebtProvision = 146.57m,
                         PreviousInvoicedTonnage = 0,
                         TonnageChange = 0,
-                        ActionedSelfManagedConsumerWasteTonnage = 140
+                        ActionedSelfManagedConsumerWasteTonnage = (total: 140, red: 0, amber: 90, green: 140)
                     }
                 },
                 {
@@ -1172,6 +1195,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     {
                         HouseholdPackagingWasteTonnage = 500,
                         SelfManagedConsumerWasteTonnage = 150,
+                        TotalReportedTonnageRagRating = applyModulation
+                            ? new Dictionary<RagRating, decimal>
+                                {
+                                    [RagRating.Red]          = 1,
+                                    [RagRating.Amber]        = 2,
+                                    [RagRating.Green]        = 3,
+                                    [RagRating.RedMedical]   = 4,
+                                    [RagRating.AmberMedical] = 5,
+                                    [RagRating.GreenMedical] = 6
+                                }
+                            : new(),
                         NetReportedTonnage = applyModulation
                             ?(total: 350, red: 300, amber: 50, green: 0)
                             :(total: 350, red: null, amber: null, green: null),
@@ -1190,7 +1224,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         HouseholdDrinksContainersTonnage = 220,
                         PreviousInvoicedTonnage = 0,
                         TonnageChange = 0,
-                        ActionedSelfManagedConsumerWasteTonnage = 150
+                        ActionedSelfManagedConsumerWasteTonnage = (total: 150, red: 50, amber: 100, green: 0)
                     }
                 },
                 {
@@ -1199,6 +1233,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     {
                         HouseholdPackagingWasteTonnage = 20,
                         SelfManagedConsumerWasteTonnage = 2.200m,
+                        TotalReportedTonnageRagRating = applyModulation
+                            ? new Dictionary<RagRating, decimal>
+                                {
+                                    [RagRating.Red]          = 1,
+                                    [RagRating.Amber]        = 2,
+                                    [RagRating.Green]        = 3,
+                                    [RagRating.RedMedical]   = 4,
+                                    [RagRating.AmberMedical] = 5,
+                                    [RagRating.GreenMedical] = 6
+                                }
+                            : new(),
                         NetReportedTonnage = applyModulation
                             ?(total: 17.800m, red: 0, amber: 0, green: 0)
                             :(total: 17.800m, red: null, amber: null, green: null),
@@ -1216,7 +1261,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         NorthernIrelandWithBadDebtProvision = 4.39m,
                         PreviousInvoicedTonnage = 0,
                         TonnageChange = 0,
-                        ActionedSelfManagedConsumerWasteTonnage = 2.200m,
+                        ActionedSelfManagedConsumerWasteTonnage = (total: 2.200m, red: 0, amber: 2.200m, green: 0)
                     }
                 },
                 {
@@ -1225,6 +1270,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     {
                         HouseholdPackagingWasteTonnage = 5.000m,
                         SelfManagedConsumerWasteTonnage = 0.600m,
+                        TotalReportedTonnageRagRating = applyModulation
+                            ? new Dictionary<RagRating, decimal>
+                                {
+                                    [RagRating.Red]          = 1,
+                                    [RagRating.Amber]        = 2,
+                                    [RagRating.Green]        = 3,
+                                    [RagRating.RedMedical]   = 4,
+                                    [RagRating.AmberMedical] = 5,
+                                    [RagRating.GreenMedical] = 6
+                                }
+                            : new(),
                         NetReportedTonnage = applyModulation
                             ?(total: 4.400m, red: 4.400m, amber: 0, green: 0)
                             :(total: 4.400m, red: null, amber: null, green: null),
@@ -1242,7 +1298,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         NorthernIrelandWithBadDebtProvision = 0.96m,
                         PreviousInvoicedTonnage = 0,
                         TonnageChange = 0,
-                        ActionedSelfManagedConsumerWasteTonnage = 0.600m
+                        ActionedSelfManagedConsumerWasteTonnage = (total: 0.600m, red: 0, amber: 0.600m, green: 0)
                     }
                 },
                 {
@@ -1251,6 +1307,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     {
                         HouseholdPackagingWasteTonnage = 0.000m,
                         SelfManagedConsumerWasteTonnage = 0.000m,
+                                    TotalReportedTonnageRagRating = applyModulation
+                            ? new Dictionary<RagRating, decimal>
+                                {
+                                    [RagRating.Red]          = 1,
+                                    [RagRating.Amber]        = 2,
+                                    [RagRating.Green]        = 3,
+                                    [RagRating.RedMedical]   = 4,
+                                    [RagRating.AmberMedical] = 5,
+                                    [RagRating.GreenMedical] = 6
+                                }
+                            : new(),
                         NetReportedTonnage = applyModulation
                             ?(total: 0, red: 0, amber: 0, green: 0)
                             :(total: 0, red: null, amber: null, green: null),
@@ -1268,7 +1335,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         NorthernIrelandWithBadDebtProvision = 0.00m,
                         PreviousInvoicedTonnage = 0,
                         TonnageChange = 0,
-                        ActionedSelfManagedConsumerWasteTonnage = 0
+                        ActionedSelfManagedConsumerWasteTonnage = (total: 0, red: 0, amber: 0, green: 0)
                     }
                 },
                 {
@@ -1277,6 +1344,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     {
                         HouseholdPackagingWasteTonnage = 500.000m,
                         SelfManagedConsumerWasteTonnage = 95.000m,
+                        TotalReportedTonnageRagRating = applyModulation
+                            ? new Dictionary<RagRating, decimal>
+                                {
+                                    [RagRating.Red]          = 1,
+                                    [RagRating.Amber]        = 2,
+                                    [RagRating.Green]        = 3,
+                                    [RagRating.RedMedical]   = 4,
+                                    [RagRating.AmberMedical] = 5,
+                                    [RagRating.GreenMedical] = 6
+                                }
+                            : new(),
                         NetReportedTonnage = applyModulation
                             ?(total: 405.000m, red: 300, amber: 100, green: 5)
                             :(total: 405.000m, red: null, amber: null, green: null),
@@ -1294,7 +1372,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         NorthernIrelandWithBadDebtProvision = 81.57m,
                         PreviousInvoicedTonnage = 0,
                         TonnageChange = 0,
-                        ActionedSelfManagedConsumerWasteTonnage = 95.000m,
+                        ActionedSelfManagedConsumerWasteTonnage = (total: 95, red: 0, amber: 95, green: 0)
                     }
                 },
                 {
@@ -1303,6 +1381,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     {
                         HouseholdPackagingWasteTonnage = 50.000m,
                         SelfManagedConsumerWasteTonnage = 5.500m,
+                        TotalReportedTonnageRagRating = applyModulation
+                            ? new Dictionary<RagRating, decimal>
+                                {
+                                    [RagRating.Red]          = 1,
+                                    [RagRating.Amber]        = 2,
+                                    [RagRating.Green]        = 3,
+                                    [RagRating.RedMedical]   = 4,
+                                    [RagRating.AmberMedical] = 5,
+                                    [RagRating.GreenMedical] = 6
+                                }
+                            : new(),
                         NetReportedTonnage = applyModulation
                             ?(total: 44.500m, red: 0, amber: 44.500m, green: 0)
                             :(total: 44.500m, red: null, amber: null, green: null),
@@ -1320,7 +1409,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         NorthernIrelandWithBadDebtProvision = 5.36m,
                         PreviousInvoicedTonnage = 0,
                         TonnageChange = 0,
-                        ActionedSelfManagedConsumerWasteTonnage = 5.500m
+                        ActionedSelfManagedConsumerWasteTonnage = (total: 5.500m, red: 0, amber: 5.500m, green: 0)
                     }
                 },
             };

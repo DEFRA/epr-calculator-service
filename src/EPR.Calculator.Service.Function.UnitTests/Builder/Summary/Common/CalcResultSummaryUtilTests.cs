@@ -272,7 +272,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var smcw = new SelfManagedConsumerWasteData
             {
                 SelfManagedConsumerWasteTonnage = 0,
-                ActionedSelfManagedConsumerWasteTonnage = 0,
+                ActionedSelfManagedConsumerWasteTonnage = (0, 0m, 0m, 0m),
                 ResidualSelfManagedConsumerWasteTonnage = 0,
                 NetReportedTonnage = (null, 1m, 2m, 3m)
             };
