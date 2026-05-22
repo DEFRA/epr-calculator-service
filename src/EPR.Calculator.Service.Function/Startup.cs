@@ -177,7 +177,7 @@ internal static class ServiceRegistration
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
-        services.AddHttpClient<CommonDataApiHttpClient>();
+        services.AddHttpClient<ICommonDataApiClient, CommonDataApiHttpClient>();
 
         services
             .AddOptions<CommonDataApiLoaderOptions>()

@@ -21,7 +21,7 @@ namespace EPR.Calculator.Service.Function.Services.DataLoading;
 public class CommonDataApiLoader(
     IOptions<CommonDataApiLoaderOptions> options,
     IDbContextFactory<ApplicationDBContext> dbContextFactory,
-    CommonDataApiHttpClient httpClient,
+    ICommonDataApiClient httpClient,
     TimeProvider timeProvider,
     ITelemetryClient telemetry,
     ILogger<CommonDataApiLoader> logger)
