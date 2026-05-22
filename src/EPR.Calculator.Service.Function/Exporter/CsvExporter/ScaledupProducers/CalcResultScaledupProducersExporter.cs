@@ -8,7 +8,12 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers
 {
     public interface ICalcResultScaledupProducersExporter
     {
-        public void Export(CalcResultScaledupProducers calcResultScaledupProducers, IImmutableList<MaterialDetail> materials, StringBuilder stringBuilder);
+        public void Export(
+            CalcResultScaledupProducers calcResultScaledupProducers,
+            IImmutableList<MaterialDetail> materials,
+            bool showTotal,
+            StringBuilder stringBuilder
+        );
     }
 
     public class CalcResultScaledupProducersExporter : ICalcResultScaledupProducersExporter
@@ -17,7 +22,12 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers
         private const int MaterialsBreakdownHeaderIncrementalColumnIndex = 10;
 
 
-        public void Export(CalcResultScaledupProducers calcResultScaledupProducers, IImmutableList<MaterialDetail> materials, StringBuilder stringBuilder)
+        public void Export(
+            CalcResultScaledupProducers calcResultScaledupProducers,
+            IImmutableList<MaterialDetail> materials,
+            bool showTotal,
+            StringBuilder stringBuilder
+        )
         {
             // Add empty lines
             stringBuilder.AppendLine();
@@ -33,7 +43,10 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers
                     producer.ScaledupProducerTonnageByMaterial = GetTonnages(producer.PomData, materials);
 
                 AppendScaledupProducers(calcResultScaledupProducers.ScaledupProducers, stringBuilder);
-                AppendOverallTotalRow(GetOverallTotalRow(calcResultScaledupProducers.ScaledupProducers, materials), stringBuilder);
+                if (showTotal)
+                {
+                    AppendOverallTotalRow(GetOverallTotalRow(calcResultScaledupProducers.ScaledupProducers, materials), stringBuilder);
+                }
             }
             else
             {

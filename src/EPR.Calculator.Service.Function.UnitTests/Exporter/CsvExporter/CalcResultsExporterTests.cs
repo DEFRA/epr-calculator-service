@@ -106,7 +106,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             MockLaDisposalCostDataExporter.Verify(x => x.Export(It.IsAny<CalcResultLaDisposalCostData>(), It.IsAny<StringBuilder>()));
             MockCommsCostExporter.Verify(x => x.Export(It.IsAny<CalcResultCommsCost>(), It.IsAny<StringBuilder>()));
             MockOnePlusFourExporter.Verify(x => x.Export(It.IsAny<CalcResultOnePlusFourApportionment>(), It.IsAny<StringBuilder>()));
-            MockScaledupProducersExporter.Verify(x => x.Export(It.IsAny<CalcResultScaledupProducers>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<StringBuilder>()));
+            MockScaledupProducersExporter.Verify(x => x.Export(It.IsAny<CalcResultScaledupProducers>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<bool>(), It.IsAny<StringBuilder>()));
             MockPartialObligationsExporter.Verify(x => x.Export(It.IsAny<CalcResultPartialObligations>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<StringBuilder>(), It.IsAny<bool>()));
             MockProjectedProducersExporter.Verify(x => x.Export(It.IsAny<CalcResultProjectedProducers>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<StringBuilder>()), Times.Never);
             MockParameterOtherCostExporter.Verify(x => x.Export(It.IsAny<CalcResultParameterOtherCost>(), It.IsAny<StringBuilder>()));
@@ -126,7 +126,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             // Assert
             Assert.IsNotNull(result);
 
-            MockScaledupProducersExporter.Verify(x => x.Export(It.IsAny<CalcResultScaledupProducers>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<StringBuilder>()), Times.Never);
+            MockScaledupProducersExporter.Verify(x => x.Export(It.IsAny<CalcResultScaledupProducers>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<bool>(), It.IsAny<StringBuilder>()), Times.Never);
             MockProjectedProducersExporter.Verify(x => x.Export(It.IsAny<CalcResultProjectedProducers>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<StringBuilder>()));
         }
 
