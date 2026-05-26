@@ -1,5 +1,3 @@
-using EPR.Calculator.Service.Function.Builder.CommsCost;
-using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
 using EPR.Calculator.Service.Function.UnitTests.Builder;
 using System.Text.Json;
@@ -22,11 +20,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             var expectedJson = """
                 {
                   "onePlusFourCommsCostApportionmentPercentages": {
-                    "england"        : "50.23%",
-                    "wales"          : "30.34%",
-                    "scotland"       : "10.45%",
-                    "northernIreland": "8.98%",
-                    "total"          : "100.00%"
+                    "england"        : "50.23000000%",
+                    "wales"          : "30.34000000%",
+                    "scotland"       : "10.45000000%",
+                    "northernIreland": "8.98000000%",
+                    "total"          : "100.00000000%"
                   }
                 }
                 """;

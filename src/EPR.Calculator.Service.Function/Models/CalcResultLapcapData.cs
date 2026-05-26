@@ -1,6 +1,4 @@
-﻿using EPR.Calculator.API.Data.DataModels;
-
-namespace EPR.Calculator.Service.Function.Models
+﻿namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResultLapcapData
     {

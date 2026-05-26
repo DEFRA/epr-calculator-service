@@ -1,13 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
-using EPR.Calculator.Service.Function.Builder.CommsCost;
-using Microsoft.Azure.Amqp.Framing;
 
 namespace EPR.Calculator.Service.Function.Builder.CommsCost;
 

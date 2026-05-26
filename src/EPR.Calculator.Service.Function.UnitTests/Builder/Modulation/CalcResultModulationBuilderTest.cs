@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using EPR.Calculator.Service.Function.Builder.Modulation;
+﻿using EPR.Calculator.Service.Function.Builder.Modulation;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 

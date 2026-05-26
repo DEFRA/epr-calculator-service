@@ -1,4 +1,5 @@
 using System.Text.Json;
+
 namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter;
 
 public static class JsonTestUtils

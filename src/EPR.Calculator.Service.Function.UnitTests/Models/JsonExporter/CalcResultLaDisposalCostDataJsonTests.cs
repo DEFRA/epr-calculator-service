@@ -1,7 +1,6 @@
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
 using EPR.Calculator.Service.Function.UnitTests.Builder;
-using System.Text.Json.Nodes;
 using System.Text.Json;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter

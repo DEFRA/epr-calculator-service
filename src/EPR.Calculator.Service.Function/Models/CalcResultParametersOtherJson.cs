@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Utils;
 
@@ -86,11 +85,11 @@ namespace EPR.Calculator.Service.Function.Models
 
             return new CountryAmountJson
             {
-                England         = $"{Math.Round(apportionment.England        , (int)DecimalPlaces.Eight)}%",
-                Wales           = $"{Math.Round(apportionment.Wales          , (int)DecimalPlaces.Eight)}%",
-                Scotland        = $"{Math.Round(apportionment.Scotland       , (int)DecimalPlaces.Eight)}%",
-                NorthernIreland = $"{Math.Round(apportionment.NorthernIreland, (int)DecimalPlaces.Eight)}%",
-                Total           = $"{100}%"
+                England         = $"{Math.Round(apportionment.England        , (int)DecimalPlaces.Eight):0.00000000}%",
+                Wales           = $"{Math.Round(apportionment.Wales          , (int)DecimalPlaces.Eight):0.00000000}%",
+                Scotland        = $"{Math.Round(apportionment.Scotland       , (int)DecimalPlaces.Eight):0.00000000}%",
+                NorthernIreland = $"{Math.Round(apportionment.NorthernIreland, (int)DecimalPlaces.Eight):0.00000000}%",
+                Total           = $"{100                                                                :0.00000000}%"
             };
         }
     }
@@ -131,7 +130,7 @@ namespace EPR.Calculator.Service.Function.Models
         {
             return new ChangeDetailJson
             {
-                Amount     = CurrencyConverterUtils.ConvertToCurrency(materiality.Amount),
+                Amount     = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(materiality.Amount, 2, ","),
                 Percentage = $"{materiality.Percentage:0.00}%"
             };
         }

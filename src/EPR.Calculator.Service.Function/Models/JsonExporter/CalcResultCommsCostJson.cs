@@ -1,7 +1,5 @@
 ﻿using System.Text.Json.Serialization;
-using EPR.Calculator.Service.Function.Builder.CommsCost;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
@@ -37,18 +35,13 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
         public static OnePlusFourCommsCostApportionmentPercentages From(ByCountryApportionment dataRow)
         {
-            string AppendPercent(decimal input)
-            {
-                return $"{input:0.00}%";
-            }
-
             return new OnePlusFourCommsCostApportionmentPercentages
             {
-                England         = AppendPercent(dataRow.England),
-                Wales           = AppendPercent(dataRow.Wales),
-                Scotland        = AppendPercent(dataRow.Scotland),
-                NorthernIreland = AppendPercent(dataRow.NorthernIreland),
-                Total           = AppendPercent(dataRow.Total)
+                England         = $"{dataRow.England        :0.00000000}%",
+                Wales           = $"{dataRow.Wales          :0.00000000}%",
+                Scotland        = $"{dataRow.Scotland       :0.00000000}%",
+                NorthernIreland = $"{dataRow.NorthernIreland:0.00000000}%",
+                Total           = $"{dataRow.Total          :0.00000000}%"
             };
         }
     }

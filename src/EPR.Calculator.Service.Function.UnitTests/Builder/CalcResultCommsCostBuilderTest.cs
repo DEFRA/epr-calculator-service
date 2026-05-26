@@ -8,7 +8,6 @@ using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Newtonsoft.Json;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {

@@ -1,7 +1,4 @@
-﻿using System.Globalization;
-using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.Service.Function.Builder.CommsCost;
-using EPR.Calculator.Service.Function.Builder.Lapcap;
+﻿using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.Summary.Common;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;

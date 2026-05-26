@@ -1,11 +1,8 @@
 ﻿using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Function.Builder.CommsCost;
-using EPR.Calculator.Service.Function.Builder.Lapcap;
 using EPR.Calculator.Service.Function.Builder.Modulation;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.UnitTests.Builder;
-using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
 {

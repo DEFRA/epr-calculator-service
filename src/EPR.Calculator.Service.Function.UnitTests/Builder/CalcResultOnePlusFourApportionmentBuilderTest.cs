@@ -1,9 +1,7 @@
 ﻿using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment;
-using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder
 {

@@ -1,8 +1,6 @@
 using System.Text;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
 using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.Service.Function.Models.JsonExporter;
 using EPR.Calculator.Service.Function.UnitTests.Builder;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.LaDisposalCost

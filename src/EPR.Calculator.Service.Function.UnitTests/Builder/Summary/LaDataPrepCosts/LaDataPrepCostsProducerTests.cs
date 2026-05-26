@@ -2,7 +2,6 @@
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts;
-using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;

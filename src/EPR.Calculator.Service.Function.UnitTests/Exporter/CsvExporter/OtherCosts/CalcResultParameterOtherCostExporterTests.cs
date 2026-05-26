@@ -1,8 +1,6 @@
 ﻿using System.Text;
-using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
 using EPR.Calculator.Service.Function.Models;
-using Newtonsoft.Json;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.OtherCosts
 {

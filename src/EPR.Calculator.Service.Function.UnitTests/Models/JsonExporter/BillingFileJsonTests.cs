@@ -1,11 +1,8 @@
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Function.Builder.CommsCost;
-using EPR.Calculator.Service.Function.Builder.Lapcap;
 using EPR.Calculator.Service.Function.Builder.Modulation;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
 using EPR.Calculator.Service.Function.UnitTests.Builder;
-using Newtonsoft.Json;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
 {
@@ -44,8 +41,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             Assert.IsNotNull(result.ParametersCommsCost);
             var onePlusFourPct = result.ParametersCommsCost!.OnePlusFourCommsCostApportionmentPercentages;
             Assert.IsNotNull(onePlusFourPct);
-            Assert.AreEqual("50.23%", onePlusFourPct.England);
-            Assert.AreEqual("30.34%", onePlusFourPct.Wales);
+            Assert.AreEqual("50.23000000%", onePlusFourPct.England);
+            Assert.AreEqual("30.34000000%", onePlusFourPct.Wales);
             Assert.IsNotNull(result.ScaleUpProducers!.ProducerSubmissions);
             var subs = result.ScaleUpProducers.ProducerSubmissions!.ToList();
             Assert.IsTrue(subs.Count >= 1);

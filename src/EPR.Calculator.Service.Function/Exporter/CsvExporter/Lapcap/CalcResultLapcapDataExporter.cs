@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
-using System.Globalization;
 using EPR.Calculator.Service.Function.Enums;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap

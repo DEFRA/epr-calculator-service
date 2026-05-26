@@ -1,8 +1,6 @@
 ﻿using System.Text;
-using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
-using System.Collections.Immutable;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 {

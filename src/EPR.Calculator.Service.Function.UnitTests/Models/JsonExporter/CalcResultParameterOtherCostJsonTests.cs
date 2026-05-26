@@ -1,7 +1,4 @@
-using EPR.Calculator.Service.Function.Builder.Lapcap;
 using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.Models.JsonExporter;
-using EPR.Calculator.API.Data.DataModels;
 using System.Text.Json;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
@@ -57,7 +54,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                   "wales"          : "19.17808219%",
                   "scotland"       : "24.65753425%",
                   "northernIreland": "12.32876712%",
-                  "total"          : "100%"
+                  "total"          : "100.00000000%"
                 },
                 "fiveSchemeSetupCost": {
                   "england"        : "£17,500.00",
@@ -71,11 +68,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                 },
                 "sevenMateriality": {
                   "increase": {
-                    "amount"    : "£5000.00",
+                    "amount"    : "£5,000.00",
                     "percentage": "2.00%"
                   },
                   "decrease": {
-                    "amount"    : "-£1000.00",
+                    "amount"    : "-£1,000.00",
                     "percentage": "-1.00%"
                   }
                 },

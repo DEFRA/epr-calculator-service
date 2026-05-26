@@ -1,6 +1,4 @@
 using System.Text.Json;
-using System.Text.Json.Nodes;
-using EPR.Calculator.Service.Function.Builder.CommsCost;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
 using EPR.Calculator.Service.Function.UnitTests.Utils;

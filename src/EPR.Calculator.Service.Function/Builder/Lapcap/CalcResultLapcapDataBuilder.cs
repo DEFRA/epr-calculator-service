@@ -1,10 +1,8 @@
-﻿using System.Globalization;
-using EPR.Calculator.API.Data;
+﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
-using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.Builder.Lapcap
 {

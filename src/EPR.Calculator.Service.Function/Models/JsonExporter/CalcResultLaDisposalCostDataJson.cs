@@ -2,10 +2,6 @@
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Converter;
 using EPR.Calculator.Service.Function.Utils;
-using System.Globalization;
-using EPR.Calculator.Service.Function.Models.JsonExporter;
-using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
