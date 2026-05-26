@@ -132,14 +132,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             var actualChange = ReadNullableDecimal(actual, "tonnageChange");
             Assert.AreEqual(expected.Value.TonnageChange, actualChange);
 
-            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(expected.Value.PricePerTonne.total ?? 0, 4), actual["pricePerTonne"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(expected.Value.ProducerDisposalFee.total ?? 0), actual["producerDisposalFeeWithoutBadDebtProvision"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(expected.Value.BadDebtProvision), actual["badDebtProvision"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(expected.Value.ProducerDisposalFeeWithBadDebtProvision), actual["producerDisposalFeeWithBadDebtProvision"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(expected.Value.EnglandWithBadDebtProvision), actual["englandWithBadDebtProvision"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(expected.Value.WalesWithBadDebtProvision), actual["walesWithBadDebtProvision"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(expected.Value.ScotlandWithBadDebtProvision), actual["scotlandWithBadDebtProvision"]!.GetValue<string>());
-            Assert.AreEqual(CurrencyConverterUtils.ConvertToCurrency(expected.Value.NorthernIrelandWithBadDebtProvision), actual["northernIrelandWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual("£0.6676", actual["pricePerTonne"]!.GetValue<string>());
+            Assert.AreEqual("£607.52", actual["producerDisposalFeeWithoutBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual("£36.45" , actual["badDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual("£643.97", actual["producerDisposalFeeWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual("£348.06", actual["englandWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual("£78.46" , actual["walesWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual("£156.28", actual["scotlandWithBadDebtProvision"]!.GetValue<string>());
+            Assert.AreEqual("£61.18" , actual["northernIrelandWithBadDebtProvision"]!.GetValue<string>());
         }
 
         [TestMethod]

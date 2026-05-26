@@ -1139,8 +1139,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             ? (total: 0.6676m, red: 1, amber: 2, green: 3)
                             : (total: 0.6676m, red: null, amber: null, green: null),
                         ProducerDisposalFee = applyModulation
-                            ? (total: 607.52m, red: 4, amber: 5, green: 6)
-                            : (total: 607.52m, red: null, amber: null, green: null),
+                            ? (total: 607.525000m, red: 4.525001m, amber: 5   , green: 6)
+                            : (total: 607.525000m, red: null     , amber: null, green: null),
                         BadDebtProvision = 36.45m,
                         ProducerDisposalFeeWithBadDebtProvision = 643.97m,
                         EnglandWithBadDebtProvision = 348.06m,
@@ -1149,7 +1149,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         NorthernIrelandWithBadDebtProvision = 61.18m,
                         PreviousInvoicedTonnage = null,
                         TonnageChange = 0,
-                        ActionedSelfManagedConsumerWasteTonnage = (total: 90, red: 0, amber: 90, green: 0)
+                        ActionedSelfManagedConsumerWasteTonnage = (total: 90, red: 0, amber: 90, green: 0),
                     }
                 },
                 {
