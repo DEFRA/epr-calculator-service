@@ -188,6 +188,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     ["AL"] = new ()
                     {
                         Cost = ByCountryCost.Empty with { England = 4.347m },
+                        TotalCost = 4.347m,
                         HouseholdPackagingWasteTonnage = 2.34m,
                         PublicBinTonnage = 4.56m,
                         LateReportingTonnage = 3.45m
@@ -195,6 +196,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     ["GL"] = new ()
                     {
                         Cost = ByCountryCost.Empty,
+                        TotalCost = 0m,
                         HouseholdPackagingWasteTonnage = 3.45m,
                         PublicBinTonnage = 5.67m,
                         LateReportingTonnage = 4.56m

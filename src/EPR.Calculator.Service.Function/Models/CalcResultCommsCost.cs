@@ -18,6 +18,7 @@ public class CalcResultCommsCost
             new CalcResultCommsCostCommsCostByMaterial
             {
                 Cost                             = ByCountryCost.Sum(ByMaterial.Values.Select(v => v.Cost)),
+                TotalCost                        = ByMaterial.Values.Sum(v => v.TotalCost),
                 // TODO why do we sum up tonnage for different materials?
                 HouseholdPackagingWasteTonnage   = ByMaterial.Values.Sum(v => v.HouseholdPackagingWasteTonnage),
                 PublicBinTonnage                 = ByMaterial.Values.Sum(v => v.PublicBinTonnage),
@@ -33,6 +34,12 @@ public class CalcResultCommsCost
 public class CalcResultCommsCostCommsCostByMaterial
 {
     public required ByCountryCost Cost {get; set;}
+
+    /// <summary>
+    /// The pre-apportionment total cost for this material. Used for PricePerTonne so that
+    /// floating-point rounding across the four country splits does not alter the result.
+    /// </summary>
+    public required decimal TotalCost { get; set; }
 
     public required decimal HouseholdPackagingWasteTonnage { get; set; }
     public required decimal PublicBinTonnage { get; set; }
@@ -50,5 +57,5 @@ public class CalcResultCommsCostCommsCostByMaterial
     private decimal? pricePerTonne;
     public decimal PricePerTonne =>
         pricePerTonne ??=
-            TotalTonnage != 0 ? Math.Round(Cost.Total / TotalTonnage, 4, MidpointRounding.AwayFromZero) : 0;
+            TotalTonnage != 0 ? Math.Round(TotalCost / TotalTonnage, 4, MidpointRounding.AwayFromZero) : 0;
 }

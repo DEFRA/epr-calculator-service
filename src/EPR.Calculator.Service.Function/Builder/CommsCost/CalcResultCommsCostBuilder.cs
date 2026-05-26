@@ -85,10 +85,11 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
                     Scotland        = total * apportionmentDetail.Scotland        / 100,
                     NorthernIreland = total * apportionmentDetail.NorthernIreland / 100
                 },
+                TotalCost                      = total,
                 HouseholdPackagingWasteTonnage = producerReportedTon,
-                PublicBinTonnage = publicBinTonnage,
+                PublicBinTonnage               = publicBinTonnage,
                 HouseholdDrinksContainersTonnage = householdcontainers,
-                LateReportingTonnage = lateReportingTonnage.Total
+                LateReportingTonnage           = lateReportingTonnage.Total
             };
 
             return (material.Code, commsCost);
