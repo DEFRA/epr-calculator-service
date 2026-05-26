@@ -96,9 +96,9 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost
             csvContent.Append(CsvSanitiser.SanitiseData("Northern Ireland"));
             csvContent.Append(CsvSanitiser.SanitiseData("Total"));
             csvContent.Append(CsvSanitiser.SanitiseData("Producer Household Packaging Tonnage"));
-            csvContent.Append(CsvSanitiser.SanitiseData("Late Reporting Tonnage"));
             csvContent.Append(CsvSanitiser.SanitiseData("Public Bin Tonnage"));
             csvContent.Append(CsvSanitiser.SanitiseData("Household Drinks Containers Tonnage"));
+            csvContent.Append(CsvSanitiser.SanitiseData("Late Reporting Tonnage"));
             csvContent.Append(CsvSanitiser.SanitiseData("Producer Household Tonnage + Late Reporting Tonnage + Public Bin Tonnage + Household Drinks Containers Tonnage"));
             csvContent.Append(CsvSanitiser.SanitiseData("Comms Cost - by Material Price Per Tonne"));
             csvContent.AppendLine();

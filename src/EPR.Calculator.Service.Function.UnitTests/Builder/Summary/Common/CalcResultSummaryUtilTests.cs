@@ -310,7 +310,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var result = CalcResultSummaryUtil.GetCommsCostHeaderWithoutBadDebtFor2bTitle(calcResult);
 
             // Assert
-            Assert.AreEqual(2530, result);
+            Assert.AreEqual(2531, result);
         }
 
         [TestMethod]
@@ -322,7 +322,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var result = CalcResultSummaryUtil.GetCommsCostHeaderBadDebtProvisionFor2bTitle(calcResult, calcResult.CalcResultSummary);
 
             // Assert
-            Assert.AreEqual(151.80m, result);
+            Assert.AreEqual(151.86m, result);
         }
 
         [TestMethod]
@@ -335,7 +335,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var result = CalcResultSummaryUtil.GetCommsCostHeaderWithBadDebtFor2bTitle(calcResult.CalcResultSummary);
 
             // Assert
-            Assert.AreEqual(2681.80m, result);
+            Assert.AreEqual(2682.86m, result);
         }
 
         [TestMethod]

@@ -50,5 +50,5 @@ public class CalcResultCommsCostCommsCostByMaterial
     private decimal? pricePerTonne;
     public decimal PricePerTonne =>
         pricePerTonne ??=
-            TotalTonnage != 0 ? Cost.Total / TotalTonnage : 0;
+            TotalTonnage != 0 ? Math.Round(Cost.Total / TotalTonnage, 4, MidpointRounding.AwayFromZero) : 0;
 }

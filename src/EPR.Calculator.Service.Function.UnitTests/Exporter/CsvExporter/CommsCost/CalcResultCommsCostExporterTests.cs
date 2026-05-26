@@ -2,7 +2,6 @@
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.UnitTests.Builder;
-using NetTopologySuite.Algorithm;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.CommsCost
 {
@@ -41,7 +40,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.CommsCo
                 new[] { null, "England","Wales","Scotland","Northern Ireland","Total" },
                 new[] {"1 + 4 Apportionment %s","10.00000000%","20.00000000%","30.00000000%","40.00000000%","100.00000000%"},
                 new string[] { },
-                new[] { "2a Comms Costs - by Material","England","Wales","Scotland","Northern Ireland","Total","Producer Household Packaging Tonnage","Late Reporting Tonnage","Public Bin Tonnage","Household Drinks Containers Tonnage","Producer Household Tonnage + Late Reporting Tonnage + Public Bin Tonnage + Household Drinks Containers Tonnage","Comms Cost - by Material Price Per Tonne" },
+                new[] { "2a Comms Costs - by Material","England","Wales","Scotland","Northern Ireland","Total","Producer Household Packaging Tonnage","Public Bin Tonnage","Household Drinks Containers Tonnage","Late Reporting Tonnage","Producer Household Tonnage + Late Reporting Tonnage + Public Bin Tonnage + Household Drinks Containers Tonnage","Comms Cost - by Material Price Per Tonne" },
                 new[] { "Aluminium","£10.00","£20.00","£30.00","£40.00","£100.00","50.000","60.000","70.000","80.000","260.000","£0.3846" },
                 new[] { "Total"    ,"£10.00","£20.00","£30.00","£40.00","£100.00","50.000","60.000","70.000","80.000","260.000" },
                 new string[] { },

@@ -154,7 +154,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsProducerFeeWithBadDebtFor2bTotalsRow(_calcResult, _producers, TotalPackagingTonnage);
 
             // Assert
-            Assert.AreEqual(278.300m, result);
+            Assert.AreEqual(278.41m, result);
         }
 
         [TestMethod]
@@ -164,7 +164,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsEnglandWithBadDebtTotalsRow(_calcResult, _producers, TotalPackagingTonnage);
 
             // Assert
-            Assert.AreEqual(111.32m, result);
+            Assert.AreEqual(111.364m, result);
         }
 
         [TestMethod]
@@ -174,7 +174,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsNorthernIrelandWithBadDebtTotalsRow(_calcResult, _producers, TotalPackagingTonnage);
 
             // Assert
-            Assert.AreEqual(41.745m, result);
+            Assert.AreEqual(41.7615m, result);
         }
 
         [TestMethod]
@@ -184,7 +184,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsEnglandWithBadDebt(_calcResult, _producers[0], TotalPackagingTonnage);
 
             // Assert
-            Assert.AreEqual(111.32m, result);
+            Assert.AreEqual(111.364m, result);
         }
 
         [TestMethod]
@@ -194,7 +194,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsWalesWithBadDebt(_calcResult, _producers[0], TotalPackagingTonnage);
 
             // Assert
-            Assert.AreEqual(83.49m, result);
+            Assert.AreEqual(83.523m, result);
         }
 
         [TestMethod]
@@ -204,7 +204,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsScotlandWithBadDebt(_calcResult, _producers[0], TotalPackagingTonnage);
 
             // Assert
-            Assert.AreEqual(41.745m, result);
+            Assert.AreEqual(41.7615m, result);
         }
 
         [TestMethod]
@@ -214,7 +214,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsNorthernIrelandWithBadDebt(_calcResult, _producers[0], TotalPackagingTonnage);
 
             // Assert
-            Assert.AreEqual(41.745m, result);
+            Assert.AreEqual(41.7615m, result);
         }
 
         [TestMethod]
@@ -224,7 +224,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsWithBadDebt(_calcResult, _producers[0], TotalPackagingTonnage, "England");
 
             // Assert
-            Assert.AreEqual(111.32m, result);
+            Assert.AreEqual(111.364m, result);
         }
 
         [TestMethod]
@@ -244,7 +244,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsBadDebtProvisionFor2b(_calcResult, _producers[0], TotalPackagingTonnage);
 
             // Assert
-            Assert.AreEqual(25.300m, result);
+            Assert.AreEqual(25.31m, result);
         }
 
         [TestMethod]
@@ -254,7 +254,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsProducerFeeWithBadDebtFor2b(_calcResult, _producers[0], TotalPackagingTonnage);
 
             // Assert
-            Assert.AreEqual(278.300m, result);
+            Assert.AreEqual(278.41m, result);
         }
 
         [TestMethod]
@@ -264,7 +264,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             var result = CalcResultSummaryCommsCostTwoBTotalBill.CalculateProducerFee(_calcResult, _producers[0], TotalPackagingTonnage, false);
 
             // Assert
-            Assert.AreEqual(253.0m, result);
+            Assert.AreEqual(253.1m, result);
         }
 
         [TestMethod]
@@ -274,7 +274,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwo
             var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsProducerFeeWithoutBadDebtFor2b(_calcResult, _producers[0], TotalPackagingTonnage);
 
             // Assert
-            Assert.AreEqual(253.0m, result);
+            Assert.AreEqual(253.1m, result);
         }
 
         private List<ProducerDetail> GetProducers()

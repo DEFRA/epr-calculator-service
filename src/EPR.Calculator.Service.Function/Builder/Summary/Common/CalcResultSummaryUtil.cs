@@ -550,7 +550,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         public static decimal GetCommsCostHeaderWithoutBadDebtFor2bTitle(CalcResult calcResult)
         {
-            return calcResult.CalcResultCommsCostReportDetail.CommsCostByCountry.Total;
+            return calcResult.CalcResultCommsCostReportDetail.CommsCostUkWide.Total;
         }
 
         public static decimal GetCommsCostHeaderBadDebtProvisionFor2bTitle(
