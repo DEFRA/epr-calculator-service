@@ -284,6 +284,9 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("northernIrelandWithBadDebtProvision")]
         public required string NorthernIrelandWithBadDebtProvision { get; init; }
 
+        private static decimal RoundMoney(decimal value, int precision = 2)
+            => Math.Round(value, precision, MidpointRounding.ToEven);
+
         public static ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown From(
             CalcResultSummaryProducerDisposalFeesByMaterial producerTonnage,
             MaterialDetail material,
@@ -309,8 +312,8 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                     TotalTonnage                               = producerTonnage.TotalReportedTonnage,
                     SelfManagedConsumerWasteTonnage            = producerTonnage.SelfManagedConsumerWasteTonnage,
                     NetTonnage                                 = producerTonnage.NetReportedTonnage.total ?? 0,
-                    PricePerTonne                              = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.PricePerTonne.total       ?? 0, 4),
-                    ProducerDisposalFeeWithoutBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.ProducerDisposalFee.total ?? 0, 2)
+                    PricePerTonne                              = CurrencyConverterUtils.ConvertToCurrency(           producerTonnage.PricePerTonne.total       ?? 0 , 4),
+                    ProducerDisposalFeeWithoutBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(RoundMoney(producerTonnage.ProducerDisposalFee.total ?? 0), 2)
                 };
             }
 
@@ -355,10 +358,10 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                 },
                 ProducerDisposalFeeWithoutBadDebtProvision = new CombinedModulatedCostBreakdown
                 {
-                    Total                = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.ProducerDisposalFee.total ?? 0, 2),
-                    RedAndRedMedical     = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.ProducerDisposalFee.red   ?? 0, 2),
-                    AmberAndAmberMedical = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.ProducerDisposalFee.amber ?? 0, 2),
-                    GreenAndGreenMedical = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.ProducerDisposalFee.green ?? 0, 2)
+                    Total                = CurrencyConverterUtils.ConvertToCurrency(RoundMoney(producerTonnage.ProducerDisposalFee.total ?? 0), 2),
+                    RedAndRedMedical     = CurrencyConverterUtils.ConvertToCurrency(RoundMoney(producerTonnage.ProducerDisposalFee.red   ?? 0), 2),
+                    AmberAndAmberMedical = CurrencyConverterUtils.ConvertToCurrency(RoundMoney(producerTonnage.ProducerDisposalFee.amber ?? 0), 2),
+                    GreenAndGreenMedical = CurrencyConverterUtils.ConvertToCurrency(RoundMoney(producerTonnage.ProducerDisposalFee.green ?? 0), 2)
                 }
             };
         }
