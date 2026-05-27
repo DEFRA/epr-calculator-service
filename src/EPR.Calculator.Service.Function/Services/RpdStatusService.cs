@@ -12,7 +12,7 @@ namespace EPR.Calculator.Service.Function.Services
 {
     public interface IRpdStatusService
     {
-        Task<RunClassification> UpdateRpdStatus(int runId, string? runName, string createdBy, CancellationToken timeout);
+        Task<RunClassification> UpdateRpdStatus(int runId, string createdBy, CancellationToken timeout);
     }
 
     [ExcludeFromCodeCoverage(Justification = "Soon to be removed")]
@@ -27,7 +27,6 @@ namespace EPR.Calculator.Service.Function.Services
         /// <inheritdoc/>
         public async Task<RunClassification> UpdateRpdStatus(
             int runId,
-            string? runName,
             string createdBy,
             CancellationToken timeout)
         {

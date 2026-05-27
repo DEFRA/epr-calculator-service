@@ -9,10 +9,22 @@ using Microsoft.Extensions.Options;
 
 namespace EPR.Calculator.Service.Function.Services.CommonDataApi
 {
+
+    public interface ICommonDataApiClient
+    {
+        IAsyncEnumerable<PomResponse> StreamPoms(
+            RelativeYear relativeYear,
+            CancellationToken cancellationToken = default);
+
+        IAsyncEnumerable<OrganisationResponse> StreamOrganisations(
+            RelativeYear relativeYear,
+            CancellationToken cancellationToken = default);
+    }
+
     /// <summary>
     ///     HTTP client for the Common Data API.
     /// </summary>
-    public class CommonDataApiHttpClient
+    public class CommonDataApiHttpClient : ICommonDataApiClient
     {
         private static readonly JsonSerializerOptions NdJsonOptions = new()
         {

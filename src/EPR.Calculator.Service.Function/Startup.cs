@@ -177,7 +177,7 @@ internal static class ServiceRegistration
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
-        services.AddHttpClient<CommonDataApiHttpClient>();
+        services.AddHttpClient<ICommonDataApiClient, CommonDataApiHttpClient>();
 
         services
             .AddOptions<CommonDataApiLoaderOptions>()
@@ -195,7 +195,6 @@ internal static class ServiceRegistration
     private static void RegisterCommonDependencies(IServiceCollection services)
     {
         services.AddTransient<ICalculatorRunService, CalculatorRunService>();
-        services.AddTransient<ICalculatorRunParameterMapper, CalculatorRunParameterMapper>();
         services.AddTransient<IRpdStatusDataValidator, RpdStatusDataValidator>();
         services.AddTransient<IOrgAndPomWrapper, OrgAndPomWrapper>();
         services.AddTransient<ICalcResultBuilder, CalcResultBuilder>();
