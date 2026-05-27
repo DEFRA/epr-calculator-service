@@ -60,7 +60,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 
             // Total bill 1 + 2a + 2b + 2c
             csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerTotalOnePlus2A2B2CWithBadDeptProvision, DecimalPlaces.Two, null, true));
-            csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, DecimalPlaces.Eight, null, false, true));
+            csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, DecimalPlaces.Eight, DecimalFormats.F8, false, true));
 
             AddSectionContent(csvContent, producer.SchemeAdministratorOperatingCosts);
 

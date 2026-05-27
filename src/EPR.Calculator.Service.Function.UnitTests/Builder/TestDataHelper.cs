@@ -83,6 +83,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             Cost = new() { England = 5000, Wales = 1750, Scotland = 2000, NorthernIreland = 1250 },
                             HouseholdPackagingWasteTonnage = 6980,
                             PublicBinTonnage = 2000,
+                            HouseholdDrinkContainersTonnage = 0,
                             LateReportingTonnage = 8000
                         },
                     ["FC"] =
@@ -91,6 +92,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             Cost = new() { England = 7500, Wales = 2100, Scotland = 3400, NorthernIreland = 1750 },
                             HouseholdPackagingWasteTonnage = 11850,
                             PublicBinTonnage = 2000,
+                            HouseholdDrinkContainersTonnage = 0,
                             LateReportingTonnage = 7000
                         },
                     ["GL"] =
@@ -99,6 +101,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             Cost = new() { England = 45000, Wales = 0, Scotland = 20700, NorthernIreland = 4500 },
                             HouseholdPackagingWasteTonnage = 4900,
                             PublicBinTonnage = 2000,
+                            HouseholdDrinkContainersTonnage = 100,
                             LateReportingTonnage = 6000
                         },
                     ["PC"] =
@@ -107,6 +110,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             Cost = new() { England = 12500, Wales = 2300, Scotland = 4500, NorthernIreland = 3400 },
                             HouseholdPackagingWasteTonnage = 4270,
                             PublicBinTonnage = 2000,
+                            HouseholdDrinkContainersTonnage = 0,
                             LateReportingTonnage = 5000
                         },
                     ["PL"] =
@@ -115,6 +119,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             Cost = new() { England = 23000, Wales = 4500, Scotland = 6700, NorthernIreland = 2100 },
                             HouseholdPackagingWasteTonnage = 12805,
                             PublicBinTonnage = 2000,
+                            HouseholdDrinkContainersTonnage = 0,
                             LateReportingTonnage = 4000
                         },
                     ["ST"] =
@@ -123,6 +128,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             Cost = new() { England = 13400, Wales = 0, Scotland = 7800, NorthernIreland = 0 },
                             HouseholdPackagingWasteTonnage = 7700,
                             PublicBinTonnage = 2000,
+                            HouseholdDrinkContainersTonnage = 0,
                             LateReportingTonnage = 3000
                         },
                     ["WD"] =
@@ -131,6 +137,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             Cost = new() { England = 0, Wales = 12000, Scotland = 0, NorthernIreland = 5600 },
                             HouseholdPackagingWasteTonnage = 6800,
                             PublicBinTonnage = 2000,
+                            HouseholdDrinkContainersTonnage = 0,
                             LateReportingTonnage = 2000
                         },
                     ["OT"] =
@@ -139,6 +146,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                             Cost = new() { England = 3400, Wales = 2100, Scotland = 4200, NorthernIreland = 700 },
                             HouseholdPackagingWasteTonnage = 7700,
                             PublicBinTonnage = 2000,
+                            HouseholdDrinkContainersTonnage = 0,
                             LateReportingTonnage = 1000
                         }
                 }
@@ -191,6 +199,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         TotalCost = 4.347m,
                         HouseholdPackagingWasteTonnage = 2.34m,
                         PublicBinTonnage = 4.56m,
+                        HouseholdDrinksContainersTonnage = 0m,
                         LateReportingTonnage = 3.45m
                     },
                     ["GL"] = new ()
@@ -199,6 +208,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                         TotalCost = 0m,
                         HouseholdPackagingWasteTonnage = 3.45m,
                         PublicBinTonnage = 5.67m,
+                        HouseholdDrinksContainersTonnage = 1.23m,
                         LateReportingTonnage = 4.56m
                     }
                 },

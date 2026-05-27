@@ -20,6 +20,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                         TotalCost = 12.7305m,
                         HouseholdPackagingWasteTonnage = 2.34m,
                         PublicBinTonnage = 4.56m,
+                        HouseholdDrinksContainersTonnage = 0m,
                         LateReportingTonnage = 3.45m
                     },
                 ["GL"] = new CalcResultCommsCostCommsCostByMaterial
@@ -28,6 +29,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                     TotalCost = 32.0112m,
                     HouseholdPackagingWasteTonnage = 3.45m,
                     PublicBinTonnage = 5.67m,
+                    HouseholdDrinksContainersTonnage = 0m,
                     LateReportingTonnage = 4.56m
                 }
             };
@@ -37,6 +39,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                 TotalCost = 0m,
                 HouseholdPackagingWasteTonnage = 5.79m,
                 PublicBinTonnage = 10.23m,
+                HouseholdDrinksContainersTonnage = 0m,
                 LateReportingTonnage = 8.01m
             };
             var materials = TestDataHelper.GetMaterials();

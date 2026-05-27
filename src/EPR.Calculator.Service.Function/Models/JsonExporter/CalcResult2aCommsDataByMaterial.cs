@@ -61,7 +61,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                 MaterialName                           = material.Name,
                 ProducerHouseholdPackagingWasteTonnage = Math.Round(commsCost.HouseholdPackagingWasteTonnage, 3),
                 PublicBinTonnage                       = Math.Round(commsCost.PublicBinTonnage, 3),
-                HouseholdDrinksContainersTonnage       = Math.Round(commsCost.HouseholdDrinksContainersTonnage ?? 0m, 3),
+                HouseholdDrinksContainersTonnage       = Math.Round(commsCost.HouseholdDrinksContainersTonnage, 3),
                 TotalTonnage                           = Math.Round(commsCost.TotalTonnage, 3),
                 CommsCostByMaterialPricePerTonne       = CurrencyConverterUtils.ConvertToCurrency(commsCost.PricePerTonne, precision : 4),
                 EnglandCommsCost                       = CurrencyConverterUtils.ConvertToCurrency(commsCost.Cost.England),

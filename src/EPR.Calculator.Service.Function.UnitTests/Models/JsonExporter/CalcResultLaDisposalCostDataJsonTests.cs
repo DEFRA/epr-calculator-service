@@ -64,12 +64,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                     "scotlandLaDisposalCost"                : "£20,700.00",
                     "northernIrelandLaDisposalCost"         : "£4,500.00",
                     "totalLaDisposalCost"                   : "£70,200.00",
-                    "disposalCostPricePerTonne"             : "£5.4419",
+                    "disposalCostPricePerTonne"             : "£5.4000",
                     "producerHouseholdPackagingWasteTonnage": 4900.000,
                     "publicBinTonnage"                      : 2000.000,
-                    "householdDrinksContainersTonnage"      : 0,
+                    "householdDrinksContainersTonnage"      : 100.000,
                     "lateReportingTonnage"                  : 6000.000,
-                    "totalTonnage"                          : 12900.000
+                    "totalTonnage"                          : 13000.000
                   },
                   {
                     "materialName"                          : "Paper or card",
@@ -151,9 +151,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                   "totalLaDisposalCostTotal"                   : "£203,150.00",
                   "producerHouseholdPackagingWasteTonnageTotal": 63005.000,
                   "publicBinTonnage"                           : 16000.000,
-                  "householdDrinksContainersTonnageTotal"      : 0,
+                  "householdDrinksContainersTonnageTotal"      : 100.000,
                   "lateReportingTonnageTotal"                  : 36000.000,
-                  "totalTonnageTotal"                          : 115005.000
+                  "totalTonnageTotal"                          : 115105.000
                 }
                 }
                 """;

@@ -59,11 +59,11 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                 ScotlandCommsCostTotal                = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.Cost.Scotland),
                 NorthernIrelandCommsCostTotal         = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.Cost.NorthernIreland),
                 TotalCommsCostTotal                   = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.Cost.Total),
-                HouseholdPackagingWasteTonnageTotal   = Math.Round(commsCostByMaterial.HouseholdPackagingWasteTonnage        , 3),
-                PublicBinTonnageTotal                 = Math.Round(commsCostByMaterial.PublicBinTonnage                      , 3),
-                HouseholdDrinksContainersTonnageTotal = Math.Round(commsCostByMaterial.HouseholdDrinksContainersTonnage ?? 0m, 3),
-                LateReportingTonnageTotal             = Math.Round(commsCostByMaterial.LateReportingTonnage                  , 3),
-                TotalTonnageTotal                     = Math.Round(commsCostByMaterial.TotalTonnage                          , 3)
+                HouseholdPackagingWasteTonnageTotal   = Math.Round(commsCostByMaterial.HouseholdPackagingWasteTonnage  , 3),
+                PublicBinTonnageTotal                 = Math.Round(commsCostByMaterial.PublicBinTonnage                , 3),
+                HouseholdDrinksContainersTonnageTotal = Math.Round(commsCostByMaterial.HouseholdDrinksContainersTonnage, 3),
+                LateReportingTonnageTotal             = Math.Round(commsCostByMaterial.LateReportingTonnage            , 3),
+                TotalTonnageTotal                     = Math.Round(commsCostByMaterial.TotalTonnage                    , 3)
             };
         }
     }

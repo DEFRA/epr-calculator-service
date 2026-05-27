@@ -33,7 +33,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
                         Cost = ByCountryCost.Empty,
                         HouseholdPackagingWasteTonnage = 26181753.110m,
                         PublicBinTonnage = 24610.429m,
-                        HouseholdDrinkContainersTonnage = null,
+                        HouseholdDrinkContainersTonnage = 0,
                         LateReportingTonnage = 3500
                     },
                     [fc.Code] = new CalcResultLaDisposalCostDataDetail
@@ -41,7 +41,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
                         Cost = ByCountryCost.Empty,
                         HouseholdPackagingWasteTonnage = 401772.341m,
                         PublicBinTonnage = 1146.546m,
-                        HouseholdDrinkContainersTonnage = null,
+                        HouseholdDrinkContainersTonnage = 0,
                         LateReportingTonnage = 789
                     }
                 }

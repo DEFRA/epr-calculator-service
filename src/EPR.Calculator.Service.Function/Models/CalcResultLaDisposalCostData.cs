@@ -13,7 +13,7 @@ public class CalcResultLaDisposalCostData
                 // TODO why do we sum up tonnage for different materials?
                 HouseholdPackagingWasteTonnage          = ByMaterial.Values.Sum(v => v.HouseholdPackagingWasteTonnage),
                 PublicBinTonnage                        = ByMaterial.Values.Sum(v => v.PublicBinTonnage),
-                HouseholdDrinkContainersTonnage         = ByMaterial.Values.Sum(v => v.HouseholdDrinkContainersTonnage ?? 0),
+                HouseholdDrinkContainersTonnage         = ByMaterial.Values.Sum(v => v.HouseholdDrinkContainersTonnage),
                 LateReportingTonnage                    = ByMaterial.Values.Sum(v => v.LateReportingTonnage),
                 ActionedSelfManagedConsumerWasteTonnage = ByMaterial.Values.Sum(v => v.ActionedSelfManagedConsumerWasteTonnage ?? 0)
             };
@@ -27,7 +27,7 @@ public class CalcResultLaDisposalCostDataDetail
 
     public required decimal PublicBinTonnage { get; init; }
 
-    public decimal? HouseholdDrinkContainersTonnage { get; init; }
+    public required decimal HouseholdDrinkContainersTonnage { get; init; }
 
     public decimal LateReportingTonnage { get; init; }
 
@@ -40,7 +40,7 @@ public class CalcResultLaDisposalCostDataDetail
             LateReportingTonnage
                 + HouseholdPackagingWasteTonnage
                 + PublicBinTonnage
-                + (HouseholdDrinkContainersTonnage ?? 0)
+                + HouseholdDrinkContainersTonnage
                 - (ActionedSelfManagedConsumerWasteTonnage ?? 0);
 
     private decimal? disposalCostPricePerTonne;

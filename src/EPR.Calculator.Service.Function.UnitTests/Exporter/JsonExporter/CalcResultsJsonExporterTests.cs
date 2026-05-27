@@ -90,21 +90,24 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
                             {
                                 Cost = ByCountryCost.Empty,
                                 HouseholdPackagingWasteTonnage = 0m,
-                                PublicBinTonnage = 0m
+                                PublicBinTonnage = 0m,
+                                HouseholdDrinkContainersTonnage = 0
                             },
                         ["PL"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
                                 Cost = ByCountryCost.Empty,
                                 HouseholdPackagingWasteTonnage = 0,
-                                PublicBinTonnage = 0
+                                PublicBinTonnage = 0,
+                                HouseholdDrinkContainersTonnage = 0
                             },
                         ["GL"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
                                 Cost = ByCountryCost.Empty,
                                 HouseholdPackagingWasteTonnage = 0,
-                                PublicBinTonnage = 0
+                                PublicBinTonnage = 0,
+                                HouseholdDrinkContainersTonnage = 0
                             }
                     },
                 },

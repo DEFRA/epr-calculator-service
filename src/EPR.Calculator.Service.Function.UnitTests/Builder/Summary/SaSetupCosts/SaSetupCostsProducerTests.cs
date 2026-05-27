@@ -115,13 +115,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts
                                 Cost = ByCountryCost.Empty,
                                 HouseholdPackagingWasteTonnage = Fixture.Create<decimal>(),
                                 PublicBinTonnage = Fixture.Create<decimal>(),
+                                HouseholdDrinkContainersTonnage = 0
                             },
                         ["Material2"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
                                 Cost = ByCountryCost.Empty,
                                 HouseholdPackagingWasteTonnage = Fixture.Create<decimal>(),
-                                PublicBinTonnage = Fixture.Create<decimal>()
+                                PublicBinTonnage = Fixture.Create<decimal>(),
+                                HouseholdDrinkContainersTonnage = 0
                             }
                     }
                 },

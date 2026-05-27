@@ -60,20 +60,15 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
 
         var commsCostByMaterial = materialDetails.Select(material =>
         {
-            var producerReportedTon = producerReportedMaterials.Where(x => x.MaterialId == material.Id && x.PackagingType != PackagingTypes.PublicBin && x.PackagingType != PackagingTypes.HouseholdDrinksContainers)
+            var hhTonnage = producerReportedMaterials.Where(x => x.MaterialId == material.Id && x.PackagingType != PackagingTypes.PublicBin && x.PackagingType != PackagingTypes.HouseholdDrinksContainers)
                 .Sum(x => x.PackagingTonnage);
 
             var lateReportingTonnage = calcResultLateReportingTonnage.ByMaterial[material.Code];
-            var publicBinTonnage = producerReportedMaterials.Where(p => p.MaterialId == material.Id && p.PackagingType == PackagingTypes.PublicBin).Sum(p => p.PackagingTonnage);
-            var householdcontainers = producerReportedMaterials.Where(p => p.MaterialId == material.Id && p.PackagingType == PackagingTypes.HouseholdDrinksContainers).Sum(p => p.PackagingTonnage);
+            var pbTonnage = producerReportedMaterials.Where(p => p.MaterialId == material.Id && p.PackagingType == PackagingTypes.PublicBin).Sum(p => p.PackagingTonnage);
+            var hdcTonnage = producerReportedMaterials.Where(p => p.MaterialId == material.Id && p.PackagingType == PackagingTypes.HouseholdDrinksContainers).Sum(p => p.PackagingTonnage);
 
             var materialDefault = materialDefaults.Single(m => m.ParameterCategory == material.Name);
             var total = Math.Round(materialDefault.ParameterValue, 2);
-            var producerReportedTotalTonnage =
-                    producerReportedTon
-                    + lateReportingTonnage.Total
-                    + publicBinTonnage
-                    + householdcontainers;
             var commsCost = new CalcResultCommsCostCommsCostByMaterial{
                 Cost = new ByCountryCost
                 {
@@ -83,9 +78,9 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
                     NorthernIreland = total * apportionmentDetail.NorthernIreland / 100
                 },
                 TotalCost                      = total,
-                HouseholdPackagingWasteTonnage = producerReportedTon,
-                PublicBinTonnage               = publicBinTonnage,
-                HouseholdDrinksContainersTonnage = householdcontainers,
+                HouseholdPackagingWasteTonnage = hhTonnage,
+                PublicBinTonnage               = pbTonnage,
+                HouseholdDrinksContainersTonnage = hdcTonnage,
                 LateReportingTonnage           = lateReportingTonnage.Total
             };
 

@@ -1,4 +1,6 @@
 ﻿using System.Text;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
@@ -112,12 +114,19 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost
             csvContent.Append(CsvSanitiser.SanitiseData(commCost.Cost.Total          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
             csvContent.Append(CsvSanitiser.SanitiseData(commCost.HouseholdPackagingWasteTonnage  , DecimalPlaces.Three, DecimalFormats.F3));
             csvContent.Append(CsvSanitiser.SanitiseData(commCost.PublicBinTonnage                , DecimalPlaces.Three, DecimalFormats.F3));
-            csvContent.Append(CsvSanitiser.SanitiseData(commCost.HouseholdDrinksContainersTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+            if (name != "Total" && name != MaterialNames.Glass && commCost.HouseholdDrinksContainersTonnage == 0)
+            {
+                csvContent.Append(CsvSanitiser.SanitiseData((string?)null));
+            }
+            else
+            {
+                csvContent.Append(CsvSanitiser.SanitiseData(commCost.HouseholdDrinksContainersTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+            }
             csvContent.Append(CsvSanitiser.SanitiseData(commCost.LateReportingTonnage            , DecimalPlaces.Three, DecimalFormats.F3));
             csvContent.Append(CsvSanitiser.SanitiseData(commCost.TotalTonnage                    , DecimalPlaces.Three, DecimalFormats.F3));
             if (name == "Total")
             {
-                csvContent.Append((string?)null);
+                csvContent.Append(CsvSanitiser.SanitiseData((string?)null));
             }
             else
             {

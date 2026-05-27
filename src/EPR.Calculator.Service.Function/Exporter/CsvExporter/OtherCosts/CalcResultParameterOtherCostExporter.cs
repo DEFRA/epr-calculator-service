@@ -57,6 +57,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts
             csvContent.Append(CsvSanitiser.SanitiseData("Decrease"));
             csvContent.Append(CsvSanitiser.SanitiseData(otherCost.TonnageChangeDecrease.Amount, DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
             csvContent.Append(CsvSanitiser.SanitiseData(otherCost.TonnageChangeDecrease.Percentage, DecimalPlaces.Two, DecimalFormats.F2, isPercentage: true));
+            csvContent.AppendLine();
         }
 
         public void SchemeSetupCost(CalcResultParameterOtherCost otherCost, StringBuilder csvContent)
@@ -88,7 +89,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts
             csvContent.Append(CsvSanitiser.SanitiseData(otherCost.CountryApportionment.Wales          , DecimalPlaces.Eight, DecimalFormats.F8, isPercentage: true));
             csvContent.Append(CsvSanitiser.SanitiseData(otherCost.CountryApportionment.Scotland       , DecimalPlaces.Eight, DecimalFormats.F8, isPercentage: true));
             csvContent.Append(CsvSanitiser.SanitiseData(otherCost.CountryApportionment.NorthernIreland, DecimalPlaces.Eight, DecimalFormats.F8, isPercentage: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(otherCost.CountryApportionment.Total          , DecimalPlaces.Eight, DecimalFormats.F8, isPercentage: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(100                                           , DecimalPlaces.Eight, DecimalFormats.F8, isPercentage: true));
             csvContent.AppendLine();
         }
 

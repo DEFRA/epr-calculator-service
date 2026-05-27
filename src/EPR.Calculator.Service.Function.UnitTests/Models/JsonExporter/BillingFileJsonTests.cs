@@ -35,7 +35,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             var aluminium = comms.Single(d => d.MaterialName == "Aluminium");
             Assert.AreEqual("£0.4200", aluminium.CommsCostByMaterialPricePerTonne);
             Assert.IsNotNull(result.CalcResult2bCommsDataByUkWide);
-            Assert.AreEqual("£1500.00", result.CalcResult2bCommsDataByUkWide!.EnglandCommsCostUKWide);
+            Assert.AreEqual("£1,500.00", result.CalcResult2bCommsDataByUkWide!.EnglandCommsCostUKWide);
             Assert.IsNotNull(result.CalcResult2cCommsDataByCountry);
             Assert.AreEqual("£250.00", result.CalcResult2cCommsDataByCountry.WalesCommsCostByCountry);
             Assert.IsNotNull(result.ParametersCommsCost);
@@ -111,21 +111,24 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                             {
                                 Cost = ByCountryCost.Empty with { England = 2000 },
                                 HouseholdPackagingWasteTonnage = 100,
-                                PublicBinTonnage               = 0
+                                PublicBinTonnage               = 0,
+                                HouseholdDrinkContainersTonnage = 0
                             },
                         ["PL"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
                                 Cost = ByCountryCost.Empty,
                                 HouseholdPackagingWasteTonnage = 0,
-                                PublicBinTonnage               = 0
+                                PublicBinTonnage               = 0,
+                                HouseholdDrinkContainersTonnage = 0
                             },
                         ["GL"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
                                 Cost = ByCountryCost.Empty,
                                 HouseholdPackagingWasteTonnage = 0,
-                                PublicBinTonnage               = 0
+                                PublicBinTonnage               = 0,
+                                HouseholdDrinkContainersTonnage = 0
                             },
                     }
                 },

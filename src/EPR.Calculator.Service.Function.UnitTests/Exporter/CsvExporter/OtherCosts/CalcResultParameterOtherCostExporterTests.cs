@@ -53,7 +53,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.OtherCo
                 new[] { "Decrease","-£1000.00","-1.00%" },
                 new[] { "8 Tonnage Change","Amount £s","%" },
                 new[] { "Increase","£50.00","2.00%" },
-                new[] { "Decrease","-£10.00","-0.50%" }
+                new[] { "Decrease","-£10.00","-0.50%" },
+                new string[] {}
             };
 
             CsvTestUtils.AssertCsv(expected, result);

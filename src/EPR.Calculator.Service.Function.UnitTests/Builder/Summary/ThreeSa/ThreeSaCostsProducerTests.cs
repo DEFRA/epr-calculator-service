@@ -54,14 +54,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa
                             {
                                 Cost = ByCountryCost.Empty,
                                 HouseholdPackagingWasteTonnage = 0,
-                                PublicBinTonnage = 0
+                                PublicBinTonnage = 0,
+                                HouseholdDrinkContainersTonnage = 0
                             },
                         ["PL"] =
                             new CalcResultLaDisposalCostDataDetail
                             {
                                 Cost = ByCountryCost.Empty,
                                 HouseholdPackagingWasteTonnage = 0,
-                                PublicBinTonnage = 0
+                                PublicBinTonnage = 0,
+                                HouseholdDrinkContainersTonnage = 0
                             }
                     }
                 },

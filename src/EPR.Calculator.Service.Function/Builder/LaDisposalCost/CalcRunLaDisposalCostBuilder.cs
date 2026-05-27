@@ -64,18 +64,16 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
                     var materialCode = detail.Key;
                     var materialName = materialDetails.First(m => m.Code == materialCode).Name;
                     var lateReportingTonnageValue = lateReportingTonnage.ByMaterial[materialCode].Total;
-                    var producerReportedHouseholdPackagingWasteTonnage = producerData.Where(t => t.MaterialName == materialName && t.PackagingType == PackagingTypes.Household).Sum(t => t.Tonnage);
-                    var reportedPublicBinTonnage                       = producerData.Where(p => p.MaterialName == materialName && p.PackagingType == PackagingTypes.PublicBin).Sum(p => p.Tonnage);
-                    decimal? householdDrinkContainers = materialName == "Glass"
-                        ? producerData.Where(p => p.MaterialName == materialName && p.PackagingType == PackagingTypes.HouseholdDrinksContainers).Sum(p => p.Tonnage)
-                        : null;
+                    var hhTonnage  = producerData.Where(t => t.MaterialName == materialName && t.PackagingType == PackagingTypes.Household).Sum(t => t.Tonnage);
+                    var pbTonnage  = producerData.Where(p => p.MaterialName == materialName && p.PackagingType == PackagingTypes.PublicBin).Sum(p => p.Tonnage);
+                    var hdcTonnage = producerData.Where(p => p.MaterialName == materialName && p.PackagingType == PackagingTypes.HouseholdDrinksContainers).Sum(p => p.Tonnage);
                     decimal? actionedSelfManagedConsumerWasteTonnage = applyModulation ? smcw.OverallTotalPerMaterials[materialCode].ActionedSelfManagedConsumerWasteTonnage.total ?? 0 : null;
                     var laDisposalDetail = new CalcResultLaDisposalCostDataDetail
                     {
                         Cost                                    = detail.Value,
-                        HouseholdPackagingWasteTonnage          = producerReportedHouseholdPackagingWasteTonnage,
-                        PublicBinTonnage                        = reportedPublicBinTonnage,
-                        HouseholdDrinkContainersTonnage         = householdDrinkContainers,
+                        HouseholdPackagingWasteTonnage          = hhTonnage,
+                        PublicBinTonnage                        = pbTonnage,
+                        HouseholdDrinkContainersTonnage         = hdcTonnage,
                         LateReportingTonnage                    = lateReportingTonnageValue,
                         ActionedSelfManagedConsumerWasteTonnage = actionedSelfManagedConsumerWasteTonnage,
                     };

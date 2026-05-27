@@ -34,11 +34,11 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
             return new CalcResultCommsCostOnePlusFourApportionmentCountryWide
             {
                 Name                              = CalcResultCommsCostBuilder.TwoCCommsCostByCountry,
-                EnglandCommsCostByCountry         = CurrencyConverterUtils.ConvertToCurrency(record.England),
-                WalesCommsCostByCountry           = CurrencyConverterUtils.ConvertToCurrency(record.Wales),
-                ScotlandCommsCostByCountry        = CurrencyConverterUtils.ConvertToCurrency(record.Scotland),
-                NorthernIrelandCommsCostByCountry = CurrencyConverterUtils.ConvertToCurrency(record.NorthernIreland),
-                TotalCommsCostByCountry           = CurrencyConverterUtils.ConvertToCurrency(record.Total)
+                EnglandCommsCostByCountry         = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.England        , 2, ","),
+                WalesCommsCostByCountry           = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Wales          , 2, ","),
+                ScotlandCommsCostByCountry        = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Scotland       , 2, ","),
+                NorthernIrelandCommsCostByCountry = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.NorthernIreland, 2, ","),
+                TotalCommsCostByCountry           = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Total          , 2, ",")
             };
         }
     }

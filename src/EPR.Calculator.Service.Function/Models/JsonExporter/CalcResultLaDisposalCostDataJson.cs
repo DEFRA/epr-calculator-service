@@ -72,7 +72,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                 TotalLaDisposalCost                    = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(item.Cost.Total          , 2, ","),
                 ProducerHouseholdPackagingWasteTonnage = item.HouseholdPackagingWasteTonnage,
                 PublicBinTonnage                       = item.PublicBinTonnage,
-                HouseholdDrinksContainersTonnage       = item.HouseholdDrinkContainersTonnage ?? 0,
+                HouseholdDrinksContainersTonnage       = item.HouseholdDrinkContainersTonnage,
                 LateReportingTonnage                   = item.LateReportingTonnage,
                 TotalTonnage                           = item.TotalTonnage,
                 DisposalCostPricePerTonne              = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(item.DisposalCostPricePerTonne == null ? 0 : item.DisposalCostPricePerTonne.Value, 4, ",")
@@ -149,7 +149,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                 TotalLaDisposalCostTotal                    = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(total.Cost.Total          , 2, ","),
                 ProducerHouseholdPackagingWasteTonnageTotal = total.HouseholdPackagingWasteTonnage,
                 PublicBinTonnage                            = total.PublicBinTonnage,
-                HouseholdDrinksContainersTonnageTotal       = total.HouseholdDrinkContainersTonnage ?? 0,
+                HouseholdDrinksContainersTonnageTotal       = total.HouseholdDrinkContainersTonnage,
                 LateReportingTonnageTotal                   = total.LateReportingTonnage,
                 TotalTonnageTotal                           = total.TotalTonnage
             };

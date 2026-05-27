@@ -71,15 +71,22 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost
             csvContent.Append(CsvSanitiser.SanitiseData(data.Cost.Scotland       , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
             csvContent.Append(CsvSanitiser.SanitiseData(data.Cost.NorthernIreland, DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
             csvContent.Append(CsvSanitiser.SanitiseData(data.Cost.Total          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(data.HouseholdPackagingWasteTonnage , DecimalPlaces.Three, null));
-            csvContent.Append(CsvSanitiser.SanitiseData(data.PublicBinTonnage               , DecimalPlaces.Three, null));
-            csvContent.Append(CsvSanitiser.SanitiseData(data.HouseholdDrinkContainersTonnage, DecimalPlaces.Three, null));
-            csvContent.Append(CsvSanitiser.SanitiseData(data.LateReportingTonnage           , DecimalPlaces.Three, null));
+            csvContent.Append(CsvSanitiser.SanitiseData(data.HouseholdPackagingWasteTonnage , DecimalPlaces.Three, DecimalFormats.F3));
+            csvContent.Append(CsvSanitiser.SanitiseData(data.PublicBinTonnage               , DecimalPlaces.Three, DecimalFormats.F3));
+            if (name != "Total" && name != MaterialNames.Glass && data.HouseholdDrinkContainersTonnage == 0)
+            {
+                csvContent.Append(CsvSanitiser.SanitiseData((string?)null));
+            }
+            else
+            {
+                csvContent.Append(CsvSanitiser.SanitiseData(data.HouseholdDrinkContainersTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+            }
+            csvContent.Append(CsvSanitiser.SanitiseData(data.LateReportingTonnage           , DecimalPlaces.Three, DecimalFormats.F3));
             if (applyModulation)
             {
-                csvContent.Append(CsvSanitiser.SanitiseData(data.ActionedSelfManagedConsumerWasteTonnage, DecimalPlaces.Three, null));
+                csvContent.Append(CsvSanitiser.SanitiseData(data.ActionedSelfManagedConsumerWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
             }
-            csvContent.Append(CsvSanitiser.SanitiseData(data.TotalTonnage, DecimalPlaces.Three, null));
+            csvContent.Append(CsvSanitiser.SanitiseData(data.TotalTonnage, DecimalPlaces.Three, DecimalFormats.F3));
             if (name != "Total")
             {
                 csvContent.Append(CsvSanitiser.SanitiseData(data.DisposalCostPricePerTonne, DecimalPlaces.Four, DecimalFormats.F4, isCurrency: true));

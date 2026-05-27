@@ -85,7 +85,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation
                 var laDisposalCost = laDisposalCostData.ByMaterial[material.Code];
                 appendd(laDisposalCost.HouseholdPackagingWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3); // B
                 appendd(laDisposalCost.PublicBinTonnage              , DecimalPlaces.Three, DecimalFormats.F3); // C
-                if (laDisposalCost.HouseholdDrinkContainersTonnage == null)
+                if (material.Code != MaterialCodes.Glass && laDisposalCost.HouseholdDrinkContainersTonnage == 0)
                     append(null); // D
                 else
                     appendd(laDisposalCost.HouseholdDrinkContainersTonnage, DecimalPlaces.Three, DecimalFormats.F3); // D

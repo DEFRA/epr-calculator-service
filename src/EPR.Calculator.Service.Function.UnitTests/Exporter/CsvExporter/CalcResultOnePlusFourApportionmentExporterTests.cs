@@ -36,7 +36,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 new string[] {},
                 new string[] {},
                 new[] { "1 + 4 Apportionment %s" },
-                new[] { "",
+                new[] { null,
                         "England",
                         "Wales",
                         "Scotland",

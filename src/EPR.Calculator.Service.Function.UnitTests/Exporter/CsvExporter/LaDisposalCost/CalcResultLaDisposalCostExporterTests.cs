@@ -47,9 +47,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.LaDispo
                         "Producer Household Tonnage + Late Reporting Tonnage + Public Bin Tonnage + Household Drinks Containers Tonnage",
                         "Disposal Cost Price Per Tonne"
                 },
-                new[] { "Aluminium"      ,"£100.00", "£50.00","£0.00","£0.00","£150.00","0","0","100.123","0","100.123",  "£1.4982" },
-                new[] { "Fibre composite","£100.00", "£50.00","£0.00","£0.00","£150.00","2","0",      "0","0",   "0.77","£194.8052" },
-                new[] { "Total"          ,"£200.00","£100.00","£0.00","£0.00","£300.00","2","0","100.123","0","100.893" },
+                new[] { "Aluminium"      ,"£100.00", "£50.00","£0.00","£0.00","£150.00","0.000","0.000","100.123","0.000","100.123",  "£1.4982" },
+                new[] { "Fibre composite","£100.00", "£50.00","£0.00","£0.00","£150.00","2.000","0.000",     null,"0.000",  "0.770","£194.8052" },
+                new[] { "Total"          ,"£200.00","£100.00","£0.00","£0.00","£300.00","2.000","0.000","100.123","0.000","100.893" },
                 new string[] { }
             };
 
@@ -89,9 +89,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.LaDispo
                         "Net Tonnage + Late Reporting Tonnage",
                         "Disposal Cost Price Per Tonne"
                 },
-                new[] { "Aluminium"      ,"£100.00", "£50.00","£0.00","£0.00","£150.00","0","0","100.123","0",   "0","100.123",  "£1.4982" },
-                new[] { "Fibre composite","£100.00", "£50.00","£0.00","£0.00","£150.00","2","0",      "0","0","1.23",   "0.77","£194.8052" },
-                new[] { "Total"          ,"£200.00","£100.00","£0.00","£0.00","£300.00","2","0","100.123","0","1.23", "100.893" },
+                new[] { "Aluminium"      ,"£100.00", "£50.00","£0.00","£0.00","£150.00","0.000","0.000","100.123","0.000","0.000","100.123",  "£1.4982" },
+                new[] { "Fibre composite","£100.00", "£50.00","£0.00","£0.00","£150.00","2.000","0.000",     null,"0.000","1.230",  "0.770","£194.8052" },
+                new[] { "Total"          ,"£200.00","£100.00","£0.00","£0.00","£300.00","2.000","0.000","100.123","0.000","1.230", "100.893" },
                 new string[] { }
             };
 
@@ -116,6 +116,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.LaDispo
                         Cost = new() { England = 100m, Wales = 50m, Scotland = 0m, NorthernIreland = 0m },
                         HouseholdPackagingWasteTonnage = 2m,
                         PublicBinTonnage = 0m,
+                        HouseholdDrinkContainersTonnage = 0m,
                         ActionedSelfManagedConsumerWasteTonnage = 1.23m
                     }
                 }

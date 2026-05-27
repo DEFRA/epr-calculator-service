@@ -149,7 +149,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
             Assert.AreEqual(400, laDisposalCost.HouseholdPackagingWasteTonnage);
             Assert.AreEqual(0, laDisposalCost.PublicBinTonnage);
-            Assert.AreEqual(null, laDisposalCost.HouseholdDrinkContainersTonnage);
+            Assert.AreEqual(0, laDisposalCost.HouseholdDrinkContainersTonnage);
             Assert.AreEqual(2000, laDisposalCost.LateReportingTonnage);
             Assert.AreEqual(2400, laDisposalCost.TotalTonnage);
         }
