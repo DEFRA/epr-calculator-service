@@ -51,16 +51,16 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
             }, name);
         calculatorRunResult.ShouldBe(true);
         {
-            var skip          = 8;
             var contents      = fakeBlobStorage.Get(ToResultsCsvFileName(calculatorRunId, name));
-            var actualLines   = string.Join(Environment.NewLine, contents.Split(Environment.NewLine, StringSplitOptions.None                                     ).Skip(skip)).Trim().Split(Environment.NewLine);
-            var expectedLines = string.Join(Environment.NewLine, (await File.ReadAllLinesAsync($"IntegrationTests/ExpectedData/{relativeYear.Value}-results.csv")).Skip(skip)).Trim().Split(Environment.NewLine);
+            var actualLines   = string.Join(Environment.NewLine, contents.Split(Environment.NewLine, StringSplitOptions.None                                     )).Trim().Split(Environment.NewLine);
+            var expectedLines = string.Join(Environment.NewLine, (await File.ReadAllLinesAsync($"IntegrationTests/ExpectedData/{relativeYear.Value}-results.csv"))).Trim().Split(Environment.NewLine);
 
-            actualLines.Length.ShouldBe(expectedLines.Length, $"Results CSV\n\n{contents}");
+            actualLines.Length.ShouldBe(expectedLines.Length, $"Results CSV mismatch: {DisplayFullContents(contents)}");
 
+            var dateFields = new List<int> {3, 6, 7, 8};
             for (var i = 0; i < actualLines.Length; i++)
             {
-                actualLines[i].ShouldBe(expectedLines[i], $"Results CSV mismatch at line {i + skip}");
+                if (!dateFields.Contains(i + 1)) actualLines[i].ShouldBe(expectedLines[i], $"Results CSV mismatch at line {i + 1}: {DisplayFullContents(contents)}");
             }
         }
 
@@ -68,32 +68,35 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
         var billingRunResult = await Provider.GetRequiredService<IPrepareBillingFileService>().PrepareBillingFileAsync(calculatorRunId, name, rundBy);
         billingRunResult.ShouldBe(true);
         {
-            var skip          = 8;
             var contents      = fakeBlobStorage.Get(ToBillingCsvFileName(calculatorRunId, name));  // Can fail as mintues in filename - return filename from PrepareBillingFileAsync instead?
-            var actualLines   = string.Join(Environment.NewLine, contents.Split(Environment.NewLine, StringSplitOptions.None                                     ).Skip(skip)).Trim().Split(Environment.NewLine);
-            var expectedLines = string.Join(Environment.NewLine, (await File.ReadAllLinesAsync($"IntegrationTests/ExpectedData/{relativeYear.Value}-billing.csv")).Skip(skip)).Trim().Split(Environment.NewLine);
+            var actualLines   = string.Join(Environment.NewLine, contents.Split(Environment.NewLine, StringSplitOptions.None                                     )).Trim().Split(Environment.NewLine);
+            var expectedLines = string.Join(Environment.NewLine, (await File.ReadAllLinesAsync($"IntegrationTests/ExpectedData/{relativeYear.Value}-billing.csv"))).Trim().Split(Environment.NewLine);
 
-            actualLines.Length.ShouldBe(expectedLines.Length, $"Billing CSV\n\n{contents}");
+            actualLines.Length.ShouldBe(expectedLines.Length, $"Billing CSV mismatch: {DisplayFullContents(contents)}");
 
+            var dateFields = new List<int> {3, 6, 7, 8};
             for (var i = 0; i < actualLines.Length; i++)
             {
-                actualLines[i].ShouldBe(expectedLines[i], $"Billing CSV mismatch at line {i + skip}");
+                if (!dateFields.Contains(i + 1)) actualLines[i].ShouldBe(expectedLines[i], $"Billing CSV mismatch at line {i + 1}: {DisplayFullContents(contents)}");
             }
         }
         {   // TODO sort json fields before comparison?
-            var skip          = 19;
             var contents      = fakeBlobStorage.Get(ToBillingJsonFileName(calculatorRunId, name));
-            var actualLines   = string.Join(Environment.NewLine, contents.Split(Environment.NewLine, StringSplitOptions.None                                      ).Skip(skip)).Trim().Split(Environment.NewLine);
-            var expectedLines = string.Join(Environment.NewLine, (await File.ReadAllLinesAsync($"IntegrationTests/ExpectedData/{relativeYear.Value}-billing.json")).Skip(skip)).Trim().Split(Environment.NewLine);
+            var actualLines   = string.Join(Environment.NewLine, contents.Split(Environment.NewLine, StringSplitOptions.None                                      )).Trim().Split(Environment.NewLine);
+            var expectedLines = string.Join(Environment.NewLine, (await File.ReadAllLinesAsync($"IntegrationTests/ExpectedData/{relativeYear.Value}-billing.json"))).Trim().Split(Environment.NewLine);
 
-            actualLines.Length.ShouldBe(expectedLines.Length, $"Billing JSON\n\n{contents}");
+            actualLines.Length.ShouldBe(expectedLines.Length, $"Billing JSON mismatch: {DisplayFullContents(contents)}");
 
+            var dateFields = new List<int> {5, 9, 11, 13, 16};
             for (var i = 0; i < actualLines.Length; i++)
             {
-                actualLines[i].ShouldBe(expectedLines[i], $"Billing JSON missmatch at line {i + skip}");
+                if (!dateFields.Contains(i + 1)) actualLines[i].ShouldBe(expectedLines[i], $"Billing JSON mismatch at line {i + 1}: {DisplayFullContents(contents)}");
             }
         }
     }
+
+    private static string DisplayFullContents(string contents) =>
+        $"Full contents:\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n{contents}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<";
 
     private static string ToResultsCsvFileName(int calculatorRunId, string name) =>
         new CalcResultsAndBillingFileName(calculatorRunId, name, Now, isDraftBillingFile: false);   // $"{calculatorRunId}-{name}_Results File_{Now.ToString("yyyyMMdd")}.csv";
