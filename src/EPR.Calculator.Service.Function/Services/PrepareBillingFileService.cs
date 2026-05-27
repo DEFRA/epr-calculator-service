@@ -9,7 +9,7 @@ namespace EPR.Calculator.Service.Function.Services;
 
 public interface IPrepareBillingFileService
 {
-    Task<bool> PrepareBillingFileAsync(int calculatorRunId, string runName, string approvedBy);
+    Task<PreparedResult<(string CsvFileName, string JsonFileName)>> PrepareBillingFileAsync(int calculatorRunId, string runName, string approvedBy);
 }
 
 public class PrepareBillingFileService(
@@ -18,7 +18,7 @@ public class PrepareBillingFileService(
     ILogger<PrepareBillingFileService> logger)
     : IPrepareBillingFileService
 {
-    public Task<bool> PrepareBillingFileAsync(int calculatorRunId, string runName, string approvedBy) =>
+    public Task<PreparedResult<(string CsvFileName, string JsonFileName)>> PrepareBillingFileAsync(int calculatorRunId, string runName, string approvedBy) =>
         logger.LogDuration(async () =>
         {
             try
@@ -42,7 +42,7 @@ public class PrepareBillingFileService(
             catch (Exception exception)
             {
                 logger.LogError(exception, "Error occurred while preparing the billing file");
-                return false;
+                return PreparedResult.Failure<(string, string)>();
             }
         });
 

@@ -77,13 +77,13 @@ public class ServiceBusQueueTrigger(
         if (runContext is CreateResultFileMessage calculatorContext)
         {
             logger.LogInformation("Processing calculator run");
-            return await calculatorRunService.PrepareResultsFileAsync(calculatorContext, runName);
+            return (await calculatorRunService.PrepareResultsFileAsync(calculatorContext, runName)).IsSuccess;
         }
 
         if (runContext is CreateBillingFileMessage billingContext)
         {
             logger.LogInformation("Processing billing run");
-            return await prepareBillingFileService.PrepareBillingFileAsync(billingContext.CalculatorRunId, runName, billingContext.ApprovedBy);
+            return (await prepareBillingFileService.PrepareBillingFileAsync(billingContext.CalculatorRunId, runName, billingContext.ApprovedBy)).IsSuccess;
         }
 
         throw new ArgumentException($"Invalid message type: {runContext.GetType().Name}", nameof(runContext));

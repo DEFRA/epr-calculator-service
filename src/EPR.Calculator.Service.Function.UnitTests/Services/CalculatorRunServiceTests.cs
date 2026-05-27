@@ -32,7 +32,7 @@ public class CalculatorRunServiceTests
                 It.IsAny<CalcResultsRequestDto>(),
                 It.IsAny<string>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(true);
+            .ReturnsAsync(PreparedResult.Success("some-results.csv"));
 
         statusService = fixture.Freeze<Mock<IRpdStatusService>>();
         statusService.Setup(s => s.UpdateRpdStatus(
@@ -61,7 +61,7 @@ public class CalculatorRunServiceTests
         var result = await sut.PrepareResultsFileAsync(message, runName);
 
         // Assert
-        Assert.IsFalse(result);
+        Assert.IsFalse(result.IsSuccess);
     }
 
     [TestMethod]
@@ -79,7 +79,7 @@ public class CalculatorRunServiceTests
         var result = await sut.PrepareResultsFileAsync(message, runName);
 
         // Assert
-        Assert.IsFalse(result);
+        Assert.IsFalse(result.IsSuccess);
     }
 
     [TestMethod]
@@ -97,7 +97,7 @@ public class CalculatorRunServiceTests
         var result = await sut.PrepareResultsFileAsync(message, runName);
 
         // Assert
-        Assert.IsFalse(result);
+        Assert.IsFalse(result.IsSuccess);
     }
 
     [TestMethod]
@@ -113,7 +113,7 @@ public class CalculatorRunServiceTests
         var result = await sut.PrepareResultsFileAsync(message, "TestRun");
 
         // Assert
-        Assert.IsTrue(result);
+        Assert.IsTrue(result.IsSuccess);
         dataLoader.Verify(d => d.LoadData(message.RelativeYear, It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -134,7 +134,7 @@ public class CalculatorRunServiceTests
         var result = await sut.PrepareResultsFileAsync(message, "TestRun");
 
         // Assert
-        Assert.IsFalse(result);
+        Assert.IsFalse(result.IsSuccess);
         transposeService.Verify(
             t => t.Transpose(It.IsAny<int>(), It.IsAny<CancellationToken>()),
             Times.Never);
@@ -146,7 +146,7 @@ public class CalculatorRunServiceTests
         // Arrange
         prepareCalcService.Setup(s => s.PrepareCalcResultsAsync(
                 It.IsAny<CalcResultsRequestDto>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(false);
+            .ReturnsAsync(PreparedResult.Failure<string>());
 
         var message = new CreateResultFileMessage
         {
@@ -157,7 +157,7 @@ public class CalculatorRunServiceTests
         var result = await sut.PrepareResultsFileAsync(message, "TestRun");
 
         // Assert
-        Assert.IsFalse(result);
+        Assert.IsFalse(result.IsSuccess);
     }
 
     [TestMethod]
@@ -177,7 +177,7 @@ public class CalculatorRunServiceTests
         var result = await sut.PrepareResultsFileAsync(message, "TestRun");
 
         // Assert
-        Assert.IsFalse(result);
+        Assert.IsFalse(result.IsSuccess);
         statusService.Verify(
             s => s.UpdateRpdStatus(
                 It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
@@ -201,6 +201,6 @@ public class CalculatorRunServiceTests
         var result = await sut.PrepareResultsFileAsync(message, "TestRun");
 
         // Assert
-        Assert.IsFalse(result);
+        Assert.IsFalse(result.IsSuccess);
     }
 }

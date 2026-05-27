@@ -27,14 +27,14 @@ public class PrepareBillingFileServiceTests
                 It.IsAny<CalcResultsRequestDto>(),
                 It.IsAny<string>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(true);
+            .ReturnsAsync(PreparedResult.Success("some-results.csv"));
 
         prepareCalcService
             .Setup(s => s.PrepareBillingResultsAsync(
                 It.IsAny<CalcResultsRequestDto>(),
                 It.IsAny<string>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(true);
+            .ReturnsAsync(PreparedResult.Success((CsvFileName: "some-billing.csv", JsonFileName: "some-billing.json")));
 
         sut = fixture.Create<PrepareBillingFileService>();
     }
@@ -51,7 +51,7 @@ public class PrepareBillingFileServiceTests
         var result = await sut.PrepareBillingFileAsync(calculatorRunId, calculatorName, approvedBy);
 
         // Assert
-        Assert.AreEqual(false, result);
+        Assert.AreEqual(false, result.IsSuccess);
     }
 
     [TestMethod]
@@ -77,7 +77,7 @@ public class PrepareBillingFileServiceTests
         var result = await sut.PrepareBillingFileAsync(calculatorRunId, calculatorName, approvedBy);
 
         // Assert
-        Assert.AreEqual(false, result);
+        Assert.AreEqual(false, result.IsSuccess);
     }
 
     [TestMethod]
@@ -117,7 +117,7 @@ public class PrepareBillingFileServiceTests
         var result = await sut.PrepareBillingFileAsync(calculatorRunId, calculatorName, approvedBy);
 
         // Assert
-        Assert.IsTrue(result);
+        Assert.IsTrue(result.IsSuccess);
         prepareCalcService.Verify(s => s.PrepareBillingResultsAsync(
             It.Is<CalcResultsRequestDto>(dto =>
                 dto.RunId == calculatorRunId &&
@@ -158,20 +158,12 @@ public class PrepareBillingFileServiceTests
 
         await dbContext.SaveChangesAsync();
 
-        // Setup PrepareCalcService to return true
-        prepareCalcService
-            .Setup(s => s.PrepareBillingResultsAsync(
-                It.IsAny<CalcResultsRequestDto>(),
-                It.IsAny<string>(),
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync(true);
-
         var approvedBy = "user";
 
         // Act
         var result = await sut.PrepareBillingFileAsync(calculatorRunId, calculatorName, approvedBy);
 
         // Assert
-        Assert.AreEqual(true, result);
+        Assert.AreEqual(true, result.IsSuccess);
     }
 }

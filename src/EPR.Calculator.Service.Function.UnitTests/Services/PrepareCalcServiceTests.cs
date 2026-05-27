@@ -110,7 +110,7 @@ public class PrepareCalcServiceTests
         var result = await sut.PrepareCalcResultsAsync(resultsRequestDto, runName, CancellationToken.None);
 
         // Assert
-        Assert.AreEqual(true, result);
+        Assert.AreEqual(true, result.IsSuccess);
 
         storageService.Verify(x => x.UploadFileContentAsync(
             It.Is<(string, string, string, string, bool)>(y => y.Item5 == false)), Times.Once);
@@ -128,7 +128,7 @@ public class PrepareCalcServiceTests
         var result = await sut.PrepareCalcResultsAsync(resultsRequestDto, runName, CancellationToken.None);
 
         // Assert
-        Assert.AreEqual(false, result);
+        Assert.AreEqual(false, result.IsSuccess);
     }
 
     [TestMethod]
@@ -143,7 +143,7 @@ public class PrepareCalcServiceTests
         var result = await sut.PrepareCalcResultsAsync(resultsRequestDto, runName, CancellationToken.None);
 
         // Assert
-        Assert.AreEqual(false, result);
+        Assert.AreEqual(false, result.IsSuccess);
     }
 
     [TestMethod]
@@ -157,7 +157,7 @@ public class PrepareCalcServiceTests
         var result = await sut.PrepareCalcResultsAsync(resultsRequestDto, runName, CancellationToken.None);
 
         // Assert
-        Assert.AreEqual(false, result);
+        Assert.AreEqual(false, result.IsSuccess);
     }
 
     [TestMethod]
@@ -171,7 +171,7 @@ public class PrepareCalcServiceTests
         var result = await sut.PrepareCalcResultsAsync(resultsRequestDto, runName, CancellationToken.None);
 
         // Assert
-        Assert.AreEqual(false, result);
+        Assert.AreEqual(false, result.IsSuccess);
     }
 
     [TestMethod]
@@ -204,7 +204,7 @@ public class PrepareCalcServiceTests
 
         var billingResult = await sut.PrepareBillingResultsAsync(calcResultsRequestDto, "TestRun", CancellationToken.None);
 
-        Assert.IsTrue(billingResult);
+        Assert.IsTrue(billingResult.IsSuccess);
         calcRun = dbContext.CalculatorRuns.Single(x => x.Id == 1);
         Assert.IsFalse(calcRun.IsBillingFileGenerating);
 

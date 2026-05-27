@@ -20,8 +20,7 @@ public abstract class BaseIntegrationTest
     [TestInitialize]
     public async Task Initialize()
     {
-        SqlContainer = new MsSqlBuilder()
-            .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
+        SqlContainer = new MsSqlBuilder("mcr.microsoft.com/mssql/server:2022-latest")
             .Build();
 
         await SqlContainer.StartAsync();
