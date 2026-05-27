@@ -49,11 +49,11 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
                 CreatedBy       = rundBy,
                 MessageType     = "some-message-type"
             }, name);
-        calculatorRunResult.ShouldBe(true);
+        calculatorRunResult.IsSuccess.ShouldBeTrue();
         {
-            var contents      = fakeBlobStorage.Get(ToResultsCsvFileName(calculatorRunId, name));
-            var actualLines   = string.Join(Environment.NewLine, contents.Split(Environment.NewLine, StringSplitOptions.None                                     )).Trim().Split(Environment.NewLine);
-            var expectedLines = string.Join(Environment.NewLine, (await File.ReadAllLinesAsync($"IntegrationTests/ExpectedData/{relativeYear.Value}-results.csv"))).Trim().Split(Environment.NewLine);
+            var contents      = fakeBlobStorage.Get(calculatorRunResult.Value);
+            var actualLines   = string.Join(Environment.NewLine, contents.Split(Environment.NewLine, StringSplitOptions.None                                   )).Trim().Split(Environment.NewLine);
+            var expectedLines = string.Join(Environment.NewLine, await File.ReadAllLinesAsync($"IntegrationTests/ExpectedData/{relativeYear.Value}-results.csv")).Trim().Split(Environment.NewLine);
 
             actualLines.Length.ShouldBe(expectedLines.Length, $"Results CSV mismatch: {DisplayFullContents(contents)}");
 
@@ -66,11 +66,11 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
 
         await SeedAcceptOrRejectProducers(db, calculatorRunId, rundBy, $"IntegrationTests/TestData/{relativeYear.Value}-accept-or-reject-producers.csv");
         var billingRunResult = await Provider.GetRequiredService<IPrepareBillingFileService>().PrepareBillingFileAsync(calculatorRunId, name, rundBy);
-        billingRunResult.ShouldBe(true);
+        billingRunResult.IsSuccess.ShouldBeTrue();
         {
-            var contents      = fakeBlobStorage.Get(ToBillingCsvFileName(calculatorRunId, name));  // Can fail as mintues in filename - return filename from PrepareBillingFileAsync instead?
+            var contents      = fakeBlobStorage.Get(billingRunResult.Value.CsvFileName);
             var actualLines   = string.Join(Environment.NewLine, contents.Split(Environment.NewLine, StringSplitOptions.None                                     )).Trim().Split(Environment.NewLine);
-            var expectedLines = string.Join(Environment.NewLine, (await File.ReadAllLinesAsync($"IntegrationTests/ExpectedData/{relativeYear.Value}-billing.csv"))).Trim().Split(Environment.NewLine);
+            var expectedLines = string.Join(Environment.NewLine, await File.ReadAllLinesAsync($"IntegrationTests/ExpectedData/{relativeYear.Value}-billing.csv")).Trim().Split(Environment.NewLine);
 
             actualLines.Length.ShouldBe(expectedLines.Length, $"Billing CSV mismatch: {DisplayFullContents(contents)}");
 
@@ -81,9 +81,9 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
             }
         }
         {   // TODO sort json fields before comparison?
-            var contents      = fakeBlobStorage.Get(ToBillingJsonFileName(calculatorRunId, name));
-            var actualLines   = string.Join(Environment.NewLine, contents.Split(Environment.NewLine, StringSplitOptions.None                                      )).Trim().Split(Environment.NewLine);
-            var expectedLines = string.Join(Environment.NewLine, (await File.ReadAllLinesAsync($"IntegrationTests/ExpectedData/{relativeYear.Value}-billing.json"))).Trim().Split(Environment.NewLine);
+            var contents      = fakeBlobStorage.Get(billingRunResult.Value.JsonFileName);
+            var actualLines   = string.Join(Environment.NewLine, contents.Split(Environment.NewLine, StringSplitOptions.None                                    )).Trim().Split(Environment.NewLine);
+            var expectedLines = string.Join(Environment.NewLine, await File.ReadAllLinesAsync($"IntegrationTests/ExpectedData/{relativeYear.Value}-billing.json")).Trim().Split(Environment.NewLine);
 
             actualLines.Length.ShouldBe(expectedLines.Length, $"Billing JSON mismatch: {DisplayFullContents(contents)}");
 
@@ -97,15 +97,6 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
 
     private static string DisplayFullContents(string contents) =>
         $"Full contents:\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n{contents}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<";
-
-    private static string ToResultsCsvFileName(int calculatorRunId, string name) =>
-        new CalcResultsAndBillingFileName(calculatorRunId, name, Now, isDraftBillingFile: false);   // $"{calculatorRunId}-{name}_Results File_{Now.ToString("yyyyMMdd")}.csv";
-
-    private static string ToBillingCsvFileName(int calculatorRunId, string name) =>
-        new CalcResultsAndBillingFileName(calculatorRunId, name, Now, isDraftBillingFile: true);    // $"{calculatorRunId}-{name}_Billing File_{Now.ToString("yyyyMMddHHmm")}.csv";
-
-    private static string ToBillingJsonFileName(int calculatorRunId, string name) =>
-        new CalcResultsAndBillingFileName(calculatorRunId, isDraftBillingFile: true, isJson: true); // $"{calculatorRunId}billing.json";
 
     private static CsvReader SlurpCsv(string csvPath) =>
         new(new StreamReader(csvPath), new CsvConfiguration(CultureInfo.InvariantCulture)

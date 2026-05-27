@@ -13,11 +13,31 @@ using Microsoft.Extensions.Options;
 
 namespace EPR.Calculator.Service.Function.Services
 {
+    public sealed record PreparedResult<T>
+    {
+        public bool IsSuccess { get; }
+        public T Value { get; }
+
+        private PreparedResult(bool isSuccess, T value)
+        {
+            IsSuccess = isSuccess;
+            Value = value;
+        }
+
+        public static PreparedResult<T> Success(T value) => new(true , value);
+        public static PreparedResult<T> Failure()        => new(false, default!);
+    }
+
+    public static class PreparedResult
+    {
+        public static PreparedResult<T> Success<T>(T value) => PreparedResult<T>.Success(value);
+        public static PreparedResult<T> Failure<T>()        => PreparedResult<T>.Failure();
+    }
+
     public interface IPrepareCalcService
     {
-        Task<bool> PrepareCalcResultsAsync(CalcResultsRequestDto resultsRequestDto, string? runName, CancellationToken cancellationToken);
-
-        Task<bool> PrepareBillingResultsAsync(CalcResultsRequestDto resultsRequestDto, string runName, CancellationToken cancellationToken);
+        Task<PreparedResult<string>> PrepareCalcResultsAsync(CalcResultsRequestDto resultsRequestDto, string? runName, CancellationToken cancellationToken);
+        Task<PreparedResult<(string CsvFileName, string JsonFileName)>> PrepareBillingResultsAsync(CalcResultsRequestDto resultsRequestDto, string runName, CancellationToken cancellationToken);
     }
 
     /// <summary>
@@ -43,7 +63,7 @@ namespace EPR.Calculator.Service.Function.Services
 
         private const bool OverwriteCsvFile = false;
 
-        public async Task<bool> PrepareCalcResultsAsync(CalcResultsRequestDto resultsRequestDto, string? runName, CancellationToken cancellationToken)
+        public async Task<PreparedResult<string>> PrepareCalcResultsAsync(CalcResultsRequestDto resultsRequestDto, string? runName, CancellationToken cancellationToken)
         {
             CalculatorRun? calculatorRun = null;
             try
@@ -54,14 +74,14 @@ namespace EPR.Calculator.Service.Function.Services
 
                 if (calculatorRun == null)
                 {
-                    return false;
+                    return PreparedResult.Failure<string>();
                 }
 
                 // Validate the result for all the required IDs
                 var validationResult = validator.ValidateCalculatorRunIds(calculatorRun);
                 if (!validationResult.IsValid)
                 {
-                    return false;
+                    return PreparedResult.Failure<string>();
                 }
 
                 var materials = await materialService.GetMaterials();
@@ -69,7 +89,7 @@ namespace EPR.Calculator.Service.Function.Services
                 await logger.LogDuration(() => producerDataInsertService.InsertProducerDataToDatabase(results, materials), "Insert producer data");
                 var csvResults = logger.LogDuration(() => csvResultsExporter.Export(results, materials), "Export results");
 
-                var fileName = new CalcResultsAndBillingFileName(
+                string fileName = new CalcResultsAndBillingFileName(
                     results.CalcResultDetail.RunId,
                     results.CalcResultDetail.RunName,
                     results.CalcResultDetail.RunDate);
@@ -93,34 +113,34 @@ namespace EPR.Calculator.Service.Function.Services
                     calculatorRun!.CalculatorRunClassificationId = (int)RunClassification.UNCLASSIFIED;
                     dbContext.CalculatorRuns.Update(calculatorRun);
                     await dbContext.SaveChangesAsync(cancellationToken);
-                    return true;
+                    return PreparedResult.Success(fileName);
                 }
             }
             catch (OperationCanceledException exception)
             {
                 logger.LogError(exception, "Operation cancelled");
                 await HandleErrorAsync(calculatorRun, RunClassification.ERROR);
-                return false;
+                return PreparedResult.Failure<string>();
             }
             catch (Exception exception)
             {
                 logger.LogError(exception, "Error occurred");
                 await HandleErrorAsync(calculatorRun, RunClassification.ERROR);
-                return false;
+                return PreparedResult.Failure<string>();
             }
 
             logger.LogError("Error occurred");
             await HandleErrorAsync(calculatorRun, RunClassification.ERROR);
-            return false;
+            return PreparedResult.Failure<string>();
         }
 
-        public async Task<bool> PrepareBillingResultsAsync(CalcResultsRequestDto resultsRequestDto, string runName, CancellationToken cancellationToken)
+        public async Task<PreparedResult<(string CsvFileName, string JsonFileName)>> PrepareBillingResultsAsync(CalcResultsRequestDto resultsRequestDto, string runName, CancellationToken cancellationToken)
         {
             var materials = await materialService.GetMaterials();
             var results = await telemetry.TrackDuration("BillingRunBuilder", () => builder.BuildAsync(resultsRequestDto, materials));
 
             // Get File name for the billing json file
-            var csvName = new CalcResultsAndBillingFileName(resultsRequestDto.RunId, runName, DateTime.UtcNow, true);
+            string csvName = new CalcResultsAndBillingFileName(resultsRequestDto.RunId, runName, DateTime.UtcNow, true);
             var csvContent = csvBillingExporter.Export(results, materials, resultsRequestDto.AcceptedProducerIds);
 
             var csvBlobUri = await storageService.UploadFileContentAsync((
@@ -141,7 +161,7 @@ namespace EPR.Calculator.Service.Function.Services
 
             logger.LogInformation("Exported Billing CSV {BillingCsvFile}", csvName);
 
-            var jsonName = new CalcResultsAndBillingFileName(resultsRequestDto.RunId, true, true);
+            string jsonName = new CalcResultsAndBillingFileName(resultsRequestDto.RunId, true, true);
             var jsonContent = jsonBillingExporter.Export(results, materials, resultsRequestDto.AcceptedProducerIds);
 
             await storageService.UploadFileContentAsync((
@@ -168,7 +188,7 @@ namespace EPR.Calculator.Service.Function.Services
             calcRun.IsBillingFileGenerating = false;
 
             await dbContext.SaveChangesAsync(cancellationToken);
-            return true;
+            return PreparedResult.Success((CsvFileName: csvName, JsonFileName: jsonName));
         }
 
         private async Task HandleErrorAsync(CalculatorRun? calculatorRun, RunClassification classification)

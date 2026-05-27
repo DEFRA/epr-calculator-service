@@ -19,7 +19,7 @@ namespace EPR.Calculator.Service.Function.Services
         /// <param name="calculatorRunParameter">The parameters required to run the calculator.</param>
         /// <param name="runName">The name of the calculator run.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains a boolean indicating success or failure.</returns>
-        Task<bool> PrepareResultsFileAsync(CreateResultFileMessage calculatorRunParameter, string runName);
+        Task<PreparedResult<string>> PrepareResultsFileAsync(CreateResultFileMessage calculatorRunParameter, string runName);
     }
 
     public class CalculatorRunService(
@@ -30,7 +30,7 @@ namespace EPR.Calculator.Service.Function.Services
         ILogger<CalculatorRunService> logger)
         : ICalculatorRunService
     {
-        public async Task<bool> PrepareResultsFileAsync(CreateResultFileMessage calculatorRunParameter, string runName)
+        public async Task<PreparedResult<string>> PrepareResultsFileAsync(CreateResultFileMessage calculatorRunParameter, string runName)
         {
             try
             {
@@ -40,20 +40,18 @@ namespace EPR.Calculator.Service.Function.Services
             catch (OperationCanceledException ex)
             {
                 logger.LogError(ex, "Prepare results file cancelled");
-                return false;
+                return PreparedResult.Failure<string>();
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, "Prepare results file failed");
-                return false;
+                return PreparedResult.Failure<string>();
             }
         }
 
-        private async Task<bool> RunResultsFileCalculationAsync(CreateResultFileMessage calculatorRunParameter,
+        private async Task<PreparedResult<string>> RunResultsFileCalculationAsync(CreateResultFileMessage calculatorRunParameter,
             string runName)
         {
-            var isSuccess = false;
-
             var statusUpdateResponse = await statusService.UpdateRpdStatus(
                 calculatorRunParameter.CalculatorRunId,
                 calculatorRunParameter.CreatedBy,
@@ -63,13 +61,13 @@ namespace EPR.Calculator.Service.Function.Services
             {
                 await producerDataTransposer.Transpose(calculatorRunParameter.CalculatorRunId, CancellationToken.None);
 
-                isSuccess = await prepareCalcService.PrepareCalcResultsAsync(
+                return await prepareCalcService.PrepareCalcResultsAsync(
                     new CalcResultsRequestDto { RunId = calculatorRunParameter.CalculatorRunId, RelativeYear = calculatorRunParameter.RelativeYear },
                     runName,
                     CancellationToken.None);
             }
 
-            return isSuccess;
+            return PreparedResult.Failure<string>();
         }
     }
 }
