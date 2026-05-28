@@ -215,7 +215,7 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
                 LapcapDataMasterId = master.Id,
                 UniqueReference    = templates.Single(x => x.Material == row.material && x.Country == row.country).UniqueReference,
                 TotalCost          = decimal.Parse(row.total_cost),
-                LapcapDataMaster   = master // TODO why is this a required field?
+                LapcapDataMaster   = master // TODO make virtual?
             }).ToImmutableList();
 
     private static ImmutableList<OrganisationResponse> OrganisationResponses(string organisationsPath) =>
@@ -224,12 +224,16 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
             .Select(row => new OrganisationResponse
             {
                 OrganisationId   = int.Parse(row.organisation_id),
-                SubsidiaryId     = row.subsidiary_id,
+                SubsidiaryId     = Nullable(row.subsidiary_id),
                 OrganisationName = row.organisation_name,
                 TradingName      = row.trading_name,
                 ObligationStatus = row.obligation_status,
-                SubmitterId      = row.submitter_id == "NULL" ? null : row.submitter_id,
-                StatusCode       = row.status_code  == "NULL" ? null : row.status_code,
+                SubmitterId      = row.submitter_id,
+                ErrorCode        = Nullable(row.error_code),
+                StatusCode       = Nullable(row.status_code),
+                NumDaysObligated = Nullable((string)row.num_days_obligated, short.Parse),
+                JoinerDate       = Nullable(row.joiner_date),
+                LeaverDate       = Nullable(row.leaver_date),
                 HasH1            = row.has_h1 == "1",
                 HasH2            = row.has_h2 == "1"
             }).ToImmutableList();
@@ -240,16 +244,26 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
             .Select(row => new PomResponse
             {
                 OrganisationId              = int.Parse(row.organisation_id),
-                SubsidiaryId                = row.subsidiary_id,
+                SubsidiaryId                = Nullable(row.subsidiary_id),
                 SubmissionPeriod            = row.submission_period,
                 PackagingActivity           = row.packaging_activity,
                 PackagingType               = row.packaging_type,
                 PackagingClass              = row.packaging_class,
                 PackagingMaterial           = row.packaging_material,
-                PackagingMaterialWeight     = double.Parse(row.packaging_material_weight, CultureInfo.InvariantCulture),
+                PackagingMaterialWeight     = Nullable((string)row.packaging_material_weight, double.Parse),
                 SubmissionPeriodDescription = row.submission_period_desc,
-                SubmitterId                 = row.submitter_id               == "NULL" ? null : row.submitter_id,
-                PackagingMaterialSubtype    = row.packaging_material_subtype == "NULL" ? null : row.packaging_material_subtype,
-                RamRagRating                = row.ram_rag_rating             == "NULL" ? null : row.ram_rag_rating
+                SubmitterId                 = row.submitter_id,
+                PackagingMaterialSubtype    = Nullable(row.packaging_material_subtype),
+                RamRagRating                = Nullable(row.ram_rag_rating)
             }).ToImmutableList();
-    }
+
+    private static string? Nullable(string value) =>
+        value.Equals("NULL", StringComparison.OrdinalIgnoreCase)
+            ? null
+            : value;
+
+    private static T? Nullable<T>(string value, Func<string, T> parser) where T : struct =>
+        value.Equals("NULL", StringComparison.OrdinalIgnoreCase)
+            ? null
+            : parser(value);
+}
