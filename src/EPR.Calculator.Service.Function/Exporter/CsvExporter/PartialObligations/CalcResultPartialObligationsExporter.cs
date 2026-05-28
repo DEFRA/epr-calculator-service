@@ -1,6 +1,7 @@
 using System.Text;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 
@@ -8,24 +9,31 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligation
 {
     public interface ICalcResultPartialObligationsExporter
     {
-        public void Export(CalcResultPartialObligations calcResultPartialObligations, IImmutableList<MaterialDetail> materials, StringBuilder stringBuilder, bool showModulation);
+        public void Export(
+            RunContext runContext,
+            CalcResultPartialObligations calcResultPartialObligations,
+            IImmutableList<MaterialDetail> materials,
+            StringBuilder stringBuilder);
     }
 
     public class CalcResultPartialObligationsExporter : ICalcResultPartialObligationsExporter
     {
-        public void Export(CalcResultPartialObligations calcResultPartialObligations, IImmutableList<MaterialDetail> materials, StringBuilder stringBuilder, bool showModulation)
+        public void Export(RunContext runContext,
+            CalcResultPartialObligations calcResultPartialObligations,
+            IImmutableList<MaterialDetail> materials,
+            StringBuilder stringBuilder)
         {
             // Add empty lines
             stringBuilder.AppendLine();
             stringBuilder.AppendLine();
 
             // Add headers
-            PreparePartialObligationsHeader(materials, stringBuilder, showModulation);
+            PreparePartialObligationsHeader(materials, stringBuilder, runContext.RequiresModulation);
 
             // Add data
             if (calcResultPartialObligations.PartialObligations?.Any() == true)
             {
-                AppendPartialObligations(calcResultPartialObligations.PartialObligations!, stringBuilder, showModulation);
+                AppendPartialObligations(calcResultPartialObligations.PartialObligations!, stringBuilder, runContext.RequiresModulation);
             }
             else
             {
@@ -120,7 +128,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligation
             csvContent.AppendLine();
         }
 
-        private static void WritePartialObligationsSecondaryHeaders(IEnumerable<CalcResultPartialObligationHeader> headers, StringBuilder csvContent)
+        private static void WritePartialObligationsSecondaryHeaders(IReadOnlyCollection<CalcResultPartialObligationHeader> headers, StringBuilder csvContent)
         {
             var maxColumnSize = headers.MaxBy(h => h.ColumnIndex ?? 0)?.ColumnIndex ?? throw new ArgumentException("No headers specified");
 
@@ -136,7 +144,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligation
 
         private static void WritePartialObligationsColumnHeaders(IEnumerable<CalcResultPartialObligationHeader> columnHeaders, StringBuilder csvContent)
         {
-            foreach (var item in columnHeaders!)
+            foreach (var item in columnHeaders)
             {
                 csvContent.Append(CsvSanitiser.SanitiseData(item.Name));
             }

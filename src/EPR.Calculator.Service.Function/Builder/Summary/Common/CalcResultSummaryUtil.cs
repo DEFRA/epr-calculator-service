@@ -1,9 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Enums;
-using EPR.Calculator.Service.Function.Builder.CommsCost;
-using EPR.Calculator.Service.Function.Builder.ParametersOther;
 using EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions;
 using EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts;
 using EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C;
@@ -13,6 +10,7 @@ using EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown;
 using EPR.Calculator.Service.Function.Builder.Summary.TwoCCommsCost;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 
@@ -219,13 +217,13 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             return producerDisposalFeeWithBadDebtProvision * disposalCostPercentage / 100;
         }
 
-        public static void SetHeaders(CalcResultSummary result, IReadOnlyList<MaterialDetail> materials, bool applyModulation)
+        public static void SetHeaders(RunContext runContext, CalcResultSummary result, IReadOnlyList<MaterialDetail> materials)
         {
             result.ResultSummaryHeader = new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.CalculationResult, ColumnIndex = 1 };
             result.NotesHeader         = new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.Notes, ColumnIndex = 1 };
 
             int section1MaterialsIdx           = 1                             + StartingHeaders().Count();
-            int section1DisposalFeeIdx         = section1MaterialsIdx          + Section1Materials(materials, applyModulation).Count();
+            int section1DisposalFeeIdx         = section1MaterialsIdx          + Section1Materials(materials, runContext.RequiresModulation).Count();
             int section2aMaterialsIdx          = section1DisposalFeeIdx        + Section1DisposalFee().Count();
             int section2aCommsIdx              = section2aMaterialsIdx         + Section2aMaterials(materials).Count();
             int section1DisposalIdx            = section2aCommsIdx             + Section1Disposal().Count();
@@ -270,7 +268,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             foreach (var material in materials)
             {
                 materialsBreakdownHeaders.Add(new CalcResultSummaryHeader { Name = $"{material.Name} Breakdown", ColumnIndex = columnIndex});
-                columnIndex += Section1Materials([material], applyModulation).Count();
+                columnIndex += Section1Materials([material], runContext.RequiresModulation).Count();
             }
             materialsBreakdownHeaders.Add(new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.DisposalFeeSummary, ColumnIndex = section1DisposalFeeIdx });
 
@@ -293,7 +291,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
             var columnHeaders = new List<CalcResultSummaryHeader>();
             columnHeaders.AddRange(StartingHeaders());
-            columnHeaders.AddRange(Section1Materials(materials, applyModulation));
+            columnHeaders.AddRange(Section1Materials(materials, runContext.RequiresModulation));
             columnHeaders.AddRange(Section1DisposalFee());
             columnHeaders.AddRange(Section2aMaterials(materials));
             columnHeaders.AddRange(Section2aComms());
@@ -318,7 +316,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         private static IEnumerable<CalcResultSummaryHeader> CreateHeaders(params string[] names)
         {
-            return names.Select((name, i) => new CalcResultSummaryHeader { Name = name});
+            return names.Select((name, _) => new CalcResultSummaryHeader { Name = name});
         }
 
         private static IEnumerable<CalcResultSummaryHeader> StartingHeaders()

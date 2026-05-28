@@ -1,6 +1,6 @@
 ﻿using EPR.Calculator.Service.Function.Builder;
 using EPR.Calculator.Service.Function.Features.BillingRun.Contexts;
-using EPR.Calculator.Service.Function.Features.BillingRun.FileExports;
+using EPR.Calculator.Service.Function.Features.BillingRun.Outputs;
 using EPR.Calculator.Service.Function.Features.Common;
 
 namespace EPR.Calculator.Service.Function.Features.BillingRun;
@@ -12,7 +12,7 @@ public interface IBillingRunProcessor
 
 public class BillingRunProcessor(
     ICalcResultBuilder resultBuilder,
-    IBillingFileExporter exporter,
+    IBillingFileGenerator fileGenerator,
     IBillingRunFinalizer finalizer,
     ILogger<BillingRunProcessor> logger)
     : IBillingRunProcessor
@@ -27,7 +27,7 @@ public class BillingRunProcessor(
 
             // This writes the CSV/JSON files to blob storage.
             // It does not mutate the database state (handled in the finalizer).
-            var exportResult = await exporter.Export(runContext, calcResult, cancellationToken);
+            var exportResult = await fileGenerator.SerializeAndExport(runContext, calcResult, cancellationToken);
 
             // This mutates the state of various database entities to reflect the completed run.
             await finalizer.FinalizeAsCompleted(runContext, calcResult, exportResult, cancellationToken);

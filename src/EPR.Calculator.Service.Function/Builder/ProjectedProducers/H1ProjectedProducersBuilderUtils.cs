@@ -10,8 +10,8 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
         {
             CalcResultH2ProjectedProducer? GetH2Producer(ProducerDetail rm)
             {
-                var prodGroup = h2ProjectedProducers.Where(p => p.ProducerId == rm.ProducerId);
-                var maybeSubtotal = prodGroup.Where(p => p.IsSubtotal);
+                var prodGroup = h2ProjectedProducers.Where(p => p.ProducerId == rm.ProducerId).ToImmutableList();
+                var maybeSubtotal = prodGroup.Where(p => p.IsSubtotal).ToImmutableList();
                 return maybeSubtotal.Any() ? maybeSubtotal.First() : prodGroup.FirstOrDefault(p => p.SubsidiaryId == rm.SubsidiaryId);
             }
 
@@ -96,7 +96,8 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 
         public static RAMTonnage GetProportionateRam(RAMTonnage h1RAMTonnage, decimal tonnageWithoutRAM, RAMProportions h2RamProportions)
         {
-            return h1RAMTonnage with {
+            return new RAMTonnage
+            {
                 RedTonnage = Math.Round(h1RAMTonnage.RedTonnage + (tonnageWithoutRAM * h2RamProportions.Red), 3),
                 AmberTonnage = Math.Round(h1RAMTonnage.AmberTonnage + (tonnageWithoutRAM * h2RamProportions.Amber), 3),
                 GreenTonnage = Math.Round(h1RAMTonnage.GreenTonnage + (tonnageWithoutRAM * h2RamProportions.Green), 3),

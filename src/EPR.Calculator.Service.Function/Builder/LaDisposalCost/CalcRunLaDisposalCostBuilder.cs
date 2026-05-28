@@ -1,7 +1,7 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
@@ -11,12 +11,11 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
     public interface ICalcRunLaDisposalCostBuilder
     {
         Task<CalcResultLaDisposalCostData> ConstructAsync(
-            CalcResultsRequestDto resultsRequestDto,
+            RunContext runContext,
             IEnumerable<MaterialDetail> materialDetails,
             CalcResultLapcapData lapcapData,
             CalcResultLateReportingTonnage lateReportingTonnage,
-            SelfManagedConsumerWaste smcw,
-            bool applyModulation
+            SelfManagedConsumerWaste smcw
         );
     }
 
@@ -45,15 +44,14 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
         }
 
         public async Task<CalcResultLaDisposalCostData> ConstructAsync(
-            CalcResultsRequestDto resultsRequestDto,
+            RunContext runContext,
             IEnumerable<MaterialDetail> materialDetails,
             CalcResultLapcapData lapcapData,
             CalcResultLateReportingTonnage lateReportingTonnage,
-            SelfManagedConsumerWaste smcw,
-            bool applyModulation
+            SelfManagedConsumerWaste smcw
         )
         {
-            producerData = await GetProducerData(resultsRequestDto);
+            producerData = await GetProducerData(runContext);
 
             var lapcapDetailsByMaterial =
                 lapcapData.ByMaterial.Select(detail =>
@@ -64,7 +62,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
                     var hhTonnage  = producerData.Where(t => t.MaterialName == materialName && t.PackagingType == PackagingTypes.Household).Sum(t => t.Tonnage);
                     var pbTonnage  = producerData.Where(p => p.MaterialName == materialName && p.PackagingType == PackagingTypes.PublicBin).Sum(p => p.Tonnage);
                     var hdcTonnage = producerData.Where(p => p.MaterialName == materialName && p.PackagingType == PackagingTypes.HouseholdDrinksContainers).Sum(p => p.Tonnage);
-                    decimal? actionedSelfManagedConsumerWasteTonnage = applyModulation ? smcw.OverallTotalPerMaterials[materialCode].ActionedSelfManagedConsumerWasteTonnage.total ?? 0 : null;
+                    decimal? actionedSelfManagedConsumerWasteTonnage = runContext.RequiresModulation ? smcw.OverallTotalPerMaterials[materialCode].ActionedSelfManagedConsumerWasteTonnage.total ?? 0 : null;
                     var laDisposalDetail = new CalcResultLaDisposalCostDataDetail
                     {
                         Cost                                    = detail.Value,
@@ -83,7 +81,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
             };
         }
 
-        private async Task<List<ProducerData>> GetProducerData(CalcResultsRequestDto resultsRequestDto)
+        private async Task<List<ProducerData>> GetProducerData(RunContext runContext)
         {
             // TODO note returns duplicates for SubmissionPeriod - should remove it from ProducerReportedMaterialProjected - it's not needed
             // TODO why filter PackagingType/Material? should already be done
@@ -92,7 +90,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
                 join producerDetail in context.ProducerDetail on run.Id equals producerDetail.CalculatorRunId
                 join producerMaterial in context.ProducerReportedMaterialProjected on producerDetail.Id equals producerMaterial.ProducerDetailId
                 join material in context.Material on producerMaterial.MaterialId equals material.Id
-                where run.Id == resultsRequestDto.RunId &&
+                where run.Id == runContext.RunId &&
                     producerMaterial.PackagingType != null &&
                     (
                         producerMaterial.PackagingType == PackagingTypes.Household ||

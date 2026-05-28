@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Converter;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
@@ -17,10 +18,10 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         public required CalcResultLaDisposalCostDataDetailsTotal CalcResultLaDisposalCostDataDetailsTotal { get; set; }
 
         public static CalcResultLaDisposalCostDataJson From(
+            RunContext runContext,
             Dictionary<string, CalcResultLaDisposalCostDataDetail> detailsByMaterial,
             CalcResultLaDisposalCostDataDetail total,
-            IImmutableList<MaterialDetail> materials,
-            bool applyModulation
+            IImmutableList<MaterialDetail> materials
         )
         {
             return new CalcResultLaDisposalCostDataJson
@@ -30,7 +31,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                     detailsByMaterial.Select(item =>
                     {
                         var material = materials.First(m => m.Code == item.Key);
-                        return CalcResultLaDisposalCostDetailsJson.From(material, item.Value, applyModulation);
+                        return CalcResultLaDisposalCostDetailsJson.From(material, item.Value, runContext.RequiresModulation);
                     }).ToList(),
                 CalcResultLaDisposalCostDataDetailsTotal = CalcResultLaDisposalCostDataDetailsTotal.From(total)
             };

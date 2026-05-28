@@ -14,9 +14,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
             Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostByMaterial,
             IImmutableList<MaterialDetail> materials)
         {
-            IEnumerable<CalcResultCommsCostByMaterial2AMaterialBreakdown> GetMaterialBreakdown(
-                Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> commsCostByMaterial,
-                IImmutableList<MaterialDetail> materials)
+            IEnumerable<CalcResultCommsCostByMaterial2AMaterialBreakdown> GetMaterialBreakdown()
             {
                 var materialBreakdown = new List<CalcResultCommsCostByMaterial2AMaterialBreakdown>();
 
@@ -39,7 +37,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
             return new CalcResultCommsCostByMaterial2AJson
             {
-                MaterialBreakdown = GetMaterialBreakdown(commsCostByMaterial, materials)
+                MaterialBreakdown = GetMaterialBreakdown()
             };
         }
     }

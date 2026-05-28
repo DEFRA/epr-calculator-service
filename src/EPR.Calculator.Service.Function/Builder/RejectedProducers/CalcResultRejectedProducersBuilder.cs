@@ -1,6 +1,6 @@
 ﻿using EPR.Calculator.API.Data;
-using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.BillingRun.Constants;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,7 +8,7 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
 {
     public interface ICalcResultRejectedProducersBuilder
     {
-        public Task<IEnumerable<CalcResultRejectedProducer>> ConstructAsync(CalcResultsRequestDto resultsRequestDto);
+        public Task<IEnumerable<CalcResultRejectedProducer>> ConstructAsync(RunContext runContext);
     }
 
     public class CalcResultRejectedProducersBuilder : ICalcResultRejectedProducersBuilder
@@ -20,7 +20,7 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
             this.dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<CalcResultRejectedProducer>> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
+        public async Task<IEnumerable<CalcResultRejectedProducer>> ConstructAsync(RunContext runContext)
         {
             var billingInstructionsQuery =
                 from prsbi in dbContext.ProducerResultFileSuggestedBillingInstruction
@@ -28,8 +28,8 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                     on new { prsbi.ProducerId, prsbi.CalculatorRunId }
                     equals new { pd.ProducerId, pd.CalculatorRunId } into pdGroup
                 from pd in pdGroup.DefaultIfEmpty()
-                where prsbi.CalculatorRunId == resultsRequestDto.RunId
-                      && prsbi.BillingInstructionAcceptReject == CommonConstants.Rejected
+                where prsbi.CalculatorRunId == runContext.RunId
+                      && prsbi.BillingInstructionAcceptReject == BillingConstants.Action.Rejected
                       && !string.IsNullOrWhiteSpace(prsbi.ReasonForRejection)
                       && pd.SubsidiaryId == null
                 select new
@@ -54,7 +54,7 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                     on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
                 join b in billingInstructionsQuery
                     on crodd.OrganisationId equals b.ProducerId
-                where cr.RelativeYearValue == resultsRequestDto.RelativeYear.Value
+                where cr.RelativeYearValue == runContext.RelativeYear.Value
                       && crodd.OrganisationName != null
                       && crodd.SubsidiaryId == null
                 group cr by crodd.OrganisationId into g
@@ -83,8 +83,8 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                     ProducerName = crodd.OrganisationName,
                     TradingName = crodd.TradingName ?? "",
                     SuggestedBillingInstruction = b.SuggestedBillingInstruction,
-                    SuggestedInvoiceAmount = (b.SuggestedBillingInstruction == CommonConstants.CancelStatus &&
-                                              b.BillingInstructionAcceptReject == CommonConstants.Rejected
+                    SuggestedInvoiceAmount = (b.SuggestedBillingInstruction == BillingConstants.Suggestion.Cancel &&
+                                              b.BillingInstructionAcceptReject == BillingConstants.Action.Rejected
                                              ? (b.CurrentYearInvoiceTotalToDate ?? 0m) : (b.SuggestedInvoiceAmount ?? 0m)),
                     InstructionConfirmedDate = b.LastModifiedAcceptReject,
                     InstructionConfirmedBy = b.LastModifiedAcceptRejectBy,

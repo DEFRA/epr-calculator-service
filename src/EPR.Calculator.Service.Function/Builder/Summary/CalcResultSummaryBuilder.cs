@@ -2,7 +2,6 @@
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Enums;
-using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.ParametersOther;
 using EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions;
 using EPR.Calculator.Service.Function.Builder.Summary.Common;
@@ -18,6 +17,7 @@ using EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown;
 using EPR.Calculator.Service.Function.Builder.Summary.TwoCCommsCost;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.Utils;
@@ -28,10 +28,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
     public interface ICalcResultSummaryBuilder
     {
         Task<CalcResultSummary> ConstructAsync(
+            RunContext runContext,
             IImmutableList<MaterialDetail> materialDetails,
-            int runId,
-            RelativeYear relativeYear,
-            bool isBillingFile,
             CalcResult calcResult,
             SelfManagedConsumerWaste smcw
         );
@@ -57,10 +55,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         private ImmutableDictionary<int, Organisation> parentOrganisationsById = ImmutableDictionary.Create<int, Organisation>();
 
         public async Task<CalcResultSummary> ConstructAsync(
+            RunContext runContext,
             IImmutableList<MaterialDetail> materialDetails,
-            int runId,
-            RelativeYear relativeYear,
-            bool isBillingFile,
             CalcResult calcResult,
             SelfManagedConsumerWaste smcw
         )
@@ -71,7 +67,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             var runProducerMaterialDetails = await (
                 from pd in context.ProducerDetail
                 join prm in context.ProducerReportedMaterialProjected on pd.Id equals prm.ProducerDetailId
-                where pd.CalculatorRunId == runId
+                where pd.CalculatorRunId == runContext.RunId
                 select new CalcResultProducerAndReportMaterialDetail
                 {
                     ProducerDetail = pd,
@@ -92,24 +88,24 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 .ThenBy(pd => pd.SubsidiaryId)
                 .ToImmutableList();
 
-            var producerInvoicedMaterialNetTonnage = await invoicedProducerService.GetLatestAcceptedInvoicedProducers(relativeYear);
+            var producerInvoicedMaterialNetTonnage = await invoicedProducerService.GetLatestAcceptedInvoicedProducers(runContext.RelativeYear);
 
             // PREF: Replace per-(producer, material) linear scans of the invoiced records collection with an O(1) lookup.
             invoicedNetTonnageByProducerMaterial = BuildInvoicedNetTonnageByProducerMaterial(producerInvoicedMaterialNetTonnage);
 
-            var defaultParams = await GetDefaultParamsAsync(runId);
+            var defaultParams = await GetDefaultParamsAsync(runContext.RunId);
 
             // Household + PublicBin + HDC.
             // PERF: wrap in an index so downstream callers (TonnageVsAllProducerUtil / 2B / 2C) get O(1)
             // per-producer percentage lookups instead of paying O(producers) per call.
-            var totalPackagingTonnage = new TotalPackagingTonnageIndex(GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materialDetails, runId));
+            var totalPackagingTonnage = new TotalPackagingTonnageIndex(GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materialDetails, runContext.RunId));
 
             // Get organisations
             Organisations = await (
                 from run in context.CalculatorRuns
                 join crodm in context.CalculatorRunOrganisationDataMaster on run.CalculatorRunOrganisationDataMasterId equals crodm.Id
                 join crodd in context.CalculatorRunOrganisationDataDetails on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
-                where run.Id == runId && crodd.ObligationStatus == ObligationStates.Obligated
+                where run.Id == runContext.RunId && crodd.ObligationStatus == ObligationStates.Obligated
                 select new Organisation
                 {
                     OrganisationId = crodd.OrganisationId,
@@ -130,6 +126,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             parentOrganisationsById = BuildParentOrganisationsById(ParentOrganisations);
 
             var result = GetCalcResultSummary(
+                runContext,
                 projectedMaterialsLookup,
                 producerDetails,
                 materialDetails,
@@ -139,11 +136,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 defaultParams,
                 smcw
             );
-
-            if (isBillingFile)
-            {
-                await UpdateBillingInstructions(calcResult, result);
-            }
 
             return result;
         }
@@ -202,6 +194,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
         [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         public CalcResultSummary GetCalcResultSummary(
+            RunContext runContext,
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             IReadOnlyList<ProducerDetail> orderedProducerDetails,
             IReadOnlyList<MaterialDetail> materials,
@@ -225,14 +218,14 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     var subsidiariesList = producerAndSubsidiaries.ToList();
 
                     if (!(subsidiariesList.Count == 1 && subsidiariesList[0].SubsidiaryId == null))
-                        producerDisposalFees.Add(GetProducerTotalRow(projectedMaterialsLookup, subsidiariesList, materials, calcResult, producerDisposalFees, false, totalPackagingTonnage, smcw));
+                        producerDisposalFees.Add(GetProducerTotalRow(runContext, projectedMaterialsLookup, subsidiariesList, materials, calcResult, producerDisposalFees, false, totalPackagingTonnage, smcw));
 
                     foreach (var producer in subsidiariesList)
-                        producerDisposalFees.Add(GetProducerRow(projectedMaterialsLookup, producerDisposalFees, subsidiariesList, producer, materials, calcResult, totalPackagingTonnage, smcw));
+                        producerDisposalFees.Add(GetProducerRow(runContext, projectedMaterialsLookup, producerDisposalFees, subsidiariesList, producer, materials, calcResult, totalPackagingTonnage, smcw));
                 };
 
                 // Calculate the total for all the producers
-                var allTotalRow = GetProducerTotalRow(projectedMaterialsLookup, orderedProducerDetails, materials, calcResult, producerDisposalFees, true, totalPackagingTonnage, smcw);
+                var allTotalRow = GetProducerTotalRow(runContext, projectedMaterialsLookup, orderedProducerDetails, materials, calcResult, producerDisposalFees, true, totalPackagingTonnage, smcw);
                 producerDisposalFees.Add(allTotalRow);
 
                 result.ProducerDisposalFees = producerDisposalFees;
@@ -274,7 +267,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             }
 
             // Set headers with calculated column index
-            CalcResultSummaryUtil.SetHeaders(result, materials, calcResult.ApplyModulation);
+            CalcResultSummaryUtil.SetHeaders(runContext, result, materials);
 
             return result;
         }
@@ -282,6 +275,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         [SuppressMessage("Critical Code Smell", "S3776:Cognitive Complexity of methods should not be too high", Justification = "This is suppressed for now and will be refactored later.")]
         public CalcResultSummaryProducerDisposalFees GetProducerTotalRow(
+            RunContext runContext,
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             IReadOnlyList<ProducerDetail> producersAndSubsidiaries,
             IReadOnlyList<MaterialDetail> materials,
@@ -292,7 +286,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             SelfManagedConsumerWaste smcw
         )
         {
-            var materialCosts = GetMaterialCosts(projectedMaterialsLookup, producersAndSubsidiaries, producerDisposalFees, materials, calcResult, isOverAllTotalRow, smcw);
+            var materialCosts = GetMaterialCosts(runContext, projectedMaterialsLookup, producersAndSubsidiaries, producerDisposalFees, materials, calcResult, isOverAllTotalRow, smcw);
             var communicationCosts = GetCommunicationCosts(projectedMaterialsLookup, producersAndSubsidiaries, materials, calcResult);
 
             // Compute Count/Advice for the producer-total (Level 1) row
@@ -374,6 +368,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
         [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         public CalcResultSummaryProducerDisposalFees GetProducerRow(
+            RunContext runContext,
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             IReadOnlyList<CalcResultSummaryProducerDisposalFees> producerDisposalFeesLookup,
             IReadOnlyList<ProducerDetail> producerAndSubsidiaries,
@@ -418,6 +413,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 var l1SelfManagedConsumerWasteData = CalcResultSummaryUtil.SumSelfManagedConsumerWasteData(producerAndSubsidiaries, material, isOverAllTotalRow: false, smcw);
 
                 var producerDisposalFeesByMaterial = BuildProducerDisposalFeesByMaterial(
+                    runContext,
                     projectedMaterialsLookup,
                     producer,
                     material,
@@ -507,6 +503,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
         [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         private CalcResultSummaryProducerDisposalFeesByMaterial BuildProducerDisposalFeesByMaterial(
+            RunContext runContext,
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             ProducerDetail producer,
             MaterialDetail material,
@@ -534,14 +531,14 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
             return new CalcResultSummaryProducerDisposalFeesByMaterial
             {
                 HouseholdPackagingWasteTonnage = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.Household),
-                HouseholdPackagingWasteTonnageRagRating = calcResult.ApplyModulation
+                HouseholdPackagingWasteTonnageRagRating = runContext.RequiresModulation
                     ? Enum.GetValues<RagRating>().ToDictionary(
                         rag => rag,
                         rag => CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.Household, rag))
                     : new(),
 
                 PublicBinTonnage = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.PublicBin),
-                PublicBinTonnageRagRating = calcResult.ApplyModulation
+                PublicBinTonnageRagRating = runContext.RequiresModulation
                     ? Enum.GetValues<RagRating>().ToDictionary(
                         rag => rag,
                         rag => CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.PublicBin, rag))
@@ -550,14 +547,14 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 HouseholdDrinksContainersTonnage = material.Code == MaterialCodes.Glass
                     ? CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.HouseholdDrinksContainers)
                     : new(),
-                HouseholdDrinksContainersTonnageRagRating = calcResult.ApplyModulation && material.Code == MaterialCodes.Glass
+                HouseholdDrinksContainersTonnageRagRating = runContext.RequiresModulation && material.Code == MaterialCodes.Glass
                     ? Enum.GetValues<RagRating>().ToDictionary(
                         rag => rag,
                         rag => CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.HouseholdDrinksContainers, rag))
                     : new(),
 
                 TotalReportedTonnage = totalReportedTonnage,
-                TotalReportedTonnageRagRating = calcResult.ApplyModulation
+                TotalReportedTonnageRagRating = runContext.RequiresModulation
                     ? Enum.GetValues<RagRating>().ToDictionary(
                         rag => rag,
                         rag => CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, producer, material, rag))
@@ -652,6 +649,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
         [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         [SuppressMessage("Critical Code Smell", "S3776:Cognitive Complexity of methods should not be too high", Justification = "This is suppressed for now and will be refactored later.")]
         private Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> GetMaterialCosts(
+            RunContext runContext,
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             IReadOnlyList<ProducerDetail> producersAndSubsidiaries,
             IReadOnlyList<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
@@ -693,14 +691,14 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 materialCosts.Add(material.Code, new CalcResultSummaryProducerDisposalFeesByMaterial
                 {
                     HouseholdPackagingWasteTonnage = householdPackagingWasteTonnage,
-                    HouseholdPackagingWasteTonnageRagRating = calcResult.ApplyModulation
+                    HouseholdPackagingWasteTonnageRagRating = runContext.RequiresModulation
                         ? Enum.GetValues<RagRating>().ToDictionary(
                             rag => rag,
                             rag => CalcResultSummaryUtil.GetTonnageTotal(projectedMaterialsLookup, producersAndSubsidiaries, material, PackagingTypes.Household, rag))
                         : new(),
 
                     PublicBinTonnage = publicBinTonnage,
-                    PublicBinTonnageRagRating = calcResult.ApplyModulation
+                    PublicBinTonnageRagRating = runContext.RequiresModulation
                         ? Enum.GetValues<RagRating>().ToDictionary(
                             rag => rag,
                             rag => CalcResultSummaryUtil.GetTonnageTotal(projectedMaterialsLookup, producersAndSubsidiaries, material, PackagingTypes.PublicBin, rag))
@@ -709,14 +707,14 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                     HouseholdDrinksContainersTonnage = material.Code == MaterialCodes.Glass
                         ? CalcResultSummaryUtil.GetTonnageTotal(projectedMaterialsLookup, producersAndSubsidiaries, material, PackagingTypes.HouseholdDrinksContainers)
                         : 0,
-                    HouseholdDrinksContainersTonnageRagRating = calcResult.ApplyModulation && material.Code == MaterialCodes.Glass
+                    HouseholdDrinksContainersTonnageRagRating = runContext.RequiresModulation && material.Code == MaterialCodes.Glass
                         ? Enum.GetValues<RagRating>().ToDictionary(
                             rag => rag,
                             rag => CalcResultSummaryUtil.GetTonnageTotal(projectedMaterialsLookup, producersAndSubsidiaries, material, PackagingTypes.HouseholdDrinksContainers, rag))
                         : new(),
 
                     TotalReportedTonnage = CalcResultSummaryUtil.GetReportedTonnageTotal(projectedMaterialsLookup, producersAndSubsidiaries, material),
-                    TotalReportedTonnageRagRating = calcResult.ApplyModulation
+                    TotalReportedTonnageRagRating = runContext.RequiresModulation
                         ? Enum.GetValues<RagRating>().ToDictionary(
                             rag => rag,
                             rag => CalcResultSummaryUtil.GetReportedTonnageTotal(projectedMaterialsLookup, producersAndSubsidiaries, material, rag))
@@ -820,39 +818,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
                 ScotlandTotalWithBadDebtProvision = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsScotlandWithBadDebtTotalsRow(calcResult, producersAndSubsidiaries, totalPackagingTonnage),
                 NorthernIrelandTotalWithBadDebtProvision = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsNorthernIrelandWithBadDebtTotalsRow(calcResult, producersAndSubsidiaries, totalPackagingTonnage)
             };
-        }
-
-        internal async Task UpdateBillingInstructions(CalcResult calcResult, CalcResultSummary result)
-        {
-            var level1ProducerIds = result.ProducerDisposalFees
-                .Where(f => f.Level == CommonConstants.LevelOne.ToString())
-                .Select(f => f.ProducerIdInt)
-                .Distinct()
-                .ToList();
-
-            if (level1ProducerIds.Count == 0) return;
-
-            var entities = await context.ProducerResultFileSuggestedBillingInstruction.Where(p => p.CalculatorRunId == calcResult.CalcResultDetail.RunId &&
-                                                                                            level1ProducerIds.Contains(p.ProducerId))
-                                                                                            .ToDictionaryAsync(p => p.ProducerId);
-            foreach (var fee in result.ProducerDisposalFees)
-            {
-                if (fee.Level == CommonConstants.LevelOne.ToString() &&
-                    entities.TryGetValue(fee.ProducerIdInt, out var producer))
-                {
-                    producer.CurrentYearInvoiceTotalToDate = fee.BillingInstructionSection?.CurrentYearInvoiceTotalToDate;
-                    producer.TonnageChangeSinceLastInvoice = fee.BillingInstructionSection?.TonnageChangeSinceLastInvoice;
-                    producer.AmountLiabilityDifferenceCalcVsPrev = fee.BillingInstructionSection?.LiabilityDifference;
-                    producer.MaterialPoundThresholdBreached = fee.BillingInstructionSection?.MaterialThresholdBreached;
-                    producer.TonnagePoundThresholdBreached = fee.BillingInstructionSection?.TonnageThresholdBreached;
-                    producer.PercentageLiabilityDifferenceCalcVsPrev = fee.BillingInstructionSection?.PercentageLiabilityDifference;
-                    producer.TonnagePercentageThresholdBreached = fee.BillingInstructionSection?.TonnagePercentageThresholdBreached;
-                    producer.SuggestedBillingInstruction = fee.BillingInstructionSection?.SuggestedBillingInstruction!;
-                    producer.SuggestedInvoiceAmount = fee.BillingInstructionSection?.SuggestedInvoiceAmount ?? 0m;
-                }
-            }
-
-            await context.SaveChangesAsync();
         }
     }
 }

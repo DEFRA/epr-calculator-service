@@ -1,9 +1,4 @@
 using System.Text.Json.Serialization;
-using EPR.Calculator.Service.Function.Builder.Lapcap;
-using System.Globalization;
-using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.Misc;
-using EPR.Calculator.Service.Function.Converter;
 using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter

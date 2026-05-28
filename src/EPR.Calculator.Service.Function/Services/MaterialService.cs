@@ -1,28 +1,27 @@
 ﻿using EPR.Calculator.API.Data;
-using EPR.Calculator.Service.Function.Mappers;
 using EPR.Calculator.Service.Function.Models;
-using Microsoft.EntityFrameworkCore;
+using EPR.Calculator.Service.Function.Utils;
 
-namespace EPR.Calculator.Service.Function.Services
+namespace EPR.Calculator.Service.Function.Services;
+
+public interface IMaterialService
 {
-    public interface IMaterialService
+    public Task<IImmutableList<MaterialDetail>> GetMaterials();
+}
+
+public class MaterialService(ApplicationDBContext dbContext)
+    : IMaterialService
+{
+    public async Task<IImmutableList<MaterialDetail>> GetMaterials()
     {
-        public Task<IImmutableList<MaterialDetail>> GetMaterials();
-    }
-
-    public class MaterialService : IMaterialService
-    {
-        private readonly ApplicationDBContext context;
-
-        public MaterialService(IDbContextFactory<ApplicationDBContext> context)
-        {
-            this.context = context.CreateDbContext();
-        }
-
-        public async Task<IImmutableList<MaterialDetail>> GetMaterials()
-        {
-            var materials = await context.Material.ToListAsync();
-            return MaterialMapper.Map(materials).ToImmutableList();
-        }
+        return await dbContext
+            .Material
+            .Select(m => new MaterialDetail
+            {
+                Id = m.Id,
+                Code = m.Code,
+                Name = m.Name
+            })
+            .ToImmutableListAsync();
     }
 }

@@ -4,7 +4,7 @@ using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Exceptions;
 using EPR.Calculator.Service.Function.Features.BillingRun.Contexts;
-using EPR.Calculator.Service.Function.Features.BillingRun.FileExports;
+using EPR.Calculator.Service.Function.Features.BillingRun.Outputs;
 using EPR.Calculator.Service.Function.Logging;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +16,7 @@ namespace EPR.Calculator.Service.Function.Features.BillingRun;
 /// </summary>
 public interface IBillingRunFinalizer
 {
-    Task FinalizeAsCompleted(BillingRunContext runContext, CalcResult calcResult, BillingFileExportResult exportResult, CancellationToken cancellationToken);
+    Task FinalizeAsCompleted(BillingRunContext runContext, CalcResult calcResult, BillingFileResult exportResult, CancellationToken cancellationToken);
     Task FinalizeAsErrored(BillingRunContext runContext, CancellationToken cancellationToken);
 }
 
@@ -27,7 +27,7 @@ public class BillingRunFinalizer(
 )
     : IBillingRunFinalizer
 {
-    public async Task FinalizeAsCompleted(BillingRunContext runContext, CalcResult calcResult, BillingFileExportResult exportResult, CancellationToken cancellationToken)
+    public async Task FinalizeAsCompleted(BillingRunContext runContext, CalcResult calcResult, BillingFileResult exportResult, CancellationToken cancellationToken)
     {
         await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
 
@@ -100,7 +100,7 @@ public class BillingRunFinalizer(
         });
     }
 
-    private async Task SaveExportMetadata(BillingFileExportResult exportResult, CancellationToken cancellationToken)
+    private async Task SaveExportMetadata(BillingFileResult exportResult, CancellationToken cancellationToken)
     {
         dbContext.CalculatorRunCsvFileMetadata.Add(exportResult.CsvMetadata);
         dbContext.CalculatorRunBillingFileMetadata.Add(exportResult.JsonMetadata);

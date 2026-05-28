@@ -2,12 +2,8 @@
 {
     public record MaterialDetail
     {
-        public int Id { get; set; }
-
-        public required string Code { get; set; }
-
-        public required string Name { get; set; }
-
-        public required string Description { get; set; }
+        public required int Id { get; init; }
+        public required string Code { get; init; }
+        public required string Name { get; init; }
     }
 }

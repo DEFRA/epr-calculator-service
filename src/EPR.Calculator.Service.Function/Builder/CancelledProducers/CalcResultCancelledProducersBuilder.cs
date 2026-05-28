@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 
@@ -8,14 +8,14 @@ namespace EPR.Calculator.Service.Function.Builder.CancelledProducers;
 
 public interface ICalcResultCancelledProducersBuilder
 {
-    Task<CalcResultCancelledProducersResponse> ConstructAsync(CalcResultsRequestDto runContext, IReadOnlyCollection<MaterialDetail> materialDetails);
+    Task<CalcResultCancelledProducersResponse> ConstructAsync(RunContext runContext, IReadOnlyCollection<MaterialDetail> materialDetails);
 }
 
 [ExcludeFromCodeCoverage(Justification = "Tests to be re-added within ECV-473")]
 public class CalcResultCancelledProducersBuilder(IInvoicedProducerService invoicedProducerService)
     : ICalcResultCancelledProducersBuilder
 {
-    public async Task<CalcResultCancelledProducersResponse> ConstructAsync(CalcResultsRequestDto runContext, IReadOnlyCollection<MaterialDetail> materialDetails)
+    public async Task<CalcResultCancelledProducersResponse> ConstructAsync(RunContext runContext, IReadOnlyCollection<MaterialDetail> materialDetails)
     {
         return new CalcResultCancelledProducersResponse
         {
@@ -24,7 +24,7 @@ public class CalcResultCancelledProducersBuilder(IInvoicedProducerService invoic
         };
     }
 
-    private async Task<ImmutableList<CalcResultCancelledProducersDto>> GetCancelledProducers(CalcResultsRequestDto runContext, IReadOnlyCollection<MaterialDetail> materialDetails)
+    private async Task<ImmutableList<CalcResultCancelledProducersDto>> GetCancelledProducers(RunContext runContext, IReadOnlyCollection<MaterialDetail> materialDetails)
     {
         var lookup = await GetMissingAcceptedCancelledInvoicedProducersLookup(runContext);
         var materialsByCode = materialDetails.ToImmutableDictionary(m => m.Code);
@@ -66,7 +66,7 @@ public class CalcResultCancelledProducersBuilder(IInvoicedProducerService invoic
         return builder.ToImmutable();
     }
 
-    private async Task<ImmutableDictionary<int, ImmutableDictionary<int, InvoicedProducer>>> GetMissingAcceptedCancelledInvoicedProducersLookup(CalcResultsRequestDto runContext)
+    private async Task<ImmutableDictionary<int, ImmutableDictionary<int, InvoicedProducer>>> GetMissingAcceptedCancelledInvoicedProducersLookup(RunContext runContext)
     {
         var producerIdsForRun = await invoicedProducerService.GetProducerIdsForRun(runContext.RunId);
         var invoicedProducerIdsForYear = await invoicedProducerService.GetInvoicedProducerIdsForYear(runContext.RelativeYear);
@@ -74,7 +74,7 @@ public class CalcResultCancelledProducersBuilder(IInvoicedProducerService invoic
 
         ImmutableHashSet<int> missingAcceptedCancelledProducerIds;
 
-        if (runContext.IsBillingFile)
+        if (runContext.RunType == RunType.Billing)
         {
             var acceptedCancelledProducers = await invoicedProducerService.GetAcceptedCancelledProducerIdsForRun(runContext.RunId);
             missingAcceptedCancelledProducerIds = acceptedCancelledProducers.Intersect(missingProducerIds);

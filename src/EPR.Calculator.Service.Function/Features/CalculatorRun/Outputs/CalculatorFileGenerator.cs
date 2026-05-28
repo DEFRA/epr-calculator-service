@@ -6,37 +6,37 @@ using EPR.Calculator.Service.Function.Options;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.Extensions.Options;
 
-namespace EPR.Calculator.Service.Function.Features.CalculatorRun.FileExports;
+namespace EPR.Calculator.Service.Function.Features.CalculatorRun.Outputs;
 
-public interface ICalculatorFileExporter
+public interface ICalculatorFileGenerator
 {
     /// <summary>
-    ///     Writes CSV calc result file to memory, then uploads it to blob storage.
+    ///     Serializes the calcResult to a CSV result file and exports it.
     /// </summary>
-    Task<CalculatorFileExportResult> Export(CalculatorRunContext runContext, CalcResult calcResult, CancellationToken cancellationToken);
+    Task<CalculatorFileResult> SerializeAndExport(CalculatorRunContext runContext, CalcResult calcResult, CancellationToken cancellationToken);
 }
 
-public class CalculatorFileExporter(
+public class CalculatorFileGenerator(
     IOptions<BlobStorageOptions> blobStorageOptions,
-    IResultsFileCsvWriter csvWriter,
+    ICalcResultsExporter csvWriter,
     IStorageService storageService,
-    ILogger<CalculatorFileExporter> logger)
-    : ICalculatorFileExporter
+    ILogger<CalculatorFileGenerator> logger)
+    : ICalculatorFileGenerator
 {
-    public async Task<CalculatorFileExportResult> Export(CalculatorRunContext runContext, CalcResult calcResult, CancellationToken cancellationToken)
+    public async Task<CalculatorFileResult> SerializeAndExport(CalculatorRunContext runContext, CalcResult calcResult, CancellationToken cancellationToken)
     {
-        var csvMetaData = await ExportCsv(runContext, calcResult, cancellationToken);
-        logger.LogInformation($"{nameof(ExportCsv)} Completed. File: {{Filename}}", csvMetaData.FileName);
+        var csvMetaData = await HandleCsvFile(runContext, calcResult, cancellationToken);
+        logger.LogInformation($"{nameof(HandleCsvFile)} Completed. File: {{Filename}}", csvMetaData.FileName);
 
-        return new CalculatorFileExportResult
+        return new CalculatorFileResult
         {
             CsvMetadata = csvMetaData
         };
     }
 
-    public async Task<CalculatorRunCsvFileMetadata> ExportCsv(CalculatorRunContext runContext, CalcResult calcResult, CancellationToken cancellationToken)
+    public async Task<CalculatorRunCsvFileMetadata> HandleCsvFile(CalculatorRunContext runContext, CalcResult calcResult, CancellationToken cancellationToken)
     {
-        var content = await csvWriter.WriteToString(runContext, calcResult);
+        var content = await csvWriter.Export(runContext, calcResult);
 
         var csvFilename = new CalcResultsAndBillingFileName(
             calcResult.CalcResultDetail.RunId,

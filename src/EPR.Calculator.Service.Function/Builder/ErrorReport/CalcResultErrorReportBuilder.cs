@@ -1,12 +1,17 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.ErrorReport
 {
+    public interface ICalcResultErrorReportBuilder
+    {
+        public IEnumerable<CalcResultErrorReport> Construct(RunContext runContext);
+    }
+
     public class CalcResultErrorReportBuilder : ICalcResultErrorReportBuilder
     {
         private readonly ApplicationDBContext context;
@@ -16,13 +21,11 @@ namespace EPR.Calculator.Service.Function.Builder.ErrorReport
             this.context = context;
         }
 
-        public IEnumerable<CalcResultErrorReport> Construct(CalcResultsRequestDto resultsRequestDto)
+        public IEnumerable<CalcResultErrorReport> Construct(RunContext runContext)
         {
-            var runId = resultsRequestDto.RunId;
-
             var baseQuery =
                 from run in context.CalculatorRuns
-                where run.Id == runId
+                where run.Id == runContext.RunId
 
                 join er in context.ErrorReports on run.Id equals er.CalculatorRunId
                 join odm in context.CalculatorRunOrganisationDataMaster

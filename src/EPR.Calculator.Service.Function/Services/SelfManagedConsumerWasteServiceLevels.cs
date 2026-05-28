@@ -62,7 +62,7 @@ namespace EPR.Calculator.Service.Function.Services
             {
                 SingleL1 sl1 => new List<Result> { UpdateSingleL1(sl1, applyModulation) },
                 HC       hc  => UpdateHC(hc, applyModulation),
-                _            => throw new ArgumentException($"Unsupported L1 type {l1.GetType}")
+                _            => throw new ArgumentException($"Unsupported L1 type {l1.GetType()}")
             };
         }
 

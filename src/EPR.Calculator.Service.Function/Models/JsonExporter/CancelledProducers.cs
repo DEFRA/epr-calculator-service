@@ -14,7 +14,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
         public static CancelledProducers From(CalcResultCancelledProducersResponse calcResultCancelledProducersResponse)
         {
-            IEnumerable<CancelledProducerTonnageInvoice> GetCancelledProducerTonnageInvoice(CalcResultCancelledProducersResponse calcResultCancelledProducersResponse)
+            IEnumerable<CancelledProducerTonnageInvoice> GetCancelledProducerTonnageInvoice()
             {
                 var cancelledProducerTonnageInvoices = new List<CancelledProducerTonnageInvoice>();
 
@@ -44,7 +44,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
             return new CancelledProducers
             {
                 Name = CommonConstants.CancelledProducers,
-                CancelledProducerTonnageInvoice = GetCancelledProducerTonnageInvoice(calcResultCancelledProducersResponse)
+                CancelledProducerTonnageInvoice = GetCancelledProducerTonnageInvoice()
             };
         }
     }
@@ -78,7 +78,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
         [JsonPropertyName("billingInstructionID")]
         public required string BillingInstructionID { get; init; }
-        
+
         public static CancelledProducerTonnageInvoice From(int runNumber, CalcResultCancelledProducersDto producer)
         {
             IEnumerable<LastProducerTonnages> GetLastProducerTonnages(LastTonnage lastTonnage)

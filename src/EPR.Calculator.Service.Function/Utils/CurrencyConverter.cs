@@ -8,9 +8,9 @@ namespace EPR.Calculator.Service.Function.Utils
         /// Converts a decimal input to GBP currency format (e.g., £12.3456) if valid.
         /// Returns an empty string if input is not valid.
         /// </summary>
-        public static string ConvertToCurrency(decimal detail, int precision = 2)
+        public static string ConvertToCurrency(decimal? detail, int precision = 2)
         {
-            return FormatCurrencyWithGbpSymbol(detail, precision);
+            return FormatCurrencyWithGbpSymbol(detail.GetValueOrDefault(), precision);
         }
 
         /// <summary>

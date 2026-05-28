@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Misc;
@@ -20,8 +19,6 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost
         /// <summary>
         /// Exports the communication cost details to the provided StringBuilder in CSV format.
         /// </summary>
-        /// <param name="communicationCost">The communication cost details to export.</param>
-        /// <param name="csvContent">The csv contenst.</param>
         public void Export(CalcResultCommsCost communicationCost, IImmutableList<MaterialDetail> materials, StringBuilder csvContent)
         {
             csvContent.AppendLine();

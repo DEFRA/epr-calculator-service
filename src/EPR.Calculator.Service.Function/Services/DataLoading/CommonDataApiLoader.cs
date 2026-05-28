@@ -4,6 +4,7 @@ using EFCore.BulkExtensions;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Features.CalculatorRun.Contexts;
 using EPR.Calculator.Service.Function.Logging;
 using EPR.Calculator.Service.Function.Options;
 using EPR.Calculator.Service.Function.Services.CommonDataApi;
@@ -12,6 +13,20 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Options;
 
 namespace EPR.Calculator.Service.Function.Services.DataLoading;
+
+/// <summary>
+///     Loads POM and Organisation data required for a calculator run.
+/// </summary>
+public interface IDataLoader
+{
+    /// <summary>
+    /// Loads data for the specified calculator run.
+    /// </summary>
+    /// <param name="runContext">The context of the calculator run containing relevant data and parameters.</param>
+    /// <param name="cancellationToken">A token to cancel the operation.</param>
+    /// <returns>A task that represents the asynchronous data loading operation.</returns>
+    Task LoadData(CalculatorRunContext runContext, CancellationToken cancellationToken = default);
+}
 
 /// <summary>
 ///     Loads POM and Organisation data by streaming from the Common Data API and bulk-inserting into the database.
@@ -28,8 +43,7 @@ public class CommonDataApiLoader(
     : IDataLoader
 {
     /// <inheritdoc />
-    public async Task LoadData(RelativeYear relativeYear,
-        CancellationToken cancellationToken = default)
+    public async Task LoadData(CalculatorRunContext runContext, CancellationToken cancellationToken = default)
     {
         var opts = options.Value;
 
@@ -39,7 +53,7 @@ public class CommonDataApiLoader(
             return;
         }
 
-        await telemetry.TrackDuration("DataStream", () => Run(relativeYear, timeProvider.GetUtcNow(), cancellationToken));
+        await telemetry.TrackDuration("DataStream", () => Run(runContext.RelativeYear, timeProvider.GetUtcNow(), cancellationToken));
     }
 
     private async Task<(long totalPoms, long totalOrgs)> Run(

@@ -1,5 +1,5 @@
 ﻿using EPR.Calculator.API.Data;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,27 +7,29 @@ namespace EPR.Calculator.Service.Function.Builder.LateReportingTonnages
 {
     public interface ICalcResultLateReportingBuilder
     {
-        Task<CalcResultLateReportingTonnage> ConstructAsync(IImmutableList<MaterialDetail> materials, CalcResultsRequestDto resultsRequestDto);
+        Task<CalcResultLateReportingTonnage> ConstructAsync(RunContext runContext, IImmutableList<MaterialDetail> materials);
     }
 
-    public class CalcResultLateReportingBuilder : ICalcResultLateReportingBuilder
+    public class CalcResultLateReportingBuilder(ApplicationDBContext dbContext)
+        : ICalcResultLateReportingBuilder
     {
-        private readonly ApplicationDBContext dbContext;
+        public const string LateReportingHeader = "Parameters - Late Reporting Tonnages";
+        public const string Total = "Total";
+        public const string MaterialHeading = "Material";
+        public const string TonnageHeading = "Late Reporting Tonnage";
+        public const string RedTonnageHeading = "Red + Red Medical Late Reporting Tonnage";
+        public const string AmberTonnageHeading = "Amber + Amber Medical Late Reporting Tonnage";
+        public const string GreenTonnageHeading = "Green + Green Medical Late Reporting Tonnage";
 
-        public CalcResultLateReportingBuilder(ApplicationDBContext dbContext)
-        {
-            this.dbContext = dbContext;
-        }
-
-        public async Task<CalcResultLateReportingTonnage> ConstructAsync(IImmutableList<MaterialDetail> materials, CalcResultsRequestDto resultsRequestDto)
+        public async Task<CalcResultLateReportingTonnage> ConstructAsync(RunContext runContext, IImmutableList<MaterialDetail> materials)
         {
             var result = await (
-                from run in dbContext.CalculatorRuns.AsNoTracking()
-                join master in dbContext.DefaultParameterSettings.AsNoTracking() on run.DefaultParameterSettingMasterId equals master.Id
-                join detail in dbContext.DefaultParameterSettingDetail.AsNoTracking() on master.Id equals detail.DefaultParameterSettingMasterId
-                join template in dbContext.DefaultParameterTemplateMasterList.AsNoTracking() on detail.ParameterUniqueReferenceId equals template.ParameterUniqueReferenceId
-                where run.Id == resultsRequestDto.RunId && template.ParameterType == "Late Reporting Tonnage"
-                select new { template.ParameterCategory, detail.ParameterValue}
+                from run in dbContext.CalculatorRuns
+                join master in dbContext.DefaultParameterSettings on run.DefaultParameterSettingMasterId equals master.Id
+                join detail in dbContext.DefaultParameterSettingDetail on master.Id equals detail.DefaultParameterSettingMasterId
+                join template in dbContext.DefaultParameterTemplateMasterList on detail.ParameterUniqueReferenceId equals template.ParameterUniqueReferenceId
+                where run.Id == runContext.RunId && template.ParameterType == "Late Reporting Tonnage"
+                select new { template.ParameterCategory, detail.ParameterValue }
             ).ToListAsync();
 
             var materialByName = materials.ToDictionary(m => m.Name, m => m.Code);

@@ -4,7 +4,7 @@ using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Exceptions;
 using EPR.Calculator.Service.Function.Features.CalculatorRun.Contexts;
-using EPR.Calculator.Service.Function.Features.CalculatorRun.FileExports;
+using EPR.Calculator.Service.Function.Features.CalculatorRun.Outputs;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
@@ -15,12 +15,12 @@ public interface ICalculatorRunFinalizer
 {
     /// <summary>
     ///     Persists any required state changes to the database, then marks the calculator run as
-    ///     <see cref="RunClassification.Unclassified" />.
+    ///     <see cref="RunClassification.UNCLASSIFIED" />.
     /// </summary>
-    Task FinalizeAsCompleted(CalculatorRunContext runContext, CalcResult calcResult, CalculatorFileExportResult exportResult, CancellationToken cancellationToken);
+    Task FinalizeAsCompleted(CalculatorRunContext runContext, CalcResult calcResult, CalculatorFileResult exportResult, CancellationToken cancellationToken);
 
     /// <summary>
-    ///     Marks the calculator run as <see cref="RunClassification.Errored" />.
+    ///     Marks the calculator run as <see cref="RunClassification.ERROR" />.
     /// </summary>
     Task FinalizeAsErrored(CalculatorRunContext runContext, CancellationToken cancellationToken);
 }
@@ -33,7 +33,7 @@ public class CalculatorRunFinalizer(
     ILogger<CalculatorRunFinalizer> logger)
     : ICalculatorRunFinalizer
 {
-    public async Task FinalizeAsCompleted(CalculatorRunContext runContext, CalcResult calcResult, CalculatorFileExportResult exportResult, CancellationToken cancellationToken)
+    public async Task FinalizeAsCompleted(CalculatorRunContext runContext, CalcResult calcResult, CalculatorFileResult exportResult, CancellationToken cancellationToken)
     {
         await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
 
@@ -72,7 +72,7 @@ public class CalculatorRunFinalizer(
         }
     }
 
-    private async Task SaveExportMetadata(CalculatorFileExportResult exportResult, CancellationToken cancellationToken)
+    private async Task SaveExportMetadata(CalculatorFileResult exportResult, CancellationToken cancellationToken)
     {
         dbContext.CalculatorRunCsvFileMetadata.Add(exportResult.CsvMetadata);
 

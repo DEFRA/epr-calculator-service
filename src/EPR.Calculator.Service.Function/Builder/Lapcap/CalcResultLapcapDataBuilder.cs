@@ -1,5 +1,5 @@
 ﻿using EPR.Calculator.API.Data;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
@@ -8,10 +8,7 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
 {
     public interface ICalcResultLapcapDataBuilder
     {
-        Task<CalcResultLapcapData> ConstructAsync(
-            IEnumerable<MaterialDetail> materialDetails,
-            CalcResultsRequestDto resultsRequestDto
-        );
+        Task<CalcResultLapcapData> ConstructAsync(RunContext runContext, IEnumerable<MaterialDetail> materialDetails);
     }
 
     public class CalcResultLapcapDataBuilder : ICalcResultLapcapDataBuilder
@@ -28,8 +25,8 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
 
 #pragma warning disable S1854
         public async Task<CalcResultLapcapData> ConstructAsync(
-            IEnumerable<MaterialDetail> materialDetails,
-            CalcResultsRequestDto resultsRequestDto
+            RunContext runContext,
+            IEnumerable<MaterialDetail> materialDetails
         )
         {
             var results = await (
@@ -37,7 +34,7 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
                 join lapcapMaster in dbContext.LapcapDataMaster on run.LapcapDataMasterId equals lapcapMaster.Id
                 join lapcapDetail in dbContext.LapcapDataDetail on lapcapMaster.Id equals lapcapDetail.LapcapDataMasterId
                 join lapcapTemplate in dbContext.LapcapDataTemplateMaster on lapcapDetail.UniqueReference equals lapcapTemplate.UniqueReference
-                where run.Id == resultsRequestDto.RunId
+                where run.Id == runContext.RunId
                 select new ResultsClass
                 {
                     Material  = lapcapTemplate.Material,
@@ -65,11 +62,11 @@ namespace EPR.Calculator.Service.Function.Builder.Lapcap
                 ByMaterial = data
             };
 
-            if (!resultsRequestDto.IsBillingFile)
+            if(runContext.RunType == RunType.Calculator)
             {
                 await calcCountryApportionmentService.SaveChangesAsync(new CalcCountryApportionmentServiceDto
                 {
-                    RunId               = resultsRequestDto.RunId,
+                    RunId               = runContext.RunId,
                     Countries           = countries,
                     CostTypeId          = costTypeId,
                     EnglandCost         = lapcapData.CountryApportionment.England,

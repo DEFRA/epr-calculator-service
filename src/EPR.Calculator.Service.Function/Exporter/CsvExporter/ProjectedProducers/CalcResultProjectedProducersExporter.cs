@@ -35,7 +35,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
             PrepareProjectedProducersHeaders(H2ProjectedProducersExporterUtils.GetProjectedProducerHeaders(materials), stringBuilder);
 
             // Add H2 data
-            if (h2WhereModified.Any() == true)
+            if (h2WhereModified.Any())
             {
                 H2ProjectedProducersExporterUtils.AppendProjectedProducers(h2WhereModified, stringBuilder);
             }
@@ -69,14 +69,14 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
             csvContent.AppendLine();
 
             // Add material breakdown headers
-            WriteProjectedProducersSecondaryHeaders(headers.MaterialBreakdownHeaders, csvContent);
+            WriteProjectedProducersSecondaryHeaders(headers.MaterialBreakdownHeaders.ToList(), csvContent);
 
             // Add column headers
             WriteProjectedProducersColumnHeaders(headers.ColumnHeaders, csvContent);
             csvContent.AppendLine();
         }
 
-        private void WriteProjectedProducersSecondaryHeaders(IEnumerable<ProjectedProducersHeader> headers, StringBuilder csvContent)
+        private static void WriteProjectedProducersSecondaryHeaders(IReadOnlyCollection<ProjectedProducersHeader> headers, StringBuilder csvContent)
         {
             var maxColumnSize = headers.MaxBy(h => h.ColumnIndex ?? 0)?.ColumnIndex ?? throw new ArgumentException("No headers specified");
 
@@ -90,7 +90,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
             csvContent.AppendLine(headerRow);
         }
 
-        private void WriteProjectedProducersColumnHeaders(IEnumerable<ProjectedProducersHeader> columnHeaders, StringBuilder csvContent)
+        private static void WriteProjectedProducersColumnHeaders(IEnumerable<ProjectedProducersHeader> columnHeaders, StringBuilder csvContent)
         {
             foreach (var item in columnHeaders)
             {

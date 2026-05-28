@@ -2,7 +2,7 @@ using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder;
 using EPR.Calculator.Service.Function.Features.CalculatorRun.Contexts;
-using EPR.Calculator.Service.Function.Features.CalculatorRun.FileExports;
+using EPR.Calculator.Service.Function.Features.CalculatorRun.Outputs;
 using EPR.Calculator.Service.Function.Features.Common;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,7 +18,7 @@ public class CalculatorRunProcessor(
     ICalculatorRunDataInitializer dataInitializer,
     ICalculatorRunFinalizer finalizer,
     ICalcResultBuilder resultBuilder,
-    ICalculatorFileExporter fileExporter,
+    ICalculatorFileGenerator fileGenerator,
     ILogger<CalculatorRunProcessor> logger)
     : ICalculatorRunProcessor
 {
@@ -38,7 +38,7 @@ public class CalculatorRunProcessor(
 
             // This writes the CSV/JSON files to blob storage.
             // It does not mutate the database state (handled in the finalizer).
-            var exportResult = await fileExporter.Export(runContext, calcResult, cancellationToken);
+            var exportResult = await fileGenerator.SerializeAndExport(runContext, calcResult, cancellationToken);
 
             // This mutates the state of various database entities to reflect the completed run.
             await finalizer.FinalizeAsCompleted(runContext, calcResult, exportResult, cancellationToken);

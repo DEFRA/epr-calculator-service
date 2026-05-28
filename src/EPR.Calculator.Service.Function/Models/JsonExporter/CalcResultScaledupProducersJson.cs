@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Converter;
+using EPR.Calculator.Service.Function.Features.BillingRun.Contexts;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
@@ -12,13 +13,16 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("producerSubmissions")]
         public IEnumerable<ProducerSubmission>? ProducerSubmissions { get; set; }
 
-        public static CalcResultScaledupProducersJson From(CalcResultScaledupProducers calcResultScaledupProducers,IEnumerable<int> acceptedProducerIds,IImmutableList<MaterialDetail> materials)
+        public static CalcResultScaledupProducersJson From(
+            BillingRunContext runContext,
+            CalcResultScaledupProducers calcResultScaledupProducers,
+            IImmutableList<MaterialDetail> materials)
         {
-            IEnumerable<ProducerSubmission> GetProducerSubmissions(CalcResultScaledupProducers calcResultScaledupProducers, IEnumerable<int> acceptedProducerIds, IImmutableList<MaterialDetail> materials)
+            IEnumerable<ProducerSubmission> GetProducerSubmissions()
             {
                 var producerSubmissions = new List<ProducerSubmission>();
 
-                var filteredProducers = calcResultScaledupProducers?.ScaledupProducers?.Where(producer => acceptedProducerIds.Contains(producer.ProducerId)) ?? [];
+                var filteredProducers = calcResultScaledupProducers?.ScaledupProducers?.Where(producer => runContext.AcceptedProducerIds.Contains(producer.ProducerId)) ?? [];
 
                 foreach (var item in filteredProducers)
                 {
@@ -42,7 +46,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
             return new CalcResultScaledupProducersJson
             {
                 Name = CalcResultScaledupProducerHeaders.ScaledupProducers,
-                ProducerSubmissions = GetProducerSubmissions(calcResultScaledupProducers, acceptedProducerIds, materials)
+                ProducerSubmissions = GetProducerSubmissions()
             };
         }
     }

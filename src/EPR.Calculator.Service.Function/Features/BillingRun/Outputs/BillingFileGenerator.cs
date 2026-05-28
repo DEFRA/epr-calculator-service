@@ -7,49 +7,46 @@ using EPR.Calculator.Service.Function.Options;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.Extensions.Options;
 
-namespace EPR.Calculator.Service.Function.Features.BillingRun.FileExports;
+namespace EPR.Calculator.Service.Function.Features.BillingRun.Outputs;
 
-/// <summary>
-///     Creates the billing files for the Billing Run and exports them.
-/// </summary>
-public interface IBillingFileExporter
+public interface IBillingFileGenerator
 {
     /// <summary>
-    ///     Writes CSV/JSON billing files to memory, then uploads them to blob storage.
+    ///     Serializes the calcResult to CSV/JSON billing files and exports them.
     /// </summary>
-    Task<BillingFileExportResult> Export(BillingRunContext runContext, CalcResult calcResult, CancellationToken cancellationToken);
+    Task<BillingFileResult> SerializeAndExport(BillingRunContext runContext, CalcResult calcResult, CancellationToken cancellationToken);
 }
 
-public class BillingFileExporter(
+public class BillingFileGenerator(
     IOptions<BlobStorageOptions> blobStorageOptions,
-    IBillingFileCsvWriter csvWriter,
+    IBillingFileExporter exporter,
     IBillingFileJsonWriter jsonWriter,
     IStorageService storageService,
-    ILogger<BillingFileExporter> logger)
-    : IBillingFileExporter
+    ILogger<BillingFileGenerator> logger)
+    : IBillingFileGenerator
 {
-    public async Task<BillingFileExportResult> Export(BillingRunContext runContext, CalcResult calcResult, CancellationToken cancellationToken)
+    public async Task<BillingFileResult> SerializeAndExport(BillingRunContext runContext, CalcResult calcResult, CancellationToken cancellationToken)
     {
-        var csvMetaData = await ExportCsv(runContext, calcResult, cancellationToken);
-        logger.LogInformation($"{nameof(ExportCsv)} Completed. File: {{Filename}}", csvMetaData.FileName);
+        var csvMetaData = await HandleCsvFile(runContext, calcResult, cancellationToken);
+        logger.LogInformation($"{nameof(HandleCsvFile)} Completed. File: {{Filename}}", csvMetaData.FileName);
 
-        var jsonMetaData = await ExportJson(runContext, calcResult, csvMetaData, cancellationToken);
-        logger.LogInformation($"{nameof(ExportJson)} Completed. File: {{Filename}}", jsonMetaData.BillingJsonFileName);
+        var jsonMetaData = await HandleJsonFile(runContext, calcResult, csvMetaData, cancellationToken);
+        logger.LogInformation($"{nameof(HandleJsonFile)} Completed. File: {{Filename}}", jsonMetaData.BillingJsonFileName);
 
-        return new BillingFileExportResult
+        return new BillingFileResult
         {
             CsvMetadata = csvMetaData,
             JsonMetadata = jsonMetaData
         };
     }
 
-    private async Task<CalculatorRunCsvFileMetadata> ExportCsv(
+    private async Task<CalculatorRunCsvFileMetadata> HandleCsvFile(
         BillingRunContext runContext,
         CalcResult calcResults,
         CancellationToken ct)
     {
         var csvFilename = new CalcResultsAndBillingFileName(runContext.RunId, runContext.RunName, runContext.ProcessingStartedAt.UtcDateTime, true);
-        var csvContent = await csvWriter.WriteToString(runContext, calcResults);
+        var csvContent = await exporter.Export(runContext, calcResults);
 
         var csvBlobUri = await storageService.UploadFileContentAsync((
             FileName: csvFilename,
@@ -66,7 +63,7 @@ public class BillingFileExporter(
         };
     }
 
-    private async Task<CalculatorRunBillingFileMetadata> ExportJson(
+    private async Task<CalculatorRunBillingFileMetadata> HandleJsonFile(
         BillingRunContext runContext,
         CalcResult calcResults,
         CalculatorRunCsvFileMetadata csvMetaData,

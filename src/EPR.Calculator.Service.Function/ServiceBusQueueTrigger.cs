@@ -1,10 +1,13 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using EPR.Calculator.Service.Function;
-using EPR.Calculator.Service.Function.Enums;
-using EPR.Calculator.Service.Function.Mappers;
-using EPR.Calculator.Service.Function.Messaging;
-using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.Exceptions;
+using EPR.Calculator.Service.Function.Features.BillingRun;
+using EPR.Calculator.Service.Function.Features.BillingRun.Contexts;
+using EPR.Calculator.Service.Function.Features.CalculatorRun;
+using EPR.Calculator.Service.Function.Features.CalculatorRun.Contexts;
+using EPR.Calculator.Service.Function.Features.Common;
+using EPR.Calculator.Service.Function.Logging;
 using EPR.Calculator.Service.Function.Telemetry.Helpers;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.WebJobs;
@@ -17,103 +20,101 @@ namespace EPR.Calculator.Service.Function;
 ///     This is the entry point for the PayCal service. It triggers the calculator/billing run processes.
 /// </summary>
 [ExcludeFromCodeCoverage(Justification = "To be re-added later.")]
-[SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
 public class ServiceBusQueueTrigger(
-    ICalculatorRunService calculatorRunService,
-    IRunNameService runNameService,
-    IMessageTypeService messageTypeService,
-    IPrepareBillingFileService prepareBillingFileService,
-    IClassificationService classificationService,
+    ICalculatorRunContextBuilder calculatorRunContextBuilder,
+    ICalculatorRunProcessor calculatorRunProcessor,
+    IBillingRunContextBuilder billingRunContextBuilder,
+    IBillingRunProcessor billingRunProcessor,
     ITelemetryClient telemetry,
     ILogger<ServiceBusQueueTrigger> logger)
 {
     [FunctionName("EPRCalculatorRunServiceBusQueueTrigger")]
     public async Task Run(
         [ServiceBusTrigger("%ServiceBusQueueName%", Connection = "ServiceBusConnectionString")]
-        string serviceBusMessage)
+        ServiceBusMessage message,
+        CancellationToken cancellationToken)
     {
         try
         {
             var startTime = Stopwatch.GetTimestamp();
-            logger.LogInformation("Run initializing for message: '{Message}'", serviceBusMessage);
-            telemetry.TrackEvent(TelemetryEvents.RunInit());
+            var runContext = await InitializeRun(message, cancellationToken);
 
-            var runContext = messageTypeService.DeserializeMessage(serviceBusMessage);
-
-            telemetry.TrackEvent(TelemetryEvents.RunStarted(runContext));
-            await ProcessRun(runContext, startTime);
+            if (runContext != null)
+                await ProcessRun(runContext, startTime, cancellationToken);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Run initialization failed for: '{Message}'", serviceBusMessage);
-            telemetry.TrackEvent(TelemetryEvents.RunInitFailed(serviceBusMessage));
+            // Exceptions should already have been handled within the processors.
+            // So if we're here, it's likely due to service misconfiguration.
+            logger.LogCritical(ex, "Run failed (unhandled exception)");
         }
     }
 
-    private async Task ProcessRun(MessageBase runContext, long startTime)
-    {
-        using (logger.BeginScope(runContext.Summary))
-        {
-            try
-            {
-                var success = await ProcessRun(runContext);
-
-                if (success)
-                    HandleSuccess(runContext, Stopwatch.GetElapsedTime(startTime));
-                else
-                    await HandleFailed(runContext, Stopwatch.GetElapsedTime(startTime));
-            }
-            catch (Exception ex)
-            {
-                await HandleFailed(runContext, Stopwatch.GetElapsedTime(startTime), ex);
-            }
-        }
-    }
-
-    private async Task<bool> ProcessRun(MessageBase runContext)
-    {
-        var runName = await runNameService.GetRunNameAsync(runContext.CalculatorRunId);
-
-        if (runContext is CreateResultFileMessage calculatorContext)
-        {
-            logger.LogInformation("Processing calculator run");
-            return (await calculatorRunService.PrepareResultsFileAsync(calculatorContext, runName)).IsSuccess;
-        }
-
-        if (runContext is CreateBillingFileMessage billingContext)
-        {
-            logger.LogInformation("Processing billing run");
-            return (await prepareBillingFileService.PrepareBillingFileAsync(billingContext.CalculatorRunId, runName, billingContext.ApprovedBy)).IsSuccess;
-        }
-
-        throw new ArgumentException($"Invalid message type: {runContext.GetType().Name}", nameof(runContext));
-    }
-
-    private void HandleSuccess(MessageBase runContext, TimeSpan elapsed)
-    {
-        logger.LogInformation("Run completed successfully. Duration: {Duration}", elapsed);
-        telemetry.TrackEvent(TelemetryEvents.RunCompleted(runContext, elapsed));
-        telemetry.TrackDuration($"{runContext.RunType}Run", elapsed);
-    }
-
-    private async Task HandleFailed(MessageBase runContext, TimeSpan elapsed, Exception? exception = null)
+    private async Task<RunContext?> InitializeRun(ServiceBusMessage message, CancellationToken ct)
     {
         try
         {
-            if (exception is not null)
-                logger.LogError(exception, "Run failed due to unhandled exception");
-            else
-                logger.LogError(exception, "Run failed due to processor returning FALSE");
+            logger.LogInformation("Run initializing for message: '{Message}'", message);
+            telemetry.TrackEvent(TelemetryEvents.RunInit());
 
-            telemetry.TrackEvent(TelemetryEvents.RunFailed(runContext, elapsed, "ProcessingFailed"));
-            telemetry.TrackDuration($"{runContext.RunType}Run", elapsed);
-
-            // Maintains current behaviour of billing run failure setting the run classification to ERROR
-            await classificationService.UpdateRunClassification(runContext.CalculatorRunId, RunClassification.ERROR);
+            return message.MessageType switch
+            {
+                "Result" => await calculatorRunContextBuilder.Build(message.CalculatorRunId, message.CreatedBy, ct),
+                "Billing" => await billingRunContextBuilder.Build(message.CalculatorRunId, message.ApprovedBy, ct),
+                _ => throw new RunContextException(RunType.Unknown, message.CalculatorRunId, $"Invalid message type: {message.MessageType}")
+            };
         }
-        catch (Exception ex)
+        catch (RunContextException ex)
         {
-            logger.LogError(ex, "Failed to update run classification to ERROR");
+            logger.LogError(ex, "Run initialization failed for: '{Message}'", message);
+            telemetry.TrackEvent(TelemetryEvents.RunInitFailed(message.ToString()));
+            return null;
         }
+    }
+
+    private async Task ProcessRun(RunContext runContext, long startTime, CancellationToken ct)
+    {
+        using (logger.BeginRunScope(runContext))
+        {
+            telemetry.TrackEvent(TelemetryEvents.RunStarted(runContext));
+
+            var processingTask = runContext switch
+            {
+                BillingRunContext billingRunContext => billingRunProcessor.Process(billingRunContext, ct),
+                CalculatorRunContext calculatorRunContext => calculatorRunProcessor.Process(calculatorRunContext, ct),
+                _ => throw new ArgumentException("Invalid runContext type: " + runContext.GetType().Name)
+            };
+
+            var result = await processingTask;
+            var duration = Stopwatch.GetElapsedTime(startTime);
+
+            if (result.Succeeded)
+                HandleSucceeded(duration);
+            else
+                HandleFailed(duration, (BadResult)result);
+        }
+
+        void HandleSucceeded(TimeSpan duration)
+        {
+            logger.LogInformation("Run succeeded. Duration: {Duration}", duration);
+            telemetry.TrackEvent(TelemetryEvents.RunSucceeded(runContext, duration));
+            telemetry.TrackDuration($"{runContext.RunType}Run", duration);
+        }
+
+        void HandleFailed(TimeSpan duration, BadResult result)
+        {
+            logger.LogError("Run FAILED. Duration: {Duration}", duration);
+            telemetry.TrackEvent(TelemetryEvents.RunFailed(runContext, duration, result.Exception is OperationCanceledException ? "Cancelled" : "ProcessingFailed"));
+            telemetry.TrackDuration($"{runContext.RunType}Run", duration);
+        }
+    }
+
+    [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
+    public sealed record ServiceBusMessage
+    {
+        public required string MessageType { get; init; }
+        public required int CalculatorRunId { get; init; }
+        public required string? CreatedBy { get; init; }
+        public required string? ApprovedBy { get; init; }
     }
 }

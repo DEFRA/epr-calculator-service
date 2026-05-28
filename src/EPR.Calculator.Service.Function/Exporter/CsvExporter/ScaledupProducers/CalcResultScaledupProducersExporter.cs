@@ -124,7 +124,11 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers
                 ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>(),
             };
 
-            var allMaterialDict = producers.Where(x => !x.IsSubtotalRow).Select(x => x.ScaledupProducerTonnageByMaterial);
+            var allMaterialDict = producers
+                .Where(x => !x.IsSubtotalRow)
+                .Select(x => x.ScaledupProducerTonnageByMaterial)
+                .ToImmutableList();
+
             foreach (var material in materials)
             {
                 var totalRow = new CalcResultScaledupProducerTonnage();
@@ -170,7 +174,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers
             csvContent.AppendLine();
         }
 
-        private static void WriteScaledupProducersSecondaryHeaders(IEnumerable<CalcResultScaledupProducerHeader> headers, StringBuilder csvContent)
+        private static void WriteScaledupProducersSecondaryHeaders(IReadOnlyCollection<CalcResultScaledupProducerHeader> headers, StringBuilder csvContent)
         {
             var maxColumnSize = headers.MaxBy(h => h.ColumnIndex ?? 0)?.ColumnIndex ?? throw new ArgumentException("No headers specified");
 
@@ -184,7 +188,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers
             csvContent.AppendLine(headerRow);
         }
 
-        private static void WriteScaledupProducersColumnHeaders(IEnumerable<CalcResultScaledupProducerHeader> columnHeaders, StringBuilder csvContent)
+        private static void WriteScaledupProducersColumnHeaders(IReadOnlyCollection<CalcResultScaledupProducerHeader> columnHeaders, StringBuilder csvContent)
         {
             foreach (var item in columnHeaders)
             {
@@ -219,7 +223,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers
             return materialsBreakdownHeaders.ToImmutable();
         }
 
-        public static ImmutableList<CalcResultScaledupProducerHeader> GetColumnHeaders(IEnumerable<MaterialDetail> materials)
+        public static ImmutableList<CalcResultScaledupProducerHeader> GetColumnHeaders(IReadOnlyCollection<MaterialDetail> materials)
         {
             var columnHeaders = ImmutableList.CreateBuilder<CalcResultScaledupProducerHeader>();
 
@@ -264,8 +268,8 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers
         }
 
         public static Dictionary<string, CalcResultScaledupProducerTonnage> GetTonnages(
-            IReadOnlyList<ScaledupPomEntry> pomData,
-            IEnumerable<MaterialDetail> materials
+            IReadOnlyCollection<ScaledupPomEntry> pomData,
+            IReadOnlyCollection<MaterialDetail> materials
         )
         {
             var scaledupProducerTonnages = new Dictionary<string, CalcResultScaledupProducerTonnage>();
@@ -273,7 +277,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers
             foreach (var material in materials)
             {
                 var scaledupProducerTonnage = new CalcResultScaledupProducerTonnage();
-                var materialPomData = pomData.Where(e => e.MaterialId == material.Id);
+                var materialPomData = pomData.Where(e => e.MaterialId == material.Id).ToImmutableList();
 
                 var hh  = materialPomData.SingleOrDefault(e => e.PackagingType == PackagingTypes.Household);
                 var pb  = materialPomData.SingleOrDefault(e => e.PackagingType == PackagingTypes.PublicBin);

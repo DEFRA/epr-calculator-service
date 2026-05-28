@@ -4,8 +4,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown
 {
     public static class TotalBillBreakdownProducer
     {
-        public static readonly int ColumnIndex = 385;
-
         public static ImmutableList<CalcResultSummaryHeader> GetHeaders()
         {
             return [
