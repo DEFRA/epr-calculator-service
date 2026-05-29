@@ -1,6 +1,5 @@
 using System.Text;
 using EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions;
-using EPR.Calculator.Service.Function.Builder.Summary.SaSetupCosts;
 using EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
@@ -17,7 +16,6 @@ public class ProducerSummaryExporter : IProducerSummaryExporter
     public IEnumerable<CalcResultSummaryHeader> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
     {
         var headers = new List<CalcResultSummaryHeader>();
-        headers.AddRange(SaSetupCostsProducer.GetHeaders());
         headers.AddRange(TotalBillBreakdownProducer.GetHeaders());
         headers.AddRange(BillingInstructionsProducer.GetHeaders());
         return headers;
@@ -25,7 +23,6 @@ public class ProducerSummaryExporter : IProducerSummaryExporter
 
     public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
     {
-        AppendSectionContent(csvContent, producer.OneOffSchemeAdministrationSetupCosts);
         AppendSectionContent(csvContent, producer.TotalProducerBillBreakdownCosts);
 
         AppendBillingInstructionsSection(csvContent, producer);

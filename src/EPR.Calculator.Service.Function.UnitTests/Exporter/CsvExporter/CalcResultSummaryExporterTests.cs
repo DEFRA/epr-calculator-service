@@ -28,6 +28,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 new OnePlus2a2b2cExporter(),
                 new ThreeSaCostsExporter(),
                 new LaDataPrepCostsExporter(),
+                new SaSetupCostsExporter(),
                 new ProducerSummaryExporter(),
             ]);
         }
