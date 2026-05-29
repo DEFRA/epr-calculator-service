@@ -53,14 +53,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             {
                 var expectedRow = expected2[i];
                 var actualRow = actual[i];
-                var data = $"Expected row: {expectedRow}\nActual row  : {actualRow}";
-
-                for (int j = 0; j < expectedRow.Length; j++)
-                {
-                    var exp = expectedRow[j];
-                    var act = actualRow[j];
-                    Assert.AreEqual(exp, act, $"First difference on Row {i}, index {j}: expected '{exp}' but was '{act}'.\n{data}");
-                }
+                Assert.AreEqual(expectedRow, actualRow, $"Row {i} differs:\nExpected: {expectedRow}\nActual  : {actualRow}");
             }
         }
     }

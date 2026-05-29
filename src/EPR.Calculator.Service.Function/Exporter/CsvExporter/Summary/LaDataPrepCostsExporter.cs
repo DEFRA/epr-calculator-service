@@ -22,7 +22,6 @@ public class LaDataPrepCostsExporter : ICalcResultSummaryPartExporter
         ];
     }
 
-    // TODO consolidate pattern with GetColumnHeaders - all return `[string]` or all append to csvContent
     public void AppendSectionHeader(StringBuilder csvContent, CalcResultSummary resultSummary, IReadOnlyList<MaterialDetail> materials, bool applyModulation)
     {
         int count = GetColumnHeaders(materials, applyModulation).Count();
