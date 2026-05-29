@@ -1,7 +1,6 @@
 using System.Text;
 using EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions;
 using EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts;
-using EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C;
 using EPR.Calculator.Service.Function.Builder.Summary.SaSetupCosts;
 using EPR.Calculator.Service.Function.Builder.Summary.ThreeSa;
 using EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown;
@@ -20,7 +19,6 @@ public class ProducerSummaryExporter : IProducerSummaryExporter
     public IEnumerable<CalcResultSummaryHeader> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
     {
         var headers = new List<CalcResultSummaryHeader>();
-        headers.AddRange(OnePlus2A2B2CProducer.GetHeaders());
         headers.AddRange(ThreeSaCostsProducer.GetHeaders());
         headers.AddRange(LaDataPrepCostsProducer.GetHeaders());
         headers.AddRange(SaSetupCostsProducer.GetHeaders());
@@ -31,9 +29,6 @@ public class ProducerSummaryExporter : IProducerSummaryExporter
 
     public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
     {
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerTotalOnePlus2A2B2CWithBadDeptProvision, DecimalPlaces.Two, null, true));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, DecimalPlaces.Eight, DecimalFormats.F8, false, true));
-
         AppendSectionContent(csvContent, producer.SchemeAdministratorOperatingCosts);
         AppendSectionContent(csvContent, producer.LocalAuthorityDataPreparationCosts);
         AppendSectionContent(csvContent, producer.OneOffSchemeAdministrationSetupCosts);
