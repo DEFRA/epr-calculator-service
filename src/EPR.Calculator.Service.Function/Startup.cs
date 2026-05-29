@@ -258,7 +258,7 @@ internal static class ServiceRegistration
         services.AddTransient<ICalcResultSummaryPartExporter, LaDataPrepCostsExporter>();
         services.AddTransient<ICalcResultSummaryPartExporter, SaSetupCostsExporter>();
         services.AddTransient<ICalcResultSummaryPartExporter, TotalBillBreakdownExporter>();
-        services.AddTransient<ICalcResultSummaryPartExporter, ProducerSummaryExporter>();
+        services.AddTransient<ICalcResultSummaryPartExporter, BillingInstructionsExporter>();
         services.AddTransient<ICalcResultSummaryExporter, CalcResultSummaryExporter>();
         services.AddTransient<IBillingFileJsonWriter, BillingFileJsonWriter>();
         services.AddTransient<ICalcResultLateReportingExporter, CalcResultLateReportingExporter>();

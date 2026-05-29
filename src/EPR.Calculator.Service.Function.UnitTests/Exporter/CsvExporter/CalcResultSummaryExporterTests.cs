@@ -30,7 +30,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 new LaDataPrepCostsExporter(),
                 new SaSetupCostsExporter(),
                 new TotalBillBreakdownExporter(),
-                new ProducerSummaryExporter(),
+                new BillingInstructionsExporter(),
             ]);
         }
 
