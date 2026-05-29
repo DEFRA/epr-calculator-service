@@ -6,9 +6,7 @@ using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 
-public interface ISection1DisposalFeeExporter : ICalcResultSummaryPartExporter { }
-
-public class Section1DisposalFeeExporter : ISection1DisposalFeeExporter
+public class Section1DisposalFeeExporter : ICalcResultSummaryPartExporter
 {
     public IEnumerable<CalcResultSummaryHeader> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
         => CalcResultSummaryUtil.Section1DisposalFee();

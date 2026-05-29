@@ -5,9 +5,7 @@ using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 
-public interface ICommsCost2cExporter : ICalcResultSummaryPartExporter { }
-
-public class CommsCost2cExporter : ICommsCost2cExporter
+public class CommsCost2cExporter : ICalcResultSummaryPartExporter
 {
     public IEnumerable<CalcResultSummaryHeader> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
         => CalcResultSummaryUtil.CommsCost2c();

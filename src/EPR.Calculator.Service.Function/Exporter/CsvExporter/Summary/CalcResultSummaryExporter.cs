@@ -2,11 +2,7 @@ using System.Text;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.Services;
-using EPR.Calculator.Service.Function.Utils;
 using EPR.Calculator.Service.Function.Features.Common;
-using EPR.Calculator.API.Data.Enums;
-using EPR.Calculator.Service.Function.Enums;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 
@@ -24,9 +20,26 @@ public class CalcResultSummaryExporter : ICalcResultSummaryExporter
 {
     private readonly IReadOnlyList<ICalcResultSummaryPartExporter> partExporters;
 
-    public CalcResultSummaryExporter(IEnumerable<ICalcResultSummaryPartExporter> partExporters)
+    public CalcResultSummaryExporter()
     {
-        this.partExporters = partExporters.ToList();
+        this.partExporters = [
+            new ProducerIdentityExporter(),
+            new Section1MaterialsExporter(),
+            new Section1DisposalFeeExporter(),
+            new Section2aMaterialsExporter(),
+            new Section2aCommsExporter(),
+            new Section1DisposalExporter(),
+            new Section2aComms2aExporter(),
+            new CommsCost2aPercentageExporter(),
+            new CommsCost2bExporter(),
+            new CommsCost2cExporter(),
+            new OnePlus2a2b2cExporter(),
+            new ThreeSaCostsExporter(),
+            new LaDataPrepCostsExporter(),
+            new SaSetupCostsExporter(),
+            new TotalBillBreakdownExporter(),
+            new BillingInstructionsExporter()
+        ];
     }
 
     public void Export(
@@ -47,7 +60,7 @@ public class CalcResultSummaryExporter : ICalcResultSummaryExporter
         }
     }
 
-    public void AddNewRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
+    private void AddNewRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
     {
         foreach (var exporter in partExporters)
         {
@@ -70,7 +83,7 @@ public class CalcResultSummaryExporter : ICalcResultSummaryExporter
         csvContent.AppendLine(headerRow);
     }
 
-    public void WriteColumnHeaders(List<CalcResultSummaryHeader> columnHeaders, StringBuilder csvContent)
+    private void WriteColumnHeaders(List<CalcResultSummaryHeader> columnHeaders, StringBuilder csvContent)
     {
         foreach (var item in columnHeaders)
         {

@@ -8,9 +8,7 @@ using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 
-public interface IBillingInstructionsExporter : ICalcResultSummaryPartExporter { }
-
-public class BillingInstructionsExporter : IBillingInstructionsExporter
+public class BillingInstructionsExporter : ICalcResultSummaryPartExporter
 {
     public IEnumerable<CalcResultSummaryHeader> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
         => BillingInstructionsProducer.GetHeaders();

@@ -6,9 +6,7 @@ using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 
-public interface IOnePlus2a2b2cExporter : ICalcResultSummaryPartExporter { }
-
-public class OnePlus2a2b2cExporter : IOnePlus2a2b2cExporter
+public class OnePlus2a2b2cExporter : ICalcResultSummaryPartExporter
 {
     public IEnumerable<CalcResultSummaryHeader> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
         => OnePlus2A2B2CProducer.GetHeaders();

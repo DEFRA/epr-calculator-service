@@ -6,9 +6,7 @@ using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 
-public interface ILaDataPrepCostsExporter : ICalcResultSummaryPartExporter { }
-
-public class LaDataPrepCostsExporter : ILaDataPrepCostsExporter
+public class LaDataPrepCostsExporter : ICalcResultSummaryPartExporter
 {
     public IEnumerable<CalcResultSummaryHeader> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
         => LaDataPrepCostsProducer.GetHeaders();
