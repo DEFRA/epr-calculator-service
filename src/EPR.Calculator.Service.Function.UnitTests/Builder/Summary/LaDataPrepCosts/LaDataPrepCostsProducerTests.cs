@@ -2,7 +2,6 @@
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts;
-using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -38,207 +37,20 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.LaDataPrepCo
                 CalcResultPartialObligations = new CalcResultPartialObligations(),
                 CalcResultParameterOtherCost = new CalcResultParameterOtherCost
                 {
-                    BadDebtProvision = new KeyValuePair<string, string>("key1", "6%"),
                     BadDebtValue = 6m,
-                    Details = [
-                        new CalcResultParameterOtherCostDetail
-                        {
-                            Name = "4 LA Data Prep Charge",
-                            OrderId = 1,
-                            England = "£40.00",
-                            EnglandValue = 40,
-                            Wales = "£30.00",
-                            WalesValue = 30,
-                            Scotland = "£20.00",
-                            ScotlandValue = 20,
-                            NorthernIreland = "£10.00",
-                            NorthernIrelandValue = 10,
-                            Total = "£100.00",
-                            TotalValue = 100,
-                        },
-                        new CalcResultParameterOtherCostDetail
-                        {
-                            Name = "4 Country Apportionment %s",
-                            OrderId = 1,
-                            England = "40.00%",
-                            EnglandValue = 40,
-                            Wales = "30.00%",
-                            WalesValue = 30,
-                            Scotland = "20.00%",
-                            ScotlandValue = 20,
-                            NorthernIreland = "10.00%",
-                            NorthernIrelandValue = 10,
-                            Total = "100.00%",
-                            TotalValue = 100,
-                        }
-                    ],
-                    Materiality = [
-                        new CalcResultMateriality
-                        {
-                            Amount = "Amount £s",
-                            AmountValue = 0,
-                            Percentage = "%",
-                            PercentageValue = 0,
-                            SevenMateriality = "7 Materiality",
-                        }
-                    ],
-                    Name = "Parameters - Other",
-                    SaOperatingCost = [
-                        new CalcResultParameterOtherCostDetail
-                        {
-                            Name = string.Empty,
-                            OrderId = 0,
-                            England = "England",
-                            EnglandValue = 0,
-                            Wales = "Wales",
-                            WalesValue = 0,
-                            Scotland = "Scotland",
-                            ScotlandValue = 0,
-                            NorthernIreland = "Northern Ireland",
-                            NorthernIrelandValue = 0,
-                            Total = "Total",
-                            TotalValue = 0,
-                        }
-                    ],
-                    SchemeSetupCost = {
-                        Name = "5 Scheme set up cost Yearly Cost",
-                        OrderId = 1,
-                        England = "£40.00",
-                        EnglandValue = 40,
-                        Wales = "£30.00",
-                        WalesValue = 30,
-                        Scotland = "£20.00",
-                        ScotlandValue = 20,
-                        NorthernIreland = "£10.00",
-                        NorthernIrelandValue = 10,
-                        Total = "£100.00",
-                        TotalValue = 100,
-                    },
+                    LaDataPrepCharge = new() { England = 40, Wales = 30, Scotland = 20, NorthernIreland = 10 },
+                    CountryApportionment = new() { England = 40, Wales = 30, Scotland = 20, NorthernIreland = 10 },
+                    SaOperatingCost = new() { England = 0, Wales = 0, Scotland = 0, NorthernIreland = 0 },
+                    SchemeSetupCost = new() { England = 40, Wales = 30, Scotland = 20, NorthernIreland = 10 }
                 },
                 CalcResultDetail = new CalcResultDetail { RunId = 1, RelativeYear = new RelativeYear(2024) },
-                CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData
-                {
-                    Name = Fixture.Create<string>(),
-                    CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>
-                    {
-                        new CalcResultLaDisposalCostDataDetail
-                        {
-                            DisposalCostPricePerTonne="20",
-                            England="EnglandTest",
-                            Wales="WalesTest",
-                            Name="ScotlandTest",
-                            Scotland="ScotlandTest",
-                            NorthernIreland = "NorthernIrelandTest",
-                            Total = "TotalTest",
-                            ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<string>(),
-                            ReportedPublicBinTonnage = Fixture.Create<string>(),
-                            ProducerReportedTotalTonnage = Fixture.Create<string>(),
-                        },
-                        new CalcResultLaDisposalCostDataDetail
-                        {
-                            DisposalCostPricePerTonne="20",
-                            England="EnglandTest",
-                            Wales="WalesTest",
-                            Name="Material1",
-                            Scotland="ScotlandTest",
-                            NorthernIreland = "NorthernIrelandTest",
-                            Total = "TotalTest",
-                            ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<string>(),
-                            ReportedPublicBinTonnage = Fixture.Create<string>(),
-                            ProducerReportedTotalTonnage = Fixture.Create<string>(),
-                        },
-                        new CalcResultLaDisposalCostDataDetail
-                        {
-                            DisposalCostPricePerTonne="10",
-                            England="EnglandTest",
-                            Wales="WalesTest",
-                            Name="Material2",
-                            Scotland="ScotlandTest",
-                            NorthernIreland = "NorthernIrelandTest",
-                            Total = "TotalTest",
-                            ProducerReportedHouseholdPackagingWasteTonnage = Fixture.Create<string>(),
-                            ReportedPublicBinTonnage = Fixture.Create<string>(),
-                            ProducerReportedTotalTonnage = Fixture.Create<string>(),
-                        },
-                    }
-                },
-                CalcResultLapcapData = new CalcResultLapcapData
-                {
-                    CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetail>(),
-                },
+                CalcResultLaDisposalCostData = new CalcResultLaDisposalCostData() { ByMaterial = [] },
+                CalcResultLapcapData = new CalcResultLapcapData { ByMaterial = [] },
                 CalcResultOnePlusFourApportionment = new CalcResultOnePlusFourApportionment
                 {
-                    Name = Fixture.Create<string>(),
-                    CalcResultOnePlusFourApportionmentDetails =
-                    [
-                        new()
-                        {
-                            EnglandDisposalTotal="80",
-                            NorthernIrelandDisposalTotal="70",
-                            ScotlandDisposalTotal="30",
-                            WalesDisposalTotal="20",
-                            AllTotal=0.1M,
-                            EnglandTotal=0.10M,
-                            NorthernIrelandTotal=0.15M,
-                            ScotlandTotal=0.15M,
-                            WalesTotal=020M,
-                            Name="1 + 4 Apportionment %s",
-                        },
-                        new()
-                        {
-                            EnglandDisposalTotal="80",
-                            NorthernIrelandDisposalTotal="70",
-                            ScotlandDisposalTotal="30",
-                            WalesDisposalTotal="20",
-                            AllTotal=0.1M,
-                            EnglandTotal=0.10M,
-                            NorthernIrelandTotal=0.15M,
-                            ScotlandTotal=0.15M,
-                            WalesTotal=020M,
-                            Name="Test",
-                        },
-                        new()
-                        {
-                            EnglandDisposalTotal="80",
-                            NorthernIrelandDisposalTotal="70",
-                            ScotlandDisposalTotal="30",
-                            WalesDisposalTotal="20",
-                            AllTotal=0.1M,
-                            EnglandTotal=0.10M,
-                            NorthernIrelandTotal=0.15M,
-                            ScotlandTotal=0.15M,
-                            WalesTotal=020M,
-                            Name="Test",
-                        },
-                        new()
-                        {
-                            EnglandDisposalTotal="80",
-                            NorthernIrelandDisposalTotal="70",
-                            ScotlandDisposalTotal="30",
-                            WalesDisposalTotal="20",
-                            AllTotal=0.1M,
-                            EnglandTotal=14.53M,
-                            NorthernIrelandTotal=0.15M,
-                            ScotlandTotal=0.15M,
-                            WalesTotal=020M,
-                            Name="Test",
-                        },
-                        new()
-                        {
-                            EnglandDisposalTotal="80",
-                            NorthernIrelandDisposalTotal="70",
-                            ScotlandDisposalTotal="30",
-                            WalesDisposalTotal="20",
-                            AllTotal=0.1M,
-                            EnglandTotal=14.53M,
-                            NorthernIrelandTotal=0.15M,
-                            ScotlandTotal=0.15M,
-                            WalesTotal=020M,
-                            Name="Test",
-                        }
-                    ],
+                    LaDisposalCost   = new() { England = 0.10M, Wales = 20M, Scotland = 0.15M, NorthernIreland = 0.15M },
+                    LADataPrepCharge = new() { England = 0.10M, Wales = 20M, Scotland = 0.15M, NorthernIreland = 0.15M }
                 },
-                CalcResultParameterCommunicationCost = Fixture.Create<CalcResultParameterCommunicationCost>(),
                 CalcResultSummary = new CalcResultSummary
                 {
                     ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
@@ -276,22 +88,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.LaDataPrepCo
                     CommsCostHeaderWithBadDebtFor2bTitle = 100,
                     TwoCCommsCostsByCountryWithBadDebtProvision = 100,
                 },
-                CalcResultCommsCostReportDetail = new CalcResultCommsCost
-                {
-                    CalcResultCommsCostCommsCostByMaterial =
-                    [
-                        new ()
-                        {
-                            CommsCostByMaterialPricePerTonne="0.42",
-                            Name ="Aluminium",
-                        },
-                        new ()
-                        {
-                            CommsCostByMaterialPricePerTonne="0.3",
-                            Name ="Glass",
-                        }
-                    ],
-                },
+                CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
                 CalcResultLateReportingTonnageData = Fixture.Create<CalcResultLateReportingTonnage>(),
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(),
             };
@@ -366,32 +163,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.LaDataPrepCo
             Assert.AreEqual(31.80m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts!.WalesTotalWithBadDebtProvision);
             Assert.AreEqual(21.20m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts!.ScotlandTotalWithBadDebtProvision);
             Assert.AreEqual(10.60m, _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts!.NorthernIrelandTotalWithBadDebtProvision);
-        }
-
-        [TestMethod]
-        public void GetLaDataPrepCostsWithoutBadDebtProvision_NoDataPrepCharge_Returns0()
-        {
-            // Arrange
-            _calcResult.CalcResultParameterOtherCost.Details.ToList()[0].Name = null;
-
-            // Act
-            var result = LaDataPrepCostsProducer.GetLaDataPrepCostsWithoutBadDebtProvision(_calcResult);
-
-            // Assert
-            Assert.AreEqual(0m, result);
-        }
-
-        [TestMethod]
-        public void GetCountryTotalWithBadDebtProvision_CostsForOnePlus2A2B2Cis0_Returns0()
-        {
-            // Arrange
-            _calcResult.CalcResultParameterOtherCost.Details.ToList()[0].Name = null;
-
-            // Act
-            var result = LaDataPrepCostsProducer.GetCountryTotalWithBadDebtProvision(_calcResult, 0, 0, Countries.England);
-
-            // Assert
-            Assert.AreEqual(0m, result);
         }
 
         private void CreateMaterials()

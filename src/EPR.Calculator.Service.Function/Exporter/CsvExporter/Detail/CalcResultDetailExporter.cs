@@ -5,7 +5,12 @@ using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail
 {
-    public class CalcResultDetailexporter : ICalcResultDetailExporter
+    public interface ICalcResultDetailExporter
+    {
+        void Export(CalcResultDetail calcResultDetail, StringBuilder stringBuilder);
+    }
+
+    public class CalcResultDetailExporter : ICalcResultDetailExporter
     {
         private const string RunName = "Run Name";
         private const string RunId = "Run Id";

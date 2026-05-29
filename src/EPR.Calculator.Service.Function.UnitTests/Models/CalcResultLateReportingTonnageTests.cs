@@ -5,67 +5,48 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
     [TestClass]
     public class CalcResultLateReportingTonnageTests
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CalcResultLateReportingTonnageTests"/> class.
-        /// </summary>
         public CalcResultLateReportingTonnageTests()
         {
             Fixture = new Fixture();
-            Name = Fixture.Create<string>();
-            MaterialHeading = Fixture.Create<string>();
-            TonnageHeading = Fixture.Create<string>();
-            CalcResultLateReportingTonnageDetails = new Mock<IEnumerable<CalcResultLateReportingTonnageDetail>>().Object;
+            LateReportingTonnageByMaterial = new Dictionary<string, CalcResultLateReportingTonnageDetail>
+            {
+                [Fixture.Create<string>()] = Fixture.Create<CalcResultLateReportingTonnageDetail>()
+            };
             TestClass = new CalcResultLateReportingTonnage
             {
-                Name = Name,
-                MaterialHeading = MaterialHeading,
-                TonnageHeading = TonnageHeading,
-                CalcResultLateReportingTonnageDetails = CalcResultLateReportingTonnageDetails,
+                ByMaterial = LateReportingTonnageByMaterial
             };
         }
 
         private CalcResultLateReportingTonnage TestClass { get; init; }
-
         private IFixture Fixture { get; init; }
-
-        private string Name { get; init; }
-
-        private string MaterialHeading { get; init; }
-
-        private string TonnageHeading { get; init; }
-
-        private IEnumerable<CalcResultLateReportingTonnageDetail> CalcResultLateReportingTonnageDetails { get; init; }
+        private Dictionary<string, CalcResultLateReportingTonnageDetail> LateReportingTonnageByMaterial { get; init; }
 
         [TestMethod]
         public void CanInitialize()
         {
-            // Act
             var instance = new CalcResultLateReportingTonnage
             {
-                Name = Name,
-                MaterialHeading = MaterialHeading,
-                TonnageHeading = TonnageHeading,
-                CalcResultLateReportingTonnageDetails = CalcResultLateReportingTonnageDetails,
+                ByMaterial = LateReportingTonnageByMaterial
             };
-
-            // Assert
             Assert.IsNotNull(instance);
         }
 
         [TestMethod]
         public void ImplementsIEquatable_CalcResultLateReportingTonnage()
         {
-            // Arrange
             var same = new CalcResultLateReportingTonnage
             {
-                Name = Name,
-                MaterialHeading = MaterialHeading,
-                TonnageHeading = TonnageHeading,
-                CalcResultLateReportingTonnageDetails = CalcResultLateReportingTonnageDetails,
+                ByMaterial = LateReportingTonnageByMaterial
             };
-            var different = Fixture.Create<CalcResultLateReportingTonnage>();
+            var different = new CalcResultLateReportingTonnage
+            {
+                ByMaterial = new Dictionary<string, CalcResultLateReportingTonnageDetail>
+                {
+                    [Fixture.Create<string>()] = Fixture.Create<CalcResultLateReportingTonnageDetail>()
+                }
+            };
 
-            // Assert
             Assert.IsFalse(TestClass.Equals(default(object)));
             Assert.IsFalse(TestClass.Equals(new object()));
             Assert.IsTrue(TestClass.Equals((object)same));
@@ -73,7 +54,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
             Assert.IsTrue(TestClass.Equals(same));
             Assert.IsFalse(TestClass.Equals(different));
             Assert.AreEqual(same.GetHashCode(), TestClass.GetHashCode());
-            Assert.AreNotEqual(different.GetHashCode(), TestClass.GetHashCode());
             Assert.IsTrue(TestClass == same);
             Assert.IsFalse(TestClass == different);
             Assert.IsFalse(TestClass != same);
@@ -81,19 +61,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
         }
 
         [TestMethod]
-        public void NameIsInitializedCorrectly()
-            => Assert.AreEqual(Name, TestClass.Name);
-
-        [TestMethod]
-        public void MaterialHeadingIsInitializedCorrectly()
-            => Assert.AreEqual(MaterialHeading, TestClass.MaterialHeading);
-
-        [TestMethod]
-        public void TonnageHeadingIsInitializedCorrectly()
-            => Assert.AreEqual(TonnageHeading, TestClass.TonnageHeading);
-
-        [TestMethod]
-        public void CalcResultLateReportingTonnageDetailsIsInitializedCorrectly()
-            => Assert.AreSame(CalcResultLateReportingTonnageDetails, TestClass.CalcResultLateReportingTonnageDetails);
+        public void LateReportingTonnageByMaterialIsInitializedCorrectly()
+            => Assert.AreSame(LateReportingTonnageByMaterial, TestClass.ByMaterial);
     }
 }

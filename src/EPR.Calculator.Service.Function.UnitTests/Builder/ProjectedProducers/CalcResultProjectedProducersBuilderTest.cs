@@ -507,19 +507,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 else
                 {
                     var row = new string[13];
-                    row[ProducerI] = producerId.ToString();
-                    row[SubsidiaryI] = subsidiaryId ?? "";
-                    row[PeriodI] = submission.SubmissionPeriod;
-                    row[LevelI] = level;
-                    row[MaterialCodeI] = materials.Single(m => m.Id == submission.MaterialId).Code;
+                    row[ProducerI]      = producerId.ToString();
+                    row[SubsidiaryI]    = subsidiaryId ?? "";
+                    row[PeriodI]        = submission.SubmissionPeriod;
+                    row[LevelI]         = level;
+                    row[MaterialCodeI]  = materials.Single(m => m.Id == submission.MaterialId).Code;
                     row[PackagingTypeI] = submission.PackagingType;
-                    row[TotalTonnageI] = submission.PackagingTonnage.ToString();
-                    row[RTonnageI]  = (submission.PackagingTonnageRed  ?? 0m).ToString();
-                    row[RMTonnageI] = (submission.PackagingTonnageRedMedical ?? 0m).ToString();
-                    row[ATonnageI]  = (submission.PackagingTonnageAmber  ?? 0m).ToString();
-                    row[AMTonnageI] = (submission.PackagingTonnageAmberMedical ?? 0m).ToString();
-                    row[GTonnageI]  = (submission.PackagingTonnageGreen  ?? 0m).ToString();
-                    row[GMTonnageI] = (submission.PackagingTonnageGreenMedical ?? 0m).ToString();
+                    row[TotalTonnageI]  = submission.PackagingTonnage.ToString();
+                    row[RTonnageI]      = (submission.PackagingTonnageRed          ?? 0).ToString();
+                    row[RMTonnageI]     = (submission.PackagingTonnageRedMedical   ?? 0).ToString();
+                    row[ATonnageI]      = (submission.PackagingTonnageAmber        ?? 0).ToString();
+                    row[AMTonnageI]     = (submission.PackagingTonnageAmberMedical ?? 0).ToString();
+                    row[GTonnageI]      = (submission.PackagingTonnageGreen        ?? 0).ToString();
+                    row[GMTonnageI]     = (submission.PackagingTonnageGreenMedical ?? 0).ToString();
                     return row;
                 }
             }
@@ -575,16 +575,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                         producer.ProducerReportedMaterials.Add(
                             new ProducerReportedMaterial
                             {
-                                MaterialId = materials.Single(m => m.Code == row[MaterialCodeI]).Id,
-                                PackagingType = row[PackagingTypeI],
-                                PackagingTonnage = ToDecimal(row[TotalTonnageI]) ?? 0m,
-                                PackagingTonnageRed = ToDecimal(row[RTonnageI]),
-                                PackagingTonnageAmber = ToDecimal(row[ATonnageI]),
-                                PackagingTonnageGreen = ToDecimal(row[GTonnageI]),
-                                PackagingTonnageRedMedical = ToDecimal(row[RMTonnageI]),
+                                MaterialId                   = materials.Single(m => m.Code == row[MaterialCodeI]).Id,
+                                PackagingType                = row[PackagingTypeI],
+                                PackagingTonnage             = ToDecimal(row[TotalTonnageI]) ?? 0m,
+                                PackagingTonnageRed          = ToDecimal(row[RTonnageI]),
+                                PackagingTonnageAmber        = ToDecimal(row[ATonnageI]),
+                                PackagingTonnageGreen        = ToDecimal(row[GTonnageI]),
+                                PackagingTonnageRedMedical   = ToDecimal(row[RMTonnageI]),
                                 PackagingTonnageAmberMedical = ToDecimal(row[AMTonnageI]),
                                 PackagingTonnageGreenMedical = ToDecimal(row[GMTonnageI]),
-                                SubmissionPeriod = row[PeriodI]
+                                SubmissionPeriod             = row[PeriodI]
                             }
                         );
                     }

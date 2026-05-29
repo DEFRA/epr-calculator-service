@@ -1,5 +1,6 @@
 using EPR.Calculator.Service.Function.Models.JsonExporter;
 using EPR.Calculator.Service.Function.UnitTests.Builder;
+using System.Text.Json;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
 {
@@ -9,22 +10,61 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         [TestMethod]
         public void From_HandlesNullOrPopulated()
         {
+            // Arrange
             var data = TestDataHelper.GetCalcResultLateReportingTonnage();
+            var materials = TestDataHelper.GetMaterials();
 
-            var result = CalcResultLateReportingTonnageJson.From(data);
+            // Act
+            var result = CalcResultLateReportingTonnageJson.From(data, materials);
 
+            // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual("Late Reporting Tonnage", result.Name);
-            
-            var details = result.calcResultLateReportingTonnageDetails;
-            Assert.AreEqual(8, details.Count);
-            var aluminium = details.Find(d => d.MaterialName == "Aluminium");
-            var plastic = details.Find(d => d.MaterialName == "Plastic");
-            Assert.IsNotNull(aluminium);
-            Assert.IsNotNull(plastic);
-            Assert.AreEqual(8000.00m, aluminium.TotalLateReportingTonnage);
-            Assert.AreEqual(2000.00m, plastic.TotalLateReportingTonnage);
-            Assert.AreEqual(10020.00m, result.CalcResultLateReportingTonnageTotal);
+
+            var json = JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true });
+            Console.WriteLine(json);
+
+            var expectedJson = """
+                {
+                "name": "Late Reporting Tonnage",
+                "calcResultLateReportingTonnageDetails": [
+                    {
+                      "materialName": "Aluminium",
+                      "totalLateReportingTonnage": 8000.000
+                    },
+                    {
+                      "materialName": "Fibre composite",
+                      "totalLateReportingTonnage": 10.000
+                    },
+                    {
+                      "materialName": "Glass",
+                      "totalLateReportingTonnage": 10.000
+                    },
+                    {
+                      "materialName": "Paper or card",
+                      "totalLateReportingTonnage": 0
+                    },
+                    {
+                      "materialName": "Plastic",
+                      "totalLateReportingTonnage": 2000.000
+                    },
+                    {
+                      "materialName": "Steel",
+                      "totalLateReportingTonnage": 0
+                    },
+                    {
+                      "materialName": "Wood",
+                      "totalLateReportingTonnage": 0
+                    },
+                    {
+                      "materialName": "Other materials",
+                      "totalLateReportingTonnage": 0
+                    }
+                ],
+                "calcResultLateReportingTonnageTotal": 10020.000
+                }
+                """;
+
+            JsonTestUtils.AssertJson(expectedJson, json);
         }
     }
 }

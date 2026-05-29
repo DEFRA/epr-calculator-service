@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
 using EPR.Calculator.Service.Function.Models;
 
@@ -16,239 +15,49 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.OtherCo
             // Arrange
             var otherCost = new CalcResultParameterOtherCost
             {
-                BadDebtProvision = new KeyValuePair<string, string>("key1", "6%"),
-                Details =
-                    [
-                        new CalcResultParameterOtherCostDetail
-                        {
-                            Name = "4 LA Data Prep Charge",
-                            OrderId = 1,
-                            England = "£40.00",
-                            EnglandValue = 40,
-                            Wales = "£30.00",
-                            WalesValue = 30,
-                            Scotland = "£20.00",
-                            ScotlandValue = 20,
-                            NorthernIreland = "£10.00",
-                            NorthernIrelandValue = 10,
-                            Total = "£100.00",
-                            TotalValue = 100,
-                        },
-                    ],
-                Materiality =
-                    [
-                        new CalcResultMateriality
-                        {
-                            Amount = "Amount £s",
-                            AmountValue = 0,
-                            Percentage = "%",
-                            PercentageValue = 0,
-                            SevenMateriality = "7 Materiality",
-                        },
-                    ],
-                Name = "Parameters - Other",
-                SaOperatingCost =
-                    [
-                        new CalcResultParameterOtherCostDetail
-                        {
-                            Name = "3 SA Operating Costs",
-                            OrderId = 1,
-                            England = "England",
-                            EnglandValue = 100,
-                            Wales = "Wales",
-                            WalesValue = 50,
-                            Scotland = "Scotland",
-                            ScotlandValue = 80,
-                            NorthernIreland = "Northern Ireland",
-                            NorthernIrelandValue = 100,
-                            Total = "Total",
-                            TotalValue = 330,
-                        },
-                    ],
-                SchemeSetupCost =
-                    {
-                        Name = "5 Scheme set up cost Yearly Cost",
-                        OrderId = 1,
-                        England = "£40.00",
-                        EnglandValue = 40,
-                        Wales = "£30.00",
-                        WalesValue = 30,
-                        Scotland = "£20.00",
-                        ScotlandValue = 20,
-                        NorthernIreland = "£10.00",
-                        NorthernIrelandValue = 10,
-                        Total = "£100.00",
-                        TotalValue = 100,
-                    },
+                SaOperatingCost = new() { England = 25000, Wales = 14000, Scotland = 17000, NorthernIreland = 9000 },
+                LaDataPrepCharge = new() { England = 40, Wales = 30, Scotland = 20, NorthernIreland = 10 },
+                CountryApportionment = new() { England = 43.83561644m, Wales = 19.17808219m, Scotland = 24.65753425m, NorthernIreland = 12.32876712m },
+                SchemeSetupCost = new () { England = 17500, Wales = 23400, Scotland = 12400, NorthernIreland = 9450 },
+                BadDebtValue = 6,
+                MaterialityIncrease = new Materiality { Amount = 5000, Percentage = 2 },
+                MaterialityDecrease = new Materiality { Amount = -1000, Percentage = -1 },
+                TonnageChangeIncrease = new Materiality { Amount = 50, Percentage = 2 },
+                TonnageChangeDecrease = new Materiality { Amount = -10, Percentage = -0.5m }
             };
-            var csvContent = new StringBuilder();
 
             // Act
+            var csvContent = new StringBuilder();
             exporter.Export(otherCost, csvContent);
 
-            var result = csvContent.ToString();
+            var result = csvContent.ToString().Split("\n").Select(s => s.TrimEnd(',')).ToArray();
+            Console.WriteLine(string.Join("\n", result));
 
             // Assert
-            Assert.IsTrue(result.Contains(CommonConstants.England));
-            Assert.IsTrue(result.Contains(CommonConstants.Wales));
-            Assert.IsTrue(result.Contains(CommonConstants.Scotland));
-            Assert.IsTrue(result.Contains(CommonConstants.NorthernIreland));
-            Assert.IsTrue(result.Contains(CommonConstants.Total));
-            Assert.IsTrue(result.Contains(CommonConstants.ParametersOther));
-            Assert.IsTrue(result.Contains("6%"));
-        }
-
-        [TestMethod]
-        public void CanCalLaDataPrepCosts()
-        {
-            // Arrange
-            var otherCost = new CalcResultParameterOtherCost
-            {
-                Name = "Parameters - Other",
-                Details =
-                    [
-                        new CalcResultParameterOtherCostDetail
-                        {
-                            Name = "4 LA Data Prep Charge",
-                            OrderId = 0,
-                            England = CommonConstants.England,
-                            Wales = CommonConstants.Wales,
-                            Scotland = CommonConstants.Scotland,
-                            NorthernIreland = CommonConstants.NorthernIreland,
-                            Total = CommonConstants.Total,
-                        },
-                        new CalcResultParameterOtherCostDetail
-                        {
-                            Name = string.Empty,
-                            OrderId = 1,
-                            England = "£40.00",
-                            Wales = "£30.00",
-                            Scotland = "£20.00",
-                            NorthernIreland = "£10.00",
-                            Total = "£100.00",
-                        },
-                    ],
+            var expected = new[] {
+                new string[] {},
+                new string[] {},
+                new[] { "Parameters - Other" },
+                new[] { null,"England","Wales","Scotland","Northern Ireland","Total" },
+                new[] { "3 SA Operating Costs","£25000.00","£14000.00","£17000.00","£9000.00","£65000.00" },
+                new string[] {},
+                new[] { "4 LA Data Prep Charge","£40.00","£30.00","£20.00","£10.00","£100.00" },
+                new[] { "4 Country Apportionment %s","43.83561644%","19.17808219%","24.65753425%","12.32876712%","100.00000000%" },
+                new string[] {},
+                new[] { "5 Scheme set up cost Yearly Cost","£17500.00","£23400.00","£12400.00","£9450.00","£62750.00" },
+                new string[] {},
+                new[] { "6 Bad Debt Provision","6.00%" },
+                new string[] {},
+                new[] { "7 Materiality","Amount £s","%" },
+                new[] { "Increase","£5000.00","2.00%" },
+                new[] { "Decrease","-£1000.00","-1.00%" },
+                new[] { "8 Tonnage Change","Amount £s","%" },
+                new[] { "Increase","£50.00","2.00%" },
+                new[] { "Decrease","-£10.00","-0.50%" },
+                new string[] {}
             };
-            var csvContent = new StringBuilder();
 
-            exporter.LaDataPrepCosts(otherCost, csvContent);
-            var result = csvContent.ToString();
-
-            // Assert
-            Assert.IsTrue(result.Contains("England"));
-            Assert.IsTrue(result.Contains("Wales"));
-            Assert.IsTrue(result.Contains("Scotland"));
-            Assert.IsTrue(result.Contains("Northern Ireland"));
-            Assert.IsTrue(result.Contains("Total"));
-            Assert.IsTrue(result.Contains("4 LA Data Prep Charge"));
-            Assert.IsTrue(result.Contains("100"));
-        }
-
-        [TestMethod]
-        public void CanCalSchemeSetupCost()
-        {
-            // Arrange
-            var otherCost = new CalcResultParameterOtherCost
-            {
-                Name = "Parameters - Other",
-                SchemeSetupCost =
-                    {
-                        Name = "5 Scheme set up cost Yearly Cost",
-                        OrderId = 1,
-                        England = "£40.00",
-                        Wales = "£30.00",
-                        Scotland = "£20.00",
-                        NorthernIreland = "£10.00",
-                        Total = "£100.00",
-                    },
-            };
-            var csvContent = new StringBuilder();
-
-            // Assert
-            exporter.SchemeSetupCost(otherCost, csvContent);
-            var result = csvContent.ToString();
-            Assert.IsTrue(result.Contains("£40"));
-            Assert.IsTrue(result.Contains("£100"));
-        }
-
-        [TestMethod]
-        public void CanCalMaterialityCost()
-        {
-            // Arrange
-            var otherCost = new CalcResultParameterOtherCost
-            {
-                Name = "Parameters - Other",
-                Materiality =
-                    [
-                        new CalcResultMateriality
-                        {
-                            Amount = "Amount £s",
-                            Percentage = "%",
-                            SevenMateriality = "7 Materiality",
-                        },
-                        new CalcResultMateriality
-                        {
-                            Amount = "10",
-                            Percentage = "1%",
-                            SevenMateriality = "Increase",
-                        },
-                    ],
-            };
-            var csvContent = new StringBuilder();
-
-            // Assert
-            exporter.Materiality(otherCost, csvContent);
-            var result = csvContent.ToString();
-            Assert.IsTrue(result.Contains("Amount £s"));
-            Assert.IsTrue(result.Contains("%"));
-            Assert.IsTrue(result.Contains("7 Materiality"));
-            Assert.IsTrue(result.Contains("Increase"));
-            Assert.IsTrue(result.Contains("1%"));
-        }
-
-        [TestMethod]
-        public void CanCallSaOpertingCosts()
-        {
-            // Arrange
-            var otherCost = new CalcResultParameterOtherCost
-            {
-                Name = "Parameters - Other",
-                SaOperatingCost =
-                    [
-                        new CalcResultParameterOtherCostDetail
-                        {
-                            Name = "3 SA Operating Costs",
-                            OrderId = 0,
-                            England = CommonConstants.England,
-                            Wales = CommonConstants.Wales,
-                            Scotland = CommonConstants.Scotland,
-                            NorthernIreland = CommonConstants.NorthernIreland,
-                            Total = CommonConstants.Total,
-                        },
-                         new CalcResultParameterOtherCostDetail
-                        {
-                            Name = string.Empty,
-                            OrderId = 1,
-                            England = "100",
-                            Wales = "50",
-                            Scotland = "80",
-                            NorthernIreland = "100",
-                            Total = "330",
-                        },
-                    ],
-            };
-            var csvContent = new StringBuilder();
-            exporter.SaOpertingCosts(otherCost, csvContent);
-            var result = csvContent.ToString();
-
-            // Assert
-            Assert.IsTrue(result.Contains("England"));
-            Assert.IsTrue(result.Contains("Wales"));
-            Assert.IsTrue(result.Contains("Scotland"));
-            Assert.IsTrue(result.Contains("Northern Ireland"));
-            Assert.IsTrue(result.Contains("Total"));
-            Assert.IsTrue(result.Contains("3 SA Operating Costs"));
-            Assert.IsTrue(result.Contains("330"));
+            CsvTestUtils.AssertCsv(expected, result);
         }
     }
 }

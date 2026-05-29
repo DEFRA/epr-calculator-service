@@ -15,20 +15,20 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonConverter(typeof(DecimalPrecision3Converter))]
         public decimal CalcResultLateReportingTonnageTotal { get; set; }
 
-        public static CalcResultLateReportingTonnageJson From(CalcResultLateReportingTonnage? calcResultLateReportingTonnage)
+        public static CalcResultLateReportingTonnageJson From(CalcResultLateReportingTonnage? calcResultLateReportingTonnage, IImmutableList<MaterialDetail> materials)
         {
             if (calcResultLateReportingTonnage is null) return new CalcResultLateReportingTonnageJson();
-            string Total = "total";
             return new CalcResultLateReportingTonnageJson
             {
                 Name = "Late Reporting Tonnage",
-                calcResultLateReportingTonnageDetails = calcResultLateReportingTonnage.CalcResultLateReportingTonnageDetails
-                .Where(n=>n.Name.Trim().ToLower() != Total)
-                .Select(t => new CalcResultLateReportingTonnageDetailsJson { MaterialName = t.Name, TotalLateReportingTonnage = t.TotalLateReportingTonnage }).ToList(),
-                
-                CalcResultLateReportingTonnageTotal = calcResultLateReportingTonnage.CalcResultLateReportingTonnageDetails
-                .Where(n => n.Name.Trim().ToLower() != Total)
-                .Sum(t => t.TotalLateReportingTonnage)
+                calcResultLateReportingTonnageDetails = calcResultLateReportingTonnage.ByMaterial
+                    .Select(kv => new CalcResultLateReportingTonnageDetailsJson
+                    {
+                        MaterialName = materials.First(m => m.Code == kv.Key).Name,
+                        TotalLateReportingTonnage = kv.Value.Total
+                    })
+                    .ToList(),
+                CalcResultLateReportingTonnageTotal = calcResultLateReportingTonnage.Total.Total
             };
         }
     }

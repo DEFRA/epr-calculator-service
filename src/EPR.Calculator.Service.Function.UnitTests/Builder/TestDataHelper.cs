@@ -30,141 +30,39 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             return new CalcResultParameterOtherCost
             {
-                Name = "Parameters - Other",
-                SaOperatingCost = new List<CalcResultParameterOtherCostDetail>
+                SaOperatingCost = new ByCountryCost
                 {
-                    new CalcResultParameterOtherCostDetail
-                    {
-                        Name = null,
-                        England = "England",
-                        Wales = "Wales",
-                        Scotland = "Scotland",
-                        NorthernIreland = "Northern Ireland",
-                        Total = "Total",
-                        EnglandValue = 0,
-                        WalesValue = 0,
-                        ScotlandValue = 0,
-                        NorthernIrelandValue = 0,
-                        TotalValue = 0,
-                        OrderId = 0,
-                    },
-                    new CalcResultParameterOtherCostDetail
-                    {
-                        Name = "3 SA Operating Costs",
-                        England = "£25,000.00",
-                        Wales = "£14,000.00",
-                        Scotland = "£17,000.00",
-                        NorthernIreland = "£9,000.00",
-                        Total = "£65,000.00",
-                        EnglandValue = 25000,
-                        WalesValue = 14000,
-                        ScotlandValue = 17000,
-                        NorthernIrelandValue = 9000,
-                        TotalValue = 65000,
-                        OrderId = 2,
-                    },
+                    England         = 25000,
+                    Wales           = 14000,
+                    Scotland        = 17000,
+                    NorthernIreland = 9000
                 },
-                Details = new List<CalcResultParameterOtherCostDetail>
+                LaDataPrepCharge = new ByCountryCost
                 {
-                    new CalcResultParameterOtherCostDetail
-                    {
-                        Name = "4 LA Data Prep Charge",
-                        England = "£16,000.00",
-                        Wales = "£7,000.00",
-                        Scotland = "£9,000.00",
-                        NorthernIreland = "£4,500.00",
-                        Total = "£36,500.00",
-                        EnglandValue = 16000,
-                        WalesValue = 7000,
-                        ScotlandValue = 9000,
-                        NorthernIrelandValue = 4500,
-                        TotalValue = 36500,
-                        OrderId = 1,
-                    },
-                    new CalcResultParameterOtherCostDetail
-                    {
-                        Name = "4 Country Apportionment %s",
-                        England = "43.83561644%",
-                        Wales = "19.17808219%",
-                        Scotland = "24.65753425%",
-                        NorthernIreland = "12.32876712%",
-                        Total = "100.00000000%",
-                        EnglandValue = 43.83561643835616m,
-                        WalesValue = 19.17808219178082m,
-                        ScotlandValue = 24.65753424657534m,
-                        NorthernIrelandValue = 12.32876712328767m,
-                        TotalValue = 100,
-                        OrderId = 2,
-                    },
+                    England         = 16000,
+                    Wales           = 7000,
+                    Scotland        = 9000,
+                    NorthernIreland = 4500
                 },
-                SchemeSetupCost =
+                CountryApportionment = new ByCountryApportionment
                 {
-                    Name = "5 Scheme set up cost Yearly Cost",
-                    England = "£17,500.00",
-                    Wales = "£23,400.00",
-                    Scotland = "£12,400.00",
-                    NorthernIreland = "£9,450.00",
-                    Total = "£62,750.00",
-                    EnglandValue = 17500,
-                    WalesValue = 23400,
-                    ScotlandValue = 12400,
-                    NorthernIrelandValue = 9450,
-                    TotalValue = 62750,
-                    OrderId = 1,
+                    England         = 43.83561643835616m,
+                    Wales           = 19.17808219178082m,
+                    Scotland        = 24.65753424657534m,
+                    NorthernIreland = 12.32876712328767m
                 },
-                BadDebtProvision = new KeyValuePair<string, string>("6 Bad Debt Provision", "6.00%"),
-                Materiality = new List<CalcResultMateriality>
+                SchemeSetupCost = new ByCountryCost
                 {
-                    new CalcResultMateriality
-                    {
-                        SevenMateriality = "7 Materiality",
-                        Amount = "Amount £s",
-                        Percentage = "%",
-                        AmountValue = 0,
-                        PercentageValue = 0,
-                    },
-                    new CalcResultMateriality
-                    {
-                        SevenMateriality = "Increase",
-                        Amount = "£5,000.00",
-                        Percentage = "2.00%",
-                        AmountValue = 5000,
-                        PercentageValue = 2,
-                    },
-                    new CalcResultMateriality
-                    {
-                        SevenMateriality = "Decrease",
-                        Amount = "-£1,000.00",
-                        Percentage = "-1.00%",
-                        AmountValue = -1000,
-                        PercentageValue = -1,
-                    },
-                    new CalcResultMateriality
-                    {
-                        SevenMateriality = "8 Tonnage Change",
-                        Amount = "Amount £s",
-                        Percentage = "%",
-                        AmountValue = 0,
-                        PercentageValue = 0,
-                    },
-                    new CalcResultMateriality
-                    {
-                        SevenMateriality = "Increase",
-                        Amount = "£50.00",
-                        Percentage = "2.00%",
-                        AmountValue = 50,
-                        PercentageValue = 2,
-                    },
-                    new CalcResultMateriality
-                    {
-                        SevenMateriality = "Decrease",
-                        Amount = "-£10.00",
-                        Percentage = "-0.50%",
-                        AmountValue = -10,
-                        PercentageValue = -0.5m,
-                    },
+                    England         = 17500,
+                    Wales           = 23400,
+                    Scotland        = 12400,
+                    NorthernIreland = 9450
                 },
                 BadDebtValue = 6,
+                MaterialityIncrease   = new Materiality { Amount =  5000, Percentage =    2m },
+                MaterialityDecrease   = new Materiality { Amount = -1000, Percentage =   -1m },
+                TonnageChangeIncrease = new Materiality { Amount =    50, Percentage =    2m },
+                TonnageChangeDecrease = new Materiality { Amount =   -10, Percentage = -0.5m }
             };
         }
 
@@ -177,159 +75,80 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             return new CalcResultLaDisposalCostData
             {
-                Name = "Disposal Cost Data",
-                CalcResultLaDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>
+                ByMaterial = new Dictionary<string, CalcResultLaDisposalCostDataDetail>
                 {
-                    new CalcResultLaDisposalCostDataDetail
-                    {
-                        Name = "Material",
-                        England = "England",
-                        Wales = "Wales",
-                        Scotland = "Scotland",
-                        NorthernIreland = "Northern Ireland",
-                        Total = "Total",
-                        ProducerReportedHouseholdPackagingWasteTonnage = "Producer Reported Household Packaging Tonnage",
-                        ReportedPublicBinTonnage = "Reported Public Bin Tonnage",
-                        LateReportingTonnage = "Late Reporting Tonnage",
-                        ProducerReportedTotalTonnage = "Producer Reported Household Tonnage + Late Reporting Tonnage",
-                        DisposalCostPricePerTonne = "Disposal Cost Price Per Tonne",
-                        OrderId = 1,
-                    },
-                    new CalcResultLaDisposalCostDataDetail
-                    {
-                        Name = "Aluminium",
-                        England = "£5,000.00",
-                        Wales = "£1,750.00",
-                        Scotland = "£2,000.00",
-                        NorthernIreland = "£1,250.00",
-                        Total = "£10,000.00",
-                        ProducerReportedHouseholdPackagingWasteTonnage = "6980.000",
-                        ReportedPublicBinTonnage = "2000.000",
-                        LateReportingTonnage = "8000.000",
-                        ProducerReportedTotalTonnage = "14980.000",
-                        DisposalCostPricePerTonne = "£0.6676",
-                        OrderId = 2,
-                    },
-                    new CalcResultLaDisposalCostDataDetail
-                    {
-                        Name = "Fibre composite",
-                        England = "£7,500.00",
-                        Wales = "£2,100.00",
-                        Scotland = "£3,400.00",
-                        NorthernIreland = "£1,750.00",
-                        Total = "£14,750.00",
-                        ProducerReportedHouseholdPackagingWasteTonnage = "11850.000",
-                        ReportedPublicBinTonnage = "2000.000",
-                        LateReportingTonnage = "7000.000",
-                        ProducerReportedTotalTonnage = "18850.000",
-                        DisposalCostPricePerTonne = "£0.7825",
-                        OrderId = 3,
-                    },
-                    new CalcResultLaDisposalCostDataDetail
-                    {
-                        Name = "Glass",
-                        England = "£45,000.00",
-                        Wales = "£0.00",
-                        Scotland = "£20,700.00",
-                        NorthernIreland = "£4,500.00",
-                        Total = "£70,200.00",
-                        ProducerReportedHouseholdPackagingWasteTonnage = "4900.000",
-                        ReportedPublicBinTonnage = "2000.000",
-                        LateReportingTonnage = "6000.000",
-                        ProducerReportedTotalTonnage = "10900.000",
-                        DisposalCostPricePerTonne = "£6.4404",
-                        OrderId = 4,
-                    },
-                    new CalcResultLaDisposalCostDataDetail
-                    {
-                        Name = "Paper or card",
-                        England = "£12,500.00",
-                        Wales = "£2,300.00",
-                        Scotland = "£4,500.00",
-                        NorthernIreland = "£3,400.00",
-                        Total = "£22,700.00",
-                        ProducerReportedHouseholdPackagingWasteTonnage = "4270.000",
-                        ReportedPublicBinTonnage = "2000.000",
-                        LateReportingTonnage = "5000.000",
-                        ProducerReportedTotalTonnage = "9270.000",
-                        DisposalCostPricePerTonne = "£2.4488",
-                        OrderId = 5,
-                    },
-                    new CalcResultLaDisposalCostDataDetail
-                    {
-                        Name = "Plastic",
-                        England = "£23,000.00",
-                        Wales = "£4,500.00",
-                        Scotland = "£6,700.00",
-                        NorthernIreland = "£2,100.00",
-                        Total = "£36,300.00",
-                        ProducerReportedHouseholdPackagingWasteTonnage = "12805.000",
-                        ReportedPublicBinTonnage = "2000.000",
-                        LateReportingTonnage = "4000.000",
-                        ProducerReportedTotalTonnage = "16805.000",
-                        DisposalCostPricePerTonne = "£2.1601",
-                        OrderId = 6,
-                    },
-                    new CalcResultLaDisposalCostDataDetail
-                    {
-                        Name = "Steel",
-                        England = "£13,400.00",
-                        Wales = "£0.00",
-                        Scotland = "£7,800.00",
-                        NorthernIreland = "£0.00",
-                        Total = "£21,200.00",
-                        ProducerReportedHouseholdPackagingWasteTonnage = "7700.000",
-                        ReportedPublicBinTonnage = "2000.000",
-                        LateReportingTonnage = "3000.000",
-                        ProducerReportedTotalTonnage = "10700.000",
-                        DisposalCostPricePerTonne = "£1.9813",
-                        OrderId = 7,
-                    },
-                    new CalcResultLaDisposalCostDataDetail
-                    {
-                        Name = "Wood",
-                        England = "£0.00",
-                        Wales = "£12,000.00",
-                        Scotland = "£0.00",
-                        NorthernIreland = "£5,600.00",
-                        Total = "£17,600.00",
-                        ProducerReportedHouseholdPackagingWasteTonnage = "6800.000",
-                        ReportedPublicBinTonnage = "2000.000",
-                        LateReportingTonnage = "2000.000",
-                        ProducerReportedTotalTonnage = "8800.000",
-                        DisposalCostPricePerTonne = "£2.0000",
-                        OrderId = 8,
-                    },
-                    new CalcResultLaDisposalCostDataDetail
-                    {
-                        Name = "Other materials",
-                        England = "£3,400.00",
-                        Wales = "£2,100.00",
-                        Scotland = "£4,200.00",
-                        NorthernIreland = "£700.00",
-                        Total = "£10,400.00",
-                        ProducerReportedHouseholdPackagingWasteTonnage = "7700.000",
-                        ReportedPublicBinTonnage = "2000.000",
-                        LateReportingTonnage = "1000.000",
-                        ProducerReportedTotalTonnage = "8700.000",
-                        DisposalCostPricePerTonne = "£1.1954",
-                        OrderId = 9,
-                    },
-                    new CalcResultLaDisposalCostDataDetail
-                    {
-                        Name = "Total",
-                        England = "£109,800.00",
-                        Wales = "£24,750.00",
-                        Scotland = "£49,300.00",
-                        NorthernIreland = "£19,300.00",
-                        Total = "£203,150.00",
-                        ProducerReportedHouseholdPackagingWasteTonnage = "63005.000",
-                        ReportedPublicBinTonnage = "2000.000",
-                        LateReportingTonnage = "36000.000",
-                        ProducerReportedTotalTonnage = "99005.000",
-                        DisposalCostPricePerTonne = null,
-                        OrderId = 10,
-                    },
+                    ["AL"] =
+                        new CalcResultLaDisposalCostDataDetail
+                        {
+                            Cost = new() { England = 5000, Wales = 1750, Scotland = 2000, NorthernIreland = 1250 },
+                            HouseholdPackagingWasteTonnage = 6980,
+                            PublicBinTonnage = 2000,
+                            HouseholdDrinkContainersTonnage = 0,
+                            LateReportingTonnage = 8000
+                        },
+                    ["FC"] =
+                        new CalcResultLaDisposalCostDataDetail
+                        {
+                            Cost = new() { England = 7500, Wales = 2100, Scotland = 3400, NorthernIreland = 1750 },
+                            HouseholdPackagingWasteTonnage = 11850,
+                            PublicBinTonnage = 2000,
+                            HouseholdDrinkContainersTonnage = 0,
+                            LateReportingTonnage = 7000
+                        },
+                    ["GL"] =
+                        new CalcResultLaDisposalCostDataDetail
+                        {
+                            Cost = new() { England = 45000, Wales = 0, Scotland = 20700, NorthernIreland = 4500 },
+                            HouseholdPackagingWasteTonnage = 4900,
+                            PublicBinTonnage = 2000,
+                            HouseholdDrinkContainersTonnage = 100,
+                            LateReportingTonnage = 6000
+                        },
+                    ["PC"] =
+                        new CalcResultLaDisposalCostDataDetail
+                        {
+                            Cost = new() { England = 12500, Wales = 2300, Scotland = 4500, NorthernIreland = 3400 },
+                            HouseholdPackagingWasteTonnage = 4270,
+                            PublicBinTonnage = 2000,
+                            HouseholdDrinkContainersTonnage = 0,
+                            LateReportingTonnage = 5000
+                        },
+                    ["PL"] =
+                        new CalcResultLaDisposalCostDataDetail
+                        {
+                            Cost = new() { England = 23000, Wales = 4500, Scotland = 6700, NorthernIreland = 2100 },
+                            HouseholdPackagingWasteTonnage = 12805,
+                            PublicBinTonnage = 2000,
+                            HouseholdDrinkContainersTonnage = 0,
+                            LateReportingTonnage = 4000
+                        },
+                    ["ST"] =
+                        new CalcResultLaDisposalCostDataDetail
+                        {
+                            Cost = new() { England = 13400, Wales = 0, Scotland = 7800, NorthernIreland = 0 },
+                            HouseholdPackagingWasteTonnage = 7700,
+                            PublicBinTonnage = 2000,
+                            HouseholdDrinkContainersTonnage = 0,
+                            LateReportingTonnage = 3000
+                        },
+                    ["WD"] =
+                        new CalcResultLaDisposalCostDataDetail
+                        {
+                            Cost = new() { England = 0, Wales = 12000, Scotland = 0, NorthernIreland = 5600 },
+                            HouseholdPackagingWasteTonnage = 6800,
+                            PublicBinTonnage = 2000,
+                            HouseholdDrinkContainersTonnage = 0,
+                            LateReportingTonnage = 2000
+                        },
+                    ["OT"] =
+                        new CalcResultLaDisposalCostDataDetail
+                        {
+                            Cost = new() { England = 3400, Wales = 2100, Scotland = 4200, NorthernIreland = 700 },
+                            HouseholdPackagingWasteTonnage = 7700,
+                            PublicBinTonnage = 2000,
+                            HouseholdDrinkContainersTonnage = 0,
+                            LateReportingTonnage = 1000
+                        }
                 }
             };
         }
@@ -338,175 +157,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             return new CalcResultLapcapData
             {
-                Name = "LAPCAP Data",
-                CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetail>
+                ByMaterial = new Dictionary<string, ByCountryCost>
                 {
-                    new CalcResultLapcapDataDetail
-                    {
-                        Name = "Material",
-                        EnglandDisposalCost = "England LA Disposal Cost",
-                        WalesDisposalCost = "Wales LA Disposal Cost",
-                        ScotlandDisposalCost = "Scotland LA Disposal Cost",
-                        NorthernIrelandDisposalCost = "Northern Ireland LA Disposal Cost",
-                        TotalDisposalCost = "1 LA Disposal Cost Total",
-                        EnglandCost = 0,
-                        WalesCost = 0,
-                        ScotlandCost = 0,
-                        NorthernIrelandCost = 0,
-                        TotalCost = 0,
-                        OrderId = 1,
-                    },
-                    new CalcResultLapcapDataDetail
-                    {
-                        Name = "Aluminium",
-                        EnglandDisposalCost = "£5,000.00",
-                        WalesDisposalCost = "£1,750.00",
-                        ScotlandDisposalCost = "£2,000.00",
-                        NorthernIrelandDisposalCost = "£1,250.00",
-                        TotalDisposalCost = "£10,000.00",
-                        EnglandCost = 5000,
-                        WalesCost = 1750,
-                        ScotlandCost = 2000,
-                        NorthernIrelandCost = 1250,
-                        TotalCost = 10000,
-                        OrderId = 2,
-                    },
-                    new CalcResultLapcapDataDetail
-                    {
-                        Name = "Fibre composite",
-                        EnglandDisposalCost = "£7,500.00",
-                        WalesDisposalCost = "£2,100.00",
-                        ScotlandDisposalCost = "£3,400.00",
-                        NorthernIrelandDisposalCost = "£1,750.00",
-                        TotalDisposalCost = "£14,750.00",
-                        EnglandCost = 7500,
-                        WalesCost = 2100,
-                        ScotlandCost = 3400,
-                        NorthernIrelandCost = 1750,
-                        TotalCost = 14750,
-                        OrderId = 3,
-                    },
-                    new CalcResultLapcapDataDetail
-                    {
-                        Name = "Glass",
-                        EnglandDisposalCost = "£45,000.00",
-                        WalesDisposalCost = "£0.00",
-                        ScotlandDisposalCost = "£20,700.00",
-                        NorthernIrelandDisposalCost = "£4,500.00",
-                        TotalDisposalCost = "£70,200.00",
-                        EnglandCost = 45000,
-                        WalesCost = 0,
-                        ScotlandCost = 20700,
-                        NorthernIrelandCost = 4500,
-                        TotalCost = 70200,
-                        OrderId = 4,
-                    },
-                    new CalcResultLapcapDataDetail
-                    {
-                        Name = "Paper or card",
-                        EnglandDisposalCost = "£12,500.00",
-                        WalesDisposalCost = "£2,300.00",
-                        ScotlandDisposalCost = "£4,500.00",
-                        NorthernIrelandDisposalCost = "£3,400.00",
-                        TotalDisposalCost = "£22,700.00",
-                        EnglandCost = 12500,
-                        WalesCost = 2300,
-                        ScotlandCost = 4500,
-                        NorthernIrelandCost = 3400,
-                        TotalCost = 22700,
-                        OrderId = 5,
-                    },
-                    new CalcResultLapcapDataDetail
-                    {
-                        Name = "Plastic",
-                        EnglandDisposalCost = "£23,000.00",
-                        WalesDisposalCost = "£4,500.00",
-                        ScotlandDisposalCost = "£6,700.00",
-                        NorthernIrelandDisposalCost = "£2,100.00",
-                        TotalDisposalCost = "£36,300.00",
-                        EnglandCost = 23000,
-                        WalesCost = 4500,
-                        ScotlandCost = 6700,
-                        NorthernIrelandCost = 2100,
-                        TotalCost = 36300,
-                        OrderId = 6,
-                    },
-                    new CalcResultLapcapDataDetail
-                    {
-                        Name = "Steel",
-                        EnglandDisposalCost = "£13,400.00",
-                        WalesDisposalCost = "£0.00",
-                        ScotlandDisposalCost = "£7,800.00",
-                        NorthernIrelandDisposalCost = "£0.00",
-                        TotalDisposalCost = "£21,200.00",
-                        EnglandCost = 13400,
-                        WalesCost = 0,
-                        ScotlandCost = 7800,
-                        NorthernIrelandCost = 0,
-                        TotalCost = 21200,
-                        OrderId = 7,
-                    },
-                    new CalcResultLapcapDataDetail
-                    {
-                        Name = "Wood",
-                        EnglandDisposalCost = "£0.00",
-                        WalesDisposalCost = "£12,000.00",
-                        ScotlandDisposalCost = "£0.00",
-                        NorthernIrelandDisposalCost = "£5,600.00",
-                        TotalDisposalCost = "£17,600.00",
-                        EnglandCost = 0,
-                        WalesCost = 12000,
-                        ScotlandCost = 0,
-                        NorthernIrelandCost = 5600,
-                        TotalCost = 17600,
-                        OrderId = 8,
-                    },
-                    new CalcResultLapcapDataDetail
-                    {
-                        Name = "Other materials",
-                        EnglandDisposalCost = "£3,400.00",
-                        WalesDisposalCost = "£2,100.00",
-                        ScotlandDisposalCost = "£4,200.00",
-                        NorthernIrelandDisposalCost = "£700.00",
-                        TotalDisposalCost = "£10,400.00",
-                        EnglandCost = 3400,
-                        WalesCost = 2100,
-                        ScotlandCost = 4200,
-                        NorthernIrelandCost = 700,
-                        TotalCost = 10400,
-                        OrderId = 9,
-                    },
-                    new CalcResultLapcapDataDetail
-                    {
-                        Name = "Total",
-                        EnglandDisposalCost = "£109,800.00",
-                        WalesDisposalCost = "£24,750.00",
-                        ScotlandDisposalCost = "£49,300.00",
-                        NorthernIrelandDisposalCost = "£19,300.00",
-                        TotalDisposalCost = "£203,150.00",
-                        EnglandCost = 109800,
-                        WalesCost = 24750,
-                        ScotlandCost = 49300,
-                        NorthernIrelandCost = 19300,
-                        TotalCost = 203150,
-                        OrderId = 10,
-                    },
-                    new CalcResultLapcapDataDetail
-                    {
-                        Name = "1 Country Apportionment %s",
-                        EnglandDisposalCost = "54.04873246%",
-                        WalesDisposalCost = "12.18311592%",
-                        ScotlandDisposalCost = "24.26778243%",
-                        NorthernIrelandDisposalCost = "9.50036919%",
-                        TotalDisposalCost = "100.00000000%",
-                        EnglandCost = 54.04873246369677m,
-                        WalesCost = 12.183115924193945m,
-                        ScotlandCost = 24.267782426778243m,
-                        NorthernIrelandCost = 9.500369185331037m,
-                        TotalCost = 100,
-                        OrderId = 11,
-                    },
-                },
+                    ["AL"] = new ByCountryCost { England =  5000, Wales =  1750, Scotland =  2000, NorthernIreland = 1250 },
+                    ["FC"] = new ByCountryCost { England =  7500, Wales =  2100, Scotland =  3400, NorthernIreland = 1750 },
+                    ["GL"] = new ByCountryCost { England = 45000, Wales =     0, Scotland = 20700, NorthernIreland = 4500 },
+                    ["PC"] = new ByCountryCost { England = 12500, Wales =  2300, Scotland =  4500, NorthernIreland = 3400 },
+                    ["PL"] = new ByCountryCost { England = 23000, Wales =  4500, Scotland =  6700, NorthernIreland = 2100 },
+                    ["ST"] = new ByCountryCost { England = 13400, Wales =     0, Scotland =  7800, NorthernIreland =    0 },
+                    ["WD"] = new ByCountryCost { England =     0, Wales = 12000, Scotland =     0, NorthernIreland = 5600 },
+                    ["OT"] = new ByCountryCost { England =  3400, Wales =  2100, Scotland =  4200, NorthernIreland =  700 }
+                }
             };
         }
 
@@ -514,75 +175,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             return new CalcResultOnePlusFourApportionment
             {
-                Name = "One Plus Four Apportionment",
-                CalcResultOnePlusFourApportionmentDetails = new List<CalcResultOnePlusFourApportionmentDetail>
-                {
-                    new CalcResultOnePlusFourApportionmentDetail
-                    {
-                        EnglandDisposalTotal = "80",
-                        NorthernIrelandDisposalTotal = "70",
-                        ScotlandDisposalTotal = "30",
-                        WalesDisposalTotal = "20",
-                        AllTotal = 0.1M,
-                        EnglandTotal = 0.10M,
-                        NorthernIrelandTotal = 0.15M,
-                        ScotlandTotal = 0.15M,
-                        WalesTotal = 020M,
-                        Name = "Test",
-                    },
-                    new CalcResultOnePlusFourApportionmentDetail
-                    {
-                        EnglandDisposalTotal = "80",
-                        NorthernIrelandDisposalTotal = "70",
-                        ScotlandDisposalTotal = "30",
-                        WalesDisposalTotal = "20",
-                        AllTotal = 0.1M,
-                        EnglandTotal = 0.10M,
-                        NorthernIrelandTotal = 0.15M,
-                        ScotlandTotal = 0.15M,
-                        WalesTotal = 020M,
-                        Name = "Test",
-                    },
-                    new CalcResultOnePlusFourApportionmentDetail
-                    {
-                        EnglandDisposalTotal = "80",
-                        NorthernIrelandDisposalTotal = "70",
-                        ScotlandDisposalTotal = "30",
-                        WalesDisposalTotal = "20",
-                        AllTotal = 0.1M,
-                        EnglandTotal = 0.10M,
-                        NorthernIrelandTotal = 0.15M,
-                        ScotlandTotal = 0.15M,
-                        WalesTotal = 020M,
-                        Name = "Test",
-                    },
-                    new CalcResultOnePlusFourApportionmentDetail
-                    {
-                        EnglandDisposalTotal = "80",
-                        NorthernIrelandDisposalTotal = "70",
-                        ScotlandDisposalTotal = "30",
-                        WalesDisposalTotal = "20",
-                        AllTotal = 0.1M,
-                        EnglandTotal = 14.53M,
-                        NorthernIrelandTotal = 0.15M,
-                        ScotlandTotal = 0.15M,
-                        WalesTotal = 020M,
-                        Name = "Test",
-                    },
-                    new CalcResultOnePlusFourApportionmentDetail
-                    {
-                        EnglandDisposalTotal = "80",
-                        NorthernIrelandDisposalTotal = "70",
-                        ScotlandDisposalTotal = "30",
-                        WalesDisposalTotal = "20",
-                        AllTotal = 0.1M,
-                        EnglandTotal = 14.53M,
-                        NorthernIrelandTotal = 0.15M,
-                        ScotlandTotal = 0.15M,
-                        WalesTotal = 020M,
-                        Name = OnePlus4ApportionmentColumnHeaders.OnePluseFourApportionment,
-                    },
-                },
+                LaDisposalCost   = new() { England = 30, Wales = 5, Scotland = 15, NorthernIreland = 35 },
+                LADataPrepCharge = new() { England = 10, Wales = 5, Scotland =  0, NorthernIreland =  0 }
             };
         }
 
@@ -590,30 +184,36 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             return new CalcResultCommsCost
             {
-                CalcResultCommsCostCommsCostByMaterial =
-                [
-                    new ()
+                OnePlusFourApportionment = new ByCountryApportionment
+                {
+                    England         = 50.23m,
+                    Wales           = 30.34m,
+                    Scotland        = 10.45m,
+                    NorthernIreland =  8.98m
+                },
+                ByMaterial = new ()
+                {
+                    ["AL"] = new ()
                     {
-                        CommsCostByMaterialPricePerTonne = "0.42",
-                        Name = "Material1",
+                        Cost = ByCountryCost.Empty with { England = 4.347m },
+                        TotalCost = 4.347m,
+                        HouseholdPackagingWasteTonnage = 2.34m,
+                        PublicBinTonnage = 4.56m,
+                        HouseholdDrinksContainersTonnage = 0m,
+                        LateReportingTonnage = 3.45m
                     },
-                    new ()
+                    ["GL"] = new ()
                     {
-                        CommsCostByMaterialPricePerTonne = "0.3",
-                        Name = "Material2",
-                    },
-                ],
-                CommsCostByCountry =
-                [
-                    new ()
-                    {
-                        Total = "Total",
-                    },
-                    new ()
-                    {
-                        TotalValue = 2530,
-                    },
-                ],
+                        Cost = ByCountryCost.Empty,
+                        TotalCost = 0m,
+                        HouseholdPackagingWasteTonnage = 3.45m,
+                        PublicBinTonnage = 5.67m,
+                        HouseholdDrinksContainersTonnage = 1.23m,
+                        LateReportingTonnage = 4.56m
+                    }
+                },
+                CommsCostUkWide    = new () { England = 1500, Wales = 200, Scotland = 500, NorthernIreland = 331 },
+                CommsCostByCountry = new () { England = 1400, Wales = 250, Scotland = 600, NorthernIreland = 280 }
             };
         }
 
@@ -621,82 +221,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         {
             return new CalcResultLateReportingTonnage
             {
-                Name = "Late Reporting Tonnage",
-                CalcResultLateReportingTonnageDetails = new[]
+                ByMaterial = new Dictionary<string, CalcResultLateReportingTonnageDetail>
                 {
-                    new CalcResultLateReportingTonnageDetail
-                        {
-                            Name = "Aluminium",
-                            RedLateReportingTonnage = 1000.00m,
-                            AmberLateReportingTonnage = 2000.00m,
-                            GreenLateReportingTonnage = 5000.00m,
-                            TotalLateReportingTonnage = 8000.00m,
-                        },
-                        new CalcResultLateReportingTonnageDetail
-                        {
-                            Name = "Fibre composite",
-                            RedLateReportingTonnage = 5.00m,
-                            AmberLateReportingTonnage = 0m,
-                            GreenLateReportingTonnage = 5.00m,
-                            TotalLateReportingTonnage = 10.00m,
-                        },
-                        new CalcResultLateReportingTonnageDetail
-                        {
-                            Name = "Glass",
-                            RedLateReportingTonnage = 10.00m,
-                            AmberLateReportingTonnage = 0m,
-                            GreenLateReportingTonnage = 0m,
-                            TotalLateReportingTonnage = 10.00m,
-                        },
-                        new CalcResultLateReportingTonnageDetail
-                        {
-                            Name = "Paper or card",
-                            RedLateReportingTonnage = 0m,
-                            AmberLateReportingTonnage = 0m,
-                            GreenLateReportingTonnage = 0m,
-                            TotalLateReportingTonnage = 0m,
-                        },
-                        new CalcResultLateReportingTonnageDetail
-                        {
-                            Name = "Plastic",
-                            RedLateReportingTonnage = 1000.00m,
-                            AmberLateReportingTonnage = 500.00m,
-                            GreenLateReportingTonnage = 500.00m,
-                            TotalLateReportingTonnage = 2000.00m,
-                        },
-                        new CalcResultLateReportingTonnageDetail
-                        {
-                            Name = "Steel",
-                            RedLateReportingTonnage = 0m,
-                            AmberLateReportingTonnage = 0m,
-                            GreenLateReportingTonnage = 0m,
-                            TotalLateReportingTonnage = 0m,
-                        },
-                        new CalcResultLateReportingTonnageDetail
-                        {
-                            Name = "Wood",
-                            RedLateReportingTonnage = 0m,
-                            AmberLateReportingTonnage = 0m,
-                            GreenLateReportingTonnage = 0m,
-                            TotalLateReportingTonnage = 0m,
-                        },
-                        new CalcResultLateReportingTonnageDetail
-                        {
-                            Name = "Other materials",
-                            RedLateReportingTonnage = 0m,
-                            AmberLateReportingTonnage = 0m,
-                            GreenLateReportingTonnage = 0m,
-                            TotalLateReportingTonnage = 0m,
-                        },
-                        new CalcResultLateReportingTonnageDetail
-                        {
-                            Name = "Total",
-                            RedLateReportingTonnage = 2015.00m,
-                            AmberLateReportingTonnage = 2500.00m,
-                            GreenLateReportingTonnage = 5505.00m,
-                            TotalLateReportingTonnage = 10020.00m,
-                        },
-                },
+                    ["AL"] = new() { Red = 1000.00m, Amber = 2000.00m, Green = 5000.00m, Total = 8000.00m },
+                    ["FC"] = new() { Red =    5.00m, Amber =       0m, Green =    5.00m, Total =   10.00m },
+                    ["GL"] = new() { Red =   10.00m, Amber =       0m, Green =    0.00m, Total =   10.00m },
+                    ["PC"] = new() { Red =    0.00m, Amber =       0m, Green =    0.00m, Total =    0.00m },
+                    ["PL"] = new() { Red = 1000.00m, Amber =  500.00m, Green =  500.00m, Total = 2000.00m },
+                    ["ST"] = new() { Red =    0.00m, Amber =    0.00m, Green =    0.00m, Total =    0.00m },
+                    ["WD"] = new() { Red =    0.00m, Amber =    0.00m, Green =    0.00m, Total =    0.00m },
+                    ["OT"] = new() { Red =    0.00m, Amber =    0.00m, Green =    0.00m, Total =    0.00m }
+                }
             };
         }
 
@@ -1170,13 +705,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                                 }
                             : new(),
                         NetReportedTonnage = applyModulation
-                            ?(total: 1860, red: 860, amber: 0, green: 1000)
+                            ?(total: 1860, red:  860, amber:    0, green: 1000)
                             :(total: 1860, red: null, amber: null, green: null),
                         PricePerTonne = applyModulation
-                            ? (total: 0.7825m, red: 1, amber: 2, green: 3)
+                            ? (total: 0.7825m, red:    1, amber:    2, green:    3)
                             : (total: 0.7825m, red: null, amber: null, green: null),
                         ProducerDisposalFee = applyModulation
-                            ? (total: 1455.45m, red: 4, amber: 5, green: 6)
+                            ? (total: 1455.45m, red:    4, amber:    5, green:    6)
                             : (total: 1455.45m, red: null, amber: null, green: null),
                         BadDebtProvision = 87.33m,
                         ProducerDisposalFeeWithBadDebtProvision = 1542.78m,
@@ -1207,13 +742,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                                 }
                             : new(),
                         NetReportedTonnage = applyModulation
-                            ?(total: 350, red: 300, amber: 50, green: 0)
+                            ?(total: 350, red:  300, amber:   50, green:    0)
                             :(total: 350, red: null, amber: null, green: null),
                         PricePerTonne = applyModulation
-                            ? (total: 6.4404m, red: 1, amber: 2, green: 3)
+                            ? (total: 6.4404m, red:    1, amber:    2, green:    3)
                             : (total: 6.4404m, red: null, amber: null, green: null),
                         ProducerDisposalFee = applyModulation
-                            ? (total: 2254.14m, red: 4, amber: 5, green: 6)
+                            ? (total: 2254.14m, red:    4, amber:    5, green:    6)
                             : (total: 2254.14m, red: null, amber: null, green: null),
                         BadDebtProvision = 135.25m,
                         ProducerDisposalFeeWithBadDebtProvision = 2389.39m,
@@ -1245,13 +780,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                                 }
                             : new(),
                         NetReportedTonnage = applyModulation
-                            ?(total: 17.800m, red: 0, amber: 0, green: 0)
+                            ?(total: 17.800m, red:    0, amber:    0, green:    0)
                             :(total: 17.800m, red: null, amber: null, green: null),
                         PricePerTonne = applyModulation
-                            ? (total: 2.4488m, red: 1, amber: 2, green: 3)
+                            ? (total: 2.4488m, red:    1, amber:    2, green:    3)
                             : (total: 2.4488m, red: null, amber: null, green: null),
                         ProducerDisposalFee = applyModulation
-                            ? (total: 43.59m, red: 4, amber: 5, green: 6)
+                            ? (total: 43.59m, red:    4, amber:    5, green:    6)
                             : (total: 43.59m, red: null, amber: null, green: null),
                         BadDebtProvision = 2.62m,
                         ProducerDisposalFeeWithBadDebtProvision = 46.20m,
@@ -1282,13 +817,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                                 }
                             : new(),
                         NetReportedTonnage = applyModulation
-                            ?(total: 4.400m, red: 4.400m, amber: 0, green: 0)
-                            :(total: 4.400m, red: null, amber: null, green: null),
+                            ?(total: 4.400m, red: 4.400m, amber:    0, green:    0)
+                            :(total: 4.400m, red:   null, amber: null, green: null),
                         PricePerTonne = applyModulation
-                            ? (total: 2.1601m, red: 1, amber: 2, green: 3)
+                            ? (total: 2.1601m, red:    1, amber:    2, green:    3)
                             : (total: 2.1601m, red: null, amber: null, green: null),
                         ProducerDisposalFee = applyModulation
-                            ? (total: 9.50m, red: 4, amber: 5, green: 6)
+                            ? (total: 9.50m, red:    4, amber:    5, green:    6)
                             : (total: 9.50m, red: null, amber: null, green: null),
                         BadDebtProvision = 0.57m,
                         ProducerDisposalFeeWithBadDebtProvision = 10.07m,
@@ -1319,13 +854,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                                 }
                             : new(),
                         NetReportedTonnage = applyModulation
-                            ?(total: 0, red: 0, amber: 0, green: 0)
+                            ?(total: 0, red:    0, amber:    0, green:    0)
                             :(total: 0, red: null, amber: null, green: null),
                         PricePerTonne = applyModulation
-                            ? (total: 1.9813m, red: 1, amber: 2, green: 3)
+                            ? (total: 1.9813m, red:    1, amber:    2, green:    3)
                             : (total: 1.9813m, red: null, amber: null, green: null),
                         ProducerDisposalFee = applyModulation
-                            ? (total: 0.00m, red: 4, amber: 5, green: 6)
+                            ? (total: 0.00m, red:    4, amber:    5, green:    6)
                             : (total: 0.00m, red: null, amber: null, green: null),
                         BadDebtProvision = 0.00m,
                         ProducerDisposalFeeWithBadDebtProvision = 0.00m,
@@ -1356,13 +891,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                                 }
                             : new(),
                         NetReportedTonnage = applyModulation
-                            ?(total: 405.000m, red: 300, amber: 100, green: 5)
+                            ?(total: 405.000m, red:  300, amber:  100, green:    5)
                             :(total: 405.000m, red: null, amber: null, green: null),
                         PricePerTonne = applyModulation
-                            ? (total: 2.0000m, red: 1, amber: 2, green: 3)
+                            ? (total: 2.0000m, red:    1, amber:    2, green:    3)
                             : (total: 2.0000m, red: null, amber: null, green: null),
                         ProducerDisposalFee = applyModulation
-                            ? (total: 810.00m, red: 4, amber: 5, green: 6)
+                            ? (total: 810.00m, red:    4, amber:    5, green:    6)
                             : (total: 810.00m, red: null, amber: null, green: null),
                         BadDebtProvision = 48.60m,
                         ProducerDisposalFeeWithBadDebtProvision = 858.60m,
@@ -1393,13 +928,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                                 }
                             : new(),
                         NetReportedTonnage = applyModulation
-                            ?(total: 44.500m, red: 0, amber: 44.500m, green: 0)
-                            :(total: 44.500m, red: null, amber: null, green: null),
+                            ?(total: 44.500m, red:    0, amber: 44.500m, green:    0)
+                            :(total: 44.500m, red: null, amber:    null, green: null),
                         PricePerTonne = applyModulation
-                            ? (total: 1.1954m, red: 1, amber: 2, green: 3)
+                            ? (total: 1.1954m, red:    1, amber:    2, green:    3)
                             : (total: 1.1954m, red: null, amber: null, green: null),
                         ProducerDisposalFee = applyModulation
-                            ? (total: 53.20m, red: 4, amber: 5, green: 6)
+                            ? (total: 53.20m, red:    4, amber:    5, green:    6)
                             : (total: 53.20m, red: null, amber: null, green: null),
                         BadDebtProvision = 3.19m,
                         ProducerDisposalFeeWithBadDebtProvision = 56.39m,
@@ -1778,55 +1313,49 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                 prodMats.AddRange(new[]{
                     new ProducerReportedMaterial
                     {
-                        Material = new Material { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
+                        MaterialId = 1,
                         PackagingTonnage = 500.00m,
                         PackagingType = "HH",
                         SubmissionPeriod = subPeriod,
-                        MaterialId = 1,
                         ProducerDetail = null,
                     },
                     new ProducerReportedMaterial
                     {
-                        Material = new Material { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
+                        MaterialId = 1,
                         PackagingTonnage = 10.00m,
                         PackagingType = "CW",
-                        MaterialId = 1,
                         SubmissionPeriod = subPeriod,
                         ProducerDetail = null,
                     },
                     new ProducerReportedMaterial
                     {
-                        Material = new Material { Id = 5, Code = "PL", Name = "Plastic", Description = "Plastic" },
+                        MaterialId = 5,
                         PackagingTonnage = 10.00m,
                         PackagingType = "PB",
-                        MaterialId = 5,
                         SubmissionPeriod = subPeriod,
                         ProducerDetail = null,
                     },
                     new ProducerReportedMaterial
                     {
-                        Material = new Material { Id = 3, Code = "GL", Name = "Glass", Description = "Glass" },
+                        MaterialId = 3,
                         PackagingTonnage = 20.00m,
                         PackagingType = "HH",
-                        MaterialId = 3,
                         SubmissionPeriod = subPeriod,
                         ProducerDetail = null,
                     },
                     new ProducerReportedMaterial
                     {
-                        Material = new Material { Id = 3, Code = "GL", Name = "Glass", Description = "Glass" },
+                        MaterialId = 3,
                         PackagingTonnage = 10.00m,
                         PackagingType = "HDC",
-                        MaterialId = 3,
                         SubmissionPeriod = subPeriod,
                         ProducerDetail = null,
                     },
                     new ProducerReportedMaterial
                     {
-                        Material = new Material { Id = 3, Code = "GL", Name = "Glass", Description = "Glass" },
+                        MaterialId = 3,
                         PackagingTonnage = 50.00m,
                         PackagingType = "CW",
-                        MaterialId = 3,
                         SubmissionPeriod = subPeriod,
                         ProducerDetail = null,
                     }
@@ -2515,8 +2044,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public static void SeedDatabaseForInitialRun(ApplicationDBContext context)
         {
             //calculator runs
-            var runs = new List<CalculatorRun> { new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=7, Name = "CalculatorRunTest1" },
-             new CalculatorRun { Id = 2, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest2" }};
+            var runs = new List<CalculatorRun> {
+                new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=7, Name = "CalculatorRunTest1" },
+                new CalculatorRun { Id = 2, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest2" }
+            };
             context.CalculatorRuns.AddRange(runs);
 
             context.CalculatorRunOrganisationDataMaster.AddRange(GetCalculatorRunOrganisationDataMaster());
@@ -2544,20 +2075,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
 
             var producerDetails = new List<ProducerDetail>
-            {  new ProducerDetail { Id =1 , CalculatorRunId = 1, ProducerName="Test1", ProducerId = 1, TradingName = "TN1"},
-             new ProducerDetail { Id =2 , CalculatorRunId = 1, ProducerName="Test2", ProducerId = 2, TradingName = "TN2"},
-              new ProducerDetail { Id =3 , CalculatorRunId = 2, ProducerName="Test1", ProducerId = 1, TradingName = "TN3"},
-               new ProducerDetail { Id =4 , CalculatorRunId = 1, ProducerName="Test3", ProducerId = 3, TradingName = "TN4"},
+            {
+                new ProducerDetail { Id =1 , CalculatorRunId = 1, ProducerName="Test1", ProducerId = 1, TradingName = "TN1"},
+                new ProducerDetail { Id =2 , CalculatorRunId = 1, ProducerName="Test2", ProducerId = 2, TradingName = "TN2"},
+                new ProducerDetail { Id =3 , CalculatorRunId = 2, ProducerName="Test1", ProducerId = 1, TradingName = "TN3"},
+                new ProducerDetail { Id =4 , CalculatorRunId = 1, ProducerName="Test3", ProducerId = 3, TradingName = "TN4"},
             };
 
             context.ProducerDetail.AddRange(producerDetails);
 
             var materials = new List<Material>
-        {
-            new Material { Id = 5, Name = "Plastic", Code = MaterialCodes.Plastic },
-            new Material { Id = 6, Name = "Steel", Code = MaterialCodes.Steel },
-            new Material { Id = 3, Name = "Glass", Code = MaterialCodes.Glass },
-        };
+            {
+                new Material { Id = 5, Name = "Plastic", Code = MaterialCodes.Plastic },
+                new Material { Id = 6, Name = "Steel", Code = MaterialCodes.Steel },
+                new Material { Id = 3, Name = "Glass", Code = MaterialCodes.Glass },
+            };
             context.Material.AddRange(materials);
 
             var producerReportedMaterials = new List<ProducerReportedMaterial>
@@ -2581,7 +2113,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
 
             var designatedRunInvoice = new List<ProducerDesignatedRunInvoiceInstruction>
-            { new ProducerDesignatedRunInvoiceInstruction
+            {
+                new ProducerDesignatedRunInvoiceInstruction
                 {
                     BillingInstructionId = "1_1",
                     CalculatorRunId = 1,
@@ -2610,7 +2143,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
 
             var billingInstructionList = new List<ProducerResultFileSuggestedBillingInstruction>
-            {  new ProducerResultFileSuggestedBillingInstruction
+            {
+                new ProducerResultFileSuggestedBillingInstruction
                 {
                     MaterialPercentageThresholdBreached = "1%",
                     MaterialPoundThresholdBreached = "1",
@@ -2620,8 +2154,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     CalculatorRunId = 1,
                     BillingInstructionAcceptReject = "Accepted"
                 },
-            new ProducerResultFileSuggestedBillingInstruction
-            {
+                new ProducerResultFileSuggestedBillingInstruction
+                {
                     MaterialPercentageThresholdBreached = "1%",
                     MaterialPoundThresholdBreached = "1",
                     ProducerId = 2,
@@ -2630,8 +2164,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     CalculatorRunId = 1,
                     BillingInstructionAcceptReject = "Accepted"
                 },
-             new ProducerResultFileSuggestedBillingInstruction
-             {
+                new ProducerResultFileSuggestedBillingInstruction
+                {
                     MaterialPercentageThresholdBreached = "1%",
                     MaterialPoundThresholdBreached = "1",
                     ProducerId = 3,
@@ -2664,9 +2198,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                       ProducerId =1,
                     Id=2
 
-                 },
-            new ProducerInvoicedMaterialNetTonnage
-            {
+                },
+                new ProducerInvoicedMaterialNetTonnage
+                {
                       CalculatorRunId =1,
                       MaterialId= 1,
                       InvoicedNetTonnage = 100,
@@ -2681,11 +2215,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                       ProducerId =2,
                     Id=4
 
-                 }};
+                }
+            };
 
             context.ProducerInvoicedMaterialNetTonnage.AddRange(materialInvoiceTonnage);
-
-
 
             context.SaveChanges();
         }
@@ -2693,51 +2226,52 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
         public static void SeedDatabaseForUnclassified(ApplicationDBContext context)
         {
             //calculator runs
-            var runs = new List<CalculatorRun> { new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest1" },
-             new CalculatorRun { Id = 2, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest2" }};
+            var runs = new List<CalculatorRun> {
+                new CalculatorRun { Id = 1, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest1" },
+                new CalculatorRun { Id = 2, RelativeYear = new RelativeYear(2025), CalculatorRunClassificationId=2, Name = "CalculatorRunTest2" }
+            };
             context.CalculatorRuns.AddRange(runs);
 
 
-
             var producerDetails = new List<ProducerDetail>
-            {  new ProducerDetail { Id =1 , CalculatorRunId = 1, ProducerName="Test1", ProducerId = 1, TradingName = "TN1"},
-             new ProducerDetail { Id =2 , CalculatorRunId = 1, ProducerName="Test2", ProducerId = 2, TradingName = "TN2"},
-              new ProducerDetail { Id =3 , CalculatorRunId = 2, ProducerName="Test1", ProducerId = 1, TradingName = "TN3"},
-               new ProducerDetail { Id =4 , CalculatorRunId = 1, ProducerName="Test3", ProducerId = 3, TradingName = "TN4"},
+            {
+                new ProducerDetail { Id =1 , CalculatorRunId = 1, ProducerName="Test1", ProducerId = 1, TradingName = "TN1"},
+                new ProducerDetail { Id =2 , CalculatorRunId = 1, ProducerName="Test2", ProducerId = 2, TradingName = "TN2"},
+                new ProducerDetail { Id =3 , CalculatorRunId = 2, ProducerName="Test1", ProducerId = 1, TradingName = "TN3"},
+                new ProducerDetail { Id =4 , CalculatorRunId = 1, ProducerName="Test3", ProducerId = 3, TradingName = "TN4"},
             };
 
             context.ProducerDetail.AddRange(producerDetails);
 
             var materials = new List<Material>
-        {
-            new Material { Id = 5, Name = "Plastic", Code = MaterialCodes.Plastic },
-            new Material { Id = 6, Name = "Steel", Code = MaterialCodes.Steel },
-            new Material { Id = 3, Name = "Glass", Code = MaterialCodes.Glass },
-        };
+            {
+                new Material { Id = 5, Name = "Plastic", Code = MaterialCodes.Plastic },
+                new Material { Id = 6, Name = "Steel", Code = MaterialCodes.Steel },
+                new Material { Id = 3, Name = "Glass", Code = MaterialCodes.Glass },
+            };
             context.Material.AddRange(materials);
 
             var producerReportedMaterials = new List<ProducerReportedMaterial>
-        {
-            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 1, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
-            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 1, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
-            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 2, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
-            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 2, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
-            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 3, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
-            new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 3, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
-            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 1, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
-            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 1, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
-            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 2, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
-            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 2, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
-            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 3, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
-            new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 3, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
-
-        };
+            {
+                new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 1, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
+                new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 1, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
+                new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 2, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
+                new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 2, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
+                new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 3, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
+                new ProducerReportedMaterial { ProducerDetailId = 1, MaterialId = 3, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
+                new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 1, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
+                new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 1, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
+                new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 2, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
+                new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 2, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100 },
+                new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 3, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
+                new ProducerReportedMaterial { ProducerDetailId = 2, MaterialId = 3, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
+            };
             context.ProducerReportedMaterial.AddRange(producerReportedMaterials);
 
 
-
             var designatedRunInvoice = new List<ProducerDesignatedRunInvoiceInstruction>
-            { new ProducerDesignatedRunInvoiceInstruction
+            {
+                new ProducerDesignatedRunInvoiceInstruction
                 {
                     BillingInstructionId = "1_1",
                     CalculatorRunId = 1,
@@ -2760,13 +2294,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
 
                 },
             };
-
-
             context.ProducerDesignatedRunInvoiceInstruction.AddRange(designatedRunInvoice);
 
 
             var billingInstructionList = new List<ProducerResultFileSuggestedBillingInstruction>
-            {  new ProducerResultFileSuggestedBillingInstruction
+            {
+                new ProducerResultFileSuggestedBillingInstruction
                 {
                     MaterialPercentageThresholdBreached = "1%",
                     MaterialPoundThresholdBreached = "1",
@@ -2776,8 +2309,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     CalculatorRunId = 1,
                     BillingInstructionAcceptReject = "Accepted"
                 },
-            new ProducerResultFileSuggestedBillingInstruction
-            {
+                new ProducerResultFileSuggestedBillingInstruction
+                {
                     MaterialPercentageThresholdBreached = "1%",
                     MaterialPoundThresholdBreached = "1",
                     ProducerId = 2,
@@ -2786,8 +2319,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     CalculatorRunId = 1,
                     BillingInstructionAcceptReject = "Accepted"
                 },
-             new ProducerResultFileSuggestedBillingInstruction
-             {
+                new ProducerResultFileSuggestedBillingInstruction
+                {
                     MaterialPercentageThresholdBreached = "1%",
                     MaterialPoundThresholdBreached = "1",
                     ProducerId = 3,
@@ -2797,54 +2330,46 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder
                     BillingInstructionAcceptReject = "Accepted"
                 }
             };
-
-
-
             context.ProducerResultFileSuggestedBillingInstruction.AddRange(billingInstructionList);
 
             var materialInvoiceTonnage = new List<ProducerInvoicedMaterialNetTonnage>
             {
-                 new ProducerInvoicedMaterialNetTonnage
-                 {
-                      CalculatorRunId =1,
-                      MaterialId= 1,
-                      InvoicedNetTonnage = 100,
-                      ProducerId =1, Id=1
-
-                 },
                 new ProducerInvoicedMaterialNetTonnage
                 {
-                      CalculatorRunId =1,
-                      MaterialId= 2,
-                      InvoicedNetTonnage = 100,
-                      ProducerId =1,
-                    Id=2
-
-                 },
-            new ProducerInvoicedMaterialNetTonnage
-            {
-                      CalculatorRunId =1,
-                      MaterialId= 1,
-                      InvoicedNetTonnage = 100,
-                      ProducerId =2, Id=3
-
-                 },
+                    Id = 1,
+                    CalculatorRunId = 1,
+                    MaterialId = 1,
+                    InvoicedNetTonnage = 100,
+                    ProducerId = 1
+                },
                 new ProducerInvoicedMaterialNetTonnage
                 {
-                      CalculatorRunId =1,
-                      MaterialId= 2,
-                      InvoicedNetTonnage = 100,
-                      ProducerId =2,
-                    Id=4
-
-                 }};
-
+                    Id = 2,
+                    CalculatorRunId = 1,
+                    MaterialId = 2,
+                    InvoicedNetTonnage = 100,
+                    ProducerId = 1
+                },
+                new ProducerInvoicedMaterialNetTonnage
+                {
+                    Id = 3,
+                    CalculatorRunId = 1,
+                    MaterialId = 1,
+                    InvoicedNetTonnage = 100,
+                    ProducerId = 2,
+                },
+                new ProducerInvoicedMaterialNetTonnage
+                {
+                    Id = 4,
+                    CalculatorRunId = 1,
+                    MaterialId = 2,
+                    InvoicedNetTonnage = 100,
+                    ProducerId = 2
+                }
+            };
             context.ProducerInvoicedMaterialNetTonnage.AddRange(materialInvoiceTonnage);
-
-
 
             context.SaveChanges();
         }
-
     }
 }

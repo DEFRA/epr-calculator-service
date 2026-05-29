@@ -1,7 +1,9 @@
 using System.Text.Json.Serialization;
+using EPR.Calculator.Service.Function.Utils;
+using EPR.Calculator.Service.Function.Builder.CommsCost;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
-{ 
+{
     public class CalcResultCommsCostOnePlusFourApportionmentUKWide
     {
         [JsonPropertyName("name")]
@@ -22,7 +24,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("totalCommsCostUKWide")]
         public required string TotalCommsCostUKWide { get; set; }
 
-        public static CalcResultCommsCostOnePlusFourApportionmentUKWide? From(CalcResultCommsCostOnePlusFourApportionment? record)
+        public static CalcResultCommsCostOnePlusFourApportionmentUKWide? From(ByCountryCost? record)
         {
             if (record == null)
             {
@@ -31,12 +33,12 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
             return new CalcResultCommsCostOnePlusFourApportionmentUKWide
             {
-                Name = record.Name,
-                EnglandCommsCostUKWide = record.England,
-                WalesCommsCostUKWide = record.Wales,
-                ScotlandCommsCostUKWide = record.Scotland,
-                NorthernIrelandCommsCostUKWide = record.NorthernIreland,
-                TotalCommsCostUKWide = record.Total,
+                Name                           = CalcResultCommsCostBuilder.TwoBCommsCostUkWide,
+                EnglandCommsCostUKWide         = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.England        , 2, ","),
+                WalesCommsCostUKWide           = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Wales          , 2, ","),
+                ScotlandCommsCostUKWide        = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Scotland       , 2, ","),
+                NorthernIrelandCommsCostUKWide = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.NorthernIreland, 2, ","),
+                TotalCommsCostUKWide           = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Total          , 2, ",")
              };
          }
     }

@@ -125,29 +125,29 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoBTotalBill
         {
             decimal commsCostHeaderWithoutBadDebtFor2bTitle = CalcResultSummaryUtil.GetCommsCostHeaderWithoutBadDebtFor2bTitle(calcResult);
             decimal percentageOfProducerReportedHHTonnagevsAllProducers = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducers(producer, hhTotalPackagingTonnage) / 100;
-            decimal regionApportionment = GetRegionApportionment(calcResult, region);
-            decimal badDebtProvision = Convert.ToDecimal(calcResult.CalcResultParameterOtherCost.BadDebtProvision.Value.Trim('%')) / 100;
+            decimal regionApportionment = GetRegionApportionment(calcResult, region) / 100;
+            decimal badDebtProvision = calcResult.CalcResultParameterOtherCost.BadDebtValue / 100;
             return commsCostHeaderWithoutBadDebtFor2bTitle * (1 + badDebtProvision) * percentageOfProducerReportedHHTonnagevsAllProducers * regionApportionment;
         }
 
         public static decimal GetRegionApportionment(CalcResult calcResult, string region)
         {
-            var apportionmentDetails = calcResult.CalcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails;
+            var apportionmentDetail = calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment;
 
             return region switch
             {
-                England => Convert.ToDecimal(apportionmentDetails.Select(x => x.EnglandDisposalTotal).ToList()[4].Trim('%')) / 100,
-                Wales => Convert.ToDecimal(apportionmentDetails.Select(x => x.WalesDisposalTotal).ToList()[4].Trim('%')) / 100,
-                Scotland => Convert.ToDecimal(apportionmentDetails.Select(x => x.ScotlandDisposalTotal).ToList()[4].Trim('%')) / 100,
-                NorthernIreland => Convert.ToDecimal(apportionmentDetails.Select(x => x.NorthernIrelandDisposalTotal).ToList()[4].Trim('%')) / 100,
-                _ => throw new ArgumentException("Invalid region specified")
+                England         => apportionmentDetail.England,
+                Wales           => apportionmentDetail.Wales,
+                Scotland        => apportionmentDetail.Scotland,
+                NorthernIreland => apportionmentDetail.NorthernIreland,
+                _               => throw new ArgumentException("Invalid region specified")
             };
         }
 
         public static decimal GetCommsBadDebtProvisionFor2b(CalcResult calcResult, ProducerDetail producer, IReadOnlyList<TotalPackagingTonnagePerRun> hhTotalPackagingTonnage)
         {
             decimal producerFeeWithoutBadDebtFor2b = GetCommsProducerFeeWithoutBadDebtFor2b(calcResult, producer, hhTotalPackagingTonnage);
-            decimal badDebtProvision = Convert.ToDecimal(calcResult.CalcResultParameterOtherCost.BadDebtProvision.Value.Trim('%')) / 100;
+            decimal badDebtProvision = calcResult.CalcResultParameterOtherCost.BadDebtValue / 100;
             return producerFeeWithoutBadDebtFor2b * badDebtProvision;
         }
 

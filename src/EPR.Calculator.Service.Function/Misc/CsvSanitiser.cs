@@ -2,6 +2,7 @@
 using System.Text.Json;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Misc
 {
@@ -81,7 +82,7 @@ namespace EPR.Calculator.Service.Function.Misc
 
             if (isCurrency)
             {
-                formattedValue = $"£{formattedValue}";
+                formattedValue = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(roundedValue, ((int?)roundTo) ?? 2);
             }
 
             if (isPercentage)

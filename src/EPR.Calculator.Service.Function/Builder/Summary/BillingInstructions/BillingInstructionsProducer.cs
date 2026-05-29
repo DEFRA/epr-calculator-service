@@ -35,6 +35,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
             decimal liabilityDifferenceRunningTotal = 0m;
             decimal SuggestedInvoiceAmountTotal = 0m;
 
+            // TODO reuse CalcResultParamterOtherCostBuilder output rather than going to db and working with raw
             var dpList = defaultParams as IList<DefaultParamResultsClass> ?? defaultParams.ToList();
 
             decimal? param_MATT_AI = dpList.FirstOrDefault(p => p.ParameterUniqueReference == CommonConstants.MaterialAmountIncrease)?.ParameterValue;

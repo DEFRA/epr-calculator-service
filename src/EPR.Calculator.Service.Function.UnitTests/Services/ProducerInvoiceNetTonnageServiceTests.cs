@@ -58,25 +58,19 @@ public class ProducerInvoiceNetTonnageServiceTests
             },
             CalcResultLapcapData = new CalcResultLapcapData
             {
-                Name = string.Empty,
-                CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetail>()
+                ByMaterial = []
             },
             CalcResultParameterOtherCost = new CalcResultParameterOtherCost
             {
-                BadDebtProvision = new KeyValuePair<string, string>(),
-                Name = string.Empty,
-                Details = new List<CalcResultParameterOtherCostDetail>(),
-                Materiality = new List<CalcResultMateriality>(),
-                SaOperatingCost = new List<CalcResultParameterOtherCostDetail>(),
-                SchemeSetupCost = new CalcResultParameterOtherCostDetail()
+                SchemeSetupCost = new ByCountryCost
+                {
+                    England = 0,
+                    Wales = 0,
+                    Scotland = 0,
+                    NorthernIreland = 0
+                }
             },
-            CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
-            {
-                Name = string.Empty,
-                CalcResultLateReportingTonnageDetails = new List<CalcResultLateReportingTonnageDetail>(),
-                MaterialHeading = string.Empty,
-                TonnageHeading = string.Empty
-            },
+            CalcResultLateReportingTonnageData = new() { ByMaterial = [] },
             CalcResultProjectedProducers = new CalcResultProjectedProducers()
         };
 

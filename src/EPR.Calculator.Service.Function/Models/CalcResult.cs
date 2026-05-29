@@ -8,52 +8,36 @@ namespace EPR.Calculator.Service.Function.Models
         public required bool ApplyModulation {get; set;}
         public required CalcResultDetail CalcResultDetail { get; set; }
 
-        public required CalcResultLapcapData CalcResultLapcapData { get; set; } = new()
-        {
-            Name = string.Empty,
-            CalcResultLapcapDataDetails = []
-        };
+        public required CalcResultLapcapData CalcResultLapcapData { get; set; } =
+            new() { ByMaterial = [] };
 
-        public CalcResultCommsCost CalcResultCommsCostReportDetail { get; set; } = new();
+        public CalcResultCommsCost CalcResultCommsCostReportDetail { get; set; } =
+            new() {
+                OnePlusFourApportionment = ByCountryApportionment.Empty,
+                ByMaterial               = [],
+                CommsCostUkWide          = ByCountryCost.Empty,
+                CommsCostByCountry       = ByCountryCost.Empty
+            };
 
         public required CalcResultLateReportingTonnage CalcResultLateReportingTonnageData { get; set; } =
-            new()
-            {
-                Name = string.Empty,
-                CalcResultLateReportingTonnageDetails = new List<CalcResultLateReportingTonnageDetail>(),
-                MaterialHeading = string.Empty,
-                TonnageHeading = string.Empty
-            };
+            new() { ByMaterial = [] };
 
-        public CalcResultParameterCommunicationCost CalcResultParameterCommunicationCost { get; set; }
-            = new()
-            {
-                Name = string.Empty
-            };
 
         public required CalcResultParameterOtherCost CalcResultParameterOtherCost { get; set; } =
             new()
             {
-                BadDebtProvision = new KeyValuePair<string, string>(),
-                Name = string.Empty,
-                Details = new List<CalcResultParameterOtherCostDetail>(),
-                Materiality = new List<CalcResultMateriality>(),
-                SaOperatingCost = new List<CalcResultParameterOtherCostDetail>(),
-                SchemeSetupCost = new CalcResultParameterOtherCostDetail()
+                SchemeSetupCost  = ByCountryCost.Empty
             };
 
         public CalcResultOnePlusFourApportionment CalcResultOnePlusFourApportionment { get; set; }
             = new()
             {
-                Name = string.Empty
+                LADataPrepCharge = ByCountryCost.Empty,
+                LaDisposalCost   = ByCountryCost.Empty
             };
 
         public CalcResultLaDisposalCostData CalcResultLaDisposalCostData { get; set; }
-            = new()
-            {
-                Name = string.Empty,
-                CalcResultLaDisposalCostDetails = []
-            };
+            = new() { ByMaterial = [] };
 
         public required CalcResultPartialObligations CalcResultPartialObligations { get; set; }
 

@@ -2,73 +2,57 @@ using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Models
 {
-    /// <summary>
-    /// Unit tests for the <see cref="CalcResultLateReportingTonnageDetail"/> class.
-    /// </summary>
     [TestClass]
     public class CalcResultLateReportingTonnageDetailTests
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CalcResultLateReportingTonnageDetailTests"/> class.
-        /// </summary>
         public CalcResultLateReportingTonnageDetailTests()
         {
             Fixture = new Fixture();
-            Name = Fixture.Create<string>();
-            TotalLateReportingTonnage = Fixture.Create<decimal>();
+            Total = Fixture.Create<decimal>();
+            Red   = Fixture.Create<decimal>();
+            Amber = Fixture.Create<decimal>();
+            Green = Fixture.Create<decimal>();
             TestClass = new CalcResultLateReportingTonnageDetail
             {
-                Name = Name,
-                RedLateReportingTonnage = RedLateReportingTonnage,
-                AmberLateReportingTonnage = AmberLateReportingTonnage,
-                GreenLateReportingTonnage = GreenLateReportingTonnage,
-                TotalLateReportingTonnage = TotalLateReportingTonnage,
+                Total = Total,
+                Red   = Red,
+                Amber = Amber,
+                Green = Green
             };
         }
 
         private CalcResultLateReportingTonnageDetail TestClass { get; init; }
-
         private IFixture Fixture { get; init; }
-
-        private string Name { get; init; }
-
-        private decimal RedLateReportingTonnage { get; init; }
-        private decimal AmberLateReportingTonnage { get; init; }
-        private decimal GreenLateReportingTonnage { get; init; }
-        private decimal TotalLateReportingTonnage { get; init; }
+        private decimal Total { get; init; }
+        private decimal Red { get; init; }
+        private decimal Amber { get; init; }
+        private decimal Green { get; init; }
 
         [TestMethod]
         public void CanInitialize()
         {
-            // Act
             var instance = new CalcResultLateReportingTonnageDetail
             {
-                Name = Name,
-                RedLateReportingTonnage = RedLateReportingTonnage,
-                AmberLateReportingTonnage = AmberLateReportingTonnage,
-                GreenLateReportingTonnage = GreenLateReportingTonnage,
-                TotalLateReportingTonnage = TotalLateReportingTonnage,
+                Total = Total,
+                Red   = Red,
+                Amber = Amber,
+                Green = Green
             };
-
-            // Assert
             Assert.IsNotNull(instance);
         }
 
         [TestMethod]
         public void ImplementsIEquatable_CalcResultLateReportingTonnageDetail()
         {
-            // Arrange
             var same = new CalcResultLateReportingTonnageDetail
             {
-                Name = Name,
-                RedLateReportingTonnage = RedLateReportingTonnage,
-                AmberLateReportingTonnage = AmberLateReportingTonnage,
-                GreenLateReportingTonnage = GreenLateReportingTonnage,
-                TotalLateReportingTonnage = TotalLateReportingTonnage,
+                Total = Total,
+                Red   = Red,
+                Amber = Amber,
+                Green = Green
             };
             var different = Fixture.Create<CalcResultLateReportingTonnageDetail>();
 
-            // Assert
             Assert.IsFalse(TestClass.Equals(default(object)));
             Assert.IsFalse(TestClass.Equals(new object()));
             Assert.IsTrue(TestClass.Equals((object)same));
@@ -84,11 +68,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models
         }
 
         [TestMethod]
-        public void NameIsInitializedCorrectly()
-            => Assert.AreEqual(Name, TestClass.Name);
-
-        [TestMethod]
         public void TotalLateReportingTonnageIsInitializedCorrectly()
-            => Assert.AreEqual(TotalLateReportingTonnage, TestClass.TotalLateReportingTonnage);
+            => Assert.AreEqual(Total, TestClass.Total);
     }
 }

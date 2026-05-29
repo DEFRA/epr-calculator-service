@@ -58,16 +58,13 @@ public class CalcResultBuilder(
             CalcResultDetail = await calcResultDetailBuilder.ConstructAsync(resultsRequestDto),
             CalcResultLapcapData = new CalcResultLapcapData
             {
-                CalcResultLapcapDataDetails = new List<CalcResultLapcapDataDetail>()
+                ByMaterial = []
             },
             CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
             {
-                CalcResultLateReportingTonnageDetails = new List<CalcResultLateReportingTonnageDetail>()
+                ByMaterial = []
             },
-            CalcResultParameterOtherCost = new CalcResultParameterOtherCost
-            {
-                Name = string.Empty
-            },
+            CalcResultParameterOtherCost = new CalcResultParameterOtherCost(),
             CalcResultPartialObligations = new CalcResultPartialObligations(),
             CalcResultProjectedProducers = new CalcResultProjectedProducers(),
             CalcResultScaledupProducers = new CalcResultScaledupProducers(),
@@ -82,7 +79,7 @@ public class CalcResultBuilder(
             nameof(lapcapData));
 
         result.CalcResultLateReportingTonnageData = await logger.LogDuration(() =>
-                lateReportingTonnage.ConstructAsync(resultsRequestDto),
+                lateReportingTonnage.ConstructAsync(materials, resultsRequestDto),
             nameof(lateReportingTonnage));
 
         result.CalcResultParameterOtherCost = await logger.LogDuration(() =>

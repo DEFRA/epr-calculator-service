@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using EPR.Calculator.API.Data.Enums;
+﻿using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 
@@ -47,8 +46,7 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
 
             decimal pricePerTonne(MaterialDetail material)
             {
-                var cost = laDisposalCostData.CalcResultLaDisposalCostDetails.First(ldc => ldc.Name == material.Name).DisposalCostPricePerTonne;
-                return decimal.Parse(cost!.TrimStart('£'), CultureInfo.InvariantCulture);
+                return laDisposalCostData.ByMaterial[material.Code].DisposalCostPricePerTonne ?? 0m;
             }
 
             var materialCosts =

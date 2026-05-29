@@ -27,7 +27,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
                 CalcResultLaDisposalCostData = TestDataHelper.GetCalcResultLaDisposalCostData(),
                 CalcResultLapcapData = TestDataHelper.GetCalcResultLapcapData(),
                 CalcResultOnePlusFourApportionment = TestDataHelper.GetCalcResultOnePlusFourApportionment(),
-                CalcResultParameterCommunicationCost = GetCalcResultParameterCommunicationCost(),
                 CalcResultSummary = TestDataHelper.GetCalcResultSummary(),
                 CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
                 CalcResultLateReportingTonnageData = this.GetCalcResultLateReportingTonnage(),
@@ -238,7 +237,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var result = CalcResultSummaryUtil.GetPricePerTonne(material, calcResult);
 
             // Assert
-            Assert.AreEqual((total: 0.6676m, red: null, amber: null, green: null), result);
+            Assert.AreEqual((total: 0.5889m, red: null, amber: null, green: null), result);
         }
 
         [TestMethod]
@@ -300,22 +299,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
         [TestMethod]
         public void GetCountryBadDebtProvision()
         {
-            Assert.AreEqual(57.2916564076m, CalcResultSummaryUtil.GetCountryBadDebtProvision(calcResult, Countries.England, 100m));
-            Assert.AreEqual(12.9141028752m, CalcResultSummaryUtil.GetCountryBadDebtProvision(calcResult, Countries.Wales  , 100m));
-
-        }
-
-        [TestMethod]
-        public void CanGetCountryApportionmentPercentage()
-        {
-            // Act
-            var result = CalcResultSummaryUtil.GetCountryApportionmentPercentage(calcResult);
-
-            // Assert
-            Assert.AreEqual(54.04873246369677m, result?.EnglandCost);
-            Assert.AreEqual(12.183115924193945m, result?.WalesCost);
-            Assert.AreEqual(24.267782426778243m, result?.ScotlandCost);
-            Assert.AreEqual(9.500369185331037m, result?.NorthernIrelandCost);
+            Assert.AreEqual(57.291656411518582328328821072m, CalcResultSummaryUtil.GetCountryBadDebtProvision(calcResult, Countries.England, 100m));
+            Assert.AreEqual(12.914102879645582082205267049m, CalcResultSummaryUtil.GetCountryBadDebtProvision(calcResult, Countries.Wales  , 100m));
         }
 
         [TestMethod]
@@ -325,7 +310,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var result = CalcResultSummaryUtil.GetCommsCostHeaderWithoutBadDebtFor2bTitle(calcResult);
 
             // Assert
-            Assert.AreEqual(2530, result);
+            Assert.AreEqual(2531, result);
         }
 
         [TestMethod]
@@ -337,7 +322,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var result = CalcResultSummaryUtil.GetCommsCostHeaderBadDebtProvisionFor2bTitle(calcResult, calcResult.CalcResultSummary);
 
             // Assert
-            Assert.AreEqual(151.80m, result);
+            Assert.AreEqual(151.86m, result);
         }
 
         [TestMethod]
@@ -350,7 +335,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var result = CalcResultSummaryUtil.GetCommsCostHeaderWithBadDebtFor2bTitle(calcResult.CalcResultSummary);
 
             // Assert
-            Assert.AreEqual(2681.80m, result);
+            Assert.AreEqual(2682.86m, result);
         }
 
         [TestMethod]
@@ -360,7 +345,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var result = CalcResultSummaryUtil.GetCountryOnePlusFourApportionment(calcResult, Countries.England);
 
             // Assert
-            Assert.AreEqual(14.53m, result);
+            Assert.AreEqual(40m, result);
         }
 
         [TestMethod]
@@ -370,7 +355,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var result = CalcResultSummaryUtil.GetCountryOnePlusFourApportionment(calcResult, Countries.Wales);
 
             // Assert
-            Assert.AreEqual(20, result);
+            Assert.AreEqual(10m, result);
         }
 
         [TestMethod]
@@ -380,7 +365,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var result = CalcResultSummaryUtil.GetCountryOnePlusFourApportionment(calcResult, Countries.Scotland);
 
             // Assert
-            Assert.AreEqual(0.15m, result);
+            Assert.AreEqual(15m, result);
         }
 
         [TestMethod]
@@ -390,7 +375,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
             var result = CalcResultSummaryUtil.GetCountryOnePlusFourApportionment(calcResult, Countries.NorthernIreland);
 
             // Assert
-            Assert.AreEqual(0.15m, result);
+            Assert.AreEqual(35m, result);
         }
 
         [TestMethod]
@@ -497,11 +482,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common
 
             // Assert
             Assert.AreEqual(60.00m, result);
-        }
-
-        private CalcResultParameterCommunicationCost GetCalcResultParameterCommunicationCost()
-        {
-            return Fixture.Create<CalcResultParameterCommunicationCost>();
         }
 
         private CalcResultLateReportingTonnage GetCalcResultLateReportingTonnage()

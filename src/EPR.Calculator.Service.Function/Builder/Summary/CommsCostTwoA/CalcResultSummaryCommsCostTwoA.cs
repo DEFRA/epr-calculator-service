@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using EPR.Calculator.API.Data.DataModels;
+﻿using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.Summary.Common;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
@@ -78,7 +77,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
         )
         {
             var producerTotalCostwithBadDebtProvision = GetProducerTotalCostwithBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
-            return producerTotalCostwithBadDebtProvision * (Convert.ToDecimal(calcResult.CalcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.Select(x => x.EnglandDisposalTotal).ToList()[4].Trim('%')) / 100);
+            return producerTotalCostwithBadDebtProvision * calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment.England / 100;
         }
 
         public static decimal GetWalesWithBadDebtProvisionForComms(
@@ -89,7 +88,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
         )
         {
             var producerTotalCostwithBadDebtProvision = GetProducerTotalCostwithBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
-            return producerTotalCostwithBadDebtProvision * (Convert.ToDecimal(calcResult.CalcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.Select(x => x.WalesDisposalTotal).ToList()[4].Trim('%')) / 100);
+            return producerTotalCostwithBadDebtProvision * calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment.Wales / 100;
         }
 
         public static decimal GetScotlandWithBadDebtProvisionForComms(
@@ -100,7 +99,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
         )
         {
             var producerTotalCostwithBadDebtProvision = GetProducerTotalCostwithBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
-            return producerTotalCostwithBadDebtProvision * (Convert.ToDecimal(calcResult.CalcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.Select(x => x.ScotlandDisposalTotal).ToList()[4].Trim('%')) / 100);
+            return producerTotalCostwithBadDebtProvision * calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment.Scotland / 100;
         }
 
         public static decimal GetNorthernIrelandWithBadDebtProvisionForComms(
@@ -111,21 +110,13 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
         )
         {
             var producerTotalCostwithBadDebtProvision = GetProducerTotalCostwithBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
-            return producerTotalCostwithBadDebtProvision * (Convert.ToDecimal(calcResult.CalcResultOnePlusFourApportionment.CalcResultOnePlusFourApportionmentDetails.Select(x => x.NorthernIrelandDisposalTotal).ToList()[4].Trim('%')) / 100);
+            return producerTotalCostwithBadDebtProvision * calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment.NorthernIreland / 100;
         }
 
         public static decimal GetPriceperTonneForComms(MaterialDetail material, CalcResult calcResult)
         {
-            var commsCostDataDetail = calcResult.CalcResultCommsCostReportDetail.CalcResultCommsCostCommsCostByMaterial.FirstOrDefault(la => la.Name == material.Name);
-
-            if (commsCostDataDetail == null)
-            {
-                return 0;
-            }
-
-            var isParseSuccessful = decimal.TryParse(commsCostDataDetail.CommsCostByMaterialPricePerTonne, NumberStyles.Currency, CultureInfo.CurrentCulture.NumberFormat, out decimal value);
-
-            return isParseSuccessful ? value : 0;
+            var commsCostDataDetail = calcResult.CalcResultCommsCostReportDetail.ByMaterial.GetValueOrDefault(material.Code);
+            return commsCostDataDetail?.PricePerTonne ?? 0m;
         }
 
         public static decimal GetProducerTotalCostwithBadDebtProvision(
@@ -135,7 +126,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
             CalcResult calcResult
         )
         {
-            var badDebtProvision = Convert.ToDecimal(calcResult.CalcResultParameterOtherCost.BadDebtProvision.Value.Trim('%'));
+            var badDebtProvision = calcResult.CalcResultParameterOtherCost.BadDebtValue;
             var producerTotalCostWithoutBadDebtProvision = GetProducerTotalCostWithoutBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
             return producerTotalCostWithoutBadDebtProvision * (1 + badDebtProvision / 100);
         }
@@ -178,7 +169,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoA
             CalcResult calcResult
         )
         {
-            var badDebtProvision = Convert.ToDecimal(calcResult.CalcResultParameterOtherCost.BadDebtProvision.Value.Trim('%'));
+            var badDebtProvision = calcResult.CalcResultParameterOtherCost.BadDebtValue;
             var producerTotalCostWithoutBadDebtProvision = GetProducerTotalCostWithoutBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
             return producerTotalCostWithoutBadDebtProvision * badDebtProvision / 100;
         }

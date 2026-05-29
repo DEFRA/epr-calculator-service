@@ -1,7 +1,9 @@
 using System.Text.Json.Serialization;
+using EPR.Calculator.Service.Function.Utils;
+using EPR.Calculator.Service.Function.Builder.CommsCost;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
-{   
+{
     public class CalcResultCommsCostOnePlusFourApportionmentCountryWide
     {
         [JsonPropertyName("name")]
@@ -22,7 +24,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("totalCommsCostByCountry")]
         public required string TotalCommsCostByCountry { get; set; }
 
-        public static CalcResultCommsCostOnePlusFourApportionmentCountryWide? From(CalcResultCommsCostOnePlusFourApportionment? record)
+        public static CalcResultCommsCostOnePlusFourApportionmentCountryWide? From(ByCountryCost? record)
         {
             if (record == null)
             {
@@ -31,12 +33,12 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
             return new CalcResultCommsCostOnePlusFourApportionmentCountryWide
             {
-                Name = record.Name,
-                EnglandCommsCostByCountry = record.England,
-                WalesCommsCostByCountry = record.Wales,
-                ScotlandCommsCostByCountry = record.Scotland,
-                NorthernIrelandCommsCostByCountry = record.NorthernIreland,
-                TotalCommsCostByCountry = record.Total,
+                Name                              = CalcResultCommsCostBuilder.TwoCCommsCostByCountry,
+                EnglandCommsCostByCountry         = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.England        , 2, ","),
+                WalesCommsCostByCountry           = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Wales          , 2, ","),
+                ScotlandCommsCostByCountry        = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Scotland       , 2, ","),
+                NorthernIrelandCommsCostByCountry = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.NorthernIreland, 2, ","),
+                TotalCommsCostByCountry           = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Total          , 2, ",")
             };
         }
     }

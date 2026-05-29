@@ -140,15 +140,14 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             MaterialDetail material,
             CalcResult calcResult)
         {
-            var laDisposalCostDataDetail = calcResult.CalcResultLaDisposalCostData.CalcResultLaDisposalCostDetails.FirstOrDefault(la => la.Name == material.Name);
+            var laDisposalCostDataDetail = calcResult.CalcResultLaDisposalCostData.ByMaterial.GetValueOrDefault(material.Code);
 
             if (laDisposalCostDataDetail == null)
             {
                 return (total: null, red: null, amber: null, green: null);
             }
 
-            var isParseSuccessful = decimal.TryParse(laDisposalCostDataDetail.DisposalCostPricePerTonne, NumberStyles.Currency, CultureInfo.GetCultureInfo("en-GB"), out decimal value);
-            var total = isParseSuccessful ? value : 0;
+            var total = laDisposalCostDataDetail.DisposalCostPricePerTonne ?? 0m;
 
             if (calcResult.CalcResultModulation is not null) {
                 return (
@@ -189,18 +188,14 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             CalcResult calcResult,
             decimal? producerDisposalFeeTotal)
         {
-            return decimal.TryParse(calcResult.CalcResultParameterOtherCost.BadDebtProvision.Value.Replace("%", string.Empty), out decimal value)
-                ? (producerDisposalFeeTotal ?? 0) * value / 100
-                : 0;
+            return (producerDisposalFeeTotal ?? 0) * calcResult.CalcResultParameterOtherCost.BadDebtValue / 100;
         }
 
         public static decimal GetProducerDisposalFeeWithBadDebtProvision(
             CalcResult calcResult,
             decimal? producerDisposalFeeTotal)
         {
-            return decimal.TryParse(calcResult.CalcResultParameterOtherCost.BadDebtProvision.Value.Replace("%", string.Empty), out decimal value)
-                ? (producerDisposalFeeTotal ?? 0) * (1 + (value / 100))
-                : 0;
+            return (producerDisposalFeeTotal ?? 0) * (1 + (calcResult.CalcResultParameterOtherCost.BadDebtValue / 100));
         }
 
         public static decimal GetCountryBadDebtProvision(
@@ -210,40 +205,18 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
         {
             var producerDisposalFeeWithBadDebtProvision = GetProducerDisposalFeeWithBadDebtProvision(calcResult, producerDisposalFeeTotal);
 
-            var countryApportionmentPercentage = GetCountryApportionmentPercentage(calcResult);
-            if (countryApportionmentPercentage == null)
+            var countryApportionment = calcResult.CalcResultLapcapData.CountryApportionment;
+
+            var disposalCostPercentage = country switch
             {
-                return 0;
-            }
+                Countries.England         => countryApportionment.England,
+                Countries.Wales           => countryApportionment.Wales,
+                Countries.Scotland        => countryApportionment.Scotland,
+                Countries.NorthernIreland => countryApportionment.NorthernIreland,
+                _                         => throw new ArgumentOutOfRangeException(nameof(country), country, null),
+            };
 
-            string? disposalCost;
-            switch (country)
-            {
-                case Countries.England:
-                    disposalCost = countryApportionmentPercentage.EnglandDisposalCost;
-                    break;
-                case Countries.Wales:
-                    disposalCost = countryApportionmentPercentage.WalesDisposalCost;
-                    break;
-                case Countries.Scotland:
-                    disposalCost = countryApportionmentPercentage.ScotlandDisposalCost;
-                    break;
-                case Countries.NorthernIreland:
-                    disposalCost = countryApportionmentPercentage.NorthernIrelandDisposalCost;
-                    break;
-                default:
-                    disposalCost = "0%";
-                    break;
-            }
-
-            return decimal.TryParse(disposalCost.Replace("%", string.Empty), out decimal value)
-                ? producerDisposalFeeWithBadDebtProvision * value / 100
-                : 0;
-        }
-
-        public static CalcResultLapcapDataDetail? GetCountryApportionmentPercentage(CalcResult calcResult)
-        {
-            return calcResult.CalcResultLapcapData.CalcResultLapcapDataDetails?.FirstOrDefault(la => la.Name == CalcResultSummaryHeaders.OneCountryApportionment);
+            return producerDisposalFeeWithBadDebtProvision * disposalCostPercentage / 100;
         }
 
         public static void SetHeaders(CalcResultSummary result, IReadOnlyList<MaterialDetail> materials, bool applyModulation)
@@ -577,7 +550,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         public static decimal GetCommsCostHeaderWithoutBadDebtFor2bTitle(CalcResult calcResult)
         {
-            return calcResult.CalcResultCommsCostReportDetail.CommsCostByCountry.ToList()[1].TotalValue;
+            return calcResult.CalcResultCommsCostReportDetail.CommsCostUkWide.Total;
         }
 
         public static decimal GetCommsCostHeaderBadDebtProvisionFor2bTitle(
@@ -585,7 +558,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             CalcResultSummary calcResultSummary)
         {
             var commsCost = calcResultSummary.CommsCostHeaderWithoutBadDebtFor2bTitle;
-            var badDebtProvision = Convert.ToDecimal(calcResult.CalcResultParameterOtherCost.BadDebtProvision.Value.Trim('%')) / 100;
+            var badDebtProvision = calcResult.CalcResultParameterOtherCost.BadDebtValue / 100;
             return commsCost * badDebtProvision;
         }
 
@@ -600,20 +573,17 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             CalcResult calcResult,
             Countries country)
         {
-            var onePlusFourApportionment = calcResult.CalcResultOnePlusFourApportionment
-                .CalcResultOnePlusFourApportionmentDetails
-                .Single(x => x.Name == CalcResultCommsCostBuilder.OnePlusFourApportionment);
-
+            var onePlusFourApportionment = calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment;
             switch (country)
             {
                 case Countries.England:
-                    return onePlusFourApportionment.EnglandTotal;
+                    return onePlusFourApportionment.England;
                 case Countries.Wales:
-                    return onePlusFourApportionment.WalesTotal;
+                    return onePlusFourApportionment.Wales;
                 case Countries.Scotland:
-                    return onePlusFourApportionment.ScotlandTotal;
+                    return onePlusFourApportionment.Scotland;
                 case Countries.NorthernIreland:
-                    return onePlusFourApportionment.NorthernIrelandTotal;
+                    return onePlusFourApportionment.NorthernIreland;
                 default:
                     return 0;
             }
@@ -623,8 +593,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             CalcResult calcResult,
             Countries country)
         {
-            var fourCountryApportionment = calcResult.CalcResultParameterOtherCost.Details
-                .SingleOrDefault(x => x.Name == CalcResultParameterOtherCostBuilder.FourCountryApportionmentPercentage);
+            var fourCountryApportionment = calcResult.CalcResultParameterOtherCost.CountryApportionment;
 
             if (fourCountryApportionment == null)
             {
@@ -634,13 +603,13 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             switch (country)
             {
                 case Countries.England:
-                    return fourCountryApportionment.EnglandValue;
+                    return fourCountryApportionment.England;
                 case Countries.Wales:
-                    return fourCountryApportionment.WalesValue;
+                    return fourCountryApportionment.Wales;
                 case Countries.Scotland:
-                    return fourCountryApportionment.ScotlandValue;
+                    return fourCountryApportionment.Scotland;
                 case Countries.NorthernIreland:
-                    return fourCountryApportionment.NorthernIrelandValue;
+                    return fourCountryApportionment.NorthernIreland;
                 default:
                     return 0;
             }

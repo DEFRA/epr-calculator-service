@@ -1,9 +1,7 @@
 ﻿using System.Text.Json;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using EPR.Calculator.Service.Function.Builder.Modulation;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
 using EPR.Calculator.Service.Function.Models;
-using System.Text.Json.Nodes;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
 {
@@ -20,16 +18,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                 MaterialModulation = new Dictionary<MaterialDetail, MaterialModulation>()
             });
 
-            var actualJson = JsonNode.Parse(JsonSerializer.Serialize(result));
+            var actualJson = JsonSerializer.Serialize(result);
 
-            var expectedJson = JsonNode.Parse("""
+            var expectedJson = """
             {
                 "redFactor": 1.25,
                 "greenDiscountFactor": 0.750000
             }
-            """);
+            """;
 
-            Assert.IsTrue(JsonNode.DeepEquals(expectedJson, actualJson));
+            JsonTestUtils.AssertJson(expectedJson, actualJson);
         }
     }
 }

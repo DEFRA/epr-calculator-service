@@ -1,17 +1,28 @@
-﻿namespace EPR.Calculator.Service.Function.Models
+﻿namespace EPR.Calculator.Service.Function.Models;
+
+public record CalcResultLateReportingTonnage
 {
-    public record CalcResultLateReportingTonnage
-    {
-        public string Name { get; init; } = string.Empty;
+    required public Dictionary<string, CalcResultLateReportingTonnageDetail> ByMaterial { get; init; }
 
-        public string MaterialHeading { get; init; } = string.Empty;
+    private CalcResultLateReportingTonnageDetail? total;
+    public CalcResultLateReportingTonnageDetail Total =>
+        total ??=
+            new CalcResultLateReportingTonnageDetail
+            {
+                 Total = ByMaterial.Values.Sum(v => v.Total),
+                 Red   = ByMaterial.Values.Sum(v => v.Red),
+                 Amber = ByMaterial.Values.Sum(v => v.Amber),
+                 Green = ByMaterial.Values.Sum(v => v.Green)
+            };
+}
 
-        public string TonnageHeading { get; init; } = string.Empty;
-        public string RedTonnageHeading { get; init; } = string.Empty;
-        public string AmberTonnageHeading { get; init; } = string.Empty;
-        public string GreenTonnageHeading { get; init; } = string.Empty;
+public record CalcResultLateReportingTonnageDetail
+{
+    required public decimal Total { get; init; }
 
-        required public IEnumerable<CalcResultLateReportingTonnageDetail> CalcResultLateReportingTonnageDetails { get; init; }
-            = Array.Empty<CalcResultLateReportingTonnageDetail>();
-    }
+    required public decimal Red { get; init; }
+
+    required public decimal Amber { get; init; }
+
+    required public decimal Green { get; init; }
 }

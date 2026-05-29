@@ -52,7 +52,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                 if (value == null)
                     return CommonConstants.Hyphen;
 
-                return CurrencyConverterUtils.ConvertToCurrency(value.ToString()!);
+                return CurrencyConverterUtils.ConvertToCurrency(value.Value);
             }
 
             var costs = fees.BillingInstructionSection;

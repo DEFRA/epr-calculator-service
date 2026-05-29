@@ -1,5 +1,10 @@
 using System.Text.Json.Serialization;
 using EPR.Calculator.Service.Function.Builder.Lapcap;
+using System.Globalization;
+using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Converter;
+using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {
@@ -17,23 +22,20 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("oneCountryApportionmentPercentages")]
         public CalcResultLapcapDataDetailApportionmentJson? OneCountryApportionmentPercentages { get; set; }
 
-        public static CalcResultLapcapDataJson From(CalcResultLapcapData data)
+        public static CalcResultLapcapDataJson From(
+            CalcResultLapcapData data,
+            IImmutableList<MaterialDetail> materials
+        )
         {
-            IEnumerable<string> SeperatedRecords = [CalcResultLapcapDataBuilder.Total, CalcResultLapcapDataBuilder.CountryApportionment, "Material"];
-
             return new CalcResultLapcapDataJson
             {
-                Name = data.Name,
-                CalcResultLapcapDataDetails =
-                    data.CalcResultLapcapDataDetails
-                    .Where(record => !SeperatedRecords.Contains(record.Name))
-                    .Select(details => CalcResultLapcapDataDetailJson.From(details)),
-                CalcResultLapcapDataTotal = CalcResultLapcapDataDetailTotalJson.From(
-                    data.CalcResultLapcapDataDetails.Single(record => record.Name == CalcResultLapcapDataBuilder.Total)
-                ),
-                OneCountryApportionmentPercentages = CalcResultLapcapDataDetailApportionmentJson.From(
-                    data.CalcResultLapcapDataDetails.Single(record => record.Name == CalcResultLapcapDataBuilder.CountryApportionment)
-                )
+                Name = "LAPCAP Data",
+                CalcResultLapcapDataDetails        = data.ByMaterial.Select(detail => {
+                    var material = materials.First(m => m.Code == detail.Key);
+                    return CalcResultLapcapDataDetailJson.From(material, detail.Value);
+                }),
+                CalcResultLapcapDataTotal          = CalcResultLapcapDataDetailTotalJson.From(data.Total),
+                OneCountryApportionmentPercentages = CalcResultLapcapDataDetailApportionmentJson.From(data.CountryApportionment)
             };
         }
     }
@@ -58,16 +60,16 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("oneLaDisposalCostTotal")]
         public required string OneLaDisposalCostTotal { get; set; }
 
-        public static CalcResultLapcapDataDetailJson From(CalcResultLapcapDataDetail record)
+        public static CalcResultLapcapDataDetailJson From(MaterialDetail materialDetail, ByCountryCost record)
         {
             return new CalcResultLapcapDataDetailJson
             {
-                MaterialName = record.Name,
-                EnglandLaDisposalCost = record.EnglandDisposalCost,
-                WalesLaDisposalCost = record.WalesDisposalCost,
-                ScotlandLaDisposalCost = record.ScotlandDisposalCost,
-                NorthernIrelandLaDisposalCost = record.NorthernIrelandDisposalCost,
-                OneLaDisposalCostTotal = record.TotalDisposalCost
+                MaterialName                  = materialDetail.Name,
+                EnglandLaDisposalCost         = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.England        , 2, ","),
+                WalesLaDisposalCost           = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Wales          , 2, ","),
+                ScotlandLaDisposalCost        = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Scotland       , 2, ","),
+                NorthernIrelandLaDisposalCost = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.NorthernIreland, 2, ","),
+                OneLaDisposalCostTotal        = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Total          , 2, ",")
             };
         }
     }
@@ -89,15 +91,15 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("totalLaDisposalCost")]
         public required string TotalLaDisposalCost { get; set; }
 
-        public static CalcResultLapcapDataDetailTotalJson From(CalcResultLapcapDataDetail record)
+        public static CalcResultLapcapDataDetailTotalJson From(ByCountryCost record)
         {
             return new CalcResultLapcapDataDetailTotalJson
             {
-                TotalEnglandLaDisposalCost = record.EnglandDisposalCost,
-                TotalWalesLaDisposalCost = record.WalesDisposalCost,
-                TotalScotlandLaDisposalCost = record.ScotlandDisposalCost,
-                TotalNorthernIrelandLaDisposalCost = record.NorthernIrelandDisposalCost,
-                TotalLaDisposalCost = record.TotalDisposalCost
+                TotalEnglandLaDisposalCost         = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.England        , 2, ","),
+                TotalWalesLaDisposalCost           = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Wales          , 2, ","),
+                TotalScotlandLaDisposalCost        = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Scotland       , 2, ","),
+                TotalNorthernIrelandLaDisposalCost = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.NorthernIreland, 2, ","),
+                TotalLaDisposalCost                = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Total          , 2, ",")
             };
         }
     }
@@ -119,15 +121,15 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("totalApportionment")]
         public required string TotalApportionment { get; set; }
 
-        public static CalcResultLapcapDataDetailApportionmentJson From(CalcResultLapcapDataDetail record)
+        public static CalcResultLapcapDataDetailApportionmentJson From(ByCountryApportionment record)
         {
             return new CalcResultLapcapDataDetailApportionmentJson
             {
-                EnglandApportionment = record.EnglandDisposalCost,
-                WalesApportionment = record.WalesDisposalCost,
-                ScotlandApportionment = record.ScotlandDisposalCost,
-                NorthernIrelandApportionment = record.NorthernIrelandDisposalCost,
-                TotalApportionment = record.TotalDisposalCost
+                EnglandApportionment         = $"{record.England        :0.00000000}%",
+                WalesApportionment           = $"{record.Wales          :0.00000000}%",
+                ScotlandApportionment        = $"{record.Scotland       :0.00000000}%",
+                NorthernIrelandApportionment = $"{record.NorthernIreland:0.00000000}%",
+                TotalApportionment           = $"{100                   :0.00000000}%"
             };
         }
     }

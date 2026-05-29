@@ -12,6 +12,7 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 {
@@ -24,33 +25,33 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
     {
         private readonly ICalcResultSummaryExporter calcResultSummaryExporter;
         private readonly ICalcResultDetailExporter resultDetailexporter;
-        private readonly IOnePlusFourApportionmentExporter onePlusFourApportionmentExporter;
-        private readonly ILapcaptDetailExporter lapcaptDetailExporter;
+        private readonly ICalcResultOnePlusFourApportionmentExporter onePlusFourApportionmentExporter;
+        private readonly ICalcResultLapcapDataExporter lapcapDataExporter;
         private readonly ICalcResultParameterOtherCostExporter parameterOtherCosts;
-        private readonly ILateReportingExporter lateReportingExporter;
+        private readonly ICalcResultLateReportingExporter lateReportingExporter;
         private readonly ICalcResultScaledupProducersExporter calcResultScaledupProducersExporter;
         private readonly ICalcResultPartialObligationsExporter calcResultPartialObligationsExporter;
         private readonly ICalcResultProjectedProducersExporter calcResultProjectedProducersExporter;
         private readonly ICalcResultLaDisposalCostExporter laDisposalCostExporter;
         private readonly ICalcResultModulationExporter modulationExporter;
-        private readonly ICommsCostExporter commsCostExporter;
+        private readonly ICalcResultCommsCostExporter commsCostExporter;
         private readonly ICalcResultCancelledProducersExporter calcResultCancelledProducersExporter;
         private readonly ICalcResultErrorReportExporter calcResultErrorReportExporter;
 
         // Suppress SonarQube warning for constructor parameter count
         [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
         public CalcResultsExporter(
-            ILateReportingExporter lateReporting,
+            ICalcResultLateReportingExporter lateReporting,
             ICalcResultDetailExporter resultDetail,
-            IOnePlusFourApportionmentExporter onePlusFourApportionment,
+            ICalcResultOnePlusFourApportionmentExporter onePlusFourApportionment,
             ICalcResultLaDisposalCostExporter laDisposalCost,
             ICalcResultModulationExporter modulationExporter,
             ICalcResultScaledupProducersExporter calcResultScaledupProducers,
             ICalcResultPartialObligationsExporter calcResultPartialObligations,
             ICalcResultProjectedProducersExporter calcResultProjectedProducers,
-            ILapcaptDetailExporter lapcaptDetail,
+            ICalcResultLapcapDataExporter lapcapDataExporter,
             ICalcResultParameterOtherCostExporter parameterOt,
-            ICommsCostExporter commsCost,
+            ICalcResultCommsCostExporter commsCost,
             ICalcResultSummaryExporter calcResultSummary,
             ICalcResultCancelledProducersExporter calcResultCancelledProducers,
             ICalcResultErrorReportExporter calcResultErrorReport
@@ -62,7 +63,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             calcResultScaledupProducersExporter = calcResultScaledupProducers;
             calcResultPartialObligationsExporter = calcResultPartialObligations;
             calcResultProjectedProducersExporter = calcResultProjectedProducers;
-            lapcaptDetailExporter = lapcaptDetail;
+            this.lapcapDataExporter = lapcapDataExporter;
             parameterOtherCosts = parameterOt;
             calcResultSummaryExporter = calcResultSummary;
             laDisposalCostExporter = laDisposalCost;
@@ -82,17 +83,17 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             var csvContent = new StringBuilder();
             resultDetailexporter.Export(calcResult.CalcResultDetail, csvContent);
 
-            lapcaptDetailExporter.Export(calcResult.CalcResultLapcapData, csvContent);
+            lapcapDataExporter.Export(calcResult.CalcResultLapcapData, materials, csvContent);
 
-            csvContent.Append(lateReportingExporter.Export(calcResult.CalcResultLateReportingTonnageData));
+            lateReportingExporter.Export(materials, calcResult.CalcResultLateReportingTonnageData, csvContent);
 
             parameterOtherCosts.Export(calcResult.CalcResultParameterOtherCost, csvContent);
 
             onePlusFourApportionmentExporter.Export(calcResult.CalcResultOnePlusFourApportionment, csvContent);
 
-            commsCostExporter.Export(calcResult.CalcResultCommsCostReportDetail, csvContent);
+            commsCostExporter.Export(calcResult.CalcResultCommsCostReportDetail, materials, csvContent);
 
-            laDisposalCostExporter.Export(calcResult.CalcResultLaDisposalCostData, csvContent);
+            laDisposalCostExporter.Export(calcResult.ApplyModulation, materials, calcResult.CalcResultLaDisposalCostData, csvContent);
 
             if (calcResult.Smcw is not null && calcResult.CalcResultModulation is not null) {
                 modulationExporter.Export(calcResult.CalcResultLaDisposalCostData, calcResult.Smcw, calcResult.CalcResultModulation, csvContent);
