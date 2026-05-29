@@ -1,5 +1,6 @@
 using System.Text;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 
@@ -19,41 +20,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         public void CanCallWriteColumnHeaders()
         {
             // Arrange
-            var resultSummary = new CalcResultSummary
+            var columnHeaders = new List<CalcResultSummaryHeader>
             {
-                ColumnHeaders = new List<CalcResultSummaryHeader>
-                {
-                    new CalcResultSummaryHeader
-                    {
-                        ColumnIndex = 0,
-                        Name = "Column 0",
-                    },
-                    new CalcResultSummaryHeader
-                    {
-                        ColumnIndex = 1,
-                        Name = "Column 2",
-                    },
-                    new CalcResultSummaryHeader
-                    {
-                        ColumnIndex = 5,
-                        Name = "Column 6",
-                    },
-                    new CalcResultSummaryHeader
-                    {
-                        ColumnIndex = 10,
-                        Name = "Column 11",
-                    },
-                    new CalcResultSummaryHeader
-                    {
-                        ColumnIndex = 20,
-                        Name = "Column 21",
-                    },
-                },
+                new CalcResultSummaryHeader { ColumnIndex =  0, Name = "Column 0" },
+                new CalcResultSummaryHeader { ColumnIndex =  1, Name = "Column 2" },
+                new CalcResultSummaryHeader { ColumnIndex =  5, Name = "Column 6" },
+                new CalcResultSummaryHeader { ColumnIndex = 10, Name = "Column 11" },
+                new CalcResultSummaryHeader { ColumnIndex = 20, Name = "Column 21" }
             };
             var csvContent = new StringBuilder();
 
             // Act
-            _testClass.WriteColumnHeaders(resultSummary, csvContent);
+            _testClass.WriteColumnHeaders(columnHeaders, csvContent);
 
             // Assert
             Assert.AreEqual("\"Column 0\",\"Column 2\",\"Column 6\",\"Column 11\",\"Column 21\",", csvContent.ToString());
@@ -64,31 +42,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         {
             var columnHeaders = new List<CalcResultSummaryHeader>
             {
-                new CalcResultSummaryHeader
-                {
-                    ColumnIndex = 1,
-                    Name = "Column 0",
-                },
-                new CalcResultSummaryHeader
-                {
-                    ColumnIndex = 2,
-                    Name = "Column 2",
-                },
-                new CalcResultSummaryHeader
-                {
-                    ColumnIndex = 6,
-                    Name = "Column 6",
-                },
-                new CalcResultSummaryHeader
-                {
-                    ColumnIndex = 11,
-                    Name = "Column 11",
-                },
-                new CalcResultSummaryHeader
-                {
-                    ColumnIndex = 21,
-                    Name = "Column 21",
-                },
+                new CalcResultSummaryHeader { ColumnIndex =  1, Name = "Column 0" },
+                new CalcResultSummaryHeader { ColumnIndex =  2, Name = "Column 2" },
+                new CalcResultSummaryHeader { ColumnIndex =  6, Name = "Column 6" },
+                new CalcResultSummaryHeader { ColumnIndex = 11, Name = "Column 11" },
+                new CalcResultSummaryHeader { ColumnIndex = 21, Name = "Column 21" }
             };
             var csvContent = new StringBuilder();
             CalcResultSummaryExporter.WriteSecondaryHeaders(csvContent, columnHeaders);
@@ -168,16 +126,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var runContext = TestDataHelper.CalculatorRun2025;
             var resultSummary = new CalcResultSummary
             {
-                ProducerDisposalFeesHeaders = [new CalcResultSummaryHeader { ColumnIndex = 1, Name = "Column 1"}],
-                MaterialBreakdownHeaders = [new CalcResultSummaryHeader { ColumnIndex = 1, Name = "Column 1"}],
-                ColumnHeaders = [new CalcResultSummaryHeader { ColumnIndex = 1, Name = "Column 1"}],
                 ProducerDisposalFees = TestDataHelper.GetProducerDisposalFees()
             };
+
+            var materials = TestDataHelper.GetMaterialDetails();
 
             var csvContent = new StringBuilder();
 
             // Act
-            _testClass.Export(runContext, resultSummary, csvContent);
+            _testClass.Export(runContext, resultSummary, materials, csvContent);
 
             // Assert
             Assert.IsNotNull(csvContent.ToString());
