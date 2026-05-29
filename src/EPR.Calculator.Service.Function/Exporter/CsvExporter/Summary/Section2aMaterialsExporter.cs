@@ -3,18 +3,52 @@ using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
+using static EPR.Calculator.Service.Function.Constants.MaterialCodes;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 
 public class Section2aMaterialsExporter : ICalcResultSummaryPartExporter
 {
-    public IEnumerable<CalcResultSummaryHeader> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
-        => CalcResultSummaryUtil.Section2aMaterials(materials);
+    public IEnumerable<string> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
+    {
+        return materials.SelectMany(material =>
+        {
+            return Section2aMaterialsHeaders(material);
+        });
+    }
+
+    private static IEnumerable<string> Section2aMaterialsHeaders(MaterialDetail material)
+    {
+        var headers = new List<string>();
+        headers.AddRange([
+            "Household Packaging Tonnage",
+            "Public Bin Tonnage"
+        ]);
+
+        if (material.Code == MaterialCodes.Glass)
+        {
+            headers.Add("Household Drinks Containers Tonnage - Glass");
+        }
+
+        headers.AddRange([
+            "Total Tonnage",
+            "Price per Tonne",
+            "Producer Total Cost w/o Bad Debt Provision",
+            "Bad Debt Provision",
+            "Producer Total Cost with Bad Debt Provision",
+            "England with Bad Debt Provision",
+            "Wales with Bad Debt Provision",
+            "Scotland with Bad Debt Provision",
+            "Northern Ireland with Bad Debt Provision"
+        ]);
+
+        return headers;
+    }
 
     public void AppendSectionHeader(StringBuilder csvContent, CalcResultSummary resultSummary, IReadOnlyList<MaterialDetail> materials, bool applyModulation)
     {
         int count = GetColumnHeaders(materials, applyModulation).Count();
-        csvContent.Append(CsvSanitiser.SanitiseData(CalcResultSummaryHeaders.CommsCostHeader));
+        csvContent.Append(CsvSanitiser.SanitiseData("2a Fees for Comms Costs - by Material with Bad Debt provision"));
         for (int i = 1; i < count; i++)
             csvContent.Append(',');
     }
@@ -23,7 +57,7 @@ public class Section2aMaterialsExporter : ICalcResultSummaryPartExporter
     {
         foreach (var material in materials)
         {
-            int count = CalcResultSummaryUtil.Section2aMaterials([material]).Count();
+            int count = Section2aMaterialsHeaders(material).Count();
             csvContent.Append(CsvSanitiser.SanitiseData($"{material.Name} Breakdown"));
             for (int i = 1; i < count; i++)
                 csvContent.Append(',');

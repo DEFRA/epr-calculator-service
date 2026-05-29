@@ -9,15 +9,26 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 
 public class LaDataPrepCostsExporter : ICalcResultSummaryPartExporter
 {
-    public IEnumerable<CalcResultSummaryHeader> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
-        => LaDataPrepCostsProducer.GetHeaders();
+    public IEnumerable<string> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
+    {
+        return [
+            "4 Total Producer Fee for LA Data Prep Costs In proportion to Percentage of Overall Producer Cost of (1+2a+2b+2c) w/o Bad Debt provision",
+            "Bad Debt Provision for 4",
+            "4 Total Producer Fee for LA Data Prep Costs In proportion to Percentage of Overall Producer Cost of (1+2a+2b+2c) with Bad Debt provision",
+            "England Total with Bad Debt provision",
+            "Wales Total with Bad Debt provision",
+            "Scotland Total with Bad Debt provision",
+            "Northern Ireland Total with Bad Debt provision"
+        ];
+    }
 
+    // TODO consolidate pattern with GetColumnHeaders - all return `[string]` or all append to csvContent
     public void AppendSectionHeader(StringBuilder csvContent, CalcResultSummary resultSummary, IReadOnlyList<MaterialDetail> materials, bool applyModulation)
     {
         int count = GetColumnHeaders(materials, applyModulation).Count();
-        csvContent.Append(CsvSanitiser.SanitiseData(LaDataPrepCostsHeaders.LaDataPrepCostsWithoutBadDebtProvisionTitle));
-        csvContent.Append(CsvSanitiser.SanitiseData(LaDataPrepCostsHeaders.BadDebtProvisionTitle));
-        csvContent.Append(CsvSanitiser.SanitiseData(LaDataPrepCostsHeaders.LaDataPrepCostsWithBadDebtProvisionTitle));
+        csvContent.Append(CsvSanitiser.SanitiseData("4 LA Data Prep Costs w/o Bad Debt provision"));
+        csvContent.Append(CsvSanitiser.SanitiseData("Bad Debt provision"));
+        csvContent.Append(CsvSanitiser.SanitiseData("4 LA Data Prep Costs with Bad Debt provision"));
         csvContent.Append(',', count - 3);
     }
 

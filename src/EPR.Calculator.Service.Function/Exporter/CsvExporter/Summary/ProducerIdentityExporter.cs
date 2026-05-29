@@ -7,20 +7,20 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 
 public class ProducerIdentityExporter : ICalcResultSummaryPartExporter
 {
-    public IEnumerable<CalcResultSummaryHeader> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
+    public IEnumerable<string> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
     {
         return
         [
-            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.ProducerId },
-            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.SubsidiaryId },
-            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.ProducerOrSubsidiaryName },
-            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.TradingName },
-            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.Level },
-            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.ScaledupTonnages },
-            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.PartialCalculation },
-            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.StatusCode },
-            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.JoinersDate },
-            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.LeaversDate },
+            "Producer ID",
+            "Subsidiary ID",
+            "Producer / Subsidiary Name",
+            "Trading Name",
+            "Level",
+            "Scaled-up tonnages?",
+            "Partial Calculation?",
+            "Registration Status Code",
+            "Joiners Date",
+            "Leavers Date"
         ];
     }
 

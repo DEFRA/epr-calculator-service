@@ -6,28 +6,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts
 {
     public static class LaDataPrepCostsProducer
     {
-        public static ImmutableList<CalcResultSummaryHeader> GetHeaders()
-        {
-            return [
-                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.TotalProducerFeeWithoutBadDebtProvision },
-                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.BadDebtProvision },
-                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.TotalProducerFeeWithBadDebtProvision },
-                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.EnglandTotalWithBadDebtProvision },
-                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.WalesTotalWithBadDebtProvision },
-                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.ScotlandTotalWithBadDebtProvision },
-                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.NorthernIrelandTotalWithBadDebtProvision }
-            ];
-        }
-
-        public static ImmutableList<CalcResultSummaryHeader> GetSummaryHeaders(int columnIndex)
-        {
-            return [
-                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.LaDataPrepCostsWithoutBadDebtProvisionTitle, ColumnIndex = columnIndex },
-                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.BadDebtProvisionTitle, ColumnIndex = columnIndex + 1 },
-                new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.LaDataPrepCostsWithBadDebtProvisionTitle, ColumnIndex = columnIndex + 2 }
-            ];
-        }
-
         public static void SetValues(CalcResult calcResult, CalcResultSummary result)
         {
             result.LaDataPrepCostsTitleSection4 = GetLaDataPrepCostsWithoutBadDebtProvision(calcResult);

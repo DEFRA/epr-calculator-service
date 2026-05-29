@@ -10,25 +10,133 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 
 public class Section1MaterialsExporter : ICalcResultSummaryPartExporter
 {
-    public IEnumerable<CalcResultSummaryHeader> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
-        => CalcResultSummaryUtil.Section1Materials(materials, applyModulation);
+    public IEnumerable<string> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
+    {
+        return materials.SelectMany(material =>
+        {
+            return Section1MaterialsHeaders(material, applyModulation);
+        });
+    }
+
+    private static IEnumerable<string> Section1MaterialsHeaders(MaterialDetail material, bool applyModulation)
+    {
+        var headers = new List<string>();
+        headers.Add("Previous Invoiced Tonnage");
+
+        headers.Add("Household Packaging Tonnage");
+        if (applyModulation)
+        {
+            headers.AddRange([
+                "Household Red Material Tonnage",
+                "Household Amber Material Tonnage",
+                "Household Green Material Tonnage",
+                "Household Red Medical Material Tonnage",
+                "Household Amber Medical Material Tonnage",
+                "Household Green Medical Material Tonnage"
+            ]);
+        }
+
+        headers.Add("Public Bin Tonnage");
+        if (applyModulation)
+        {
+            headers.AddRange([
+                "Public Bin Red Material Tonnage",
+                "Public Bin Amber Material Tonnage",
+                "Public Bin Green Material Tonnage",
+                "Public Bin Red Medical Material Tonnage",
+                "Public Bin Amber Medical Material Tonnage",
+                "Public Bin Green Medical Material Tonnage"
+            ]);
+        }
+
+        if (material.Code == MaterialCodes.Glass)
+        {
+            headers.Add("Household Drinks Containers Tonnage - Glass");
+            if (applyModulation)
+            {
+                headers.AddRange([
+                    "Household Drinks Containers Red Material Tonnage",
+                    "Household Drinks Containers Amber Material Tonnage",
+                    "Household Drinks Containers Green Material Tonnage",
+                    "Household Drinks Containers Red Medical Material Tonnage",
+                    "Household Drinks Containers Amber Medical Material Tonnage",
+                    "Household Drinks Containers Green Medical Material Tonnage"
+                ]);
+            }
+        }
+
+        if (applyModulation) {
+            headers.AddRange([
+                "Total Tonnage",
+                "Red Total Tonnage",
+                "Amber Total Tonnage",
+                "Green Total Tonnage",
+                "Red Medical Total Tonnage",
+                "Amber Medical Total Tonnage",
+                "Green Medical Total Tonnage",
+                "Red + Red Medical Total Tonnage",
+                "Amber + Amber Medical Total Tonnage",
+                "Green + Green Medical Total Tonnage",
+                "Self Managed Consumer Waste Tonnage",
+                "Actioned Self Managed Consumer Waste Tonnage",
+                "Red + Red Medical Actioned Self Managed Consumer Waste Tonnage",
+                "Amber + Amber Medical Actioned Self Managed Consumer Waste Tonnage",
+                "Green + Green Medical Actioned Self Managed Consumer Waste Tonnage",
+                "Net Tonnage",
+                "Red + Red Medical Net Tonnage",
+                "Amber + Amber Medical Net Tonnage",
+                "Green + Green Medical Net Tonnage",
+                "Residual SMCW"
+            ]);
+        } else {
+            headers.AddRange([
+                "Total Tonnage",
+                "Self Managed Consumer Waste Tonnage",
+                "Net Tonnage"
+            ]);
+        }
+
+        headers.Add("Tonnage Change");
+        if (applyModulation) {
+            headers.AddRange([
+                "Red + Red Medical Material Price per Tonne",
+                "Amber + Amber Medical Material Price per Tonne",
+                "Green + Green Medical Material Price per Tonne",
+                "Producer Red + Red Medical Material Disposal Cost",
+                "Producer Amber + Amber Medical Material Disposal Cost",
+                "Producer Green + Green Medical Material Disposal Cost"
+            ]);
+        } else {
+            headers.Add("Price per Tonne");
+        }
+
+        headers.AddRange([
+            "Producer Disposal Fee w/o Bad Debt Provision",
+            "Bad Debt Provision",
+            "Producer Disposal Fee with Bad Debt Provision",
+            "England with Bad Debt Provision",
+            "Wales with Bad Debt Provision",
+            "Scotland with Bad Debt Provision",
+            "Northern Ireland with Bad Debt Provision"
+        ]);
+
+        return headers;
+    }
 
     public void AppendSectionHeader(StringBuilder csvContent, CalcResultSummary resultSummary, IReadOnlyList<MaterialDetail> materials, bool applyModulation)
     {
         int count = GetColumnHeaders(materials, applyModulation).Count();
-        csvContent.Append(CsvSanitiser.SanitiseData(CalcResultSummaryHeaders.OneProducerDisposalFeesWithBadDebtProvision));
-        for (int i = 1; i < count; i++)
-            csvContent.Append(',');
+        csvContent.Append(CsvSanitiser.SanitiseData("1 Producer Disposal Fees with Bad Debt Provision"));
+        csvContent.Append(',', count - 1);
     }
 
     public void AppendGroupHeader(StringBuilder csvContent, CalcResultSummary resultSummary, IReadOnlyList<MaterialDetail> materials, bool applyModulation)
     {
         foreach (var material in materials)
         {
-            int count = CalcResultSummaryUtil.Section1Materials([material], applyModulation).Count();
+            int count = Section1MaterialsHeaders(material, applyModulation).Count();
             csvContent.Append(CsvSanitiser.SanitiseData($"{material.Name} Breakdown"));
-            for (int i = 1; i < count; i++)
-                csvContent.Append(',');
+            csvContent.Append(',', count - 1);
         }
     }
 

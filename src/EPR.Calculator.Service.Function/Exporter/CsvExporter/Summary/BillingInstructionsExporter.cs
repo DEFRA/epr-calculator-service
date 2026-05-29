@@ -10,13 +10,28 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 
 public class BillingInstructionsExporter : ICalcResultSummaryPartExporter
 {
-    public IEnumerable<CalcResultSummaryHeader> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
-        => BillingInstructionsProducer.GetHeaders();
+    public static readonly string Title = "Calculation of Suggested Billing Instructions and Invoice Amounts";
+
+    public IEnumerable<string> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
+    {
+        return [
+            "Current Year Invoiced Total To Date",
+            "Tonnage Change Since Last Invoice",
+            "Liability Difference (Calc vs Prev)",
+            "Material £ Threshold Breached",
+            "Tonnage £ Threshold Breached (if tonnage changed)",
+            "% Liability Difference (Calc vs Prev)",
+            "Material % Threshold Breached",
+            "Tonnage % Threshold Breached (if tonnage changed)",
+            "Suggested Billing Instruction",
+            "Suggested Invoice Amount"
+        ];
+    }
 
     public void AppendSectionHeader(StringBuilder csvContent, CalcResultSummary resultSummary, IReadOnlyList<MaterialDetail> materials, bool applyModulation)
     {
         int count = GetColumnHeaders(materials, applyModulation).Count();
-        csvContent.Append(CsvSanitiser.SanitiseData(BillingInstructionsHeader.Title));
+        csvContent.Append(CsvSanitiser.SanitiseData(Title));
         csvContent.Append(',', count - 1);
     }
 

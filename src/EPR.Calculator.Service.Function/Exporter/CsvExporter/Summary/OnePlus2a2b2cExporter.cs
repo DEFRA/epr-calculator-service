@@ -9,13 +9,18 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 
 public class OnePlus2a2b2cExporter : ICalcResultSummaryPartExporter
 {
-    public IEnumerable<CalcResultSummaryHeader> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
-        => OnePlus2A2B2CProducer.GetHeaders();
+    public IEnumerable<string> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
+    {
+        return [
+            "Producer Total (1+2a+2b+2c) with Bad Debt provision",
+            "Producer Percentage of Overall Producer Cost for (1+2a+2b+2c)"
+        ];
+    }
 
     public void AppendSectionHeader(StringBuilder csvContent, CalcResultSummary resultSummary, IReadOnlyList<MaterialDetail> materials, bool applyModulation)
     {
         int count = GetColumnHeaders(materials, applyModulation).Count();
-        csvContent.Append(CsvSanitiser.SanitiseData(OnePlus2A2B2CHeaders.TotalWithBadDebtProvision));
+        csvContent.Append(CsvSanitiser.SanitiseData("Total (1+2a+2b+2c) with Bad Debt provision"));
         csvContent.Append(',', count - 1);
     }
 

@@ -67,11 +67,13 @@ public class CalcResultSummaryExporter : ICalcResultSummaryExporter
 
     private static void AddSummaryDataHeader(CalcResultSummary resultSummary, IReadOnlyList<MaterialDetail> materials, bool applyModulation, StringBuilder csvContent)
     {
-        csvContent.AppendLine(CsvSanitiser.SanitiseData(CalcResultSummaryHeaders.CalculationResult))
+        csvContent.AppendLine(CsvSanitiser.SanitiseData("Calculation Result"))
             .AppendLine()
             .AppendLine();
 
-        csvContent.AppendLine(CsvSanitiser.SanitiseData(CalcResultSummaryHeaders.Notes));
+        csvContent.AppendLine(CsvSanitiser.SanitiseData("NOTE: Rows with 'Scaled-up tonnages?' = " +
+            "Yes include reported tonnages for a period that have been scaled-up to a full 6 month equivalent period. " +
+            "See 'Scaled-up Producers' table for details."));
 
         foreach (var exporter in PartExporters)
             exporter.AppendSectionHeader(csvContent, resultSummary, materials, applyModulation);
@@ -83,7 +85,7 @@ public class CalcResultSummaryExporter : ICalcResultSummaryExporter
 
         foreach (var exporter in PartExporters)
             foreach (var header in exporter.GetColumnHeaders(materials, applyModulation))
-                csvContent.Append(CsvSanitiser.SanitiseData(header.Name));
+                csvContent.Append(CsvSanitiser.SanitiseData(header));
         csvContent.AppendLine();
     }
 }

@@ -8,13 +8,23 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 
 public class Section2aCommsExporter : ICalcResultSummaryPartExporter
 {
-    public IEnumerable<CalcResultSummaryHeader> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
-        => CalcResultSummaryUtil.Section2aComms();
+    public IEnumerable<string> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
+    {
+        return [
+            "2a Total Producer Fee for Comms Costs - by Material w/o Bad Debt provision",
+            "Total Bad Debt Provision",
+            "2a Total Producer Fee for Comms Costs - by Material with Bad Debt provision",
+            "England Total with Bad Debt provision",
+            "Wales Total with Bad Debt provision",
+            "Scotland Total with Bad Debt provision",
+            "Northern Ireland Total with Bad Debt provision"
+        ];
+    }
 
     public void AppendGroupHeader(StringBuilder csvContent, CalcResultSummary resultSummary, IReadOnlyList<MaterialDetail> materials, bool applyModulation)
     {
         int count = GetColumnHeaders(materials, applyModulation).Count();
-        csvContent.Append(CsvSanitiser.SanitiseData(CalcResultSummaryHeaders.CommsCostSummaryHeader));
+        csvContent.Append(CsvSanitiser.SanitiseData("Summary of Fee for Comms Costs - by Material"));
         csvContent.Append(',', count - 1);
     }
 

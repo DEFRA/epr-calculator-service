@@ -9,15 +9,25 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 
 public class ThreeSaCostsExporter : ICalcResultSummaryPartExporter
 {
-    public IEnumerable<CalcResultSummaryHeader> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
-        => ThreeSaCostsProducer.GetHeaders();
+    public IEnumerable<string> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
+    {
+        return [
+            "3 Total Producer Fee for SA Operating Costs In proportion to Percentage of Overall Producer Cost of (1+2a+2b+2c) w/o Bad Debt provision",
+            "Bad Debt provision for 3",
+            "3 Total Producer Fee for SA Operating Costs In proportion to Percentage of Overall Producer Cost of (1+2a+2b+2c) with Bad Debt provision",
+            "England Total with Bad Debt provision",
+            "Wales Total with Bad Debt provision",
+            "Scotland Total with Bad Debt provision",
+            "Northern Ireland Total with Bad Debt provision"
+        ];
+    }
 
     public void AppendSectionHeader(StringBuilder csvContent, CalcResultSummary resultSummary, IReadOnlyList<MaterialDetail> materials, bool applyModulation)
     {
         int count = GetColumnHeaders(materials, applyModulation).Count();
-        csvContent.Append(CsvSanitiser.SanitiseData(ThreeSaCostHeader.SaOperatingCostsWithoutBadDebtProvisionTitleSection3));
-        csvContent.Append(CsvSanitiser.SanitiseData(ThreeSaCostHeader.BadDebtProvisionTitleSection3));
-        csvContent.Append(CsvSanitiser.SanitiseData(ThreeSaCostHeader.SaOperatingCostsWithBadDebtProvisionTitleSection3));
+        csvContent.Append(CsvSanitiser.SanitiseData("3 SA Operating Costs w/o Bad Debt provision"));
+        csvContent.Append(CsvSanitiser.SanitiseData("Bad Debt provision"));
+        csvContent.Append(CsvSanitiser.SanitiseData("3 SA Operating Costs with Bad Debt provision"));
         csvContent.Append(',', count - 3);
     }
 

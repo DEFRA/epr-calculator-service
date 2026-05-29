@@ -80,33 +80,6 @@ public class SaSetupCostsProducerTests
     };
 
     [TestMethod]
-    public void CanCallGetHeaders()
-    {
-        // Act
-        var result = SaSetupCostsProducer.GetHeaders().ToList();
-
-        var expectedResult = new List<CalcResultSummaryHeader>();
-        expectedResult.AddRange([
-            new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.ProducerOneOffFeeWithoutBadDebtProvision },
-            new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.BadDebtProvision },
-            new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.ProducerOneOffFeeWithBadDebtProvision },
-            new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.EnglandTotalWithBadDebtProvision },
-            new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.WalesTotalWithBadDebtProvision },
-            new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.ScotlandTotalWithBadDebtProvision },
-            new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.NorthernIrelandTotalWithBadDebtProvision }
-        ]);
-
-        // Assert
-        Assert.AreEqual(expectedResult[0].Name, result[0].Name);
-        Assert.AreEqual(expectedResult[1].Name, result[1].Name);
-        Assert.AreEqual(expectedResult[2].Name, result[2].Name);
-        Assert.AreEqual(expectedResult[3].Name, result[3].Name);
-        Assert.AreEqual(expectedResult[4].Name, result[4].Name);
-        Assert.AreEqual(expectedResult[5].Name, result[5].Name);
-        Assert.AreEqual(expectedResult[6].Name, result[6].Name);
-    }
-
-    [TestMethod]
     public void CanCallSaSetupCostsProducerFeeWithoutBadDebtProvision()
     {
         // Act

@@ -6,7 +6,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 
 public interface ICalcResultSummaryPartExporter
 {
-    IEnumerable<CalcResultSummaryHeader> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation);
+    IEnumerable<string> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation);
 
     void AppendSectionHeader(StringBuilder csvContent, CalcResultSummary resultSummary, IReadOnlyList<MaterialDetail> materials, bool applyModulation)
     {
