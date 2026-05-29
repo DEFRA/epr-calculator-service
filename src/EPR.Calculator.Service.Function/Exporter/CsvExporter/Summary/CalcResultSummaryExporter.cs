@@ -22,15 +22,11 @@ public interface ICalcResultSummaryExporter
 
 public class CalcResultSummaryExporter : ICalcResultSummaryExporter
 {
-    private readonly IProducerIdentityExporter _identityExporter;
-    private readonly IProducerSummaryExporter _summaryExporter;
+    private readonly IReadOnlyList<ICalcResultSummaryPartExporter> partExporters;
 
-    public CalcResultSummaryExporter(
-        IProducerIdentityExporter identityExporter,
-        IProducerSummaryExporter summaryExporter)
+    public CalcResultSummaryExporter(IEnumerable<ICalcResultSummaryPartExporter> partExporters)
     {
-        _identityExporter = identityExporter;
-        _summaryExporter = summaryExporter;
+        this.partExporters = partExporters.ToList();
     }
 
     public void Export(
@@ -53,8 +49,10 @@ public class CalcResultSummaryExporter : ICalcResultSummaryExporter
 
     public void AddNewRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
     {
-        _identityExporter.AppendRow(csvContent, producer, applyModulation);
-        _summaryExporter.AppendRow(csvContent, producer, applyModulation);
+        foreach (var exporter in partExporters)
+        {
+            exporter.AppendRow(csvContent, producer, applyModulation);
+        }
         csvContent.AppendLine();
     }
 
@@ -82,12 +80,17 @@ public class CalcResultSummaryExporter : ICalcResultSummaryExporter
 
     private void AddSummaryDataHeader(CalcResultSummary resultSummary, IReadOnlyList<MaterialDetail> materials, bool applyModulation, StringBuilder csvContent)
     {
-        var identityColumnHeaders = _identityExporter.GetColumnHeaders(materials, applyModulation).ToList();
-        var summaryColumnHeaders = _summaryExporter.GetColumnHeaders(materials, applyModulation).ToList();
-        var columnHeaders = identityColumnHeaders.Concat(summaryColumnHeaders).ToList();
+        var partColumnHeaders = partExporters
+            .Select(e => e.GetColumnHeaders(materials, applyModulation).ToList())
+            .ToList();
+
+        // The first part exporter (ProducerIdentityExporter) contributes the identity columns;
+        // GetSecondaryHeaders needs that count to compute section start indices.
+        int identityColumnCount = partColumnHeaders[0].Count;
+        var columnHeaders = partColumnHeaders.SelectMany(h => h).ToList();
 
         var (producerDisposalFeesHeaders, materialBreakdownHeaders) =
-            CalcResultSummaryUtil.GetSecondaryHeaders(resultSummary, materials, applyModulation, identityColumnHeaders.Count);
+            CalcResultSummaryUtil.GetSecondaryHeaders(resultSummary, materials, applyModulation, identityColumnCount);
 
         csvContent.AppendLine(CsvSanitiser.SanitiseData(CalcResultSummaryHeaders.CalculationResult))
             .AppendLine()

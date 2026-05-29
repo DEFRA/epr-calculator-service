@@ -13,7 +13,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 
         public CalcResultSummaryExporterTests()
         {
-            _testClass = new CalcResultSummaryExporter(new ProducerIdentityExporter(), new ProducerSummaryExporter());
+            _testClass = new CalcResultSummaryExporter(
+            [
+                new ProducerIdentityExporter(),
+                new Section1MaterialsExporter(),
+                new ProducerSummaryExporter(),
+            ]);
         }
 
         [TestMethod]
