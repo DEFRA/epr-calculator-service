@@ -42,7 +42,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             AppendRow("Total", calcResultLateReportingData.Total, csvContent);
         }
 
-        private void AppendRow(string name, CalcResultLateReportingTonnageDetail lateReportingData, StringBuilder csvContent)
+        private static void AppendRow(string name, CalcResultLateReportingTonnageDetail lateReportingData, StringBuilder csvContent)
         {
             csvContent.Append(CsvSanitiser.SanitiseData(name));
             csvContent.Append(CsvSanitiser.SanitiseData(lateReportingData.Total, Enums.DecimalPlaces.Three, null));

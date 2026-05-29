@@ -26,7 +26,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             AppendByCountryApportionment("1 + 4 Apportionment %s", calcResult1Plus4Apportionment.OnePlusFourApportionment, csvContent);
         }
 
-        private void AppendHeaders(StringBuilder csvContent)
+        private static void AppendHeaders(StringBuilder csvContent)
         {
             csvContent.Append(CsvSanitiser.SanitiseData((string?)null));
             csvContent.Append(CsvSanitiser.SanitiseData("England"));
@@ -37,7 +37,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             csvContent.AppendLine();
         }
 
-        private void AppendByCountryCost(string name, ByCountryCost byCountryValue, StringBuilder csvContent)
+        private static void AppendByCountryCost(string name, ByCountryCost byCountryValue, StringBuilder csvContent)
         {
             csvContent.Append(CsvSanitiser.SanitiseData(name));
             csvContent.Append(CsvSanitiser.SanitiseData(byCountryValue.England        , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
@@ -48,7 +48,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             csvContent.AppendLine();
         }
 
-        private void AppendByCountryApportionment(string name, ByCountryApportionment byCountryApportionment, StringBuilder csvContent)
+        private static void AppendByCountryApportionment(string name, ByCountryApportionment byCountryApportionment, StringBuilder csvContent)
         {
             csvContent.Append(CsvSanitiser.SanitiseData(name));
             csvContent.Append(CsvSanitiser.SanitiseData(byCountryApportionment.England        , DecimalPlaces.Eight, DecimalFormats.F8, isPercentage: true));
