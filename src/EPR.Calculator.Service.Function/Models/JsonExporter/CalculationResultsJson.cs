@@ -62,9 +62,9 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
                 BadDebtProvision4 = CurrencyConverterUtils.ConvertToCurrency(data.LaDataPrepCostsBadDebtProvisionTitleSection4),
                 LaDataPrepCostsWithbadDebtProvision4 = CurrencyConverterUtils.ConvertToCurrency(data.LaDataPrepCostsWithBadDebtProvisionTitleSection4),
 
-                OneOffFeeSaSetuCostsWithbadDebtProvision5 = CurrencyConverterUtils.ConvertToCurrency(data.SaSetupCostsTitleSection5),
+                OneOffFeeSaSetupCostsWithBadDebtProvision5 = CurrencyConverterUtils.ConvertToCurrency(data.SaSetupCostsWithBadDebtProvisionTitleSection5),
                 BadDebtProvision5 = CurrencyConverterUtils.ConvertToCurrency(data.SaSetupCostsBadDebtProvisionTitleSection5),
-                OneOffFeeSaSetuCostsWithoutbadDebtProvision5 = CurrencyConverterUtils.ConvertToCurrency(data.SaSetupCostsWithBadDebtProvisionTitleSection5),
+                OneOffFeeSaSetupCostsWithoutBadDebtProvision5 = CurrencyConverterUtils.ConvertToCurrency(data.SaSetupCostsTitleSection5),
             };
         }
 

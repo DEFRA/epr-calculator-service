@@ -538,9 +538,9 @@
       "laDataPrepCostsWithoutBadDebtProvision4": "£0.00",
       "badDebtProvision4": "£0.00",
       "laDataPrepCostsWithbadDebtProvision4": "£0.00",
-      "oneOffFeeSaSetuCostsWithbadDebtProvision5": "£27204000.00",
+      "oneOffFeeSaSetupCostsWithBadDebtProvision5": "£28292160.00",
       "badDebtProvision5": "£1088160.00",
-      "oneOffFeeSaSetuCostsWithoutbadDebtProvision5": "£28292160.00"
+      "oneOffFeeSaSetupCostsWithoutBadDebtProvision5": "£27204000.00"
     },
     "producerCalculationResults": [
       {

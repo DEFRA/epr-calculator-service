@@ -84,12 +84,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                 roundTrippedData["laDataPrepCostsWithbadDebtProvision4"]);
 
             // 5
-            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.SaSetupCostsTitleSection5),
-                roundTrippedData["oneOffFeeSaSetuCostsWithbadDebtProvision5"]);
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.SaSetupCostsWithBadDebtProvisionTitleSection5),
+                roundTrippedData["oneOffFeeSaSetupCostsWithBadDebtProvision5"]);
             AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.SaSetupCostsBadDebtProvisionTitleSection5),
                 roundTrippedData["badDebtProvision5"]);
-            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.SaSetupCostsWithBadDebtProvisionTitleSection5),
-                roundTrippedData["oneOffFeeSaSetuCostsWithoutbadDebtProvision5"]);
+            AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.SaSetupCostsTitleSection5),
+                roundTrippedData["oneOffFeeSaSetupCostsWithoutBadDebtProvision5"]);
         }
 
         [TestMethod]
