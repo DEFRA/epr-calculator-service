@@ -20,7 +20,6 @@ public class ProducerSummaryExporter : IProducerSummaryExporter
     public IEnumerable<CalcResultSummaryHeader> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
     {
         var headers = new List<CalcResultSummaryHeader>();
-        headers.AddRange(CalcResultSummaryUtil.CommsCost2b());
         headers.AddRange(CalcResultSummaryUtil.CommsCost2c());
         headers.AddRange(OnePlus2A2B2CProducer.GetHeaders());
         headers.AddRange(ThreeSaCostsProducer.GetHeaders());
@@ -33,8 +32,6 @@ public class ProducerSummaryExporter : IProducerSummaryExporter
 
     public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
     {
-        AppendSectionContent(csvContent, producer.CommunicationCostsSectionTwoB);
-
         AppendTwoC(csvContent, producer);
 
         csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerTotalOnePlus2A2B2CWithBadDeptProvision, DecimalPlaces.Two, null, true));

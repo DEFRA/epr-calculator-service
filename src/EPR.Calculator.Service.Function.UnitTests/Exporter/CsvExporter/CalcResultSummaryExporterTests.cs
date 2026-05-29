@@ -23,6 +23,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 new Section1DisposalExporter(),
                 new Section2aComms2aExporter(),
                 new CommsCost2aPercentageExporter(),
+                new CommsCost2bExporter(),
                 new ProducerSummaryExporter(),
             ]);
         }
