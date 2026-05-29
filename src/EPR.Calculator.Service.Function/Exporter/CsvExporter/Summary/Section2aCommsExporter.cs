@@ -1,4 +1,5 @@
 using System.Text;
+using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
@@ -9,6 +10,13 @@ public class Section2aCommsExporter : ICalcResultSummaryPartExporter
 {
     public IEnumerable<CalcResultSummaryHeader> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
         => CalcResultSummaryUtil.Section2aComms();
+
+    public void AppendGroupHeader(StringBuilder csvContent, CalcResultSummary resultSummary, IReadOnlyList<MaterialDetail> materials, bool applyModulation)
+    {
+        int count = GetColumnHeaders(materials, applyModulation).Count();
+        csvContent.Append(CsvSanitiser.SanitiseData(CalcResultSummaryHeaders.CommsCostSummaryHeader));
+        csvContent.Append(',', count - 1);
+    }
 
     public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
     {

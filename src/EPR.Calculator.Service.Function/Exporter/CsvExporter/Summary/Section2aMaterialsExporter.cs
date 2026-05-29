@@ -11,6 +11,25 @@ public class Section2aMaterialsExporter : ICalcResultSummaryPartExporter
     public IEnumerable<CalcResultSummaryHeader> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
         => CalcResultSummaryUtil.Section2aMaterials(materials);
 
+    public void AppendSectionHeader(StringBuilder csvContent, CalcResultSummary resultSummary, IReadOnlyList<MaterialDetail> materials, bool applyModulation)
+    {
+        int count = GetColumnHeaders(materials, applyModulation).Count();
+        csvContent.Append(CsvSanitiser.SanitiseData(CalcResultSummaryHeaders.CommsCostHeader));
+        for (int i = 1; i < count; i++)
+            csvContent.Append(',');
+    }
+
+    public void AppendGroupHeader(StringBuilder csvContent, CalcResultSummary resultSummary, IReadOnlyList<MaterialDetail> materials, bool applyModulation)
+    {
+        foreach (var material in materials)
+        {
+            int count = CalcResultSummaryUtil.Section2aMaterials([material]).Count();
+            csvContent.Append(CsvSanitiser.SanitiseData($"{material.Name} Breakdown"));
+            for (int i = 1; i < count; i++)
+                csvContent.Append(',');
+        }
+    }
+
     public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
     {
         if (producer.ProducerCommsFeesByMaterial == null) { return; }

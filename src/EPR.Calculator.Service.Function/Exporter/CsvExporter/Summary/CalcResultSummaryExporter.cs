@@ -1,8 +1,8 @@
 using System.Text;
 using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.Features.Common;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 
@@ -18,29 +18,25 @@ public interface ICalcResultSummaryExporter
 
 public class CalcResultSummaryExporter : ICalcResultSummaryExporter
 {
-    private readonly IReadOnlyList<ICalcResultSummaryPartExporter> partExporters;
-
-    public CalcResultSummaryExporter()
-    {
-        this.partExporters = [
-            new ProducerIdentityExporter(),
-            new Section1MaterialsExporter(),
-            new Section1DisposalFeeExporter(),
-            new Section2aMaterialsExporter(),
-            new Section2aCommsExporter(),
-            new Section1DisposalExporter(),
-            new Section2aComms2aExporter(),
-            new CommsCost2aPercentageExporter(),
-            new CommsCost2bExporter(),
-            new CommsCost2cExporter(),
-            new OnePlus2a2b2cExporter(),
-            new ThreeSaCostsExporter(),
-            new LaDataPrepCostsExporter(),
-            new SaSetupCostsExporter(),
-            new TotalBillBreakdownExporter(),
-            new BillingInstructionsExporter()
-        ];
-    }
+    private static readonly IReadOnlyList<ICalcResultSummaryPartExporter> PartExporters =
+    [
+        new ProducerIdentityExporter(),
+        new Section1MaterialsExporter(),
+        new Section1DisposalFeeExporter(),
+        new Section2aMaterialsExporter(),
+        new Section2aCommsExporter(),
+        new Section1DisposalExporter(),
+        new Section2aComms2aExporter(),
+        new CommsCost2aPercentageExporter(),
+        new CommsCost2bExporter(),
+        new CommsCost2cExporter(),
+        new OnePlus2a2b2cExporter(),
+        new ThreeSaCostsExporter(),
+        new LaDataPrepCostsExporter(),
+        new SaSetupCostsExporter(),
+        new TotalBillBreakdownExporter(),
+        new BillingInstructionsExporter(),
+    ];
 
     public void Export(
         RunContext runContext,
@@ -60,61 +56,34 @@ public class CalcResultSummaryExporter : ICalcResultSummaryExporter
         }
     }
 
-    private void AddNewRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
+    public void AddNewRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
     {
-        foreach (var exporter in partExporters)
+        foreach (var exporter in PartExporters)
         {
             exporter.AppendRow(csvContent, producer, applyModulation);
         }
         csvContent.AppendLine();
     }
 
-    public static void WriteSecondaryHeaders(StringBuilder csvContent, IReadOnlyCollection<CalcResultSummaryHeader> headers)
+    private static void AddSummaryDataHeader(CalcResultSummary resultSummary, IReadOnlyList<MaterialDetail> materials, bool applyModulation, StringBuilder csvContent)
     {
-        var maxColumnSize = headers.MaxBy(h => h.ColumnIndex ?? 0)?.ColumnIndex ?? throw new ArgumentException("No headers specified");
-
-        var headerRows = new string[maxColumnSize];
-        foreach (var item in headers.Where(h => h.ColumnIndex.HasValue))
-        {
-            headerRows[item.ColumnIndex!.Value - 1] = CsvSanitiser.SanitiseData(item.Name, false);
-        }
-
-        var headerRow = string.Join(CommonConstants.CsvFileDelimiter, headerRows);
-        csvContent.AppendLine(headerRow);
-    }
-
-    private void WriteColumnHeaders(List<CalcResultSummaryHeader> columnHeaders, StringBuilder csvContent)
-    {
-        foreach (var item in columnHeaders)
-        {
-            csvContent.Append(CsvSanitiser.SanitiseData(item.Name));
-        }
-    }
-
-    private void AddSummaryDataHeader(CalcResultSummary resultSummary, IReadOnlyList<MaterialDetail> materials, bool applyModulation, StringBuilder csvContent)
-    {
-        var partColumnHeaders = partExporters
-            .Select(e => e.GetColumnHeaders(materials, applyModulation).ToList())
-            .ToList();
-
-        // The first part exporter (ProducerIdentityExporter) contributes the identity columns;
-        // GetSecondaryHeaders needs that count to compute section start indices.
-        int identityColumnCount = partColumnHeaders[0].Count;
-        var columnHeaders = partColumnHeaders.SelectMany(h => h).ToList();
-
-        var (producerDisposalFeesHeaders, materialBreakdownHeaders) =
-            CalcResultSummaryUtil.GetSecondaryHeaders(resultSummary, materials, applyModulation, identityColumnCount);
-
         csvContent.AppendLine(CsvSanitiser.SanitiseData(CalcResultSummaryHeaders.CalculationResult))
             .AppendLine()
             .AppendLine();
 
         csvContent.AppendLine(CsvSanitiser.SanitiseData(CalcResultSummaryHeaders.Notes));
 
-        WriteSecondaryHeaders(csvContent, producerDisposalFeesHeaders);
-        WriteSecondaryHeaders(csvContent, materialBreakdownHeaders);
-        WriteColumnHeaders(columnHeaders, csvContent);
+        foreach (var exporter in PartExporters)
+            exporter.AppendSectionHeader(csvContent, resultSummary, materials, applyModulation);
+        csvContent.AppendLine();
 
+        foreach (var exporter in PartExporters)
+            exporter.AppendGroupHeader(csvContent, resultSummary, materials, applyModulation);
+        csvContent.AppendLine();
+
+        foreach (var exporter in PartExporters)
+            foreach (var header in exporter.GetColumnHeaders(materials, applyModulation))
+                csvContent.Append(CsvSanitiser.SanitiseData(header.Name));
         csvContent.AppendLine();
     }
 }

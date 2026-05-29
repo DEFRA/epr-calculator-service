@@ -13,6 +13,13 @@ public class BillingInstructionsExporter : ICalcResultSummaryPartExporter
     public IEnumerable<CalcResultSummaryHeader> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
         => BillingInstructionsProducer.GetHeaders();
 
+    public void AppendSectionHeader(StringBuilder csvContent, CalcResultSummary resultSummary, IReadOnlyList<MaterialDetail> materials, bool applyModulation)
+    {
+        int count = GetColumnHeaders(materials, applyModulation).Count();
+        csvContent.Append(CsvSanitiser.SanitiseData(BillingInstructionsHeader.Title));
+        csvContent.Append(',', count - 1);
+    }
+
     public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
     {
         var s = producer.BillingInstructionSection!;

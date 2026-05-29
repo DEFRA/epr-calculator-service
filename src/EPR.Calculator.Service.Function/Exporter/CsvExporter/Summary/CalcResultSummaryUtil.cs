@@ -1,10 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions;
-using EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts;
-using EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C;
-using EPR.Calculator.Service.Function.Builder.Summary.SaSetupCosts;
-using EPR.Calculator.Service.Function.Builder.Summary.ThreeSa;
-using EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown;
 using EPR.Calculator.Service.Function.Builder.Summary.TwoCCommsCost;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
@@ -14,88 +8,6 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 [ExcludeFromCodeCoverage]
 public static class CalcResultSummaryUtil
 {
-    private const int decimalRoundUp = 2;
-
-    public static (List<CalcResultSummaryHeader>, List<CalcResultSummaryHeader>) GetSecondaryHeaders(
-        CalcResultSummary resultSummary,
-        IReadOnlyList<MaterialDetail> materials,
-        bool applyModulation,
-        int identityColumnCount
-    )
-    {
-        int section1MaterialsIdx           = 1                             + identityColumnCount;
-        int section1DisposalFeeIdx         = section1MaterialsIdx          + Section1Materials(materials, applyModulation).Count();
-        int section2aMaterialsIdx          = section1DisposalFeeIdx        + Section1DisposalFee().Count();
-        int section2aCommsIdx              = section2aMaterialsIdx         + Section2aMaterials(materials).Count();
-        int section1DisposalIdx            = section2aCommsIdx             + Section1Disposal().Count();
-        int section2aComms2aIdx            = section1DisposalIdx           + Section2aComms().Count();
-        int commsCost2aPercentageIdx       = section2aComms2aIdx           + CommsCost2aPercentage().Count();
-        int commsCost2bIdx                 = commsCost2aPercentageIdx      + CommsCost2b().Count();
-        int commsCost2cIdx                 = commsCost2bIdx                + CommsCost2c().Count();
-        int onePlus2A2B2CProducerIdx       = commsCost2cIdx                + CommsCost2c().Count();
-        int threeSaCostsSummaryIdx         = onePlus2A2B2CProducerIdx      + OnePlus2A2B2CProducer.GetHeaders().Count;
-        int laDataPrepCostsProducerIdx     = threeSaCostsSummaryIdx        + ThreeSaCostsProducer.GetHeaders().Count;
-        int saSetupCostsSummaryIdx         = laDataPrepCostsProducerIdx    + LaDataPrepCostsProducer.GetHeaders().Count;
-        int totalBillBreakdownProducerIdx  = saSetupCostsSummaryIdx        + SaSetupCostsProducer.GetHeaders().Count;
-        int billingInstructionsProducerIdx = totalBillBreakdownProducerIdx + TotalBillBreakdownProducer.GetHeaders().Count;
-
-        var producerDisposalFeesHeaders = new List<CalcResultSummaryHeader>();
-        producerDisposalFeesHeaders.AddRange([
-            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.OneProducerDisposalFeesWithBadDebtProvision, ColumnIndex = section1MaterialsIdx },
-            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.CommsCostHeader, ColumnIndex = section2aMaterialsIdx },
-            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.FeeforLADisposalCostswoBadDebtprovision1, ColumnIndex = section1DisposalIdx },
-            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.BadDebtProvision, ColumnIndex = section1DisposalIdx + 1 },
-            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.FeeforLADisposalCostswithBadDebtprovision1, ColumnIndex = section1DisposalIdx + 2 },
-            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.FeeforCommsCostsbyMaterialwoBadDebtprovision2A, ColumnIndex = section2aComms2aIdx },
-            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.BadDebtProvision, ColumnIndex = section2aComms2aIdx + 1 },
-            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.FeeforCommsCostsbyMaterialwithBadDebtprovision2A, ColumnIndex = section2aComms2aIdx + 2 },
-            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.CommsCostHeaderWithoutBadDebtFor2bTitle, ColumnIndex = commsCost2bIdx },
-            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.CommsCostHeaderBadDebtProvisionFor2bTitle, ColumnIndex = commsCost2bIdx + 1 },
-            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.CommsCostHeaderWithBadDebtFor2bTitle, ColumnIndex = commsCost2bIdx + 2 },
-            new CalcResultSummaryHeader { Name = TwoCCommsConstantsHeader.TwoCCommsCostByCountryWithout, ColumnIndex = commsCost2cIdx },
-            new CalcResultSummaryHeader { Name = TwoCCommsConstantsHeader.TwoCCommsCostBadBebtProvision, ColumnIndex = commsCost2cIdx + 1 },
-            new CalcResultSummaryHeader { Name = TwoCCommsConstantsHeader.TwoCCommsCostByCountryWithBadDebt, ColumnIndex = commsCost2cIdx + 2 },
-        ]);
-        producerDisposalFeesHeaders.AddRange(OnePlus2A2B2CProducer.GetSummaryHeaders(onePlus2A2B2CProducerIdx));
-        producerDisposalFeesHeaders.AddRange(ThreeSaCostsProducer.GetSummaryHeaders(threeSaCostsSummaryIdx));
-        producerDisposalFeesHeaders.AddRange(LaDataPrepCostsProducer.GetSummaryHeaders(laDataPrepCostsProducerIdx));
-        producerDisposalFeesHeaders.AddRange(SaSetupCostsProducer.GetSummaryHeaders(saSetupCostsSummaryIdx));
-        producerDisposalFeesHeaders.AddRange(TotalBillBreakdownProducer.GetSummaryHeaders(totalBillBreakdownProducerIdx));
-        producerDisposalFeesHeaders.AddRange(BillingInstructionsProducer.GetSummaryHeaders(billingInstructionsProducerIdx));
-
-        var materialsBreakdownHeaders = new List<CalcResultSummaryHeader>();
-        var columnIndex = section1MaterialsIdx;
-        foreach (var material in materials)
-        {
-            materialsBreakdownHeaders.Add(new CalcResultSummaryHeader { Name = $"{material.Name} Breakdown", ColumnIndex = columnIndex});
-            columnIndex += Section1Materials([material], applyModulation).Count();
-        }
-        materialsBreakdownHeaders.Add(new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.DisposalFeeSummary, ColumnIndex = section1DisposalFeeIdx });
-
-        var commsCostColumnIndex = section2aMaterialsIdx;
-        foreach (var material in materials)
-        {
-            materialsBreakdownHeaders.Add(new CalcResultSummaryHeader { Name = $"{material.Name} Breakdown", ColumnIndex = commsCostColumnIndex });
-            commsCostColumnIndex += Section2aMaterials([material]).Count();
-        }
-        materialsBreakdownHeaders.Add(new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.CommsCostSummaryHeader, ColumnIndex = commsCostColumnIndex});
-        materialsBreakdownHeaders.AddRange(CreateMoneyHeaders(section1DisposalIdx       , resultSummary.TotalFeeforLADisposalCostswoBadDebtprovision1      , resultSummary.BadDebtProvisionFor1                        , resultSummary.TotalFeeforLADisposalCostswithBadDebtprovision1));
-        materialsBreakdownHeaders.AddRange(CreateMoneyHeaders(section2aComms2aIdx       , resultSummary.TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A, resultSummary.BadDebtProvisionFor2A                       , resultSummary.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A));
-        materialsBreakdownHeaders.AddRange(CreateMoneyHeaders(commsCost2bIdx            , resultSummary.CommsCostHeaderWithoutBadDebtFor2bTitle            , resultSummary.CommsCostHeaderBadDebtProvisionFor2bTitle   , resultSummary.CommsCostHeaderWithBadDebtFor2bTitle));
-        materialsBreakdownHeaders.AddRange(CreateMoneyHeaders(commsCost2cIdx            , resultSummary.TwoCCommsCostsByCountryWithoutBadDebtProvision     , resultSummary.TwoCBadDebtProvision                        , resultSummary.TwoCCommsCostsByCountryWithBadDebtProvision));
-        materialsBreakdownHeaders.AddRange(CreateMoneyHeaders(onePlus2A2B2CProducerIdx  , resultSummary.TotalOnePlus2A2B2CFeeWithBadDebtProvision));
-        materialsBreakdownHeaders.AddRange(CreateMoneyHeaders(threeSaCostsSummaryIdx    , resultSummary.SaOperatingCostsWoTitleSection3                    , resultSummary.BadDebtProvisionTitleSection3               , resultSummary.SaOperatingCostsWithTitleSection3));
-        materialsBreakdownHeaders.AddRange(CreateMoneyHeaders(laDataPrepCostsProducerIdx, resultSummary.LaDataPrepCostsTitleSection4                       , resultSummary.LaDataPrepCostsBadDebtProvisionTitleSection4, resultSummary.LaDataPrepCostsWithBadDebtProvisionTitleSection4));
-        materialsBreakdownHeaders.AddRange(CreateMoneyHeaders(saSetupCostsSummaryIdx    , resultSummary.SaSetupCostsTitleSection5                          , resultSummary.SaSetupCostsBadDebtProvisionTitleSection5   , resultSummary.SaSetupCostsWithBadDebtProvisionTitleSection5));
-
-        return (producerDisposalFeesHeaders, materialsBreakdownHeaders);
-    }
-
-    private static IEnumerable<CalcResultSummaryHeader> CreateMoneyHeaders(int columnIndex, params decimal[] values)
-    {
-        return values.Select((value, i) => new CalcResultSummaryHeader { Name = $"£{Math.Round(value, decimalRoundUp)}", ColumnIndex = columnIndex + i});
-    }
-
     private static IEnumerable<CalcResultSummaryHeader> CreateHeaders(params string[] names)
     {
         return names.Select((name, i) => new CalcResultSummaryHeader { Name = name});

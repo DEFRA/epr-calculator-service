@@ -13,6 +13,25 @@ public class Section1MaterialsExporter : ICalcResultSummaryPartExporter
     public IEnumerable<CalcResultSummaryHeader> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
         => CalcResultSummaryUtil.Section1Materials(materials, applyModulation);
 
+    public void AppendSectionHeader(StringBuilder csvContent, CalcResultSummary resultSummary, IReadOnlyList<MaterialDetail> materials, bool applyModulation)
+    {
+        int count = GetColumnHeaders(materials, applyModulation).Count();
+        csvContent.Append(CsvSanitiser.SanitiseData(CalcResultSummaryHeaders.OneProducerDisposalFeesWithBadDebtProvision));
+        for (int i = 1; i < count; i++)
+            csvContent.Append(',');
+    }
+
+    public void AppendGroupHeader(StringBuilder csvContent, CalcResultSummary resultSummary, IReadOnlyList<MaterialDetail> materials, bool applyModulation)
+    {
+        foreach (var material in materials)
+        {
+            int count = CalcResultSummaryUtil.Section1Materials([material], applyModulation).Count();
+            csvContent.Append(CsvSanitiser.SanitiseData($"{material.Name} Breakdown"));
+            for (int i = 1; i < count; i++)
+                csvContent.Append(',');
+        }
+    }
+
     public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
     {
         bool isNotTotal = producer.LeaverDate != CommonConstants.Totals;
