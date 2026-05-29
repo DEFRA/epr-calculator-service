@@ -20,7 +20,6 @@ public class ProducerSummaryExporter : IProducerSummaryExporter
     public IEnumerable<CalcResultSummaryHeader> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
     {
         var headers = new List<CalcResultSummaryHeader>();
-        headers.AddRange(CalcResultSummaryUtil.Section1DisposalFee());
         headers.AddRange(CalcResultSummaryUtil.Section2aMaterials(materials));
         headers.AddRange(CalcResultSummaryUtil.Section2aComms());
         headers.AddRange(CalcResultSummaryUtil.Section1Disposal());
@@ -40,8 +39,6 @@ public class ProducerSummaryExporter : IProducerSummaryExporter
     public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
     {
         bool isNotTotal = producer.LeaverDate != CommonConstants.Totals;
-
-        AppendProducerDisposalSummary(csvContent, producer);
 
         AppendProducerCommsFeesByMaterial(csvContent, producer, isNotTotal);
 
@@ -103,19 +100,6 @@ public class ProducerSummaryExporter : IProducerSummaryExporter
         csvContent.Append(CsvSanitiser.SanitiseData(producer.NorthernIrelandTotalComms, DecimalPlaces.Two, null, true));
     }
 
-    private void AppendProducerDisposalSummary(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer)
-    {
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.TotalProducerDisposalFee, DecimalPlaces.Two, null, true));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.BadDebtProvision, DecimalPlaces.Two, null, true));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.TotalProducerDisposalFeeWithBadDebtProvision, DecimalPlaces.Two, null, true));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.EnglandTotal, DecimalPlaces.Two, null, true));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.WalesTotal, DecimalPlaces.Two, null, true));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.ScotlandTotal, DecimalPlaces.Two, null, true));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.NorthernIrelandTotal, DecimalPlaces.Two, null, true));
-        AppendCsvValue(csvContent, producer.TonnageChangeCount, producer.isOverallTotalRow);
-        AppendCsvValue(csvContent, producer.TonnageChangeAdvice, producer.isOverallTotalRow);
-    }
-
     private static void AppendSectionContent(StringBuilder csvContent, CalcResultSummaryBadDebtProvision? costs)
     {
         csvContent.Append(CsvSanitiser.SanitiseData(costs?.TotalProducerFeeWithoutBadDebtProvision, DecimalPlaces.Two, null, true));
@@ -125,24 +109,6 @@ public class ProducerSummaryExporter : IProducerSummaryExporter
         csvContent.Append(CsvSanitiser.SanitiseData(costs?.WalesTotalWithBadDebtProvision, DecimalPlaces.Two, null, true));
         csvContent.Append(CsvSanitiser.SanitiseData(costs?.ScotlandTotalWithBadDebtProvision, DecimalPlaces.Two, null, true));
         csvContent.Append(CsvSanitiser.SanitiseData(costs?.NorthernIrelandTotalWithBadDebtProvision, DecimalPlaces.Two, null, true));
-    }
-
-    private static void AppendCsvValue(StringBuilder csvContent, object? value, bool isOverallTotalRow = false,
-                                       DecimalPlaces decimalPlaces = DecimalPlaces.Zero,
-                                       DecimalFormats decimalFormat = DecimalFormats.F2)
-    {
-        if (value == null && !isOverallTotalRow)
-        {
-            csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.Hyphen));
-        }
-        else if (value is int or decimal or double)
-        {
-            csvContent.Append(CsvSanitiser.SanitiseData(value, decimalPlaces, decimalFormat));
-        }
-        else
-        {
-            csvContent.Append(CsvSanitiser.SanitiseData(value));
-        }
     }
 
     private static void AppendProducerCommsFeesByMaterial(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool isNotTotal)
