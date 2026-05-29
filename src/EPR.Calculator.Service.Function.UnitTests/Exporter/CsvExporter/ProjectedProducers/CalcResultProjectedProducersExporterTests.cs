@@ -10,12 +10,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
     {
         private CalcResultProjectedProducersExporter exporter = new CalcResultProjectedProducersExporter();
 
-        private readonly ImmutableList<MaterialDetail> materials = ImmutableList.Create<MaterialDetail>
-        (
-            new MaterialDetail { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
-            new MaterialDetail { Id = 2, Code = "GL", Name = "Glass", Description = "Glass" },
-            new MaterialDetail { Id = 3, Code = "OT", Name = "Other materials", Description = "Other materials" }
-        );
+        private readonly ImmutableList<MaterialDetail> materials =
+        [
+            new() { Id = 1, Code = "AL", Name = "Aluminium" },
+            new() { Id = 2, Code = "GL", Name = "Glass" },
+            new() { Id = 3, Code = "OT", Name = "Other materials" }
+        ];
 
         [TestMethod]
         public void Export_ShouldIncludeProjectedProducers_WhenNotNull()

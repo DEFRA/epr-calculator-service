@@ -1,7 +1,7 @@
 using System.Text;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost;
 using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.UnitTests.Builder;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.LaDisposalCost
 {
@@ -19,12 +19,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.LaDispo
         public void Export_ShouldIncludeLaDisposalCostData_PreModulation()
         {
             // Arrange
+            var runContext = TestDataHelper.CalculatorRun2025;
             var calcResultLaDisposalCostData = GetCalcResultLaDisposalCostData();
 
             var csvContent = new StringBuilder();
 
             // Act
-            exporter.Export(applyModulation: false, TestDataHelper.GetMaterials(), calcResultLaDisposalCostData, csvContent);
+            exporter.Export(runContext, calcResultLaDisposalCostData, TestDataHelper.GetMaterialDetails(), csvContent);
 
             // Assert
             var result = csvContent.ToString().Split("\n").Select(s => s.TrimEnd(',')).ToArray();
@@ -60,12 +61,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.LaDispo
         public void Export_ShouldIncludeLaDisposalCostData_Modulation()
         {
             // Arrange
+            var runContext = TestDataHelper.CalculatorRun2026;
             var calcResultLaDisposalCostData = GetCalcResultLaDisposalCostData();
 
             var csvContent = new StringBuilder();
 
             // Act
-            exporter.Export(applyModulation: true, TestDataHelper.GetMaterials(), calcResultLaDisposalCostData, csvContent);
+            exporter.Export(runContext, calcResultLaDisposalCostData, TestDataHelper.GetMaterialDetails(), csvContent);
 
             // Assert
             var result = csvContent.ToString().Split("\n").Select(s => s.TrimEnd(',')).ToArray();

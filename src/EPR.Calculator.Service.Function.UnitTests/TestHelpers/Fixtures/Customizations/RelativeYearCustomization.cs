@@ -10,16 +10,16 @@ public class RelativeYearCustomization : ICustomization
 {
     public void Customize(IFixture fixture) =>
         fixture.Customizations.Add(new RelativeYears());
-}
 
-public class RelativeYears : ISpecimenBuilder
-{
-    public object? Create(object request, ISpecimenContext context)
+    private class RelativeYears : ISpecimenBuilder
     {
-        if (!typeof(RelativeYear).Equals(request))
-            return new NoSpecimen();
+        public object? Create(object request, ISpecimenContext context)
+        {
+            if (!typeof(RelativeYear).Equals(request))
+                return new NoSpecimen();
 
-        var year = new Random().Next(2000, 2099);
-        return new RelativeYear(year);
+            var year = new Random().Next(2000, 2099);
+            return new RelativeYear(year);
+        }
     }
 }

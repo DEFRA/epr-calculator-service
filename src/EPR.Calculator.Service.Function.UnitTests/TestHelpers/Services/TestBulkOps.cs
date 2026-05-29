@@ -2,7 +2,7 @@
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
 
-namespace EPR.Calculator.Service.Function.UnitTests.TestHelpers.Utils;
+namespace EPR.Calculator.Service.Function.UnitTests.TestHelpers.Services;
 
 /// <summary>
 ///     Skips doing anything fancy (due to InMemory db incompatibility) and just directly inserts the entities into the

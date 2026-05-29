@@ -1,32 +1,28 @@
 using EPR.Calculator.Service.Function.Exporter.CsvExporter;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter;
 using EPR.Calculator.Service.Function.Features.BillingRun.Contexts;
-using EPR.Calculator.Service.Function.Features.BillingRun.FileExports;
+using EPR.Calculator.Service.Function.Features.BillingRun.Outputs;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Options;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
-using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 using Microsoft.Extensions.Options;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Features.Billing.FileExports;
 
 [TestCategory(TestCategories.BillingRuns)]
 [TestClass]
-public class BillingFileExporterTests
+public class BillingFileGeneratorTests : TestsFor<BillingFileGenerator>
 {
     private Mock<IOptions<BlobStorageOptions>> blobOptions = null!;
     private CalcResult calcResult = null!;
-    private Mock<IBillingFileCsvWriter> csvWriter = null!;
+    private Mock<IBillingFileExporter> csvWriter = null!;
     private Mock<IBillingFileJsonWriter> jsonWriter = null!;
     private BillingRunContext runContext = null!;
     private Mock<IStorageService> storageService = null!;
-    private BillingFileExporter sut = null!;
 
-    [TestInitialize]
-    public void Init()
+    protected override void TestInitialize()
     {
-        var fixture = TestFixtures.New();
         blobOptions = fixture.Freeze<Mock<IOptions<BlobStorageOptions>>>();
         blobOptions.Setup(m => m.Value).Returns(new BlobStorageOptions
         {
@@ -34,8 +30,8 @@ public class BillingFileExporterTests
             BillingFileJsonContainer = "json-container"
         });
 
-        csvWriter = fixture.Freeze<Mock<IBillingFileCsvWriter>>();
-        csvWriter.Setup(m => m.WriteToString(
+        csvWriter = fixture.Freeze<Mock<IBillingFileExporter>>();
+        csvWriter.Setup(m => m.Export(
                 It.IsAny<BillingRunContext>(), It.IsAny<CalcResult>()))
             .ReturnsAsync("csv-content");
 
@@ -56,15 +52,13 @@ public class BillingFileExporterTests
 
         runContext = fixture.Create<BillingRunContext>();
         calcResult = fixture.Create<CalcResult>();
-
-        sut = fixture.Create<BillingFileExporter>();
     }
 
     [TestMethod]
     public async Task Should_upload_csv_to_correct_container()
     {
         // Act
-        await sut.Export(runContext, calcResult, CancellationToken.None);
+        await testSubject.SerializeAndExport(runContext, calcResult, CancellationToken.None);
 
         // Assert
         storageService.Verify(x => x.UploadFileContentAsync(
@@ -80,7 +74,7 @@ public class BillingFileExporterTests
     public async Task Should_upload_json_to_correct_container()
     {
         // Act
-        await sut.Export(runContext, calcResult, CancellationToken.None);
+        await testSubject.SerializeAndExport(runContext, calcResult, CancellationToken.None);
 
         // Assert
         storageService.Verify(x => x.UploadFileContentAsync(
@@ -96,7 +90,7 @@ public class BillingFileExporterTests
     public async Task Should_return_csv_metadata_with_correct_values()
     {
         // Act
-        var result = await sut.Export(runContext, calcResult, CancellationToken.None);
+        var result = await testSubject.SerializeAndExport(runContext, calcResult, CancellationToken.None);
 
         // Assert
         result.CsvMetadata.CalculatorRunId.ShouldBe(runContext.RunId);
@@ -110,7 +104,7 @@ public class BillingFileExporterTests
     public async Task Should_return_json_metadata_with_correct_values()
     {
         // Act
-        var result = await sut.Export(runContext, calcResult, CancellationToken.None);
+        var result = await testSubject.SerializeAndExport(runContext, calcResult, CancellationToken.None);
 
         // Assert
         result.JsonMetadata.CalculatorRunId.ShouldBe(runContext.RunId);

@@ -1,8 +1,6 @@
 using System.Text;
-using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
-using EPR.Calculator.Service.Function.Mappers;
 using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.ScaledupProducers
@@ -162,8 +160,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
         {
             return new List<MaterialDetail>
             {
-                new MaterialDetail { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
-                new MaterialDetail { Id = 2, Code = "GL", Name = "Glass", Description = "Glass" },
+                new MaterialDetail { Id = 1, Code = "AL", Name = "Aluminium" },
+                new MaterialDetail { Id = 2, Code = "GL", Name = "Glass" },
             }.ToImmutableList();
         }
 
@@ -198,9 +196,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
         public void GetTonnagesTest()
         {
             var alId = 1;
-            var materials = new List<Material>();
-            materials.Add(new Material { Id = alId, Code = "AL", Name = "Aluminium" });
-            var materialDetails = MaterialMapper.Map(materials);
+            List<MaterialDetail> materialDetails = [new() { Id = 1, Code = "AL", Name = "Aluminium" }];
             var pomData = new List<ScaledupPomEntry>
             {
                 new ScaledupPomEntry(alId, PackagingTypes.Household, 0.1m, 0.2m),
@@ -218,7 +214,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
             var glassId = 1;
             var materials = new List<MaterialDetail>
             {
-                new MaterialDetail { Id = glassId, Code = MaterialCodes.Glass, Name = "Glass", Description = "" },
+                new MaterialDetail { Id = glassId, Code = MaterialCodes.Glass, Name = "Glass" },
             };
             var pomData = new List<ScaledupPomEntry>
             {
@@ -296,9 +292,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
                 ScaledupProducerTonnageByMaterial = dictionary,
             });
 
-            var materials = new List<Material>();
-            materials.Add(new Material { Code = "AL", Name = "Aluminium" });
-            var materialDetails = MaterialMapper.Map(materials);
+            List<MaterialDetail> materialDetails = [new() { Id = 1, Code = "AL", Name = "Aluminium" }];
             var totalRow = CalcResultScaledupProducersExporter.GetOverallTotalRow(runProducerMaterialDetails, materialDetails);
             Assert.IsNotNull(totalRow);
             var aluminium = totalRow.ScaledupProducerTonnageByMaterial["Aluminium"];

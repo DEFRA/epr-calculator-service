@@ -1,41 +1,44 @@
-﻿using EPR.Calculator.Service.Function.Builder;
+﻿using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Builder;
 using EPR.Calculator.Service.Function.Features.CalculatorRun;
 using EPR.Calculator.Service.Function.Features.CalculatorRun.Contexts;
 using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
-using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
-using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Utils;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Services;
 using Microsoft.Extensions.Logging;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Features.Calculator;
 
 [TestCategory(TestCategories.CalculatorRuns)]
 [TestClass]
-public class CalculatorRunProcessorTests
+public class CalculatorRunProcessorTests : TestsFor<CalculatorRunProcessor>
 {
     private Mock<ICalcResultBuilder> builder = null!;
-    private IFixture fixture = null!;
     private Mock<ILogger<CalculatorRunProcessor>> logger = null!;
     private CalculatorRunContext runContext = null!;
-    private CalculatorRunProcessor sut = null!;
 
-    [TestInitialize]
-    public void Init()
+    protected override void TestInitialize()
     {
-        fixture = TestFixtures.New();
         runContext = fixture.Create<CalculatorRunContext>();
         builder = fixture.Freeze<Mock<ICalcResultBuilder>>();
         logger = fixture.Freeze<Mock<ILogger<CalculatorRunProcessor>>>();
 
-        sut = fixture.Create<CalculatorRunProcessor>();
+        dbContext.CalculatorRuns.Add(new CalculatorRun
+        {
+            Id = runContext.RunId,
+            RelativeYear = runContext.RelativeYear,
+            Name = runContext.RunName
+        });
+
+        dbContext.SaveChanges();
     }
 
     [TestMethod]
     public async Task Should_handle_success()
     {
-        var result = await sut.Process(runContext, CancellationToken.None);
+        var result = await testSubject.Process(runContext, CancellationToken.None);
 
-        result.ShouldBeTrue();
+        result.Succeeded.ShouldBeTrue();
     }
 
     [TestMethod]
@@ -44,9 +47,9 @@ public class CalculatorRunProcessorTests
         var exception = new OperationCanceledException("Test cancelled");
         builder.Setup(b => b.BuildAsync(It.IsAny<RunContext>())).ThrowsAsync(exception);
 
-        var result = await sut.Process(runContext, CancellationToken.None);
+        var result = await testSubject.Process(runContext, CancellationToken.None);
 
-        result.ShouldBeFalse();
+        result.Succeeded.ShouldBeFalse();
         logger.VerifyLogContains(LogLevel.Error, "cancellation");
     }
 
@@ -56,9 +59,9 @@ public class CalculatorRunProcessorTests
         var exception = new Exception("Test failure");
         builder.Setup(b => b.BuildAsync(It.IsAny<RunContext>())).ThrowsAsync(exception);
 
-        var result = await sut.Process(runContext, CancellationToken.None);
+        var result = await testSubject.Process(runContext, CancellationToken.None);
 
-        result.ShouldBeFalse();
+        result.Succeeded.ShouldBeFalse();
         logger.VerifyLogContains(LogLevel.Error, "failed");
     }
 }

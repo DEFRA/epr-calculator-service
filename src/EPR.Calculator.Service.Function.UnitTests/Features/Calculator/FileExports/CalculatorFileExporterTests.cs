@@ -1,39 +1,35 @@
 using EPR.Calculator.Service.Function.Exporter.CsvExporter;
 using EPR.Calculator.Service.Function.Features.CalculatorRun.Contexts;
-using EPR.Calculator.Service.Function.Features.CalculatorRun.FileExports;
+using EPR.Calculator.Service.Function.Features.CalculatorRun.Outputs;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Options;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
-using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 using Microsoft.Extensions.Options;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Features.Calculator.FileExports;
 
 [TestCategory(TestCategories.CalculatorRuns)]
 [TestClass]
-public class CalculatorFileExporterTests
+public class CalculatorFileGeneratorTests : TestsFor<CalculatorFileGenerator>
 {
     private Mock<IOptions<BlobStorageOptions>> blobOptions = null!;
     private CalcResult calcResult = null!;
-    private Mock<IResultsFileCsvWriter> csvWriter = null!;
+    private Mock<ICalcResultsExporter> csvWriter = null!;
     private CalculatorRunContext runContext = null!;
     private Mock<IStorageService> storageService = null!;
-    private CalculatorFileExporter sut = null!;
 
-    [TestInitialize]
-    public void Init()
+    protected override void TestInitialize()
     {
-        var fixture = TestFixtures.New();
         blobOptions = fixture.Freeze<Mock<IOptions<BlobStorageOptions>>>();
         blobOptions.Setup(m => m.Value).Returns(new BlobStorageOptions
         {
             ResultFileCsvContainer = "results-container"
         });
 
-        csvWriter = fixture.Freeze<Mock<IResultsFileCsvWriter>>();
+        csvWriter = fixture.Freeze<Mock<ICalcResultsExporter>>();
         csvWriter
-            .Setup(m => m.WriteToString(
+            .Setup(m => m.Export(
                 It.IsAny<CalculatorRunContext>(), It.IsAny<CalcResult>()))
             .ReturnsAsync("results-content");
 
@@ -45,15 +41,13 @@ public class CalculatorFileExporterTests
 
         runContext = fixture.Create<CalculatorRunContext>();
         calcResult = fixture.Create<CalcResult>();
-
-        sut = fixture.Create<CalculatorFileExporter>();
     }
 
     [TestMethod]
     public async Task Should_upload_csv_to_correct_container()
     {
         // Act
-        await sut.Export(runContext, calcResult, CancellationToken.None);
+        await testSubject.SerializeAndExport(runContext, calcResult, CancellationToken.None);
 
         // Assert
         storageService.Verify(x => x.UploadFileContentAsync(
@@ -69,7 +63,7 @@ public class CalculatorFileExporterTests
     public async Task Should_return_csv_metadata_with_correct_values()
     {
         // Act
-        var result = await sut.Export(runContext, calcResult, CancellationToken.None);
+        var result = await testSubject.SerializeAndExport(runContext, calcResult, CancellationToken.None);
 
         // Assert
         result.CsvMetadata.CalculatorRunId.ShouldBe(runContext.RunId);

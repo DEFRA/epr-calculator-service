@@ -9,23 +9,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures.Customi
 /// </summary>
 public class IgnoreVirtualMembersCustomization : ICustomization
 {
-    public void Customize(IFixture fixture)
-    {
+    public void Customize(IFixture fixture) =>
         fixture.Customizations.Add(new IgnoreVirtualMembers());
-    }
-}
 
-public class IgnoreVirtualMembers : ISpecimenBuilder
-{
-    public object? Create(object request, ISpecimenContext context)
+    private class IgnoreVirtualMembers : ISpecimenBuilder
     {
-        if (context == null) throw new ArgumentNullException("context");
+        public object? Create(object request, ISpecimenContext context)
+        {
+            ArgumentNullException.ThrowIfNull(context);
 
-        var propertyInfo = request as PropertyInfo;
-        if (propertyInfo == null) return new NoSpecimen();
+            var propertyInfo = request as PropertyInfo;
+            if (propertyInfo == null) return new NoSpecimen();
 
-        if (propertyInfo.GetMethod != null && propertyInfo.GetMethod.IsVirtual) return null;
+            if (propertyInfo.GetMethod != null && propertyInfo.GetMethod.IsVirtual) return null;
 
-        return new NoSpecimen();
+            return new NoSpecimen();
+        }
     }
 }

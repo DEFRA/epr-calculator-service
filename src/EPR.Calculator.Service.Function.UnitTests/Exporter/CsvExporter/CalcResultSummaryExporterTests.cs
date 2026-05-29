@@ -1,7 +1,7 @@
 using System.Text;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter;
 using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.UnitTests.Builder;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 {
@@ -91,7 +91,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 },
             };
             var csvContent = new StringBuilder();
-            _testClass.WriteSecondaryHeaders(csvContent, columnHeaders);
+            CalcResultSummaryExporter.WriteSecondaryHeaders(csvContent, columnHeaders);
 
             var rowContents = csvContent.ToString().Split(",");
             Assert.AreEqual("\"Column 0\"", rowContents[0]);
@@ -165,7 +165,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         public void CanCallExport()
         {
             // Arrange
-
+            var runContext = TestDataHelper.CalculatorRun2025;
             var resultSummary = new CalcResultSummary
             {
                 ProducerDisposalFeesHeaders = [new CalcResultSummaryHeader { ColumnIndex = 1, Name = "Column 1"}],
@@ -177,7 +177,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var csvContent = new StringBuilder();
 
             // Act
-            _testClass.Export(resultSummary, csvContent, applyModulation: false);
+            _testClass.Export(runContext, resultSummary, csvContent);
 
             // Assert
             Assert.IsNotNull(csvContent.ToString());

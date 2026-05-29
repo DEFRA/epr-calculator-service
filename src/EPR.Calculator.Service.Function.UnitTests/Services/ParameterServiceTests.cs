@@ -1,6 +1,7 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
@@ -41,9 +42,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task ShouldReturnDefaultParameters()
         {
             // Arrange
+            var runContext = TestDataHelper.CalculatorRun2024;
+
             var run = new CalculatorRun
             {
-                Id = 1,
+                Id = runContext.RunId,
                 Name = "Some name",
                 DefaultParameterSettingMasterId = 100
             };
@@ -75,7 +78,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             await dbContext.SaveChangesAsync();
 
             // Act
-            var result = await parameterService.GetDefaultParameters(1);
+            var result = await parameterService.GetDefaultParameters(runContext);
 
             // Assert
             Assert.AreEqual(1, result.Count);

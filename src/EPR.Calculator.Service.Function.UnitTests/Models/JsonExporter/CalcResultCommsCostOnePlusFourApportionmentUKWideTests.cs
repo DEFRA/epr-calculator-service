@@ -1,7 +1,6 @@
 using System.Text.Json;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
-using EPR.Calculator.Service.Function.UnitTests.Utils;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
 {

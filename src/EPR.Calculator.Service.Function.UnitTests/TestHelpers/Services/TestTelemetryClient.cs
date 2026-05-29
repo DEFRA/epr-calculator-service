@@ -1,7 +1,7 @@
 ﻿using EPR.Calculator.Service.Function.Telemetry;
 using Microsoft.ApplicationInsights.DataContracts;
 
-namespace EPR.Calculator.Service.Function.UnitTests.TestHelpers.Utils;
+namespace EPR.Calculator.Service.Function.UnitTests.TestHelpers.Services;
 
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 public class TestTelemetryClient : ITelemetryClient

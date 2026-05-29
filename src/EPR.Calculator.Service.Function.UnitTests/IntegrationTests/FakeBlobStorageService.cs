@@ -1,11 +1,13 @@
 using EPR.Calculator.Service.Function.Services;
 
+namespace EPR.Calculator.Service.Function.UnitTests.IntegrationTests;
+
 public class FakeBlobStorageService : IStorageService
 {
     private readonly Dictionary<string, string> store = new();
 
     public Task<string> UploadFileContentAsync(
-        (string FileName, string Content, string RunName, string ContainerName, bool Overwrite) args)
+        (string FileName, string Content, string RunName, string ContainerName, bool Overwrite) args, CancellationToken cancellationToken = default)
     {
         store[args.FileName] = args.Content;
         return Task.FromResult(args.FileName);

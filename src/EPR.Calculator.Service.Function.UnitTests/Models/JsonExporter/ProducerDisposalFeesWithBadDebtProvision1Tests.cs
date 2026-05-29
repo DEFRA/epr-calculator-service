@@ -1,6 +1,5 @@
 using EPR.Calculator.Service.Function.Models.JsonExporter;
-using EPR.Calculator.Service.Function.UnitTests.Builder;
-using EPR.Calculator.Service.Function.Utils;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
 {
@@ -11,7 +10,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public void From_MapsMaterialBreakdown()
         {
             var byMaterial = TestDataHelper.GetProducerDisposalFeesByMaterial();
-            var materials = TestDataHelper.GetMaterials();
+            var materials = TestDataHelper.GetMaterialDetails();
 
             var result = ProducerDisposalFeesWithBadDebtProvision1.From(byMaterial, materials, "1", applyModulation: false);
 
@@ -31,7 +30,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public void From_MapsMaterialBreakdown_Modulated()
         {
             var byMaterial = TestDataHelper.GetProducerDisposalFeesByMaterial(applyModulation: true);
-            var materials = TestDataHelper.GetMaterials();
+            var materials = TestDataHelper.GetMaterialDetails();
 
             var result = ProducerDisposalFeesWithBadDebtProvision1.From(byMaterial, materials, "1", applyModulation: true);
 

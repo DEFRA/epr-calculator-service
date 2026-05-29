@@ -1,9 +1,10 @@
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
@@ -32,7 +33,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             _connection.Close();
         }
 
-        private async Task<(RelativeYear, CalculatorRunClassification, OrganisationData)> SeedData()
+        private async Task<(CalculatorRunClassification, OrganisationData)> SeedData()
         {
             var calculatorRunRelativeYear = new CalculatorRunRelativeYear { Value  = 2024 };
             context.CalculatorRunRelativeYears.Add(calculatorRunRelativeYear);
@@ -58,31 +59,30 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 VALUES ({orgData.OrganisationId}, {orgData.OrganisationName}, {orgData.LoadTimestamp}, {orgData.ObligationStatus}, {orgData.SubmitterId}, {orgData.HasH1}, {orgData.HasH2} )");
 
             await context.SaveChangesAsync();
-            return (new RelativeYear(calculatorRunRelativeYear.Value), classification, orgData);
+            return (classification, orgData);
         }
 
         [TestMethod]
         public async Task LoadOrgDataForCalcRun()
         {
-            int runId = 1;
-            int runId2 = 2;
-            string createdBy = "TestUser";
+            var runContext1 = TestDataHelper.CalculatorRun2024;
+            var runContext2 = runContext1 with { RunId = runContext1.RunId + 1 };
             var cancellationToken = CancellationToken.None;
-            var service = new CalculatorRunOrgData(context);
-            var (relativeYear, classification, orgData) = await SeedData();
+            var service = new CalculatorRunOrgData(context, new Mock<ILogger<CalculatorRunOrgData>>().Object);
+            var (classification, orgData) = await SeedData();
 
             //Run 1
-            var run = new CalculatorRun { Id = runId, RelativeYear = relativeYear, Name = "CalculatorRunTest1", CalculatorRunClassificationId = classification.Id };
+            var run = new CalculatorRun { Id = runContext1.RunId, RelativeYear = runContext1.RelativeYear, Name = "CalculatorRunTest1", CalculatorRunClassificationId = classification.Id };
             context.CalculatorRuns.Add(run);
             await context.SaveChangesAsync();
 
-            await service.LoadOrgDataForCalcRun(runId, relativeYear, createdBy, cancellationToken);
+            await service.LoadOrgDataForCalcRun(runContext1, cancellationToken);
 
             var masterRecords = await context.CalculatorRunOrganisationDataMaster.ToListAsync();
             Assert.AreEqual(1, masterRecords.Count);
             var orgMasterRun1 = masterRecords[0];
-            Assert.AreEqual(relativeYear, orgMasterRun1.RelativeYear);
-            Assert.AreEqual(createdBy, orgMasterRun1.CreatedBy);
+            Assert.AreEqual(runContext1.RelativeYear, orgMasterRun1.RelativeYear);
+            Assert.AreEqual(runContext1.User, orgMasterRun1.CreatedBy);
             Assert.IsNull(orgMasterRun1.EffectiveTo);
 
             var detailRecords = await context.CalculatorRunOrganisationDataDetails.ToListAsync();
@@ -92,15 +92,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.AreEqual(orgData.OrganisationName, orgDataRun1.OrganisationName);
             Assert.AreEqual(orgMasterRun1.Id, orgDataRun1.CalculatorRunOrganisationDataMasterId);
 
-            var calculatorRun1 = await context.CalculatorRuns.FirstOrDefaultAsync(c => c.Id == runId);
+            var calculatorRun1 = await context.CalculatorRuns.FirstOrDefaultAsync(c => c.Id == runContext1.RunId);
             Assert.AreEqual(orgMasterRun1.Id, calculatorRun1!.CalculatorRunOrganisationDataMasterId);
 
             //Run 2
-            var run2 = new CalculatorRun { Id = runId2, RelativeYear = relativeYear, Name = "CalculatorRunTest2", CalculatorRunClassificationId = classification.Id };
+            var run2 = new CalculatorRun { Id = runContext2.RunId, RelativeYear = runContext2.RelativeYear, Name = "CalculatorRunTest2", CalculatorRunClassificationId = classification.Id };
             context.CalculatorRuns.Add(run2);
             await context.SaveChangesAsync();
 
-            await service.LoadOrgDataForCalcRun(runId2, relativeYear, createdBy, cancellationToken);
+            await service.LoadOrgDataForCalcRun(runContext2, cancellationToken);
 
             var updatedMasterRecords = await context.CalculatorRunOrganisationDataMaster.ToListAsync();
             Assert.AreEqual(2, updatedMasterRecords.Count);
@@ -115,7 +115,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.AreEqual(orgData.OrganisationName, orgDataRun1.OrganisationName);
             Assert.AreEqual(orgMasterRun2.Id, orgDataRun2.CalculatorRunOrganisationDataMasterId);
 
-            var calculatorRun2 = await context.CalculatorRuns.FirstOrDefaultAsync(c => c.Id == runId2);
+            var calculatorRun2 = await context.CalculatorRuns.FirstOrDefaultAsync(c => c.Id == runContext2.RunId);
             Assert.AreEqual(orgMasterRun2.Id, calculatorRun2!.CalculatorRunOrganisationDataMasterId);
         }
     }

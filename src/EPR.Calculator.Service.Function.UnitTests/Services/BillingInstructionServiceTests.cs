@@ -2,9 +2,8 @@ using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
-using EPR.Calculator.Service.Function.UnitTests.Builder;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
-using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services;
 
@@ -41,7 +40,6 @@ public class BillingInstructionServiceTests
         // Arrange
         var calcResult = new CalcResult
         {
-            ApplyModulation = true,
             CalcResultScaledupProducers = new CalcResultScaledupProducers(),
             CalcResultPartialObligations = new CalcResultPartialObligations(),
             CalcResultDetail = new CalcResultDetail
@@ -115,7 +113,6 @@ public class BillingInstructionServiceTests
         // Arrange
         var calcResult = new CalcResult
         {
-            ApplyModulation = true,
             CalcResultScaledupProducers = new CalcResultScaledupProducers(),
             CalcResultPartialObligations = new CalcResultPartialObligations(),
             CalcResultDetail = new CalcResultDetail
@@ -160,7 +157,6 @@ public class BillingInstructionServiceTests
         // Arrange
         var calcResult = new CalcResult
         {
-            ApplyModulation = true,
             CalcResultScaledupProducers = new CalcResultScaledupProducers(),
             CalcResultPartialObligations = new CalcResultPartialObligations(),
             CalcResultDetail = new CalcResultDetail

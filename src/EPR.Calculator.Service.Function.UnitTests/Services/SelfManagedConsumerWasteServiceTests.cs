@@ -1,10 +1,9 @@
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
@@ -31,7 +30,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             decimal hhGreen,
             decimal hhGreenMedical,
             decimal smcw,
-            int runId = 1,
+            int runId,
             string materialCode = MaterialCodes.Aluminium)
         {
             var material = new Material { Code = materialCode, Name = materialCode };
@@ -123,6 +122,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         [TestMethod]
         public async Task Calculate_Should_Aggregate_OverallTotals_Correctly()
         {
+            var runContext = TestDataHelper.CalculatorRun2024;
             var context = CreateContext();
 
             var materialId = SeedProducer(
@@ -134,20 +134,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 hhAmberMedical: 20,
                 hhGreen: 5,
                 hhGreenMedical: 5,
-                smcw: 40
+                smcw: 40,
+                runId: runContext.RunId
             );
 
             var service = new SelfManagedConsumerWasteService(context);
 
             var materials = new[]
             {
-                new MaterialDetail { Id = materialId, Code = MaterialCodes.Aluminium, Name = MaterialNames.Aluminium, Description = "" }
+                new MaterialDetail { Id = materialId, Code = MaterialCodes.Aluminium, Name = MaterialNames.Aluminium }
             };
 
-            var result = await service.Calculate(
-                new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) },
-                materials,
-                applyModulation: false);
+            var result = await service.Calculate(runContext, materials);
 
             var total = result.OverallTotalPerMaterials[MaterialCodes.Aluminium];
 
@@ -162,6 +160,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         [TestMethod]
         public async Task Calculate_Should_Return_Zero_When_Material_Missing()
         {
+            var runContext = TestDataHelper.CalculatorRun2024;
             var context = CreateContext();
 
             SeedProducer(
@@ -173,15 +172,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 hhAmberMedical: 20,
                 hhGreen: 5,
                 hhGreenMedical: 5,
-                smcw: 40
+                smcw: 40,
+                runId: runContext.RunId
             );
 
             var service = new SelfManagedConsumerWasteService(context);
 
             var result = await service.Calculate(
-                new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2024) },
-                new[] { new MaterialDetail { Code = "NOT_EXIST", Name = "", Description = "" } },
-                applyModulation: false);
+                runContext,
+                [new MaterialDetail { Id = 99, Code = "NOT_EXIST", Name = "" }]);
 
             var total = result.OverallTotalPerMaterials["NOT_EXIST"];
 
@@ -193,6 +192,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         [TestMethod]
         public async Task Calculate_Should_Only_Include_Level1_In_OverallTotals()
         {
+            var runContext = TestDataHelper.CalculatorRun2024;
             var context = CreateContext();
 
             var material = new Material { Id = 1, Code = MaterialCodes.Aluminium, Name = MaterialNames.Aluminium, Description = "" };
@@ -221,9 +221,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var service = new SelfManagedConsumerWasteService(context);
 
             var result = await service.Calculate(
-                new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) },
-                new[] { new MaterialDetail { Code = MaterialCodes.Aluminium, Name = MaterialNames.Aluminium, Description = "" } },
-                applyModulation: false);
+                runContext,
+                [new MaterialDetail { Id = 1, Code = MaterialCodes.Aluminium, Name = MaterialNames.Aluminium }]);
 
             var total = result.OverallTotalPerMaterials[MaterialCodes.Aluminium];
 
@@ -264,7 +263,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             decimal cw,
             (decimal? total, decimal? red, decimal? amber, decimal? green) expected)
         {
-
+            var runContext = TestDataHelper.CalculatorRun2026;
             var context = CreateContext();
 
             var materialId = SeedProducer(
@@ -276,15 +275,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 amberMedical,
                 green,
                 greenMedical,
-                cw
+                cw,
+                runId: runContext.RunId
             );
 
             var service = new SelfManagedConsumerWasteService(context);
 
             var result = await service.Calculate(
-                new CalcResultsRequestDto { RunId = 1, RelativeYear = new RelativeYear(2025) },
-                new[] { new MaterialDetail { Id = materialId, Code = MaterialCodes.Aluminium, Name = MaterialNames.Aluminium, Description = "" } },
-                applyModulation: true);
+                runContext,
+                [new MaterialDetail { Id = materialId, Code = MaterialCodes.Aluminium, Name = MaterialNames.Aluminium }]);
 
             var x = result.ProducerTotals.First().SelfManagedConsumerWasteDataPerMaterials[MaterialCodes.Aluminium];
 

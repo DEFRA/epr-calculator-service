@@ -7,16 +7,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Features.Billing.Contexts;
 
 [TestCategory(TestCategories.BillingRuns)]
 [TestClass]
-public class BillingRunValidatorTests
+public class BillingRunValidatorTests : TestsFor<BillingRunValidator>
 {
-    private BillingRunValidator sut = null!;
-
-    [TestInitialize]
-    public void Init()
-    {
-        sut = new BillingRunValidator();
-    }
-
     [TestMethod]
     public void Should_not_error_when_run_is_valid()
     {
@@ -31,7 +23,7 @@ public class BillingRunValidatorTests
             IsBillingFileGenerating = true
         };
 
-        var result = sut.TestValidate(run);
+        var result = testSubject.TestValidate(run);
 
         result.ShouldNotHaveAnyValidationErrors();
     }
@@ -53,7 +45,7 @@ public class BillingRunValidatorTests
             IsBillingFileGenerating = true
         };
 
-        var result = sut.TestValidate(run);
+        var result = testSubject.TestValidate(run);
 
         result.ShouldHaveValidationErrorFor(r => r.Name);
     }
@@ -74,7 +66,7 @@ public class BillingRunValidatorTests
             IsBillingFileGenerating = true
         };
 
-        var result = sut.TestValidate(run);
+        var result = testSubject.TestValidate(run);
 
         result.ShouldHaveValidationErrorFor(r => r.DefaultParameterSettingMasterId);
     }
@@ -95,7 +87,7 @@ public class BillingRunValidatorTests
             IsBillingFileGenerating = true
         };
 
-        var result = sut.TestValidate(run);
+        var result = testSubject.TestValidate(run);
 
         result.ShouldHaveValidationErrorFor(r => r.LapcapDataMasterId);
     }
@@ -116,7 +108,7 @@ public class BillingRunValidatorTests
             IsBillingFileGenerating = true
         };
 
-        var result = sut.TestValidate(run);
+        var result = testSubject.TestValidate(run);
 
         result.ShouldHaveValidationErrorFor(r => r.CalculatorRunOrganisationDataMasterId);
     }
@@ -137,7 +129,7 @@ public class BillingRunValidatorTests
             IsBillingFileGenerating = true
         };
 
-        var result = sut.TestValidate(run);
+        var result = testSubject.TestValidate(run);
 
         result.ShouldHaveValidationErrorFor(r => r.CalculatorRunPomDataMasterId);
     }
@@ -158,7 +150,7 @@ public class BillingRunValidatorTests
             IsBillingFileGenerating = status
         };
 
-        var result = sut.TestValidate(run);
+        var result = testSubject.TestValidate(run);
 
         result.ShouldHaveValidationErrorFor(r => r.IsBillingFileGenerating);
     }

@@ -1,7 +1,7 @@
+using System.Text.Json;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
-using EPR.Calculator.Service.Function.UnitTests.Builder;
-using System.Text.Json;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
 {
@@ -12,7 +12,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public void From_MapsDictionaryToMaterialBreakdown_AndSetsGlassDrinksContainers()
         {
             // Arrange
-            var materials = TestDataHelper.GetMaterials();
+            var materials = TestDataHelper.GetMaterialDetails();
 
             var comms = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>
             {

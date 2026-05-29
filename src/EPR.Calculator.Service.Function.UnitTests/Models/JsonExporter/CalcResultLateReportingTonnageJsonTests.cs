@@ -1,6 +1,6 @@
-using EPR.Calculator.Service.Function.Models.JsonExporter;
-using EPR.Calculator.Service.Function.UnitTests.Builder;
 using System.Text.Json;
+using EPR.Calculator.Service.Function.Models.JsonExporter;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
 {
@@ -12,7 +12,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         {
             // Arrange
             var data = TestDataHelper.GetCalcResultLateReportingTonnage();
-            var materials = TestDataHelper.GetMaterials();
+            var materials = TestDataHelper.GetMaterialDetails();
 
             // Act
             var result = CalcResultLateReportingTonnageJson.From(data, materials);

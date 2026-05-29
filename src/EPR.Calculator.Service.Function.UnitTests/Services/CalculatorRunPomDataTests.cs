@@ -2,8 +2,10 @@ using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
@@ -67,25 +69,24 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         [TestMethod]
         public async Task LoadPomDataForCalcRun()
         {
-            int runId = 1;
-            int runId2 = 2;
-            string createdBy = "TestUser";
+            var runContext1 = TestDataHelper.CalculatorRun2024;
+            var runContext2 = runContext1 with { RunId = runContext1.RunId + 1 };
             var cancellationToken = CancellationToken.None;
-            var service = new CalculatorRunPomData(context);
+            var service = new CalculatorRunPomData(context, new Mock<ILogger<CalculatorRunPomData>>().Object);
             var (relativeYear, classification, pomData) = await SeedData();
 
             //Run 1
-            var run = new CalculatorRun { Id = runId, RelativeYear = relativeYear, Name = "CalculatorRunTest1", CalculatorRunClassificationId = classification.Id };
+            var run = new CalculatorRun { Id = runContext1.RunId, RelativeYear = runContext1.RelativeYear, Name = "CalculatorRunTest1", CalculatorRunClassificationId = classification.Id };
             context.CalculatorRuns.Add(run);
             await context.SaveChangesAsync();
 
-            await service.LoadPomDataForCalcRun(runId, relativeYear, createdBy, cancellationToken);
+            await service.LoadPomDataForCalcRun(runContext1, cancellationToken);
 
             var masterRecords = await context.CalculatorRunPomDataMaster.ToListAsync();
             Assert.AreEqual(1, masterRecords.Count);
             var pomMasterRun1 = masterRecords[0];
             Assert.AreEqual(relativeYear, pomMasterRun1.RelativeYear);
-            Assert.AreEqual(createdBy, pomMasterRun1.CreatedBy);
+            Assert.AreEqual(runContext1.User, pomMasterRun1.CreatedBy);
             Assert.IsNull(pomMasterRun1.EffectiveTo);
 
             var detailRecords = await context.CalculatorRunPomDataDetails.ToListAsync();
@@ -95,15 +96,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.AreEqual(pomData.SubsidiaryId, pomDataRun1.SubsidiaryId);
             Assert.AreEqual(pomMasterRun1.Id, pomDataRun1.CalculatorRunPomDataMasterId);
 
-            var calculatorRun1 = await context.CalculatorRuns.FirstOrDefaultAsync(c => c.Id == runId);
+            var calculatorRun1 = await context.CalculatorRuns.FirstOrDefaultAsync(c => c.Id == runContext1.RunId);
             Assert.AreEqual(pomMasterRun1.Id, calculatorRun1!.CalculatorRunPomDataMasterId);
 
             //Run 2
-            var run2 = new CalculatorRun { Id = runId2, RelativeYear = relativeYear, Name = "CalculatorRunTest2", CalculatorRunClassificationId = classification.Id };
+            var run2 = new CalculatorRun { Id = runContext2.RunId, RelativeYear = runContext2.RelativeYear, Name = "CalculatorRunTest2", CalculatorRunClassificationId = classification.Id };
             context.CalculatorRuns.Add(run2);
             await context.SaveChangesAsync();
 
-            await service.LoadPomDataForCalcRun(runId2, relativeYear, createdBy, cancellationToken);
+            await service.LoadPomDataForCalcRun(runContext2, cancellationToken);
 
             var updatedMasterRecords = await context.CalculatorRunPomDataMaster.ToListAsync();
             Assert.AreEqual(2, updatedMasterRecords.Count);
@@ -118,7 +119,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             Assert.AreEqual(pomData.PackagingActivity, pomDataRun2.PackagingActivity);
             Assert.AreEqual(pomMasterRun2.Id, pomDataRun2.CalculatorRunPomDataMasterId);
 
-            var calculatorRun2 = await context.CalculatorRuns.FirstOrDefaultAsync(c => c.Id == runId2);
+            var calculatorRun2 = await context.CalculatorRuns.FirstOrDefaultAsync(c => c.Id == runContext2.RunId);
             Assert.AreEqual(pomMasterRun2.Id, calculatorRun2!.CalculatorRunPomDataMasterId);
         }
     }

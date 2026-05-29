@@ -1,7 +1,7 @@
+using System.Text.Json;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
-using System.Text.Json;
-using EPR.Calculator.Service.Function.UnitTests.Builder;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
 {
@@ -20,7 +20,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                     ["PL"] = new() { England = 100, Wales = 200, Scotland = 300, NorthernIreland = 400 }
                 }
             };
-            var materials = TestDataHelper.GetMaterials();
+            var materials = TestDataHelper.GetMaterialDetails();
 
             // Act
             var result = CalcResultLapcapDataJson.From(data, materials);

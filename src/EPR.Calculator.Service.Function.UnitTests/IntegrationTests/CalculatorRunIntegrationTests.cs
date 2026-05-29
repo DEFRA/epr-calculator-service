@@ -5,16 +5,21 @@ using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Enums;
-using EPR.Calculator.Service.Function.Exporter.CsvExporter;
-using EPR.Calculator.Service.Function.Messaging;
-using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.Features.BillingRun;
+using EPR.Calculator.Service.Function.Features.BillingRun.Contexts;
+using EPR.Calculator.Service.Function.Features.CalculatorRun;
+using EPR.Calculator.Service.Function.Features.CalculatorRun.Contexts;
 using EPR.Calculator.Service.Function.Services.CommonDataApi;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
 using EPR.Calculator.Service.Function.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Shouldly;
 
+namespace EPR.Calculator.Service.Function.UnitTests.IntegrationTests;
+
+[TestCategory(TestCategories.IntegrationTests)]
 [TestClass]
+[DoNotParallelize]
 public class CalculatorRunIntegrationTests : BaseIntegrationTest
 {
     private static readonly DateTime Now = DateTime.UtcNow;
@@ -41,17 +46,9 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
 
         var fakeBlobStorage = Provider.GetRequiredService<FakeBlobStorageService>();
 
-        var calculatorRunResult = await Provider.GetRequiredService<ICalculatorRunService>().PrepareResultsFileAsync(
-            new CreateResultFileMessage
-            {
-                CalculatorRunId = calculatorRunId,
-                RelativeYear    = relativeYear,
-                CreatedBy       = rundBy,
-                MessageType     = "some-message-type"
-            }, name);
-        calculatorRunResult.IsSuccess.ShouldBeTrue();
+        var calculatorRunResult = await PerformCalculatorRun(calculatorRunId, rundBy);
         {
-            var contents      = fakeBlobStorage.Get(calculatorRunResult.Value);
+            var contents       = fakeBlobStorage.Get(calculatorRunResult.ExportResult.CsvMetadata.FileName);
             var actualLines   = string.Join(Environment.NewLine, contents.Split(Environment.NewLine, StringSplitOptions.None                                   )).Trim().Split(Environment.NewLine);
             var expectedLines = string.Join(Environment.NewLine, await File.ReadAllLinesAsync($"IntegrationTests/ExpectedData/{relativeYear.Value}-results.csv")).Trim().Split(Environment.NewLine);
 
@@ -65,10 +62,10 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
         }
 
         await SeedAcceptOrRejectProducers(db, calculatorRunId, rundBy, $"IntegrationTests/TestData/{relativeYear.Value}-accept-or-reject-producers.csv");
-        var billingRunResult = await Provider.GetRequiredService<IPrepareBillingFileService>().PrepareBillingFileAsync(calculatorRunId, name, rundBy);
-        billingRunResult.IsSuccess.ShouldBeTrue();
+
+        var billingRunResult = await PerformBillingRun(calculatorRunId, rundBy);
         {
-            var contents      = fakeBlobStorage.Get(billingRunResult.Value.CsvFileName);
+            var contents      = fakeBlobStorage.Get(billingRunResult.ExportResult.CsvMetadata.FileName);
             var actualLines   = string.Join(Environment.NewLine, contents.Split(Environment.NewLine, StringSplitOptions.None                                     )).Trim().Split(Environment.NewLine);
             var expectedLines = string.Join(Environment.NewLine, await File.ReadAllLinesAsync($"IntegrationTests/ExpectedData/{relativeYear.Value}-billing.csv")).Trim().Split(Environment.NewLine);
 
@@ -81,7 +78,7 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
             }
         }
         {   // TODO sort json fields before comparison?
-            var contents      = fakeBlobStorage.Get(billingRunResult.Value.JsonFileName);
+            var contents      = fakeBlobStorage.Get(billingRunResult.ExportResult.JsonMetadata.BillingJsonFileName!);
             var actualLines   = string.Join(Environment.NewLine, contents.Split(Environment.NewLine, StringSplitOptions.None                                    )).Trim().Split(Environment.NewLine);
             var expectedLines = string.Join(Environment.NewLine, await File.ReadAllLinesAsync($"IntegrationTests/ExpectedData/{relativeYear.Value}-billing.json")).Trim().Split(Environment.NewLine);
 
@@ -93,6 +90,22 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
                 if (!dateFields.Contains(i + 1)) actualLines[i].ShouldBe(expectedLines[i], $"Billing JSON mismatch at line {i + 1}: {DisplayFullContents(contents)}");
             }
         }
+    }
+
+    private async Task<CalculatorRunResult> PerformCalculatorRun(int runId, string user)
+    {
+        var runContext = await Provider.GetRequiredService<ICalculatorRunContextBuilder>().Build(runId, user, CancellationToken.None);
+        var runResult = await Provider.GetRequiredService<ICalculatorRunProcessor>().Process(runContext, CancellationToken.None);
+        runResult.Succeeded.ShouldBeTrue();
+        return (CalculatorRunResult) runResult;
+    }
+
+    private async Task<BillingRunResult> PerformBillingRun(int runId, string user)
+    {
+        var runContext = await Provider.GetRequiredService<IBillingRunContextBuilder>().Build(runId, user, CancellationToken.None);
+        var runResult = await Provider.GetRequiredService<IBillingRunProcessor>().Process(runContext, CancellationToken.None);
+        runResult.Succeeded.ShouldBeTrue();
+        return (BillingRunResult) runResult;
     }
 
     private static string DisplayFullContents(string contents) =>

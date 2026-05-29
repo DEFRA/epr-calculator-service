@@ -8,16 +8,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Features.Calculator.Contexts
 
 [TestCategory(TestCategories.CalculatorRuns)]
 [TestClass]
-public class CalculatorRunValidatorTests
+public class CalculatorRunValidatorTests : TestsFor<CalculatorRunValidator>
 {
-    private CalculatorRunValidator sut = null!;
-
-    [TestInitialize]
-    public void Init()
-    {
-        sut = new CalculatorRunValidator();
-    }
-
     [DataRow(RunClassification.INTHEQUEUE)]
     [DataRow(RunClassification.RUNNING)]
     [TestMethod]
@@ -25,13 +17,13 @@ public class CalculatorRunValidatorTests
     {
         var run = new CalculatorRun
         {
-            CalculatorRunClassificationId = (int) classification,
+            CalculatorRunClassificationId = (int)classification,
             Name = "TestRun",
             DefaultParameterSettingMasterId = 1,
             LapcapDataMasterId = 1
         };
 
-        var result = sut.TestValidate(run);
+        var result = testSubject.TestValidate(run);
 
         result.ShouldNotHaveAnyValidationErrors();
     }
@@ -44,13 +36,13 @@ public class CalculatorRunValidatorTests
     {
         var run = new CalculatorRun
         {
-            CalculatorRunClassificationId = (int) classification,
+            CalculatorRunClassificationId = (int)classification,
             Name = "TestRun",
             DefaultParameterSettingMasterId = 1,
             LapcapDataMasterId = 1
         };
 
-        var result = sut.TestValidate(run);
+        var result = testSubject.TestValidate(run);
 
         result.ShouldHaveValidationErrorFor(r => r.CalculatorRunClassificationId);
     }
@@ -63,13 +55,13 @@ public class CalculatorRunValidatorTests
     {
         var run = new CalculatorRun
         {
-            CalculatorRunClassificationId = (int) RunClassification.INTHEQUEUE,
+            CalculatorRunClassificationId = (int)RunClassification.INTHEQUEUE,
             Name = name!,
             DefaultParameterSettingMasterId = 1,
             LapcapDataMasterId = 1
         };
 
-        var result = sut.TestValidate(run);
+        var result = testSubject.TestValidate(run);
 
         result.ShouldHaveValidationErrorFor(r => r.Name);
     }
@@ -81,13 +73,13 @@ public class CalculatorRunValidatorTests
     {
         var run = new CalculatorRun
         {
-            CalculatorRunClassificationId = (int) RunClassification.INTHEQUEUE,
+            CalculatorRunClassificationId = (int)RunClassification.INTHEQUEUE,
             Name = "TestRun",
             DefaultParameterSettingMasterId = id,
             LapcapDataMasterId = 1
         };
 
-        var result = sut.TestValidate(run);
+        var result = testSubject.TestValidate(run);
 
         result.ShouldHaveValidationErrorFor(r => r.DefaultParameterSettingMasterId);
     }
@@ -99,13 +91,13 @@ public class CalculatorRunValidatorTests
     {
         var run = new CalculatorRun
         {
-            CalculatorRunClassificationId = (int) RunClassification.INTHEQUEUE,
+            CalculatorRunClassificationId = (int)RunClassification.INTHEQUEUE,
             Name = "TestRun",
             DefaultParameterSettingMasterId = 1,
             LapcapDataMasterId = id
         };
 
-        var result = sut.TestValidate(run);
+        var result = testSubject.TestValidate(run);
 
         result.ShouldHaveValidationErrorFor(r => r.LapcapDataMasterId);
     }
@@ -115,14 +107,14 @@ public class CalculatorRunValidatorTests
     {
         var run = new CalculatorRun
         {
-            CalculatorRunClassificationId = (int) RunClassification.INTHEQUEUE,
+            CalculatorRunClassificationId = (int)RunClassification.INTHEQUEUE,
             Name = "TestRun",
             DefaultParameterSettingMasterId = 1,
             LapcapDataMasterId = 1,
             CalculatorRunOrganisationDataMasterId = 1
         };
 
-        var result = sut.TestValidate(run);
+        var result = testSubject.TestValidate(run);
 
         result.ShouldHaveValidationErrorFor(r => r.CalculatorRunOrganisationDataMasterId);
     }
@@ -132,14 +124,14 @@ public class CalculatorRunValidatorTests
     {
         var run = new CalculatorRun
         {
-            CalculatorRunClassificationId = (int) RunClassification.INTHEQUEUE,
+            CalculatorRunClassificationId = (int)RunClassification.INTHEQUEUE,
             Name = "TestRun",
             DefaultParameterSettingMasterId = 1,
             LapcapDataMasterId = 1,
             CalculatorRunPomDataMasterId = 1
         };
 
-        var result = sut.TestValidate(run);
+        var result = testSubject.TestValidate(run);
 
         result.ShouldHaveValidationErrorFor(r => r.CalculatorRunPomDataMasterId);
     }

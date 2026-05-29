@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace EPR.Calculator.Service.Function.UnitTests.TestHelpers.Utils;
+namespace EPR.Calculator.Service.Function.UnitTests.TestHelpers.Services;
 
-public static class LoggingTestExtensions
+public static class TestLoggingExtensions
 {
     public static void VerifyLogContains<T>(this Mock<ILogger<T>> logger, LogLevel level, string fragment)
     {
