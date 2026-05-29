@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions;
 using EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts;
 using EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C;
@@ -16,13 +16,14 @@ public static class CalcResultSummaryUtil
 {
     private const int decimalRoundUp = 2;
 
-    public static (List<CalcResultSummaryHeader>, List<CalcResultSummaryHeader>, List<CalcResultSummaryHeader>) GetHeaders(
+    public static (List<CalcResultSummaryHeader>, List<CalcResultSummaryHeader>) GetSecondaryHeaders(
         CalcResultSummary resultSummary,
         IReadOnlyList<MaterialDetail> materials,
-        bool applyModulation
+        bool applyModulation,
+        int identityColumnCount
     )
     {
-        int section1MaterialsIdx           = 1                             + StartingHeaders().Count();
+        int section1MaterialsIdx           = 1                             + identityColumnCount;
         int section1DisposalFeeIdx         = section1MaterialsIdx          + Section1Materials(materials, applyModulation).Count();
         int section2aMaterialsIdx          = section1DisposalFeeIdx        + Section1DisposalFee().Count();
         int section2aCommsIdx              = section2aMaterialsIdx         + Section2aMaterials(materials).Count();
@@ -50,7 +51,7 @@ public static class CalcResultSummaryUtil
             new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.FeeforCommsCostsbyMaterialwithBadDebtprovision2A, ColumnIndex = section2aComms2aIdx + 2 },
             new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.CommsCostHeaderWithoutBadDebtFor2bTitle, ColumnIndex = commsCost2bIdx },
             new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.CommsCostHeaderBadDebtProvisionFor2bTitle, ColumnIndex = commsCost2bIdx + 1 },
-            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.CommsCostHeaderWithBadDebtFor2bTitle,ColumnIndex = commsCost2bIdx + 2 },
+            new CalcResultSummaryHeader { Name = CalcResultSummaryHeaders.CommsCostHeaderWithBadDebtFor2bTitle, ColumnIndex = commsCost2bIdx + 2 },
             new CalcResultSummaryHeader { Name = TwoCCommsConstantsHeader.TwoCCommsCostByCountryWithout, ColumnIndex = commsCost2cIdx },
             new CalcResultSummaryHeader { Name = TwoCCommsConstantsHeader.TwoCCommsCostBadBebtProvision, ColumnIndex = commsCost2cIdx + 1 },
             new CalcResultSummaryHeader { Name = TwoCCommsConstantsHeader.TwoCCommsCostByCountryWithBadDebt, ColumnIndex = commsCost2cIdx + 2 },
@@ -87,25 +88,7 @@ public static class CalcResultSummaryUtil
         materialsBreakdownHeaders.AddRange(CreateMoneyHeaders(laDataPrepCostsProducerIdx, resultSummary.LaDataPrepCostsTitleSection4                       , resultSummary.LaDataPrepCostsBadDebtProvisionTitleSection4, resultSummary.LaDataPrepCostsWithBadDebtProvisionTitleSection4));
         materialsBreakdownHeaders.AddRange(CreateMoneyHeaders(saSetupCostsSummaryIdx    , resultSummary.SaSetupCostsTitleSection5                          , resultSummary.SaSetupCostsBadDebtProvisionTitleSection5   , resultSummary.SaSetupCostsWithBadDebtProvisionTitleSection5));
 
-        var columnHeaders = new List<CalcResultSummaryHeader>();
-        columnHeaders.AddRange(StartingHeaders());
-        columnHeaders.AddRange(Section1Materials(materials, applyModulation));
-        columnHeaders.AddRange(Section1DisposalFee());
-        columnHeaders.AddRange(Section2aMaterials(materials));
-        columnHeaders.AddRange(Section2aComms());
-        columnHeaders.AddRange(Section1Disposal());
-        columnHeaders.AddRange(Section2aComms2a());
-        columnHeaders.AddRange(CommsCost2aPercentage());
-        columnHeaders.AddRange(CommsCost2b());
-        columnHeaders.AddRange(CommsCost2c());
-        columnHeaders.AddRange(OnePlus2A2B2CProducer.GetHeaders());
-        columnHeaders.AddRange(ThreeSaCostsProducer.GetHeaders());
-        columnHeaders.AddRange(LaDataPrepCostsProducer.GetHeaders());
-        columnHeaders.AddRange(SaSetupCostsProducer.GetHeaders());
-        columnHeaders.AddRange(TotalBillBreakdownProducer.GetHeaders());
-        columnHeaders.AddRange(BillingInstructionsProducer.GetHeaders());
-
-        return (producerDisposalFeesHeaders, materialsBreakdownHeaders, columnHeaders);
+        return (producerDisposalFeesHeaders, materialsBreakdownHeaders);
     }
 
     private static IEnumerable<CalcResultSummaryHeader> CreateMoneyHeaders(int columnIndex, params decimal[] values)
@@ -118,22 +101,7 @@ public static class CalcResultSummaryUtil
         return names.Select((name, i) => new CalcResultSummaryHeader { Name = name});
     }
 
-    private static IEnumerable<CalcResultSummaryHeader> StartingHeaders()
-    {
-        return CreateHeaders(
-            CalcResultSummaryHeaders.ProducerId,
-            CalcResultSummaryHeaders.SubsidiaryId,
-            CalcResultSummaryHeaders.ProducerOrSubsidiaryName,
-            CalcResultSummaryHeaders.TradingName,
-            CalcResultSummaryHeaders.Level,
-            CalcResultSummaryHeaders.ScaledupTonnages,
-            CalcResultSummaryHeaders.PartialCalculation,
-            CalcResultSummaryHeaders.StatusCode,
-            CalcResultSummaryHeaders.JoinersDate,
-            CalcResultSummaryHeaders.LeaversDate);
-    }
-
-    private static IEnumerable<CalcResultSummaryHeader> Section1Materials(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
+    internal static IEnumerable<CalcResultSummaryHeader> Section1Materials(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
     {
         return materials.SelectMany(material =>
         {
@@ -236,7 +204,7 @@ public static class CalcResultSummaryUtil
         });
     }
 
-    private static IEnumerable<CalcResultSummaryHeader> Section1DisposalFee()
+    internal static IEnumerable<CalcResultSummaryHeader> Section1DisposalFee()
     {
         return CreateHeaders(
             CalcResultSummaryHeaders.TotalProducerDisposalFee,
@@ -250,7 +218,7 @@ public static class CalcResultSummaryUtil
             CalcResultSummaryHeaders.TonnageChangeAdvice);
     }
 
-    private static IEnumerable<CalcResultSummaryHeader> Section2aMaterials(IReadOnlyList<MaterialDetail> materials)
+    internal static IEnumerable<CalcResultSummaryHeader> Section2aMaterials(IReadOnlyList<MaterialDetail> materials)
     {
         return materials.SelectMany(material =>
         {
@@ -280,7 +248,7 @@ public static class CalcResultSummaryUtil
         });
     }
 
-    private static IEnumerable<CalcResultSummaryHeader> Section2aComms()
+    internal static IEnumerable<CalcResultSummaryHeader> Section2aComms()
     {
         return CreateHeaders(
             CalcResultSummaryHeaders.TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision,
@@ -292,7 +260,7 @@ public static class CalcResultSummaryUtil
             CalcResultSummaryHeaders.NorthernIrelandTotalwithBadDebtprovision);
     }
 
-    private static IEnumerable<CalcResultSummaryHeader> Section1Disposal()
+    internal static IEnumerable<CalcResultSummaryHeader> Section1Disposal()
     {
         return CreateHeaders(
             CalcResultSummaryHeaders.TotalProducerFeeforLADisposalCostswoBadDebtprovision,
@@ -304,7 +272,7 @@ public static class CalcResultSummaryUtil
             CalcResultSummaryHeaders.NorthernIrelandTotalwithBadDebtprovision);
     }
 
-    private static IEnumerable<CalcResultSummaryHeader> Section2aComms2a()
+    internal static IEnumerable<CalcResultSummaryHeader> Section2aComms2a()
     {
         return CreateHeaders(
             CalcResultSummaryHeaders.TotalProducerFeeforCommsCostsbyMaterialwoBadDebtprovision2A,
@@ -316,12 +284,12 @@ public static class CalcResultSummaryUtil
             CalcResultSummaryHeaders.NorthernIrelandTotalwithBadDebtprovision);
     }
 
-    private static IEnumerable<CalcResultSummaryHeader> CommsCost2aPercentage()
+    internal static IEnumerable<CalcResultSummaryHeader> CommsCost2aPercentage()
     {
         return CreateHeaders(CalcResultSummaryHeaders.PercentageofProducerTonnagevsAllProducers);
     }
 
-    private static IEnumerable<CalcResultSummaryHeader> CommsCost2b()
+    internal static IEnumerable<CalcResultSummaryHeader> CommsCost2b()
     {
         return CreateHeaders(
             CalcResultSummaryHeaders.ProducerFeeWithoutBadDebtForComms2b,
@@ -333,7 +301,7 @@ public static class CalcResultSummaryUtil
             CalcResultSummaryHeaders.NorthernIrelandTotalWithBadDebtProvisionForComms2b);
     }
 
-    private static IEnumerable<CalcResultSummaryHeader> CommsCost2c()
+    internal static IEnumerable<CalcResultSummaryHeader> CommsCost2c()
     {
         return CreateHeaders(
             TwoCCommsCostSubColumnHeader.TwoCCommsCostCountryInPropertionWithoutBadDebt,
@@ -365,5 +333,4 @@ public static class CalcResultSummaryUtil
         var commsCostHeaderBadDebtProvision = calcResultSummary.CommsCostHeaderBadDebtProvisionFor2bTitle;
         return commsCostHeaderWithoutBadDebt + commsCostHeaderBadDebtProvision;
     }
-
 }
