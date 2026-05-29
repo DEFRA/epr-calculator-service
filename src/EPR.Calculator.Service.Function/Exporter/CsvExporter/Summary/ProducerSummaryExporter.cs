@@ -20,7 +20,6 @@ public class ProducerSummaryExporter : IProducerSummaryExporter
     public IEnumerable<CalcResultSummaryHeader> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
     {
         var headers = new List<CalcResultSummaryHeader>();
-        headers.AddRange(CalcResultSummaryUtil.Section1Disposal());
         headers.AddRange(CalcResultSummaryUtil.Section2aComms2a());
         headers.AddRange(CalcResultSummaryUtil.CommsCost2aPercentage());
         headers.AddRange(CalcResultSummaryUtil.CommsCost2b());
@@ -36,7 +35,6 @@ public class ProducerSummaryExporter : IProducerSummaryExporter
 
     public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
     {
-        AppendSectionContent(csvContent, producer.LocalAuthorityDisposalCostsSectionOne);
         AppendSectionContent(csvContent, producer.CommunicationCostsSectionTwoA);
 
         csvContent.Append(CsvSanitiser.SanitiseData(producer.PercentageofProducerReportedTonnagevsAllProducers, DecimalPlaces.Eight, null, false, true));
