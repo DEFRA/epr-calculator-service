@@ -43,22 +43,15 @@ public class Section1DisposalFeeExporter : ICalcResultSummaryPartExporter
         AppendCsvValue(csvContent, producer.TonnageChangeAdvice, producer.isOverallTotalRow);
     }
 
-    // TODO need this function?
     private static void AppendCsvValue(
         StringBuilder csvContent,
-        object? value,
-        bool isOverallTotalRow = false,
-        DecimalPlaces decimalPlaces = DecimalPlaces.Zero,
-        DecimalFormats decimalFormat = DecimalFormats.F2
+        string? value,
+        bool isOverallTotalRow
     )
     {
         if (value == null && !isOverallTotalRow)
         {
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.Hyphen));
-        }
-        else if (value is int or decimal or double)
-        {
-            csvContent.Append(CsvSanitiser.SanitiseData(value, decimalPlaces, decimalFormat));
         }
         else
         {

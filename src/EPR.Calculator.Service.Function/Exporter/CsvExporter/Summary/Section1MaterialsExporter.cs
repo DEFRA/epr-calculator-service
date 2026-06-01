@@ -175,7 +175,7 @@ public class Section1MaterialsExporter : ICalcResultSummaryPartExporter
                 ? CsvSanitiser.SanitiseData(CommonConstants.Hyphen)
                 : CsvSanitiser.SanitiseData(disposalFee.PreviousInvoicedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
 
-        foreach (var tonnage in MaterialTonnagePackages(key, disposalFee)) {
+        foreach (var tonnage in MaterialTonnagePackages(key, disposalFee, applyModulation)) {
             csvContent.Append(CsvSanitiser.SanitiseData(tonnage, DecimalPlaces.Three, DecimalFormats.F3));
         }
 
@@ -230,29 +230,32 @@ public class Section1MaterialsExporter : ICalcResultSummaryPartExporter
         csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.NorthernIrelandWithBadDebtProvision    , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
     }
 
-    private static IEnumerable<decimal> MaterialTonnagePackages(string materialCode, CalcResultSummaryProducerDisposalFeesByMaterial mb)
+    private static IEnumerable<decimal> MaterialTonnagePackages(string materialCode, CalcResultSummaryProducerDisposalFeesByMaterial mb, bool applyModulation)
     {
         yield return mb.HouseholdPackagingWasteTonnage;
 
-        foreach (var dict in mb.HouseholdPackagingWasteTonnageRagRating.OrderBy(x => x.Key))
+        if (applyModulation)
         {
-            yield return dict.Value;
+            foreach (var rating in Enum.GetValues<RagRating>())
+                yield return mb.HouseholdPackagingWasteTonnageRagRating.GetValueOrDefault(rating, 0);
         }
 
         yield return mb.PublicBinTonnage;
 
-        foreach (var dict in mb.PublicBinTonnageRagRating.OrderBy(x => x.Key))
+        if (applyModulation)
         {
-            yield return dict.Value;
+            foreach (var rating in Enum.GetValues<RagRating>())
+                yield return mb.PublicBinTonnageRagRating.GetValueOrDefault(rating, 0);
         }
 
         if (materialCode == MaterialCodes.Glass)
         {
             yield return mb.HouseholdDrinksContainersTonnage;
 
-            foreach (var dict in mb.HouseholdDrinksContainersTonnageRagRating.OrderBy(x => x.Key))
+            if (applyModulation)
             {
-                yield return dict.Value;
+                foreach (var rating in Enum.GetValues<RagRating>())
+                    yield return mb.HouseholdDrinksContainersTonnageRagRating.GetValueOrDefault(rating, 0);
             }
         }
     }

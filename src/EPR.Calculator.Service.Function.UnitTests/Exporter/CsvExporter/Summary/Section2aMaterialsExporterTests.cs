@@ -1,6 +1,6 @@
 using System.Text;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
-using EPR.Calculator.Service.Function.UnitTests.Builder;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Summary;
 
@@ -13,7 +13,7 @@ public class Section2aMaterialsExporterTests
     public void Section2aMaterialsExporter_Export_CSV_Aluminium()
     {
         // Arrange
-        var materials = TestDataHelper.GetMaterials().Where(m => m.Code == "AL").ToList();
+        var materials = TestDataHelper.GetMaterialDetails().Where(m => m.Code == "AL").ToList();
         const bool applyModulation = false;
         var resultSummary = TestDataHelper.GetCalcResultSummary();
         var producer = resultSummary.ProducerDisposalFees.First();
@@ -66,7 +66,7 @@ public class Section2aMaterialsExporterTests
     public void Section2aMaterialsExporter_Export_CSV_Glass()
     {
         // Arrange
-        var materials = TestDataHelper.GetMaterials().Where(m => m.Code == "GL").ToList();
+        var materials = TestDataHelper.GetMaterialDetails().Where(m => m.Code == "GL").ToList();
         const bool applyModulation = false;
         var resultSummary = TestDataHelper.GetCalcResultSummary();
         var producer = resultSummary.ProducerDisposalFees.First();

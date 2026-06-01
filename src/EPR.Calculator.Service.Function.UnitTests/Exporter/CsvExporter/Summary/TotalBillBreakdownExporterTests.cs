@@ -1,6 +1,6 @@
 using System.Text;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
-using EPR.Calculator.Service.Function.UnitTests.Builder;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Summary;
 
@@ -13,7 +13,7 @@ public class TotalBillBreakdownExporterTests
     public void TotalBillBreakdownExporter_Export_CSV()
     {
         // Arrange
-        var materials = TestDataHelper.GetMaterials();
+        var materials = TestDataHelper.GetMaterialDetails();
         const bool applyModulation = false;
         var resultSummary = TestDataHelper.GetCalcResultSummary();
         var csvContent = new StringBuilder();

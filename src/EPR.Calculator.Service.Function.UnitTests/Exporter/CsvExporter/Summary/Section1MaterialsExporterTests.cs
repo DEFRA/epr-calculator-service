@@ -1,6 +1,6 @@
 using System.Text;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
-using EPR.Calculator.Service.Function.UnitTests.Builder;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Summary;
 
@@ -13,7 +13,7 @@ public class Section1MaterialsExporterTests
     public void Section1MaterialsExporter_Export_CSV_Aluminium()
     {
         // Arrange
-        var materials = TestDataHelper.GetMaterials().Where(m => m.Code == "AL").ToList();
+        var materials = TestDataHelper.GetMaterialDetails().Where(m => m.Code == "AL").ToList();
         const bool applyModulation = false;
         var resultSummary = TestDataHelper.GetCalcResultSummary();
         var producer = resultSummary.ProducerDisposalFees.First();
@@ -72,7 +72,7 @@ public class Section1MaterialsExporterTests
     public void Section1MaterialsExporter_Export_CSV_Glass()
     {
         // Arrange — Glass has an extra "Household Drinks Containers Tonnage" column (16 columns total)
-        var materials = TestDataHelper.GetMaterials().Where(m => m.Code == "GL").ToList();
+        var materials = TestDataHelper.GetMaterialDetails().Where(m => m.Code == "GL").ToList();
         const bool applyModulation = false;
         var resultSummary = TestDataHelper.GetCalcResultSummary();
         var producer = resultSummary.ProducerDisposalFees.First();
@@ -133,10 +133,7 @@ public class Section1MaterialsExporterTests
     public void Section1MaterialsExporter_Export_CSV_Aluminium_WithModulation()
     {
         // Arrange — 49 columns with modulation
-        // Note: HouseholdPackagingWasteTonnageRagRating and PublicBinTonnageRagRating are not set in
-        // the test data, so MaterialTonnagePackages yields only HH + PubBin (no per-band rag values).
-        // The data row (37 values) is therefore shorter than the column header row (49 columns).
-        var materials = TestDataHelper.GetMaterials().Where(m => m.Code == "AL").ToList();
+        var materials = TestDataHelper.GetMaterialDetails().Where(m => m.Code == "AL").ToList();
         const bool applyModulation = true;
         var resultSummary = TestDataHelper.GetCalcResultSummary(applyModulation);
         var producer = resultSummary.ProducerDisposalFees.First();
@@ -207,21 +204,23 @@ public class Section1MaterialsExporterTests
             "Scotland with Bad Debt Provision",
             "Northern Ireland with Bad Debt Provision"];
 
-        // Data row: 37 values.
+        // Data row: 49 values.
         string?[] dataRow = [
-            "-",                                         // PIT (null, Level="1")
-            "1000.000",
-            "0.000",                                     // HH, PB (no rag-rating yields)
-            "0.000",                                     // TotalReportedTonnage
-            "1.000", "2.000", "3.000", "4.000", "5.000", "6.000",  // TotalRag ordered
-            "5.000", "7.000", "9.000",                   // grouped: Red+RM, Amber+AM, Green+GM
-            "90.000",                                    // SMCW
-            "90.000", "0.000", "90.000", "0.000",        // ActionedSMCW: total,red,amber,green
-            "910.000", "300.000", "200.000", "410.000",  // Net: total,red,amber,green
-            "-",                                         // ResidualSMCW (null)
-            "0.000",                                     // TonnageChange
-            "£1.0000", "£2.0000", "£3.0000",             // Price: red,amber,green
-            "£4.53", "£5.00", "£6.00",                   // DisposalFee: red(4.525001→4.53),amber,green
+            "-",                                                  // PIT
+            "1000.000",                                           // HH Tonnage
+            "11.000", "12.000", "13.000", "14.000", "15.000", "16.000", // HH RAG
+            "0.000",                                              // PB Tonnage
+            "21.000", "22.000", "23.000", "24.000", "25.000", "26.000", // PB RAG
+            "0.000",                                              // TotalReportedTonnage
+            "1.000", "2.000", "3.000", "4.000", "5.000", "6.000", // TotalRag ordered
+            "5.000", "7.000", "9.000",                            // grouped: Red+RM, Amber+AM, Green+GM
+            "90.000",                                             // SMCW
+            "90.000" ,   "0.000",  "90.000",   "0.000",           // ActionedSMCW: total,red,amber,green
+            "910.000", "300.000", "200.000", "410.000",           // Net: total,red,amber,green
+            "-",                                                  // ResidualSMCW (null)
+            "0.000",                                              // TonnageChange
+            "£1.0000", "£2.0000", "£3.0000",                      // Price: red,amber,green
+            "£4.53"  ,   "£5.00",   "£6.00",                      // DisposalFee: red(4.525001→4.53),amber,green
             "£607.52", "£36.45", "£643.97", "£348.06", "£78.46", "£156.28", "£61.18",  // common 7
         ];
 
@@ -232,8 +231,8 @@ public class Section1MaterialsExporterTests
     [TestMethod]
     public void Section1MaterialsExporter_Export_CSV_Glass_WithModulation()
     {
-        // Arrange — 56 columns with modulation (Glass adds 7 extra: Drinks Containers + 6 rag bands)
-        var materials = TestDataHelper.GetMaterials().Where(m => m.Code == "GL").ToList();
+        // Arrange — 56 columns with modulation (Glass adds 7 extra: HDC + 6 rag bands)
+        var materials = TestDataHelper.GetMaterialDetails().Where(m => m.Code == "GL").ToList();
         const bool applyModulation = true;
         var resultSummary = TestDataHelper.GetCalcResultSummary(applyModulation);
         var producer = resultSummary.ProducerDisposalFees.First();
@@ -311,19 +310,25 @@ public class Section1MaterialsExporterTests
             "Scotland with Bad Debt Provision",
             "Northern Ireland with Bad Debt Provision"];
 
+        // Data row: 56 values.
         string?[] dataRow = [
-            "0.000",                 // PIT=0
-            "500.000", "0.000", "220.000",            // HH, PubBin, Drinks (no rag yields)
-            "0.000",                                  // TotalReportedTonnage
-            "1.000", "2.000", "3.000", "4.000", "5.000", "6.000",  // TotalRag ordered
-            "5.000", "7.000", "9.000",                // grouped: Red+RM, Amber+AM, Green+GM
-            "150.000",                                // SMCW
-            "150.000", "50.000", "100.000", "0.000",  // ActionedSMCW: total,red,amber,green
-            "350.000", "300.000", "50.000", "0.000",  // Net: total,red,amber,green
-            "-",                                      // ResidualSMCW (null)
-            "0.000",                                  // TonnageChange
-            "£1.0000", "£2.0000", "£3.0000",          // Price: red,amber,green
-            "£4.00", "£5.00", "£6.00",                // DisposalFee: red,amber,green
+            "0.000",                                              // PIT=0
+            "500.000",                                            // HH Tonnage
+            "0.000", "0.000", "0.000", "0.000", "0.000", "0.000", // HH RAG (padded zeros)
+            "0.000",                                              // PB Tonnage
+            "0.000", "0.000", "0.000", "0.000", "0.000", "0.000", // PB RAG (padded zeros)
+            "220.000",                                            // HDC Tonnage
+            "0.000", "0.000", "0.000", "0.000", "0.000", "0.000", // HDC RAG (padded zeros)
+            "0.000",                                              // TotalReportedTonnage
+            "1.000", "2.000", "3.000", "4.000", "5.000", "6.000", // TotalRag ordered
+            "5.000", "7.000", "9.000",                            // grouped: Red+RM, Amber+AM, Green+GM
+            "150.000",                                            // SMCW
+            "150.000",  "50.000", "100.000", "0.000",             // ActionedSMCW: total,red,amber,green
+            "350.000", "300.000",  "50.000", "0.000",             // Net: total,red,amber,green
+            "-",                                                  // ResidualSMCW (null)
+            "0.000",                                              // TonnageChange
+            "£1.0000", "£2.0000", "£3.0000",                      // Price: red,amber,green
+            "£4.00"  ,   "£5.00",   "£6.00",                      // DisposalFee: red,amber,green
             "£2254.14", "£135.25", "£2389.39", "£1291.43", "£291.10", "£579.85", "£227.00",  // common 7
         ];
 
