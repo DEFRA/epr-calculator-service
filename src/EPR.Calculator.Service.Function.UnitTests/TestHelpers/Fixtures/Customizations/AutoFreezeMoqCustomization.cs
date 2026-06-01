@@ -11,8 +11,6 @@ public class AutoFreezeMoqCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
-        ArgumentNullException.ThrowIfNull(fixture);
-
         fixture.Customizations.Add(
             new CachedSpecimensBuilder(
                 new MockPostprocessor(
@@ -25,9 +23,6 @@ public class AutoFreezeMoqCustomization : ICustomization
     {
         private readonly ConcurrentDictionary<object, object> _instances = new();
 
-        public object Create(object request, ISpecimenContext context)
-        {
-            return _instances.GetOrAdd(request, r => builder.Create(r, context));
-        }
+        public object Create(object request, ISpecimenContext context) => _instances.GetOrAdd(request, r => builder.Create(r, context));
     }
 }

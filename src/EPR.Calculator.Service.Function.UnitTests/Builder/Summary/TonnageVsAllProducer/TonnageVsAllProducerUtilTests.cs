@@ -2,198 +2,182 @@
 using EPR.Calculator.Service.Function.Builder.Summary;
 using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
 
-namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TonnageVsAllProducer
+namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TonnageVsAllProducer;
+
+[TestCategory(TestCategories.ResultBuilder)]
+[TestClass]
+public class TonnageVsAllProducerUtilTests
 {
-    [TestClass]
-    public class TonnageVsAllProducerUtilTests
+    private Fixture Fixture { get; } = new();
+
+    [TestMethod]
+    public void CanCallGetPercentageofProducerReportedHHTonnagevsAllProducersTotal()
     {
-        private Fixture Fixture { get; init; } = new Fixture();
+        // Arrange
+        var producers = Fixture.Create<List<ProducerDetail>>();
 
-        [TestMethod]
-        public void CanCallGetPercentageofProducerReportedHHTonnagevsAllProducersTotal()
-        {
-            // Arrange
-            var producers = Fixture.Create<List<ProducerDetail>>();
+        var testProducerId = Fixture.Create<int>();
+        var testCalculatorRunId = Fixture.Create<int>();
+        var testSubsidaryId = Fixture.Create<string>();
+        var materialDetails = Fixture.Create<List<MaterialDetail>>();
 
-            var testProducerId = Fixture.Create<int>();
-            var testCalculatorRunId = Fixture.Create<int>();
-            var testSubsidaryId = Fixture.Create<string>();
-            var testMaterialId = Fixture.Create<int>();
-            var materialDetails = Fixture.Create<List<MaterialDetail>>();
+        var allResults = GenerateAllResults(testProducerId, testCalculatorRunId, testSubsidaryId);
 
-            var allResults = GenerateAllResults(testProducerId, testCalculatorRunId, testSubsidaryId);
+        producers.First().ProducerId = testProducerId;
+        producers.First().SubsidiaryId = testSubsidaryId;
+        producers.First().CalculatorRunId = testCalculatorRunId;
+        allResults.First().ProducerReportedMaterialProjected.MaterialId = materialDetails.First().Id;
 
-            producers.First().ProducerId = testProducerId;
-            producers.First().SubsidiaryId = testSubsidaryId;
-            producers.First().CalculatorRunId = testCalculatorRunId;
-            allResults.First().ProducerReportedMaterialProjected.MaterialId = testMaterialId;
-            materialDetails.First().Id = testMaterialId;
+        var TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, producers.First().CalculatorRunId);
+        // Act
+        var result = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducersTotal(producers, TotalPackagingTonnage);
 
-            var scaledupProducers = Fixture.Create<List<CalcResultScaledupProducer>>();
-            var partialObligations = new List<CalcResultPartialObligation>();
+        // Assert
+        Assert.AreEqual(50, result);
+    }
 
-            var TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, producers.First().CalculatorRunId);
-            // Act
-            var result = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducersTotal(producers, TotalPackagingTonnage);
+    /// <summary>
+    ///     Check that the percentage of HH tonnage returns zero if there is no producer details corresponding
+    ///     to the ID given in the materials details.
+    /// </summary>
+    [TestMethod]
+    public void GetPercentageofProducerReportedHHTonnagevsAllProducersTotal_ReturnsZeroWhenNoMatchingProducer()
+    {
+        // Arrange
+        var fixture = new Fixture();
+        var producers = fixture.Create<List<ProducerDetail>>();
+        var allResults = fixture.Create<List<CalcResultProducerAndReportMaterialDetail>>();
+        var materialDetails = Fixture.Create<List<MaterialDetail>>();
 
-            // Assert
-            Assert.AreEqual(50, result);
-        }
+        var testProducerId = fixture.Create<int>();
+        var testCalculatorRunId = fixture.Create<int>();
 
-        /// <summary>
-        /// Check that the percentage of HH tonnage returns zero if there is no producer details corresponding
-        /// to the ID given in the materials details.
-        /// </summary>
-        [TestMethod]
-        public void GetPercentageofProducerReportedHHTonnagevsAllProducersTotal_ReturnsZeroWhenNoMatchingProducer()
-        {
-            // Arrange
-            var fixture = new Fixture();
-            var producers = fixture.Create<List<ProducerDetail>>();
-            var allResults = fixture.Create<List<CalcResultProducerAndReportMaterialDetail>>();
-            var materialDetails = Fixture.Create<List<MaterialDetail>>();
+        allResults.First().ProducerReportedMaterialProjected.ProducerDetailId = testProducerId;
+        allResults.First().ProducerDetail.Id = testProducerId;
+        allResults.First().ProducerDetail.ProducerId = testProducerId;
+        allResults.First().ProducerDetail.CalculatorRunId = testCalculatorRunId;
+        allResults.First().ProducerReportedMaterialProjected.PackagingType = "HH";
 
-            var testProducerId = fixture.Create<int>();
-            var testCalculatorRunId = fixture.Create<int>();
+        var TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId);
 
-            allResults.First().ProducerReportedMaterialProjected.ProducerDetailId = testProducerId;
-            allResults.First().ProducerDetail.Id = testProducerId;
-            allResults.First().ProducerDetail.ProducerId = testProducerId;
-            allResults.First().ProducerDetail.CalculatorRunId = testCalculatorRunId;
-            allResults.First().ProducerReportedMaterialProjected.PackagingType = "HH";
+        // Act
+        var result = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducersTotal(producers, TotalPackagingTonnage);
 
-            var scaledupProducers = new List<CalcResultScaledupProducer>();
-            var partialObligations = new List<CalcResultPartialObligation>();
-            var TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId);
+        // Assert
+        Assert.AreEqual(0, result);
+    }
 
-            // Act
-            var result = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducersTotal(producers, TotalPackagingTonnage);
+    [TestMethod]
+    public void CanCallGetPercentageofProducerReportedHHTonnagevsAllProducers()
+    {
+        // Arrange
+        var testProducerId = Fixture.Create<int>();
+        var testCalculatorRunId = Fixture.Create<int>();
+        var testSubsidaryId = Fixture.Create<string>();
+        var materialDetails = Fixture.Create<List<MaterialDetail>>();
 
-            // Assert
-            Assert.AreEqual(0, result);
-        }
+        //CalcResultSummaryBuilder.ScaledupProducers = Fixture.Create<List<CalcResultScaledupProducer>>();
 
-        [TestMethod]
-        public void CanCallGetPercentageofProducerReportedHHTonnagevsAllProducers()
-        {
-            // Arrange
-            var testProducerId = Fixture.Create<int>();
-            var testCalculatorRunId = Fixture.Create<int>();
-            var testSubsidaryId = Fixture.Create<string>();
-            var materialDetails = Fixture.Create<List<MaterialDetail>>();
-            var testMaterialId = Fixture.Create<int>();
+        var producer = Fixture.Create<ProducerDetail>();
+        var allResults = GenerateAllResults(testProducerId, testCalculatorRunId, testSubsidaryId);
 
-            //CalcResultSummaryBuilder.ScaledupProducers = Fixture.Create<List<CalcResultScaledupProducer>>();
+        producer.ProducerId = testProducerId;
+        producer.SubsidiaryId = testSubsidaryId;
+        producer.CalculatorRunId = testCalculatorRunId;
+        allResults.First().ProducerReportedMaterialProjected.MaterialId = materialDetails.First().Id;
 
-            var producer = Fixture.Create<ProducerDetail>();
-            var allResults = GenerateAllResults(testProducerId, testCalculatorRunId, testSubsidaryId);
+        var TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId);
 
-            producer.ProducerId = testProducerId;
-            producer.SubsidiaryId = testSubsidaryId;
-            producer.CalculatorRunId = testCalculatorRunId;
-            allResults.First().ProducerReportedMaterialProjected.MaterialId = testMaterialId;
-            materialDetails.First().Id = testMaterialId;
+        // Act
+        var result = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducers(
+            producer,
+            TotalPackagingTonnage);
 
-            var scaledupProducers = new List<CalcResultScaledupProducer>();
-            var partialObligations = new List<CalcResultPartialObligation>();
-            var TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId);
+        // Assert
+        Assert.AreEqual(50, result);
+    }
 
-            // Act
-            var result = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducers(
-                producer,
-                TotalPackagingTonnage);
+    [TestMethod]
+    public void GetPercentageofProducerReportedTonnagevsAllProducersTotal_ReturnsZero_WhenNoMatchingProducer()
+    {
+        // Arrange
+        var fixture = new Fixture();
+        var producers = fixture.Create<List<ProducerDetail>>();
+        var allResults = fixture.Create<List<CalcResultProducerAndReportMaterialDetail>>();
+        var materialDetails = fixture.Create<List<MaterialDetail>>();
 
-            // Assert
-            Assert.AreEqual(50, result);
-        }
+        var testProducerId = fixture.Create<int>();
+        var testCalculatorRunId = fixture.Create<int>();
 
-        [TestMethod]
-        public void GetPercentageofProducerReportedTonnagevsAllProducersTotal_ReturnsZero_WhenNoMatchingProducer()
-        {
-            // Arrange
-            var fixture = new Fixture();
-            var producers = fixture.Create<List<ProducerDetail>>();
-            var allResults = fixture.Create<List<CalcResultProducerAndReportMaterialDetail>>();
-            var materialDetails = fixture.Create<List<MaterialDetail>>();
+        allResults.First().ProducerReportedMaterialProjected.ProducerDetailId = testProducerId;
+        allResults.First().ProducerDetail.Id = testProducerId;
+        allResults.First().ProducerDetail.ProducerId = testProducerId;
+        allResults.First().ProducerDetail.CalculatorRunId = testCalculatorRunId;
+        allResults.First().ProducerReportedMaterialProjected.PackagingType = "PB";
 
-            var testProducerId = fixture.Create<int>();
-            var testCalculatorRunId = fixture.Create<int>();
+        var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId);
 
-            allResults.First().ProducerReportedMaterialProjected.ProducerDetailId = testProducerId;
-            allResults.First().ProducerDetail.Id = testProducerId;
-            allResults.First().ProducerDetail.ProducerId = testProducerId;
-            allResults.First().ProducerDetail.CalculatorRunId = testCalculatorRunId;
-            allResults.First().ProducerReportedMaterialProjected.PackagingType = "PB";
+        // Act
+        var result = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducersTotal(producers, totalPackagingTonnage);
 
-            var scaledupProducers = new List<CalcResultScaledupProducer>();
-            var partialObligations = new List<CalcResultPartialObligation>();
-            var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId);
+        // Assert
+        Assert.AreEqual(0, result);
+    }
 
-            // Act
-            var result = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducersTotal(producers, totalPackagingTonnage);
+    [TestMethod]
+    public void GetPercentageofProducerReportedTonnagevsAllProducersTotal_ReturnsValue_WhenMatchingProducer()
+    {
+        // Arrange
+        var testProducerId = Fixture.Create<int>();
+        var testCalculatorRunId = Fixture.Create<int>();
+        var testSubsidaryId = Fixture.Create<string>();
+        var materialDetails = Fixture.Create<List<MaterialDetail>>();
 
-            // Assert
-            Assert.AreEqual(0, result);
-        }
+        var producer = Fixture.Create<ProducerDetail>();
+        var allResults = GenerateAllResults(testProducerId, testCalculatorRunId, testSubsidaryId);
 
-        [TestMethod]
-        public void GetPercentageofProducerReportedTonnagevsAllProducersTotal_ReturnsValue_WhenMatchingProducer()
-        {
-            // Arrange
-            var testProducerId = Fixture.Create<int>();
-            var testCalculatorRunId = Fixture.Create<int>();
-            var testMaterialId = Fixture.Create<int>();
-            var testSubsidaryId = Fixture.Create<string>();
-            var materialDetails = Fixture.Create<List<MaterialDetail>>();
+        allResults.First().ProducerReportedMaterialProjected.MaterialId = materialDetails.First().Id;
+        allResults.First().ProducerReportedMaterialProjected.PackagingType = "PB";
 
-            var producer = Fixture.Create<ProducerDetail>();
-            var allResults = GenerateAllResults(testProducerId, testCalculatorRunId, testSubsidaryId);
+        producer.ProducerId = testProducerId;
+        producer.SubsidiaryId = testSubsidaryId;
+        producer.CalculatorRunId = testCalculatorRunId;
 
-            allResults.First().ProducerReportedMaterialProjected.MaterialId = testMaterialId;
-            allResults.First().ProducerReportedMaterialProjected.PackagingType = "PB";
-            materialDetails.First().Id = testMaterialId;
+        //CalcResultSummaryBuilder.ScaledupProducers = Fixture.Create<List<CalcResultScaledupProducer>>();
 
-            producer.ProducerId = testProducerId;
-            producer.SubsidiaryId = testSubsidaryId;
-            producer.CalculatorRunId = testCalculatorRunId;
+        var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId);
 
-            //CalcResultSummaryBuilder.ScaledupProducers = Fixture.Create<List<CalcResultScaledupProducer>>();
+        // Act
+        var result = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducers(
+            producer,
+            totalPackagingTonnage);
 
-            var scaledupProducers = new List<CalcResultScaledupProducer>();
-            var partialObligations = new List<CalcResultPartialObligation>();
-            var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId);
+        // Assert
+        Assert.AreEqual(50, result);
+    }
 
-            // Act
-            var result = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducers(
-              producer,
-              totalPackagingTonnage);
+    private List<CalcResultProducerAndReportMaterialDetail> GenerateAllResults(
+        int testProducerId,
+        int testCalculatorRunId,
+        string testSubsidaryId)
+    {
+        var allResults = Fixture.Create<List<CalcResultProducerAndReportMaterialDetail>>();
+        allResults.First().ProducerReportedMaterialProjected.ProducerDetailId = testProducerId;
+        allResults.First().ProducerDetail.Id = testProducerId;
+        allResults.First().ProducerDetail.ProducerId = testProducerId;
+        allResults.First().ProducerDetail.CalculatorRunId = testCalculatorRunId;
+        allResults.First().ProducerDetail.SubsidiaryId = testSubsidaryId;
+        allResults.First().ProducerReportedMaterialProjected.PackagingType = "HH";
 
-            // Assert
-            Assert.AreEqual(50, result);
-        }
+        allResults.Last().ProducerReportedMaterialProjected.ProducerDetailId = testProducerId;
+        allResults.Last().ProducerDetail.Id = testProducerId;
+        allResults.Last().ProducerDetail.ProducerId = testProducerId;
+        allResults.Last().ProducerDetail.CalculatorRunId = testCalculatorRunId;
+        allResults.Last().ProducerDetail.SubsidiaryId = Fixture.Create<string>();
+        allResults.Last().ProducerReportedMaterialProjected.PackagingType = "HH";
 
-        private List<CalcResultProducerAndReportMaterialDetail> GenerateAllResults(
-                int testProducerId,
-                int testCalculatorRunId,
-                string testSubsidaryId)
-        {
-            var allResults = Fixture.Create<List<CalcResultProducerAndReportMaterialDetail>>();
-            allResults.First().ProducerReportedMaterialProjected.ProducerDetailId = testProducerId;
-            allResults.First().ProducerDetail.Id = testProducerId;
-            allResults.First().ProducerDetail.ProducerId = testProducerId;
-            allResults.First().ProducerDetail.CalculatorRunId = testCalculatorRunId;
-            allResults.First().ProducerDetail.SubsidiaryId = testSubsidaryId;
-            allResults.First().ProducerReportedMaterialProjected.PackagingType = "HH";
-
-            allResults.Last().ProducerReportedMaterialProjected.ProducerDetailId = testProducerId;
-            allResults.Last().ProducerDetail.Id = testProducerId;
-            allResults.Last().ProducerDetail.ProducerId = testProducerId;
-            allResults.Last().ProducerDetail.CalculatorRunId = testCalculatorRunId;
-            allResults.Last().ProducerDetail.SubsidiaryId = Fixture.Create<string>();
-            allResults.Last().ProducerReportedMaterialProjected.PackagingType = "HH";
-
-            return allResults;
-        }
+        return allResults;
     }
 }

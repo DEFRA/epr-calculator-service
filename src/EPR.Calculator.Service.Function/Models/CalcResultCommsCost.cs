@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using EPR.Calculator.Service.Function.Models;
-namespace EPR.Calculator.Service.Function.Models;
+﻿namespace EPR.Calculator.Service.Function.Models;
 
 /// <summary>
 /// The CommsCost report.
@@ -17,7 +15,7 @@ public class CalcResultCommsCost
         total ??=
             new CalcResultCommsCostCommsCostByMaterial
             {
-                Cost                             = ByCountryCost.Sum(ByMaterial.Values.Select(v => v.Cost)),
+                Cost                             = ByCountryCost.Sum(ByMaterial.Values.Select(v => v.Cost).ToImmutableList()),
                 TotalCost                        = ByMaterial.Values.Sum(v => v.TotalCost),
                 // TODO why do we sum up tonnage for different materials?
                 HouseholdPackagingWasteTonnage   = ByMaterial.Values.Sum(v => v.HouseholdPackagingWasteTonnage),

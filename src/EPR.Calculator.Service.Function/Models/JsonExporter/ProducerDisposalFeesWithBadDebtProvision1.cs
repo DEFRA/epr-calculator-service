@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.Service.Function.Constants;
@@ -18,10 +19,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
             string level,
             bool applyModulation)
         {
-            IEnumerable<ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown> GetMaterialBreakdown(
-                Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>? producerDisposalFeesByMaterial,
-                IImmutableList<MaterialDetail> materials,
-                string level)
+            IEnumerable<ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown> GetMaterialBreakdown()
             {
                 if (producerDisposalFeesByMaterial == null) return [];
 
@@ -32,7 +30,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
 
             return new ProducerDisposalFeesWithBadDebtProvision1
             {
-                MaterialBreakdown = GetMaterialBreakdown(producerDisposalFeesByMaterial, materials, level),
+                MaterialBreakdown = GetMaterialBreakdown()
             };
         }
     }
@@ -52,7 +50,7 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
             => new() { Modulated = value };
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+    [SuppressMessage(
         "Major Code Smell",
         "S2436:Types and methods should not have too many generic parameters",
         Justification = "Strongly typed JsonConverter requires wrapper, value, and modulated types for reusable serialization.")]

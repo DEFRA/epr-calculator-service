@@ -14,8 +14,8 @@ using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
 using EPR.Calculator.Service.Function.Builder.RejectedProducers;
 using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
 using EPR.Calculator.Service.Function.Builder.Summary;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Logging;
-using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 
@@ -23,7 +23,7 @@ namespace EPR.Calculator.Service.Function.Builder;
 
 public interface ICalcResultBuilder
 {
-    Task<CalcResult> BuildAsync(CalcResultsRequestDto resultsRequestDto, IImmutableList<MaterialDetail> materials);
+    Task<CalcResult> BuildAsync(RunContext runContext);
 }
 
 [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
@@ -47,15 +47,19 @@ public class CalcResultBuilder(
     IProjectedProducersService projectedProducersService,
     ISelfManagedConsumerWasteService selfManagedConsumerWaste,
     ICalcResultModulationBuilder modulation,
+    IMaterialService materialService,
+    ITelemetryClient telemetryClient,
     ILogger<CalcResultBuilder> logger)
     : ICalcResultBuilder
 {
-    public async Task<CalcResult> BuildAsync(CalcResultsRequestDto resultsRequestDto, IImmutableList<MaterialDetail> materials)
+    public Task<CalcResult> BuildAsync(RunContext runContext) =>
+        telemetryClient.TrackDuration($"{runContext.RunType}RunResultBuilder", () => BuildResult(runContext));
+
+    private async Task<CalcResult> BuildResult(RunContext runContext)
     {
         var result = new CalcResult
         {
-            ApplyModulation = resultsRequestDto.RelativeYear.Value >= 2026,
-            CalcResultDetail = await calcResultDetailBuilder.ConstructAsync(resultsRequestDto),
+            CalcResultDetail = await calcResultDetailBuilder.ConstructAsync(runContext),
             CalcResultLapcapData = new CalcResultLapcapData
             {
                 ByMaterial = []
@@ -72,77 +76,78 @@ public class CalcResultBuilder(
             CalcResultRejectedProducers = new List<CalcResultRejectedProducer>()
         };
 
-        var defaultParams = await parameterService.GetDefaultParameters(resultsRequestDto.RunId);
+        var materials = await materialService.GetMaterials();
+        var defaultParams = await parameterService.GetDefaultParameters(runContext);
 
         result.CalcResultLapcapData = await logger.LogDuration(() =>
-                lapcapData.ConstructAsync(materials, resultsRequestDto),
+                lapcapData.ConstructAsync(runContext, materials),
             nameof(lapcapData));
 
         result.CalcResultLateReportingTonnageData = await logger.LogDuration(() =>
-                lateReportingTonnage.ConstructAsync(materials, resultsRequestDto),
+                lateReportingTonnage.ConstructAsync(runContext, materials),
             nameof(lateReportingTonnage));
 
         result.CalcResultParameterOtherCost = await logger.LogDuration(() =>
-                otherCosts.ConstructAsync(resultsRequestDto),
+                otherCosts.ConstructAsync(runContext),
             nameof(otherCosts));
 
         result.CalcResultOnePlusFourApportionment = logger.LogDuration(() =>
-                onePlusFourApportionment.Construct(resultsRequestDto, result),
+                onePlusFourApportionment.Construct(result),
             nameof(onePlusFourApportionment));
 
         result.CalcResultCancelledProducers = await logger.LogDuration(() =>
-                cancelledProducers.ConstructAsync(resultsRequestDto, materials),
+                cancelledProducers.ConstructAsync(runContext, materials),
             nameof(cancelledProducers));
 
         // ReSharper disable AccessToModifiedClosure - LogDuration always immediately invokes the delegate
-        var producers = await reportedProducers.GetProducers(resultsRequestDto.RunId);
+        var producers = await reportedProducers.GetProducers(runContext);
 
-        if (result.ApplyModulation)
+        if (runContext.RequiresModulation)
         {
             (producers, result.CalcResultProjectedProducers) = logger.LogDuration(() =>
-                    projectedProducers.Construct(materials, producers, resultsRequestDto),
+                    projectedProducers.Construct(runContext, materials, producers),
                 nameof(projectedProducers));
         }
 
-        if (resultsRequestDto.RelativeYear.Value == 2025)
+        if (runContext.RequiresScaling)
         {
             (producers, result.CalcResultScaledupProducers) = await logger.LogDuration(() =>
-                    scaledUpProducers.ConstructAsync(materials, producers, resultsRequestDto),
+                    scaledUpProducers.ConstructAsync(runContext, materials, producers),
                 nameof(scaledUpProducers));
         }
 
         (producers, result.CalcResultPartialObligations) = await logger.LogDuration(() =>
-                partialObligations.ConstructAsync(materials, producers, resultsRequestDto, result.ApplyModulation),
+                partialObligations.ConstructAsync(runContext, materials, producers),
             nameof(partialObligations));
         // ReSharper restore AccessToModifiedClosure
 
-        if (!resultsRequestDto.IsBillingFile)
+        if (runContext.RunType == RunType.Calculator)
         {
             await logger.LogDuration(() =>
-                    projectedProducersService.StoreProjectedProducers(resultsRequestDto.RunId, producers),
+                    projectedProducersService.StoreProjectedProducers(producers),
                 nameof(projectedProducersService.StoreProjectedProducers));
         }
 
-        if (resultsRequestDto.IsBillingFile)
+        if (runContext.RunType == RunType.Billing)
         {
             result.CalcResultRejectedProducers = await logger.LogDuration(() =>
-                    rejectedProducers.ConstructAsync(resultsRequestDto),
+                    rejectedProducers.ConstructAsync(runContext),
                 nameof(rejectedProducers));
         }
 
         result.Smcw = await logger.LogDuration(() =>
-                selfManagedConsumerWaste.Calculate(resultsRequestDto, materials, result.ApplyModulation),
+                selfManagedConsumerWaste.Calculate(runContext, materials),
             nameof(selfManagedConsumerWaste));
 
         result.CalcResultLaDisposalCostData = await logger.LogDuration(() =>
-                laDisposalCosts.ConstructAsync(resultsRequestDto, materials, result.CalcResultLapcapData, result.CalcResultLateReportingTonnageData, result.Smcw, result.ApplyModulation),
+                laDisposalCosts.ConstructAsync(runContext, materials, result.CalcResultLapcapData, result.CalcResultLateReportingTonnageData, result.Smcw),
             nameof(laDisposalCosts));
 
         result.CalcResultCommsCostReportDetail = await logger.LogDuration(() =>
-                commsCosts.ConstructAsync(materials, resultsRequestDto, result.CalcResultOnePlusFourApportionment, result.CalcResultLateReportingTonnageData),
+                commsCosts.ConstructAsync(runContext, materials, result.CalcResultOnePlusFourApportionment, result.CalcResultLateReportingTonnageData),
             nameof(commsCosts));
 
-        if (result.ApplyModulation)
+        if (runContext.RequiresModulation)
         {
             result.CalcResultModulation = await logger.LogDuration(() =>
                     modulation.ConstructAsync(defaultParams, materials, result.CalcResultLaDisposalCostData, result.Smcw),
@@ -150,11 +155,11 @@ public class CalcResultBuilder(
         }
 
         result.CalcResultSummary = await logger.LogDuration(() =>
-                summary.ConstructAsync(materials, resultsRequestDto.RunId, resultsRequestDto.RelativeYear, resultsRequestDto.IsBillingFile, result, result.Smcw),
+                summary.ConstructAsync(runContext, materials, result, result.Smcw),
             nameof(summary));
 
         result.CalcResultErrorReports = logger.LogDuration(() =>
-                errorReport.Construct(resultsRequestDto),
+                errorReport.Construct(runContext),
             nameof(errorReport));
 
         return result;

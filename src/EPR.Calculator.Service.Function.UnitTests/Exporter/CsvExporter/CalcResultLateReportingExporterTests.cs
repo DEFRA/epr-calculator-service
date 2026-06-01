@@ -1,8 +1,7 @@
+using System.Text;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter;
 using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.UnitTests.Builder;
-using EPR.Calculator.Service.Function.UnitTests.Utils;
-using System.Text;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 {
@@ -31,13 +30,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                     ["GL"] = new() { Total = 1.34m, Red = 2.45m, Amber = 3.56m, Green = 4.67m }
                 }
             };
-            var materials = TestDataHelper.GetMaterials();
+            var materials = TestDataHelper.GetMaterialDetails();
 
 
             var csvContent = new StringBuilder();
 
             // Act
-            exporter.Export(materials, calcResultLateReportingData, csvContent);
+            exporter.Export(calcResultLateReportingData, materials, csvContent);
             var result = csvContent.ToString().Split("\n").Select(s => s.TrimEnd(',')).ToArray();
             //Console.WriteLine($">> {JsonConvert.SerializeObject(result, Formatting.Indented)}");
             Console.WriteLine(string.Join("\n", result));

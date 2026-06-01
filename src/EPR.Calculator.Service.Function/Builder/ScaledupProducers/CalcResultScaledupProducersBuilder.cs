@@ -3,9 +3,10 @@ using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.PartialObligations;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
@@ -13,9 +14,9 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
     public interface ICalcResultScaledupProducersBuilder
     {
         Task<(List<L1Producer>, CalcResultScaledupProducers)> ConstructAsync(
+            RunContext runContext,
             IImmutableList<MaterialDetail> materialDetails,
-            List<L1Producer> producers,
-            CalcResultsRequestDto resultsRequestDto
+            List<L1Producer> producers
         );
     }
 
@@ -30,7 +31,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
             this.dbContext = dbContext;
         }
 
-        public static void AddExtraRows(List<CalcResultScaledupProducer> scaledUpProducers, IEnumerable<Organisation> scaledupOrganisations)
+        public static void AddExtraRows(List<CalcResultScaledupProducer> scaledUpProducers, IReadOnlyCollection<Organisation> scaledupOrganisations)
         {
             var level2Rows = scaledUpProducers
                 .Where(x => string.IsNullOrEmpty(x.SubsidiaryId))
@@ -87,14 +88,12 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
             "S3776:Cognitive Complexity of methods should not be too high",
             Justification = "Temporaraly suppress - will refactor later.")]
         public async Task<(List<L1Producer>, CalcResultScaledupProducers)> ConstructAsync(
+            RunContext runContext,
             IImmutableList<MaterialDetail> materialDetails,
-            List<L1Producer> producers,
-            CalcResultsRequestDto resultsRequestDto
+            List<L1Producer> producers
         )
         {
-            var runId = resultsRequestDto.RunId;
-
-            var (scaledUpProducers, scaledupOrganisations) = await GetScaledUpDataAsync(runId);
+            var (scaledUpProducers, scaledupOrganisations) = await GetScaledUpDataAsync(runContext.RunId);
 
             if (!scaledUpProducers.Any())
             {
@@ -216,7 +215,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
             };
         }
 
-        private async Task<(List<CalcResultScaledupProducer> producers, IEnumerable<Organisation> organisations)> GetScaledUpDataAsync(int runId)
+        private async Task<(List<CalcResultScaledupProducer> producers, ImmutableList<Organisation> organisations)> GetScaledUpDataAsync(int runId)
         {
             var scaledProducerIds = await (
                 from run in dbContext.CalculatorRuns.AsNoTracking()
@@ -252,7 +251,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
                     DaysInSubmissionPeriod = spl.DaysInSubmissionPeriod,
                     DaysInWholePeriod      = spl.DaysInWholePeriod,
                 }
-            ).Distinct().ToListAsync();
+            ).Distinct().ToImmutableListAsync();
 
             var producers = rows.Select(r => new CalcResultScaledupProducer
             {
@@ -270,7 +269,8 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
             var organisations = rows
                 .Where(r => string.IsNullOrEmpty(r.SubsidiaryId))
                 .DistinctBy(o => o.ProducerId)
-                .Select(r => new Organisation { OrganisationId = r.ProducerId, OrganisationName = r.OrgName, TradingName = r.TradingName });
+                .Select(r => new Organisation { OrganisationId = r.ProducerId, OrganisationName = r.OrgName, TradingName = r.TradingName })
+                .ToImmutableList();
 
             return (producers, organisations);
         }

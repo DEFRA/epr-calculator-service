@@ -19,7 +19,6 @@ using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
 using EPR.Calculator.Service.Function.Builder.RejectedProducers;
 using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
 using EPR.Calculator.Service.Function.Builder.Summary;
-using EPR.Calculator.Service.Function.Logging;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
@@ -34,9 +33,13 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.RejectedProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter;
-using EPR.Calculator.Service.Function.Mappers;
-using EPR.Calculator.Service.Function.Messaging;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.BillingRun;
+using EPR.Calculator.Service.Function.Features.BillingRun.Contexts;
+using EPR.Calculator.Service.Function.Features.BillingRun.Outputs;
+using EPR.Calculator.Service.Function.Features.CalculatorRun;
+using EPR.Calculator.Service.Function.Features.CalculatorRun.Contexts;
+using EPR.Calculator.Service.Function.Features.CalculatorRun.Outputs;
+using EPR.Calculator.Service.Function.Logging;
 using EPR.Calculator.Service.Function.Options;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.Services.CommonDataApi;
@@ -113,6 +116,7 @@ internal static class ServiceRegistration
         RegisterDatabase(services);
         RegisterBlobStorage(services);
         RegisterCalculatorRunDependencies(services);
+        RegisterBillingRunDependencies(services);
         RegisterCommonDependencies(services);
 
         return services;
@@ -171,6 +175,13 @@ internal static class ServiceRegistration
 
     private static void RegisterCalculatorRunDependencies(IServiceCollection services)
     {
+        services.AddTransient<ICalculatorRunContextBuilder, CalculatorRunContextBuilder>();
+        services.AddTransient<ICalculatorRunProcessor, CalculatorRunProcessor>();
+        services.AddTransient<ICalculatorRunDataInitializer, CalculatorRunDataInitializer>();
+        services.AddTransient<ICalculatorRunFinalizer, CalculatorRunFinalizer>();
+        services.AddTransient<ICalculatorFileGenerator, CalculatorFileGenerator>();
+        services.AddTransient<ICalcResultsExporter, CalcResultsExporter>();
+
         services
             .AddOptions<CommonDataApiHttpClientOptions>()
             .BindConfiguration(CommonDataApiHttpClientOptions.SectionKey)
@@ -186,21 +197,24 @@ internal static class ServiceRegistration
             .ValidateOnStart();
 
         services.AddTransient<IDataLoader, CommonDataApiLoader>();
-
         services.AddTransient<ICalculatorRunOrgData, CalculatorRunOrgData>();
         services.AddTransient<ICalculatorRunPomData, CalculatorRunPomData>();
         services.AddTransient<IProducerDataTransposer, ProducerDataTransposer>();
     }
 
+    private static void RegisterBillingRunDependencies(IServiceCollection services)
+    {
+        services.AddTransient<IBillingRunContextBuilder, BillingRunContextBuilder>();
+        services.AddTransient<IBillingRunProcessor, BillingRunProcessor>();
+        services.AddTransient<IBillingRunFinalizer, BillingRunFinalizer>();
+        services.AddTransient<IBillingFileGenerator, BillingFileGenerator>();
+        services.AddTransient<IBillingFileExporter, BillingFileExporter>();
+        services.AddTransient<IBillingFileJsonWriter, BillingFileJsonWriter>();
+    }
+
     private static void RegisterCommonDependencies(IServiceCollection services)
     {
-        services.AddTransient<ICalculatorRunService, CalculatorRunService>();
-        services.AddTransient<IRpdStatusDataValidator, RpdStatusDataValidator>();
-        services.AddTransient<IOrgAndPomWrapper, OrgAndPomWrapper>();
         services.AddTransient<ICalcResultBuilder, CalcResultBuilder>();
-        services.AddTransient<ICalcResultsExporter, CalcResultsExporter>();
-        services.AddTransient<CalculatorRunValidator, CalculatorRunValidator>();
-        services.AddTransient<IPrepareCalcService, PrepareCalcService>();
         services.AddTransient<IParameterService, ParameterService>();
         services.AddTransient<ICalcResultDetailBuilder, CalcResultDetailBuilder>();
         services.AddTransient<ICalcResultLapcapDataBuilder, CalcResultLapcapDataBuilder>();
@@ -217,7 +231,6 @@ internal static class ServiceRegistration
         services.AddTransient<ICalcResultSummaryBuilder, CalcResultSummaryBuilder>();
         services.AddTransient<IBillingInstructionService, BillingInstructionService>();
         services.AddTransient<ICalcResultOnePlusFourApportionmentExporter, CalcResultOnePlusFourApportionmentExporter>();
-        services.AddTransient<IRpdStatusService, RpdStatusService>();
         services.AddTransient<ICalcResultDetailExporter, CalcResultDetailExporter>();
         services.AddTransient<ICalcResultLapcapDataExporter, CalcResultLapcapDataExporter>();
         services.AddTransient<ICalcResultLaDisposalCostExporter, CalcResultLaDisposalCostExporter>();
@@ -230,21 +243,15 @@ internal static class ServiceRegistration
         services.AddTransient<ICalcResultModulationExporter, CalcResultModulationExporter>();
         services.AddTransient<ICalcResultCommsCostExporter, CalcResultCommsCostExporter>();
         services.AddTransient<ICalcResultSummaryExporter, CalcResultSummaryExporter>();
-        services.AddTransient<ICalcBillingJsonExporter, CalcResultsJsonExporter>();
+        services.AddTransient<IBillingFileJsonWriter, BillingFileJsonWriter>();
         services.AddTransient<ICalcResultLateReportingExporter, CalcResultLateReportingExporter>();
-        services.AddTransient<IRunNameService, RunNameService>();
-        services.AddTransient<IClassificationService, ClassificationService>();
         services.AddTransient<IMaterialService, MaterialService>();
-        services.AddTransient<IMessageTypeService, MessageTypeService>();
-        services.AddTransient<IPrepareBillingFileService, PrepareBillingFileService>();
         services.AddTransient<ICalcCountryApportionmentService, CalcCountryApportionmentService>();
         services.AddTransient<IInvoicedProducerService, InvoicedProducerService>();
         services.AddTransient<ICalcResultCancelledProducersBuilder, CalcResultCancelledProducersBuilder>();
         services.AddTransient<ICalcResultCancelledProducersExporter, CalcResultCancelledProducersExporter>();
         services.AddTransient<IBillingFileExporter, BillingFileExporter>();
         services.AddTransient<IProducerInvoiceNetTonnageService, ProducerInvoiceNetTonnageService>();
-        services.AddTransient<IProducerInvoiceTonnageMapper, ProducerInvoiceTonnageMapper>();
-        services.AddTransient<IPrepareProducerDataInsertService, PrepareProducerDataInsertService>();
         services.AddTransient<ICalcResultErrorReportBuilder, CalcResultErrorReportBuilder>();
         services.AddTransient<ICalcResultErrorReportExporter, CalcResultErrorReportExporter>();
         services.AddTransient<IErrorReportService, ErrorReportService>();

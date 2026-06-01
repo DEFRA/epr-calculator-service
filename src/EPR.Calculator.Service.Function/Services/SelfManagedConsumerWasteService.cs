@@ -3,7 +3,7 @@ using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.Service.Function.Builder.Summary.Common;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,9 +13,8 @@ namespace EPR.Calculator.Service.Function.Services
     {
         Task<SelfManagedConsumerWaste>
          Calculate(
-            CalcResultsRequestDto resultsRequestDto,
-            IEnumerable<MaterialDetail> materialDetails,
-            bool applyModulation);
+            RunContext runContext,
+            IEnumerable<MaterialDetail> materialDetails);
     }
 
     public class SelfManagedConsumerWasteService: ISelfManagedConsumerWasteService
@@ -28,16 +27,15 @@ namespace EPR.Calculator.Service.Function.Services
         }
 
         public async Task<SelfManagedConsumerWaste> Calculate(
-            CalcResultsRequestDto resultsRequestDto,
-            IEnumerable<MaterialDetail> materialDetails,
-            bool applyModulation
+            RunContext runContext,
+            IEnumerable<MaterialDetail> materialDetails
         )
         {
             // TODO also used by CalcResultSummaryBuilder - look up in CalcResultBuilder...
             var producerMaterialDetails = await (
                 from pd in context.ProducerDetail
                 join prm in context.ProducerReportedMaterialProjected on pd.Id equals prm.ProducerDetailId
-                where pd.CalculatorRunId == resultsRequestDto.RunId
+                where pd.CalculatorRunId == runContext.RunId
                 select new CalcResultProducerAndReportMaterialDetail
                 {
                     ProducerDetail = pd,
@@ -62,7 +60,7 @@ namespace EPR.Calculator.Service.Function.Services
                     materialDetails
                         .SelectMany(material =>
                             SelfManagedConsumerWasteServiceLevels
-                                .Calculate(BuildL1(projectedMaterialsLookup, group, material), applyModulation)
+                                .Calculate(BuildL1(projectedMaterialsLookup, group, material), runContext.RequiresModulation)
                                 .Select(r => (material, result: r))
                         )
                         .GroupBy(x => (x.result.OrgId, x.result.SubsidiaryId, x.result.Level))

@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 
@@ -6,7 +7,10 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 {
     public interface ICalcResultLateReportingExporter
     {
-        void Export(IImmutableList<MaterialDetail> materials, CalcResultLateReportingTonnage? calcResultLateReportingData, StringBuilder csvContent);
+        void Export(
+            CalcResultLateReportingTonnage? calcResultLateReportingData,
+            IImmutableList<MaterialDetail> materials,
+            StringBuilder csvContent);
     }
 
     /// <summary>
@@ -14,7 +18,10 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
     /// </summary>
     public class CalcResultLateReportingExporter : ICalcResultLateReportingExporter
     {
-        public void Export(IImmutableList<MaterialDetail> materials, CalcResultLateReportingTonnage? calcResultLateReportingData, StringBuilder csvContent)
+        public void Export(
+            CalcResultLateReportingTonnage? calcResultLateReportingData,
+            IImmutableList<MaterialDetail> materials,
+            StringBuilder csvContent)
         {
             if (calcResultLateReportingData is null)
             {
@@ -45,10 +52,10 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         private static void AppendRow(string name, CalcResultLateReportingTonnageDetail lateReportingData, StringBuilder csvContent)
         {
             csvContent.Append(CsvSanitiser.SanitiseData(name));
-            csvContent.Append(CsvSanitiser.SanitiseData(lateReportingData.Total, Enums.DecimalPlaces.Three, null));
-            csvContent.Append(CsvSanitiser.SanitiseData(lateReportingData.Red  , Enums.DecimalPlaces.Three, null));
-            csvContent.Append(CsvSanitiser.SanitiseData(lateReportingData.Amber, Enums.DecimalPlaces.Three, null));
-            csvContent.Append(CsvSanitiser.SanitiseData(lateReportingData.Green, Enums.DecimalPlaces.Three, null));
+            csvContent.Append(CsvSanitiser.SanitiseData(lateReportingData.Total, DecimalPlaces.Three, null));
+            csvContent.Append(CsvSanitiser.SanitiseData(lateReportingData.Red  , DecimalPlaces.Three, null));
+            csvContent.Append(CsvSanitiser.SanitiseData(lateReportingData.Amber, DecimalPlaces.Three, null));
+            csvContent.Append(CsvSanitiser.SanitiseData(lateReportingData.Green, DecimalPlaces.Three, null));
             csvContent.AppendLine();
         }
     }

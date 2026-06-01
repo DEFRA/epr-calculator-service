@@ -1,5 +1,5 @@
 ﻿using EPR.Calculator.API.Data;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
@@ -8,28 +8,20 @@ namespace EPR.Calculator.Service.Function.Builder.ParametersOther
 {
     public interface ICalcResultParameterOtherCostBuilder
     {
-        Task<CalcResultParameterOtherCost> ConstructAsync(CalcResultsRequestDto resultsRequestDto);
+        Task<CalcResultParameterOtherCost> ConstructAsync(RunContext runContext);
     }
 
-    public class CalcResultParameterOtherCostBuilder : ICalcResultParameterOtherCostBuilder
+    public class CalcResultParameterOtherCostBuilder(
+        ApplicationDBContext dbContext,
+        ICalcCountryApportionmentService calcCountryApportionmentService)
+        : ICalcResultParameterOtherCostBuilder
     {
         public const string SchemeAdminOperatingCost = "Scheme administrator operating costs";
         public const string LaPrepCharge = "Local authority data preparation costs";
         public const string SchemeSetupCost = "Scheme setup costs";
         public const string BadDebtProvision = "Bad debt provision";
 
-        private readonly ApplicationDBContext dbContext;
-        private readonly ICalcCountryApportionmentService calcCountryApportionmentService;
-
-        public CalcResultParameterOtherCostBuilder(
-            ApplicationDBContext dbContext,
-            ICalcCountryApportionmentService calcCountryApportionmentService)
-        {
-            this.dbContext = dbContext;
-            this.calcCountryApportionmentService = calcCountryApportionmentService;
-        }
-
-        public async Task<CalcResultParameterOtherCost> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
+        public async Task<CalcResultParameterOtherCost> ConstructAsync(RunContext runContext)
         {
             //TODO inject params
             var results = await (
@@ -37,7 +29,7 @@ namespace EPR.Calculator.Service.Function.Builder.ParametersOther
                 join defaultMaster in dbContext.DefaultParameterSettings on run.DefaultParameterSettingMasterId equals defaultMaster.Id
                 join defaultDetail in dbContext.DefaultParameterSettingDetail on defaultMaster.Id equals defaultDetail.DefaultParameterSettingMasterId
                 join defaultTemplate in dbContext.DefaultParameterTemplateMasterList on defaultDetail.ParameterUniqueReferenceId equals defaultTemplate.ParameterUniqueReferenceId
-                where run.Id == resultsRequestDto.RunId
+                where run.Id == runContext.RunId
                 select new DefaultParamResultsClass
                 {
                     ParameterValue = defaultDetail.ParameterValue,
@@ -47,27 +39,40 @@ namespace EPR.Calculator.Service.Function.Builder.ParametersOther
                 }
             ).ToListAsync();
 
-            var schemeAdminCosts = results.Where(x => x.ParameterType == SchemeAdminOperatingCost);
+            var schemeAdminCosts = results
+                .Where(x => x.ParameterType == SchemeAdminOperatingCost)
+                .ToImmutableArray();
 
             var saOperatingCost = GetPrepCharge(schemeAdminCosts);
 
-            var lapPrepCharges = results.Where(x => x.ParameterType == LaPrepCharge);
+            var lapPrepCharges = results
+                .Where(x => x.ParameterType == LaPrepCharge)
+                .ToImmutableArray();
+
             var laDataPrep = GetPrepCharge(lapPrepCharges);
             var countryApportionment = GetCountryApportionment(laDataPrep);
 
-            var schemeSetUpCharges = results.Where(x => x.ParameterType == SchemeSetupCost);
+            var schemeSetUpCharges = results
+                .Where(x => x.ParameterType == SchemeSetupCost)
+                .ToImmutableArray();
+
             var schemeSetupCharge = GetPrepCharge(schemeSetUpCharges);
 
             var badDebtValue = results.Single(x => x.ParameterType == BadDebtProvision).ParameterValue;
 
-            var materialityResults = results.Where(x => x.ParameterType == "Materiality threshold");
+            var materialityResults = results
+                .Where(x => x.ParameterType == "Materiality threshold")
+                .ToImmutableArray();
 
             var amountIncrease = materialityResults.Single(x => x.ParameterCategory == "Amount Increase");
             var amountDecrease = materialityResults.Single(x => x.ParameterCategory == "Amount Decrease");
             var percentageDecrease = materialityResults.Single(x => x.ParameterCategory == "Percent Decrease");
             var percentageIncrease = materialityResults.Single(x => x.ParameterCategory == "Percent Increase");
 
-            var tonnageResults = results.Where(x => x.ParameterType == "Tonnage change threshold");
+            var tonnageResults = results
+                .Where(x => x.ParameterType == "Tonnage change threshold")
+                .ToImmutableArray();
+
             var tonIncrease = tonnageResults.Single(x => x.ParameterCategory == "Amount Increase");
             var tonDecrease = tonnageResults.Single(x => x.ParameterCategory == "Amount Decrease");
             var tonPercentageDecrease = tonnageResults.Single(x => x.ParameterCategory == "Percent Decrease");
@@ -78,11 +83,11 @@ namespace EPR.Calculator.Service.Function.Builder.ParametersOther
             var costType = await dbContext.CostType.SingleAsync(x => x.Name == "LA Data Prep Charge");
             var costTypeId = costType.Id;
 
-            if (!resultsRequestDto.IsBillingFile)
+            if (runContext.RunType == RunType.Calculator)
             {
                 await calcCountryApportionmentService.SaveChangesAsync(new CalcCountryApportionmentServiceDto
                 {
-                    RunId               = resultsRequestDto.RunId,
+                    RunId               = runContext.RunId,
                     Countries           = countries,
                     CostTypeId          = costTypeId,
                     EnglandCost         = laDataPrep.England,
@@ -118,7 +123,7 @@ namespace EPR.Calculator.Service.Function.Builder.ParametersOther
             };
         }
 
-        private static ByCountryCost GetPrepCharge(IEnumerable<DefaultParamResultsClass> lapPrepCharges)
+        private static ByCountryCost GetPrepCharge(IReadOnlyCollection<DefaultParamResultsClass> lapPrepCharges)
         {
             var e  = lapPrepCharges.Single(cost => cost.ParameterCategory == "England"         ).ParameterValue;
             var w  = lapPrepCharges.Single(cost => cost.ParameterCategory == "Wales"           ).ParameterValue;

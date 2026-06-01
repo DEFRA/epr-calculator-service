@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap;
-using EPR.Calculator.Service.Function.UnitTests.Builder;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Lapcap
 {
@@ -16,7 +16,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Lapcap
             var csvContent = new StringBuilder();
 
             // Act
-            lapcapDataExporter.Export(TestDataHelper.GetCalcResultLapcapData(), TestDataHelper.GetMaterials(), csvContent);
+            lapcapDataExporter.Export(TestDataHelper.GetCalcResultLapcapData(), TestDataHelper.GetMaterialDetails(), csvContent);
 
             // Assert
             var result = csvContent.ToString().Split("\n").Select(s => s.TrimEnd(',')).ToArray();

@@ -9,7 +9,7 @@ public class CalcResultLaDisposalCostData
         total ??=
             new CalcResultLaDisposalCostDataDetail
             {
-                Cost                                    = ByCountryCost.Sum(ByMaterial.Values.Select(v => v.Cost)),
+                Cost                                    = ByCountryCost.Sum(ByMaterial.Values.Select(v => v.Cost).ToImmutableList()),
                 // TODO why do we sum up tonnage for different materials?
                 HouseholdPackagingWasteTonnage          = ByMaterial.Values.Sum(v => v.HouseholdPackagingWasteTonnage),
                 PublicBinTonnage                        = ByMaterial.Values.Sum(v => v.PublicBinTonnage),

@@ -55,7 +55,7 @@ public class BlobStorageServiceTests
                 Content: content,
                 RunName: runName,
                 ContainerName: containerName,
-                Overwrite: true));
+                Overwrite: true), CancellationToken.None);
 
         // Assert
         Assert.AreEqual(result, expectedUri.ToString());
@@ -79,6 +79,6 @@ public class BlobStorageServiceTests
                 Content: content,
                 RunName: runName,
                 ContainerName: containerName,
-                Overwrite: true)));
+                Overwrite: true), CancellationToken.None));
     }
 }

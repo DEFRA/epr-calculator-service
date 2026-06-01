@@ -2,6 +2,7 @@ using System.Text;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.PartialObligations
 {
@@ -9,12 +10,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
     public class CalcResultPartialObligationsExporterTests
     {
         private CalcResultPartialObligationsExporter exporter;
-        private readonly List<MaterialDetail> materials = new List<MaterialDetail>()
-        {
-            new MaterialDetail { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
-            new MaterialDetail { Id = 2, Code = "GL", Name = "Glass", Description = "Glass" },
-            new MaterialDetail { Id = 3, Code = "OT", Name = "Other materials", Description = "Other materials" }
-        };
+        private readonly ImmutableList<MaterialDetail> materials =
+        [
+            new() { Id = 1, Code = "AL", Name = "Aluminium" },
+            new() { Id = 2, Code = "GL", Name = "Glass" },
+            new() { Id = 3, Code = "OT", Name = "Other materials" }
+        ];
 
         public CalcResultPartialObligationsExporterTests()
         {
@@ -24,8 +25,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
         [TestMethod]
         public void Export_ShouldIncludePartialObligationWithModulation()
         {
-            var showModulation = true;
-            var materials = GetMaterials();
+            var runContext = TestDataHelper.CalculatorRun2026;
             var projectedProducers = new CalcResultPartialObligations()
             {
                 PartialObligations = GetCalcResultPartialObligationsListWithRam()
@@ -33,7 +33,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
 
             var csvContent = new StringBuilder();
 
-            exporter.Export(projectedProducers, materials, csvContent, showModulation);
+            exporter.Export(runContext, projectedProducers, materials, csvContent);
             var rows = CsvTestUtils.GetRows(csvContent);
 
             Assert.IsTrue(rows[2][0].Contains(CalcResultPartialObligationHeaders.PartialObligations));
@@ -145,8 +145,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
         [TestMethod]
         public void Export_ShouldIncludePartialObligationWithoutModulation()
         {
-            var showModulation = false;
-            var materials = GetMaterials();
+            var runContext = TestDataHelper.CalculatorRun2025;
             var projectedProducers = new CalcResultPartialObligations()
             {
                 PartialObligations = GetCalcResultPartialObligationsList()
@@ -154,7 +153,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
 
             var csvContent = new StringBuilder();
 
-            exporter.Export(projectedProducers, materials, csvContent, showModulation);
+            exporter.Export(runContext, projectedProducers, materials, csvContent);
             var rows = CsvTestUtils.GetRows(csvContent);
 
             Assert.IsTrue(rows[2][0].Contains(CalcResultPartialObligationHeaders.PartialObligations));
@@ -266,8 +265,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
         [TestMethod]
         public void Export_ShouldHandleWhenEmpty()
         {
-            var showModulation = true;
-            var materials = GetMaterials();
+            var runContext = TestDataHelper.CalculatorRun2026;
             var projectedProducers = new CalcResultPartialObligations()
             {
                 PartialObligations = []
@@ -275,7 +273,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
 
             var csvContent = new StringBuilder();
 
-            exporter.Export(projectedProducers, materials, csvContent, showModulation);
+            exporter.Export(runContext, projectedProducers, materials, csvContent);
             var rows = CsvTestUtils.GetRows(csvContent);
 
             Assert.IsTrue(rows[2][0].Contains(CalcResultPartialObligationHeaders.PartialObligations));
@@ -455,16 +453,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
                         }
                     }
                 }
-            }.ToImmutableList();
-        }
-
-        private ImmutableList<MaterialDetail> GetMaterials()
-        {
-            return new List<MaterialDetail>
-            {
-                new MaterialDetail { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
-                new MaterialDetail { Id = 2, Code = "GL", Name = "Glass", Description = "Glass" },
-                new MaterialDetail { Id = 3, Code = "OT", Name = "Other materials", Description = "Other materials" },
             }.ToImmutableList();
         }
     }

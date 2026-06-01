@@ -3,7 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
-using EPR.Calculator.Service.Function.UnitTests.Builder;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 using EPR.Calculator.Service.Function.UnitTests.Utils;
 using EPR.Calculator.Service.Function.Utils;
 
@@ -20,10 +20,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             // Arrange
             var calcResult = TestDataHelper.GetCalcResult();
             var data = calcResult.CalcResultSummary;
-            var materials = TestDataHelper.GetMaterials();
+            var materials = TestDataHelper.GetMaterialDetails();
 
             // Act
-            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(TestDataHelper.BillingRun2025, calcResult, materials);
             var json = JsonSerializer.Serialize(obj);
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!["producerCalculationResultsSummary"];
@@ -97,10 +97,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         {
             // Arrange
             var calcResult = TestDataHelper.GetCalcResult();
-            var materials  = TestDataHelper.GetMaterials();
+            var materials  = TestDataHelper.GetMaterialDetails();
 
             // Act
-            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(TestDataHelper.BillingRun2025, calcResult, materials);
             var json = JsonSerializer.Serialize(obj);
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
@@ -148,10 +148,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             // Arrange
             var calcResult = TestDataHelper.GetCalcResult();
             var data = calcResult.CalcResultSummary;
-            var materials = TestDataHelper.GetMaterials();
+            var materials = TestDataHelper.GetMaterialDetails();
 
             // Act
-            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(TestDataHelper.BillingRun2025, calcResult, materials);
             var json = JsonSerializer.Serialize(obj);
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
@@ -172,10 +172,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             // Arrange
             var calcResult = TestDataHelper.GetCalcResult();
             var data = calcResult.CalcResultSummary;
-            var materials = TestDataHelper.GetMaterials();
+            var materials = TestDataHelper.GetMaterialDetails();
 
             // Act
-            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(TestDataHelper.BillingRun2025, calcResult, materials);
             var json = JsonSerializer.Serialize(obj);
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
@@ -201,10 +201,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             // Arrange
             var calcResult = TestDataHelper.GetCalcResult();
             var data = calcResult.CalcResultSummary;
-            var materials = TestDataHelper.GetMaterials();
+            var materials = TestDataHelper.GetMaterialDetails();
 
             // Act
-            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(TestDataHelper.BillingRun2025, calcResult, materials);
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["producerCalculationResults"];
@@ -229,10 +229,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             // Arrange
             var calcResult = TestDataHelper.GetCalcResult();
             var data = calcResult.CalcResultSummary;
-            var materials = TestDataHelper.GetMaterials();
+            var materials = TestDataHelper.GetMaterialDetails();
 
             // Act
-            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(TestDataHelper.BillingRun2025, calcResult, materials);
             var json = JsonSerializer.Serialize(obj);
 
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
@@ -259,10 +259,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             // Arrange
             var calcResult = TestDataHelper.GetCalcResult();
             var data = calcResult.CalcResultSummary;
-            var materials = TestDataHelper.GetMaterials();
+            var materials = TestDataHelper.GetMaterialDetails();
 
             // Act
-            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(TestDataHelper.BillingRun2025, calcResult, materials);
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["producerCalculationResults"];
@@ -288,10 +288,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             // Arrange
             var calcResult = TestDataHelper.GetCalcResult();
             var data = calcResult.CalcResultSummary;
-            var materials = TestDataHelper.GetMaterials();
+            var materials = TestDataHelper.GetMaterialDetails();
 
             // Act
-            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(TestDataHelper.BillingRun2025, calcResult, materials);
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["producerCalculationResults"];
@@ -317,10 +317,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             // Arrange
             var calcResult = TestDataHelper.GetCalcResult();
             var data = calcResult.CalcResultSummary;
-            var materials = TestDataHelper.GetMaterials();
+            var materials = TestDataHelper.GetMaterialDetails();
 
             // Act
-            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(TestDataHelper.BillingRun2025, calcResult, materials);
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["producerCalculationResults"];
@@ -346,10 +346,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             // Arrange
             var calcResult = TestDataHelper.GetCalcResult();
             var data = calcResult.CalcResultSummary;
-            var materials = TestDataHelper.GetMaterials();
+            var materials = TestDataHelper.GetMaterialDetails();
 
             // Act
-            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(TestDataHelper.BillingRun2025, calcResult, materials);
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["producerCalculationResults"];
@@ -391,10 +391,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             // Arrange
             var calcResult = TestDataHelper.GetCalcResult();
             var data = calcResult.CalcResultSummary;
-            var materials = TestDataHelper.GetMaterials();
+            var materials = TestDataHelper.GetMaterialDetails();
 
             // Act
-            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(TestDataHelper.BillingRun2025, calcResult, materials);
             var options = new JsonSerializerOptions
             {
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
@@ -417,10 +417,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             // Arrange
             var calcResult = TestDataHelper.GetCalcResult();
             var data = calcResult.CalcResultSummary;
-            var materials = TestDataHelper.GetMaterials();
+            var materials = TestDataHelper.GetMaterialDetails();
 
             // Act
-            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(TestDataHelper.BillingRun2025, calcResult, materials);
             var json = JsonSerializer.Serialize(obj);
             var node = JsonNode.Parse(json);
             var roundTrippedData = node?["producerCalculationResults"]?.AsArray();
@@ -449,10 +449,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             // Arrange
             var calcResult = TestDataHelper.GetCalcResult();
             var data = calcResult.CalcResultSummary;
-            var materials = TestDataHelper.GetMaterials();
+            var materials = TestDataHelper.GetMaterialDetails();
 
             // Act
-            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(TestDataHelper.BillingRun2025, calcResult, materials);
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["producerCalculationResults"];
@@ -479,10 +479,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             // Arrange
             var calcResult = TestDataHelper.GetCalcResult();
             var data = calcResult.CalcResultSummary;
-            var materials = TestDataHelper.GetMaterials();
+            var materials = TestDataHelper.GetMaterialDetails();
 
             // Act
-            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(TestDataHelper.BillingRun2025, calcResult, materials);
             var json = JsonSerializer.Serialize(obj);
             var producerCalculationResultsTotal = JsonSerializer.Deserialize<JsonObject>(json)!["producerCalculationResultsTotal"]!;
 
@@ -496,10 +496,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             // Arrange
             var calcResult = TestDataHelper.GetCalcResult();
             var data = calcResult.CalcResultSummary;
-            var materials = TestDataHelper.GetMaterials();
+            var materials = TestDataHelper.GetMaterialDetails();
 
             // Act
-            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(TestDataHelper.BillingRun2025, calcResult, materials);
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                 ["producerCalculationResults"];
@@ -528,10 +528,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             // Arrange
             var calcResult = TestDataHelper.GetCalcResult();
             var data = calcResult.CalcResultSummary;
-            var materials = TestDataHelper.GetMaterials();
+            var materials = TestDataHelper.GetMaterialDetails();
 
             // Act
-            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(TestDataHelper.BillingRun2025, calcResult, materials);
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)!
                     ["producerCalculationResults"]!;
@@ -585,13 +585,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
             // Arrange
             var calcResult = TestDataHelper.GetCalcResult();
             var data = calcResult.CalcResultSummary;
-            var materials = TestDataHelper.GetMaterials();
+            var materials = TestDataHelper.GetMaterialDetails();
 
             data.ProducerDisposalFees.First().isTotalRow = true;
             data.ProducerDisposalFees.First().Level = "1";
 
             // Act
-            var obj = CalculationResultsJson.From(calcResult, new List<int> { 1, 2, 3 }, materials);
+            var obj = CalculationResultsJson.From(TestDataHelper.BillingRun2025, calcResult, materials);
             var json = JsonSerializer.Serialize(obj);
             var roundTrippedData = JsonSerializer.Deserialize<JsonObject>(json)![
                     "producerCalculationResults"]!;

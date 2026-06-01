@@ -5,8 +5,7 @@ namespace EPR.Calculator.Service.Function.Services;
 
 public interface IStorageService
 {
-    Task<string> UploadFileContentAsync(
-        (string FileName, string Content, string RunName, string ContainerName, bool Overwrite) args);
+    Task<string> UploadFileContentAsync((string FileName, string Content, string RunName, string ContainerName, bool Overwrite) args, CancellationToken cancellationToken);
 }
 
 /// <summary>
@@ -19,15 +18,15 @@ public class BlobStorageService(
 {
     /// <inheritdoc />
     public Task<string> UploadFileContentAsync(
-        (string FileName, string Content, string RunName, string ContainerName, bool Overwrite) args) =>
+        (string FileName, string Content, string RunName, string ContainerName, bool Overwrite) args, CancellationToken cancellationToken) =>
         logger.LogDuration(async () =>
         {
             var blobContainerClient = blobService.GetBlobContainerClient(args.ContainerName);
-            await blobContainerClient.CreateIfNotExistsAsync();
+            await blobContainerClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
 
             var blobClient = blobContainerClient.GetBlobClient(args.FileName);
             var binaryData = BinaryData.FromString(args.Content);
-            await blobClient.UploadAsync(binaryData, args.Overwrite);
+            await blobClient.UploadAsync(binaryData, args.Overwrite, cancellationToken);
 
             return blobClient.Uri.ToString();
         });

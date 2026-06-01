@@ -2,7 +2,7 @@
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Models;
-using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Features.BillingRun.Constants;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Utils;
 
@@ -52,8 +52,8 @@ public class InvoicedProducerService(
                 suggested in dbContext.ProducerResultFileSuggestedBillingInstruction
             where
                 suggested.CalculatorRunId == runId
-                && suggested.BillingInstructionAcceptReject == PrepareBillingFileConstants.BillingInstructionAccepted
-                && suggested.SuggestedBillingInstruction == PrepareBillingFileConstants.SuggestedBillingInstructionCancelBill
+                && suggested.BillingInstructionAcceptReject == BillingConstants.Action.Accepted
+                && suggested.SuggestedBillingInstruction == BillingConstants.Suggestion.Cancel
             select
                 suggested.ProducerId;
 
@@ -71,8 +71,8 @@ public class InvoicedProducerService(
             where
                 ValidClassifications.Contains(run.CalculatorRunClassificationId)
                 && run.RelativeYearValue == relativeYear.Value
-                && suggested.BillingInstructionAcceptReject == PrepareBillingFileConstants.BillingInstructionAccepted
-                && suggested.SuggestedBillingInstruction == PrepareBillingFileConstants.SuggestedBillingInstructionCancelBill
+                && suggested.BillingInstructionAcceptReject == BillingConstants.Action.Accepted
+                && suggested.SuggestedBillingInstruction == BillingConstants.Suggestion.Cancel
             select
                 suggested.ProducerId;
 
@@ -90,7 +90,7 @@ public class InvoicedProducerService(
             where
                 ValidClassifications.Contains(run.CalculatorRunClassificationId)
                 && run.RelativeYearValue == relativeYear.Value
-                && suggested.BillingInstructionAcceptReject == PrepareBillingFileConstants.BillingInstructionAccepted
+                && suggested.BillingInstructionAcceptReject == BillingConstants.Action.Accepted
             select
                 suggested.ProducerId;
 
@@ -119,7 +119,7 @@ public class InvoicedProducerService(
             where
                 ValidClassifications.Contains(projection.CalculatorRun.CalculatorRunClassificationId)
                 && projection.CalculatorRun.RelativeYearValue == relativeYear.Value
-                && projection.SuggestedInstruction.BillingInstructionAcceptReject == PrepareBillingFileConstants.BillingInstructionAccepted
+                && projection.SuggestedInstruction.BillingInstructionAcceptReject == BillingConstants.Action.Accepted
                 && (producerIdFilter == null || producerIdFilter.Contains(projection.ProducerId))
             select
                 new InvoicedProducer
@@ -146,8 +146,8 @@ public class InvoicedProducerService(
             where
                 ValidClassifications.Contains(projection.CalculatorRun.CalculatorRunClassificationId)
                 && projection.CalculatorRun.RelativeYearValue == relativeYear.Value
-                && projection.SuggestedInstruction.BillingInstructionAcceptReject == PrepareBillingFileConstants.BillingInstructionAccepted
-                && projection.SuggestedInstruction.SuggestedBillingInstruction != PrepareBillingFileConstants.SuggestedBillingInstructionCancelBill
+                && projection.SuggestedInstruction.BillingInstructionAcceptReject == BillingConstants.Action.Accepted
+                && projection.SuggestedInstruction.SuggestedBillingInstruction != BillingConstants.Suggestion.Cancel
 
                 // Exclude rows that have been superseded by a later valid run for this producer, i.e. either:
                 //  - a later accepted cancel-bill for the producer (any material), or
@@ -163,9 +163,9 @@ public class InvoicedProducerService(
                         && laterRun.RelativeYearValue == relativeYear.Value
                         && ValidClassifications.Contains(laterRun.CalculatorRunClassificationId)
                         && laterSuggested.ProducerId == projection.ProducerId
-                        && laterSuggested.BillingInstructionAcceptReject == PrepareBillingFileConstants.BillingInstructionAccepted
+                        && laterSuggested.BillingInstructionAcceptReject == BillingConstants.Action.Accepted
                         && (
-                            laterSuggested.SuggestedBillingInstruction == PrepareBillingFileConstants.SuggestedBillingInstructionCancelBill
+                            laterSuggested.SuggestedBillingInstruction == BillingConstants.Suggestion.Cancel
                             || dbContext.ProducerInvoicedMaterialNetTonnage.Any(t =>
                                 t.CalculatorRunId == laterRun.Id
                                 && t.ProducerId == projection.InvoicedTonnage.ProducerId

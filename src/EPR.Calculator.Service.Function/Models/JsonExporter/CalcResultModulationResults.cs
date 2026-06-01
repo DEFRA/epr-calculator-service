@@ -1,7 +1,6 @@
 ﻿using System.Text.Json.Serialization;
-using EPR.Calculator.Service.Function.Converter;
 using EPR.Calculator.Service.Function.Builder.Modulation;
-
+using EPR.Calculator.Service.Function.Converter;
 
 namespace EPR.Calculator.Service.Function.Models.JsonExporter
 {

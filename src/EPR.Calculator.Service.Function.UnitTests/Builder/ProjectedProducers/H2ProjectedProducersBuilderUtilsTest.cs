@@ -2,16 +2,18 @@
 using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 {
+    [TestCategory(TestCategories.ResultBuilder)]
     [TestClass]
     public class H2ProjectedProducersBuilderUtilsTest
     {
         private IImmutableList<MaterialDetail> materials = ImmutableList.Create<MaterialDetail>
         (
-            new MaterialDetail { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
-            new MaterialDetail { Id = 2, Code = "GL", Name = "Glass", Description = "Glass" }
+            new MaterialDetail { Id = 1, Code = "AL", Name = "Aluminium" },
+            new MaterialDetail { Id = 2, Code = "GL", Name = "Glass" }
         );
 
         [TestMethod]

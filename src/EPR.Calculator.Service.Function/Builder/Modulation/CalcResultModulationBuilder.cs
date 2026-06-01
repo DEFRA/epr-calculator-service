@@ -70,7 +70,7 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
                         redAtAmberDisposalCost   = Math.Round(redMaterialTonnages   * materialDisposalCost, 2),
                         greenAtAmberDisposalCost = Math.Round(greenMaterialTonnages * materialDisposalCost, 2)
                     };
-                });
+                }).ToImmutableList();
 
             var totalRedAtAmberDisposalCost  = materialCosts.Sum(c => c.redAtAmberDisposalCost);
             var totalGreenAtAmberDispoalCost = materialCosts.Sum(c => c.greenAtAmberDisposalCost);

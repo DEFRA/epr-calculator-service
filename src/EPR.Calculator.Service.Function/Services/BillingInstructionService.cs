@@ -1,11 +1,17 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Features.BillingRun.Constants;
 using EPR.Calculator.Service.Function.Logging;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Services;
+
+public interface IBillingInstructionService
+{
+    public Task<bool> CreateBillingInstructions(CalcResult calcResult);
+}
 
 public class BillingInstructionService(
     ApplicationDBContext dbContext,
@@ -89,7 +95,7 @@ public class BillingInstructionService(
                 PercentageLiabilityDifferenceCalcVsPrev = null,
                 MaterialPercentageThresholdBreached = null,
                 TonnagePercentageThresholdBreached = null,
-                SuggestedBillingInstruction = CommonConstants.CancelStatus,
+                SuggestedBillingInstruction = BillingConstants.Suggestion.Cancel,
                 SuggestedInvoiceAmount = null
             };
             billingInstructions.Add(billingInstruction);

@@ -3,7 +3,7 @@ using EPR.Calculator.Service.Function.Builder.Modulation;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
-using EPR.Calculator.Service.Function.UnitTests.Builder;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulation
 {
@@ -12,8 +12,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
     {
         private CalcResultModulationExporter exporter;
 
-        private MaterialDetail al = TestDataHelper.GetMaterials().First(m => m.Code == "AL");
-        private MaterialDetail fc = TestDataHelper.GetMaterials().First(m => m.Code == "FC");
+        private MaterialDetail al = TestDataHelper.GetMaterialDetails().First(m => m.Code == "AL");
+        private MaterialDetail fc = TestDataHelper.GetMaterialDetails().First(m => m.Code == "FC");
 
         public CalcResultModulationExporterTests()
         {

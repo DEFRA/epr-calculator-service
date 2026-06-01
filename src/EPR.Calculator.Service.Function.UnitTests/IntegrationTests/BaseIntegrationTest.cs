@@ -1,3 +1,6 @@
+using EPR.Calculator.API.Data;
+using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.Services.CommonDataApi;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -6,12 +9,9 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 using Testcontainers.MsSql;
-using EPR.Calculator.API.Data;
-using EPR.Calculator.Service.Function;
-using EPR.Calculator.Service.Function.Services.CommonDataApi;
-using EPR.Calculator.Service.Function.Services;
 
-[TestClass]
+namespace EPR.Calculator.Service.Function.UnitTests.IntegrationTests;
+
 public abstract class BaseIntegrationTest
 {
     protected ServiceProvider Provider = null!;
@@ -61,15 +61,15 @@ public abstract class BaseIntegrationTest
         services
             .AddSingleton<IConfiguration>(configuration)
             .AddLogging(x =>
-                {
-                    x.ClearProviders();
-                    x.AddSerilog(Log.Logger, dispose: true);
-                })
+            {
+                x.ClearProviders();
+                x.AddSerilog(Log.Logger, dispose: true);
+            })
             .AddAppDependencies()
             .AddDbContextFactory<ApplicationDBContext>(options =>
-                {
-                    options.UseSqlServer(SqlContainer.GetConnectionString());
-                })
+            {
+                options.UseSqlServer(SqlContainer.GetConnectionString());
+            })
             .RemoveAll<CommonDataApiHttpClient>()
             .AddSingleton<FakeCommonDataApiClient>()
             .AddSingleton<ICommonDataApiClient>(sp => sp.GetRequiredService<FakeCommonDataApiClient>())

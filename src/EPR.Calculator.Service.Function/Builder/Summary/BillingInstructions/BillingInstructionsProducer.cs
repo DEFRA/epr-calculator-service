@@ -1,5 +1,6 @@
 using EPR.Calculator.Service.Function.Builder.ParametersOther;
 using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Features.BillingRun.Constants;
 using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
@@ -226,11 +227,11 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
 
             if (liabilityDifference > 0 &&
                 (materialThresholdBreached != CommonConstants.Hyphen || tonnageThresholdBreached != CommonConstants.Hyphen || materialPercentageThresholdBreached != CommonConstants.Hyphen || tonnagePercentageThresholdBreached != CommonConstants.Hyphen))
-                return CommonConstants.Delta;
+                return BillingConstants.Suggestion.Delta;
 
             if (liabilityDifference < 0 &&
                 (materialThresholdBreached != CommonConstants.Hyphen || tonnageThresholdBreached != CommonConstants.Hyphen || materialPercentageThresholdBreached != CommonConstants.Hyphen || tonnagePercentageThresholdBreached != CommonConstants.Hyphen))
-                return CommonConstants.Rebill;
+                return BillingConstants.Suggestion.Rebill;
 
             return CommonConstants.Hyphen;
         }
@@ -240,10 +241,10 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
             if (fee.LeaverDate == CommonConstants.Totals) return suggestedInvoiceAmountTotal;
             if (fee.Level != CommonConstants.LevelOne.ToString()) return null;
 
-            if (suggestedBillingInstruction == CommonConstants.Initial || suggestedBillingInstruction == CommonConstants.Rebill)
+            if (suggestedBillingInstruction is BillingConstants.Suggestion.Initial or BillingConstants.Suggestion.Rebill)
                 return fee.TotalProducerBillBreakdownCosts?.TotalProducerFeeWithBadDebtProvision;
 
-            if (suggestedBillingInstruction == CommonConstants.Delta) return liabilityDifference;
+            if (suggestedBillingInstruction == BillingConstants.Suggestion.Delta) return liabilityDifference;
 
             return null;
         }

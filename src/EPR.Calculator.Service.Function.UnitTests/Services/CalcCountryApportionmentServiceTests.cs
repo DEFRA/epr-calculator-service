@@ -1,55 +1,18 @@
-using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Services;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
     [TestClass]
-    public class CalcCountryApportionmentServiceTests
+    public class CalcCountryApportionmentServiceTests : TestsFor<CalcCountryApportionmentService>
     {
-        private CalcCountryApportionmentService _testClass = null!;
-        private ApplicationDBContext _context = null!;
-
-        [TestInitialize]
-        public void SetUp()
+        protected override void TestInitialize()
         {
-            var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
-                           .UseInMemoryDatabase(databaseName: "PayCal")
-                           .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-                           .Options;
-
-            _context = new ApplicationDBContext(dbContextOptions);
-
-            _context.Database.EnsureCreated();
-
-            if(!_context.Country.Any())
-            {
-                _context.Country.Add(new Country { Name = "England", Code = "Eng" });
-                _context.Country.Add(new Country { Name = "Scotland", Code = "Sct" });
-                _context.Country.Add(new Country { Name = "Northern Ireland", Code = "NI" });
-                _context.Country.Add(new Country { Name = "Wales", Code = "Wales" });
-                _context.SaveChanges();
-            }
-            _testClass = new CalcCountryApportionmentService(_context);
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            _context.Database.EnsureDeleted();
-            _context.Dispose();
-        }
-
-        [TestMethod]
-        public void CanConstruct()
-        {
-            // Act
-            var instance = new CalcCountryApportionmentService(_context);
-
-            // Assert
-            Assert.IsNotNull(instance);
+            dbContext.Country.Add(new Country { Name = "England", Code = "Eng" });
+            dbContext.Country.Add(new Country { Name = "Scotland", Code = "Sct" });
+            dbContext.Country.Add(new Country { Name = "Northern Ireland", Code = "NI" });
+            dbContext.Country.Add(new Country { Name = "Wales", Code = "Wales" });
         }
 
         [TestMethod]
@@ -59,7 +22,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var fixture = new Fixture();
             var countryApportionmentServiceDto = fixture.Create<CalcCountryApportionmentServiceDto>();
 
-            countryApportionmentServiceDto.Countries = _context.Country.ToList();
+            countryApportionmentServiceDto.Countries = dbContext.Country.ToList();
 
             countryApportionmentServiceDto.CostTypeId = 1;
             countryApportionmentServiceDto.EnglandCost = 1000;
@@ -68,14 +31,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             countryApportionmentServiceDto.ScotlandCost = 4000;
 
             // Act
-            await _testClass.SaveChangesAsync(countryApportionmentServiceDto);
+            await testSubject.SaveChangesAsync(countryApportionmentServiceDto);
 
-            var apportionment = _context.CountryApportionment.ToList();
+            var apportionment = dbContext.CountryApportionment.ToList();
             Assert.AreEqual(4, apportionment.Count());
 
-            Assert.IsTrue(apportionment.Exists(x => 
+            Assert.IsTrue(apportionment.Exists(x =>
             x.CountryId == 1
-            && 
+            &&
             x.Apportionment == countryApportionmentServiceDto.EnglandCost
             &&
             x.CostTypeId == countryApportionmentServiceDto.CostTypeId

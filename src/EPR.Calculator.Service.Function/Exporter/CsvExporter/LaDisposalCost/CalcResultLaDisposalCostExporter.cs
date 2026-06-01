@@ -1,26 +1,28 @@
 ﻿using System.Text;
+using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.Constants;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost
 {
     public interface ICalcResultLaDisposalCostExporter
     {
         void Export(
-            bool applyModulation,
-            IImmutableList<MaterialDetail> materialDetails,
+            RunContext runContext,
             CalcResultLaDisposalCostData calcResultLaDisposalCostData,
+            IImmutableList<MaterialDetail> materialDetails,
             StringBuilder csvContent
         );
     }
 
     public class CalcResultLaDisposalCostExporter : ICalcResultLaDisposalCostExporter
     {
-        public void Export(bool applyModulation,
-            IImmutableList<MaterialDetail> materialDetails,
+        public void Export(
+            RunContext runContext,
             CalcResultLaDisposalCostData calcResultLaDisposalCostData,
+            IImmutableList<MaterialDetail> materialDetails,
             StringBuilder csvContent
         )
         {
@@ -29,13 +31,13 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.LaDisposalCost
 
             csvContent.AppendLine(CsvSanitiser.SanitiseData("LA Disposal Cost Data"));
 
-            AppendHeader(applyModulation, csvContent);
+            AppendHeader(runContext.RequiresModulation, csvContent);
             foreach (var disposalCostData in calcResultLaDisposalCostData.ByMaterial)
             {
                 var material = materialDetails.First(m => m.Code == disposalCostData.Key);
-                AppendRow(applyModulation, material.Name, disposalCostData.Value, csvContent);
+                AppendRow(runContext.RequiresModulation, material.Name, disposalCostData.Value, csvContent);
             }
-            AppendRow(applyModulation, "Total", calcResultLaDisposalCostData.Total, csvContent);
+            AppendRow(runContext.RequiresModulation, "Total", calcResultLaDisposalCostData.Total, csvContent);
         }
 
         private static void AppendHeader(bool applyModulation, StringBuilder csvContent)

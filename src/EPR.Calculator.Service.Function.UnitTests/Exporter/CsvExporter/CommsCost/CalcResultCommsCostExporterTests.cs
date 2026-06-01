@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
 using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.UnitTests.Builder;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.CommsCost
 {
@@ -24,7 +24,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.CommsCo
                 CommsCostUkWide    = new ByCountryCost { England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40 },
                 CommsCostByCountry = new ByCountryCost { England = 11, Wales = 21, Scotland = 31, NorthernIreland = 41 }
             };
-            var materials = TestDataHelper.GetMaterials();
+            var materials = TestDataHelper.GetMaterialDetails();
 
             // Act
             var csvContent = new StringBuilder();

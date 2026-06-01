@@ -3,15 +3,21 @@ using System.Text;
 using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
 {
+    public interface ICalcResultSummaryExporter
+    {
+        void Export(RunContext runContext, CalcResultSummary resultSummary, StringBuilder csvContent);
+    }
+
     public class CalcResultSummaryExporter : ICalcResultSummaryExporter
     {
-        public void Export(CalcResultSummary resultSummary, StringBuilder csvContent, bool applyModulation)
+        public void Export(RunContext runContext, CalcResultSummary resultSummary, StringBuilder csvContent)
         {
             // Add empty lines
             csvContent.AppendLine();
@@ -23,7 +29,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             // Add data
             foreach (var producer in resultSummary.ProducerDisposalFees)
             {
-                AddNewRow(csvContent, producer, applyModulation);
+                AddNewRow(csvContent, producer, runContext.RequiresModulation);
             }
         }
 
@@ -225,7 +231,8 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
         private void AppendProducerCommsFeesByMaterial(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool isNotTotal)
         {
             if (producer.ProducerCommsFeesByMaterial == null) { return; }
-            foreach (var disposalFee in producer.ProducerCommsFeesByMaterial!)
+
+            foreach (var disposalFee in producer.ProducerCommsFeesByMaterial)
             {
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.HouseholdPackagingWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.PublicBinTonnage, DecimalPlaces.Three, DecimalFormats.F3));
@@ -272,7 +279,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             }
         }
 
-        public void WriteSecondaryHeaders(StringBuilder csvContent, IEnumerable<CalcResultSummaryHeader> headers)
+        public static void WriteSecondaryHeaders(StringBuilder csvContent, IReadOnlyCollection<CalcResultSummaryHeader> headers)
         {
             var maxColumnSize = headers.MaxBy(h => h.ColumnIndex ?? 0)?.ColumnIndex ?? throw new ArgumentException("No headers specified");
 
@@ -305,10 +312,10 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter
             csvContent.AppendLine(CsvSanitiser.SanitiseData(resultSummary.NotesHeader?.Name));
 
             // Add producer disposal fees header
-            WriteSecondaryHeaders(csvContent, resultSummary.ProducerDisposalFeesHeaders);
+            WriteSecondaryHeaders(csvContent, resultSummary.ProducerDisposalFeesHeaders.ToList());
 
             // Add material breakdown header
-            WriteSecondaryHeaders(csvContent, resultSummary.MaterialBreakdownHeaders);
+            WriteSecondaryHeaders(csvContent, resultSummary.MaterialBreakdownHeaders.ToList());
 
             // Add column header
             WriteColumnHeaders(resultSummary, csvContent);

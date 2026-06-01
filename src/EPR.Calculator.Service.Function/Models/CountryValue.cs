@@ -15,7 +15,7 @@
         public static readonly ByCountryCost Empty =
             new(){ England = 0, Wales = 0, Scotland = 0, NorthernIreland = 0 };
 
-        public static ByCountryCost Sum(IEnumerable<ByCountryCost> costs)
+        public static ByCountryCost Sum(IReadOnlyCollection<ByCountryCost> costs)
         {
             return new ByCountryCost
             {

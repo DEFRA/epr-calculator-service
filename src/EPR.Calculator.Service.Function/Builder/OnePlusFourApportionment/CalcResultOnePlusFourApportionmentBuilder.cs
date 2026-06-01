@@ -1,16 +1,15 @@
-﻿using EPR.Calculator.Service.Function.Misc;
-using EPR.Calculator.Service.Function.Models;
+﻿using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment
 {
     public interface ICalcResultOnePlusFourApportionmentBuilder
     {
-        CalcResultOnePlusFourApportionment Construct(CalcResultsRequestDto resultsRequestDto, CalcResult calcResult);
+        CalcResultOnePlusFourApportionment Construct(CalcResult calcResult);
     }
 
     public class CalcResultOnePlusFourApportionmentBuilder : ICalcResultOnePlusFourApportionmentBuilder
     {
-        public CalcResultOnePlusFourApportionment Construct(CalcResultsRequestDto resultsRequestDto, CalcResult calcResult)
+        public CalcResultOnePlusFourApportionment Construct(CalcResult calcResult)
         {
             return new CalcResultOnePlusFourApportionment {
                 LaDisposalCost   = calcResult.CalcResultLapcapData.Total,

@@ -1,39 +1,31 @@
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Features.Common;
 using Microsoft.EntityFrameworkCore;
 
-namespace EPR.Calculator.Service.Function.Services
+namespace EPR.Calculator.Service.Function.Services;
+
+public record L1Producer(
+    int OrganisationId,
+    List<ProducerDetail> Producers
+);
+
+public interface IReportedProducerService
 {
-    public record L1Producer(
-        int OrganisationId,
-        List<ProducerDetail> Producers
-    );
+    Task<List<L1Producer>> GetProducers(RunContext runContext);
+}
 
-    public interface IReportedProducerService
+public class ReportedProducerService(ApplicationDBContext dbContext)
+    : IReportedProducerService
+{
+    public async Task<List<L1Producer>> GetProducers(RunContext runContext)
     {
-        Task<List<L1Producer>> GetProducers(int runId);
-    }
-
-    public class ReportedProducerService : IReportedProducerService
-    {
-        private readonly ApplicationDBContext dbContext;
-
-        public ReportedProducerService(IDbContextFactory<ApplicationDBContext> context)
-        {
-            this.dbContext = context.CreateDbContext();
-        }
-
-        public async Task<List<L1Producer>> GetProducers(int runId)
-        {
-            return (
-                await dbContext.ProducerDetail.AsNoTracking()
-                    .Where(pd => pd.CalculatorRunId == runId)
-                    .Include(pd => pd.ProducerReportedMaterials).ThenInclude(prm => prm.Material)
-                    .ToListAsync()
-            )
+        return
+            await dbContext.ProducerDetail.AsNoTracking()
+                .Include(pd => pd.ProducerReportedMaterials).ThenInclude(prm => prm.Material)
+                .Where(pd => pd.CalculatorRunId == runContext.RunId)
                 .GroupBy(pd => pd.ProducerId)
-                .Select(pds => new L1Producer(pds.First().ProducerId, pds.ToList()))
-                .ToList();
-        }
+                .Select(pds => new L1Producer(pds.Key, pds.ToList()))
+                .ToListAsync();
     }
 }

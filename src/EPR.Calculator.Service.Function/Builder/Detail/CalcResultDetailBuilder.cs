@@ -1,41 +1,35 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.Detail
 {
-    public class CalcResultDetailBuilder : ICalcResultDetailBuilder
+    public interface ICalcResultDetailBuilder
     {
-        private readonly ApplicationDBContext context;
+        Task<CalcResultDetail> ConstructAsync(RunContext runContext);
+    }
 
-        public CalcResultDetailBuilder(ApplicationDBContext context)
+    public class CalcResultDetailBuilder(ApplicationDBContext dbContext)
+        : ICalcResultDetailBuilder
+    {
+        public async Task<CalcResultDetail> ConstructAsync(RunContext runContext)
         {
-            this.context = context;
-        }
-
-        public async Task<CalcResultDetail> ConstructAsync(CalcResultsRequestDto resultsRequestDto)
-        {
-            var calculatorRuns = await context.CalculatorRuns
+            var calculatorRun = await dbContext.CalculatorRuns
                 .Include(o => o.CalculatorRunOrganisationDataMaster)
                 .Include(o => o.CalculatorRunPomDataMaster)
                 .Include(o => o.DefaultParameterSettingMaster)
                 .Include(x => x.LapcapDataMaster)
-                .ToListAsync();
-
-            string idMsg() => $"CalculatorRun {resultsRequestDto.RunId}";
-
-            var calculatorRun = calculatorRuns.Find(x => x.Id == resultsRequestDto.RunId)
-                                ?? throw new InvalidOperationException($"{idMsg()}  not found.");
+                .SingleAsync(x => x.Id == runContext.RunId);
 
             var results = new CalcResultDetail
             {
                 RunId = calculatorRun.Id,
-                RunName = calculatorRun.Name ?? throw new InvalidOperationException($"{idMsg()} has no Name assigned."),
-                RunBy = calculatorRun.CreatedBy ?? throw new InvalidOperationException($"{idMsg()} has no CreatedBy assigned."),
+                RunName = calculatorRun.Name,
+                RunBy = calculatorRun.CreatedBy,
                 RunDate = calculatorRun.CreatedAt,
-                RelativeYear = calculatorRun.RelativeYear ?? throw new InvalidOperationException($"{idMsg()} has no RelativeYear assigned."),
+                RelativeYear = calculatorRun.RelativeYear,
                 RpdFileORG = calculatorRun.CalculatorRunOrganisationDataMaster != null
                                 ? calculatorRun.CalculatorRunOrganisationDataMaster.CreatedAt.ToString(CalculationResults.DateFormat)
                                 : string.Empty,

@@ -2,7 +2,7 @@ using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Builder.Modulation;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
-using EPR.Calculator.Service.Function.UnitTests.Builder;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
 {
@@ -13,10 +13,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public void From_MapFieldsCorrectly()
         {
             var calcResult = CreateCalcResult();
-            var materials = TestDataHelper.GetMaterials();
-            var acceptedProducerIds = new List<int> { 1, 2 };
-
-            var result = BillingFileJson.From(calcResult, acceptedProducerIds, materials);
+            var materials = TestDataHelper.GetMaterialDetails();
+            var result = BillingFileJson.From(TestDataHelper.BillingRun2025, calcResult, materials);
 
             Assert.IsNotNull(result);
             Assert.IsNotNull(result.CalcResultDetail);
@@ -56,7 +54,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         {
             return new CalcResult
             {
-                ApplyModulation = true,
                 CalcResultDetail = new CalcResultDetail
                 {
                     RunId = 1,

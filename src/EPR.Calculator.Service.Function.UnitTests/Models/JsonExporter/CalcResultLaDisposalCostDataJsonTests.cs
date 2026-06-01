@@ -1,7 +1,7 @@
+using System.Text.Json;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
-using EPR.Calculator.Service.Function.UnitTests.Builder;
-using System.Text.Json;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
 {
@@ -12,8 +12,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
         public void From_ConvertsLaDisposalDetailsAndTotal()
         {
             var la = TestDataHelper.GetCalcResultLaDisposalCostData();
-            var materials = TestDataHelper.GetMaterials();
-            var result = CalcResultLaDisposalCostDataJson.From(la.ByMaterial, la.Total, materials, applyModulation: false);
+            var materials = TestDataHelper.GetMaterialDetails();
+            var result = CalcResultLaDisposalCostDataJson.From(TestDataHelper.CalculatorRun2025, la.ByMaterial, la.Total, materials);
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.CalcResultLaDisposalCostDetails.Any());

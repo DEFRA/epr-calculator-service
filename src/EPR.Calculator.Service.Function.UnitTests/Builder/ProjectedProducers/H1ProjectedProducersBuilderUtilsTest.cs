@@ -2,17 +2,19 @@
 using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 {
+    [TestCategory(TestCategories.ResultBuilder)]
     [TestClass]
     public class H1ProjectedProducersBuilderUtilsTest
     {
         private IImmutableList<MaterialDetail> materials = ImmutableList.Create<MaterialDetail>
         (
-            new MaterialDetail { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
-            new MaterialDetail { Id = 2, Code = "GL", Name = "Glass", Description = "Glass" },
-            new MaterialDetail { Id = 3, Code = "OT", Name = "Other materials", Description = "Other materials" }
+            new MaterialDetail { Id = 1, Code = "AL", Name = "Aluminium" },
+            new MaterialDetail { Id = 2, Code = "GL", Name = "Glass" },
+            new MaterialDetail { Id = 3, Code = "OT", Name = "Other materials" }
         );
 
         private RAMTonnage EmptyRAMTonnage() { return new RAMTonnage { RedTonnage = 0, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 }; }
@@ -911,9 +913,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                         { MaterialCodes.Glass, glass },
                         { MaterialCodes.OtherMaterials,
                             new CalcResultH2ProjectedProducerMaterialTonnage {
-                                HouseholdTonnage = 75, 
+                                HouseholdTonnage = 75,
                                 HouseholdRAMTonnage = new RAMTonnage { RedTonnage = 10, AmberTonnage = 11, GreenTonnage = 12, RedMedicalTonnage = 13, AmberMedicalTonnage = 14, GreenMedicalTonnage = 15 },
-                                PublicBinTonnage = 135,     
+                                PublicBinTonnage = 135,
                                 PublicBinRAMTonnage = new RAMTonnage { RedTonnage = 20, AmberTonnage = 21, GreenTonnage = 22, RedMedicalTonnage = 23, AmberMedicalTonnage = 24, GreenMedicalTonnage = 25 },
                                 HouseholdTonnageWithoutRAM = 10,
                                 PublicBinTonnageWithoutRAM = 20,

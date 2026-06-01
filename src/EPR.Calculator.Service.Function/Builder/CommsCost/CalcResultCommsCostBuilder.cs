@@ -2,7 +2,7 @@
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,8 +11,8 @@ namespace EPR.Calculator.Service.Function.Builder.CommsCost;
 public interface ICalcResultCommsCostBuilder
 {
     Task<CalcResultCommsCost> ConstructAsync(
+        RunContext runContext,
         IImmutableList<MaterialDetail> materialDetails,
-        CalcResultsRequestDto resultsRequestDto,
         CalcResultOnePlusFourApportionment apportionment,
         CalcResultLateReportingTonnage calcResultLateReportingTonnage
     );
@@ -30,14 +30,12 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
     public const string OnePlusFourApportionment = "1 + 4 Apportionment %s";
 
     public async Task<CalcResultCommsCost> ConstructAsync(
+        RunContext runContext,
         IImmutableList<MaterialDetail> materialDetails,
-        CalcResultsRequestDto resultsRequestDto,
         CalcResultOnePlusFourApportionment apportionment,
         CalcResultLateReportingTonnage calcResultLateReportingTonnage
     )
     {
-        var runId = resultsRequestDto.RunId;
-
         var apportionmentDetail = apportionment.OnePlusFourApportionment;
 
         var allDefaultResults = await (
@@ -45,7 +43,7 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
             join defaultMaster in context.DefaultParameterSettings on run.DefaultParameterSettingMasterId equals defaultMaster.Id
             join defaultDetail in context.DefaultParameterSettingDetail on defaultMaster.Id equals defaultDetail.DefaultParameterSettingMasterId
             join defaultTemplate in context.DefaultParameterTemplateMasterList on defaultDetail.ParameterUniqueReferenceId equals defaultTemplate.ParameterUniqueReferenceId
-            where run.Id == runId
+            where run.Id == runContext.RunId
             select new CalcCommsBuilderResult
             {
                 ParameterValue = defaultDetail.ParameterValue,
@@ -53,10 +51,12 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
                 ParameterCategory = defaultTemplate.ParameterCategory
             }).Distinct().ToListAsync();
 
-        var materialDefaults = allDefaultResults.Where(x =>
-            x.ParameterType == CommunicationCostByMaterial && materialDetails.Select(m => m.Name).Contains(x.ParameterCategory));
+        var materialDefaults = allDefaultResults
+            .Where(x => x.ParameterType == CommunicationCostByMaterial
+                        && materialDetails.Select(m => m.Name).Contains(x.ParameterCategory))
+            .ToImmutableArray();
 
-        var producerReportedMaterials = await GetProducerReportedMaterials(context, runId);
+        var producerReportedMaterials = await GetProducerReportedMaterials(runContext);
 
         var commsCostByMaterial = materialDetails.Select(material =>
         {
@@ -110,14 +110,14 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
         };
     }
 
-    public async Task<List<ProducerReportedMaterialProjected>> GetProducerReportedMaterials(ApplicationDBContext context, int runId)
+    public async Task<List<ProducerReportedMaterialProjected>> GetProducerReportedMaterials(RunContext runContext)
     {
         return await (
             from run in context.CalculatorRuns
             join pd in context.ProducerDetail on run.Id equals pd.CalculatorRunId
             join mat in context.ProducerReportedMaterialProjected on pd.Id equals mat.ProducerDetailId
             join material in context.Material on mat.MaterialId equals material.Id
-            where run.Id == runId &&
+            where run.Id == runContext.RunId &&
                   // TODO need the following filter?
                   mat.PackagingType != null &&
                   (mat.PackagingType == PackagingTypes.Household ||
@@ -129,8 +129,7 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
     }
 
     private static ByCountryCost GetCommsCostByCountry(
-        IEnumerable<CalcCommsBuilderResult> allDefaultResults
-    )
+        IReadOnlyCollection<CalcCommsBuilderResult> allDefaultResults)
     {
         var englandValue =
             allDefaultResults.Single(x =>

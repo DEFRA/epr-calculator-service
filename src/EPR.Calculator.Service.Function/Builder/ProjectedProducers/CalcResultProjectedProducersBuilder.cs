@@ -1,7 +1,7 @@
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.PartialObligations;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Misc;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 
@@ -10,22 +10,22 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
     public interface ICalcResultProjectedProducersBuilder
     {
         (List<L1Producer>, CalcResultProjectedProducers) Construct(
+            RunContext runContext,
             IImmutableList<MaterialDetail> materialDetails,
-            IReadOnlyCollection<L1Producer> producers,
-            CalcResultsRequestDto resultsRequestDto
+            IReadOnlyCollection<L1Producer> producers
         );
     }
 
     public class CalcResultProjectedProducersBuilder : ICalcResultProjectedProducersBuilder
     {
         public (List<L1Producer>, CalcResultProjectedProducers) Construct(
+            RunContext runContext,
             IImmutableList<MaterialDetail> materialDetails,
-            IReadOnlyCollection<L1Producer> producers,
-            CalcResultsRequestDto resultsRequestDto
+            IReadOnlyCollection<L1Producer> producers
         )
         {
-            var h2Period = $"{resultsRequestDto.RelativeYear.Value - 1}-H2";
-            var h1Period = $"{resultsRequestDto.RelativeYear.Value - 1}-H1";
+            var h2Period = $"{runContext.RelativeYear.Value - 1}-H2";
+            var h1Period = $"{runContext.RelativeYear.Value - 1}-H1";
 
             var allH2Rows = new List<CalcResultH2ProjectedProducer>();
             var allH1Rows = new List<CalcResultH1ProjectedProducer>();

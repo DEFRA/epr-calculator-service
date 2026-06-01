@@ -2,7 +2,8 @@
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.Telemetry;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures.Customizations;
-using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Utils;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Services;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Time.Testing;
 
 namespace EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
@@ -19,7 +20,13 @@ public static class TestFixtures
             .Customize(new ImmutableCollectionsCustomization())
             .Customize(new IgnoreVirtualMembersCustomization())
             .Customize(new RelativeYearCustomization())
-            .Customize(new InMemoryCustomization());
+            .Customize(new MaterialServiceCustomization())
+            .Customize(new InMemoryCustomization
+            {
+                Configure = opts => opts.ConfigureWarnings(
+                    warnings => warnings.Ignore(InMemoryEventId.TransactionIgnoredWarning)
+                )
+            });
 
         fixture.Register<TimeProvider>(() => new FakeTimeProvider());
         fixture.Register<ITelemetryClient>(() => new TestTelemetryClient());

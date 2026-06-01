@@ -2,29 +2,28 @@ using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Logging;
-using EPR.Calculator.Service.Function.Mappers;
 using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Services;
 
 public interface IProducerInvoiceNetTonnageService
 {
-    public Task<bool> CreateProducerInvoiceNetTonnage(CalcResult calcResult, IImmutableList<MaterialDetail> materials);
+    public Task<bool> CreateProducerInvoiceNetTonnage(CalcResult calcResult);
 }
 
 public class ProducerInvoiceNetTonnageService(
     ApplicationDBContext dbContext,
     IBulkOperations bulkOps,
-    IProducerInvoiceTonnageMapper producerInvoiceTonnageMapper,
+    IMaterialService materialService,
     ILogger<ProducerInvoiceNetTonnageService> logger)
     : IProducerInvoiceNetTonnageService
 {
-    public Task<bool> CreateProducerInvoiceNetTonnage(CalcResult calcResult, IImmutableList<MaterialDetail> materials) =>
+    public Task<bool> CreateProducerInvoiceNetTonnage(CalcResult calcResult) =>
         logger.LogDuration(async () =>
-
         {
             try
             {
+                var materials = await materialService.GetMaterials();
                 var producerInvoicedNetTonnage = GetInvoicedMaterialNetTonnage(calcResult, materials);
 
                 if (producerInvoicedNetTonnage.Count == 0)
@@ -63,13 +62,13 @@ public class ProducerInvoiceNetTonnageService(
 
                 if (disposalFees is not null && disposalFees.TryGetValue(material.Code, out var feeSummary))
                 {
-                    invoiced = producerInvoiceTonnageMapper.Map(new ProducerInvoiceTonnage
+                    invoiced = new ProducerInvoicedMaterialNetTonnage
                     {
-                        RunId = runId,
+                        CalculatorRunId = runId,
                         ProducerId = producer.ProducerIdInt,
-                        NetTonnage = feeSummary.NetReportedTonnage.total,
+                        InvoicedNetTonnage = feeSummary.NetReportedTonnage.total,
                         MaterialId = material.Id
-                    });
+                    };
                 }
 
                 producerInvoiceNetTonnages.Add(invoiced);

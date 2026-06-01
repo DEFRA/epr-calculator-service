@@ -2,6 +2,8 @@ using System.Runtime.CompilerServices;
 using EPR.Calculator.API.Data.Models;
 using EPR.Calculator.Service.Function.Services.CommonDataApi;
 
+namespace EPR.Calculator.Service.Function.UnitTests.IntegrationTests;
+
 public class FakeCommonDataApiClient : ICommonDataApiClient
 {
     public ImmutableList<PomResponse> PomResponses { get; set; } = [];

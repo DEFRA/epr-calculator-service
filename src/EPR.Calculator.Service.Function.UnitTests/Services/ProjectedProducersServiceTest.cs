@@ -1,8 +1,8 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Services;
-using EPR.Calculator.Service.Function.UnitTests.Builder;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
@@ -10,28 +10,28 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     [TestClass]
     public class ProjectedProducersServiceTest
     {
-        private IFixture _fixture = null!;
-        private ApplicationDBContext _dbContext = null!;
-        private ProjectedProducersService _sut = null!;
+        private IFixture fixture = null!;
+        private ApplicationDBContext dbContext = null!;
+        private ProjectedProducersService sut = null!;
 
         [TestInitialize]
         public void Init()
         {
-            _fixture = TestFixtures.New();
-            _dbContext = _fixture.Freeze<ApplicationDBContext>();
-            _sut = _fixture.Create<ProjectedProducersService>();
+            fixture = TestFixtures.New();
+            dbContext = fixture.Freeze<ApplicationDBContext>();
+            sut = fixture.Create<ProjectedProducersService>();
         }
 
         [TestCleanup]
         public void TearDown()
         {
-            _dbContext.Database.EnsureDeleted();
+            dbContext.Database.EnsureDeleted();
         }
 
         [TestMethod]
         public async Task StoreProjectedProducers_WorksAsExpected()
         {
-            TestDataHelper.SeedDatabaseForInitialRun(_dbContext);
+            TestDataHelper.SeedDatabaseForInitialRun(dbContext);
 
             ProducerReportedMaterial mkProducerReportedMaterial(string submissionPeriod, string material, string packagingType, decimal total, decimal? r, decimal? a)
             {
@@ -72,9 +72,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new L1Producer(1, [producer1, producer2])
             };
 
-            await _sut.StoreProjectedProducers(1, producers);
+            await sut.StoreProjectedProducers(producers);
 
-            var stored = await _dbContext.ProducerReportedMaterialProjected.ToImmutableListAsync();
+            var stored = await dbContext.ProducerReportedMaterialProjected.ToImmutableListAsync();
             stored.Count.ShouldBe(6);
         }
     }

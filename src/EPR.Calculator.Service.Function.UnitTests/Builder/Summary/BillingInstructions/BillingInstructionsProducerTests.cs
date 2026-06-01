@@ -1,46 +1,20 @@
-﻿using EPR.Calculator.API.Data;
-using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.Service.Function.Builder.ParametersOther;
+﻿using EPR.Calculator.Service.Function.Builder.ParametersOther;
 using EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions;
 using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Features.BillingRun.Constants;
 using EPR.Calculator.Service.Function.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstructions;
 
-/// <summary>
-///     Defines the <see cref="BillingInstructionsProducerTests" />
-/// </summary>
+[TestCategory(TestCategories.ResultBuilder)]
 [TestClass]
 public class BillingInstructionsProducerTests
 {
-    /// <summary>
-    ///     Defines the _calcResult
-    /// </summary>
-    private readonly CalcResult _calcResult;
+    private readonly CalcResult calcResult = TestDataHelper.GetCalcResult();
 
-    /// <summary>
-    ///     Defines the _commsCostSummary
-    /// </summary>
-    private readonly Dictionary<MaterialDetail, CalcResultSummaryProducerCommsFeesCostByMaterial> _commsCostSummary;
-
-    /// <summary>
-    ///     Defines the _dbContext
-    /// </summary>
-    private readonly ApplicationDBContext _dbContext;
-
-    /// <summary>
-    ///     Defines the _materialCostSummary
-    /// </summary>
-    private readonly Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial> _materialCostSummary;
-
-    /// <summary>
-    ///     Defines the _materials
-    /// </summary>
-    private readonly IEnumerable<MaterialDetail> _materials;
-
-    private readonly InvoicedProducer _defaultInvoicedProducer = new()
+    private readonly InvoicedProducer defaultInvoicedProducer = new()
     {
         CalculatorRunId = 0,
         CalculatorName = "ignored",
@@ -53,77 +27,16 @@ public class BillingInstructionsProducerTests
         CurrentYearInvoicedTotalAfterThisRun = 20.003m
     };
 
-    private readonly List<DefaultParamResultsClass> defaultParam;
-
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="BillingInstructionsProducerTests" /> class.
-    /// </summary>
-    public BillingInstructionsProducerTests()
-    {
-        var dbContextOptions = new DbContextOptionsBuilder<ApplicationDBContext>()
-            .UseInMemoryDatabase("PayCal")
-            .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-            .Options;
-
-        _dbContext = new ApplicationDBContext(dbContextOptions);
-        _dbContext.Database.EnsureCreated();
-
-        _materials = CreateMaterials();
-        CreateProducerDetail();
-
-        _calcResult = TestDataHelper.GetCalcResult();
-
-        _materialCostSummary = new Dictionary<MaterialDetail, CalcResultSummaryProducerDisposalFeesByMaterial>();
-        _commsCostSummary = new Dictionary<MaterialDetail, CalcResultSummaryProducerCommsFeesCostByMaterial>();
-
-        foreach (var material in _materials)
+    private readonly List<DefaultParamResultsClass> defaultParam =
+    [
+        new()
         {
-            _materialCostSummary.Add(material, new CalcResultSummaryProducerDisposalFeesByMaterial
-            {
-                HouseholdPackagingWasteTonnage = 1000,
-                SelfManagedConsumerWasteTonnage = 90,
-                NetReportedTonnage = (total: 910, red: null, amber: null, green: null),
-                PricePerTonne = (total: 0.6676m, red: null, amber: null, green: null),
-                ProducerDisposalFee = (total: 607.52m, red: null, amber: null, green: null),
-                BadDebtProvision = 36.45m,
-                ProducerDisposalFeeWithBadDebtProvision = 643.97m,
-                EnglandWithBadDebtProvision = 348.06m,
-                WalesWithBadDebtProvision = 78.46m,
-                ScotlandWithBadDebtProvision = 156.28m,
-                NorthernIrelandWithBadDebtProvision = 61.18m
-            });
-
-            _commsCostSummary.Add(material, new CalcResultSummaryProducerCommsFeesCostByMaterial
-            {
-                HouseholdPackagingWasteTonnage = 1000,
-                PriceperTonne = 0.6676m,
-                ProducerTotalCostWithoutBadDebtProvision = 607.52m,
-                BadDebtProvision = 36.45m,
-                ProducerTotalCostwithBadDebtProvision = 643.97m,
-                EnglandWithBadDebtProvision = 348.06m,
-                WalesWithBadDebtProvision = 78.46m,
-                ScotlandWithBadDebtProvision = 156.28m,
-                NorthernIrelandWithBadDebtProvision = 61.18m
-            });
+            ParameterUniqueReference = "MATT-PI",
+            ParameterValue = 50m,
+            ParameterCategory = "Percentage Increase",
+            ParameterType = "Material threshold"
         }
-
-        defaultParam = new List<DefaultParamResultsClass>
-        {
-            new()
-            {
-                ParameterUniqueReference = "MATT-PI",
-                ParameterValue = 50m,
-                ParameterCategory = "Percentage Increase",
-                ParameterType = "Material threshold"
-            }
-        };
-    }
-
-    [TestCleanup]
-    public void TearDown()
-    {
-        _dbContext.Database.EnsureDeleted();
-    }
+    ];
 
     [TestMethod]
     public void CanCallGetHeaders()
@@ -194,10 +107,10 @@ public class BillingInstructionsProducerTests
         defaultParam.First().ParameterValue = 55000m;
         defaultParam.First().ParameterUniqueReference = "MATT-PD";
 
-        BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, producerInvoicedMaterialNetTonnage, defaultParam);
-        var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection;
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, producerInvoicedMaterialNetTonnage, defaultParam);
+        var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection;
 
-        var calcTotal = _calcResult.CalcResultSummary.ProducerDisposalFees.First().TotalProducerBillBreakdownCosts!.TotalProducerFeeWithBadDebtProvision;
+        var calcTotal = calcResult.CalcResultSummary.ProducerDisposalFees.First().TotalProducerBillBreakdownCosts!.TotalProducerFeeWithBadDebtProvision;
         var expectedLiabilityDiff = Math.Round(calcTotal, 2) - Math.Round(20.00m, 2);
 
         // Assert
@@ -209,7 +122,7 @@ public class BillingInstructionsProducerTests
         Assert.AreEqual(52355.85m, fee.PercentageLiabilityDifference);
         Assert.AreEqual("-ve", fee.MaterialPercentageThresholdBreached);
         Assert.AreEqual("-", fee.TonnagePercentageThresholdBreached);
-        Assert.AreEqual(CommonConstants.Delta, fee.SuggestedBillingInstruction);
+        Assert.AreEqual(BillingConstants.Suggestion.Delta, fee.SuggestedBillingInstruction);
         Assert.AreEqual(10471.17m, fee.SuggestedInvoiceAmount);
     }
 
@@ -1027,51 +940,51 @@ public class BillingInstructionsProducerTests
     [TestMethod]
     public void CalculatePercentageLiabilityDifference_LevelNot1_ReturnsNull()
     {
-        _calcResult.CalcResultSummary.ProducerDisposalFees.First().Level = "2";
+        calcResult.CalcResultSummary.ProducerDisposalFees.First().Level = "2";
 
-        BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, [_defaultInvoicedProducer], new List<DefaultParamResultsClass>());
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], new List<DefaultParamResultsClass>());
 
-        var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
+        var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.IsNull(fee.PercentageLiabilityDifference);
     }
 
     [TestMethod]
     public void CalculatePercentageLiabilityDifference_Level1_ComputesRoundedDifference()
     {
-        BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, [_defaultInvoicedProducer], new List<DefaultParamResultsClass>());
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], new List<DefaultParamResultsClass>());
 
-        var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
+        var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.AreEqual(52348.00m, fee.PercentageLiabilityDifference);
     }
 
     [TestMethod]
     public void CalculatePercentageLiabilityDifference_Total_ReturnsNull()
     {
-        _calcResult.CalcResultSummary.ProducerDisposalFees.First().LeaverDate = CommonConstants.Totals;
+        calcResult.CalcResultSummary.ProducerDisposalFees.First().LeaverDate = CommonConstants.Totals;
 
-        BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, [_defaultInvoicedProducer], new List<DefaultParamResultsClass>());
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], new List<DefaultParamResultsClass>());
 
-        var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
+        var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.IsNull(fee.PercentageLiabilityDifference);
     }
 
     [TestMethod]
     public void CalculateMaterialPercentageThresholdBreached_LevelNot1_ReturnsHypen()
     {
-        _calcResult.CalcResultSummary.ProducerDisposalFees.First().Level = "2";
+        calcResult.CalcResultSummary.ProducerDisposalFees.First().Level = "2";
 
-        BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, [_defaultInvoicedProducer], new List<DefaultParamResultsClass>());
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], new List<DefaultParamResultsClass>());
 
-        var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
+        var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.AreEqual(CommonConstants.Hyphen, fee.MaterialPercentageThresholdBreached);
     }
 
     [TestMethod]
     public void CalculateMaterialPercentageThresholdBreached_Level1_ReturnsPositive()
     {
-        BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, [_defaultInvoicedProducer], defaultParam);
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], defaultParam);
 
-        var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
+        var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.AreEqual(CommonConstants.Positive, fee.MaterialPercentageThresholdBreached);
     }
 
@@ -1081,9 +994,9 @@ public class BillingInstructionsProducerTests
         defaultParam.First().ParameterValue = 55000m;
         defaultParam.First().ParameterUniqueReference = "MATT-PD";
 
-        BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, [_defaultInvoicedProducer], defaultParam);
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], defaultParam);
 
-        var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
+        var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.AreEqual(CommonConstants.Negative, fee.MaterialPercentageThresholdBreached);
     }
 
@@ -1091,20 +1004,20 @@ public class BillingInstructionsProducerTests
     public void CalculateMaterialPercentageThresholdBreached_Level1_ReturnsHypen()
     {
         defaultParam.First().ParameterUniqueReference = "";
-        BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, [_defaultInvoicedProducer], defaultParam);
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], defaultParam);
 
-        var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
+        var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.AreEqual(CommonConstants.Hyphen, fee.MaterialPercentageThresholdBreached);
     }
 
     [TestMethod]
     public void CalculateTonnagePercentageThresholdBreached_LevelNot1_ReturnsHypen()
     {
-        _calcResult.CalcResultSummary.ProducerDisposalFees.First().Level = "2";
+        calcResult.CalcResultSummary.ProducerDisposalFees.First().Level = "2";
 
-        BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, [_defaultInvoicedProducer], new List<DefaultParamResultsClass>());
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], new List<DefaultParamResultsClass>());
 
-        var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
+        var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.AreEqual(CommonConstants.Hyphen, fee.TonnagePercentageThresholdBreached);
     }
 
@@ -1112,229 +1025,142 @@ public class BillingInstructionsProducerTests
     public void CalculateTonnagePercentageThresholdBreached_WhenTonnageChangeIsNull_ReturnsHypen()
     {
         defaultParam.First().ParameterUniqueReference = "TONT-PI";
-        BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, [_defaultInvoicedProducer], defaultParam);
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], defaultParam);
 
-        var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
+        var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.AreEqual(CommonConstants.Hyphen, fee.TonnagePercentageThresholdBreached);
     }
 
     [TestMethod]
     public void CalculateTonnagePercentageThresholdBreached_Level1_ReturnsPositive()
     {
-        _calcResult.CalcResultSummary.ProducerDisposalFees.First().TonnageChangeAdvice = "CHANGE";
+        calcResult.CalcResultSummary.ProducerDisposalFees.First().TonnageChangeAdvice = "CHANGE";
         defaultParam.First().ParameterUniqueReference = "TONT-PI";
-        BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, [_defaultInvoicedProducer], defaultParam);
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], defaultParam);
 
-        var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
+        var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.AreEqual(CommonConstants.Positive, fee.TonnagePercentageThresholdBreached);
     }
 
     [TestMethod]
     public void CalculateTonnagePercentageThresholdBreached_Level1_ReturnsNegative()
     {
-        _calcResult.CalcResultSummary.ProducerDisposalFees.First().TonnageChangeAdvice = "CHANGE";
+        calcResult.CalcResultSummary.ProducerDisposalFees.First().TonnageChangeAdvice = "CHANGE";
         defaultParam.First().ParameterValue = 55000m;
         defaultParam.First().ParameterUniqueReference = "TONT-PD";
 
-        BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, [_defaultInvoicedProducer], defaultParam);
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], defaultParam);
 
-        var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
+        var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.AreEqual(CommonConstants.Negative, fee.TonnagePercentageThresholdBreached);
     }
 
     [TestMethod]
     public void CalculateTonnagePercentageThresholdBreached_Level1_ReturnsHypen()
     {
-        BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, [_defaultInvoicedProducer], defaultParam);
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], defaultParam);
 
-        var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
+        var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.AreEqual(CommonConstants.Hyphen, fee.TonnagePercentageThresholdBreached);
     }
 
     [TestMethod]
     public void CalculateSuggestedBillingInstruction_NotLevel1_ReturnsHypen()
     {
-        _calcResult.CalcResultSummary.ProducerDisposalFees.First().Level = "2";
+        calcResult.CalcResultSummary.ProducerDisposalFees.First().Level = "2";
 
-        BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, [_defaultInvoicedProducer], defaultParam);
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], defaultParam);
 
-        var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
+        var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.AreEqual(CommonConstants.Hyphen, fee.SuggestedBillingInstruction);
     }
 
     [TestMethod]
     public void CalculateSuggestedBillingInstruction_Level1_ReturnsDelta()
     {
-        var invoicedProducer = _defaultInvoicedProducer with { CurrentYearInvoicedTotalAfterThisRun = 100m };
+        var invoicedProducer = defaultInvoicedProducer with { CurrentYearInvoicedTotalAfterThisRun = 100m };
 
         defaultParam.First().ParameterValue = 55000m;
         defaultParam.First().ParameterUniqueReference = "MATT-PD";
 
-        BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, [invoicedProducer], defaultParam);
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [invoicedProducer], defaultParam);
 
-        var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
-        Assert.AreEqual(CommonConstants.Delta, fee.SuggestedBillingInstruction);
+        var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
+        Assert.AreEqual(BillingConstants.Suggestion.Delta, fee.SuggestedBillingInstruction);
     }
 
     [TestMethod]
     public void CalculateSuggestedBillingInstruction_Level1_ReturnsRebill()
     {
-        var invoicedProducer = _defaultInvoicedProducer with { CurrentYearInvoicedTotalAfterThisRun = 15000m };
+        var invoicedProducer = defaultInvoicedProducer with { CurrentYearInvoicedTotalAfterThisRun = 15000m };
 
         defaultParam.First().ParameterValue = 55000m;
         defaultParam.First().ParameterUniqueReference = "MATT-PD";
 
-        BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, [invoicedProducer], defaultParam);
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [invoicedProducer], defaultParam);
 
-        var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
-        Assert.AreEqual(CommonConstants.Rebill, fee.SuggestedBillingInstruction);
+        var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
+        Assert.AreEqual(BillingConstants.Suggestion.Rebill, fee.SuggestedBillingInstruction);
     }
 
     [TestMethod]
     public void CalculateSuggestedBillingInstruction_Level1_ReturnsHypen()
     {
-        var invoicedProducer = _defaultInvoicedProducer with { CurrentYearInvoicedTotalAfterThisRun = 10491.17m };
+        var invoicedProducer = defaultInvoicedProducer with { CurrentYearInvoicedTotalAfterThisRun = 10491.17m };
 
-        BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, [invoicedProducer], new List<DefaultParamResultsClass>());
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [invoicedProducer], new List<DefaultParamResultsClass>());
 
-        var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
+        var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.AreEqual(CommonConstants.Hyphen, fee.SuggestedBillingInstruction);
     }
 
     [TestMethod]
     public void CalculateGetSuggestedInvoiceAmount_NotLevel1_ReturnsHypen()
     {
-        _calcResult.CalcResultSummary.ProducerDisposalFees.First().Level = "2";
+        calcResult.CalcResultSummary.ProducerDisposalFees.First().Level = "2";
 
-        BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, [_defaultInvoicedProducer], defaultParam);
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], defaultParam);
 
-        var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
+        var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.IsNull(fee.SuggestedInvoiceAmount);
     }
 
     [TestMethod]
     public void CalculateGetSuggestedInvoiceAmount_Level1_ReturnsLiabilityDifference()
     {
-        var invoicedProducer = _defaultInvoicedProducer with { CurrentYearInvoicedTotalAfterThisRun = 100m };
+        var invoicedProducer = defaultInvoicedProducer with { CurrentYearInvoicedTotalAfterThisRun = 100m };
 
         defaultParam.First().ParameterValue = 55000m;
         defaultParam.First().ParameterUniqueReference = "MATT-PD";
 
-        BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, [invoicedProducer], defaultParam);
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [invoicedProducer], defaultParam);
 
-        var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
+        var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.AreEqual(fee.LiabilityDifference, fee.SuggestedInvoiceAmount);
     }
 
     [TestMethod]
     public void CalculateGetSuggestedInvoiceAmount_Level1_ReturnsTotalProducerFeeWithBadDebtProvision()
     {
-        var invoicedProducer = _defaultInvoicedProducer with { CurrentYearInvoicedTotalAfterThisRun = 15000m };
+        var invoicedProducer = defaultInvoicedProducer with { CurrentYearInvoicedTotalAfterThisRun = 15000m };
 
         defaultParam.First().ParameterValue = 55000m;
         defaultParam.First().ParameterUniqueReference = "MATT-PD";
 
-        _dbContext.ProducerResultFileSuggestedBillingInstruction.AddRange(new List<ProducerResultFileSuggestedBillingInstruction>
-        {
-            new() { Id = 1, CalculatorRunId = 101, ProducerId = 1, SuggestedBillingInstruction = "INITIAL", BillingInstructionAcceptReject = "Accepted" },
-            new() { Id = 2, CalculatorRunId = 101, ProducerId = 2, SuggestedBillingInstruction = "INITIAL", BillingInstructionAcceptReject = "Accepted" },
-            new() { Id = 3, CalculatorRunId = 101, ProducerId = 3, SuggestedBillingInstruction = "INITIAL", BillingInstructionAcceptReject = "Accepted" }
-        });
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [invoicedProducer], defaultParam);
 
-        _dbContext.SaveChanges();
-
-        BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, [invoicedProducer], defaultParam);
-
-        var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
+        var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.AreEqual(10491.17m, Math.Round(fee.SuggestedInvoiceAmount ?? 0m, 2));
     }
 
     [TestMethod]
     public void CalculateGetSuggestedInvoiceAmount_Level1_ReturnsHypen()
     {
-        var invoicedProducer = _defaultInvoicedProducer with { CurrentYearInvoicedTotalAfterThisRun = 10491.17m };
+        var invoicedProducer = defaultInvoicedProducer with { CurrentYearInvoicedTotalAfterThisRun = 10491.17m };
 
-        BillingInstructionsProducer.SetValues(_calcResult.CalcResultSummary, [invoicedProducer], new List<DefaultParamResultsClass>());
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [invoicedProducer], new List<DefaultParamResultsClass>());
 
-        var fee = _calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
+        var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.IsNull(fee.SuggestedInvoiceAmount);
-    }
-
-    private ImmutableList<MaterialDetail> CreateMaterials()
-    {
-        ImmutableList<Material> materials =
-        [
-            new() { Id = 1, Code = "AL", Name = "Aluminium", Description = "Aluminium" },
-            new() { Id = 2, Code = "FC", Name = "Fibre composite", Description = "Fibre composite" },
-            new() { Id = 3, Code = "GL", Name = "Glass", Description = "Glass" },
-            new() { Id = 4, Code = "PC", Name = "Paper or card", Description = "Paper or card" },
-            new() { Id = 5, Code = "PL", Name = "Plastic", Description = "Plastic" },
-            new() { Id = 6, Code = "ST", Name = "Steel", Description = "Steel" },
-            new() { Id = 7, Code = "WD", Name = "Wood", Description = "Wood" },
-            new() { Id = 8, Code = "OT", Name = "Other materials", Description = "Other materials" }
-        ];
-
-        _dbContext.Material.AddRange(materials);
-        _dbContext.SaveChanges();
-
-        return materials.Select(m => new MaterialDetail
-        {
-            Id = m.Id,
-            Code = m.Code,
-            Name = m.Name,
-            Description = m.Description!
-        }).ToImmutableList();
-    }
-
-    private void CreateProducerDetail()
-    {
-        var producerNames = new[]
-        {
-            "Allied Packaging",
-            "Beeline Materials",
-            "Cloud Boxes",
-            "Decking and Shed",
-            "Electric Things",
-            "French Flooring",
-            "Good Fruit Co",
-            "Happy Shopper",
-            "Icicle Foods",
-            "Jumbo Box Store"
-        };
-
-        var producerId = 1;
-        foreach (var producerName in producerNames)
-            _dbContext.ProducerDetail.Add(new ProducerDetail
-            {
-                ProducerId = producerId++,
-                SubsidiaryId = $"{producerId}-Sub",
-                ProducerName = producerName,
-                CalculatorRunId = 1
-            });
-
-        _dbContext.SaveChanges();
-
-        for (var producerDetailId = 1; producerDetailId <= 10; producerDetailId++)
-        for (var materialId = 1; materialId < 9; materialId++)
-            foreach (var subPeriod in new[] { "2025-H1", "2025-H2" })
-                _dbContext.ProducerReportedMaterial.AddRange(
-                    new ProducerReportedMaterial
-                    {
-                        MaterialId = materialId,
-                        ProducerDetailId = producerDetailId,
-                        PackagingType = "HH",
-                        SubmissionPeriod = subPeriod,
-                        PackagingTonnage = materialId * 50
-                    },
-                    new ProducerReportedMaterial
-                    {
-                        MaterialId = materialId,
-                        ProducerDetailId = producerDetailId,
-                        PackagingType = "CW",
-                        SubmissionPeriod = subPeriod,
-                        PackagingTonnage = materialId * 25
-                    });
-
-        _dbContext.SaveChanges();
     }
 }
