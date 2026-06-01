@@ -22,7 +22,6 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
 
     public class CalcRunLaDisposalCostBuilder : ICalcRunLaDisposalCostBuilder
     {
-        private const string EmptyString = "0";
         private readonly ApplicationDBContext context;
         private List<ProducerData> producerData;
 
@@ -54,8 +53,6 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
             bool applyModulation
         )
         {
-            var laDisposalCostDetails = new List<CalcResultLaDisposalCostDataDetail>();
-
             producerData = await GetProducerData(resultsRequestDto);
 
             var lapcapDetailsByMaterial =

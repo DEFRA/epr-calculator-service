@@ -76,7 +76,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost
             csvContent.AppendLine();
         }
 
-        private void AppendHeaderApportionmentHeaders(StringBuilder csvContent)
+        private static void AppendHeaderApportionmentHeaders(StringBuilder csvContent)
         {
             csvContent.Append(CsvSanitiser.SanitiseData((string?)null));
             csvContent.Append(CsvSanitiser.SanitiseData("England"));
@@ -87,7 +87,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost
             csvContent.AppendLine();
         }
 
-        private void AppendHeader(StringBuilder csvContent)
+        private static void AppendHeader(StringBuilder csvContent)
         {
             csvContent.Append(CsvSanitiser.SanitiseData("2a Comms Costs - by Material"));
             csvContent.Append(CsvSanitiser.SanitiseData("England"));
@@ -104,7 +104,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost
             csvContent.AppendLine();
         }
 
-        private void AppendRow(string name, CalcResultCommsCostCommsCostByMaterial commCost, StringBuilder csvContent)
+        private static void AppendRow(string name, CalcResultCommsCostCommsCostByMaterial commCost, StringBuilder csvContent)
         {
             csvContent.Append(CsvSanitiser.SanitiseData(name));
             csvContent.Append(CsvSanitiser.SanitiseData(commCost.Cost.England        , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));

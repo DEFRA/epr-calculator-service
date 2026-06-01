@@ -45,7 +45,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap
             csvContent.AppendLine();
         }
 
-        private void AppendHeaders(StringBuilder csvContent)
+        private static void AppendHeaders(StringBuilder csvContent)
         {
             csvContent.Append(CsvSanitiser.SanitiseData("Material"));
             csvContent.Append(CsvSanitiser.SanitiseData("England LA Disposal Cost"));
@@ -56,7 +56,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Lapcap
             csvContent.AppendLine();
         }
 
-        private void AppendRow(string name, ByCountryCost value, StringBuilder csvContent)
+        private static void AppendRow(string name, ByCountryCost value, StringBuilder csvContent)
         {
             csvContent.Append(CsvSanitiser.SanitiseData(name));
             csvContent.Append(CsvSanitiser.SanitiseData(value.England        , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
