@@ -192,16 +192,16 @@ public class Section1MaterialsExporter : ICalcResultSummaryPartExporter
                 csvContent.Append(CsvSanitiser.SanitiseData(group.Sum(x => x.Value), DecimalPlaces.Three, DecimalFormats.F3));
             }
 
-            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.SelfManagedConsumerWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.SelfManagedConsumerWasteTonnage              , DecimalPlaces.Three, DecimalFormats.F3));
             csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ActionedSelfManagedConsumerWasteTonnage.total, DecimalPlaces.Three, DecimalFormats.F3, canBeEmpty: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ActionedSelfManagedConsumerWasteTonnage.red, DecimalPlaces.Three, DecimalFormats.F3, canBeEmpty: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ActionedSelfManagedConsumerWasteTonnage.red  , DecimalPlaces.Three, DecimalFormats.F3, canBeEmpty: true));
             csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ActionedSelfManagedConsumerWasteTonnage.amber, DecimalPlaces.Three, DecimalFormats.F3, canBeEmpty: true));
             csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ActionedSelfManagedConsumerWasteTonnage.green, DecimalPlaces.Three, DecimalFormats.F3, canBeEmpty: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.NetReportedTonnage.total, DecimalPlaces.Three, DecimalFormats.F3, canBeEmpty: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.NetReportedTonnage.red, DecimalPlaces.Three, DecimalFormats.F3, canBeEmpty: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.NetReportedTonnage.amber, DecimalPlaces.Three, DecimalFormats.F3, canBeEmpty: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.NetReportedTonnage.green, DecimalPlaces.Three, DecimalFormats.F3, canBeEmpty: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ResidualSelfManagedConsumerWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3, canBeEmpty: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.NetReportedTonnage.total                     , DecimalPlaces.Three, DecimalFormats.F3, canBeEmpty: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.NetReportedTonnage.red                       , DecimalPlaces.Three, DecimalFormats.F3, canBeEmpty: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.NetReportedTonnage.amber                     , DecimalPlaces.Three, DecimalFormats.F3, canBeEmpty: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.NetReportedTonnage.green                     , DecimalPlaces.Three, DecimalFormats.F3, canBeEmpty: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.ResidualSelfManagedConsumerWasteTonnage      , DecimalPlaces.Three, DecimalFormats.F3, canBeEmpty: true));
         } else {
             csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.TotalReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
             csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.SelfManagedConsumerWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
@@ -257,9 +257,12 @@ public class Section1MaterialsExporter : ICalcResultSummaryPartExporter
         }
     }
 
-    private static void AppendCsvValue(StringBuilder csvContent, object? value, bool isOverallTotalRow = false,
-                                       DecimalPlaces decimalPlaces = DecimalPlaces.Zero,
-                                       DecimalFormats decimalFormat = DecimalFormats.F2)
+    private static void AppendCsvValue(
+        StringBuilder csvContent,
+        object? value,
+        bool isOverallTotalRow = false,
+        DecimalPlaces decimalPlaces = DecimalPlaces.Zero,
+        DecimalFormats decimalFormat = DecimalFormats.F2)
     {
         if (value == null && !isOverallTotalRow)
         {

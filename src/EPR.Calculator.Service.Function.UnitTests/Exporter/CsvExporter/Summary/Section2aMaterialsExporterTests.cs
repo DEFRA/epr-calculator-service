@@ -28,12 +28,11 @@ public class Section2aMaterialsExporterTests
         var result = csvContent.ToString().Split("\n").ToArray();
         Console.WriteLine(string.Join("\n", result));
 
-        // 11 columns: section/group header spans 1 cell + 10 padding nulls + 1 trailing null = 12 elements
         var expected = new string?[][] {
             ["2a Fees for Comms Costs - by Material with Bad Debt provision",
-             null, null, null, null, null, null, null, null, null, null, null],
+             null, null, null, null, null, null, null, null, null, null],
             ["Aluminium Breakdown",
-             null, null, null, null, null, null, null, null, null, null, null],
+             null, null, null, null, null, null, null, null, null, null],
             ["Household Packaging Tonnage",
              "Public Bin Tonnage",
              "Total Tonnage",
@@ -44,8 +43,7 @@ public class Section2aMaterialsExporterTests
              "England with Bad Debt Provision",
              "Wales with Bad Debt Provision",
              "Scotland with Bad Debt Provision",
-             "Northern Ireland with Bad Debt Provision",
-             null
+             "Northern Ireland with Bad Debt Provision"
             ],
             ["1000.000",
              "0.000",
@@ -57,12 +55,11 @@ public class Section2aMaterialsExporterTests
              "£106.61",
              "£26.91",
              "£49.41",
-             "£20.17",
-             null
+             "£20.17"
             ]
         };
 
-        CsvTestUtils.AssertCsv(expected, result);
+        CsvTestUtils.AssertSquareCsv(expected, result, expectedLength: 11);
     }
 
     [TestMethod]
@@ -84,12 +81,11 @@ public class Section2aMaterialsExporterTests
         var result = csvContent.ToString().Split("\n").ToArray();
         Console.WriteLine(string.Join("\n", result));
 
-        // 12 columns: section/group header spans 1 cell + 11 padding nulls + 1 trailing null = 13 elements
         var expected = new string?[][] {
             ["2a Fees for Comms Costs - by Material with Bad Debt provision",
-             null, null, null, null, null, null, null, null, null, null, null, null],
+             null, null, null, null, null, null, null, null, null, null, null],
             ["Glass Breakdown",
-             null, null, null, null, null, null, null, null, null, null, null, null],
+             null, null, null, null, null, null, null, null, null, null, null],
             ["Household Packaging Tonnage",
              "Public Bin Tonnage",
              "Household Drinks Containers Tonnage - Glass",
@@ -101,8 +97,7 @@ public class Section2aMaterialsExporterTests
              "England with Bad Debt Provision",
              "Wales with Bad Debt Provision",
              "Scotland with Bad Debt Provision",
-             "Northern Ireland with Bad Debt Provision",
-             null
+             "Northern Ireland with Bad Debt Provision"
             ],
             ["500.000",
              "0.000",
@@ -115,11 +110,10 @@ public class Section2aMaterialsExporterTests
              "£122.53",
              "£30.92",
              "£56.78",
-             "£23.18",
-             null
+             "£23.18"
             ]
         };
 
-        CsvTestUtils.AssertCsv(expected, result);
+        CsvTestUtils.AssertSquareCsv(expected, result, expectedLength: 12);
     }
 }

@@ -24,8 +24,8 @@ public class Section1DisposalFeeExporterTests
         Console.WriteLine(string.Join("\n", result));
 
         var expected = new string?[][] {
-            new string?[10],
-            ["Disposal Fee Summary", null, null, null, null, null, null, null, null, null],
+            new string?[9],
+            ["Disposal Fee Summary", null, null, null, null, null, null, null, null],
             ["1 Total Producer Disposal Fee w/o Bad Debt Provision",
              "Bad Debt Provision",
              "1 Total Producer Disposal Fee with Bad Debt Provision",
@@ -34,11 +34,10 @@ public class Section1DisposalFeeExporterTests
              "Scotland Total",
              "Northern Ireland Total",
              "Tonnage Change Count",
-             "Tonnage Change Advice",
-             null],
-            ["£4423.39", "£265.40", "£4688.80", "£2534.24", "£571.24", "£1137.87", "£445.45", "0", "", null]
+             "Tonnage Change Advice"],
+            ["£4423.39", "£265.40", "£4688.80", "£2534.24", "£571.24", "£1137.87", "£445.45", "0", ""]
         };
 
-        CsvTestUtils.AssertCsv(expected, result);
+        CsvTestUtils.AssertSquareCsv(expected, result, expectedLength: 9);
     }
 }

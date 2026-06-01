@@ -23,11 +23,11 @@ public class ProducerIdentityExporterTests
         var result = csvContent.ToString().Split("\n").ToArray();
         Console.WriteLine(string.Join("\n", result));
 
-        // 10 columns: default section/group headers → 11 nulls (10 commas each)
         var expected = new string?[][] {
-            new string?[11],
-            new string?[11],
-            ["Producer ID", "Subsidiary ID",
+            new string?[10],
+            new string?[10],
+            ["Producer ID",
+             "Subsidiary ID",
              "Producer / Subsidiary Name",
              "Trading Name",
              "Level",
@@ -35,8 +35,7 @@ public class ProducerIdentityExporterTests
              "Partial Calculation?",
              "Registration Status Code",
              "Joiners Date",
-             "Leavers Date",
-             null
+             "Leavers Date"
             ],
             ["1",
              "",
@@ -47,11 +46,10 @@ public class ProducerIdentityExporterTests
              "No",
              null,
              null,
-             null,
              null
             ]
         };
 
-        CsvTestUtils.AssertCsv(expected, result);
+        CsvTestUtils.AssertSquareCsv(expected, result, expectedLength: 10);
     }
 }

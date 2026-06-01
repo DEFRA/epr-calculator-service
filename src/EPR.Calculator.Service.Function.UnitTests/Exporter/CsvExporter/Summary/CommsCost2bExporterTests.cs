@@ -23,7 +23,6 @@ public class CommsCost2bExporterTests
         var result = csvContent.ToString().Split("\n").ToArray();
         Console.WriteLine(string.Join("\n", result));
 
-        // 7 columns: section/group headers have 3 content cells + 4 padding nulls + 1 trailing null = 8 elements
         var expected = new string?[][] {
             ["2b Comms Costs - UK wide w/o Bad Debt provision",
              "Bad Debt provision",
@@ -31,21 +30,19 @@ public class CommsCost2bExporterTests
              null,
              null,
              null,
-             null,
              null
             ],
-            ["£1339.10", "£80.35", "£1419.45", null, null, null, null, null],
+            ["£1339.10", "£80.35", "£1419.45", null, null, null, null],
             ["2b Total Producer Fee for Comms Costs - UK wide In proportion to Producer Tonnage w/o Bad Debt provision",
              "Bad Debt Provision for 2b",
              "2b Total Producer Fee for Comms Costs - UK wide In proportion to Producer Tonnage with Bad Debt provision",
              "England Total with Bad Debt provision",
              "Wales Total with Bad Debt provision",
              "Scotland Total with Bad Debt provision",
-             "Northern Ireland Total with Bad Debt provision",
-             null],
-            ["£2844.06", "£170.64", "£3014.70", "£1582.51", "£399.40", "£733.39", "£299.39", null]
+             "Northern Ireland Total with Bad Debt provision"],
+            ["£2844.06", "£170.64", "£3014.70", "£1582.51", "£399.40", "£733.39", "£299.39"]
         };
 
-        CsvTestUtils.AssertCsv(expected, result);
+        CsvTestUtils.AssertSquareCsv(expected, result, expectedLength: 7);
     }
 }

@@ -30,21 +30,19 @@ public class LaDataPrepCostsExporterTests
              null,
              null,
              null,
-             null,
              null
             ],
-            ["£1727.98", "£103.68", "£1831.66", null, null, null, null, null],
+            ["£1727.98", "£103.68", "£1831.66", null, null, null, null],
             ["4 Total Producer Fee for LA Data Prep Costs In proportion to Percentage of Overall Producer Cost of (1+2a+2b+2c) w/o Bad Debt provision",
              "Bad Debt Provision for 4",
              "4 Total Producer Fee for LA Data Prep Costs In proportion to Percentage of Overall Producer Cost of (1+2a+2b+2c) with Bad Debt provision",
              "England Total with Bad Debt provision",
              "Wales Total with Bad Debt provision",
              "Scotland Total with Bad Debt provision",
-             "Northern Ireland Total with Bad Debt provision",
-             null],
-            ["£1727.98", "£103.68", "£1831.66", "£802.92", "£351.28", "£451.64", "£225.82", null]
+             "Northern Ireland Total with Bad Debt provision"],
+            ["£1727.98", "£103.68", "£1831.66", "£802.92", "£351.28", "£451.64", "£225.82"]
         };
 
-        CsvTestUtils.AssertCsv(expected, result);
+        CsvTestUtils.AssertSquareCsv(expected, result, expectedLength: 7);
     }
 }

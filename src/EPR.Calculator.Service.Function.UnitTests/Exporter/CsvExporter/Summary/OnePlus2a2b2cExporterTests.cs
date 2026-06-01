@@ -23,16 +23,14 @@ public class OnePlus2a2b2cExporterTests
         var result = csvContent.ToString().Split("\n").ToArray();
         Console.WriteLine(string.Join("\n", result));
 
-        // 2 columns: section/group headers have 1 content + 1 padding null + 1 trailing null = 3 elements
         var expected = new string?[][] {
-            ["Total (1+2a+2b+2c) with Bad Debt provision", null, null],
-            ["£10230.26", null, null],
+            ["Total (1+2a+2b+2c) with Bad Debt provision", null],
+            ["£10230.26", null],
             ["Producer Total (1+2a+2b+2c) with Bad Debt provision",
-             "Producer Percentage of Overall Producer Cost for (1+2a+2b+2c)",
-             null],
-            ["£10491.17", "4.73419134%", null]
+             "Producer Percentage of Overall Producer Cost for (1+2a+2b+2c)"],
+            ["£10491.17", "4.73419134%"]
         };
 
-        CsvTestUtils.AssertCsv(expected, result);
+        CsvTestUtils.AssertSquareCsv(expected, result, expectedLength: 2);
     }
 }

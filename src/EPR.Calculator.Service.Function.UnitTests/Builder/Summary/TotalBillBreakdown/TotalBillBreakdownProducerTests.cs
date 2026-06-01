@@ -10,7 +10,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBre
 public class TotalBillBreakdownProducerTests
 {
     private readonly CalcResult calcResult = TestDataHelper.GetCalcResult();
-    private readonly int columnIndex = 289;
 
     /// <summary>
     ///     The CanCallSetValues

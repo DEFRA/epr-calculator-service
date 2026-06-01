@@ -27,13 +27,13 @@ public class OnePlus2a2b2cExporter : ICalcResultSummaryPartExporter
     public void AppendGroupHeader(StringBuilder csvContent, CalcResultSummary resultSummary, IReadOnlyList<MaterialDetail> materials, bool applyModulation)
     {
         int count = GetColumnHeaders(materials, applyModulation).Count();
-        csvContent.Append(CsvSanitiser.SanitiseData($"£{Math.Round(resultSummary.TotalOnePlus2A2B2CFeeWithBadDebtProvision, 2)}"));
+        csvContent.Append(CsvSanitiser.SanitiseData(resultSummary.TotalOnePlus2A2B2CFeeWithBadDebtProvision, DecimalPlaces.Two, null, isCurrency: true));
         csvContent.Append(',', count - 1);
     }
 
     public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
     {
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerTotalOnePlus2A2B2CWithBadDeptProvision, DecimalPlaces.Two, null, true));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, DecimalPlaces.Eight, DecimalFormats.F8, false, true));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerTotalOnePlus2A2B2CWithBadDeptProvision, DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, DecimalPlaces.Eight, DecimalFormats.F8, isCurrency: false, isPercentage: true));
     }
 }

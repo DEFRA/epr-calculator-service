@@ -30,21 +30,19 @@ public class ThreeSaCostsExporterTests
               null,
               null,
               null,
-              null,
               null
             ],
-            ["£3077.22", "£3900.00", "£3261.86", null, null, null, null, null],
+            ["£3077.22", "£3900.00", "£3261.86", null, null, null, null],
             ["3 Total Producer Fee for SA Operating Costs In proportion to Percentage of Overall Producer Cost of (1+2a+2b+2c) w/o Bad Debt provision",
              "Bad Debt provision for 3",
              "3 Total Producer Fee for SA Operating Costs In proportion to Percentage of Overall Producer Cost of (1+2a+2b+2c) with Bad Debt provision",
              "England Total with Bad Debt provision",
              "Wales Total with Bad Debt provision",
              "Scotland Total with Bad Debt provision",
-             "Northern Ireland Total with Bad Debt provision",
-             null],
-            ["£3077.22", "£184.63", "£3261.86", "£1712.25", "£432.15", "£793.52", "£323.94", null]
+             "Northern Ireland Total with Bad Debt provision"],
+            ["£3077.22", "£184.63", "£3261.86", "£1712.25", "£432.15", "£793.52", "£323.94"]
         };
 
-        CsvTestUtils.AssertCsv(expected, result);
+        CsvTestUtils.AssertSquareCsv(expected, result, expectedLength: 7);
     }
 }

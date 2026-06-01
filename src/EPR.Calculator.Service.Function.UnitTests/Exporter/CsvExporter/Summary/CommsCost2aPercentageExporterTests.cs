@@ -23,14 +23,13 @@ public class CommsCost2aPercentageExporterTests
         var result = csvContent.ToString().Split("\n").ToArray();
         Console.WriteLine(string.Join("\n", result));
 
-        // 1 column: default section/group headers → [null, null] (1 comma each)
         var expected = new string?[][] {
-            [null, null],
-            [null, null],
-            ["Percentage of Producer Tonnage vs All Producers", null],
-            ["5.67415285%", null]
+            [null],
+            [null],
+            ["Percentage of Producer Tonnage vs All Producers"],
+            ["5.67415285%"]
         };
 
-        CsvTestUtils.AssertCsv(expected, result);
+        CsvTestUtils.AssertSquareCsv(expected, result, expectedLength: 1);
     }
 }

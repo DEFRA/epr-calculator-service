@@ -30,21 +30,19 @@ public class Section1DisposalExporterTests
              null,
              null,
              null,
-             null,
              null
             ],
-            ["£4423.39", "£6021.37", "£4688.80", null, null, null, null, null],
+            ["£4423.39", "£6021.37", "£4688.80", null, null, null, null],
             ["1 Total Producer Fee for LA Disposal Costs w/o Bad Debt provision",
              "Bad Debt Provision for 1",
              "1 Total Producer Fee for LA Disposal Costs with Bad Debt provision",
              "England Total with Bad Debt provision",
              "Wales Total with Bad Debt provision",
              "Scotland Total with Bad Debt provision",
-             "Northern Ireland Total with Bad Debt provision",
-             null],
-            ["£4423.39", "£265.40", "£4688.80", "£2534.24", "£571.24", "£1137.87", "£445.45", null]
+             "Northern Ireland Total with Bad Debt provision"],
+            ["£4423.39", "£265.40", "£4688.80", "£2534.24", "£571.24", "£1137.87", "£445.45"]
         };
 
-        CsvTestUtils.AssertCsv(expected, result);
+        CsvTestUtils.AssertSquareCsv(expected, result, expectedLength: 7);
     }
 }

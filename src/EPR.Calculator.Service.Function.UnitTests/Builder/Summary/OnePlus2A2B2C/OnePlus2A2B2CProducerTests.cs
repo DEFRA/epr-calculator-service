@@ -9,7 +9,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.OnePlus2A2B2
 [TestClass]
 public class OnePlus2A2B2CProducerTests
 {
-    private readonly int columnIndex = 266;
     private readonly CalcResult calcResult = TestDataHelper.GetCalcResult();
 
     [TestMethod]

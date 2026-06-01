@@ -30,21 +30,19 @@ public class SaSetupCostsExporterTests
              null,
              null,
              null,
-             null,
              null
             ],
-            ["£17500.00", "£1050.00", "£18550.00", null, null, null, null, null],
+            ["£17500.00", "£1050.00", "£18550.00", null, null, null, null],
             ["5 Total Producer One-off fee for SA Set Up Costs In proportion to Percentage of Overall Producer Cost of (1+2a+2b+2c) w/o Bad Debt provision",
              "Bad Debt Provision for 5",
              "5 Total Producer One-off fee for SA Set Up Costs In proportion to Percentage of Overall Producer Cost of (1+2a+2b+2c) with Bad Debt provision",
              "England Total with Bad Debt provision",
              "Wales Total with Bad Debt provision",
              "Scotland Total with Bad Debt provision",
-             "Northern Ireland Total with Bad Debt provision",
-             null],
-            ["£2970.71", "£178.24", "£3148.95", "£1652.98", "£417.19", "£766.05", "£312.73", null]
+             "Northern Ireland Total with Bad Debt provision"],
+            ["£2970.71", "£178.24", "£3148.95", "£1652.98", "£417.19", "£766.05", "£312.73"]
         };
 
-        CsvTestUtils.AssertCsv(expected, result);
+        CsvTestUtils.AssertSquareCsv(expected, result, expectedLength: 7);
     }
 }

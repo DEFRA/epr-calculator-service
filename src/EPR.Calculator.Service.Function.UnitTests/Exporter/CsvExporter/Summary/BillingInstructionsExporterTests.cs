@@ -23,12 +23,10 @@ public class BillingInstructionsExporterTests
         var result = csvContent.ToString().Split("\n").ToArray();
         Console.WriteLine(string.Join("\n", result));
 
-        // 10 columns: section header spans 1 cell + 9 padding nulls + 1 trailing null = 11 elements
-        //             default group header → 11 nulls (10 commas)
         var expected = new string?[][] {
             ["Calculation of Suggested Billing Instructions and Invoice Amounts",
-             null, null, null, null, null, null, null, null, null, null],
-            new string?[11],
+             null, null, null, null, null, null, null, null, null],
+            new string?[10],
             ["Current Year Invoiced Total To Date",
              "Tonnage Change Since Last Invoice",
              "Liability Difference (Calc vs Prev)",
@@ -38,11 +36,10 @@ public class BillingInstructionsExporterTests
              "Material % Threshold Breached",
              "Tonnage % Threshold Breached (if tonnage changed)",
              "Suggested Billing Instruction",
-             "Suggested Invoice Amount",
-             null],
-            ["£1250.89", "Tonnage Changed", "£580.73", "", "", "123.45%", "", "", "", "£4039.00", null]
+             "Suggested Invoice Amount"],
+            ["£1250.89", "Tonnage Changed", "£580.73", "", "", "123.45%", "", "", "", "£4039.00"]
         };
 
-        CsvTestUtils.AssertCsv(expected, result);
+        CsvTestUtils.AssertSquareCsv(expected, result, expectedLength: 10);
     }
 }
