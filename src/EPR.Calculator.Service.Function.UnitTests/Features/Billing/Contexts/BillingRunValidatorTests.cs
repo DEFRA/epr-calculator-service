@@ -15,7 +15,7 @@ public class BillingRunValidatorTests : TestsFor<BillingRunValidator>
         var run = new CalculatorRun
         {
             Name = "TestRun",
-            CalculatorRunClassificationId = 3,
+            CalculatorRunClassificationId = RunClassificationStatusIds.INITIALRUNID,
             DefaultParameterSettingMasterId = 1,
             LapcapDataMasterId = 1,
             CalculatorRunOrganisationDataMasterId = 1,

@@ -10,7 +10,7 @@ public class BillingRunValidator : AbstractValidator<API.Data.DataModels.Calcula
 {
     private static readonly ImmutableHashSet<int> ValidClassifications =
     [
-        RunClassificationStatusIds.UNCLASSIFIEDID
+        RunClassificationStatusIds.INITIALRUNID
     ];
 
     public BillingRunValidator()
