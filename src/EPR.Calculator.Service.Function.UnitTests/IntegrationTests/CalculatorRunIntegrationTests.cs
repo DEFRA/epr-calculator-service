@@ -63,7 +63,7 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
 
         await SeedAcceptOrRejectProducers(db, calculatorRunId, rundBy, $"IntegrationTests/TestData/{relativeYear.Value}-accept-or-reject-producers.csv");
 
-        var billingRunResult = await PerformBillingRun(calculatorRunId, rundBy);
+        var billingRunResult = await PerformBillingRun(db, calculatorRunId, rundBy);
         {
             var contents      = fakeBlobStorage.Get(billingRunResult.ExportResult.CsvMetadata.FileName);
             var actualLines   = string.Join(Environment.NewLine, contents.Split(Environment.NewLine, StringSplitOptions.None                                     )).Trim().Split(Environment.NewLine);
@@ -100,8 +100,14 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
         return (CalculatorRunResult) runResult;
     }
 
-    private async Task<BillingRunResult> PerformBillingRun(int runId, string user)
+    private async Task<BillingRunResult> PerformBillingRun(ApplicationDBContext dbContext, int runId, string user)
     {
+        // Simulates the billing run being started by a user in the FE
+        var calcRun = await dbContext.CalculatorRuns.SingleAsync(r => r.Id == runId);
+        calcRun.CalculatorRunClassificationId = RunClassificationStatusIds.INITIALRUNID;
+        calcRun.IsBillingFileGenerating = true;
+        await dbContext.SaveChangesAsync();
+
         var runContext = await Provider.GetRequiredService<IBillingRunContextBuilder>().Build(runId, user, CancellationToken.None);
         var runResult = await Provider.GetRequiredService<IBillingRunProcessor>().Process(runContext, CancellationToken.None);
         runResult.Succeeded.ShouldBeTrue();
@@ -153,7 +159,7 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
             CalculatorRunClassificationId   = (int)RunClassification.RUNNING,
             DefaultParameterSettingMasterId = parameterMaster.Id,
             LapcapDataMasterId              = lapcap.Id,
-            IsBillingFileGenerating         = true // Should really be set just before PrepareBillingFileAsync is run but work here.
+            IsBillingFileGenerating         = null
         };
         db.CalculatorRuns.Add(run);
         await db.SaveChangesAsync();
