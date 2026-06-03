@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["calcResultDetail", "parametersOther", "calculationResults"],
+  "properties": {
+    "calcResultDetail": {
+      "type": "object",
+      "required": ["runId", "financialYear"],
+      "properties": {
+        "runId": { "type": "integer" },
+        "financialYear": { "type": "string" }
+      }
+    },
+    "parametersOther": {
+      "type": "object",
+      "required": ["sixBadDebtProvision"],
+      "properties": {
+        "sixBadDebtProvision": {
+          "type": "object",
+          "required": ["percentage"],
+          "properties": {
+            "percentage": { "type": "string" }
+          }
+        }
+      }
+    },
+    "modulationResults": { "type": "null" },
+    "calculationResults": {
+      "type": "object",
+      "required": ["producerCalculationResults"],
+      "properties": {
+        "producerCalculationResults": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "producerName",
+              "producerID",
+              "subsidiaryID",
+              "level",
+              "producerDisposalFeesWithBadDebtProvision1",
+              "disposalFeeSummary1",
+              "totalProducerBillWithBadDebtProvision",
+              "calculationOfSuggestedBillingInstructionsAndInvoiceAmounts",
+              "feeForLADisposalCosts1",
+              "feeForCommsCostsWithBadDebtProvision_2a",
+              "feeForCommsCostsWithBadDebtProvision_2b",
+              "feeForCommsCostsWithBadDebtProvision_2c",
+              "feeForSAOperatingCostsWithBadDebtProvision_3",
+              "feeForLADataPrepCostsWithBadDebtProvision_4",
+              "feeForSASetUpCostsWithBadDebtProvision_5",
+              "commsCostsByMaterialFeesSummary2a"
+            ],
+            "properties": {
+              "producerName": { "type": "string" },
+              "producerID": { "type": "string" },
+              "subsidiaryID": { "type": "string" },
+              "level": { "type": "integer" },
+              "producerDisposalFeesWithoutBadDebtProvision": { "type": ["string", "null"] },
+              "producerDisposalFeesWithBadDebtProvision1": {
+                "type": "object",
+                "required": ["materialBreakdown"],
+                "properties": {
+                  "materialBreakdown": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "materialName",
+                        "totalTonnage",
+                        "selfManagedConsumerWasteTonnage",
+                        "netTonnage",
+                        "pricePerTonne",
+                        "producerDisposalFeeWithoutBadDebtProvision"
+                      ],
+                      "properties": {
+                        "materialName": { "type": "string" },
+                        "totalTonnage": { "type": "number" },
+                        "selfManagedConsumerWasteTonnage": { "type": "number" },
+                        "netTonnage": { "type": "number" },
+                        "pricePerTonne": { "type": "string" },
+                        "producerDisposalFeeWithoutBadDebtProvision": { "type": "string" },
+                        "actionedSelfManagedConsumerWasteTonnage": { "type": "null" }
+                      }
+                    }
+                  }
+                }
+              },
+              "disposalFeeSummary1": {
+                "type": "object",
+                "required": [
+                  "totalProducerDisposalFeeWithoutBadDebtProvision",
+                  "totalProducerDisposalFeeWithBadDebtProvision",
+                  "englandTotal",
+                  "walesTotal",
+                  "scotlandTotal",
+                  "northernIrelandTotal"
+                ],
+                "properties": {
+                  "totalProducerDisposalFeeWithoutBadDebtProvision": { "type": "string" },
+                  "totalProducerDisposalFeeWithBadDebtProvision": { "type": "string" },
+                  "englandTotal": { "type": "string" },
+                  "walesTotal": { "type": "string" },
+                  "scotlandTotal": { "type": "string" },
+                  "northernIrelandTotal": { "type": "string" }
+                }
+              },
+              "totalProducerBillWithBadDebtProvision": {
+                "type": "object",
+                "required": ["totalProducerBillWithBadDebtProvision"],
+                "properties": {
+                  "totalProducerBillWithBadDebtProvision": { "type": "string" }
+                }
+              },
+              "calculationOfSuggestedBillingInstructionsAndInvoiceAmounts": {
+                "type": "object",
+                "required": [
+                  "suggestedBillingInstruction",
+                  "suggestedInvoiceAmount",
+                  "currentYearInvoicedTotalToDate"
+                ],
+                "properties": {
+                  "suggestedBillingInstruction": { "type": "string", "enum": ["", "-", "INITIAL", "DELTA", "REBILL"] },
+                  "suggestedInvoiceAmount": { "type": "string" },
+                  "currentYearInvoicedTotalToDate": { "type": "string" }
+                }
+              },
+              "feeForLADisposalCosts1": {
+                "type": "object",
+                "required": [
+                  "totalProducerFeeForLADisposalCostsWithoutBadDebtProvision",
+                  "badDebtProvisionForLADisposalCosts"
+                ],
+                "properties": {
+                  "totalProducerFeeForLADisposalCostsWithoutBadDebtProvision": { "type": "string" },
+                  "badDebtProvisionForLADisposalCosts": { "type": "string" }
+                }
+              },
+              "feeForCommsCostsWithBadDebtProvision_2a": {
+                "type": "object",
+                "required": ["badDebtProvisionFor2a"],
+                "properties": {
+                  "badDebtProvisionFor2a": { "type": "string" }
+                }
+              },
+              "feeForCommsCostsWithBadDebtProvision_2b": {
+                "type": "object",
+                "required": [
+                  "totalProducerFeeForCommsCostsUKWideWithoutBadDebtProvision",
+                  "badDebtProvisionFor2b"
+                ],
+                "properties": {
+                  "totalProducerFeeForCommsCostsUKWideWithoutBadDebtProvision": { "type": "string" },
+                  "badDebtProvisionFor2b": { "type": "string" }
+                }
+              },
+              "feeForCommsCostsWithBadDebtProvision_2c": {
+                "type": "object",
+                "required": [
+                  "totalProducerFeeForCommsCostsByCountryWithoutBadDebtProvision",
+                  "badDebProvisionFor2c"
+                ],
+                "properties": {
+                  "totalProducerFeeForCommsCostsByCountryWithoutBadDebtProvision": { "type": "string" },
+                  "badDebProvisionFor2c": { "type": "string" }
+                }
+              },
+              "feeForSAOperatingCostsWithBadDebtProvision_3": {
+                "type": "object",
+                "required": [
+                  "totalProducerFeeForSAOperatingCosts_1_2a_2b_2c_WithoutBadDebtProvision",
+                  "badDebProvisionFor3"
+                ],
+                "properties": {
+                  "totalProducerFeeForSAOperatingCosts_1_2a_2b_2c_WithoutBadDebtProvision": { "type": "string" },
+                  "badDebProvisionFor3": { "type": "string" }
+                }
+              },
+              "feeForLADataPrepCostsWithBadDebtProvision_4": {
+                "type": "object",
+                "required": [
+                  "totalProducerFeeForLADataPrepCostsWithoutBadDebtProvision",
+                  "badDebtProvisionFor4"
+                ],
+                "properties": {
+                  "totalProducerFeeForLADataPrepCostsWithoutBadDebtProvision": { "type": "string" },
+                  "badDebtProvisionFor4": { "type": "string" }
+                }
+              },
+              "feeForSASetUpCostsWithBadDebtProvision_5": {
+                "type": "object",
+                "required": [
+                  "totalProducerOneOffFeeForSASetUpCostsWithoutBadDebtProvision",
+                  "badDebtProvisionFor5"
+                ],
+                "properties": {
+                  "totalProducerOneOffFeeForSASetUpCostsWithoutBadDebtProvision": { "type": "string" },
+                  "badDebtProvisionFor5": { "type": "string" }
+                }
+              },
+              "commsCostsByMaterialFeesSummary2a": {
+                "type": "object",
+                "required": ["totalProducerFeeForCommsCostsWithoutBadDebtProvision2a"],
+                "properties": {
+                  "totalProducerFeeForCommsCostsWithoutBadDebtProvision2a": { "type": "string" }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
