@@ -47,6 +47,7 @@ public class CalcResultBuilder(
     IProjectedProducersService projectedProducersService,
     ISelfManagedConsumerWasteService selfManagedConsumerWaste,
     ICalcResultModulationBuilder modulation,
+    ICalcResultService calcResultService,
     IMaterialService materialService,
     ITelemetryClient telemetryClient,
     ILogger<CalcResultBuilder> logger)
@@ -69,9 +70,16 @@ public class CalcResultBuilder(
                 ByMaterial = []
             },
             CalcResultParameterOtherCost = new CalcResultParameterOtherCost(),
-            CalcResultPartialObligations = new CalcResultPartialObligations(),
-            CalcResultProjectedProducers = new CalcResultProjectedProducers(),
-            CalcResultScaledupProducers = new CalcResultScaledupProducers(),
+            CalcResultPartialObligations = new CalcResultPartialObligations(){
+                PartialObligations = ImmutableList<CalcResultPartialObligation>.Empty,
+            },
+            CalcResultProjectedProducers = new CalcResultProjectedProducers(){
+                H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
+                H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty
+            },
+            CalcResultScaledupProducers = new CalcResultScaledupProducers(){
+                ScaledupProducers = ImmutableList<CalcResultScaledupProducer>.Empty,
+            },
             CalcResultCancelledProducers = new CalcResultCancelledProducersResponse(),
             CalcResultRejectedProducers = new List<CalcResultRejectedProducer>()
         };
@@ -100,41 +108,76 @@ public class CalcResultBuilder(
             nameof(cancelledProducers));
 
         // ReSharper disable AccessToModifiedClosure - LogDuration always immediately invokes the delegate
-        var producers = await reportedProducers.GetProducers(runContext);
-
-        if (runContext.RequiresModulation)
-        {
-            (producers, result.CalcResultProjectedProducers) = logger.LogDuration(() =>
-                    projectedProducers.Construct(runContext, materials, producers),
-                nameof(projectedProducers));
-        }
-
-        if (runContext.RequiresScaling)
-        {
-            (producers, result.CalcResultScaledupProducers) = await logger.LogDuration(() =>
-                    scaledUpProducers.ConstructAsync(runContext, materials, producers),
-                nameof(scaledUpProducers));
-        }
-
-        (producers, result.CalcResultPartialObligations) = await logger.LogDuration(() =>
-                partialObligations.ConstructAsync(runContext, materials, producers),
-            nameof(partialObligations));
-        // ReSharper restore AccessToModifiedClosure
-
-        if (runContext.RunType == RunType.Calculator)
-        {
-            await logger.LogDuration(() =>
-                    projectedProducersService.StoreProjectedProducers(producers),
-                nameof(projectedProducersService.StoreProjectedProducers));
-        }
-
         if (runContext.RunType == RunType.Billing)
         {
+            if (runContext.RequiresModulation)
+            {
+                result.CalcResultProjectedProducers.H1ProjectedProducers = (await logger.LogDuration(() =>
+                    calcResultService.ReadH1ProjectedData(runContext.RunId),
+                nameof(calcResultService.ReadH1ProjectedData))).ToImmutableList();
+
+                result.CalcResultProjectedProducers.H2ProjectedProducers = (await logger.LogDuration(() =>
+                    calcResultService.ReadH2ProjectedData(runContext.RunId),
+                nameof(calcResultService.ReadH2ProjectedData))).ToImmutableList();
+            }
+
+            if (runContext.RequiresScaling)
+            {
+                result.CalcResultScaledupProducers.ScaledupProducers = (await logger.LogDuration(() =>
+                    calcResultService.ReadScaledData(runContext.RunId),
+                nameof(calcResultService.ReadScaledData))).ToImmutableList();
+            }
+
+            result.CalcResultPartialObligations.PartialObligations = (await logger.LogDuration(() =>
+                    calcResultService.ReadPartialData(runContext.RunId),
+                nameof(calcResultService.ReadPartialData))).ToImmutableList();
+
             result.CalcResultRejectedProducers = await logger.LogDuration(() =>
                     rejectedProducers.ConstructAsync(runContext),
                 nameof(rejectedProducers));
         }
+        else {
+            var producers = await reportedProducers.GetProducers(runContext);
+            
+            if (runContext.RequiresModulation)
+            {
+                (producers, result.CalcResultProjectedProducers) = logger.LogDuration(() =>
+                        projectedProducers.Construct(runContext, materials, producers),
+                    nameof(projectedProducers));
+                
+                await logger.LogDuration(() =>
+                    calcResultService.StoreProjectedH1Data(runContext.RunId, result.CalcResultProjectedProducers.H1ProjectedProducers),
+                nameof(calcResultService.StoreProjectedH1Data));
 
+                await logger.LogDuration(() =>
+                    calcResultService.StoreProjectedH2Data(runContext.RunId, result.CalcResultProjectedProducers.H2ProjectedProducers),
+                nameof(calcResultService.StoreProjectedH2Data));
+            }
+
+            if (runContext.RequiresScaling)
+            {
+                (producers, result.CalcResultScaledupProducers) = await logger.LogDuration(() =>
+                        scaledUpProducers.ConstructAsync(runContext, materials, producers),
+                    nameof(scaledUpProducers));
+
+                await logger.LogDuration(() =>
+                    calcResultService.StoreScaledData(runContext.RunId, result.CalcResultScaledupProducers.ScaledupProducers),
+                nameof(calcResultService.StoreScaledData));
+            }
+
+            (producers, result.CalcResultPartialObligations) = await logger.LogDuration(() =>
+                    partialObligations.ConstructAsync(runContext, materials, producers),
+                nameof(partialObligations));
+
+            await logger.LogDuration(() =>
+                    calcResultService.StorePartialData(runContext.RunId, result.CalcResultPartialObligations.PartialObligations),
+                nameof(calcResultService.StorePartialData));
+
+            await logger.LogDuration(() =>
+                    projectedProducersService.StoreProjectedProducers(producers),
+                nameof(projectedProducersService.StoreProjectedProducers));
+        }
+        
         result.Smcw = await logger.LogDuration(() =>
                 selfManagedConsumerWaste.Calculate(runContext, materials),
             nameof(selfManagedConsumerWaste));

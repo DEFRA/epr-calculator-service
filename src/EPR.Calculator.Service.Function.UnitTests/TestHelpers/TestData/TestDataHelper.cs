@@ -23,7 +23,10 @@ public static partial class TestDataHelper
             CalcResultLapcapData = GetCalcResultLapcapData(),
             CalcResultLateReportingTonnageData = GetCalcResultLateReportingTonnage(),
             CalcResultSummary = GetCalcResultSummary(applyModulation),
-            CalcResultProjectedProducers = new CalcResultProjectedProducers()
+            CalcResultProjectedProducers = new CalcResultProjectedProducers(){
+                H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
+                H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty,
+            }
         };
     }
 
@@ -1159,40 +1162,26 @@ public static partial class TestDataHelper
                             "AL",
                             new CalcResultPartialObligationTonnage
                             {
+                                ObligatedFactor = 0.5m,
                                 HouseholdTonnage = 100,
                                 HouseholdRAMTonnage = new RAMTonnage(),
                                 PublicBinTonnage = 20,
                                 PublicBinRAMTonnage = new RAMTonnage(),
-                                TotalTonnage = 120,
-                                SelfManagedConsumerWasteTonnage = 60,
-                                PartialHouseholdTonnage = 50,
-                                PartialHouseholdRAMTonnage = new RAMTonnage(),
-                                PartialPublicBinTonnage = 10,
-                                PartialPublicBinRAMTonnage = new RAMTonnage(),
-                                PartialTotalTonnage = 60,
-                                PartialSelfManagedConsumerWasteTonnage = 30
+                                SelfManagedConsumerWasteTonnage = 60
                             }
                         },
                         {
                             "GL",
                             new CalcResultPartialObligationTonnage
                             {
+                                ObligatedFactor = 0.5m,
                                 HouseholdTonnage = 100,
                                 HouseholdRAMTonnage = new RAMTonnage(),
                                 PublicBinTonnage = 20,
                                 PublicBinRAMTonnage = new RAMTonnage(),
                                 HouseholdDrinksContainersTonnage = 70,
                                 HouseholdDrinksContainersRAMTonnage = new RAMTonnage(),
-                                TotalTonnage = 120,
-                                SelfManagedConsumerWasteTonnage = 60,
-                                PartialHouseholdTonnage = 50,
-                                PartialHouseholdRAMTonnage = new RAMTonnage(),
-                                PartialPublicBinTonnage = 10,
-                                PartialPublicBinRAMTonnage = new RAMTonnage(),
-                                PartialHouseholdDrinksContainersTonnage = 35,
-                                PartialHouseholdDrinksContainersRAMTonnage = new RAMTonnage(),
-                                PartialTotalTonnage = 60,
-                                PartialSelfManagedConsumerWasteTonnage = 30
+                                SelfManagedConsumerWasteTonnage = 60
                             }
                         }
                     }

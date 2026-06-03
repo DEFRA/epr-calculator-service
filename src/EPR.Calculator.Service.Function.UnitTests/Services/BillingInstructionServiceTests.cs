@@ -40,8 +40,12 @@ public class BillingInstructionServiceTests
         // Arrange
         var calcResult = new CalcResult
         {
-            CalcResultScaledupProducers = new CalcResultScaledupProducers(),
-            CalcResultPartialObligations = new CalcResultPartialObligations(),
+            CalcResultScaledupProducers = new CalcResultScaledupProducers(){
+                ScaledupProducers = ImmutableList<CalcResultScaledupProducer>.Empty
+            },
+            CalcResultPartialObligations = new CalcResultPartialObligations(){
+                PartialObligations = ImmutableList<CalcResultPartialObligation>.Empty
+            },
             CalcResultDetail = new CalcResultDetail
             {
                 RunId = 4,
@@ -97,7 +101,10 @@ public class BillingInstructionServiceTests
                     }
                 }
             },
-            CalcResultProjectedProducers = new CalcResultProjectedProducers()
+            CalcResultProjectedProducers = new CalcResultProjectedProducers(){
+                H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
+                H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty,
+            }
         };
 
         // Act
@@ -113,8 +120,12 @@ public class BillingInstructionServiceTests
         // Arrange
         var calcResult = new CalcResult
         {
-            CalcResultScaledupProducers = new CalcResultScaledupProducers(),
-            CalcResultPartialObligations = new CalcResultPartialObligations(),
+            CalcResultScaledupProducers = new CalcResultScaledupProducers(){
+                ScaledupProducers = ImmutableList<CalcResultScaledupProducer>.Empty
+            },
+            CalcResultPartialObligations = new CalcResultPartialObligations(){
+                PartialObligations = ImmutableList<CalcResultPartialObligation>.Empty
+            },
             CalcResultDetail = new CalcResultDetail
             {
                 RunId = 4,
@@ -141,7 +152,10 @@ public class BillingInstructionServiceTests
                 ByMaterial = []
             },
             CalcResultSummary = new CalcResultSummary { ProducerDisposalFees = null! },
-            CalcResultProjectedProducers = new CalcResultProjectedProducers()
+            CalcResultProjectedProducers = new CalcResultProjectedProducers(){
+                H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
+                H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty,
+            }
         };
 
         // Act
@@ -157,8 +171,12 @@ public class BillingInstructionServiceTests
         // Arrange
         var calcResult = new CalcResult
         {
-            CalcResultScaledupProducers = new CalcResultScaledupProducers(),
-            CalcResultPartialObligations = new CalcResultPartialObligations(),
+            CalcResultScaledupProducers = new CalcResultScaledupProducers(){
+                ScaledupProducers = ImmutableList<CalcResultScaledupProducer>.Empty
+            },
+            CalcResultPartialObligations = new CalcResultPartialObligations(){
+                PartialObligations = ImmutableList<CalcResultPartialObligation>.Empty
+            },
             CalcResultDetail = new CalcResultDetail
             {
                 RunId = 4,
@@ -207,7 +225,10 @@ public class BillingInstructionServiceTests
                     }
                 }
             },
-            CalcResultProjectedProducers = new CalcResultProjectedProducers()
+            CalcResultProjectedProducers = new CalcResultProjectedProducers(){
+                H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
+                H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty,
+            }
         };
 
         // Act

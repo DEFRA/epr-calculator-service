@@ -2,6 +2,6 @@
 {
     public class CalcResultPartialObligations
     {
-        public ImmutableList<CalcResultPartialObligation>? PartialObligations { get; set; }
+        public required ImmutableList<CalcResultPartialObligation> PartialObligations { get; set; }
     }
 }

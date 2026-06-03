@@ -521,8 +521,8 @@ public class CalcResultScaledupProducersBuilderTest : TestsFor<CalcResultScaledu
         {
             ScaledupProducers =
             [
-                new CalcResultScaledupProducer { ProducerId = 1 },
-                new CalcResultScaledupProducer { ProducerId = 3 }
+                new CalcResultScaledupProducer { ProducerId = 1, Level = "1", SubmissionPeriodCode = "2025-P1" },
+                new CalcResultScaledupProducer { ProducerId = 3, Level = "1", SubmissionPeriodCode = "2025-P1" }
             ]
         };
 
@@ -541,31 +541,43 @@ public class CalcResultScaledupProducersBuilderTest : TestsFor<CalcResultScaledu
         runProducerMaterialDetails.AddRange([
             new CalcResultScaledupProducer
             {
-                ProducerId = 1
+                ProducerId = 1,
+                Level = "1",
+                SubmissionPeriodCode = "2025-P1"
             },
             new CalcResultScaledupProducer
             {
                 ProducerId = 1,
-                SubsidiaryId = "Sub1"
+                SubsidiaryId = "Sub1",
+                Level = "2",
+                SubmissionPeriodCode = "2025-P1"
             },
             new CalcResultScaledupProducer
             {
                 ProducerId = 1,
-                SubsidiaryId = "Sub2"
-            },
-            new CalcResultScaledupProducer
-            {
-                ProducerId = 2
-            },
-            new CalcResultScaledupProducer
-            {
-                ProducerId = 2,
-                SubsidiaryId = "Sub3"
+                SubsidiaryId = "Sub2",
+                Level = "2",
+                SubmissionPeriodCode = "2025-P1"
             },
             new CalcResultScaledupProducer
             {
                 ProducerId = 2,
-                SubsidiaryId = "Sub4"
+                Level = "1",
+                SubmissionPeriodCode = "2025-P1"
+            },
+            new CalcResultScaledupProducer
+            {
+                ProducerId = 2,
+                SubsidiaryId = "Sub3",
+                Level = "2",
+                SubmissionPeriodCode = "2025-P1"
+            },
+            new CalcResultScaledupProducer
+            {
+                ProducerId = 2,
+                SubsidiaryId = "Sub4",
+                Level = "2",
+                SubmissionPeriodCode = "2025-P1"
             }
         ]);
 

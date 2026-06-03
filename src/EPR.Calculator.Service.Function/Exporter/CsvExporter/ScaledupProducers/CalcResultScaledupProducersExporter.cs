@@ -121,6 +121,8 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers
         {
             var overallTotalRow = new CalcResultScaledupProducer
             {
+                Level = string.Empty,
+                SubmissionPeriodCode = string.Empty,
                 ScaledupProducerTonnageByMaterial = new Dictionary<string, CalcResultScaledupProducerTonnage>(),
             };
 

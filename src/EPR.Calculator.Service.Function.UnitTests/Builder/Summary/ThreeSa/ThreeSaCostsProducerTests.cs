@@ -13,8 +13,12 @@ public class ThreeSaCostsProducerTests
 {
     private readonly CalcResult calcResult = new()
     {
-        CalcResultScaledupProducers = new CalcResultScaledupProducers(),
-        CalcResultPartialObligations = new CalcResultPartialObligations(),
+        CalcResultScaledupProducers = new CalcResultScaledupProducers(){
+            ScaledupProducers = ImmutableList<CalcResultScaledupProducer>.Empty
+        },
+        CalcResultPartialObligations = new CalcResultPartialObligations(){
+            PartialObligations = ImmutableList<CalcResultPartialObligation>.Empty,
+        },
         CalcResultParameterOtherCost = new CalcResultParameterOtherCost
         {
             BadDebtValue = 6m,
@@ -71,7 +75,10 @@ public class ThreeSaCostsProducerTests
         },
         CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
         CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage { ByMaterial = [] },
-        CalcResultProjectedProducers = new CalcResultProjectedProducers()
+        CalcResultProjectedProducers = new CalcResultProjectedProducers(){
+            H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
+            H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty,
+        }
     };
 
     [TestMethod]

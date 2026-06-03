@@ -131,8 +131,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Models.JsonExporter
                 },
                 CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers(),
                 CalcResultSummary = TestDataHelper.GetCalcResultSummary(),
-                CalcResultPartialObligations = new CalcResultPartialObligations(),
-                CalcResultProjectedProducers = new CalcResultProjectedProducers(),
+                CalcResultPartialObligations = new CalcResultPartialObligations(){
+                    PartialObligations = ImmutableList<CalcResultPartialObligation>.Empty,
+                },
+                CalcResultProjectedProducers = new CalcResultProjectedProducers(){
+                    H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
+                    H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty,
+                },
                 CalcResultModulation = new ModulationResult()
                 {
                     GreenFactor = 1,

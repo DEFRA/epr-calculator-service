@@ -41,7 +41,7 @@
 
     public record CalcResultProjectedProducers
     {
-        public IImmutableList<CalcResultH2ProjectedProducer>? H2ProjectedProducers { get; init; }
-        public IImmutableList<CalcResultH1ProjectedProducer>? H1ProjectedProducers { get; init; }
+        public required IImmutableList<CalcResultH2ProjectedProducer> H2ProjectedProducers { get; set; }
+        public required IImmutableList<CalcResultH1ProjectedProducer> H1ProjectedProducers { get; set; }
     }
 }

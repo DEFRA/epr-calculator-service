@@ -32,8 +32,13 @@ public class CalcResultSummaryCommsCostTwoBTotalBillTests
             CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
             CalcResultLateReportingTonnageData = GetCalcResultLateReportingTonnage(),
             CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers(),
-            CalcResultPartialObligations = new CalcResultPartialObligations(),
-            CalcResultProjectedProducers = new CalcResultProjectedProducers()
+            CalcResultPartialObligations = new CalcResultPartialObligations(){
+                PartialObligations = ImmutableList<CalcResultPartialObligation>.Empty,
+            },
+            CalcResultProjectedProducers = new CalcResultProjectedProducers(){
+                H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
+                H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty,
+            }
         };
 
         // Set up consistent data

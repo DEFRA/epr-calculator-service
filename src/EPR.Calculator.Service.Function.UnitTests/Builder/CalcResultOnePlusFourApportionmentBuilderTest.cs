@@ -19,8 +19,12 @@ public class CalcResultOnePlusFourApportionmentBuilderTest : CalcResultOnePlusFo
         var calcResult = new CalcResult
         {
             CalcResultDetail = new CalcResultDetail { RunId = runContext.RunId, RelativeYear = runContext.RelativeYear },
-            CalcResultScaledupProducers = new CalcResultScaledupProducers(),
-            CalcResultPartialObligations = new CalcResultPartialObligations(),
+            CalcResultScaledupProducers = new CalcResultScaledupProducers(){
+                    ScaledupProducers = ImmutableList<CalcResultScaledupProducer>.Empty
+                },
+            CalcResultPartialObligations = new CalcResultPartialObligations(){
+                    PartialObligations = ImmutableList<CalcResultPartialObligation>.Empty,
+                },
             CalcResultLapcapData = new CalcResultLapcapData
             {
                 ByMaterial = new Dictionary<string, ByCountryCost>
@@ -46,7 +50,10 @@ public class CalcResultOnePlusFourApportionmentBuilderTest : CalcResultOnePlusFo
                 }
             },
             CalcResultLateReportingTonnageData = Fixture.Create<CalcResultLateReportingTonnage>(),
-            CalcResultProjectedProducers = new CalcResultProjectedProducers()
+            CalcResultProjectedProducers = new CalcResultProjectedProducers(){
+                    H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
+                    H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty,
+                },
         };
 
         var resultCalc = Construct(calcResult);
