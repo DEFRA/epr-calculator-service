@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.API.Data.DataTypes;
 using EPR.Calculator.Service.Function.Options;
 using EPR.Calculator.Service.Function.Services.CommonDataApi;
 using Microsoft.Extensions.Options;
@@ -155,34 +155,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.CommonDataApi
 
             // Assert
             Assert.AreEqual(1, results.Count);
-        }
-
-        /// <summary>
-        ///     Verifies that StreamPoms throws ArgumentNullException when relativeYear is null.
-        /// </summary>
-        [TestMethod]
-        public void StreamPoms_WithNullRelativeYear_ThrowsArgumentNullException()
-        {
-            // Arrange
-            var handler = CreateOkHandler(string.Empty);
-            var client = CreateClient(handler);
-
-            // Act & Assert
-            Should.Throw<ArgumentNullException>(() => client.StreamPoms(null!));
-        }
-
-        /// <summary>
-        ///     Verifies that StreamOrganisations throws ArgumentNullException when relativeYear is null.
-        /// </summary>
-        [TestMethod]
-        public void StreamOrganisations_WithNullRelativeYear_ThrowsArgumentNullException()
-        {
-            // Arrange
-            var handler = CreateOkHandler(string.Empty);
-            var client = CreateClient(handler);
-
-            // Act & Assert
-            Should.Throw<ArgumentNullException>(() => client.StreamOrganisations(null!));
         }
 
         /// <summary>

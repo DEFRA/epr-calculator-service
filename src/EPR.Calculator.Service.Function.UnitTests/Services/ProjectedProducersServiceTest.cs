@@ -47,9 +47,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     PackagingTonnageRedMedical = null,
                     PackagingTonnageAmberMedical = null,
                     PackagingTonnageGreenMedical = null,
-                    SubmissionPeriod = submissionPeriod,
-                    ProducerDetail = null,
-                    Material = null
+                    SubmissionPeriod = submissionPeriod
                 };
             }
 

@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.API.Data.DataTypes;
 
 namespace EPR.Calculator.Service.Function.Features.Common;
 
@@ -44,10 +44,10 @@ public abstract record RunContext
     /// <summary>
     ///     Whether modulation data is required for this run.
     /// </summary>
-    public bool RequiresModulation => RelativeYear.Value >= 2026;
+    public bool RequiresModulation => RelativeYear >= 2026;
 
     /// <summary>
     ///     Whether scaled up producer data is required for this run.
     /// </summary>
-    public bool RequiresScaling => RelativeYear.Value == 2025;
+    public bool RequiresScaling => RelativeYear == 2025;
 }

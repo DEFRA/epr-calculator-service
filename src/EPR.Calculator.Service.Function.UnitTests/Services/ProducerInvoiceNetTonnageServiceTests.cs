@@ -1,4 +1,4 @@
-using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.API.Data.DataTypes;
 using EPR.Calculator.Service.Function.Exceptions;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
@@ -28,10 +28,12 @@ public class ProducerInvoiceNetTonnageServiceTests : TestsFor<ProducerInvoiceNet
         var runContext = TestDataHelper.CalculatorRun2025;
         var calcResult = new CalcResult
         {
-            CalcResultScaledupProducers = new CalcResultScaledupProducers(){
+            CalcResultScaledupProducers = new CalcResultScaledupProducers
+            {
                 ScaledupProducers = ImmutableList<CalcResultScaledupProducer>.Empty
             },
-            CalcResultPartialObligations = new CalcResultPartialObligations(){
+            CalcResultPartialObligations = new CalcResultPartialObligations
+            {
                 PartialObligations = ImmutableList<CalcResultPartialObligation>.Empty
             },
             CalcResultDetail = new CalcResultDetail
@@ -55,11 +57,12 @@ public class ProducerInvoiceNetTonnageServiceTests : TestsFor<ProducerInvoiceNet
                     NorthernIreland = 0
                 }
             },
-            CalcResultLateReportingTonnageData = new() { ByMaterial = [] },
-            CalcResultProjectedProducers = new CalcResultProjectedProducers(){
+            CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage { ByMaterial = [] },
+            CalcResultProjectedProducers = new CalcResultProjectedProducers
+            {
                 H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
-                H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty,
-            },
+                H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty
+            }
         };
 
         // Act & Assert

@@ -4,6 +4,7 @@ using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoBTotalBill;
 using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwoBTotalBill;
@@ -148,7 +149,7 @@ public class CalcResultSummaryCommsCostTwoBTotalBillTests
         TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materials, 1);
     }
 
-    private Fixture Fixture { get; } = new();
+    private IFixture Fixture { get; } = TestFixtures.New();
 
     [TestCleanup]
     public void TestCleanup()

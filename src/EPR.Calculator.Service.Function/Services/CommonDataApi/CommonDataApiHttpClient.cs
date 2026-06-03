@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
-using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.API.Data.DataTypes;
 using EPR.Calculator.Service.Function.Options;
 using Microsoft.Extensions.Options;
 
@@ -61,11 +61,6 @@ namespace EPR.Calculator.Service.Function.Services.CommonDataApi
         public IAsyncEnumerable<OrganisationResponse> StreamOrganisations(RelativeYear relativeYear,
             CancellationToken cancellationToken = default)
         {
-            if (relativeYear == null)
-            {
-                throw new ArgumentNullException(nameof(relativeYear));
-            }
-
             var url = $"/api/paycal/organisations/stream?relativeYear={relativeYear}";
             return ReadNdJsonStreamAsync<OrganisationResponse>(url, cancellationToken);
         }
@@ -79,11 +74,6 @@ namespace EPR.Calculator.Service.Function.Services.CommonDataApi
         public IAsyncEnumerable<PomResponse> StreamPoms(RelativeYear relativeYear,
             CancellationToken cancellationToken = default)
         {
-            if (relativeYear == null)
-            {
-                throw new ArgumentNullException(nameof(relativeYear));
-            }
-
             var url = $"/api/paycal/poms/stream?relativeYear={relativeYear}";
             return ReadNdJsonStreamAsync<PomResponse>(url, cancellationToken);
         }

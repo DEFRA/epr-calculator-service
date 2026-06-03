@@ -1,10 +1,9 @@
-using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.API.Data.DataTypes;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Exceptions;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
-using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services;
@@ -23,17 +22,19 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
         await Should.NotThrowAsync(testSubject.CreateBillingInstructions(runContext, calcResult));
     }
 
-     [TestMethod]
+    [TestMethod]
     public async Task Should_create_instructions_with_cancelled_producers()
     {
         // Arrange
         var runContext = TestDataHelper.CalculatorRun2025;
         var calcResult = new CalcResult
         {
-            CalcResultScaledupProducers = new CalcResultScaledupProducers(){
+            CalcResultScaledupProducers = new CalcResultScaledupProducers
+            {
                 ScaledupProducers = ImmutableList<CalcResultScaledupProducer>.Empty
             },
-            CalcResultPartialObligations = new CalcResultPartialObligations(){
+            CalcResultPartialObligations = new CalcResultPartialObligations
+            {
                 PartialObligations = ImmutableList<CalcResultPartialObligation>.Empty
             },
             CalcResultDetail = new CalcResultDetail
@@ -84,9 +85,10 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
                     }
                 }
             },
-            CalcResultProjectedProducers = new CalcResultProjectedProducers(){
+            CalcResultProjectedProducers = new CalcResultProjectedProducers
+            {
                 H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
-                H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty,
+                H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty
             }
         };
 
@@ -101,10 +103,12 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
         var runContext = TestDataHelper.CalculatorRun2025;
         var calcResult = new CalcResult
         {
-            CalcResultScaledupProducers = new CalcResultScaledupProducers(){
+            CalcResultScaledupProducers = new CalcResultScaledupProducers
+            {
                 ScaledupProducers = ImmutableList<CalcResultScaledupProducer>.Empty
             },
-            CalcResultPartialObligations = new CalcResultPartialObligations(){
+            CalcResultPartialObligations = new CalcResultPartialObligations
+            {
                 PartialObligations = ImmutableList<CalcResultPartialObligation>.Empty
             },
             CalcResultDetail = new CalcResultDetail
@@ -162,9 +166,10 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
                     }
                 }
             },
-            CalcResultProjectedProducers = new CalcResultProjectedProducers(){
+            CalcResultProjectedProducers = new CalcResultProjectedProducers
+            {
                 H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
-                H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty,
+                H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty
             }
         };
 
@@ -179,10 +184,12 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
         var runContext = TestDataHelper.CalculatorRun2025;
         var calcResult = new CalcResult
         {
-            CalcResultScaledupProducers = new CalcResultScaledupProducers(){
+            CalcResultScaledupProducers = new CalcResultScaledupProducers
+            {
                 ScaledupProducers = ImmutableList<CalcResultScaledupProducer>.Empty
             },
-            CalcResultPartialObligations = new CalcResultPartialObligations(){
+            CalcResultPartialObligations = new CalcResultPartialObligations
+            {
                 PartialObligations = ImmutableList<CalcResultPartialObligation>.Empty
             },
             CalcResultDetail = new CalcResultDetail
@@ -211,9 +218,10 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
                 ByMaterial = []
             },
             CalcResultSummary = new CalcResultSummary { ProducerDisposalFees = null! },
-            CalcResultProjectedProducers = new CalcResultProjectedProducers(){
+            CalcResultProjectedProducers = new CalcResultProjectedProducers
+            {
                 H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
-                H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty,
+                H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty
             }
         };
 

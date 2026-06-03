@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.API.Data.DataTypes;
 using EPR.Calculator.Service.Function.Features.BillingRun.Constants;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Utils;
@@ -70,7 +70,7 @@ public class InvoicedProducerService(
                 on suggested.CalculatorRunId equals run.Id
             where
                 ValidClassifications.Contains(run.CalculatorRunClassificationId)
-                && run.RelativeYearValue == relativeYear.Value
+                && run.RelativeYear == relativeYear
                 && suggested.BillingInstructionAcceptReject == BillingConstants.Action.Accepted
                 && suggested.SuggestedBillingInstruction == BillingConstants.Suggestion.Cancel
             select
@@ -89,7 +89,7 @@ public class InvoicedProducerService(
                 on suggested.CalculatorRunId equals run.Id
             where
                 ValidClassifications.Contains(run.CalculatorRunClassificationId)
-                && run.RelativeYearValue == relativeYear.Value
+                && run.RelativeYear == relativeYear
                 && suggested.BillingInstructionAcceptReject == BillingConstants.Action.Accepted
             select
                 suggested.ProducerId;
@@ -118,7 +118,7 @@ public class InvoicedProducerService(
                 projection in GetInvoicedProducerProjection()
             where
                 ValidClassifications.Contains(projection.CalculatorRun.CalculatorRunClassificationId)
-                && projection.CalculatorRun.RelativeYearValue == relativeYear.Value
+                && projection.CalculatorRun.RelativeYear == relativeYear
                 && projection.SuggestedInstruction.BillingInstructionAcceptReject == BillingConstants.Action.Accepted
                 && (producerIdFilter == null || producerIdFilter.Contains(projection.ProducerId))
             select
@@ -145,7 +145,7 @@ public class InvoicedProducerService(
                 projection in GetInvoicedProducerProjection()
             where
                 ValidClassifications.Contains(projection.CalculatorRun.CalculatorRunClassificationId)
-                && projection.CalculatorRun.RelativeYearValue == relativeYear.Value
+                && projection.CalculatorRun.RelativeYear == relativeYear
                 && projection.SuggestedInstruction.BillingInstructionAcceptReject == BillingConstants.Action.Accepted
                 && projection.SuggestedInstruction.SuggestedBillingInstruction != BillingConstants.Suggestion.Cancel
 
@@ -160,7 +160,7 @@ public class InvoicedProducerService(
                         on laterRun.Id equals laterSuggested.CalculatorRunId
                     where
                         laterRun.Id > projection.CalculatorRun.Id
-                        && laterRun.RelativeYearValue == relativeYear.Value
+                        && laterRun.RelativeYear == relativeYear
                         && ValidClassifications.Contains(laterRun.CalculatorRunClassificationId)
                         && laterSuggested.ProducerId == projection.ProducerId
                         && laterSuggested.BillingInstructionAcceptReject == BillingConstants.Action.Accepted

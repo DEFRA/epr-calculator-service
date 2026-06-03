@@ -3,6 +3,7 @@ using EPR.Calculator.Service.Function.Builder.Summary;
 using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TonnageVsAllProducer;
 
@@ -10,7 +11,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TonnageVsAll
 [TestClass]
 public class TonnageVsAllProducerUtilTests
 {
-    private Fixture Fixture { get; } = new();
+    private IFixture Fixture { get; } = TestFixtures.New();
+
 
     [TestMethod]
     public void CanCallGetPercentageofProducerReportedHHTonnagevsAllProducersTotal()
@@ -46,13 +48,12 @@ public class TonnageVsAllProducerUtilTests
     public void GetPercentageofProducerReportedHHTonnagevsAllProducersTotal_ReturnsZeroWhenNoMatchingProducer()
     {
         // Arrange
-        var fixture = new Fixture();
-        var producers = fixture.Create<List<ProducerDetail>>();
-        var allResults = fixture.Create<List<CalcResultProducerAndReportMaterialDetail>>();
+        var producers = Fixture.Create<List<ProducerDetail>>();
+        var allResults = Fixture.Create<List<CalcResultProducerAndReportMaterialDetail>>();
         var materialDetails = Fixture.Create<List<MaterialDetail>>();
 
-        var testProducerId = fixture.Create<int>();
-        var testCalculatorRunId = fixture.Create<int>();
+        var testProducerId = Fixture.Create<int>();
+        var testCalculatorRunId = Fixture.Create<int>();
 
         allResults.First().ProducerReportedMaterialProjected.ProducerDetailId = testProducerId;
         allResults.First().ProducerDetail.Id = testProducerId;
@@ -103,13 +104,12 @@ public class TonnageVsAllProducerUtilTests
     public void GetPercentageofProducerReportedTonnagevsAllProducersTotal_ReturnsZero_WhenNoMatchingProducer()
     {
         // Arrange
-        var fixture = new Fixture();
-        var producers = fixture.Create<List<ProducerDetail>>();
-        var allResults = fixture.Create<List<CalcResultProducerAndReportMaterialDetail>>();
-        var materialDetails = fixture.Create<List<MaterialDetail>>();
+        var producers = Fixture.Create<List<ProducerDetail>>();
+        var allResults = Fixture.Create<List<CalcResultProducerAndReportMaterialDetail>>();
+        var materialDetails = Fixture.Create<List<MaterialDetail>>();
 
-        var testProducerId = fixture.Create<int>();
-        var testCalculatorRunId = fixture.Create<int>();
+        var testProducerId = Fixture.Create<int>();
+        var testCalculatorRunId = Fixture.Create<int>();
 
         allResults.First().ProducerReportedMaterialProjected.ProducerDetailId = testProducerId;
         allResults.First().ProducerDetail.Id = testProducerId;

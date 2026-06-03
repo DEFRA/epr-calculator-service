@@ -1,5 +1,5 @@
 ﻿using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.API.Data.DataTypes;
 using EPR.Calculator.Service.Function.Builder.ParametersOther;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
@@ -51,7 +51,7 @@ public class CalcResultParameterOtherCostBuilderTest : TestsFor<CalcResultParame
                 ParameterUniqueReferenceId = templateMaster.ParameterUniqueReferenceId,
                 ParameterValue = GetValue(templateMaster),
                 DefaultParameterSettingMasterId = 1,
-                DefaultParameterSettingMaster = null
+                DefaultParameterSettingMaster = null!
             };
             dbContext.DefaultParameterSettingDetail.Add(defaultDetail);
         }

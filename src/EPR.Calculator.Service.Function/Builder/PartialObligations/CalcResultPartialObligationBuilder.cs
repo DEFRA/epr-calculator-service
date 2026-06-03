@@ -129,7 +129,7 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
                 join crodd in dbContext.CalculatorRunOrganisationDataDetails.AsNoTracking() on crodm.Id equals crodd.CalculatorRunOrganisationDataMasterId
                 join pd in dbContext.ProducerDetail.AsNoTracking() on crodd.OrganisationId equals pd.ProducerId
                 where run.Id == runId && crodd.ObligationStatus == ObligationStates.Obligated && crodd.DaysObligated != null && crodd.SubsidiaryId == pd.SubsidiaryId && pd.CalculatorRunId == runId
-                let daysInYear = DateTime.IsLeapYear(crodm.RelativeYear.Value) ? 366 : 365
+                let daysInYear = DateTime.IsLeapYear(crodm.RelativeYear) ? 366 : 365
                 let partialAmount = crodd.DaysObligated != null ? (decimal)crodd.DaysObligated! / daysInYear : 1
                 select new CalcResultPartialObligation
                 {
@@ -138,7 +138,7 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
                     ProducerName         = pd.ProducerName,
                     TradingName          = pd.TradingName,
                     Level                = pd.SubsidiaryId != null ? CommonConstants.LevelTwo.ToString() : CommonConstants.LevelOne.ToString(),
-                    SubmissionYear       = crodm.RelativeYear.Value,
+                    SubmissionYear       = crodm.RelativeYear,
                     DaysInSubmissionYear = daysInYear,
                     JoiningDate          = crodd.JoinerDate,
                     DaysObligated        = crodd.DaysObligated,

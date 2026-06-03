@@ -1,7 +1,7 @@
-﻿using EPR.Calculator.API.Data;
+using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Enums;
-using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.API.Data.DataTypes;
 using EPR.Calculator.Service.Function.Builder.Modulation;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Features.Common;
@@ -1300,8 +1300,7 @@ public static partial class TestDataHelper
                     PackagingTonnage = 500.00m,
                     PackagingType = "HH",
                     SubmissionPeriod = subPeriod,
-                    MaterialId = 1,
-                    ProducerDetail = null
+                    MaterialId = 1
                 },
                 new ProducerReportedMaterial
                 {
@@ -1309,8 +1308,7 @@ public static partial class TestDataHelper
                     PackagingTonnage = 10.00m,
                     PackagingType = "CW",
                     MaterialId = 1,
-                    SubmissionPeriod = subPeriod,
-                    ProducerDetail = null
+                    SubmissionPeriod = subPeriod
                 },
                 new ProducerReportedMaterial
                 {
@@ -1318,8 +1316,7 @@ public static partial class TestDataHelper
                     PackagingTonnage = 10.00m,
                     PackagingType = "PB",
                     MaterialId = 5,
-                    SubmissionPeriod = subPeriod,
-                    ProducerDetail = null
+                    SubmissionPeriod = subPeriod
                 },
                 new ProducerReportedMaterial
                 {
@@ -1327,8 +1324,7 @@ public static partial class TestDataHelper
                     PackagingTonnage = 20.00m,
                     PackagingType = "HH",
                     MaterialId = 3,
-                    SubmissionPeriod = subPeriod,
-                    ProducerDetail = null
+                    SubmissionPeriod = subPeriod
                 },
                 new ProducerReportedMaterial
                 {
@@ -1336,8 +1332,7 @@ public static partial class TestDataHelper
                     PackagingTonnage = 10.00m,
                     PackagingType = "HDC",
                     MaterialId = 3,
-                    SubmissionPeriod = subPeriod,
-                    ProducerDetail = null
+                    SubmissionPeriod = subPeriod
                 },
                 new ProducerReportedMaterial
                 {
@@ -1345,8 +1340,7 @@ public static partial class TestDataHelper
                     PackagingTonnage = 50.00m,
                     PackagingType = "CW",
                     MaterialId = 3,
-                    SubmissionPeriod = subPeriod,
-                    ProducerDetail = null
+                    SubmissionPeriod = subPeriod
                 }
             });
         }
@@ -1950,9 +1944,9 @@ public static partial class TestDataHelper
         ];
     }
 
-    public static ImmutableList<CalculatorRunOrganisationDataMaster> GetCalculatorRunOrganisationDataMaster(RelativeYear? relativeYear = null)
+    public static ImmutableList<CalculatorRunOrganisationDataMaster> GetCalculatorRunOrganisationDataMaster(RelativeYear relativeYear = default)
     {
-        relativeYear ??= new RelativeYear(204);
+        relativeYear = relativeYear == default ? new RelativeYear(2024) : relativeYear;
 
         return
         [

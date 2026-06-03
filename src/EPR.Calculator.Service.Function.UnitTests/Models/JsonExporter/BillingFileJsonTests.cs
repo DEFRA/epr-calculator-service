@@ -1,3 +1,6 @@
+using EPR.Calculator.API.Data.DataTypes;
+using EPR.Calculator.Service.Function.Builder.Modulation;
+using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Models.JsonExporter;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 

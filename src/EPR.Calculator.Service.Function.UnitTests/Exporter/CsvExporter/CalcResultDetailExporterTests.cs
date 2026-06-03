@@ -1,5 +1,5 @@
 using System.Text;
-using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.API.Data.DataTypes;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
 using EPR.Calculator.Service.Function.Models;
 

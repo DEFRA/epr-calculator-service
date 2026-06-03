@@ -35,7 +35,6 @@
     </PackageReference>
     <PackageReference Include="CsvHelper" Version="33.1.0" />
     <PackageReference Include="EntityFrameworkCore.AutoFixture" Version="2.1.0" />
-    <PackageReference Include="EPR.Calculator.API.Data" Version="2.5.0" />
     <PackageReference Include="JsonSchema.Net" Version="9.2.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.7" />
