@@ -61,13 +61,13 @@ namespace EPR.Calculator.Service.Function.Models.JsonExporter
         [JsonPropertyName("laDataPrepCostsWithbadDebtProvision4")]
         public required string LaDataPrepCostsWithbadDebtProvision4 { get; init; }
 
-        [JsonPropertyName("oneOffFeeSaSetuCostsWithbadDebtProvision5")]
-        public required string OneOffFeeSaSetuCostsWithbadDebtProvision5 { get; init; }
+        [JsonPropertyName("oneOffFeeSaSetupCostsWithBadDebtProvision5")]
+        public required string OneOffFeeSaSetupCostsWithBadDebtProvision5 { get; init; }
 
         [JsonPropertyName("badDebtProvision5")]
         public required string BadDebtProvision5 { get; init; }
 
-        [JsonPropertyName("oneOffFeeSaSetuCostsWithoutbadDebtProvision5")]
-        public required string OneOffFeeSaSetuCostsWithoutbadDebtProvision5 { get; init; }
+        [JsonPropertyName("oneOffFeeSaSetupCostsWithoutBadDebtProvision5")]
+        public required string OneOffFeeSaSetupCostsWithoutBadDebtProvision5 { get; init; }
     }
 }
