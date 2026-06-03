@@ -1,4 +1,5 @@
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.Service.Function.Services.CommonDataApi;
 
 namespace EPR.Calculator.Service.Function.Services.DataLoading
@@ -10,7 +11,7 @@ namespace EPR.Calculator.Service.Function.Services.DataLoading
         /// </summary>
         /// <param name="loadTime">The timestamp to apply to all mapped entities.</param>
         /// <returns>A mapper function that throws FormatException if SubmitterId is invalid.</returns>
-        internal static Func<PomResponse, PomData> MapPom(DateTimeOffset loadTime)
+        internal static Func<PomResponse, PomData> MapPom(DateTimeOffset loadTime, ILogger logger)
         {
             return r => new PomData
             {
@@ -24,7 +25,7 @@ namespace EPR.Calculator.Service.Function.Services.DataLoading
                 PackagingMaterialWeight = r.PackagingMaterialWeight,
                 PackagingClass = r.PackagingClass,
                 PackagingActivity = r.PackagingActivity,
-                RamRagRating = r.RamRagRating,
+                RamRagRating = SafeParseRamRagRating(r, logger),
                 SubmitterId = Guid.TryParse(r.SubmitterId, out var guid)
                     ? guid
                     : throw new FormatException(
@@ -32,6 +33,31 @@ namespace EPR.Calculator.Service.Function.Services.DataLoading
                 LoadTimeStamp = loadTime.UtcDateTime
             };
         }
+
+
+        private static string? SafeParseRamRagRating(PomResponse pom, ILogger logger)
+        {
+            try
+            {
+                return string.IsNullOrWhiteSpace(pom.RamRagRating)
+                    ? null
+                    : RagRatingExtensions.ParseRag(pom.RamRagRating.Trim()).ToDbValue();
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning(
+                    ex,
+                    "Invalid RAG rating OrganisationId: '{OrganisationId}' SubsidiaryId: '{SubsidiaryId}' SubmitterId: '{SubmitterId}' RamRagRating '{RamRagRating}' Material '{Material}' - treating as Red",
+                    pom.OrganisationId,
+                    pom.SubsidiaryId,
+                    pom.SubmitterId,
+                    pom.RamRagRating,
+                    pom.PackagingMaterial);
+
+                return RagRating.Red.ToDbValue();
+            }
+        }
+
 
         /// <summary>
         ///     Creates a mapper function to convert OrganisationResponse API objects to OrganisationData database entities.

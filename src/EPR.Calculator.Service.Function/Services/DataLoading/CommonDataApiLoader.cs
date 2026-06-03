@@ -84,7 +84,7 @@ public class CommonDataApiLoader(
         GetStreams(RelativeYear relativeYear, DateTimeOffset loadTime, CancellationToken linkedCt)
     {
         var pomStream = httpClient.StreamPoms(relativeYear, linkedCt)
-            .Select(CommonDataApiLoaderMapper.MapPom(loadTime))
+            .Select(CommonDataApiLoaderMapper.MapPom(loadTime, logger))
             .Chunk(options.Value.PomBatchSize)
             .GetAsyncEnumerator(linkedCt);
 
