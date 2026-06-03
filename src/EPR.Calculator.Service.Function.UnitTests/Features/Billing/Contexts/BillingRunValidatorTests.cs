@@ -9,13 +9,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Features.Billing.Contexts;
 [TestClass]
 public class BillingRunValidatorTests : TestsFor<BillingRunValidator>
 {
+    [DataRow(RunClassificationStatusIds.INITIALRUNID)]
+    [DataRow(RunClassificationStatusIds.INTERIMRECALCULATIONRUNID)]
+    [DataRow(RunClassificationStatusIds.FINALRECALCULATIONRUNID)]
+    [DataRow(RunClassificationStatusIds.FINALRUNID)]
     [TestMethod]
-    public void Should_not_error_when_run_is_valid()
+    public void Should_not_error_when_run_is_valid(int classificationId)
     {
         var run = new CalculatorRun
         {
             Name = "TestRun",
-            CalculatorRunClassificationId = RunClassificationStatusIds.INITIALRUNID,
+            CalculatorRunClassificationId = classificationId,
             DefaultParameterSettingMasterId = 1,
             LapcapDataMasterId = 1,
             CalculatorRunOrganisationDataMasterId = 1,
