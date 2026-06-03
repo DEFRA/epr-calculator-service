@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using EPR.Calculator.Service.Function.Services.CommonDataApi;
 using EPR.Calculator.Service.Function.Services.DataLoading;
 
@@ -34,11 +35,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
                 PackagingMaterialWeight = 250.75,
                 PackagingClass = "P1",
                 PackagingActivity = "PAC",
-                RamRagRating = "Green",
+                RamRagRating = "G",
                 SubmitterId = ValidGuid
             };
 
-            var mapper = CommonDataApiLoaderMapper.MapPom(FixedUtcNow);
+            var mapper = CommonDataApiLoaderMapper.MapPom(FixedUtcNow, NullLogger.Instance);
 
             // Act
             var pom = mapper(response);
@@ -54,10 +55,50 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
             Assert.AreEqual(250.75, pom.PackagingMaterialWeight);
             Assert.AreEqual("P1", pom.PackagingClass);
             Assert.AreEqual("PAC", pom.PackagingActivity);
-            Assert.AreEqual("Green", pom.RamRagRating);
+            Assert.AreEqual("G", pom.RamRagRating);
             Assert.AreEqual(Guid.Parse(ValidGuid), pom.SubmitterId);
             Assert.AreEqual(FixedUtcNow.DateTime, pom.LoadTimeStamp);
         }
+
+        /// <summary>
+        ///     Verifies that RamRagRating is parsed correctly.
+        /// </summary>
+        [TestMethod]
+        [DataRow("")]
+        [DataRow(" ")]
+        [DataRow("G ")]
+        [DataRow(" G")]
+        [DataRow("Bad")]
+        public void PomMapper_WithInvalidRamRagRating_MapsToNull(string? ramRagRating)
+        {
+            // Arrange
+            var response = new PomResponse
+            {
+                SubmissionPeriod = "2024-Q1",
+                SubmissionPeriodDescription = "Quarter 1 2024",
+                OrganisationId = 42,
+                SubsidiaryId = "SUB-001",
+                PackagingType = "HH",
+                PackagingMaterial = "PL",
+                PackagingMaterialSubtype = "ST-01",
+                PackagingMaterialWeight = 250.75,
+                PackagingClass = "P1",
+                PackagingActivity = "PAC",
+                RamRagRating = ramRagRating,
+                SubmitterId = ValidGuid
+            };
+
+            var mapper = CommonDataApiLoaderMapper.MapPom(
+                FixedUtcNow,
+                NullLogger.Instance);
+
+            // Act
+            var pom = mapper(response);
+
+            // Assert
+            Assert.IsNull(pom.RamRagRating);
+        }
+
 
         // ───────────────────────── POM mapper – validation ─────────────────────────
 
@@ -77,7 +118,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
                 SubmitterId = "not-a-guid"
             };
 
-            var mapper = CommonDataApiLoaderMapper.MapPom(FixedUtcNow);
+            var mapper = CommonDataApiLoaderMapper.MapPom(FixedUtcNow, NullLogger.Instance);
 
             Should.Throw<FormatException>(() => mapper(response));
         }
