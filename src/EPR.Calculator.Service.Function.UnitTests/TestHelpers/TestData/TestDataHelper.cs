@@ -2,6 +2,7 @@
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Builder.Modulation;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
@@ -16,17 +17,28 @@ public static partial class TestDataHelper
     {
         return new CalcResult
         {
-            CalcResultScaledupProducers = GetScaledupProducers(),
-            CalcResultPartialObligations = GetPartialObligations(),
-            CalcResultParameterOtherCost = GetCalcResultParameterOtherCost(),
-            CalcResultDetail = GetCalcResultDetail(),
-            CalcResultLapcapData = GetCalcResultLapcapData(),
+            CalcResultScaledupProducers        = GetScaledupProducers(),
+            CalcResultPartialObligations       = GetPartialObligations(),
+            CalcResultParameterOtherCost       = GetCalcResultParameterOtherCost(),
+            CalcResultDetail                   = GetCalcResultDetail(),
+            CalcResultLapcapData               = GetCalcResultLapcapData(),
             CalcResultLateReportingTonnageData = GetCalcResultLateReportingTonnage(),
-            CalcResultSummary = GetCalcResultSummary(applyModulation),
-            CalcResultProjectedProducers = new CalcResultProjectedProducers(){
+            CalcResultOnePlusFourApportionment = GetCalcResultOnePlusFourApportionment(),
+            CalcResultLaDisposalCostData       = GetCalcResultLaDisposalCostData(),
+            CalcResultCommsCostReportDetail    = GetCalcResultCommsCostReportDetail(),
+            CalcResultSummary                  = GetCalcResultSummary(applyModulation),
+            CalcResultProjectedProducers       = new CalcResultProjectedProducers(){
                 H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
                 H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty,
-            }
+            },
+            CalcResultModulation               = applyModulation
+                ? new ModulationResult
+                {
+                    GreenFactor        = 1,
+                    RedFactor          = 2,
+                    MaterialModulation = new Dictionary<MaterialDetail, MaterialModulation>()
+                }
+                : null
         };
     }
 
@@ -36,41 +48,52 @@ public static partial class TestDataHelper
         {
             SaOperatingCost = new ByCountryCost
             {
-                England = 25000,
-                Wales = 14000,
-                Scotland = 17000,
+                England         = 25000,
+                Wales           = 14000,
+                Scotland        = 17000,
                 NorthernIreland = 9000
             },
             LaDataPrepCharge = new ByCountryCost
             {
-                England = 16000,
-                Wales = 7000,
-                Scotland = 9000,
+                England         = 16000,
+                Wales           = 7000,
+                Scotland        = 9000,
                 NorthernIreland = 4500
             },
             CountryApportionment = new ByCountryApportionment
             {
-                England = 43.83561643835616m,
-                Wales = 19.17808219178082m,
-                Scotland = 24.65753424657534m,
+                England         = 43.83561643835616m,
+                Wales           = 19.17808219178082m,
+                Scotland        = 24.65753424657534m,
                 NorthernIreland = 12.32876712328767m
             },
             SchemeSetupCost = new ByCountryCost
             {
-                England = 17500,
-                Wales = 23400,
-                Scotland = 12400,
+                England         = 17500,
+                Wales           = 23400,
+                Scotland        = 12400,
                 NorthernIreland = 9450
             },
             BadDebtValue = 6,
-            MaterialityIncrease = new Materiality { Amount = 5000, Percentage = 2m },
-            MaterialityDecrease = new Materiality { Amount = -1000, Percentage = -1m },
-            TonnageChangeIncrease = new Materiality { Amount = 50, Percentage = 2m },
-            TonnageChangeDecrease = new Materiality { Amount = -10, Percentage = -0.5m }
+            MaterialityIncrease   = new Materiality { Amount =  5000, Percentage =  2.0m },
+            MaterialityDecrease   = new Materiality { Amount = -1000, Percentage = -1.0m },
+            TonnageChangeIncrease = new Materiality { Amount =    50, Percentage =  2.0m },
+            TonnageChangeDecrease = new Materiality { Amount =   -10, Percentage = -0.5m }
         };
     }
 
-    public static CalcResultDetail GetCalcResultDetail() => new() { RunId = 1, RelativeYear = new RelativeYear(2024) };
+    public static CalcResultDetail GetCalcResultDetail() => new()
+    {
+        RunId          = 1,
+        RunDate        = DateTime.UtcNow,
+        RunName        = "CalculatorRunName",
+        RunBy          = "Test user",
+        RelativeYear   = new RelativeYear(2024),
+        RpdFileORG     = "21/07/2017 17:32",
+        RpdFilePOM     = "21/07/2017 17:32",
+        LapcapFile     = "lapcap-data.csv,24/06/2025 10:00, test",
+        ParametersFile = "parameter-data.csv,24/06/2025 10:00, test"
+    };
 
     public static CalcResultLaDisposalCostData GetCalcResultLaDisposalCostData()
     {
@@ -160,14 +183,14 @@ public static partial class TestDataHelper
         {
             ByMaterial = new Dictionary<string, ByCountryCost>
             {
-                ["AL"] = new() { England = 5000, Wales = 1750, Scotland = 2000, NorthernIreland = 1250 },
-                ["FC"] = new() { England = 7500, Wales = 2100, Scotland = 3400, NorthernIreland = 1750 },
-                ["GL"] = new() { England = 45000, Wales = 0, Scotland = 20700, NorthernIreland = 4500 },
-                ["PC"] = new() { England = 12500, Wales = 2300, Scotland = 4500, NorthernIreland = 3400 },
-                ["PL"] = new() { England = 23000, Wales = 4500, Scotland = 6700, NorthernIreland = 2100 },
-                ["ST"] = new() { England = 13400, Wales = 0, Scotland = 7800, NorthernIreland = 0 },
-                ["WD"] = new() { England = 0, Wales = 12000, Scotland = 0, NorthernIreland = 5600 },
-                ["OT"] = new() { England = 3400, Wales = 2100, Scotland = 4200, NorthernIreland = 700 }
+                ["AL"] = new() { England =  5000, Wales =  1750, Scotland =  2000, NorthernIreland = 1250 },
+                ["FC"] = new() { England =  7500, Wales =  2100, Scotland =  3400, NorthernIreland = 1750 },
+                ["GL"] = new() { England = 45000, Wales =     0, Scotland = 20700, NorthernIreland = 4500 },
+                ["PC"] = new() { England = 12500, Wales =  2300, Scotland =  4500, NorthernIreland = 3400 },
+                ["PL"] = new() { England = 23000, Wales =  4500, Scotland =  6700, NorthernIreland = 2100 },
+                ["ST"] = new() { England = 13400, Wales =     0, Scotland =  7800, NorthernIreland =    0 },
+                ["WD"] = new() { England =     0, Wales = 12000, Scotland =     0, NorthernIreland = 5600 },
+                ["OT"] = new() { England =  3400, Wales =  2100, Scotland =  4200, NorthernIreland =  700 }
             }
         };
     }
@@ -176,8 +199,8 @@ public static partial class TestDataHelper
     {
         return new CalcResultOnePlusFourApportionment
         {
-            LaDisposalCost = new ByCountryCost { England = 30, Wales = 5, Scotland = 15, NorthernIreland = 35 },
-            LADataPrepCharge = new ByCountryCost { England = 10, Wales = 5, Scotland = 0, NorthernIreland = 0 }
+            LaDisposalCost   = new ByCountryCost { England = 30, Wales = 5, Scotland = 15, NorthernIreland = 35 },
+            LADataPrepCharge = new ByCountryCost { England = 10, Wales = 5, Scotland =  0, NorthernIreland =  0 }
         };
     }
 
@@ -187,9 +210,9 @@ public static partial class TestDataHelper
         {
             OnePlusFourApportionment = new ByCountryApportionment
             {
-                England = 50.23m,
-                Wales = 30.34m,
-                Scotland = 10.45m,
+                England         = 50.23m,
+                Wales           = 30.34m,
+                Scotland        = 10.45m,
                 NorthernIreland = 8.98m
             },
             ByMaterial = new Dictionary<string, CalcResultCommsCostCommsCostByMaterial>
@@ -213,7 +236,7 @@ public static partial class TestDataHelper
                     LateReportingTonnage = 4.56m
                 }
             },
-            CommsCostUkWide = new ByCountryCost { England = 1500, Wales = 200, Scotland = 500, NorthernIreland = 331 },
+            CommsCostUkWide    = new ByCountryCost { England = 1500, Wales = 200, Scotland = 500, NorthernIreland = 331 },
             CommsCostByCountry = new ByCountryCost { England = 1400, Wales = 250, Scotland = 600, NorthernIreland = 280 }
         };
     }
@@ -225,13 +248,13 @@ public static partial class TestDataHelper
             ByMaterial = new Dictionary<string, CalcResultLateReportingTonnageDetail>
             {
                 ["AL"] = new() { Red = 1000.00m, Amber = 2000.00m, Green = 5000.00m, Total = 8000.00m },
-                ["FC"] = new() { Red = 5.00m, Amber = 0m, Green = 5.00m, Total = 10.00m },
-                ["GL"] = new() { Red = 10.00m, Amber = 0m, Green = 0.00m, Total = 10.00m },
-                ["PC"] = new() { Red = 0.00m, Amber = 0m, Green = 0.00m, Total = 0.00m },
-                ["PL"] = new() { Red = 1000.00m, Amber = 500.00m, Green = 500.00m, Total = 2000.00m },
-                ["ST"] = new() { Red = 0.00m, Amber = 0.00m, Green = 0.00m, Total = 0.00m },
-                ["WD"] = new() { Red = 0.00m, Amber = 0.00m, Green = 0.00m, Total = 0.00m },
-                ["OT"] = new() { Red = 0.00m, Amber = 0.00m, Green = 0.00m, Total = 0.00m }
+                ["FC"] = new() { Red =    5.00m, Amber =    0.00m, Green =    5.00m, Total =   10.00m },
+                ["GL"] = new() { Red =   10.00m, Amber =    0.00m, Green =    0.00m, Total =   10.00m },
+                ["PC"] = new() { Red =    0.00m, Amber =    0.00m, Green =    0.00m, Total =    0.00m },
+                ["PL"] = new() { Red = 1000.00m, Amber =  500.00m, Green =  500.00m, Total = 2000.00m },
+                ["ST"] = new() { Red =    0.00m, Amber =    0.00m, Green =    0.00m, Total =    0.00m },
+                ["WD"] = new() { Red =    0.00m, Amber =    0.00m, Green =    0.00m, Total =    0.00m },
+                ["OT"] = new() { Red =    0.00m, Amber =    0.00m, Green =    0.00m, Total =    0.00m }
             }
         };
     }
@@ -692,14 +715,14 @@ public static partial class TestDataHelper
                         }
                         : new Dictionary<RagRating, decimal>(),
                     NetReportedTonnage = applyModulation
-                        ? (total: 910, red: 300, amber: 200, green: 410)
+                        ? (total: 910, red:  300, amber:  200, green: 410)
                         : (total: 910, red: null, amber: null, green: null),
                     PricePerTonne = applyModulation
-                        ? (total: 0.6676m, red: 1, amber: 2, green: 3)
+                        ? (total: 0.6676m, red:    1, amber:    2, green: 3)
                         : (total: 0.6676m, red: null, amber: null, green: null),
                     ProducerDisposalFee = applyModulation
-                        ? (total: 607.525000m, red: 4.525001m, amber: 5, green: 6)
-                        : (total: 607.525000m, red: null, amber: null, green: null),
+                        ? (total: 607.525000m, red: 4.525001m, amber:    5, green: 6)
+                        : (total: 607.525000m, red:      null, amber: null, green: null),
                     BadDebtProvision = 36.45m,
                     ProducerDisposalFeeWithBadDebtProvision = 643.97m,
                     EnglandWithBadDebtProvision = 348.06m,
@@ -720,22 +743,22 @@ public static partial class TestDataHelper
                     TotalReportedTonnageRagRating = applyModulation
                         ? new Dictionary<RagRating, decimal>
                         {
-                            [RagRating.Red] = 1,
-                            [RagRating.Amber] = 2,
-                            [RagRating.Green] = 3,
-                            [RagRating.RedMedical] = 4,
+                            [RagRating.Red]          = 1,
+                            [RagRating.Amber]        = 2,
+                            [RagRating.Green]        = 3,
+                            [RagRating.RedMedical]   = 4,
                             [RagRating.AmberMedical] = 5,
                             [RagRating.GreenMedical] = 6
                         }
                         : new Dictionary<RagRating, decimal>(),
                     NetReportedTonnage = applyModulation
-                        ? (total: 1860, red: 860, amber: 0, green: 1000)
+                        ? (total: 1860, red:  860, amber:    0, green: 1000)
                         : (total: 1860, red: null, amber: null, green: null),
                     PricePerTonne = applyModulation
-                        ? (total: 0.7825m, red: 1, amber: 2, green: 3)
+                        ? (total: 0.7825m, red:    1, amber:    2, green: 3)
                         : (total: 0.7825m, red: null, amber: null, green: null),
                     ProducerDisposalFee = applyModulation
-                        ? (total: 1455.45m, red: 4, amber: 5, green: 6)
+                        ? (total: 1455.45m, red:    4, amber:    5, green: 6)
                         : (total: 1455.45m, red: null, amber: null, green: null),
                     BadDebtProvision = 87.33m,
                     ProducerDisposalFeeWithBadDebtProvision = 1542.78m,
@@ -757,22 +780,22 @@ public static partial class TestDataHelper
                     TotalReportedTonnageRagRating = applyModulation
                         ? new Dictionary<RagRating, decimal>
                         {
-                            [RagRating.Red] = 1,
-                            [RagRating.Amber] = 2,
-                            [RagRating.Green] = 3,
-                            [RagRating.RedMedical] = 4,
+                            [RagRating.Red]          = 1,
+                            [RagRating.Amber]        = 2,
+                            [RagRating.Green]        = 3,
+                            [RagRating.RedMedical]   = 4,
                             [RagRating.AmberMedical] = 5,
                             [RagRating.GreenMedical] = 6
                         }
                         : new Dictionary<RagRating, decimal>(),
                     NetReportedTonnage = applyModulation
-                        ? (total: 350, red: 300, amber: 50, green: 0)
+                        ? (total: 350, red:  300, amber:   50, green: 0)
                         : (total: 350, red: null, amber: null, green: null),
                     PricePerTonne = applyModulation
-                        ? (total: 6.4404m, red: 1, amber: 2, green: 3)
+                        ? (total: 6.4404m, red:    1, amber:    2, green: 3)
                         : (total: 6.4404m, red: null, amber: null, green: null),
                     ProducerDisposalFee = applyModulation
-                        ? (total: 2254.14m, red: 4, amber: 5, green: 6)
+                        ? (total: 2254.14m, red:    4, amber:    5, green: 6)
                         : (total: 2254.14m, red: null, amber: null, green: null),
                     BadDebtProvision = 135.25m,
                     ProducerDisposalFeeWithBadDebtProvision = 2389.39m,
@@ -795,22 +818,22 @@ public static partial class TestDataHelper
                     TotalReportedTonnageRagRating = applyModulation
                         ? new Dictionary<RagRating, decimal>
                         {
-                            [RagRating.Red] = 1,
-                            [RagRating.Amber] = 2,
-                            [RagRating.Green] = 3,
-                            [RagRating.RedMedical] = 4,
+                            [RagRating.Red]          = 1,
+                            [RagRating.Amber]        = 2,
+                            [RagRating.Green]        = 3,
+                            [RagRating.RedMedical]   = 4,
                             [RagRating.AmberMedical] = 5,
                             [RagRating.GreenMedical] = 6
                         }
                         : new Dictionary<RagRating, decimal>(),
                     NetReportedTonnage = applyModulation
-                        ? (total: 17.800m, red: 0, amber: 0, green: 0)
+                        ? (total: 17.800m, red:    0, amber:    0, green: 0)
                         : (total: 17.800m, red: null, amber: null, green: null),
                     PricePerTonne = applyModulation
-                        ? (total: 2.4488m, red: 1, amber: 2, green: 3)
+                        ? (total: 2.4488m, red:    1, amber:    2, green: 3)
                         : (total: 2.4488m, red: null, amber: null, green: null),
                     ProducerDisposalFee = applyModulation
-                        ? (total: 43.59m, red: 4, amber: 5, green: 6)
+                        ? (total: 43.59m, red:    4, amber:    5, green: 6)
                         : (total: 43.59m, red: null, amber: null, green: null),
                     BadDebtProvision = 2.62m,
                     ProducerDisposalFeeWithBadDebtProvision = 46.20m,
@@ -832,22 +855,22 @@ public static partial class TestDataHelper
                     TotalReportedTonnageRagRating = applyModulation
                         ? new Dictionary<RagRating, decimal>
                         {
-                            [RagRating.Red] = 1,
-                            [RagRating.Amber] = 2,
-                            [RagRating.Green] = 3,
-                            [RagRating.RedMedical] = 4,
+                            [RagRating.Red]          = 1,
+                            [RagRating.Amber]        = 2,
+                            [RagRating.Green]        = 3,
+                            [RagRating.RedMedical]   = 4,
                             [RagRating.AmberMedical] = 5,
                             [RagRating.GreenMedical] = 6
                         }
                         : new Dictionary<RagRating, decimal>(),
                     NetReportedTonnage = applyModulation
-                        ? (total: 4.400m, red: 4.400m, amber: 0, green: 0)
-                        : (total: 4.400m, red: null, amber: null, green: null),
+                        ? (total: 4.400m, red: 4.400m, amber:    0, green: 0)
+                        : (total: 4.400m, red:   null, amber: null, green: null),
                     PricePerTonne = applyModulation
-                        ? (total: 2.1601m, red: 1, amber: 2, green: 3)
+                        ? (total: 2.1601m, red:    1, amber:    2, green: 3)
                         : (total: 2.1601m, red: null, amber: null, green: null),
                     ProducerDisposalFee = applyModulation
-                        ? (total: 9.50m, red: 4, amber: 5, green: 6)
+                        ? (total: 9.50m, red:    4, amber:    5, green: 6)
                         : (total: 9.50m, red: null, amber: null, green: null),
                     BadDebtProvision = 0.57m,
                     ProducerDisposalFeeWithBadDebtProvision = 10.07m,
@@ -869,22 +892,22 @@ public static partial class TestDataHelper
                     TotalReportedTonnageRagRating = applyModulation
                         ? new Dictionary<RagRating, decimal>
                         {
-                            [RagRating.Red] = 1,
-                            [RagRating.Amber] = 2,
-                            [RagRating.Green] = 3,
-                            [RagRating.RedMedical] = 4,
+                            [RagRating.Red]          = 1,
+                            [RagRating.Amber]        = 2,
+                            [RagRating.Green]        = 3,
+                            [RagRating.RedMedical]   = 4,
                             [RagRating.AmberMedical] = 5,
                             [RagRating.GreenMedical] = 6
                         }
                         : new Dictionary<RagRating, decimal>(),
                     NetReportedTonnage = applyModulation
-                        ? (total: 0, red: 0, amber: 0, green: 0)
+                        ? (total: 0, red:    0, amber:    0, green: 0)
                         : (total: 0, red: null, amber: null, green: null),
                     PricePerTonne = applyModulation
-                        ? (total: 1.9813m, red: 1, amber: 2, green: 3)
+                        ? (total: 1.9813m, red:    1, amber:    2, green: 3)
                         : (total: 1.9813m, red: null, amber: null, green: null),
                     ProducerDisposalFee = applyModulation
-                        ? (total: 0.00m, red: 4, amber: 5, green: 6)
+                        ? (total: 0.00m, red:    4, amber:    5, green: 6)
                         : (total: 0.00m, red: null, amber: null, green: null),
                     BadDebtProvision = 0.00m,
                     ProducerDisposalFeeWithBadDebtProvision = 0.00m,
@@ -906,22 +929,22 @@ public static partial class TestDataHelper
                     TotalReportedTonnageRagRating = applyModulation
                         ? new Dictionary<RagRating, decimal>
                         {
-                            [RagRating.Red] = 1,
-                            [RagRating.Amber] = 2,
-                            [RagRating.Green] = 3,
-                            [RagRating.RedMedical] = 4,
+                            [RagRating.Red]          = 1,
+                            [RagRating.Amber]        = 2,
+                            [RagRating.Green]        = 3,
+                            [RagRating.RedMedical]   = 4,
                             [RagRating.AmberMedical] = 5,
                             [RagRating.GreenMedical] = 6
                         }
                         : new Dictionary<RagRating, decimal>(),
                     NetReportedTonnage = applyModulation
-                        ? (total: 405.000m, red: 300, amber: 100, green: 5)
+                        ? (total: 405.000m, red:  300, amber:  100, green: 5)
                         : (total: 405.000m, red: null, amber: null, green: null),
                     PricePerTonne = applyModulation
-                        ? (total: 2.0000m, red: 1, amber: 2, green: 3)
+                        ? (total: 2.0000m, red:    1, amber:    2, green: 3)
                         : (total: 2.0000m, red: null, amber: null, green: null),
                     ProducerDisposalFee = applyModulation
-                        ? (total: 810.00m, red: 4, amber: 5, green: 6)
+                        ? (total: 810.00m, red:    4, amber:    5, green: 6)
                         : (total: 810.00m, red: null, amber: null, green: null),
                     BadDebtProvision = 48.60m,
                     ProducerDisposalFeeWithBadDebtProvision = 858.60m,
@@ -943,22 +966,22 @@ public static partial class TestDataHelper
                     TotalReportedTonnageRagRating = applyModulation
                         ? new Dictionary<RagRating, decimal>
                         {
-                            [RagRating.Red] = 1,
-                            [RagRating.Amber] = 2,
-                            [RagRating.Green] = 3,
-                            [RagRating.RedMedical] = 4,
+                            [RagRating.Red]          = 1,
+                            [RagRating.Amber]        = 2,
+                            [RagRating.Green]        = 3,
+                            [RagRating.RedMedical]   = 4,
                             [RagRating.AmberMedical] = 5,
                             [RagRating.GreenMedical] = 6
                         }
                         : new Dictionary<RagRating, decimal>(),
                     NetReportedTonnage = applyModulation
-                        ? (total: 44.500m, red: 0, amber: 44.500m, green: 0)
-                        : (total: 44.500m, red: null, amber: null, green: null),
+                        ? (total: 44.500m, red:    0, amber: 44.500m, green: 0)
+                        : (total: 44.500m, red: null, amber:    null, green: null),
                     PricePerTonne = applyModulation
-                        ? (total: 1.1954m, red: 1, amber: 2, green: 3)
+                        ? (total: 1.1954m, red:    1, amber:    2, green: 3)
                         : (total: 1.1954m, red: null, amber: null, green: null),
                     ProducerDisposalFee = applyModulation
-                        ? (total: 53.20m, red: 4, amber: 5, green: 6)
+                        ? (total: 53.20m, red:    4, amber:    5, green: 6)
                         : (total: 53.20m, red: null, amber: null, green: null),
                     BadDebtProvision = 3.19m,
                     ProducerDisposalFeeWithBadDebtProvision = 56.39m,
@@ -1214,13 +1237,13 @@ public static partial class TestDataHelper
 
     public static IImmutableList<Material> GetMaterials() =>
     [
-        new()  { Id = 1, Code = "AL", Name = "Aluminium" },
+        new()  { Id = 1, Code = "AL", Name = "Aluminium"       },
         new()  { Id = 2, Code = "FC", Name = "Fibre composite" },
-        new()  { Id = 3, Code = "GL", Name = "Glass" },
-        new()  { Id = 4, Code = "PC", Name = "Paper or card" },
-        new()  { Id = 5, Code = "PL", Name = "Plastic" },
-        new()  { Id = 6, Code = "ST", Name = "Steel" },
-        new()  { Id = 7, Code = "WD", Name = "Wood" },
+        new()  { Id = 3, Code = "GL", Name = "Glass"           },
+        new()  { Id = 4, Code = "PC", Name = "Paper or card"   },
+        new()  { Id = 5, Code = "PL", Name = "Plastic"         },
+        new()  { Id = 6, Code = "ST", Name = "Steel"           },
+        new()  { Id = 7, Code = "WD", Name = "Wood"            },
         new()  { Id = 8, Code = "OT", Name = "Other materials" }
     ];
 
@@ -1985,16 +2008,16 @@ public static partial class TestDataHelper
 
         List<ProducerReportedMaterial> producerReportedMaterials =
         [
-            new() { ProducerDetail = producerDetails[0], Material = materials[0], SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.Household, PackagingTonnage = 50, PackagingTonnageRed = 50 },
-            new() { ProducerDetail = producerDetails[0], Material = materials[0], SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.Household, PackagingTonnage = 50, PackagingTonnageAmber = 50 },
-            new() { ProducerDetail = producerDetails[0], Material = materials[1], SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100, PackagingTonnageGreen = 100 },
-            new() { ProducerDetail = producerDetails[0], Material = materials[1], SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100, PackagingTonnageRedMedical = 100 },
+            new() { ProducerDetail = producerDetails[0], Material = materials[0], SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.Household                , PackagingTonnage =  50, PackagingTonnageRed          = 50 },
+            new() { ProducerDetail = producerDetails[0], Material = materials[0], SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.Household                , PackagingTonnage =  50, PackagingTonnageAmber        = 50 },
+            new() { ProducerDetail = producerDetails[0], Material = materials[1], SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.PublicBin                , PackagingTonnage = 100, PackagingTonnageGreen        = 100 },
+            new() { ProducerDetail = producerDetails[0], Material = materials[1], SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.PublicBin                , PackagingTonnage = 100, PackagingTonnageRedMedical   = 100 },
             new() { ProducerDetail = producerDetails[0], Material = materials[3], SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150, PackagingTonnageAmberMedical = 150 },
             new() { ProducerDetail = producerDetails[0], Material = materials[3], SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150, PackagingTonnageGreenMedical = 150 },
-            new() { ProducerDetail = producerDetails[1], Material = materials[0], SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.Household, PackagingTonnage = 50, PackagingTonnageRed = 50 },
-            new() { ProducerDetail = producerDetails[1], Material = materials[0], SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.Household, PackagingTonnage = 50, PackagingTonnageAmber = 50 },
-            new() { ProducerDetail = producerDetails[1], Material = materials[1], SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100, PackagingTonnageGreen = 100 },
-            new() { ProducerDetail = producerDetails[1], Material = materials[1], SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.PublicBin, PackagingTonnage = 100, PackagingTonnageRedMedical = 100 },
+            new() { ProducerDetail = producerDetails[1], Material = materials[0], SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.Household                , PackagingTonnage =  50, PackagingTonnageRed          = 50 },
+            new() { ProducerDetail = producerDetails[1], Material = materials[0], SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.Household                , PackagingTonnage =  50, PackagingTonnageAmber        = 50 },
+            new() { ProducerDetail = producerDetails[1], Material = materials[1], SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.PublicBin                , PackagingTonnage = 100, PackagingTonnageGreen        = 100 },
+            new() { ProducerDetail = producerDetails[1], Material = materials[1], SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.PublicBin                , PackagingTonnage = 100, PackagingTonnageRedMedical   = 100 },
             new() { ProducerDetail = producerDetails[1], Material = materials[3], SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150, PackagingTonnageAmberMedical = 150 },
             new() { ProducerDetail = producerDetails[1], Material = materials[3], SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150, PackagingTonnageGreenMedical = 150 }
         ];
