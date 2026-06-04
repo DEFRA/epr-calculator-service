@@ -30,7 +30,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.CommsCo
             var csvContent = new StringBuilder();
             exporter.Export(communicationCost, materials, csvContent);
 
-            var result = csvContent.ToString().Split("\n").Select(s => s.TrimEnd(',')).ToArray();
+            var result = csvContent.ToString().ReplaceLineEndings("\n").Split("\n").Select(s => s.TrimEnd(',')).ToArray();
             Console.WriteLine(string.Join("\n", result));
 
             var expected = new[] {

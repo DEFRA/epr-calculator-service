@@ -30,7 +30,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.OtherCo
             var csvContent = new StringBuilder();
             exporter.Export(otherCost, csvContent);
 
-            var result = csvContent.ToString().Split("\n").Select(s => s.TrimEnd(',')).ToArray();
+            var result = csvContent.ToString().ReplaceLineEndings("\n").Split("\n").Select(s => s.TrimEnd(',')).ToArray();
             Console.WriteLine(string.Join("\n", result));
 
             // Assert

@@ -29,7 +29,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             _testClass.Export(calcResult1Plus4Apportionment, csvContent);
 
             // Assert
-            var result = csvContent.ToString().Split("\n").Select(s => s.TrimEnd(',')).ToArray();
+            var result = csvContent.ToString().ReplaceLineEndings("\n").Split("\n").Select(s => s.TrimEnd(',')).ToArray();
             Console.WriteLine(string.Join("\n", result));
 
             var expected = new[] {

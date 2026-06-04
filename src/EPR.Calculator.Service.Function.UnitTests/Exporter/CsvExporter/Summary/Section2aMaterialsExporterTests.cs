@@ -25,7 +25,7 @@ public class Section2aMaterialsExporterTests
 
         // Act
         SummaryExporterTestUtils.Render(exporter, materials, applyModulation, resultSummary, csvContent);
-        var result = csvContent.ToString().Split("\n").ToArray();
+        var result = csvContent.ToString().ReplaceLineEndings("\n").Split("\n").ToArray();
         Console.WriteLine(string.Join("\n", result));
 
         var expected = new string?[][] {
@@ -78,7 +78,7 @@ public class Section2aMaterialsExporterTests
 
         // Act
         SummaryExporterTestUtils.Render(exporter, materials, applyModulation, resultSummary, csvContent);
-        var result = csvContent.ToString().Split("\n").ToArray();
+        var result = csvContent.ToString().ReplaceLineEndings("\n").Split("\n").ToArray();
         Console.WriteLine(string.Join("\n", result));
 
         var expected = new string?[][] {
