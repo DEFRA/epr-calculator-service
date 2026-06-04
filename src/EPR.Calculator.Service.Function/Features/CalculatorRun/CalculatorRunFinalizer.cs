@@ -39,8 +39,8 @@ public class CalculatorRunFinalizer(
 
         try
         {
-            await billingInstructionService.CreateBillingInstructions(calcResult);
-            await producerInvoiceNetTonnageService.CreateProducerInvoiceNetTonnage(calcResult);
+            await billingInstructionService.CreateBillingInstructions(runContext, calcResult);
+            await producerInvoiceNetTonnageService.CreateProducerInvoiceNetTonnage(runContext, calcResult);
             await SaveExportMetadata(exportResult, cancellationToken);
             await SaveCompletedRunStatus(runContext, cancellationToken);
 

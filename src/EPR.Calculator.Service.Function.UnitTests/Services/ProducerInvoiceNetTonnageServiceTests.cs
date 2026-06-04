@@ -1,4 +1,5 @@
 using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.Service.Function.Exceptions;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
@@ -10,22 +11,21 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services;
 public class ProducerInvoiceNetTonnageServiceTests : TestsFor<ProducerInvoiceNetTonnageService>
 {
     [TestMethod]
-    public async Task CanCallCreateProducerInvoiceNetTonnage1()
+    public async Task Should_create_net_tonnages()
     {
         // Arrange
+        var runContext = TestDataHelper.CalculatorRun2025;
         var calcResult = TestDataHelper.GetCalcResult();
 
-        // Act
-        var result = await testSubject.CreateProducerInvoiceNetTonnage(calcResult);
-
-        // Assert
-        Assert.IsTrue(result);
+        // Act & Assert
+        await Should.NotThrowAsync(testSubject.CreateProducerInvoiceNetTonnage(runContext, calcResult));
     }
 
     [TestMethod]
-    public async Task CanCallCreateProducerInvoiceTonnageWithNoProducers()
+    public async Task Should_throw_when_no_producers()
     {
         // Arrange
+        var runContext = TestDataHelper.CalculatorRun2025;
         var calcResult = new CalcResult
         {
             CalcResultScaledupProducers = new CalcResultScaledupProducers(){
@@ -62,8 +62,7 @@ public class ProducerInvoiceNetTonnageServiceTests : TestsFor<ProducerInvoiceNet
             },
         };
 
-        // Act
-        var result = await testSubject.CreateProducerInvoiceNetTonnage(calcResult);
-        Assert.IsFalse(result);
+        // Act & Assert
+        await Should.ThrowAsync<RunProcessingException>(testSubject.CreateProducerInvoiceNetTonnage(runContext, calcResult));
     }
 }
