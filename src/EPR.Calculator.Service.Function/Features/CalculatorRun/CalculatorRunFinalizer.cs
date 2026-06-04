@@ -1,4 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Enums;
@@ -40,7 +40,7 @@ public class CalculatorRunFinalizer(
         try
         {
             await billingInstructionService.CreateBillingInstructions(runContext, calcResult);
-            await producerInvoiceNetTonnageService.CreateProducerInvoiceNetTonnage(calcResult);
+            await producerInvoiceNetTonnageService.CreateProducerInvoiceNetTonnage(runContext, calcResult);
             await SaveExportMetadata(exportResult, cancellationToken);
             await SaveCompletedRunStatus(runContext, cancellationToken);
 
