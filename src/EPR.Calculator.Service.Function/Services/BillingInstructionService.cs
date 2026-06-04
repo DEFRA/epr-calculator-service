@@ -1,7 +1,9 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.Exceptions;
 using EPR.Calculator.Service.Function.Features.BillingRun.Constants;
+using EPR.Calculator.Service.Function.Features.CalculatorRun.Contexts;
 using EPR.Calculator.Service.Function.Logging;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
@@ -10,7 +12,7 @@ namespace EPR.Calculator.Service.Function.Services;
 
 public interface IBillingInstructionService
 {
-    public Task<bool> CreateBillingInstructions(CalcResult calcResult);
+    Task CreateBillingInstructions(CalculatorRunContext runContext, CalcResult calcResult);
 }
 
 public class BillingInstructionService(
@@ -19,7 +21,7 @@ public class BillingInstructionService(
     ILogger<BillingInstructionService> logger)
     : IBillingInstructionService
 {
-    public Task<bool> CreateBillingInstructions(CalcResult calcResult) =>
+    public Task CreateBillingInstructions(CalculatorRunContext runContext, CalcResult calcResult) =>
         logger.LogDuration(async () =>
         {
             try
@@ -27,20 +29,15 @@ public class BillingInstructionService(
                 var billingInstructions = GetBillingInstructions(calcResult);
 
                 if (billingInstructions.Count == 0)
-                {
-                    logger.LogError("No billing instructions generated");
-                    return false;
-                }
+                    throw new RunProcessingException(runContext, "No billing instructions generated");
 
                 await bulkOps.BulkInsertAsync(dbContext, billingInstructions);
 
                 logger.LogInformation("Inserted {BillingInstructionsCount} billing instructions", billingInstructions.Count);
-                return true;
             }
             catch (Exception exception)
             {
-                logger.LogError(exception, "Error occurred while populating the billing instructions");
-                return false;
+                throw new RunProcessingException(runContext, "Error occurred while generating billing instructions, see inner exception for details.", exception);
             }
         });
 
