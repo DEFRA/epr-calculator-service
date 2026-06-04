@@ -261,35 +261,47 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
             {
                 ProducerId = 1,
                 ScaledupProducerTonnageByMaterial = dictionary,
+                Level = "1",
+                SubmissionPeriodCode = "2025-P2"
             });
             runProducerMaterialDetails.Add(new CalcResultScaledupProducer
             {
                 ProducerId = 1,
                 SubsidiaryId = "Sub1",
                 ScaledupProducerTonnageByMaterial = dictionary,
+                Level = "2",
+                SubmissionPeriodCode = "2025-P2"
             });
             runProducerMaterialDetails.Add(new CalcResultScaledupProducer
             {
                 ProducerId = 1,
                 SubsidiaryId = "Sub2",
                 ScaledupProducerTonnageByMaterial = dictionary,
+                Level = "2",
+                SubmissionPeriodCode = "2025-P2"
             });
             runProducerMaterialDetails.Add(new CalcResultScaledupProducer
             {
                 ProducerId = 2,
                 ScaledupProducerTonnageByMaterial = dictionary,
+                Level = "1",
+                SubmissionPeriodCode = "2025-P2"
             });
             runProducerMaterialDetails.Add(new CalcResultScaledupProducer
             {
                 ProducerId = 2,
                 SubsidiaryId = "Sub3",
                 ScaledupProducerTonnageByMaterial = dictionary,
+                Level = "2",
+                SubmissionPeriodCode = "2025-P2"
             });
             runProducerMaterialDetails.Add(new CalcResultScaledupProducer
             {
                 ProducerId = 2,
                 SubsidiaryId = "Sub4",
                 ScaledupProducerTonnageByMaterial = dictionary,
+                Level = "2",
+                SubmissionPeriodCode = "2025-P2"
             });
 
             List<MaterialDetail> materialDetails = [new() { Id = 1, Code = "AL", Name = "Aluminium" }];

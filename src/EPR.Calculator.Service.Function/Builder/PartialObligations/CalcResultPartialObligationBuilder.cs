@@ -154,12 +154,12 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
             bool applyModulation)
         {
             CalcResultPartialObligationTonnage ToTonnage(IEnumerable<ProducerReportedMaterial> mats, string materialCode)
-             {
+            {
                 var isGlass = materialCode == MaterialCodes.Glass;
                 var matList = mats.ToList();
-                decimal hh, pb, scaledHh, scaledPb;
-                decimal? hdc = null, scaledHdc = null;
-                RAMTonnage? hhRam = null, pbRam = null, hdcRam = null, scaledHhRam = null, scaledPbRam = null, scaledHdcRam = null;
+                decimal hh, pb;
+                decimal? hdc = null;
+                RAMTonnage? hhRam = null, pbRam = null, hdcRam = null;
 
                 if(applyModulation)
                 {
@@ -172,46 +172,27 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
                     {
                         hdcRam = RAMTonnage.ToRAMTonnage(PackagingTypes.HouseholdDrinksContainers, matList);
                         hdc = hdcRam.TotalRamTonnage();
-                        scaledHdcRam = ToPartialRam(hdcRam, partialAmount);
-                        scaledHdc = scaledHdcRam.TotalRamTonnage();
                     }
-
-                    scaledHhRam = ToPartialRam(hhRam, partialAmount);
-                    scaledHh = scaledHhRam.TotalRamTonnage();
-                    scaledPbRam = ToPartialRam(pbRam, partialAmount);
-                    scaledPb = scaledPbRam.TotalRamTonnage();
                 }
                 else
                 {
                     hh = RAMTonnage.GetReportedTonnage(matList, PackagingTypes.Household, rm => rm.PackagingTonnage);
                     pb = RAMTonnage.GetReportedTonnage(matList, PackagingTypes.PublicBin, rm => rm.PackagingTonnage);
                     hdc = isGlass ? RAMTonnage.GetReportedTonnage(matList, PackagingTypes.HouseholdDrinksContainers, rm => rm.PackagingTonnage) : null;
-                    scaledHh = Math.Round(hh * partialAmount, 3);
-                    scaledPb = Math.Round(pb * partialAmount, 3);
-                    scaledHdc = isGlass ? Math.Round(hdc!.Value * partialAmount, 3) : null;
                 }
 
                 var smcw = RAMTonnage.GetReportedTonnage(matList, PackagingTypes.ConsumerWaste, rm => rm.PackagingTonnage);
-                var scaledSmcw = Math.Round(smcw * partialAmount, 3);
 
                 return new CalcResultPartialObligationTonnage
                 {
+                    ObligatedFactor                            = partialAmount,
                     HouseholdTonnage                           = hh,
                     HouseholdRAMTonnage                        = hhRam,
                     PublicBinTonnage                           = pb,
                     PublicBinRAMTonnage                        = pbRam,
                     HouseholdDrinksContainersTonnage           = hdc,
                     HouseholdDrinksContainersRAMTonnage        = hdcRam,
-                    TotalTonnage                               = hh + pb + (hdc ?? 0),
-                    SelfManagedConsumerWasteTonnage            = smcw,
-                    PartialHouseholdTonnage                    = scaledHh,
-                    PartialHouseholdRAMTonnage                 = scaledHhRam,
-                    PartialPublicBinTonnage                    = scaledPb,
-                    PartialPublicBinRAMTonnage                 = scaledPbRam,
-                    PartialHouseholdDrinksContainersTonnage    = scaledHdc,
-                    PartialHouseholdDrinksContainersRAMTonnage = scaledHdcRam,
-                    PartialTotalTonnage                        = scaledHh + scaledPb + (scaledHdc ?? 0),
-                    PartialSelfManagedConsumerWasteTonnage     = scaledSmcw
+                    SelfManagedConsumerWasteTonnage            = smcw
                 };
             }
 
@@ -224,45 +205,38 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
 
             return materials.ToDictionary(
                 m => m.Code,
-                m => byMaterialCode.TryGetValue(m.Code, out var val) ? val : EmptyPartialTonnage(applyModulation, m.Code)
+                m => byMaterialCode.TryGetValue(m.Code, out var val) ? val : EmptyPartialTonnage(applyModulation, m.Code, partialAmount)
             );
         }
 
-        private static CalcResultPartialObligationTonnage EmptyPartialTonnage(bool applyModulation, string materialCode)
+        private static CalcResultPartialObligationTonnage EmptyPartialTonnage(bool applyModulation, string materialCode, decimal partialAmount)
         {
             var isGlass = materialCode == MaterialCodes.Glass;
             if (applyModulation)
             {
                 return new CalcResultPartialObligationTonnage()
                 {
+                    ObligatedFactor                            = partialAmount,
+                    HouseholdTonnage                           = 0m,
                     HouseholdRAMTonnage                        = new RAMTonnage(),
+                    PublicBinTonnage                           = 0m,
                     PublicBinRAMTonnage                        = new RAMTonnage(),
                     HouseholdDrinksContainersTonnage           = isGlass ? 0m : null,
                     HouseholdDrinksContainersRAMTonnage        = isGlass ? new RAMTonnage() : null,
-                    PartialHouseholdRAMTonnage                 = new RAMTonnage(),
-                    PartialPublicBinRAMTonnage                 = new RAMTonnage(),
-                    PartialHouseholdDrinksContainersTonnage    = isGlass ? 0m : null,
-                    PartialHouseholdDrinksContainersRAMTonnage = isGlass ? new RAMTonnage() : null,
+                    SelfManagedConsumerWasteTonnage            = 0m
+                    
                 };
             } else
             {
                 return new CalcResultPartialObligationTonnage()
                 {
+                    ObligatedFactor                         = partialAmount,
+                    HouseholdTonnage                        = 0m,
+                    PublicBinTonnage                        = 0m,
                     HouseholdDrinksContainersTonnage        = isGlass ? 0m : null,
-                    PartialHouseholdDrinksContainersTonnage = isGlass ? 0m : null
+                    SelfManagedConsumerWasteTonnage         = 0m
                 };
             }
-        }
-
-        private static RAMTonnage ToPartialRam(RAMTonnage ram, decimal partialAmount) {
-            return new RAMTonnage {
-                RedTonnage          = Math.Round(ram.RedTonnage * partialAmount, 3),
-                AmberTonnage        = Math.Round(ram.AmberTonnage * partialAmount, 3),
-                GreenTonnage        = Math.Round(ram.GreenTonnage * partialAmount, 3),
-                RedMedicalTonnage   = Math.Round(ram.RedMedicalTonnage * partialAmount, 3),
-                AmberMedicalTonnage = Math.Round(ram.AmberMedicalTonnage * partialAmount, 3),
-                GreenMedicalTonnage = Math.Round(ram.GreenMedicalTonnage * partialAmount, 3),
-            };
         }
     }
 }

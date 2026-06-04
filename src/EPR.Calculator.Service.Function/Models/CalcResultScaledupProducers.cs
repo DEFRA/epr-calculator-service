@@ -2,6 +2,6 @@
 {
     public class CalcResultScaledupProducers
     {
-        public ImmutableList<CalcResultScaledupProducer>? ScaledupProducers { get; set; }
+        public required ImmutableList<CalcResultScaledupProducer> ScaledupProducers { get; set; }
     }
 }

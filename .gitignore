@@ -371,6 +371,7 @@ local.settings.json
 .idea
 .DS_Store
 .vscode
+*.lscache
 
 .claude
 

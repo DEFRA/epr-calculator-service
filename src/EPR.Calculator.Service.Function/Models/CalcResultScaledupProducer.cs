@@ -2,7 +2,7 @@
 {
     public record ScaledupPomEntry(
         int MaterialId,
-        string? PackagingType,
+        string PackagingType,
         decimal Tonnage,
         decimal ScaledTonnage
     );
@@ -17,11 +17,11 @@
 
         public string? TradingName { get; set; }
 
-        public string? Level { get; set; }
+        public required string Level { get; set; }
 
         public bool IsSubtotalRow { get; set; }
 
-        public string? SubmissionPeriodCode { get; set; }
+        public required string SubmissionPeriodCode { get; set; }
 
         public int DaysInSubmissionPeriod { get; set; }
 

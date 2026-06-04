@@ -20,21 +20,28 @@ public class CalcResultSummaryCommsCostTwoATests
         material = GetMaterial();
         producers = GetProducers();
 
-        calcResult = new CalcResult
-        {
-            CalcResultScaledupProducers = new CalcResultScaledupProducers(),
-            CalcResultPartialObligations = new CalcResultPartialObligations(),
-            CalcResultParameterOtherCost = TestDataHelper.GetCalcResultParameterOtherCost(),
-            CalcResultDetail = TestDataHelper.GetCalcResultDetail(),
-            CalcResultLaDisposalCostData = TestDataHelper.GetCalcResultLaDisposalCostData(),
-            CalcResultLapcapData = TestDataHelper.GetCalcResultLapcapData(),
-            CalcResultOnePlusFourApportionment = TestDataHelper.GetCalcResultOnePlusFourApportionment(),
-            CalcResultSummary = TestDataHelper.GetCalcResultSummary(),
-            CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
-            CalcResultLateReportingTonnageData = GetCalcResultLateReportingTonnage(),
-            CalcResultProjectedProducers = new CalcResultProjectedProducers()
-        };
-    }
+            calcResult = new CalcResult
+            {
+                CalcResultScaledupProducers = new CalcResultScaledupProducers(){
+                    ScaledupProducers = ImmutableList<CalcResultScaledupProducer>.Empty
+                },
+                CalcResultPartialObligations = new CalcResultPartialObligations(){
+                    PartialObligations = ImmutableList<CalcResultPartialObligation>.Empty,
+                },
+                CalcResultParameterOtherCost = TestDataHelper.GetCalcResultParameterOtherCost(),
+                CalcResultDetail = TestDataHelper.GetCalcResultDetail(),
+                CalcResultLaDisposalCostData = TestDataHelper.GetCalcResultLaDisposalCostData(),
+                CalcResultLapcapData = TestDataHelper.GetCalcResultLapcapData(),
+                CalcResultOnePlusFourApportionment = TestDataHelper.GetCalcResultOnePlusFourApportionment(),
+                CalcResultSummary = TestDataHelper.GetCalcResultSummary(),
+                CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
+                CalcResultLateReportingTonnageData = this.GetCalcResultLateReportingTonnage(),
+                CalcResultProjectedProducers = new CalcResultProjectedProducers(){
+                    H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
+                    H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty,
+                },
+            };
+        }
 
     private Fixture Fixture { get; } = new();
 

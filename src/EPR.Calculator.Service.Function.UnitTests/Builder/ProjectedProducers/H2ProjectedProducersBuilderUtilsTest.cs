@@ -76,7 +76,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             Assert.AreEqual(2, prod11Mats.Count());
             Assert.AreEqual(expProd11MatAl, prod11Al.HouseholdRAMTonnage);
             Assert.AreEqual(expProd11AlDefaultRed, prod11Al.HouseholdTonnageWithoutRAM);
-            Assert.AreEqual(expProd11AlTotalTonnage, prod11Al.TotalTonnage);
+            Assert.AreEqual(expProd11AlTotalTonnage, prod11Al.TotalTonnage());
             Assert.AreEqual(expProd11MatAl, prod11Al.ProjectedHouseholdRAMTonnage);
 
             var prod11Sub22 = result.FirstOrDefault(p => p.ProducerId == 11 && p.SubsidiaryId == "22");
@@ -94,7 +94,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             Assert.AreEqual(2, prod11Sub22Mats.Count());
             Assert.AreEqual(expProd11Sub22HDC, prod11Sub22Glass.HouseholdDrinksContainerRAMTonnage);
             Assert.AreEqual(expProd11Sub22HDCDefaultRed, prod11Sub22Glass.HouseholdDrinksContainerTonnageWithoutRAM);
-            Assert.AreEqual(expProd11Sub22HDCTotalTonnage, prod11Sub22Glass.TotalTonnage);
+            Assert.AreEqual(expProd11Sub22HDCTotalTonnage, prod11Sub22Glass.TotalTonnage());
             Assert.AreEqual(expProd11Sub22HDC with { RedTonnage = 500 }, prod11Sub22Glass.ProjectedHouseholdDrinksContainerRAMTonnage);
         }
 
@@ -116,7 +116,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                             PublicBinRAMTonnage = new RAMTonnage { RedTonnage = 0, AmberTonnage = 100, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
                             HouseholdTonnageWithoutRAM = 0,
                             PublicBinTonnageWithoutRAM = 100,
-                            TotalTonnage = 300,
                             ProjectedHouseholdTonnage = 100,
                             ProjectedHouseholdRAMTonnage = new RAMTonnage { RedTonnage = 100, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
                             ProjectedPublicBinTonnage = 200,
@@ -137,7 +136,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                             PublicBinRAMTonnage = new RAMTonnage { RedTonnage = 0, AmberTonnage = 100, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
                             HouseholdTonnageWithoutRAM = 0,
                             PublicBinTonnageWithoutRAM = 100,
-                            TotalTonnage = 300,
                             ProjectedHouseholdTonnage = 100,
                             ProjectedHouseholdRAMTonnage = new RAMTonnage { RedTonnage = 100, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
                             ProjectedPublicBinTonnage = 200,
@@ -153,7 +151,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 PublicBinRAMTonnage = new RAMTonnage { RedTonnage = 0, AmberTonnage = 200, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
                 HouseholdTonnageWithoutRAM = 0,
                 PublicBinTonnageWithoutRAM = 200,
-                TotalTonnage = 600,
                 ProjectedHouseholdTonnage = 200,
                 ProjectedPublicBinTonnage = 400,
                 ProjectedHouseholdRAMTonnage = new RAMTonnage { RedTonnage = 200, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },

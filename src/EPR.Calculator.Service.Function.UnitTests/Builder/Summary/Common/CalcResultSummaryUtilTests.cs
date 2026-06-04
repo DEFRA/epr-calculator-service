@@ -20,8 +20,12 @@ public class CalcResultSummaryUtilTests
     {
         calcResult = new CalcResult
         {
-            CalcResultScaledupProducers = new CalcResultScaledupProducers(),
-            CalcResultPartialObligations = new CalcResultPartialObligations(),
+            CalcResultScaledupProducers = new CalcResultScaledupProducers(){
+                    ScaledupProducers = ImmutableList<CalcResultScaledupProducer>.Empty
+                },
+                CalcResultPartialObligations = new CalcResultPartialObligations(){
+                    PartialObligations = ImmutableList<CalcResultPartialObligation>.Empty,
+                },
             CalcResultParameterOtherCost = TestDataHelper.GetCalcResultParameterOtherCost(),
             CalcResultDetail = TestDataHelper.GetCalcResultDetail(),
             CalcResultLaDisposalCostData = TestDataHelper.GetCalcResultLaDisposalCostData(),
@@ -30,7 +34,10 @@ public class CalcResultSummaryUtilTests
             CalcResultSummary = TestDataHelper.GetCalcResultSummary(),
             CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
             CalcResultLateReportingTonnageData = GetCalcResultLateReportingTonnage(),
-            CalcResultProjectedProducers = new CalcResultProjectedProducers()
+            CalcResultProjectedProducers = new CalcResultProjectedProducers(){
+                H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
+                H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty,
+            }
         };
     }
 

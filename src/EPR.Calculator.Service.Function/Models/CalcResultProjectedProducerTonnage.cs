@@ -32,7 +32,9 @@
         public required RAMTonnage ProjectedPublicBinRAMTonnage { get; init; }
         public decimal? ProjectedHouseholdDrinksContainerTonnage { get; init; }
         public RAMTonnage? ProjectedHouseholdDrinksContainerRAMTonnage { get; init; }
-        public required decimal TotalTonnage { get; init; }
+        public decimal TotalTonnage() {
+            return HouseholdTonnage + PublicBinTonnage + (HouseholdDrinksContainerTonnage ?? 0);
+        }
 
         private decimal GetTotalProjectedRamTonnage(Func<RAMTonnage, decimal> getTonnage)
         {
