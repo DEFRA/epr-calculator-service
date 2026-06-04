@@ -657,6 +657,28 @@ public static partial class TestDataHelper
                 new CalcResultSummaryProducerDisposalFeesByMaterial
                 {
                     HouseholdPackagingWasteTonnage = 1000,
+                    HouseholdPackagingWasteTonnageRagRating = applyModulation
+                        ? new Dictionary<RagRating, decimal>
+                            {
+                                [RagRating.Red]          = 11,
+                                [RagRating.Amber]        = 12,
+                                [RagRating.Green]        = 13,
+                                [RagRating.RedMedical]   = 14,
+                                [RagRating.AmberMedical] = 15,
+                                [RagRating.GreenMedical] = 16
+                            }
+                        : new(),
+                    PublicBinTonnageRagRating = applyModulation
+                        ? new Dictionary<RagRating, decimal>
+                            {
+                                [RagRating.Red]          = 21,
+                                [RagRating.Amber]        = 22,
+                                [RagRating.Green]        = 23,
+                                [RagRating.RedMedical]   = 24,
+                                [RagRating.AmberMedical] = 25,
+                                [RagRating.GreenMedical] = 26
+                            }
+                        : new(),
                     SelfManagedConsumerWasteTonnage = 90,
                     TotalReportedTonnageRagRating = applyModulation
                         ? new Dictionary<RagRating, decimal>

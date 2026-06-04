@@ -2,19 +2,6 @@
 {
     public class CalcResultSummary
     {
-        public CalcResultSummaryHeader? ResultSummaryHeader { get; set; }
-
-        public CalcResultSummaryHeader? NotesHeader { get; set; }
-
-        public IEnumerable<CalcResultSummaryHeader> ProducerDisposalFeesHeaders { get; set; }
-            = [];
-
-        public IEnumerable<CalcResultSummaryHeader> MaterialBreakdownHeaders { get; set; }
-            = [];
-
-        public IEnumerable<CalcResultSummaryHeader> ColumnHeaders { get; set; }
-            = [];
-
         //Section-(1) & (2a)
         public decimal TotalFeeforLADisposalCostswoBadDebtprovision1 { get; set; }
 

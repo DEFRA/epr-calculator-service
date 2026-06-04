@@ -4,21 +4,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C
 {
     public static class OnePlus2A2B2CProducer
     {
-        public static ImmutableList<CalcResultSummaryHeader> GetHeaders()
-        {
-            return [
-                new CalcResultSummaryHeader { Name = OnePlus2A2B2CHeaders.ProducerTotalWithBadDebtProvision },
-                new CalcResultSummaryHeader { Name = OnePlus2A2B2CHeaders.ProducerPercentageOfOverallProducerCost }
-            ];
-        }
-
-        public static ImmutableList<CalcResultSummaryHeader> GetSummaryHeaders(int columnIndex)
-        {
-            return [
-                new CalcResultSummaryHeader { Name = OnePlus2A2B2CHeaders.TotalWithBadDebtProvision , ColumnIndex = columnIndex }
-            ];
-        }
-
         public static void SetValues(CalcResultSummary result)
         {
             result.TotalOnePlus2A2B2CFeeWithBadDebtProvision = GetHeaderTotalFeeWithBadDebtProvision(result);

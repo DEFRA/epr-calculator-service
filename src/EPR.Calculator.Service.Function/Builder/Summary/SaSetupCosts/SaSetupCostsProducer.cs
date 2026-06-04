@@ -6,27 +6,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.SaSetupCosts
 {
     public static class SaSetupCostsProducer
     {
-        public static ImmutableList<CalcResultSummaryHeader> GetHeaders()
-        {
-            return [
-                new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.ProducerOneOffFeeWithoutBadDebtProvision },
-                new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.BadDebtProvision },
-                new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.ProducerOneOffFeeWithBadDebtProvision },
-                new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.EnglandTotalWithBadDebtProvision },
-                new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.WalesTotalWithBadDebtProvision },
-                new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.ScotlandTotalWithBadDebtProvision },
-                new CalcResultSummaryHeader { Name = SaSetupCostsHeaders.NorthernIrelandTotalWithBadDebtProvision }
-            ];
-        }
-        public static ImmutableList<CalcResultSummaryHeader> GetSummaryHeaders(int columnIndex)
-        {
-            return [
-                new CalcResultSummaryHeader { Name = $"{SaSetupCostsHeaders.OneOffFeeSetupCostsWithoutBadDebtProvisionTitle}", ColumnIndex = columnIndex },
-                new CalcResultSummaryHeader { Name = $"{SaSetupCostsHeaders.BadDebtProvisionTitle}", ColumnIndex = columnIndex + 1 },
-                new CalcResultSummaryHeader { Name = $"{SaSetupCostsHeaders.OneOffFeeSetupCostsWithBadDebtProvisionTitle}", ColumnIndex = columnIndex + 2 }
-            ];
-        }
-
         public static void GetProducerSetUpCosts(CalcResult calcResult, CalcResultSummary summary)
         {
             summary.SaSetupCostsTitleSection5 = calcResult.CalcResultParameterOtherCost.SchemeSetupCost.Total;

@@ -11,6 +11,7 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.OtherCosts;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 using EPR.Calculator.Service.Function.Features.CalculatorRun.Contexts;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
@@ -25,49 +26,49 @@ public interface ICalcResultsExporter
 [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
 public class CalcResultsExporter(
     IMaterialService materialService,
-    ICalcResultLateReportingExporter lateReporting,
-    ICalcResultDetailExporter resultDetail,
-    ICalcResultOnePlusFourApportionmentExporter onePlusFourApportionment,
-    ICalcResultLaDisposalCostExporter laDisposalCost,
-    ICalcResultModulationExporter modulation,
-    ICalcResultScaledupProducersExporter scaledUpProducers,
-    ICalcResultPartialObligationsExporter partialObligations,
-    ICalcResultProjectedProducersExporter projectedProducers,
-    ICalcResultLapcapDataExporter lapcapData,
-    ICalcResultParameterOtherCostExporter parameterOtherCosts,
-    ICalcResultCommsCostExporter commsCost,
-    ICalcResultSummaryExporter summary,
-    ICalcResultCancelledProducersExporter cancelledProducers,
-    ICalcResultErrorReportExporter calcResultErrorReport)
-    : ICalcResultsExporter
+    ICalcResultLateReportingExporter lateReportingExporter,
+    ICalcResultDetailExporter resultDetailExporter,
+    ICalcResultOnePlusFourApportionmentExporter onePlusFourApportionmentExporter,
+    ICalcResultLaDisposalCostExporter laDisposalCostExporter,
+    ICalcResultModulationExporter modulationExporter,
+    ICalcResultScaledupProducersExporter scaledUpProducersExporter,
+    ICalcResultPartialObligationsExporter partialObligationsExporter,
+    ICalcResultProjectedProducersExporter projectedProducersExporter,
+    ICalcResultLapcapDataExporter lapcapDataExporter,
+    ICalcResultParameterOtherCostExporter parameterOtherCostsExporter,
+    ICalcResultCommsCostExporter commsCostExporter,
+    ICalcResultSummaryExporter summaryExporter,
+    ICalcResultCancelledProducersExporter cancelledProducersExporter,
+    ICalcResultErrorReportExporter calcResultErrorReportExporter
+)  : ICalcResultsExporter
 {
     public async Task<string> Export(CalculatorRunContext runContext, CalcResult calcResult)
     {
         var materials = await materialService.GetMaterials();
         var csvContent = new StringBuilder();
 
-        resultDetail.Export(calcResult.CalcResultDetail, csvContent);
-        lapcapData.Export(calcResult.CalcResultLapcapData, materials, csvContent);
-        lateReporting.Export(calcResult.CalcResultLateReportingTonnageData, materials, csvContent);
-        parameterOtherCosts.Export(calcResult.CalcResultParameterOtherCost, csvContent);
-        onePlusFourApportionment.Export(calcResult.CalcResultOnePlusFourApportionment, csvContent);
-        commsCost.Export(calcResult.CalcResultCommsCostReportDetail, materials, csvContent);
-        laDisposalCost.Export(runContext, calcResult.CalcResultLaDisposalCostData, materials, csvContent);
+        resultDetailExporter.Export(calcResult.CalcResultDetail, csvContent);
+        lapcapDataExporter.Export(calcResult.CalcResultLapcapData, materials, csvContent);
+        lateReportingExporter.Export(calcResult.CalcResultLateReportingTonnageData, materials, csvContent);
+        parameterOtherCostsExporter.Export(calcResult.CalcResultParameterOtherCost, csvContent);
+        onePlusFourApportionmentExporter.Export(calcResult.CalcResultOnePlusFourApportionment, csvContent);
+        commsCostExporter.Export(calcResult.CalcResultCommsCostReportDetail, materials, csvContent);
+        laDisposalCostExporter.Export(runContext, calcResult.CalcResultLaDisposalCostData, materials, csvContent);
 
         if (calcResult.Smcw is not null && calcResult.CalcResultModulation is not null) {
-            modulation.Export(calcResult.CalcResultLaDisposalCostData, calcResult.Smcw, calcResult.CalcResultModulation, csvContent);
+            modulationExporter.Export(calcResult.CalcResultLaDisposalCostData, calcResult.Smcw, calcResult.CalcResultModulation, csvContent);
         }
 
-        cancelledProducers.Export(calcResult.CalcResultCancelledProducers, csvContent);
+        cancelledProducersExporter.Export(calcResult.CalcResultCancelledProducers, csvContent);
 
         if (runContext.RequiresModulation)
-            projectedProducers.Export(calcResult.CalcResultProjectedProducers, materials, csvContent);
+            projectedProducersExporter.Export(calcResult.CalcResultProjectedProducers, materials, csvContent);
         else
-            scaledUpProducers.Export(calcResult.CalcResultScaledupProducers, materials, showTotal : true, csvContent);
+            scaledUpProducersExporter.Export(calcResult.CalcResultScaledupProducers, materials, showTotal : true, csvContent);
 
-        partialObligations.Export(runContext, calcResult.CalcResultPartialObligations, materials, csvContent);
-        summary.Export(runContext, calcResult.CalcResultSummary, csvContent);
-        calcResultErrorReport.Export(calcResult.CalcResultErrorReports, csvContent);
+        partialObligationsExporter.Export(runContext, calcResult.CalcResultPartialObligations, materials, csvContent);
+        summaryExporter.Export(runContext, calcResult.CalcResultSummary, materials, csvContent);
+        calcResultErrorReportExporter.Export(calcResult.CalcResultErrorReports, csvContent);
 
         return csvContent.ToString();
     }

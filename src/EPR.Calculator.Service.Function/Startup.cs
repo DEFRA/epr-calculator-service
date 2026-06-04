@@ -51,6 +51,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Serilog;
 using Serilog.Filters;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 

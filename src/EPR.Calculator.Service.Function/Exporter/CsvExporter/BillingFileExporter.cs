@@ -12,6 +12,7 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.RejectedProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 using EPR.Calculator.Service.Function.Features.BillingRun.Contexts;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
@@ -27,65 +28,65 @@ public interface IBillingFileExporter
 [SuppressMessage("Constructor has 8 parameters, which is greater than the 7 authorized.", "S107", Justification = "This is suppressed for now and will be refactored later")]
 public class BillingFileExporter(
     IMaterialService materialService,
-    ICalcResultLateReportingExporter lateReporting,
-    ICalcResultDetailExporter resultDetail,
-    ICalcResultOnePlusFourApportionmentExporter onePlusFourApportionment,
-    ICalcResultLaDisposalCostExporter laDisposalCost,
-    ICalcResultModulationExporter modulation,
-    ICalcResultScaledupProducersExporter scaledUpProducers,
-    ICalcResultPartialObligationsExporter partialObligations,
-    ICalcResultProjectedProducersExporter projectedProducers,
-    ICalcResultLapcapDataExporter lapcapData,
-    ICalcResultParameterOtherCostExporter parameterOtherCost,
-    ICalcResultCommsCostExporter commsCost,
-    ICalcResultSummaryExporter summary,
-    ICalcResultCancelledProducersExporter cancelledProducers,
-    ICalcResultRejectedProducersExporter rejectedProducers)
-    : IBillingFileExporter
+    ICalcResultLateReportingExporter lateReportingExporter,
+    ICalcResultDetailExporter resultDetailExporter,
+    ICalcResultOnePlusFourApportionmentExporter onePlusFourApportionmentExporter,
+    ICalcResultLaDisposalCostExporter laDisposalCostExporter,
+    ICalcResultModulationExporter modulationExporter,
+    ICalcResultScaledupProducersExporter scaledUpProducersExporter,
+    ICalcResultPartialObligationsExporter partialObligationsExporter,
+    ICalcResultProjectedProducersExporter projectedProducersExporter,
+    ICalcResultLapcapDataExporter lapcapDataExporter,
+    ICalcResultParameterOtherCostExporter parameterOtherCostExporter,
+    ICalcResultCommsCostExporter commsCostExporter,
+    ICalcResultSummaryExporter summaryExporter,
+    ICalcResultCancelledProducersExporter cancelledProducersExporter,
+    ICalcResultRejectedProducersExporter rejectedProducersExporter
+)  : IBillingFileExporter
 {
     public async Task<string> Export(BillingRunContext runContext, CalcResult calcResult)
     {
         var materials = await materialService.GetMaterials();
         var csvContent = new StringBuilder();
-        resultDetail.Export(calcResult.CalcResultDetail, csvContent);
+        resultDetailExporter.Export(calcResult.CalcResultDetail, csvContent);
 
-        lapcapData.Export(calcResult.CalcResultLapcapData, materials, csvContent);
+        lapcapDataExporter.Export(calcResult.CalcResultLapcapData, materials, csvContent);
 
-        lateReporting.Export(calcResult.CalcResultLateReportingTonnageData, materials, csvContent);
+        lateReportingExporter.Export(calcResult.CalcResultLateReportingTonnageData, materials, csvContent);
 
-        parameterOtherCost.Export(calcResult.CalcResultParameterOtherCost, csvContent);
+        parameterOtherCostExporter.Export(calcResult.CalcResultParameterOtherCost, csvContent);
 
-        onePlusFourApportionment.Export(calcResult.CalcResultOnePlusFourApportionment, csvContent);
+        onePlusFourApportionmentExporter.Export(calcResult.CalcResultOnePlusFourApportionment, csvContent);
 
-        commsCost.Export(calcResult.CalcResultCommsCostReportDetail, materials, csvContent);
+        commsCostExporter.Export(calcResult.CalcResultCommsCostReportDetail, materials, csvContent);
 
-        laDisposalCost.Export(runContext, calcResult.CalcResultLaDisposalCostData, materials, csvContent);
+        laDisposalCostExporter.Export(runContext, calcResult.CalcResultLaDisposalCostData, materials, csvContent);
 
         if (calcResult.Smcw is not null && calcResult.CalcResultModulation is not null)
-            modulation.Export(calcResult.CalcResultLaDisposalCostData, calcResult.Smcw, calcResult.CalcResultModulation, csvContent);
+            modulationExporter.Export(calcResult.CalcResultLaDisposalCostData, calcResult.Smcw, calcResult.CalcResultModulation, csvContent);
 
-        cancelledProducers.Export(calcResult.CalcResultCancelledProducers, csvContent);
+        cancelledProducersExporter.Export(calcResult.CalcResultCancelledProducers, csvContent);
 
         if (runContext.RequiresModulation)
         {
             var accepted = GetProjectedProducerForExport(calcResult.CalcResultProjectedProducers, runContext.AcceptedProducerIds);
-            projectedProducers.Export(accepted, materials, csvContent);
+            projectedProducersExporter.Export(accepted, materials, csvContent);
         }
         else
         {
             var acceptedProducers = GetScaledUpProducersForExport(calcResult.CalcResultScaledupProducers, runContext.AcceptedProducerIds);
-            scaledUpProducers.Export(acceptedProducers, materials, false, csvContent);
+            scaledUpProducersExporter.Export(acceptedProducers, materials, false, csvContent);
         }
 
-        partialObligations.Export(runContext, GetPartialObligationsForExport(calcResult.CalcResultPartialObligations, runContext.AcceptedProducerIds), materials, csvContent);
+        partialObligationsExporter.Export(runContext, GetPartialObligationsForExport(calcResult.CalcResultPartialObligations, runContext.AcceptedProducerIds), materials, csvContent);
 
         var acceptedCalcResultSummary = GetAcceptedProducersCalcResults(calcResult.CalcResultSummary, runContext.AcceptedProducerIds);
 
-        summary.Export(runContext, acceptedCalcResultSummary, csvContent);
+        summaryExporter.Export(runContext, acceptedCalcResultSummary, materials, csvContent);
 
         csvContent = ResetTotals(csvContent.ToString());
 
-        rejectedProducers.Export(calcResult.CalcResultRejectedProducers, csvContent);
+        rejectedProducersExporter.Export(calcResult.CalcResultRejectedProducers, csvContent);
 
         return csvContent.ToString();
     }
@@ -97,18 +98,13 @@ public class BillingFileExporter(
             BadDebtProvisionFor1 = calcResultSummary.BadDebtProvisionFor1,
             BadDebtProvisionFor2A = calcResultSummary.BadDebtProvisionFor2A,
             BadDebtProvisionTitleSection3 = calcResultSummary.BadDebtProvisionTitleSection3,
-            ColumnHeaders = calcResultSummary.ColumnHeaders,
             CommsCostHeaderBadDebtProvisionFor2bTitle = calcResultSummary.CommsCostHeaderBadDebtProvisionFor2bTitle,
             CommsCostHeaderWithBadDebtFor2bTitle = calcResultSummary.CommsCostHeaderWithBadDebtFor2bTitle,
             CommsCostHeaderWithoutBadDebtFor2bTitle = calcResultSummary.CommsCostHeaderWithoutBadDebtFor2bTitle,
             LaDataPrepCostsBadDebtProvisionTitleSection4 = calcResultSummary.LaDataPrepCostsBadDebtProvisionTitleSection4,
             LaDataPrepCostsTitleSection4 = calcResultSummary.LaDataPrepCostsTitleSection4,
             LaDataPrepCostsWithBadDebtProvisionTitleSection4 = calcResultSummary.LaDataPrepCostsWithBadDebtProvisionTitleSection4,
-            MaterialBreakdownHeaders = calcResultSummary.MaterialBreakdownHeaders,
-            NotesHeader = calcResultSummary.NotesHeader,
             ProducerDisposalFees = GetAcceptedProducerDisposalFees(calcResultSummary.ProducerDisposalFees.ToList(), acceptedProducerIds),
-            ProducerDisposalFeesHeaders = calcResultSummary.ProducerDisposalFeesHeaders,
-            ResultSummaryHeader = calcResultSummary.ResultSummaryHeader,
             SaOperatingCostsWithTitleSection3 = calcResultSummary.SaOperatingCostsWithTitleSection3,
             SaOperatingCostsWoTitleSection3 = calcResultSummary.SaOperatingCostsWoTitleSection3,
             SaSetupCostsBadDebtProvisionTitleSection5 = calcResultSummary.SaSetupCostsBadDebtProvisionTitleSection5,

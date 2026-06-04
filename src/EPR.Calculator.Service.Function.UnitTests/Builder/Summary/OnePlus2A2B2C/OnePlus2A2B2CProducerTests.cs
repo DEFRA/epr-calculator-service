@@ -9,40 +9,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.OnePlus2A2B2
 [TestClass]
 public class OnePlus2A2B2CProducerTests
 {
-    private readonly int columnIndex = 266;
     private readonly CalcResult calcResult = TestDataHelper.GetCalcResult();
-
-    [TestMethod]
-    public void CanCallGetHeaders()
-    {
-        // Act
-        var result = OnePlus2A2B2CProducer.GetHeaders().ToList();
-
-        var expectedResult = new List<CalcResultSummaryHeader>();
-        expectedResult.AddRange([
-            new CalcResultSummaryHeader { Name = OnePlus2A2B2CHeaders.ProducerTotalWithBadDebtProvision },
-            new CalcResultSummaryHeader { Name = OnePlus2A2B2CHeaders.ProducerPercentageOfOverallProducerCost }
-        ]);
-
-        // Assert
-        Assert.AreEqual(expectedResult[0].Name, result[0].Name);
-        Assert.AreEqual(expectedResult[1].Name, result[1].Name);
-    }
-
-    [TestMethod]
-    public void CanCallGetSummaryHeaders()
-    {
-        // Act
-        var result = OnePlus2A2B2CProducer.GetSummaryHeaders(columnIndex).ToList();
-
-        var expectedResult = new List<CalcResultSummaryHeader>();
-        expectedResult.AddRange([
-            new CalcResultSummaryHeader { Name = OnePlus2A2B2CHeaders.TotalWithBadDebtProvision }
-        ]);
-
-        // Assert
-        Assert.AreEqual(expectedResult[0].Name, result[0].Name);
-    }
 
     [TestMethod]
     public void CanCallSetValues()

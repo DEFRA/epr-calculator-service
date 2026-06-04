@@ -39,52 +39,6 @@ public class BillingInstructionsProducerTests
     ];
 
     [TestMethod]
-    public void CanCallGetHeaders()
-    {
-        // Act
-        var result = BillingInstructionsProducer.GetHeaders().ToList();
-
-        var expectedResult = new List<CalcResultSummaryHeader>();
-        expectedResult.AddRange([
-            new CalcResultSummaryHeader { Name = BillingInstructionsHeader.CurrentYearInvoicedTotalToDate },
-            new CalcResultSummaryHeader { Name = BillingInstructionsHeader.TonnageChangeSinceLastInvoice },
-            new CalcResultSummaryHeader { Name = BillingInstructionsHeader.LiabilityDifference },
-            new CalcResultSummaryHeader { Name = BillingInstructionsHeader.MaterialThresholdBreached },
-            new CalcResultSummaryHeader { Name = BillingInstructionsHeader.TonnageThresholdBreached },
-            new CalcResultSummaryHeader { Name = BillingInstructionsHeader.PercentageLiabilityDifference },
-            new CalcResultSummaryHeader { Name = BillingInstructionsHeader.MaterialPercentageThresholdBreached },
-            new CalcResultSummaryHeader { Name = BillingInstructionsHeader.TonnagePercentagThresholdBreached },
-            new CalcResultSummaryHeader { Name = BillingInstructionsHeader.SuggestedBillingInstruction },
-            new CalcResultSummaryHeader { Name = BillingInstructionsHeader.SuggestedInvoiceAmount }
-        ]);
-
-        // Assert
-        Assert.AreEqual(expectedResult[0].Name, result[0].Name);
-        Assert.AreEqual(expectedResult[1].Name, result[1].Name);
-        Assert.AreEqual(expectedResult[2].Name, result[2].Name);
-        Assert.AreEqual(expectedResult[3].Name, result[3].Name);
-        Assert.AreEqual(expectedResult[4].Name, result[4].Name);
-        Assert.AreEqual(expectedResult[5].Name, result[5].Name);
-        Assert.AreEqual(expectedResult[6].Name, result[6].Name);
-    }
-
-    [TestMethod]
-    public void CanCallGetSummaryHeaders()
-    {
-        // Act
-        var result = BillingInstructionsProducer.GetSummaryHeaders(296).ToList();
-
-        var expectedResult = new List<CalcResultSummaryHeader>();
-        expectedResult.AddRange([
-            new CalcResultSummaryHeader { Name = BillingInstructionsHeader.Title, ColumnIndex = 296 }
-        ]);
-
-        // Assert
-        Assert.AreEqual(expectedResult[0].Name, result[0].Name);
-        Assert.AreEqual(expectedResult[0].ColumnIndex, result[0].ColumnIndex);
-    }
-
-    [TestMethod]
     public void CanCallSetValues()
     {
         // Act

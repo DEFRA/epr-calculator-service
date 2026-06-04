@@ -4,26 +4,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.TotalBillBreakdown
 {
     public static class TotalBillBreakdownProducer
     {
-        public static ImmutableList<CalcResultSummaryHeader> GetHeaders()
-        {
-            return [
-                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.TotalProducerBillWithoutBadDebtProvision },
-                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.BadDebtProvision },
-                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.TotalProducerBillWithBadDebtProvision },
-                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.EnglandTotalWithBadDebtProvision },
-                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.WalesTotalWithBadDebtProvision },
-                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.ScotlandTotalWithBadDebtProvision },
-                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.NorthernIrelandTotalWithBadDebtProvision }
-            ];
-        }
-
-        public static ImmutableList<CalcResultSummaryHeader> GetSummaryHeaders(int columnIndex)
-        {
-            return [
-                new CalcResultSummaryHeader { Name = TotalBillBreakdownHeaders.TotalProducerBillBreakdown, ColumnIndex = columnIndex }
-            ];
-        }
-
         public static void SetValues(CalcResultSummary result)
         {
             foreach (var fee in result.ProducerDisposalFees)

@@ -266,9 +266,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary
 
             }
 
-            // Set headers with calculated column index
-            CalcResultSummaryUtil.SetHeaders(runContext, result, materials);
-
             return result;
         }
 

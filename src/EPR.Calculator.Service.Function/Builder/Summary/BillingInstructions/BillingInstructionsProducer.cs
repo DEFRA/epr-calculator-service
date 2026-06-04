@@ -7,29 +7,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions
 {
     public static class BillingInstructionsProducer
     {
-        public static ImmutableList<CalcResultSummaryHeader> GetHeaders()
-        {
-            return [
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.CurrentYearInvoicedTotalToDate },
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.TonnageChangeSinceLastInvoice },
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.LiabilityDifference },
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.MaterialThresholdBreached },
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.TonnageThresholdBreached},
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.PercentageLiabilityDifference },
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.MaterialPercentageThresholdBreached },
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.TonnagePercentagThresholdBreached },
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.SuggestedBillingInstruction },
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.SuggestedInvoiceAmount }
-            ];
-        }
-
-        public static ImmutableList<CalcResultSummaryHeader> GetSummaryHeaders(int columnIndex)
-        {
-            return [
-                new CalcResultSummaryHeader { Name = BillingInstructionsHeader.Title, ColumnIndex = columnIndex }
-            ];
-        }
-
         public static void SetValues(CalcResultSummary result, IReadOnlyList<InvoicedProducer> ProducerInvoicedMaterialNetTonnage, IReadOnlyList<DefaultParamResultsClass> defaultParams)
         {
             decimal totalTonnage = 0;

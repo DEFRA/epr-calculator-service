@@ -44,23 +44,30 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var expected2 =
                 expected.Select(row => string.Join(",", row.Select(cell => cell == null ? "" : $"\"{cell}\""))).ToArray();
 
-            // FluentAssertions would give the clearest diff output?
-            //result.Should().Be(expected2);
-
             Assert.AreEqual(expected2.Length, actual.Length, $"CSV sizes differ\nExpected: {expected2}\nActual: {actual}");
 
             for (int i = 0; i < expected2.Length; i++)
             {
                 var expectedRow = expected2[i];
                 var actualRow = actual[i];
-                var data = $"Expected row: {expectedRow}\nActual row  : {actualRow}";
+                Assert.AreEqual(expectedRow, actualRow, $"Row {i} differs:\nExpected: {expectedRow}\nActual  : {actualRow}");
+            }
+        }
 
-                for (int j = 0; j < expectedRow.Length; j++)
-                {
-                    var exp = expectedRow[j];
-                    var act = actualRow[j];
-                    Assert.AreEqual(exp, act, $"First difference on Row {i}, index {j}: expected '{exp}' but was '{act}'.\n{data}");
-                }
+        public static void AssertSquareCsv(string?[][] expected, string[] actual, int expectedLength)
+        {
+            var expected2 =
+                expected.Select(row => string.Join(",", row.Select(cell => cell == null ? "" : $"\"{cell}\""))).ToArray();
+
+            Assert.AreEqual(expected2.Length, actual.Length, $"CSV sizes differ\nExpected: {expected2}\nActual: {actual}");
+
+            for (int i = 0; i < expected2.Length; i++)
+            {
+                var expectedRow = expected2[i];
+                Assert.IsTrue(actual[i].EndsWith(','), $"Row {i} does not end with a trailing comma:\n{actual[i]}");
+                var actualRow = actual[i][..^1];
+                Assert.AreEqual(expectedLength, actualRow.Split(",").Length);
+                Assert.AreEqual(expectedRow, actualRow, $"Row {i} differs:\nExpected: {expectedRow}\nActual  : {actualRow}");
             }
         }
     }

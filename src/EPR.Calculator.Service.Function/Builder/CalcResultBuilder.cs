@@ -29,29 +29,29 @@ public interface ICalcResultBuilder
 [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
 public class CalcResultBuilder(
     IParameterService parameterService,
-    ICalcResultLapcapDataBuilder lapcapData,
-    ICalcResultLateReportingBuilder lateReportingTonnage,
-    ICalcResultParameterOtherCostBuilder otherCosts,
-    ICalcResultOnePlusFourApportionmentBuilder onePlusFourApportionment,
-    ICalcResultCancelledProducersBuilder cancelledProducers,
-    IReportedProducerService reportedProducers,
-    ICalcResultProjectedProducersBuilder projectedProducers,
-    ICalcResultScaledupProducersBuilder scaledUpProducers,
+    ICalcResultLapcapDataBuilder lapcapDataBuilder,
+    ICalcResultLateReportingBuilder lateReportingTonnageBuilder,
+    ICalcResultParameterOtherCostBuilder otherCostsBuilder,
+    ICalcResultOnePlusFourApportionmentBuilder onePlusFourApportionmentBuilder,
+    ICalcResultCancelledProducersBuilder cancelledProducersBuilder,
+    IReportedProducerService reportedProducersService,
+    ICalcResultProjectedProducersBuilder projectedProducersBuilder,
+    ICalcResultScaledupProducersBuilder scaledUpProducersBuilder,
     ICalcResultDetailBuilder calcResultDetailBuilder,
-    ICalcResultCommsCostBuilder commsCosts,
-    ICalcRunLaDisposalCostBuilder laDisposalCosts,
-    ICalcResultPartialObligationBuilder partialObligations,
-    ICalcResultSummaryBuilder summary,
-    ICalcResultRejectedProducersBuilder rejectedProducers,
-    ICalcResultErrorReportBuilder errorReport,
+    ICalcResultCommsCostBuilder commsCostsBuilder,
+    ICalcRunLaDisposalCostBuilder laDisposalCostsBuilder,
+    ICalcResultPartialObligationBuilder partialObligationsBuilder,
+    ICalcResultSummaryBuilder summaryBuilder,
+    ICalcResultRejectedProducersBuilder rejectedProducersBuilder,
+    ICalcResultErrorReportBuilder errorReportBuilder,
     IProjectedProducersService projectedProducersService,
-    ISelfManagedConsumerWasteService selfManagedConsumerWaste,
-    ICalcResultModulationBuilder modulation,
+    ISelfManagedConsumerWasteService selfManagedConsumerWasteService,
+    ICalcResultModulationBuilder modulationBuilder,
     ICalcResultService calcResultService,
     IMaterialService materialService,
     ITelemetryClient telemetryClient,
-    ILogger<CalcResultBuilder> logger)
-    : ICalcResultBuilder
+    ILogger<CalcResultBuilder> logger
+)  : ICalcResultBuilder
 {
     public Task<CalcResult> BuildAsync(RunContext runContext) =>
         telemetryClient.TrackDuration($"{runContext.RunType}RunResultBuilder", () => BuildResult(runContext));
@@ -87,123 +87,123 @@ public class CalcResultBuilder(
         var materials = await materialService.GetMaterials();
         var defaultParams = await parameterService.GetDefaultParameters(runContext);
 
-        result.CalcResultLapcapData = await logger.LogDuration(() =>
-                lapcapData.ConstructAsync(runContext, materials),
-            nameof(lapcapData));
+        result.CalcResultLapcapData = await logger.LogDuration(
+            () => lapcapDataBuilder.ConstructAsync(runContext, materials),
+            nameof(lapcapDataBuilder));
 
-        result.CalcResultLateReportingTonnageData = await logger.LogDuration(() =>
-                lateReportingTonnage.ConstructAsync(runContext, materials),
-            nameof(lateReportingTonnage));
+        result.CalcResultLateReportingTonnageData = await logger.LogDuration(
+            () => lateReportingTonnageBuilder.ConstructAsync(runContext, materials),
+            nameof(lateReportingTonnageBuilder));
 
-        result.CalcResultParameterOtherCost = await logger.LogDuration(() =>
-                otherCosts.ConstructAsync(runContext),
-            nameof(otherCosts));
+        result.CalcResultParameterOtherCost = await logger.LogDuration(
+            () => otherCostsBuilder.ConstructAsync(runContext),
+            nameof(otherCostsBuilder));
 
-        result.CalcResultOnePlusFourApportionment = logger.LogDuration(() =>
-                onePlusFourApportionment.Construct(result),
-            nameof(onePlusFourApportionment));
+        result.CalcResultOnePlusFourApportionment = logger.LogDuration(
+            () => onePlusFourApportionmentBuilder.Construct(result),
+            nameof(onePlusFourApportionmentBuilder));
 
-        result.CalcResultCancelledProducers = await logger.LogDuration(() =>
-                cancelledProducers.ConstructAsync(runContext, materials),
-            nameof(cancelledProducers));
+        result.CalcResultCancelledProducers = await logger.LogDuration(
+            () => cancelledProducersBuilder.ConstructAsync(runContext, materials),
+            nameof(cancelledProducersBuilder));
 
         // ReSharper disable AccessToModifiedClosure - LogDuration always immediately invokes the delegate
         if (runContext.RunType == RunType.Billing)
         {
             if (runContext.RequiresModulation)
             {
-                result.CalcResultProjectedProducers.H1ProjectedProducers = (await logger.LogDuration(() =>
-                    calcResultService.ReadH1ProjectedData(runContext.RunId),
-                nameof(calcResultService.ReadH1ProjectedData))).ToImmutableList();
+                result.CalcResultProjectedProducers.H1ProjectedProducers = (await logger.LogDuration(
+                    () => calcResultService.ReadH1ProjectedData(runContext.RunId),
+                    nameof(calcResultService.ReadH1ProjectedData))).ToImmutableList();
 
-                result.CalcResultProjectedProducers.H2ProjectedProducers = (await logger.LogDuration(() =>
-                    calcResultService.ReadH2ProjectedData(runContext.RunId),
-                nameof(calcResultService.ReadH2ProjectedData))).ToImmutableList();
+                result.CalcResultProjectedProducers.H2ProjectedProducers = (await logger.LogDuration(
+                    () => calcResultService.ReadH2ProjectedData(runContext.RunId),
+                    nameof(calcResultService.ReadH2ProjectedData))).ToImmutableList();
             }
 
             if (runContext.RequiresScaling)
             {
-                result.CalcResultScaledupProducers.ScaledupProducers = (await logger.LogDuration(() =>
-                    calcResultService.ReadScaledData(runContext.RunId),
-                nameof(calcResultService.ReadScaledData))).ToImmutableList();
+                result.CalcResultScaledupProducers.ScaledupProducers = (await logger.LogDuration(
+                    () => calcResultService.ReadScaledData(runContext.RunId),
+                    nameof(calcResultService.ReadScaledData))).ToImmutableList();
             }
 
-            result.CalcResultPartialObligations.PartialObligations = (await logger.LogDuration(() =>
-                    calcResultService.ReadPartialData(runContext.RunId),
+            result.CalcResultPartialObligations.PartialObligations = (await logger.LogDuration(
+                () => calcResultService.ReadPartialData(runContext.RunId),
                 nameof(calcResultService.ReadPartialData))).ToImmutableList();
 
-            result.CalcResultRejectedProducers = await logger.LogDuration(() =>
-                    rejectedProducers.ConstructAsync(runContext),
-                nameof(rejectedProducers));
+            result.CalcResultRejectedProducers = await logger.LogDuration(
+                () => rejectedProducersBuilder.ConstructAsync(runContext),
+                nameof(rejectedProducersBuilder));
         }
         else {
-            var producers = await reportedProducers.GetProducers(runContext);
-            
+            var producers = await reportedProducersService.GetProducers(runContext);
+
             if (runContext.RequiresModulation)
             {
-                (producers, result.CalcResultProjectedProducers) = logger.LogDuration(() =>
-                        projectedProducers.Construct(runContext, materials, producers),
-                    nameof(projectedProducers));
-                
-                await logger.LogDuration(() =>
-                    calcResultService.StoreProjectedH1Data(runContext.RunId, result.CalcResultProjectedProducers.H1ProjectedProducers),
-                nameof(calcResultService.StoreProjectedH1Data));
+                (producers, result.CalcResultProjectedProducers) = logger.LogDuration(
+                    () => projectedProducersBuilder.Construct(runContext, materials, producers),
+                    nameof(projectedProducersBuilder));
 
-                await logger.LogDuration(() =>
-                    calcResultService.StoreProjectedH2Data(runContext.RunId, result.CalcResultProjectedProducers.H2ProjectedProducers),
-                nameof(calcResultService.StoreProjectedH2Data));
+                await logger.LogDuration(
+                    () => calcResultService.StoreProjectedH1Data(runContext.RunId, result.CalcResultProjectedProducers.H1ProjectedProducers),
+                    nameof(calcResultService.StoreProjectedH1Data));
+
+                await logger.LogDuration(
+                    () => calcResultService.StoreProjectedH2Data(runContext.RunId, result.CalcResultProjectedProducers.H2ProjectedProducers),
+                    nameof(calcResultService.StoreProjectedH2Data));
             }
 
             if (runContext.RequiresScaling)
             {
-                (producers, result.CalcResultScaledupProducers) = await logger.LogDuration(() =>
-                        scaledUpProducers.ConstructAsync(runContext, materials, producers),
-                    nameof(scaledUpProducers));
+                (producers, result.CalcResultScaledupProducers) = await logger.LogDuration(
+                    () => scaledUpProducersBuilder.ConstructAsync(runContext, materials, producers),
+                    nameof(scaledUpProducersBuilder));
 
-                await logger.LogDuration(() =>
-                    calcResultService.StoreScaledData(runContext.RunId, result.CalcResultScaledupProducers.ScaledupProducers),
-                nameof(calcResultService.StoreScaledData));
+                await logger.LogDuration(
+                    () => calcResultService.StoreScaledData(runContext.RunId, result.CalcResultScaledupProducers.ScaledupProducers),
+                    nameof(calcResultService.StoreScaledData));
             }
 
-            (producers, result.CalcResultPartialObligations) = await logger.LogDuration(() =>
-                    partialObligations.ConstructAsync(runContext, materials, producers),
-                nameof(partialObligations));
+            (producers, result.CalcResultPartialObligations) = await logger.LogDuration(
+                () => partialObligationsBuilder.ConstructAsync(runContext, materials, producers),
+                nameof(partialObligationsBuilder));
 
-            await logger.LogDuration(() =>
-                    calcResultService.StorePartialData(runContext.RunId, result.CalcResultPartialObligations.PartialObligations),
+            await logger.LogDuration(
+                () => calcResultService.StorePartialData(runContext.RunId, result.CalcResultPartialObligations.PartialObligations),
                 nameof(calcResultService.StorePartialData));
 
-            await logger.LogDuration(() =>
-                    projectedProducersService.StoreProjectedProducers(producers),
+            await logger.LogDuration(
+                () => projectedProducersService.StoreProjectedProducers(producers),
                 nameof(projectedProducersService.StoreProjectedProducers));
         }
-        
-        result.Smcw = await logger.LogDuration(() =>
-                selfManagedConsumerWaste.Calculate(runContext, materials),
-            nameof(selfManagedConsumerWaste));
 
-        result.CalcResultLaDisposalCostData = await logger.LogDuration(() =>
-                laDisposalCosts.ConstructAsync(runContext, materials, result.CalcResultLapcapData, result.CalcResultLateReportingTonnageData, result.Smcw),
-            nameof(laDisposalCosts));
+        result.Smcw = await logger.LogDuration(
+            () => selfManagedConsumerWasteService.Calculate(runContext, materials),
+            nameof(selfManagedConsumerWasteService));
 
-        result.CalcResultCommsCostReportDetail = await logger.LogDuration(() =>
-                commsCosts.ConstructAsync(runContext, materials, result.CalcResultOnePlusFourApportionment, result.CalcResultLateReportingTonnageData),
-            nameof(commsCosts));
+        result.CalcResultLaDisposalCostData = await logger.LogDuration(
+            () => laDisposalCostsBuilder.ConstructAsync(runContext, materials, result.CalcResultLapcapData, result.CalcResultLateReportingTonnageData, result.Smcw),
+            nameof(laDisposalCostsBuilder));
+
+        result.CalcResultCommsCostReportDetail = await logger.LogDuration(
+            () => commsCostsBuilder.ConstructAsync(runContext, materials, result.CalcResultOnePlusFourApportionment, result.CalcResultLateReportingTonnageData),
+            nameof(commsCostsBuilder));
 
         if (runContext.RequiresModulation)
         {
-            result.CalcResultModulation = await logger.LogDuration(() =>
-                    modulation.ConstructAsync(defaultParams, materials, result.CalcResultLaDisposalCostData, result.Smcw),
-                nameof(modulation));
+            result.CalcResultModulation = await logger.LogDuration(
+                () => modulationBuilder.ConstructAsync(defaultParams, materials, result.CalcResultLaDisposalCostData, result.Smcw),
+                nameof(modulationBuilder));
         }
 
-        result.CalcResultSummary = await logger.LogDuration(() =>
-                summary.ConstructAsync(runContext, materials, result, result.Smcw),
-            nameof(summary));
+        result.CalcResultSummary = await logger.LogDuration(
+            () => summaryBuilder.ConstructAsync(runContext, materials, result, result.Smcw),
+            nameof(summaryBuilder));
 
-        result.CalcResultErrorReports = logger.LogDuration(() =>
-                errorReport.Construct(runContext),
-            nameof(errorReport));
+        result.CalcResultErrorReports = logger.LogDuration(
+            () => errorReportBuilder.Construct(runContext),
+            nameof(errorReportBuilder));
 
         return result;
     }

@@ -80,53 +80,6 @@ public class LaDataPrepCostsProducerTests
         }
     };
 
-    private readonly int columnIndex = 275;
-
-    [TestMethod]
-    public void CanCallGetHeaders()
-    {
-        // Act
-        var result = LaDataPrepCostsProducer.GetHeaders().ToList();
-        var expectedResult = new List<CalcResultSummaryHeader>();
-        expectedResult.AddRange([
-            new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.TotalProducerFeeWithoutBadDebtProvision },
-            new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.BadDebtProvision },
-            new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.TotalProducerFeeWithBadDebtProvision },
-            new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.EnglandTotalWithBadDebtProvision },
-            new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.WalesTotalWithBadDebtProvision },
-            new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.ScotlandTotalWithBadDebtProvision },
-            new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.NorthernIrelandTotalWithBadDebtProvision }
-        ]);
-
-        // Assert
-        Assert.AreEqual(expectedResult[0].Name, result[0].Name);
-        Assert.AreEqual(expectedResult[1].Name, result[1].Name);
-        Assert.AreEqual(expectedResult[2].Name, result[2].Name);
-        Assert.AreEqual(expectedResult[3].Name, result[3].Name);
-        Assert.AreEqual(expectedResult[4].Name, result[4].Name);
-        Assert.AreEqual(expectedResult[5].Name, result[5].Name);
-        Assert.AreEqual(expectedResult[6].Name, result[6].Name);
-    }
-
-    [TestMethod]
-    public void CanCallGetSummaryHeaders()
-    {
-        // Act
-        var result = LaDataPrepCostsProducer.GetSummaryHeaders(columnIndex).ToList();
-
-        var expectedResult = new List<CalcResultSummaryHeader>();
-        expectedResult.AddRange([
-            new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.LaDataPrepCostsWithoutBadDebtProvisionTitle },
-            new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.BadDebtProvisionTitle },
-            new CalcResultSummaryHeader { Name = LaDataPrepCostsHeaders.LaDataPrepCostsWithBadDebtProvisionTitle }
-        ]);
-
-        // Assert
-        Assert.AreEqual(expectedResult[0].Name, result[0].Name);
-        Assert.AreEqual(expectedResult[1].Name, result[1].Name);
-        Assert.AreEqual(expectedResult[2].Name, result[2].Name);
-    }
-
     [TestMethod]
     public void CanCallSetValues()
     {
