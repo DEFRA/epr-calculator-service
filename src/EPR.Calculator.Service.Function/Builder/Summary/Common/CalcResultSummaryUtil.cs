@@ -19,8 +19,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
     [ExcludeFromCodeCoverage]
     public static class CalcResultSummaryUtil
     {
-        private const int decimalRoundUp = 2;
-
         public static int GetLevelIndex(
             IReadOnlyList<CalcResultSummaryProducerDisposalFees> producerDisposalFeesLookup,
             ProducerDetail producer)

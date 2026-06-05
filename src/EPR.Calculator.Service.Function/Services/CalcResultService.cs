@@ -21,16 +21,6 @@ namespace EPR.Calculator.Service.Function.Services
 
     public class CalcResultService(ApplicationDBContext dbContext) : ICalcResultService
     {
-        private async Task StoreData<TSource, TEntity>(
-            DbSet<TEntity> dbSet,
-            IReadOnlyList<TSource> data,
-            Func<TSource, IEnumerable<TEntity>> mapper)
-            where TEntity : class
-        {
-            await dbSet.AddRangeAsync(data.SelectMany(mapper));
-            await dbContext.SaveChangesAsync();
-        }
-
         public async Task StoreProjectedH1Data(int runId, IReadOnlyList<CalcResultH1ProjectedProducer> projectedProducers)
         {
             await StoreData(dbContext.TransformProjectedH1, projectedProducers, p => 
@@ -42,14 +32,11 @@ namespace EPR.Calculator.Service.Function.Services
 
         public async Task StoreProjectedH2Data(int runId, IReadOnlyList<CalcResultH2ProjectedProducer> projectedProducers)
         {
-            await dbContext.TransformProjectedH2.AddRangeAsync(
-                projectedProducers.SelectMany(p => 
-                    p.H2ProjectedTonnageByMaterial.Select(m => 
-                        MapToTransformProjectedH2(runId, p.ProducerId, p.SubsidiaryId, m.Key, p.SubmissionPeriodCode, p.Level, m.Value)
-                    )
+            await StoreData(dbContext.TransformProjectedH2, projectedProducers, p => 
+                p.H2ProjectedTonnageByMaterial.Select(m => 
+                    MapToTransformProjectedH2(runId, p.ProducerId, p.SubsidiaryId, m.Key, p.SubmissionPeriodCode, p.Level, m.Value)
                 )
             );
-            await dbContext.SaveChangesAsync();
         }
 
         public async Task<IReadOnlyList<CalcResultH1ProjectedProducer>> ReadH1ProjectedData(int runId)
@@ -64,7 +51,11 @@ namespace EPR.Calculator.Service.Function.Services
                             Level = g.Key.Level,
                             SubmissionPeriodCode = g.Key.SubmissionPeriodCode,
                             H1ProjectedTonnageByMaterial = MapToH1MaterialTonnages(g.ToList())
-                        }).ToImmutableListAsync();
+                        })
+                        .OrderBy(p => p.ProducerId)
+                        .ThenBy(p => p.Level)
+                        .ThenBy(p => p.SubsidiaryId)
+                        .ToImmutableListAsync();
         }
 
         public async Task<IReadOnlyList<CalcResultH2ProjectedProducer>> ReadH2ProjectedData(int runId)
@@ -79,37 +70,39 @@ namespace EPR.Calculator.Service.Function.Services
                             Level = g.Key.Level,
                             SubmissionPeriodCode = g.Key.SubmissionPeriodCode,
                             H2ProjectedTonnageByMaterial = MapToH2MaterialTonnages(g.ToList())
-                        }).ToImmutableListAsync();
+                        })
+                        .OrderBy(p => p.ProducerId)
+                        .ThenBy(p => p.Level)
+                        .ThenBy(p => p.SubsidiaryId)
+                        .ToImmutableListAsync();
         }
 
         public async Task StoreScaledData(int runId, IReadOnlyList<CalcResultScaledupProducer> scaled)
         {
-            await dbContext.TransformScaled.AddRangeAsync(
-                scaled.SelectMany(p => 
-                    p.PomData.Select(m => 
-                        new TransformScaled
-                        {
-                            CalculatorRunId = runId,
-                            ProducerId = p.ProducerId, 
-                            SubsidiaryId = p.SubsidiaryId,
-                            ProducerName = p.ProducerName,
-                            TradingName = p.TradingName,
-                            SubmissionPeriodCode = p.SubmissionPeriodCode,
-                            Level = p.Level,
-                            IsSubTotal = p.IsSubtotalRow,
-                            DaysInSubmissionPeriod = p.DaysInSubmissionPeriod,
-                            DaysInWholePeriod = p.DaysInWholePeriod,
-                            ScaleupFactor = p.ScaleupFactor,
-                            MaterialId = m.MaterialId,
-                            PackagingType = m.PackagingType,
-                            Tonnage = m.Tonnage,
-                            ScaledTonnage = m.ScaledTonnage
-                        }
-                    )
+             await StoreData(dbContext.TransformScaled, scaled, p => 
+                p.PomData.Select(m => 
+                    new TransformScaled
+                    {
+                        CalculatorRunId = runId,
+                        ProducerId = p.ProducerId, 
+                        SubsidiaryId = p.SubsidiaryId,
+                        ProducerName = p.ProducerName,
+                        TradingName = p.TradingName,
+                        SubmissionPeriodCode = p.SubmissionPeriodCode,
+                        Level = p.Level,
+                        IsSubTotal = p.IsSubtotalRow,
+                        DaysInSubmissionPeriod = p.DaysInSubmissionPeriod,
+                        DaysInWholePeriod = p.DaysInWholePeriod,
+                        ScaleupFactor = p.ScaleupFactor,
+                        MaterialId = m.MaterialId,
+                        PackagingType = m.PackagingType,
+                        Tonnage = m.Tonnage,
+                        ScaledTonnage = m.ScaledTonnage
+                    }
                 )
             );
-            await dbContext.SaveChangesAsync();
         }
+        
         public async Task<IReadOnlyList<CalcResultScaledupProducer>> ReadScaledData(int runId)
         {
             return await dbContext.TransformScaled
@@ -130,19 +123,20 @@ namespace EPR.Calculator.Service.Function.Services
                                 ScaleupFactor = g.Key.ScaleupFactor,
                                 PomData = MapToScaled(g.ToList())
                             }
-                        ).ToImmutableListAsync();
+                        )
+                        .OrderBy(p => p.ProducerId)
+                        .ThenBy(p => p.Level)
+                        .ThenBy(p => p.SubsidiaryId)
+                        .ThenBy(p => p.SubmissionPeriodCode)
+                        .ToImmutableListAsync();
         }
 
-
         public async Task StorePartialData(int runId, IReadOnlyList<CalcResultPartialObligation> partial){
-            await dbContext.TransformPartial.AddRangeAsync(
-                partial.SelectMany(p => 
-                    p.PartialObligationTonnageByMaterial.Select(m => 
-                        MapToTransformPartial(runId, m.Key, p, m.Value)
-                    )
+            await StoreData(dbContext.TransformPartial, partial, p => 
+                p.PartialObligationTonnageByMaterial.Select(m => 
+                    MapToTransformPartial(runId, m.Key, p, m.Value)
                 )
             );
-            await dbContext.SaveChangesAsync();
         }
 
         public async Task<IReadOnlyList<CalcResultPartialObligation>> ReadPartialData(int runId){
@@ -164,7 +158,17 @@ namespace EPR.Calculator.Service.Function.Services
                                 ObligatedFactor = g.Key.ObligatedFactor,
                                 PartialObligationTonnageByMaterial = MapToPartial(g.ToList())
                             }
-                        ).ToImmutableListAsync();
+                        )
+                        .OrderBy(p => p.ProducerId)
+                        .ThenBy(p => p.Level)
+                        .ThenBy(p => p.SubsidiaryId)
+                        .ToImmutableListAsync();
+        }
+
+        private async Task StoreData<TSource, TEntity>(DbSet<TEntity> dbSet, IReadOnlyList<TSource> data, Func<TSource, IEnumerable<TEntity>> mapper) where TEntity : class
+        {
+            await dbSet.AddRangeAsync(data.SelectMany(mapper));
+            await dbContext.SaveChangesAsync();
         }
 
         private static Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage> MapToH1MaterialTonnages(List<TransformProjectedH1> transformProjectedH1s)
