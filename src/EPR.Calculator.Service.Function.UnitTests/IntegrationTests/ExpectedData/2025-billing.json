@@ -115,10 +115,6 @@
         "totalLateReportingTonnage": 13163573.900
       },
       {
-        "materialName": "Other materials",
-        "totalLateReportingTonnage": 12337487.500
-      },
-      {
         "materialName": "Paper or card",
         "totalLateReportingTonnage": 1716973.140
       },
@@ -133,6 +129,10 @@
       {
         "materialName": "Wood",
         "totalLateReportingTonnage": 2165050.700
+      },
+      {
+        "materialName": "Other materials",
+        "totalLateReportingTonnage": 12337487.500
       }
     ],
     "calcResultLateReportingTonnageTotal": 62195245.900

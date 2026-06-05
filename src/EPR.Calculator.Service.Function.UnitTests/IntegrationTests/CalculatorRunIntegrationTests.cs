@@ -54,11 +54,8 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
 
             actualLines.Length.ShouldBe(expectedLines.Length, $"Results CSV mismatch: {DisplayFullContents(contents)}");
 
-            var dateFields = new List<int> {3, 6, 7, 8};
-            for (var i = 0; i < actualLines.Length; i++)
-            {
-                if (!dateFields.Contains(i + 1)) actualLines[i].ShouldBe(expectedLines[i], $"Results CSV mismatch at line {i + 1}: {DisplayFullContents(contents)}");
-            }
+            var ignoreLines = new List<int> {2, 3, 6, 7, 8}; // Ignore run id and date fields
+            AssertLines(actualLines, expectedLines, ignoreLines, "Results CSV", contents);
         }
 
         await SeedAcceptOrRejectProducers(db, calculatorRunId, rundBy, $"IntegrationTests/TestData/{relativeYear.Value}-accept-or-reject-producers.csv");
@@ -71,11 +68,8 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
 
             actualLines.Length.ShouldBe(expectedLines.Length, $"Billing CSV mismatch: {DisplayFullContents(contents)}");
 
-            var dateFields = new List<int> {3, 6, 7, 8};
-            for (var i = 0; i < actualLines.Length; i++)
-            {
-                if (!dateFields.Contains(i + 1)) actualLines[i].ShouldBe(expectedLines[i], $"Billing CSV mismatch at line {i + 1}: {DisplayFullContents(contents)}");
-            }
+            var ignoreLines = new List<int> {2, 3, 6, 7, 8}; // Ignore run id and date fields
+            AssertLines(actualLines, expectedLines, ignoreLines, "Billing CSV", contents);
         }
         {   // TODO sort json fields before comparison?
             var contents      = fakeBlobStorage.Get(billingRunResult.ExportResult.JsonMetadata.BillingJsonFileName!);
@@ -84,15 +78,31 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
 
             actualLines.Length.ShouldBe(expectedLines.Length, $"Billing JSON mismatch: {DisplayFullContents(contents)}");
 
-            var dateFields = new List<int> {5, 9, 11, 13, 16};
-            for (var i = 0; i < actualLines.Length; i++)
-            {
-                if (!dateFields.Contains(i + 1)) actualLines[i].ShouldBe(expectedLines[i], $"Billing JSON mismatch at line {i + 1}: {DisplayFullContents(contents)}");
-            }
+            var ignoreLines = new List<int> {4, 5, 9, 11, 13, 16}; // Ignore run id and date fields
+            AssertLines(actualLines, expectedLines, ignoreLines, "Billing JSON", contents);
         }
     }
 
-    private async Task<CalculatorRunResult> PerformCalculatorRun(int runId, string user)
+    private static void AssertLines(string[] actualLines, string[] expectedLines, List<int> ignoreLines, string label, string contents)
+    {
+        try
+        {
+            for (var i = 0; i < actualLines.Length; i++)
+            {
+                if (!ignoreLines.Contains(i + 1)) actualLines[i].ShouldBe(expectedLines[i], $"{label} mismatch at line {i + 1}");
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"{ex.Message}; {DisplayFullContents(contents)}", ex); // Needs to be lazy as dramatically increases test time if added to ShouldBe message
+        }
+    }
+
+    private static string DisplayFullContents(string contents) =>
+        $"Full contents:\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n{contents}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<";
+
+
+    private static async Task<CalculatorRunResult> PerformCalculatorRun(int runId, string user)
     {
         var runContext = await Provider.GetRequiredService<ICalculatorRunContextBuilder>().Build(runId, user, CancellationToken.None);
         var runResult = await Provider.GetRequiredService<ICalculatorRunProcessor>().Process(runContext, CancellationToken.None);
@@ -100,7 +110,7 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
         return (CalculatorRunResult) runResult;
     }
 
-    private async Task<BillingRunResult> PerformBillingRun(ApplicationDBContext dbContext, int runId, string user)
+    private static async Task<BillingRunResult> PerformBillingRun(ApplicationDBContext dbContext, int runId, string user)
     {
         // Simulates the billing run being started by a user in the FE
         var calcRun = await dbContext.CalculatorRuns.SingleAsync(r => r.Id == runId);
@@ -113,9 +123,6 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
         runResult.Succeeded.ShouldBeTrue();
         return (BillingRunResult) runResult;
     }
-
-    private static string DisplayFullContents(string contents) =>
-        $"Full contents:\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n{contents}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<";
 
     private static CsvReader SlurpCsv(string csvPath) =>
         new(new StreamReader(csvPath), new CsvConfiguration(CultureInfo.InvariantCulture)
