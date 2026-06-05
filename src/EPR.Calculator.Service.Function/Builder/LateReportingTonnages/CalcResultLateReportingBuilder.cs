@@ -13,13 +13,7 @@ namespace EPR.Calculator.Service.Function.Builder.LateReportingTonnages
     public class CalcResultLateReportingBuilder(ApplicationDBContext dbContext)
         : ICalcResultLateReportingBuilder
     {
-        public const string LateReportingHeader = "Parameters - Late Reporting Tonnages";
-        public const string Total = "Total";
-        public const string MaterialHeading = "Material";
-        public const string TonnageHeading = "Late Reporting Tonnage";
-        public const string RedTonnageHeading = "Red + Red Medical Late Reporting Tonnage";
-        public const string AmberTonnageHeading = "Amber + Amber Medical Late Reporting Tonnage";
-        public const string GreenTonnageHeading = "Green + Green Medical Late Reporting Tonnage";
+        private sealed record ParameterDetail(string ParameterCategory, decimal ParameterValue);
 
         public async Task<CalcResultLateReportingTonnage> ConstructAsync(RunContext runContext, IImmutableList<MaterialDetail> materials)
         {
@@ -29,29 +23,32 @@ namespace EPR.Calculator.Service.Function.Builder.LateReportingTonnages
                 join detail in dbContext.DefaultParameterSettingDetail on master.Id equals detail.DefaultParameterSettingMasterId
                 join template in dbContext.DefaultParameterTemplateMasterList on detail.ParameterUniqueReferenceId equals template.ParameterUniqueReferenceId
                 where run.Id == runContext.RunId && template.ParameterType == "Late Reporting Tonnage"
-                select new { template.ParameterCategory, detail.ParameterValue }
+                select new ParameterDetail(template.ParameterCategory, detail.ParameterValue)
             ).ToListAsync();
 
-            var materialByName = materials.ToDictionary(m => m.Name, m => m.Code);
-
-            var tonnageDetails = result
-                .GroupBy(x => RemoveSuffix(x.ParameterCategory))
-                .Select(g =>
+            var tonnageDetails = materials
+                .Select(material =>
                 {
-                    var red   = GetParameterValueBySuffix(g, "-R");
-                    var amber = GetParameterValueBySuffix(g, "-A");
-                    var green = GetParameterValueBySuffix(g, "-G");
+                    var group = result
+                        .Where(x => RemoveSuffix(x.ParameterCategory) == material.Name)
+                        .ToList();
 
-                    var materialCode = materialByName[g.Key];
-                    return (materialCode, new CalcResultLateReportingTonnageDetail
-                    {
-                        Red   = red,
-                        Amber = amber,
-                        Green = green,
-                        Total = red + amber + green
-                    });
-                }
-            ).ToDictionary();
+                    var red   = GetParameterValueBySuffix(group, "-R");
+                    var amber = GetParameterValueBySuffix(group, "-A");
+                    var green = GetParameterValueBySuffix(group, "-G");
+
+                    return KeyValuePair.Create(
+                        material.Code,
+                        new CalcResultLateReportingTonnageDetail
+                        {
+                            Red   = red,
+                            Amber = amber,
+                            Green = green,
+                            Total = red + amber + green
+                        });
+                })
+                .ToDictionary();
+
 
             return new CalcResultLateReportingTonnage
             {
@@ -66,9 +63,7 @@ namespace EPR.Calculator.Service.Function.Builder.LateReportingTonnages
             return value;
         }
 
-        private static decimal GetParameterValueBySuffix(IGrouping<string, dynamic> group, string suffix)
-        {
-            return group.First(x => x.ParameterCategory.EndsWith(suffix)).ParameterValue;
-        }
+        private static decimal GetParameterValueBySuffix(IEnumerable<ParameterDetail> values, string suffix)
+            => values.First(x => x.ParameterCategory.EndsWith(suffix)).ParameterValue;
     }
 }

@@ -1,4 +1,6 @@
+using System.Diagnostics;
 using EPR.Calculator.API.Data;
+using EPR.Calculator.Service.Function.Logging;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.Services.CommonDataApi;
 using Microsoft.EntityFrameworkCore;
@@ -14,32 +16,35 @@ namespace EPR.Calculator.Service.Function.UnitTests.IntegrationTests;
 
 public abstract class BaseIntegrationTest
 {
-    protected ServiceProvider Provider = null!;
-    protected MsSqlContainer SqlContainer = null!;
+    protected static ServiceProvider Provider { get; private set; } = null!;
 
-    [TestInitialize]
-    public async Task Initialize()
-    {
-        SqlContainer = new MsSqlBuilder("mcr.microsoft.com/mssql/server:2022-latest")
+    private static readonly MsSqlContainer SqlContainer =
+        new MsSqlBuilder("mcr.microsoft.com/mssql/server:2022-latest")
+            .WithReuse(true)
             .Build();
 
+    public static async Task InitializeAsync()
+    {
         await SqlContainer.StartAsync();
 
         var services = new ServiceCollection();
         ConfigureServices(services);
         Provider = services.BuildServiceProvider();
 
-        await CreateDatabase();
+        using var scope = Provider.CreateScope();
+        var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<ApplicationDBContext>>();
+        await using var db = await factory.CreateDbContextAsync();
+
+        await db.Database.MigrateAsync();
     }
 
-    [TestCleanup]
-    public async Task Cleanup()
+    public static async Task CleanupAsync()
     {
-        await SqlContainer.DisposeAsync();
         await Provider.DisposeAsync();
+        Log.CloseAndFlush();
     }
 
-    private void ConfigureServices(IServiceCollection services)
+    private static void ConfigureServices(IServiceCollection services)
     {
         var configuration = new ConfigurationBuilder()
             .SetBasePath(AppContext.BaseDirectory)
@@ -77,16 +82,16 @@ public abstract class BaseIntegrationTest
             .AddSingleton<FakeBlobStorageService>()
             .AddSingleton<IStorageService>(sp => sp.GetRequiredService<FakeBlobStorageService>());
     }
+}
 
-    private async Task CreateDatabase()
-    {
-        using var scope = Provider.CreateScope();
+[TestClass]
+public static class TestAssemblyHooks
+{
+    [AssemblyInitialize]
+    public static async Task Initialize(TestContext context) =>
+        await BaseIntegrationTest.InitializeAsync();
 
-        var factory = scope.ServiceProvider
-            .GetRequiredService<IDbContextFactory<ApplicationDBContext>>();
-
-        await using var db = await factory.CreateDbContextAsync();
-
-        await db.Database.MigrateAsync();
-    }
+    [AssemblyCleanup]
+    public static async Task Cleanup() =>
+        await BaseIntegrationTest.CleanupAsync();
 }
