@@ -21,9 +21,9 @@ public static class TotalBillBreakdownProducer
     private static decimal? GetTotalProducerBillWithoutBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
     {
         return fee.LocalAuthorityDisposalCostsSectionOne?.FeeWithoutBadDebtProvision
-            + fee.CommsCosts.FeeWithoutBadDebtProvision
-            + fee.CommunicationCostsSectionTwoB?.FeeWithoutBadDebtProvision
-            + fee.TwoCTotalProducerFeeForCommsCostsWithoutBadDebt
+            + fee.CommsCostsSectionTwoA.FeeWithoutBadDebtProvision
+            + fee.CommsCostsSectionTwoB?.FeeWithoutBadDebtProvision
+            + fee.CommsCostsSectionTwoC.FeeWithoutBadDebtProvision
             + fee.SchemeAdministratorOperatingCosts?.FeeWithoutBadDebtProvision
             + fee.LocalAuthorityDataPreparationCosts?.FeeWithoutBadDebtProvision
             + fee.OneOffSchemeAdministrationSetupCosts?.FeeWithoutBadDebtProvision;
@@ -32,9 +32,9 @@ public static class TotalBillBreakdownProducer
     private static decimal? GetBadDebtProvisionForTotalProducerBill(CalcResultSummaryProducerDisposalFees fee)
     {
         return fee.LocalAuthorityDisposalCostsSectionOne?.BadDebtProvision
-            + fee.CommsCosts.BadDebtProvision
-            + fee.CommunicationCostsSectionTwoB?.BadDebtProvision
-            + fee.TwoCBadDebtProvision
+            + fee.CommsCostsSectionTwoA.BadDebtProvision
+            + fee.CommsCostsSectionTwoB?.BadDebtProvision
+            + fee.CommsCostsSectionTwoC.BadDebtProvision
             + fee.SchemeAdministratorOperatingCosts?.BadDebtProvision
             + fee.LocalAuthorityDataPreparationCosts?.BadDebtProvision
             + fee.OneOffSchemeAdministrationSetupCosts?.BadDebtProvision;
@@ -43,9 +43,9 @@ public static class TotalBillBreakdownProducer
     private static ByCountryCost GetTotalProducerBillWithBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
     {
         return (fee.LocalAuthorityDisposalCostsSectionOne?.FeeWithBadDebtProvision ?? ByCountryCost.Empty)
-            + fee.CommsCosts.FeeWithBadDebtProvision
-            + (fee.CommunicationCostsSectionTwoB?.FeeWithBadDebtProvision ?? ByCountryCost.Empty)
-            + fee.TwoCTotalProducerFeeForCommsCostsWithBadDebt
+            + fee.CommsCostsSectionTwoA.FeeWithBadDebtProvision
+            + (fee.CommsCostsSectionTwoB?.FeeWithBadDebtProvision ?? ByCountryCost.Empty)
+            + fee.CommsCostsSectionTwoC.FeeWithBadDebtProvision
             + (fee.SchemeAdministratorOperatingCosts?.FeeWithBadDebtProvision ?? ByCountryCost.Empty)
             + (fee.LocalAuthorityDataPreparationCosts?.FeeWithBadDebtProvision ?? ByCountryCost.Empty)
             + (fee.OneOffSchemeAdministrationSetupCosts?.FeeWithBadDebtProvision ?? ByCountryCost.Empty);

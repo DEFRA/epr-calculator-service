@@ -39,11 +39,9 @@ public class TotalBillBreakdownProducerTests
         // Arrange
         var data = calcResult.CalcResultSummary;
         data.ProducerDisposalFees.ToList()[0].LocalAuthorityDisposalCostsSectionOne = null;
-        data.ProducerDisposalFees.ToList()[0].CommsCosts = CalcResultSummaryBadDebtProvision.Empty;
-        data.ProducerDisposalFees.ToList()[0].CommunicationCostsSectionTwoB = null;
-        data.ProducerDisposalFees.ToList()[0].TwoCTotalProducerFeeForCommsCostsWithoutBadDebt = 0;
-        data.ProducerDisposalFees.ToList()[0].TwoCBadDebtProvision = 0;
-        data.ProducerDisposalFees.ToList()[0].TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty;
+        data.ProducerDisposalFees.ToList()[0].CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty;
+        data.ProducerDisposalFees.ToList()[0].CommsCostsSectionTwoB = null;
+        data.ProducerDisposalFees.ToList()[0].CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty;
         data.ProducerDisposalFees.ToList()[0].SchemeAdministratorOperatingCosts = null;
         data.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts = null;
         data.ProducerDisposalFees.ToList()[0].OneOffSchemeAdministrationSetupCosts = null;

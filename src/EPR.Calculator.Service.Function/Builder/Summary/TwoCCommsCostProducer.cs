@@ -21,32 +21,34 @@ public static class TwoCCommsCostProducer
     public static void UpdateTwoCRows(CalcResult calcResult, CalcResultSummaryProducerDisposalFees result,
         ProducerDetail producer, IReadOnlyList<TotalPackagingTonnagePerRun> hhTotalPackagingTonnage)
     {
-        var commsWithBadDebt2C = GetCommWithBadDebt2C(calcResult, producer, hhTotalPackagingTonnage);
+        //var commsWithBadDebt2C = GetCommWithBadDebt2C(calcResult, producer, hhTotalPackagingTonnage);
         var commsCost = calcResult.CalcResultCommsCostReportDetail.CommsCostByCountry;
-        result.TwoCTotalProducerFeeForCommsCostsWithBadDebt = commsWithBadDebt2C * commsCost;
-
-        result.TwoCTotalProducerFeeForCommsCostsWithoutBadDebt =
-            calcResult.CalcResultCommsCostReportDetail.CommsCostByCountry.Total
-            * result.PercentageofProducerReportedTonnagevsAllProducers
-            / 100;
 
         var badDebtProvisionValue =
-            calcResult.CalcResultParameterOtherCost.BadDebtValue
-            * calcResult.CalcResultCommsCostReportDetail.CommsCostByCountry.Total
-            / 100;
+            calcResult.CalcResultParameterOtherCost.BadDebtValue / 100
+            * calcResult.CalcResultCommsCostReportDetail.CommsCostByCountry;
 
-        result.TwoCBadDebtProvision =
-            badDebtProvisionValue
-            * result.PercentageofProducerReportedTonnagevsAllProducers
-            / 100;
+        result.CommsCostsSectionTwoC = new CalcResultSummaryBadDebtProvision
+        {
+            FeeWithoutBadDebtProvision =
+                commsCost.Total
+                * result.PercentageofProducerReportedTonnagevsAllProducers
+                / 100,
+            BadDebtProvision = badDebtProvisionValue.Total
+                * result.PercentageofProducerReportedTonnagevsAllProducers
+                / 100,
+            FeeWithBadDebtProvision = (commsCost + badDebtProvisionValue)
+                * (result.PercentageofProducerReportedTonnagevsAllProducers
+                / 100) //commsWithBadDebt2C * commsCost
+        };
     }
 
-    private static decimal GetCommWithBadDebt2C(CalcResult calcResult, ProducerDetail producer, IReadOnlyList<TotalPackagingTonnagePerRun> hhTotalPackagingTonnage)
+    /*private static decimal GetCommWithBadDebt2C(CalcResult calcResult, ProducerDetail producer, IReadOnlyList<TotalPackagingTonnagePerRun> hhTotalPackagingTonnage)
     {
         decimal badDebtProvision = calcResult.CalcResultParameterOtherCost.BadDebtValue / 100;
         decimal percentageOfProducerReportedHhTonnageVsAllProducers =
             // TODO review this
             TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducers(producer, hhTotalPackagingTonnage) / 100;
         return (1 + badDebtProvision) * percentageOfProducerReportedHhTonnageVsAllProducers;
-    }
+    }*/
 }

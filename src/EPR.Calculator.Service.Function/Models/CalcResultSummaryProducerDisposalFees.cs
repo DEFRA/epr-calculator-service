@@ -24,14 +24,13 @@
 
         public bool isTotalRow { get; set; }
 
-        public CalcResultSummaryBadDebtProvision? LocalAuthorityDisposalCostsSectionOne { get; set; }
+        public required CalcResultSummaryBadDebtProvision? LocalAuthorityDisposalCostsSectionOne { get; set; }
 
-        // aka CommsCost Section 2a
-        public required CalcResultSummaryBadDebtProvision CommsCosts { get; set; }
+        public required CalcResultSummaryBadDebtProvision CommsCostsSectionTwoA { get; set; }
 
-        public CalcResultSummaryBadDebtProvision? CommunicationCostsSectionTwoB { get; set; }
+        public CalcResultSummaryBadDebtProvision? CommsCostsSectionTwoB { get; set; }
 
-        public CalcResultSummaryBadDebtProvision? CommunicationCostsSectionTwoC { get; set; }
+        public required CalcResultSummaryBadDebtProvision CommsCostsSectionTwoC { get; set; }
 
         public CalcResultSummaryBadDebtProvision? SchemeAdministratorOperatingCosts { get; set; }
 
@@ -40,11 +39,6 @@
         public CalcResultSummaryBadDebtProvision? OneOffSchemeAdministrationSetupCosts { get; set; }
 
         public CalcResultSummaryBadDebtProvision? TotalProducerBillBreakdownCosts { get; set; }
-
-        public decimal TwoCTotalProducerFeeForCommsCostsWithoutBadDebt { get; set; }
-        public decimal TwoCBadDebtProvision { get; set; }
-
-        public required ByCountryCost TwoCTotalProducerFeeForCommsCostsWithBadDebt { get; set; }
 
         public decimal PercentageofProducerReportedTonnagevsAllProducers { get; set; }
 

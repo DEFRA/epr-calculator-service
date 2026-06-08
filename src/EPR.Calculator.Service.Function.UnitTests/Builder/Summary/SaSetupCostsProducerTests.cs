@@ -66,10 +66,10 @@ public class SaSetupCostsProducerTests
                     ProducerId = "1",
                     ProducerName = "Test",
                     LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-                    CommsCosts = CalcResultSummaryBadDebtProvision.Empty,
                     SubsidiaryId = "1",
                     ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 1,
-                    TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty
+                    CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+                    CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty
                 }
             }
         },

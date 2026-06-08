@@ -120,21 +120,25 @@ internal sealed class ProducerRowBuilder(
             JoinerDate          = producerForTotalRow?.JoinerDate,
             LeaverDate          = producerForTotalRow?.LeaverDate,
 
-            ProducerDisposalFeesByMaterial        = materialCosts,
-            ProducerCommsFeesByMaterial           = commsCosts,
-            CommsCosts                            = GetCommunicationCostsSectionTwoA(commsCosts),
+            ProducerDisposalFeesByMaterial = materialCosts,
+            ProducerCommsFeesByMaterial    = commsCosts,
+            CommsCostsSectionTwoA          = GetCommunicationCostsSectionTwoA(commsCosts),
 
             TonnageChangeCount  = tonnageChangeCount,
             TonnageChangeAdvice = tonnageChangeAdvice,
 
             LocalAuthorityDisposalCostsSectionOne = GetLocalAuthorityDisposalCostsSectionOne(materialCosts),
-            CommunicationCostsSectionTwoB         = SumBadDebtProvision(l2Rows, r => r.CommunicationCostsSectionTwoB),
+            CommsCostsSectionTwoB                 = SumBadDebtProvision(l2Rows, r => r.CommsCostsSectionTwoB),
 
             PercentageofProducerReportedTonnagevsAllProducers = l2Rows.Sum(r => r.PercentageofProducerReportedTonnagevsAllProducers),
 
-            TwoCTotalProducerFeeForCommsCostsWithoutBadDebt = l2Rows.Sum(r => r.TwoCTotalProducerFeeForCommsCostsWithoutBadDebt),
-            TwoCBadDebtProvision                            = l2Rows.Sum(r => r.TwoCBadDebtProvision),
-            TwoCTotalProducerFeeForCommsCostsWithBadDebt    = ByCountryCost.Sum([.. l2Rows.Select(r => r.TwoCTotalProducerFeeForCommsCostsWithBadDebt)]),
+            // TODO review summing (and repeated below)
+            CommsCostsSectionTwoC = new CalcResultSummaryBadDebtProvision
+            {
+                FeeWithoutBadDebtProvision = l2Rows.Sum(r => r.CommsCostsSectionTwoC.FeeWithoutBadDebtProvision),
+                BadDebtProvision           = l2Rows.Sum(r => r.CommsCostsSectionTwoC.BadDebtProvision),
+                FeeWithBadDebtProvision    = ByCountryCost.Sum([.. l2Rows.Select(r => r.CommsCostsSectionTwoC.FeeWithBadDebtProvision)]),
+            },
 
             isTotalRow        = true,
             isOverallTotalRow = false,
@@ -217,19 +221,22 @@ internal sealed class ProducerRowBuilder(
             JoinerDate          = null,
             LeaverDate          = CommonConstants.Totals,
 
-            ProducerDisposalFeesByMaterial               = materialCosts,
+            ProducerDisposalFeesByMaterial = materialCosts,
 
-            ProducerCommsFeesByMaterial           = commsCosts,
-            CommsCosts                            = GetCommunicationCostsSectionTwoA(commsCosts),
+            ProducerCommsFeesByMaterial    = commsCosts,
+            CommsCostsSectionTwoA          = GetCommunicationCostsSectionTwoA(commsCosts),
 
             LocalAuthorityDisposalCostsSectionOne = GetLocalAuthorityDisposalCostsSectionOne(materialCosts),
-            CommunicationCostsSectionTwoB         = SumBadDebtProvision(l1Rows, r => r.CommunicationCostsSectionTwoB),
+            CommsCostsSectionTwoB         = SumBadDebtProvision(l1Rows, r => r.CommsCostsSectionTwoB),
 
             PercentageofProducerReportedTonnagevsAllProducers = l1Rows.Sum(r => r.PercentageofProducerReportedTonnagevsAllProducers),
 
-            TwoCTotalProducerFeeForCommsCostsWithoutBadDebt = l1Rows.Sum(r => r.TwoCTotalProducerFeeForCommsCostsWithoutBadDebt),
-            TwoCBadDebtProvision                            = l1Rows.Sum(r => r.TwoCBadDebtProvision),
-            TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Sum([.. l1Rows.Select(r => r.TwoCTotalProducerFeeForCommsCostsWithBadDebt)]),
+            CommsCostsSectionTwoC = new CalcResultSummaryBadDebtProvision
+            {
+                FeeWithoutBadDebtProvision = l1Rows.Sum(r => r.CommsCostsSectionTwoC.FeeWithoutBadDebtProvision),
+                BadDebtProvision           = l1Rows.Sum(r => r.CommsCostsSectionTwoC.BadDebtProvision),
+                FeeWithBadDebtProvision    = ByCountryCost.Sum([.. l1Rows.Select(r => r.CommsCostsSectionTwoC.FeeWithBadDebtProvision)]),
+            },
 
             isTotalRow        = true,
             isOverallTotalRow = true,
@@ -273,9 +280,9 @@ internal sealed class ProducerRowBuilder(
             StatusCode          = orgData?.StatusCode,
             JoinerDate          = orgData?.JoinerDate,
             LeaverDate          = orgData?.LeaverDate,
-            TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty,
-            LocalAuthorityDisposalCostsSectionOne        = CalcResultSummaryBadDebtProvision.Empty,
-            CommsCosts                                   = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoA                 = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoC                 = CalcResultSummaryBadDebtProvision.Empty,
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
         };
 
         decimal commsFeeWithout = 0;
@@ -324,15 +331,14 @@ internal sealed class ProducerRowBuilder(
         result.ProducerDisposalFeesByMaterial = materialCostSummary;
         result.ProducerCommsFeesByMaterial = commsCostSummary;
 
-        result.CommsCosts = new CalcResultSummaryBadDebtProvision
+        result.CommsCostsSectionTwoA = new CalcResultSummaryBadDebtProvision
         {
             FeeWithoutBadDebtProvision = commsFeeWithout,
             BadDebtProvision           = commsBadDebt,
             FeeWithBadDebtProvision    = commsWithBadDebt
         };
 
-        // Section 2b
-        result.CommunicationCostsSectionTwoB = new CalcResultSummaryBadDebtProvision
+        result.CommsCostsSectionTwoB = new CalcResultSummaryBadDebtProvision
         {
             FeeWithoutBadDebtProvision = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsProducerFeeWithoutBadDebtFor2b(calcResult, producer, totalPackagingTonnage),
             BadDebtProvision           = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsBadDebtProvisionFor2b(calcResult, producer, totalPackagingTonnage),

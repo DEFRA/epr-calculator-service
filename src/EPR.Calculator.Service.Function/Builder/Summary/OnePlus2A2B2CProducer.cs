@@ -25,9 +25,9 @@ public static class OnePlus2A2B2CProducer
     private static decimal? GetTotalWithBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
     {
         return fee.LocalAuthorityDisposalCostsSectionOne?.FeeWithBadDebtProvision?.Total // TODO this need to be optional?
-            + fee.CommsCosts.FeeWithBadDebtProvision.Total
-            + fee.CommunicationCostsSectionTwoB?.FeeWithBadDebtProvision?.Total
-            + fee.TwoCTotalProducerFeeForCommsCostsWithBadDebt.Total;
+            + fee.CommsCostsSectionTwoA.FeeWithBadDebtProvision.Total
+            + fee.CommsCostsSectionTwoB?.FeeWithBadDebtProvision?.Total
+            + fee.CommsCostsSectionTwoC.FeeWithBadDebtProvision.Total;
     }
 
     private static decimal GetOverallProducerPercentage(CalcResultSummaryProducerDisposalFees fee, decimal totalOnePlus2A2B2CFeeWithBadDebtProvision)

@@ -148,11 +148,11 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
                         ProducerDisposalFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>(),
                         ProducerId = "1",
                         ProducerName = "Test",
-                        LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-                        CommsCosts = CalcResultSummaryBadDebtProvision.Empty,
                         SubsidiaryId = "1",
                         Level = CommonConstants.LevelTwo.ToString(),
-                        TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty,
+                        CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+                        CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
+                        LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
                         BillingInstructionSection = new CalcResultSummaryBillingInstruction
                         {
                             CurrentYearInvoiceTotalToDate = 1000m,

@@ -41,7 +41,7 @@ public class CommsCost2bExporter : ICalcResultSummaryPartExporter
 
     public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
     {
-        var costs = producer.CommunicationCostsSectionTwoB;
+        var costs = producer.CommsCostsSectionTwoB;
         csvContent.Append(CsvSanitiser.SanitiseData(costs?.FeeWithoutBadDebtProvision              , DecimalPlaces.Two, null, isCurrency: true));
         csvContent.Append(CsvSanitiser.SanitiseData(costs?.BadDebtProvision                        , DecimalPlaces.Two, null, isCurrency: true));
         csvContent.Append(CsvSanitiser.SanitiseData(costs?.FeeWithBadDebtProvision?.Total          , DecimalPlaces.Two, null, isCurrency: true));

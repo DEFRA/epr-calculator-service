@@ -303,15 +303,18 @@ public static partial class TestDataHelper
                     BadDebtProvision           = 265.4036628m,
                     FeeWithBadDebtProvision    = new ByCountryCost { England = 2534.2359097426884m, Wales = 571.2417008090152m, Scotland = 1137.8673076088023m, NorthernIreland = 445.4531246394942m }
                 },
-                CommsCosts = new CalcResultSummaryBadDebtProvision
+                CommsCostsSectionTwoA = new CalcResultSummaryBadDebtProvision
                 {
                     FeeWithoutBadDebtProvision = 1290.778m,
                     BadDebtProvision           = 77.44668m,
                     FeeWithBadDebtProvision    = new ByCountryCost { England = 718.2251815154783m, Wales = 181.2690740598454m, Scotland = 332.8499847265775m, NorthernIreland = 135.88043969809883m }
                 },
-                TwoCTotalProducerFeeForCommsCostsWithoutBadDebt = 1339.100071422903m,
-                TwoCBadDebtProvision = 80.34600428537418m,
-                TwoCTotalProducerFeeForCommsCostsWithBadDebt = new ByCountryCost { England = 607.4748035870169m, Wales = 300.7301007856519m, Scotland = 360.87612094278234m, NorthernIreland = 150.36505039282596m },
+                CommsCostsSectionTwoC = new CalcResultSummaryBadDebtProvision
+                {
+                    FeeWithoutBadDebtProvision = 1339.100071422903m,
+                    BadDebtProvision           = 80.34600428537418m,
+                    FeeWithBadDebtProvision    = new ByCountryCost { England = 607.4748035870169m, Wales = 300.7301007856519m, Scotland = 360.87612094278234m, NorthernIreland = 150.36505039282596m }
+                },
                 PercentageofProducerReportedTonnagevsAllProducers = 5.6741528450123m,
                 ProducerTotalOnePlus2A2B2CWithBadDeptProvision = 10491.167766844124m,
                 ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 4.7341913352015945m,
@@ -352,7 +355,7 @@ public static partial class TestDataHelper
                     SuggestedBillingInstruction = string.Empty,
                     SuggestedInvoiceAmount = 4039m
                 },
-                CommunicationCostsSectionTwoB = new CalcResultSummaryBadDebtProvision
+                CommsCostsSectionTwoB = new CalcResultSummaryBadDebtProvision
                 {
                     FeeWithoutBadDebtProvision = 2844.0556305055156m,
                     BadDebtProvision           = 170.64333783033092m,
@@ -384,15 +387,18 @@ public static partial class TestDataHelper
                     BadDebtProvision           = 265.4036628m,
                     FeeWithBadDebtProvision    = new ByCountryCost { England = 2534.2359097426884m, Wales = 571.2417008090152m, Scotland = 1137.8673076088023m, NorthernIreland = 445.4531246394942m }
                 },
-                CommsCosts = new CalcResultSummaryBadDebtProvision
+                CommsCostsSectionTwoA = new CalcResultSummaryBadDebtProvision
                 {
                     FeeWithoutBadDebtProvision = 1290.778m,
                     BadDebtProvision           = 77.44668m,
                     FeeWithBadDebtProvision    = new ByCountryCost { England = 718.2251815154783m, Wales = 181.2690740598454m, Scotland = 332.8499847265775m, NorthernIreland = 135.88043969809883m }
                 },
-                TwoCTotalProducerFeeForCommsCostsWithoutBadDebt = 1339.100071422903m,
-                TwoCBadDebtProvision = 80.34600428537418m,
-                TwoCTotalProducerFeeForCommsCostsWithBadDebt = new ByCountryCost { England = 607.4748035870169m, Wales = 300.7301007856519m, Scotland = 360.87612094278234m, NorthernIreland = 150.36505039282596m },
+                CommsCostsSectionTwoC = new CalcResultSummaryBadDebtProvision
+                {
+                    FeeWithoutBadDebtProvision = 1339.100071422903m,
+                    BadDebtProvision           = 80.34600428537418m,
+                    FeeWithBadDebtProvision    = new ByCountryCost { England = 607.4748035870169m, Wales = 300.7301007856519m, Scotland = 360.87612094278234m, NorthernIreland = 150.36505039282596m }
+                },
                 PercentageofProducerReportedTonnagevsAllProducers = 5.6741528450123m,
                 ProducerTotalOnePlus2A2B2CWithBadDeptProvision = 10491.167766844124m,
                 ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 4.7341913352015945m,
@@ -433,7 +439,7 @@ public static partial class TestDataHelper
                     SuggestedBillingInstruction = string.Empty,
                     SuggestedInvoiceAmount = 4039m
                 },
-                CommunicationCostsSectionTwoB = new CalcResultSummaryBadDebtProvision
+                CommsCostsSectionTwoB = new CalcResultSummaryBadDebtProvision
                 {
                     FeeWithoutBadDebtProvision = 2844.0556305055156m,
                     BadDebtProvision           = 170.64333783033092m,
@@ -466,15 +472,18 @@ public static partial class TestDataHelper
                     BadDebtProvision           = 265.4036628m,
                     FeeWithBadDebtProvision    = new ByCountryCost { England = 2534.2359097426884m, Wales = 571.2417008090152m, Scotland = 1137.8673076088023m, NorthernIreland = 445.4531246394942m }
                 },
-                CommsCosts = new CalcResultSummaryBadDebtProvision
+                CommsCostsSectionTwoA = new CalcResultSummaryBadDebtProvision
                 {
                     FeeWithoutBadDebtProvision = 1290.778m,
                     BadDebtProvision           = 77.44668m,
                     FeeWithBadDebtProvision    = new ByCountryCost { England = 718.2251815154783m, Wales = 181.2690740598454m, Scotland = 332.8499847265775m, NorthernIreland = 135.88043969809883m }
                 },
-                TwoCTotalProducerFeeForCommsCostsWithoutBadDebt = 1339.100071422903m,
-                TwoCBadDebtProvision = 80.34600428537418m,
-                TwoCTotalProducerFeeForCommsCostsWithBadDebt = new ByCountryCost { England = 607.4748035870169m, Wales = 300.7301007856519m, Scotland = 360.87612094278234m, NorthernIreland = 150.36505039282596m },
+                CommsCostsSectionTwoC = new CalcResultSummaryBadDebtProvision
+                {
+                    FeeWithoutBadDebtProvision = 1339.100071422903m,
+                    BadDebtProvision           = 80.34600428537418m,
+                    FeeWithBadDebtProvision    = new ByCountryCost { England = 607.4748035870169m, Wales = 300.7301007856519m, Scotland = 360.87612094278234m, NorthernIreland = 150.36505039282596m }
+                },
                 PercentageofProducerReportedTonnagevsAllProducers = 5.6741528450123m,
                 ProducerTotalOnePlus2A2B2CWithBadDeptProvision = 10491.167766844124m,
                 ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 4.7341913352015945m,
@@ -515,7 +524,7 @@ public static partial class TestDataHelper
                     SuggestedBillingInstruction = string.Empty,
                     SuggestedInvoiceAmount = 4039m
                 },
-                CommunicationCostsSectionTwoB = new CalcResultSummaryBadDebtProvision
+                CommsCostsSectionTwoB = new CalcResultSummaryBadDebtProvision
                 {
                     FeeWithoutBadDebtProvision = 2844.0556305055156m,
                     BadDebtProvision           = 170.64333783033092m,

@@ -99,9 +99,9 @@ public class BillingInstructionsProducerTests
                     {
                         FeeWithBadDebtProvision = new ByCountryCost { England = 120.004m, Wales = 0, Scotland = 0, NorthernIreland = 0 }
                     },
-                    TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty,
-                    LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-                    CommsCosts = CalcResultSummaryBadDebtProvision.Empty
+                    CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+                    CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
+                    LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
                 }
             ]
         };
@@ -148,9 +148,9 @@ public class BillingInstructionsProducerTests
                     {
                         FeeWithBadDebtProvision = new ByCountryCost { England = 50m, Wales = 0, Scotland = 0, NorthernIreland = 0 }
                     },
-                    TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty,
-                    LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-                    CommsCosts = CalcResultSummaryBadDebtProvision.Empty
+                    CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+                    CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
+                    LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
                 }
             ]
         };
@@ -191,9 +191,9 @@ public class BillingInstructionsProducerTests
                     SubsidiaryId = "S-11",
                     ProducerName = "P11",
                     TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = new ByCountryCost { England = 20m, Wales = 0, Scotland = 0, NorthernIreland = 0 } },
-                    TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty,
-                    LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-                    CommsCosts = CalcResultSummaryBadDebtProvision.Empty
+                    CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+                    CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
+                    LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
                 }
             ]
         };
@@ -230,9 +230,9 @@ public class BillingInstructionsProducerTests
             SubsidiaryId = "S-1",
             ProducerName = "P1",
             TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = new ByCountryCost { England = 50m, Wales = 0, Scotland = 0, NorthernIreland = 0 } },
-            TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty,
-            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-            CommsCosts = CalcResultSummaryBadDebtProvision.Empty
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
 
         var b = new CalcResultSummaryProducerDisposalFees
@@ -243,9 +243,9 @@ public class BillingInstructionsProducerTests
             SubsidiaryId = "S-2",
             ProducerName = "P2",
             TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = new ByCountryCost { England = 70m, Wales = 0, Scotland = 0, NorthernIreland = 0 } },
-            TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty,
-            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-            CommsCosts = CalcResultSummaryBadDebtProvision.Empty
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
 
         var total = new CalcResultSummaryProducerDisposalFees
@@ -256,9 +256,9 @@ public class BillingInstructionsProducerTests
             LeaverDate = CommonConstants.Totals,
             ProducerName = "Totals",
             SubsidiaryId = string.Empty,
-            TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty,
-            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-            CommsCosts = CalcResultSummaryBadDebtProvision.Empty
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
 
         var summary = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty, ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { a, b, total } };
@@ -311,9 +311,9 @@ public class BillingInstructionsProducerTests
             SubsidiaryId = "S-1",
             ProducerName = "P1",
             TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = new ByCountryCost { England = 50m, Wales = 0, Scotland = 0, NorthernIreland = 0 } },
-            TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty,
-            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-            CommsCosts = CalcResultSummaryBadDebtProvision.Empty
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
 
         var b = new CalcResultSummaryProducerDisposalFees
@@ -324,9 +324,9 @@ public class BillingInstructionsProducerTests
             SubsidiaryId = "S-2",
             ProducerName = "P2",
             TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = new ByCountryCost { England = 20m, Wales = 0, Scotland = 0, NorthernIreland = 0 } },
-            TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty,
-            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-            CommsCosts = CalcResultSummaryBadDebtProvision.Empty
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
 
         var total = new CalcResultSummaryProducerDisposalFees
@@ -337,9 +337,9 @@ public class BillingInstructionsProducerTests
             LeaverDate = CommonConstants.Totals,
             ProducerName = "Totals",
             SubsidiaryId = string.Empty,
-            TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty,
-            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-            CommsCosts = CalcResultSummaryBadDebtProvision.Empty
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
 
         var summary = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty, ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { a, b, total } };
@@ -390,9 +390,9 @@ public class BillingInstructionsProducerTests
             LeaverDate = CommonConstants.Totals,
             ProducerName = "Totals",
             SubsidiaryId = string.Empty,
-            TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty,
-            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-            CommsCosts = CalcResultSummaryBadDebtProvision.Empty
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
 
         var summary = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty, ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { total } };
@@ -413,9 +413,9 @@ public class BillingInstructionsProducerTests
             SubsidiaryId = "S-1",
             ProducerName = "P1",
             TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = new ByCountryCost { England = 100m, Wales = 0, Scotland = 0, NorthernIreland = 0 } },
-            TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty,
-            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-            CommsCosts = CalcResultSummaryBadDebtProvision.Empty
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
         var summary = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty, ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
 
@@ -450,9 +450,9 @@ public class BillingInstructionsProducerTests
             Level = "1",
             SubsidiaryId = "S-1",
             ProducerName = "P1",
-            TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty,
-            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-            CommsCosts = CalcResultSummaryBadDebtProvision.Empty
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
         var summary = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty, ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
 
@@ -504,9 +504,9 @@ public class BillingInstructionsProducerTests
             SubsidiaryId = "S-1",
             ProducerName = "P1",
             TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = new ByCountryCost { England = 200m, Wales = 0, Scotland = 0, NorthernIreland = 0 } },
-            TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty,
-            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-            CommsCosts = CalcResultSummaryBadDebtProvision.Empty
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
         var summary = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty, ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
 
@@ -541,9 +541,9 @@ public class BillingInstructionsProducerTests
             SubsidiaryId = "S-1",
             ProducerName = "P1",
             TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = new ByCountryCost { England = 150m, Wales = 0, Scotland = 0, NorthernIreland = 0 } },
-            TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty,
-            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-            CommsCosts = CalcResultSummaryBadDebtProvision.Empty
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
         var summary = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty, ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
 
@@ -596,9 +596,9 @@ public class BillingInstructionsProducerTests
             SubsidiaryId = "S-1",
             ProducerName = "P1",
             TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = new ByCountryCost { England = 40m, Wales = 0, Scotland = 0, NorthernIreland = 0 } },
-            TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty,
-            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-            CommsCosts = CalcResultSummaryBadDebtProvision.Empty
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
         var summary = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty, ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
 
@@ -651,9 +651,9 @@ public class BillingInstructionsProducerTests
             SubsidiaryId = "S-1",
             ProducerName = "P1",
             TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = new ByCountryCost { England = 115m, Wales = 0, Scotland = 0, NorthernIreland = 0 } },
-            TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty,
-            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-            CommsCosts = CalcResultSummaryBadDebtProvision.Empty
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
         var summary = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty, ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
 
@@ -707,9 +707,9 @@ public class BillingInstructionsProducerTests
             ProducerName = "P1",
             TonnageChangeAdvice = "NOCHANGE",
             TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = new ByCountryCost { England = 200m, Wales = 0, Scotland = 0, NorthernIreland = 0 } },
-            TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty,
-            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-            CommsCosts = CalcResultSummaryBadDebtProvision.Empty
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
         var summary = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty, ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
 
@@ -763,9 +763,9 @@ public class BillingInstructionsProducerTests
             ProducerName = "P1",
             TonnageChangeAdvice = "CHANGE",
             TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = new ByCountryCost { England = 200m, Wales = 0, Scotland = 0, NorthernIreland = 0 } },
-            TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty,
-            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-            CommsCosts = CalcResultSummaryBadDebtProvision.Empty
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
         var summary = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty, ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
 
@@ -801,9 +801,9 @@ public class BillingInstructionsProducerTests
             ProducerName = "P1",
             TonnageChangeAdvice = "CHANGE",
             TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = new ByCountryCost { England = 160m, Wales = 0, Scotland = 0, NorthernIreland = 0 } },
-            TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty,
-            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-            CommsCosts = CalcResultSummaryBadDebtProvision.Empty
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
         var summary = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty, ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
 
@@ -857,9 +857,9 @@ public class BillingInstructionsProducerTests
             ProducerName = "P1",
             TonnageChangeAdvice = "CHANGE",
             TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = new ByCountryCost { England = 40m, Wales = 0, Scotland = 0, NorthernIreland = 0 } },
-            TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty,
-            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-            CommsCosts = CalcResultSummaryBadDebtProvision.Empty
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
         var summary = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty, ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
 
@@ -913,9 +913,9 @@ public class BillingInstructionsProducerTests
             ProducerName = "P1",
             TonnageChangeAdvice = "CHANGE",
             TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = new ByCountryCost { England = 110m, Wales = 0, Scotland = 0, NorthernIreland = 0 } },
-            TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty,
-            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-            CommsCosts = CalcResultSummaryBadDebtProvision.Empty
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
         var summary = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty, ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
 

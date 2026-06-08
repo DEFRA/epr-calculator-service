@@ -45,10 +45,10 @@ public class LaDataPrepCostsProducerTests
                     ProducerDisposalFeesByMaterial =
                         new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>(),
                     ProducerId = "1",
-                    ProducerName = "Test",
-                    CommsCosts = CalcResultSummaryBadDebtProvision.Empty,
                     SubsidiaryId = "1",
-                    TwoCTotalProducerFeeForCommsCostsWithBadDebt = new ByCountryCost { England = 10, Wales = 0, Scotland = 0, NorthernIreland = 0 },
+                    ProducerName = "Test",
+                    CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+                    CommsCostsSectionTwoC = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = new ByCountryCost { England = 10, Wales = 0, Scotland = 0, NorthernIreland = 0 } },
                     ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 100,
                     LocalAuthorityDataPreparationCosts = new CalcResultSummaryBadDebtProvision
                     {
@@ -56,6 +56,7 @@ public class LaDataPrepCostsProducerTests
                         BadDebtProvision           = 20,
                         FeeWithBadDebtProvision    = new ByCountryCost { England = 20, Wales = 20, Scotland = 20, NorthernIreland = 20 }
                     },
+                    LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
                     BillingInstructionSection = new CalcResultSummaryBillingInstruction
                     {
                         SuggestedBillingInstruction = string.Empty
