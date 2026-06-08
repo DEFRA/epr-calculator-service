@@ -49,9 +49,15 @@ public static class CalcResultSummaryCommsCostTwoA
         ProducerDetail producer,
         MaterialDetail material,
         CalcResult calcResult
+    ) => GetCommsFeesCosts(GetTotalReportedTonnage(projectedMaterialsLookup, producer, material), material, calcResult);
+
+    public static CalcResultSummaryBadDebtProvision GetCommsFeesCosts(
+        decimal totalReportedTonnage,
+        MaterialDetail material,
+        CalcResult calcResult
     )
     {
-        var feeWithoutBadDebt = GetProducerTotalCostWithoutBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
+        var feeWithoutBadDebt = totalReportedTonnage * GetPriceperTonneForComms(material, calcResult);
         var badDebtRate = calcResult.CalcResultParameterOtherCost.BadDebtValue;
         var apportionment = calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment;
         return new CalcResultSummaryBadDebtProvision

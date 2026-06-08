@@ -357,7 +357,29 @@ internal sealed class ProducerRowBuilder(
         // PERF: O(1) replacement for the original `Where(...).Select(...).FirstOrDefault()` scan.
         invoicedNetTonnageByProducerMaterial.TryGetValue((producer.ProducerId, material.Id), out var previousInvoicedNetTonnage);
 
-        var totalReportedTonnage = CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, producer, material);
+        var hhTonnage  = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.Household);
+        var pbTonnage  = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.PublicBin);
+        var hdcTonnage = material.Code == MaterialCodes.Glass
+            ? CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.HouseholdDrinksContainers)
+            : 0m;
+
+        Dictionary<RagRating, decimal> hhRagTonnage   = [];
+        Dictionary<RagRating, decimal> pbRagTonnage   = [];
+        Dictionary<RagRating, decimal> hdcRagTonnage  = [];
+        Dictionary<RagRating, decimal> totalRagTonnage = [];
+
+        if (runContext.RequiresModulation)
+        {
+            foreach (var rag in Enum.GetValues<RagRating>())
+            {
+                hhRagTonnage[rag]  = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.Household, rag);
+                pbRagTonnage[rag]  = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.PublicBin, rag);
+                hdcRagTonnage[rag] = material.Code == MaterialCodes.Glass
+                    ? CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.HouseholdDrinksContainers, rag)
+                    : 0m;
+                totalRagTonnage[rag] = hhRagTonnage[rag] + pbRagTonnage[rag] + hdcRagTonnage[rag];
+            }
+        }
 
         var selfManagedConsumerWasteData = smcw
             .ProducerTotals
@@ -371,35 +393,17 @@ internal sealed class ProducerRowBuilder(
 
         return new CalcResultSummaryProducerDisposalFeesByMaterial
         {
-            HouseholdPackagingWasteTonnage = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.Household),
-            HouseholdPackagingWasteTonnageRagRating = runContext.RequiresModulation
-                ? Enum.GetValues<RagRating>().ToDictionary(
-                    rag => rag,
-                    rag => CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.Household, rag))
-                : new(),
+            HouseholdPackagingWasteTonnage          = hhTonnage,
+            HouseholdPackagingWasteTonnageRagRating = hhRagTonnage,
 
-            PublicBinTonnage = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.PublicBin),
-            PublicBinTonnageRagRating = runContext.RequiresModulation
-                ? Enum.GetValues<RagRating>().ToDictionary(
-                    rag => rag,
-                    rag => CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.PublicBin, rag))
-                : new(),
+            PublicBinTonnage          = pbTonnage,
+            PublicBinTonnageRagRating = pbRagTonnage,
 
-            HouseholdDrinksContainersTonnage = material.Code == MaterialCodes.Glass
-                ? CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.HouseholdDrinksContainers)
-                : new(),
-            HouseholdDrinksContainersTonnageRagRating = runContext.RequiresModulation && material.Code == MaterialCodes.Glass
-                ? Enum.GetValues<RagRating>().ToDictionary(
-                    rag => rag,
-                    rag => CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.HouseholdDrinksContainers, rag))
-                : new(),
+            HouseholdDrinksContainersTonnage          = hdcTonnage,
+            HouseholdDrinksContainersTonnageRagRating = hdcRagTonnage,
 
-            TotalReportedTonnage = totalReportedTonnage,
-            TotalReportedTonnageRagRating = runContext.RequiresModulation
-                ? Enum.GetValues<RagRating>().ToDictionary(
-                    rag => rag,
-                    rag => CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, producer, material, rag))
-                : new(),
+            TotalReportedTonnage          = hhTonnage + pbTonnage + hdcTonnage,
+            TotalReportedTonnageRagRating = totalRagTonnage,
 
             SelfManagedConsumerWasteTonnage         = selfManagedConsumerWasteData.SelfManagedConsumerWasteTonnage,
             ActionedSelfManagedConsumerWasteTonnage = selfManagedConsumerWasteData.ActionedSelfManagedConsumerWasteTonnage,
@@ -421,16 +425,21 @@ internal sealed class ProducerRowBuilder(
         CalcResult calcResult
     )
     {
+        var hhTonnage  = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.Household);
+        var pbTonnage  = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.PublicBin);
+        var hdcTonnage = material.Code == MaterialCodes.Glass
+            ? CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.HouseholdDrinksContainers)
+            : 0m;
+        var totalTonnage = hhTonnage + pbTonnage + hdcTonnage;
+
         return new CalcResultSummaryProducerCommsFeesCostByMaterial
         {
-            HouseholdPackagingWasteTonnage   = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.Household),
-            PublicBinTonnage                 = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.PublicBin),
-            HouseholdDrinksContainersTonnage = material.Code == MaterialCodes.Glass
-                ? CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.HouseholdDrinksContainers)
-                : new(),
-            TotalReportedTonnage             = CalcResultSummaryCommsCostTwoA.GetTotalReportedTonnage(projectedMaterialsLookup, producer, material),
+            HouseholdPackagingWasteTonnage   = hhTonnage,
+            PublicBinTonnage                 = pbTonnage,
+            HouseholdDrinksContainersTonnage = hdcTonnage,
+            TotalReportedTonnage             = totalTonnage,
             PriceperTonne                    = CalcResultSummaryCommsCostTwoA.GetPriceperTonneForComms(material, calcResult),
-            Costs                            = CalcResultSummaryCommsCostTwoA.GetCommsFeesCosts(projectedMaterialsLookup, producer, material, calcResult)
+            Costs                            = CalcResultSummaryCommsCostTwoA.GetCommsFeesCosts(totalTonnage, material, calcResult)
         };
     }
 

@@ -51,6 +51,31 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             return householdTonnage + publicBinTonnage + glassTonnage;
         }
 
+        // Single-pass equivalent of calling GetReportedTonnage seven times with each RagRating and once without.
+        public static (decimal R, decimal A, decimal G, decimal Total) GetReportedTonnagesByRag(
+            ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
+            ProducerDetail producer,
+            MaterialDetail material
+        )
+        {
+            var isGlass = material.Code == MaterialCodes.Glass;
+            decimal r = 0, a = 0, g = 0, total = 0;
+
+            foreach (var item in projectedMaterialsLookup[(producer.ProducerId, producer.SubsidiaryId)]
+                .Where(p => p.MaterialId == material.Id &&
+                           (p.PackagingType == PackagingTypes.Household ||
+                            p.PackagingType == PackagingTypes.PublicBin ||
+                            (isGlass && p.PackagingType == PackagingTypes.HouseholdDrinksContainers))))
+            {
+                r     += (item.PackagingTonnageRed          ?? 0) + (item.PackagingTonnageRedMedical   ?? 0);
+                a     += (item.PackagingTonnageAmber         ?? 0) + (item.PackagingTonnageAmberMedical ?? 0);
+                g     += (item.PackagingTonnageGreen         ?? 0) + (item.PackagingTonnageGreenMedical ?? 0);
+                total += item.PackagingTonnage;
+            }
+
+            return (r, a, g, total);
+        }
+
         public static SelfManagedConsumerWasteData SumSelfManagedConsumerWasteData(
             IReadOnlyList<ProducerDetail> producersAndSubsidiaries,
             MaterialDetail material,

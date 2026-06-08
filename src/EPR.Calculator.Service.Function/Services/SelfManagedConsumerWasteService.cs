@@ -98,16 +98,13 @@ namespace EPR.Calculator.Service.Function.Services
             if (group.Count() == 1 && group.First().SubsidiaryId == null)
             {
                 var p = group.First();
-
+                var (R, A, G, Total) = CalcResultSummaryUtil.GetReportedTonnagesByRag(projectedMaterialsLookup, p, material);
                 return new SingleL1(
                     OrgId: p.ProducerId,
-                    R:     CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, p, material, RagRating.Red) +
-                           CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, p, material, RagRating.RedMedical),
-                    A:     CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, p, material, RagRating.Amber) +
-                           CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, p, material, RagRating.AmberMedical),
-                    G:     CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, p, material, RagRating.Green) +
-                           CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, p, material, RagRating.GreenMedical),
-                    Total: CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, p, material),
+                    R:     R,
+                    A:     A,
+                    G:     G,
+                    Total: Total,
                     Smcw:  CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, p, material, PackagingTypes.ConsumerWaste)
                 );
             }
@@ -115,18 +112,20 @@ namespace EPR.Calculator.Service.Function.Services
             var l2s = group
                 .OrderBy(p => p.ProducerId)
                 .ThenBy(p => p.SubsidiaryId)
-                .Select(p => new L2(
-                    OrgId:        p.ProducerId,
-                    SubsidiaryId: p.SubsidiaryId,
-                    R:            CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, p, material, RagRating.Red) +
-                                  CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, p, material, RagRating.RedMedical),
-                    A:            CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, p, material, RagRating.Amber) +
-                                  CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, p, material, RagRating.AmberMedical),
-                    G:            CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, p, material, RagRating.Green) +
-                                  CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, p, material, RagRating.GreenMedical),
-                    Total:        CalcResultSummaryUtil.GetReportedTonnage(projectedMaterialsLookup, p, material),
-                    Smcw:         CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, p, material, PackagingTypes.ConsumerWaste)
-                )).ToList();
+                .Select(p =>
+                {
+                    var (R, A, G, Total) = CalcResultSummaryUtil.GetReportedTonnagesByRag(projectedMaterialsLookup, p, material);
+                    return new L2(
+                        OrgId:        p.ProducerId,
+                        SubsidiaryId: p.SubsidiaryId,
+                        R:            R,
+                        A:            A,
+                        G:            G,
+                        Total:        Total,
+                        Smcw:         CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, p, material, PackagingTypes.ConsumerWaste)
+                    );
+                })
+                .ToList();
 
             return new HC(group.Key, l2s);
         }
