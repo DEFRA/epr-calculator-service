@@ -2,7 +2,6 @@ using System.Text;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.UnitTests.Builder;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Summary;
 

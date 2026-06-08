@@ -2,7 +2,6 @@
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 
@@ -63,9 +62,9 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             foreach (var item in projectedMaterialsLookup[(producer.ProducerId, producer.SubsidiaryId)]
                 .Where(p => p.MaterialId == material.Id && p.PackagingType != PackagingTypes.ConsumerWaste))
             {
-                r     += (item.PackagingTonnageRed          ?? 0) + (item.PackagingTonnageRedMedical   ?? 0);
-                a     += (item.PackagingTonnageAmber         ?? 0) + (item.PackagingTonnageAmberMedical ?? 0);
-                g     += (item.PackagingTonnageGreen         ?? 0) + (item.PackagingTonnageGreenMedical ?? 0);
+                r     += (item.PackagingTonnageRed   ?? 0) + (item.PackagingTonnageRedMedical   ?? 0);
+                a     += (item.PackagingTonnageAmber ?? 0) + (item.PackagingTonnageAmberMedical ?? 0);
+                g     += (item.PackagingTonnageGreen ?? 0) + (item.PackagingTonnageGreenMedical ?? 0);
                 total += item.PackagingTonnage;
             }
 

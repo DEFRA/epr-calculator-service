@@ -29,7 +29,7 @@ public static class CalcResultSummaryCommsCostTwoA
         }
 
         return material.Code == MaterialCodes.Glass
-            ? hdcTonnage + reportedPublicBinTonnage + hhPackagingWasteTonnage
+            ? hhPackagingWasteTonnage + reportedPublicBinTonnage + hdcTonnage
             : hhPackagingWasteTonnage + reportedPublicBinTonnage;
     }
 

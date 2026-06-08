@@ -3,7 +3,6 @@ using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
-using static EPR.Calculator.Service.Function.Constants.MaterialCodes;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 
