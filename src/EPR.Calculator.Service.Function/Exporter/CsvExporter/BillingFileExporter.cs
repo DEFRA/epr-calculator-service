@@ -117,9 +117,7 @@ public class BillingFileExporter(
     }
 
     // TODO can we remove this row?
-    // TODO look into why we need a new one each time - i.e. it's being mutated
-    // TODO we should just write this directly into the CSV if it's needed
-    private static CalcResultSummaryProducerDisposalFees ZeroedTotalRow => new()
+    private static readonly CalcResultSummaryProducerDisposalFees ZeroedTotalRow = new()
     {
         ProducerId                 = 0,
         SubsidiaryId               = string.Empty,

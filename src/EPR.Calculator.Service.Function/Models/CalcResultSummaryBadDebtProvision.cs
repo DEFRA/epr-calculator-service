@@ -1,4 +1,7 @@
-﻿namespace EPR.Calculator.Service.Function.Models;
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace EPR.Calculator.Service.Function.Models;
 
 public class CalcResultSummaryBadDebtProvision
 {
@@ -14,4 +17,18 @@ public class CalcResultSummaryBadDebtProvision
         BadDebtProvision           = 0,
         FeeWithBadDebtProvision    = ByCountryCost.Empty
     };
+
+    public static CalcResultSummaryBadDebtProvision operator +(CalcResultSummaryBadDebtProvision a, CalcResultSummaryBadDebtProvision b) =>
+        new()
+        {
+            FeeWithoutBadDebtProvision = a.FeeWithoutBadDebtProvision + b.FeeWithoutBadDebtProvision,
+            BadDebtProvision           = a.BadDebtProvision           + b.BadDebtProvision,
+            FeeWithBadDebtProvision    = a.FeeWithBadDebtProvision    + b.FeeWithBadDebtProvision,
+        };
+}
+
+public static class CalcResultSummaryBadDebtProvisionExtensions
+{
+    public static CalcResultSummaryBadDebtProvision Sum(this IEnumerable<CalcResultSummaryBadDebtProvision> source) =>
+        source.Aggregate(CalcResultSummaryBadDebtProvision.Empty, (acc, r) => acc + r);
 }

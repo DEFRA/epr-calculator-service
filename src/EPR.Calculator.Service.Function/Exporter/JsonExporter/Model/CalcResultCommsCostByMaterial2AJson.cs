@@ -94,13 +94,13 @@ public record CalcResultCommsCostByMaterial2AMaterialBreakdown
             PublicBinTonnage                         = item.PublicBinTonnage,
             TotalTonnage                             = item.TotalReportedTonnage,
             PricePerTonne                            = CurrencyConverterUtils.ConvertToCurrency(item.PriceperTonne, (int)DecimalPlaces.Four),
-            ProducerTotalCostWithoutBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(item.ProducerTotalCostWithoutBadDebtProvision),
-            BadDebtProvision                         = CurrencyConverterUtils.ConvertToCurrency(item.BadDebtProvision),
-            ProducerTotalCostwithBadDebtProvision    = CurrencyConverterUtils.ConvertToCurrency(item.ProducerDisposalFeeWithBadDebtProvision.Total),
-            EnglandWithBadDebtProvision              = CurrencyConverterUtils.ConvertToCurrency(item.ProducerDisposalFeeWithBadDebtProvision.England),
-            WalesWithBadDebtProvision                = CurrencyConverterUtils.ConvertToCurrency(item.ProducerDisposalFeeWithBadDebtProvision.Wales),
-            ScotlandWithBadDebtProvision             = CurrencyConverterUtils.ConvertToCurrency(item.ProducerDisposalFeeWithBadDebtProvision.Scotland),
-            NorthernIrelandWithBadDebtProvision      = CurrencyConverterUtils.ConvertToCurrency(item.ProducerDisposalFeeWithBadDebtProvision.NorthernIreland)
+            ProducerTotalCostWithoutBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(item.Costs.FeeWithoutBadDebtProvision),
+            BadDebtProvision                         = CurrencyConverterUtils.ConvertToCurrency(item.Costs.BadDebtProvision),
+            ProducerTotalCostwithBadDebtProvision    = CurrencyConverterUtils.ConvertToCurrency(item.Costs.FeeWithBadDebtProvision.Total),
+            EnglandWithBadDebtProvision              = CurrencyConverterUtils.ConvertToCurrency(item.Costs.FeeWithBadDebtProvision.England),
+            WalesWithBadDebtProvision                = CurrencyConverterUtils.ConvertToCurrency(item.Costs.FeeWithBadDebtProvision.Wales),
+            ScotlandWithBadDebtProvision             = CurrencyConverterUtils.ConvertToCurrency(item.Costs.FeeWithBadDebtProvision.Scotland),
+            NorthernIrelandWithBadDebtProvision      = CurrencyConverterUtils.ConvertToCurrency(item.Costs.FeeWithBadDebtProvision.NorthernIreland)
         };
     }
 }

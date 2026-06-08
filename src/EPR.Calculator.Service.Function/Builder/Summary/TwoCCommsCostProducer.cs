@@ -18,10 +18,8 @@ public static class TwoCCommsCostProducer
         };
     }
 
-    public static void UpdateTwoCRows(CalcResult calcResult, CalcResultSummaryProducerDisposalFees result,
-        ProducerDetail producer, IReadOnlyList<TotalPackagingTonnagePerRun> hhTotalPackagingTonnage)
+    public static void UpdateTwoCRows(CalcResult calcResult, CalcResultSummaryProducerDisposalFees result)
     {
-        //var commsWithBadDebt2C = GetCommWithBadDebt2C(calcResult, producer, hhTotalPackagingTonnage);
         var commsCost = calcResult.CalcResultCommsCostReportDetail.CommsCostByCountry;
 
         var badDebtProvisionValue =
@@ -39,16 +37,7 @@ public static class TwoCCommsCostProducer
                 / 100,
             FeeWithBadDebtProvision = (commsCost + badDebtProvisionValue)
                 * (result.PercentageofProducerReportedTonnagevsAllProducers
-                / 100) //commsWithBadDebt2C * commsCost
+                / 100)
         };
     }
-
-    /*private static decimal GetCommWithBadDebt2C(CalcResult calcResult, ProducerDetail producer, IReadOnlyList<TotalPackagingTonnagePerRun> hhTotalPackagingTonnage)
-    {
-        decimal badDebtProvision = calcResult.CalcResultParameterOtherCost.BadDebtValue / 100;
-        decimal percentageOfProducerReportedHhTonnageVsAllProducers =
-            // TODO review this
-            TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducers(producer, hhTotalPackagingTonnage) / 100;
-        return (1 + badDebtProvision) * percentageOfProducerReportedHhTonnageVsAllProducers;
-    }*/
 }

@@ -18,25 +18,31 @@ public class CommsCostByMaterial2AJsonTests
         {
             ["AL"] = new CalcResultSummaryProducerCommsFeesCostByMaterial
             {
-                HouseholdPackagingWasteTonnage = 100.25m,
-                PublicBinTonnage = 50.50m,
-                TotalReportedTonnage = 150.75m,
+                HouseholdPackagingWasteTonnage   = 100.25m,
+                PublicBinTonnage                 = 50.50m,
+                TotalReportedTonnage             = 150.75m,
                 HouseholdDrinksContainersTonnage = 0m,
-                PriceperTonne = 0.42m,
-                ProducerTotalCostWithoutBadDebtProvision = 10m,
-                BadDebtProvision = 1m,
-                ProducerDisposalFeeWithBadDebtProvision = new ByCountryCost { England = 4m, Wales = 3m, Scotland = 2m, NorthernIreland = 1m },
+                PriceperTonne                    = 0.42m,
+                Costs = new CalcResultSummaryBadDebtProvision
+                {
+                    FeeWithoutBadDebtProvision = 10m,
+                    BadDebtProvision           = 1m,
+                    FeeWithBadDebtProvision    = new ByCountryCost { England = 4m, Wales = 3m, Scotland = 2m, NorthernIreland = 1m },
+                },
             },
             ["GL"] = new CalcResultSummaryProducerCommsFeesCostByMaterial
             {
-                HouseholdPackagingWasteTonnage = 200m,
-                PublicBinTonnage = 80m,
-                TotalReportedTonnage = 280m,
+                HouseholdPackagingWasteTonnage   = 200m,
+                PublicBinTonnage                 = 80m,
+                TotalReportedTonnage             = 280m,
                 HouseholdDrinksContainersTonnage = 12.34m,
-                PriceperTonne = 0.3m,
-                ProducerTotalCostWithoutBadDebtProvision = 20m,
-                BadDebtProvision = 2m,
-                ProducerDisposalFeeWithBadDebtProvision = new ByCountryCost { England = 8m, Wales = 7m, Scotland = 6m, NorthernIreland = 5m },
+                PriceperTonne                    = 0.3m,
+                Costs = new CalcResultSummaryBadDebtProvision
+                {
+                    FeeWithoutBadDebtProvision = 20m,
+                    BadDebtProvision           = 2m,
+                    FeeWithBadDebtProvision    = new ByCountryCost { England = 8m, Wales = 7m, Scotland = 6m, NorthernIreland = 5m },
+                },
             }
         };
 

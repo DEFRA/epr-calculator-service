@@ -227,7 +227,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var total = result.OverallTotalPerMaterials[MaterialCodes.Aluminium];
 
             // Level 2 should not contribute
-            // TODO there is no ProducerReportdMaterialProjected created, so there's nothing to filter out
+            // TODO there is no ProducerReportedMaterialProjected created, so there's nothing to filter out
             Assert.AreEqual(0, total.SelfManagedConsumerWasteTonnage);
             Assert.AreEqual(0, total.NetReportedTonnage.total);
         }

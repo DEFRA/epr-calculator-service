@@ -8,46 +8,14 @@ public static class TotalBillBreakdownProducer
     {
         foreach (var fee in summary.ProducerDisposalFees)
         {
-            fee.TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision
-            {
-                FeeWithoutBadDebtProvision = GetTotalProducerBillWithoutBadDebtProvision(fee) ?? 0,
-                BadDebtProvision           = GetBadDebtProvisionForTotalProducerBill(fee) ?? 0,
-                FeeWithBadDebtProvision    = GetTotalProducerBillWithBadDebtProvision(fee)
-            };
+            fee.TotalProducerBillBreakdownCosts =
+                fee.LADisposalCostsSection1
+                + fee.CommsCostsSection2a
+                + fee.CommsCostsSection2b
+                + fee.CommsCostsSection2c
+                + fee.SaOperatingCostsSection3
+                + fee.LaDataPrepSection4
+                + fee.SaSetupCostsSection5;
         }
-    }
-
-    // TODO add these up once, then separate out the Without/With/BadDebt
-    private static decimal? GetTotalProducerBillWithoutBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
-    {
-        return fee.LADisposalCostsSection1.FeeWithoutBadDebtProvision
-            + fee.CommsCostsSection2a.FeeWithoutBadDebtProvision
-            + fee.CommsCostsSection2b.FeeWithoutBadDebtProvision
-            + fee.CommsCostsSection2c.FeeWithoutBadDebtProvision
-            + fee.SaOperatingCostsSection3.FeeWithoutBadDebtProvision
-            + fee.LaDataPrepSection4.FeeWithoutBadDebtProvision
-            + fee.SaSetupCostsSection5.FeeWithoutBadDebtProvision;
-    }
-
-    private static decimal? GetBadDebtProvisionForTotalProducerBill(CalcResultSummaryProducerDisposalFees fee)
-    {
-        return fee.LADisposalCostsSection1.BadDebtProvision
-            + fee.CommsCostsSection2a.BadDebtProvision
-            + fee.CommsCostsSection2b.BadDebtProvision
-            + fee.CommsCostsSection2c.BadDebtProvision
-            + fee.SaOperatingCostsSection3.BadDebtProvision
-            + fee.LaDataPrepSection4.BadDebtProvision
-            + fee.SaSetupCostsSection5.BadDebtProvision;
-    }
-
-    private static ByCountryCost GetTotalProducerBillWithBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
-    {
-        return fee.LADisposalCostsSection1.FeeWithBadDebtProvision
-            + fee.CommsCostsSection2a.FeeWithBadDebtProvision
-            + fee.CommsCostsSection2b.FeeWithBadDebtProvision
-            + fee.CommsCostsSection2c.FeeWithBadDebtProvision
-            + fee.SaOperatingCostsSection3.FeeWithBadDebtProvision
-            + fee.LaDataPrepSection4.FeeWithBadDebtProvision
-            + fee.SaSetupCostsSection5.FeeWithBadDebtProvision;
     }
 }

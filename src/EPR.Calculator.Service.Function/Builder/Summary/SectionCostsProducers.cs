@@ -11,108 +11,73 @@ namespace EPR.Calculator.Service.Function.Builder.Summary;
 
 public static class ThreeSaCostsProducer
 {
-    public static void SetValues(
-        CalcResult calcResult,
-        CalcResultSummary summary
-    ) =>
+    public static void SetValues(CalcResult calcResult, CalcResultSummary summary) =>
         SectionCosts.Apply(
-            badDebtRate: calcResult.CalcResultParameterOtherCost.BadDebtValue,
             summary,
-            sectionTotal: calcResult.CalcResultParameterOtherCost.SaOperatingCost.Total,
+            badDebt:       calcResult.CalcResultParameterOtherCost.BadDebtValue,
+            total:         calcResult.CalcResultParameterOtherCost.SaOperatingCost.Total,
             apportionment: calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment,
-            setHeaders: (wo, bd, with) => {
-                summary.SaOperatingCostsSection3 = new CalcResultSummaryBadDebtProvision {
-                    FeeWithoutBadDebtProvision = wo,
-                    BadDebtProvision           = bd,
-                    FeeWithBadDebtProvision    = with
-                };
-            },
-            setFee: (fee, provision) => fee.SaOperatingCostsSection3 = provision
+            setHeader: (s, p) => s.SaOperatingCostsSection3 = p,
+            setFee:    (f, p) => f.SaOperatingCostsSection3 = p
         );
 }
 
 public static class LaDataPrepCostsProducer
 {
-    public static void SetValues(
-        CalcResult calcResult,
-        CalcResultSummary summary
-    ) =>
+    public static void SetValues(CalcResult calcResult, CalcResultSummary summary) =>
         SectionCosts.Apply(
-            badDebtRate: calcResult.CalcResultParameterOtherCost.BadDebtValue,
             summary,
-            sectionTotal: calcResult.CalcResultParameterOtherCost.LaDataPrepCharge?.Total ?? 0m,
+            badDebt:       calcResult.CalcResultParameterOtherCost.BadDebtValue,
+            total:         calcResult.CalcResultParameterOtherCost.LaDataPrepCharge?.Total ?? 0m,
             apportionment: calcResult.CalcResultParameterOtherCost.CountryApportionment,
-            setHeaders: (wo, bd, with) => {
-                summary.LaDataPrepSection4 = new CalcResultSummaryBadDebtProvision {
-                    FeeWithoutBadDebtProvision = wo,
-                    BadDebtProvision           = bd,
-                    FeeWithBadDebtProvision    = with
-                };
-            },
-            setFee: (fee, provision) => fee.LaDataPrepSection4 = provision
+            setHeader: (s, p) => s.LaDataPrepSection4 = p,
+            setFee:    (f, p) => f.LaDataPrepSection4 = p
         );
 }
 
 public static class SaSetupCostsProducer
 {
-    public static void SetValues(
-        CalcResult calcResult,
-        CalcResultSummary summary
-    ) =>
+    public static void SetValues(CalcResult calcResult, CalcResultSummary summary) =>
         SectionCosts.Apply(
-            badDebtRate: calcResult.CalcResultParameterOtherCost.BadDebtValue,
             summary,
-            sectionTotal: calcResult.CalcResultParameterOtherCost.SchemeSetupCost.Total,
+            badDebt:       calcResult.CalcResultParameterOtherCost.BadDebtValue,
+            total:         calcResult.CalcResultParameterOtherCost.SchemeSetupCost.Total,
             apportionment: calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment,
-            setHeaders: (wo, bd, with) => {
-                summary.SaSetupCostsSection5 = new CalcResultSummaryBadDebtProvision {
-                    FeeWithoutBadDebtProvision = wo,
-                    BadDebtProvision           = bd,
-                    FeeWithBadDebtProvision    = with
-                };
-            },
-            setFee: (fee, provision) => fee.SaSetupCostsSection5 = provision
+            setHeader: (s, p) => s.SaSetupCostsSection5 = p,
+            setFee:    (f, p) => f.SaSetupCostsSection5 = p
         );
 }
 
 internal static class SectionCosts
 {
     internal static void Apply(
-        decimal badDebtRate,
         CalcResultSummary summary,
-        decimal sectionTotal,
+        decimal badDebt,
+        decimal total,
         ByCountryApportionment apportionment,
-        Action<decimal, decimal, ByCountryCost> setHeaders,
+        Action<CalcResultSummary, CalcResultSummaryBadDebtProvision> setHeader,
         Action<CalcResultSummaryProducerDisposalFees, CalcResultSummaryBadDebtProvision> setFee
     )
     {
-        var res = summary.ProducerDisposalFees.Select(fee =>
-        {
-            var without = fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C * sectionTotal / 100;
-            var badDebt = without * badDebtRate / 100;
-            var apportioned =
-                ApplyApportionment(
-                    badDebtRate,
-                    sectionTotal,
-                    fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C,
-                    apportionment
-                );
-            return new { fee = fee, without = without, badDebt = badDebt, with = apportioned };
-        }).ToList();
+        setHeader(summary, BadDebtProvision(badDebt, total, apportionment, 100m));
+        foreach (var fee in summary.ProducerDisposalFees)
+            setFee(fee, BadDebtProvision(badDebt, total, apportionment, fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C));
+    }
 
-        foreach (var r in res)
+    internal static CalcResultSummaryBadDebtProvision BadDebtProvision(
+        decimal badDebtRate,
+        decimal sectionTotal,
+        ByCountryApportionment apportionment,
+        decimal producerPct
+    )
+    {
+        var without = producerPct * sectionTotal / 100;
+        return new CalcResultSummaryBadDebtProvision
         {
-            setFee(r.fee, new CalcResultSummaryBadDebtProvision
-            {
-                FeeWithoutBadDebtProvision = r.without,
-                BadDebtProvision           = r.badDebt,
-                FeeWithBadDebtProvision    = r.with
-            });
-        }
-
-        var totalBadDebt = sectionTotal * badDebtRate / 100;
-        var totalApportionment = ApplyApportionment(badDebtRate, sectionTotal, 100m, apportionment);
-        setHeaders(sectionTotal, totalBadDebt, totalApportionment);
+            FeeWithoutBadDebtProvision = without,
+            BadDebtProvision           = without * badDebtRate / 100,
+            FeeWithBadDebtProvision    = ApplyApportionment(badDebtRate, sectionTotal, producerPct, apportionment)
+        };
     }
 
     // A producer's country-apportioned share of a section cost total, with bad debt applied.
