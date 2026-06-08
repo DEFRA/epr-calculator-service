@@ -21,9 +21,11 @@ public static class ThreeSaCostsProducer
             sectionTotal: calcResult.CalcResultParameterOtherCost.SaOperatingCost.Total,
             apportionment: calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment,
             setHeaders: (wo, bd, with) => {
-                summary.SaOperatingCostsWoTitleSection3   = wo;
-                summary.BadDebtProvisionTitleSection3     = bd;
-                summary.SaOperatingCostsWithTitleSection3 = with;
+                summary.SchemeAdministratorOperatingCosts = new CalcResultSummaryBadDebtProvision {
+                    FeeWithoutBadDebtProvision = wo,
+                    BadDebtProvision           = bd,
+                    FeeWithBadDebtProvision    = with
+                };
             },
             setFee: (fee, provision) => fee.SchemeAdministratorOperatingCosts = provision
         );
@@ -41,9 +43,11 @@ public static class LaDataPrepCostsProducer
             sectionTotal: calcResult.CalcResultParameterOtherCost.LaDataPrepCharge?.Total ?? 0m,
             apportionment: calcResult.CalcResultParameterOtherCost.CountryApportionment,
             setHeaders: (wo, bd, with) => {
-                summary.LaDataPrepCostsTitleSection4                     = wo;
-                summary.LaDataPrepCostsBadDebtProvisionTitleSection4     = bd;
-                summary.LaDataPrepCostsWithBadDebtProvisionTitleSection4 = with;
+                summary.LaDataPrepSection4 = new CalcResultSummaryBadDebtProvision {
+                    FeeWithoutBadDebtProvision = wo,
+                    BadDebtProvision           = bd,
+                    FeeWithBadDebtProvision    = with
+                };
             },
             setFee: (fee, provision) => fee.LocalAuthorityDataPreparationCosts = provision
         );
@@ -61,9 +65,11 @@ public static class SaSetupCostsProducer
             sectionTotal: calcResult.CalcResultParameterOtherCost.SchemeSetupCost.Total,
             apportionment: calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment,
             setHeaders: (wo, bd, with) => {
-                summary.SaSetupCostsTitleSection5                     = wo;
-                summary.SaSetupCostsBadDebtProvisionTitleSection5     = bd;
-                summary.SaSetupCostsWithBadDebtProvisionTitleSection5 = with;
+                summary.SaSetupCostsSection5 = new CalcResultSummaryBadDebtProvision {
+                    FeeWithoutBadDebtProvision = wo,
+                    BadDebtProvision           = bd,
+                    FeeWithBadDebtProvision    = with
+                };
             },
             setFee: (fee, provision) => fee.OneOffSchemeAdministrationSetupCosts = provision
         );
@@ -76,17 +82,14 @@ internal static class SectionCosts
         CalcResultSummary summary,
         decimal sectionTotal,
         ByCountryApportionment apportionment,
-        Action<decimal, decimal, decimal> setHeaders,
+        Action<decimal, decimal, ByCountryCost> setHeaders,
         Action<CalcResultSummaryProducerDisposalFees, CalcResultSummaryBadDebtProvision> setFee
     )
     {
-        var badDebt = sectionTotal * badDebtRate / 100;
-        setHeaders(sectionTotal, badDebt, sectionTotal + badDebt);
-
-        foreach (var fee in summary.ProducerDisposalFees)
+        var res = summary.ProducerDisposalFees.Select(fee =>
         {
             var without = fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C * sectionTotal / 100;
-            var feeDebt = without * badDebtRate / 100;
+            var badDebt = without * badDebtRate / 100;
             var apportioned =
                 ApplyApportionment(
                     badDebtRate,
@@ -94,14 +97,22 @@ internal static class SectionCosts
                     fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C,
                     apportionment
                 );
+            return new { fee = fee, without = without, badDebt = badDebt, with = apportioned };
+        }).ToList();
 
-            setFee(fee, new CalcResultSummaryBadDebtProvision
+        foreach (var r in res)
+        {
+            setFee(r.fee, new CalcResultSummaryBadDebtProvision
             {
-                FeeWithoutBadDebtProvision = without,
-                BadDebtProvision           = feeDebt,
-                FeeWithBadDebtProvision    = apportioned
+                FeeWithoutBadDebtProvision = r.without,
+                BadDebtProvision           = r.badDebt,
+                FeeWithBadDebtProvision    = r.with
             });
         }
+
+        var totalBadDebt = sectionTotal * badDebtRate / 100;
+        var totalApportionment = ApplyApportionment(badDebtRate, sectionTotal, 100m, apportionment);
+        setHeaders(sectionTotal, totalBadDebt, totalApportionment);
     }
 
     // A producer's country-apportioned share of a section cost total, with bad debt applied.

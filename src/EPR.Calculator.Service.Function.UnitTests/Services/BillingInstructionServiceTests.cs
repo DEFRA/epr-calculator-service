@@ -64,7 +64,13 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
             },
             CalcResultSummary = new CalcResultSummary
             {
+                LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
+                CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+                CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty,
                 TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
+                SchemeAdministratorOperatingCosts = CalcResultSummaryBadDebtProvision.Empty,
+                LaDataPrepSection4 = CalcResultSummaryBadDebtProvision.Empty,
+                SaSetupCostsSection5 = CalcResultSummaryBadDebtProvision.Empty,
                 ProducerDisposalFees = fixture.Create<List<CalcResultSummaryProducerDisposalFees>>()
             },
             CalcResultCancelledProducers = new CalcResultCancelledProducersResponse
@@ -139,7 +145,13 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
             },
             CalcResultSummary = new CalcResultSummary
             {
+                LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
+                CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+                CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty,
                 TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
+                SchemeAdministratorOperatingCosts = CalcResultSummaryBadDebtProvision.Empty,
+                LaDataPrepSection4 = CalcResultSummaryBadDebtProvision.Empty,
+                SaSetupCostsSection5 = CalcResultSummaryBadDebtProvision.Empty,
                 ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
                 {
                     new()
@@ -220,7 +232,16 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
             {
                 ByMaterial = []
             },
-            CalcResultSummary = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty, ProducerDisposalFees = null! },
+            CalcResultSummary = new CalcResultSummary {
+                LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
+                CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+                CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty,
+                TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
+                SchemeAdministratorOperatingCosts = CalcResultSummaryBadDebtProvision.Empty,
+                LaDataPrepSection4 = CalcResultSummaryBadDebtProvision.Empty,
+                SaSetupCostsSection5 = CalcResultSummaryBadDebtProvision.Empty,
+                ProducerDisposalFees = null!
+            },
             CalcResultProjectedProducers = new CalcResultProjectedProducers(){
                 H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
                 H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty

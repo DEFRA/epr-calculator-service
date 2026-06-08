@@ -39,8 +39,8 @@ public class SectionOneAndTwoAProducerTests
         Assert.AreEqual(4423.39438m,   summary.LocalAuthorityDisposalCostsSectionOne.FeeWithoutBadDebtProvision);
         Assert.AreEqual(265.4036628m,  summary.LocalAuthorityDisposalCostsSectionOne.BadDebtProvision);
         Assert.AreEqual(4688.7980428m, summary.LocalAuthorityDisposalCostsSectionOne.FeeWithBadDebtProvision.Total);
-        Assert.AreEqual(1290.778m,     summary.TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A);
-        Assert.AreEqual(77.44668m,     summary.BadDebtProvisionFor2A);
-        Assert.AreEqual(1368.22468m,   summary.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A);
+        Assert.AreEqual(1290.778m,     summary.CommsCostsSectionTwoA.FeeWithoutBadDebtProvision);
+        Assert.AreEqual(77.44668m,     summary.CommsCostsSectionTwoA.BadDebtProvision);
+        Assert.AreEqual(1368.22468m,   summary.CommsCostsSectionTwoA.FeeWithBadDebtProvision.Total);
     }
 }

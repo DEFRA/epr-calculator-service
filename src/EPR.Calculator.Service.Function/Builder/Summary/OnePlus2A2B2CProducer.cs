@@ -17,7 +17,7 @@ public static class OnePlus2A2B2CProducer
     private static decimal GetHeaderTotalFeeWithBadDebtProvision(CalcResultSummary summary)
     {
         return summary.LocalAuthorityDisposalCostsSectionOne.FeeWithBadDebtProvision.Total
-            + summary.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A
+            + summary.CommsCostsSectionTwoA.FeeWithBadDebtProvision.Total
             + summary.CommsCostsHeaderFor2bTitle.FeeWithBadDebtProvision.Total
             + summary.TwoCCommsCosts.FeeWithBadDebtProvision.Total;
     }

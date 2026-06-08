@@ -53,7 +53,15 @@ namespace EPR.Calculator.Service.Function.Models
 
         public IEnumerable<CalcResultRejectedProducer> CalcResultRejectedProducers { get; set; } = [];
 
-        public CalcResultSummary CalcResultSummary { get; set; } = new() { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty };
+        public CalcResultSummary CalcResultSummary { get; set; } = new() {
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty,
+            TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
+            SchemeAdministratorOperatingCosts = CalcResultSummaryBadDebtProvision.Empty,
+            LaDataPrepSection4 = CalcResultSummaryBadDebtProvision.Empty,
+            SaSetupCostsSection5 = CalcResultSummaryBadDebtProvision.Empty
+        };
 
         public IEnumerable<CalcResultErrorReport> CalcResultErrorReports { get; set; } = [];
 

@@ -34,7 +34,7 @@ public class OnePlus2A2B2CProducerTests
         data.ProducerDisposalFees.ToList()[0].CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty;
 
         data.LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty;
-        data.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A = 0;
+        data.CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty;
         data.CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty;
         data.TwoCCommsCosts = new CalcResultSummaryBadDebtProvision { FeeWithoutBadDebtProvision = 0, BadDebtProvision = 0m, FeeWithBadDebtProvision = ByCountryCost.Empty };
 

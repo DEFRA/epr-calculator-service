@@ -186,7 +186,15 @@ public class CalcResultSummaryBuilder(
         ProducerRowBuilder rowBuilder
     )
     {
-        var result = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty };
+        var result = new CalcResultSummary {
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty,
+            TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
+            SchemeAdministratorOperatingCosts = CalcResultSummaryBadDebtProvision.Empty,
+            LaDataPrepSection4 = CalcResultSummaryBadDebtProvision.Empty,
+            SaSetupCostsSection5 = CalcResultSummaryBadDebtProvision.Empty
+        };
 
         if (orderedProducerDetails.Count > 0)
         {

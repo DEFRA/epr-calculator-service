@@ -56,7 +56,13 @@ public class SaSetupCostsProducerTests
         CalcResultOnePlusFourApportionment = TestDataHelper.GetCalcResultOnePlusFourApportionment(),
         CalcResultSummary = new CalcResultSummary
         {
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty,
             TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
+            SchemeAdministratorOperatingCosts = CalcResultSummaryBadDebtProvision.Empty,
+            LaDataPrepSection4 = CalcResultSummaryBadDebtProvision.Empty,
+            SaSetupCostsSection5 = CalcResultSummaryBadDebtProvision.Empty,
             ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
             {
                 new()
@@ -88,9 +94,9 @@ public class SaSetupCostsProducerTests
         SaSetupCostsProducer.SetValues(calcResult, calcResult.CalcResultSummary);
 
         // Assert
-        Assert.AreEqual(100    , calcResult.CalcResultSummary.SaSetupCostsTitleSection5);
-        Assert.AreEqual(6      , calcResult.CalcResultSummary.SaSetupCostsBadDebtProvisionTitleSection5);
-        Assert.AreEqual(106    , calcResult.CalcResultSummary.SaSetupCostsWithBadDebtProvisionTitleSection5);
+        Assert.AreEqual(100    , calcResult.CalcResultSummary.SaSetupCostsSection5.FeeWithoutBadDebtProvision);
+        Assert.AreEqual(6      , calcResult.CalcResultSummary.SaSetupCostsSection5.BadDebtProvision);
+        Assert.AreEqual(106    , calcResult.CalcResultSummary.SaSetupCostsSection5.FeeWithBadDebtProvision.Total);
         Assert.AreEqual(1      , calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].OneOffSchemeAdministrationSetupCosts!.FeeWithoutBadDebtProvision);
         Assert.AreEqual(0.06m  , calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].OneOffSchemeAdministrationSetupCosts!.BadDebtProvision);
         Assert.AreEqual(1.06m  , calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].OneOffSchemeAdministrationSetupCosts!.FeeWithBadDebtProvision.Total);

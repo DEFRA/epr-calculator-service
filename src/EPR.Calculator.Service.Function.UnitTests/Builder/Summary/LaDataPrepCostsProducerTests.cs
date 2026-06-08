@@ -64,9 +64,12 @@ public class LaDataPrepCostsProducerTests
                 }
             },
             LocalAuthorityDisposalCostsSectionOne = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = ByCountryCost.Empty with { England = 100 } },
-            TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A = 100,
+            CommsCostsSectionTwoA = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = ByCountryCost.Empty with { England = 100 } },
             CommsCostsHeaderFor2bTitle = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = ByCountryCost.Empty with { England = 100 }},
-            TwoCCommsCosts = new CalcResultSummaryBadDebtProvision { FeeWithoutBadDebtProvision = 0, BadDebtProvision = 0, FeeWithBadDebtProvision = ByCountryCost.Empty with { England = 100 } }
+            TwoCCommsCosts = new CalcResultSummaryBadDebtProvision { FeeWithoutBadDebtProvision = 0, BadDebtProvision = 0, FeeWithBadDebtProvision = ByCountryCost.Empty with { England = 100 } },
+            SchemeAdministratorOperatingCosts = CalcResultSummaryBadDebtProvision.Empty,
+            LaDataPrepSection4 = CalcResultSummaryBadDebtProvision.Empty,
+            SaSetupCostsSection5 = CalcResultSummaryBadDebtProvision.Empty
         },
         CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
         CalcResultLateReportingTonnageData = TestDataHelper.GetCalcResultLateReportingTonnage(),
@@ -83,9 +86,9 @@ public class LaDataPrepCostsProducerTests
         LaDataPrepCostsProducer.SetValues(calcResult, calcResult.CalcResultSummary);
 
         // Assert
-        Assert.AreEqual(100   , calcResult.CalcResultSummary.LaDataPrepCostsTitleSection4);
-        Assert.AreEqual(6     , calcResult.CalcResultSummary.LaDataPrepCostsBadDebtProvisionTitleSection4);
-        Assert.AreEqual(106   , calcResult.CalcResultSummary.LaDataPrepCostsWithBadDebtProvisionTitleSection4);
+        Assert.AreEqual(100   , calcResult.CalcResultSummary.LaDataPrepSection4.FeeWithoutBadDebtProvision);
+        Assert.AreEqual(6     , calcResult.CalcResultSummary.LaDataPrepSection4.BadDebtProvision);
+        Assert.AreEqual(106   , calcResult.CalcResultSummary.LaDataPrepSection4.FeeWithBadDebtProvision.Total);
         Assert.AreEqual(100   , calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts!.FeeWithoutBadDebtProvision);
         Assert.AreEqual(6     , calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts!.BadDebtProvision);
         Assert.AreEqual(106   , calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts!.FeeWithBadDebtProvision.Total);

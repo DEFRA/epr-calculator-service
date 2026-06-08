@@ -41,11 +41,11 @@ public class CalculationResultsJsonFromTests
             roundTrippedData["feeForLaDisposalCostsWithBadDebtprovision1"]);
 
         // 2a
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.CommsCostsSectionTwoA.FeeWithoutBadDebtProvision),
             roundTrippedData["feeForCommsCostsByMaterialWithoutBadDebtprovision2a"]);
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.BadDebtProvisionFor2A),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.CommsCostsSectionTwoA.BadDebtProvision),
             roundTrippedData["badDebtProvision2a"]);
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.CommsCostsSectionTwoA.FeeWithBadDebtProvision.Total),
             roundTrippedData["feeForCommsCostsByMaterialWitBadDebtprovision2a"]);
 
         // 2b
@@ -69,28 +69,28 @@ public class CalculationResultsJsonFromTests
             roundTrippedData["total12a2b2cWithBadDebt"]);
 
         // 3
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.SaOperatingCostsWoTitleSection3),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.SchemeAdministratorOperatingCosts.FeeWithoutBadDebtProvision),
             roundTrippedData["saOperatingCostsWithoutBadDebtProvision3"]);
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.BadDebtProvisionTitleSection3),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.SchemeAdministratorOperatingCosts.BadDebtProvision),
             roundTrippedData["badDebtProvision3"]);
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.SaOperatingCostsWithTitleSection3),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.SchemeAdministratorOperatingCosts.FeeWithBadDebtProvision.Total),
             roundTrippedData["saOperatingCostsWithBadDebtProvision3"]);
 
         // 4
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.LaDataPrepCostsTitleSection4),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.LaDataPrepSection4.FeeWithoutBadDebtProvision),
             roundTrippedData["laDataPrepCostsWithoutBadDebtProvision4"]);
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.LaDataPrepCostsBadDebtProvisionTitleSection4),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.LaDataPrepSection4.BadDebtProvision),
             roundTrippedData["badDebtProvision4"]);
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.LaDataPrepCostsWithBadDebtProvisionTitleSection4),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.LaDataPrepSection4.FeeWithBadDebtProvision.Total),
             roundTrippedData["laDataPrepCostsWithbadDebtProvision4"]);
 
         // 5
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.SaSetupCostsWithBadDebtProvisionTitleSection5),
-            roundTrippedData["oneOffFeeSaSetupCostsWithBadDebtProvision5"]);
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.SaSetupCostsBadDebtProvisionTitleSection5),
-            roundTrippedData["badDebtProvision5"]);
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.SaSetupCostsTitleSection5),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.SaSetupCostsSection5.FeeWithoutBadDebtProvision),
             roundTrippedData["oneOffFeeSaSetupCostsWithoutBadDebtProvision5"]);
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.SaSetupCostsSection5.BadDebtProvision),
+            roundTrippedData["badDebtProvision5"]);
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.SaSetupCostsSection5.FeeWithBadDebtProvision.Total),
+            roundTrippedData["oneOffFeeSaSetupCostsWithBadDebtProvision5"]);
     }
 
     [TestMethod]

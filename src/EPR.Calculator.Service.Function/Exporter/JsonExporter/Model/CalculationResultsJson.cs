@@ -41,9 +41,9 @@ public class CalculationResultsJson
             BadDebtProvision1 = CurrencyConverterUtils.ConvertToCurrency(data.LocalAuthorityDisposalCostsSectionOne.BadDebtProvision),
             FeeForLaDisposalCostsWithBadDebtprovision1 = CurrencyConverterUtils.ConvertToCurrency(data.LocalAuthorityDisposalCostsSectionOne.FeeWithBadDebtProvision.Total),
 
-            FeeForCommsCostsByMaterialWithoutBadDebtprovision2a = CurrencyConverterUtils.ConvertToCurrency(data.TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A),
-            BadDebtProvision2a = CurrencyConverterUtils.ConvertToCurrency(data.BadDebtProvisionFor2A),
-            FeeForCommsCostsByMaterialWitBadDebtprovision2a = CurrencyConverterUtils.ConvertToCurrency(data.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A),
+            FeeForCommsCostsByMaterialWithoutBadDebtprovision2a = CurrencyConverterUtils.ConvertToCurrency(data.CommsCostsSectionTwoA.FeeWithoutBadDebtProvision),
+            BadDebtProvision2a = CurrencyConverterUtils.ConvertToCurrency(data.CommsCostsSectionTwoA.BadDebtProvision),
+            FeeForCommsCostsByMaterialWitBadDebtprovision2a = CurrencyConverterUtils.ConvertToCurrency(data.CommsCostsSectionTwoA.FeeWithBadDebtProvision.Total),
 
             FeeForCommsCostsUkWideWithoutBadDebtprovision2b = CurrencyConverterUtils.ConvertToCurrency(data.CommsCostsHeaderFor2bTitle.FeeWithoutBadDebtProvision),
             BadDebtProvision2b = CurrencyConverterUtils.ConvertToCurrency(data.CommsCostsHeaderFor2bTitle.BadDebtProvision),
@@ -55,17 +55,17 @@ public class CalculationResultsJson
 
             Total12a2b2cWithBadDebt = CurrencyConverterUtils.ConvertToCurrency(data.TotalOnePlus2A2B2CFeeWithBadDebtProvision),
 
-            SaOperatingCostsWithoutBadDebtProvision3 = CurrencyConverterUtils.ConvertToCurrency(data.SaOperatingCostsWoTitleSection3),
-            BadDebtProvision3 = CurrencyConverterUtils.ConvertToCurrency(data.BadDebtProvisionTitleSection3),
-            SaOperatingCostsWithBadDebtProvision3 = CurrencyConverterUtils.ConvertToCurrency(data.SaOperatingCostsWithTitleSection3),
+            SaOperatingCostsWithoutBadDebtProvision3 = CurrencyConverterUtils.ConvertToCurrency(data.SchemeAdministratorOperatingCosts.FeeWithoutBadDebtProvision),
+            BadDebtProvision3 = CurrencyConverterUtils.ConvertToCurrency(data.SchemeAdministratorOperatingCosts.BadDebtProvision),
+            SaOperatingCostsWithBadDebtProvision3 = CurrencyConverterUtils.ConvertToCurrency(data.SchemeAdministratorOperatingCosts.FeeWithBadDebtProvision.Total),
 
-            LaDataPrepCostsWithoutBadDebtProvision4 = CurrencyConverterUtils.ConvertToCurrency(data.LaDataPrepCostsTitleSection4),
-            BadDebtProvision4 = CurrencyConverterUtils.ConvertToCurrency(data.LaDataPrepCostsBadDebtProvisionTitleSection4),
-            LaDataPrepCostsWithbadDebtProvision4 = CurrencyConverterUtils.ConvertToCurrency(data.LaDataPrepCostsWithBadDebtProvisionTitleSection4),
+            LaDataPrepCostsWithoutBadDebtProvision4 = CurrencyConverterUtils.ConvertToCurrency(data.LaDataPrepSection4.FeeWithoutBadDebtProvision),
+            BadDebtProvision4 = CurrencyConverterUtils.ConvertToCurrency(data.LaDataPrepSection4.BadDebtProvision),
+            LaDataPrepCostsWithbadDebtProvision4 = CurrencyConverterUtils.ConvertToCurrency(data.LaDataPrepSection4.FeeWithBadDebtProvision.Total),
 
-            OneOffFeeSaSetupCostsWithBadDebtProvision5 = CurrencyConverterUtils.ConvertToCurrency(data.SaSetupCostsWithBadDebtProvisionTitleSection5),
-            BadDebtProvision5 = CurrencyConverterUtils.ConvertToCurrency(data.SaSetupCostsBadDebtProvisionTitleSection5),
-            OneOffFeeSaSetupCostsWithoutBadDebtProvision5 = CurrencyConverterUtils.ConvertToCurrency(data.SaSetupCostsTitleSection5),
+            OneOffFeeSaSetupCostsWithoutBadDebtProvision5 = CurrencyConverterUtils.ConvertToCurrency(data.SaSetupCostsSection5.FeeWithoutBadDebtProvision),
+            BadDebtProvision5 = CurrencyConverterUtils.ConvertToCurrency(data.SaSetupCostsSection5.BadDebtProvision),
+            OneOffFeeSaSetupCostsWithBadDebtProvision5 = CurrencyConverterUtils.ConvertToCurrency(data.SaSetupCostsSection5.FeeWithBadDebtProvision.Total)
         };
     }
 

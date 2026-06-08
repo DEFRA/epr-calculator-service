@@ -85,7 +85,13 @@ public class BillingInstructionsProducerTests
     {
         var summary = new CalcResultSummary
         {
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty,
             TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
+            SchemeAdministratorOperatingCosts = CalcResultSummaryBadDebtProvision.Empty,
+            LaDataPrepSection4 = CalcResultSummaryBadDebtProvision.Empty,
+            SaSetupCostsSection5 = CalcResultSummaryBadDebtProvision.Empty,
             ProducerDisposalFees =
             [
                 new CalcResultSummaryProducerDisposalFees
@@ -134,7 +140,13 @@ public class BillingInstructionsProducerTests
     {
         var summary = new CalcResultSummary
         {
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty,
             TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
+            SchemeAdministratorOperatingCosts = CalcResultSummaryBadDebtProvision.Empty,
+            LaDataPrepSection4 = CalcResultSummaryBadDebtProvision.Empty,
+            SaSetupCostsSection5 = CalcResultSummaryBadDebtProvision.Empty,
             ProducerDisposalFees = (List<CalcResultSummaryProducerDisposalFees>)
             [
                 new CalcResultSummaryProducerDisposalFees
@@ -180,7 +192,13 @@ public class BillingInstructionsProducerTests
     {
         var summary = new CalcResultSummary
         {
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty,
             TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
+            SchemeAdministratorOperatingCosts = CalcResultSummaryBadDebtProvision.Empty,
+            LaDataPrepSection4 = CalcResultSummaryBadDebtProvision.Empty,
+            SaSetupCostsSection5 = CalcResultSummaryBadDebtProvision.Empty,
             ProducerDisposalFees = (List<CalcResultSummaryProducerDisposalFees>)
             [
                 new CalcResultSummaryProducerDisposalFees
@@ -261,7 +279,16 @@ public class BillingInstructionsProducerTests
             LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
 
-        var summary = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty, ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { a, b, total } };
+        var summary = new CalcResultSummary {
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty,
+            TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
+            SchemeAdministratorOperatingCosts = CalcResultSummaryBadDebtProvision.Empty,
+            LaDataPrepSection4 = CalcResultSummaryBadDebtProvision.Empty,
+            SaSetupCostsSection5 = CalcResultSummaryBadDebtProvision.Empty,
+            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { a, b, total }
+        };
 
         List<InvoicedProducer> invoiced =
         [
@@ -342,7 +369,16 @@ public class BillingInstructionsProducerTests
             LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
 
-        var summary = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty, ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { a, b, total } };
+        var summary = new CalcResultSummary {
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty,
+            TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
+            SchemeAdministratorOperatingCosts = CalcResultSummaryBadDebtProvision.Empty,
+            LaDataPrepSection4 = CalcResultSummaryBadDebtProvision.Empty,
+            SaSetupCostsSection5 = CalcResultSummaryBadDebtProvision.Empty,
+            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { a, b, total }
+        };
 
         List<InvoicedProducer> invoiced =
         [
@@ -395,7 +431,16 @@ public class BillingInstructionsProducerTests
             LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
 
-        var summary = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty, ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { total } };
+        var summary = new CalcResultSummary {
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty,
+            TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
+            SchemeAdministratorOperatingCosts = CalcResultSummaryBadDebtProvision.Empty,
+            LaDataPrepSection4 = CalcResultSummaryBadDebtProvision.Empty,
+            SaSetupCostsSection5 = CalcResultSummaryBadDebtProvision.Empty,
+            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { total }
+        };
 
         BillingInstructionsProducer.SetValues(summary, new List<InvoicedProducer>(), new List<DefaultParamResultsClass>());
 
@@ -417,7 +462,16 @@ public class BillingInstructionsProducerTests
             CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
             LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
-        var summary = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty, ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
+        var summary = new CalcResultSummary {
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty,
+            TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
+            SchemeAdministratorOperatingCosts = CalcResultSummaryBadDebtProvision.Empty,
+            LaDataPrepSection4 = CalcResultSummaryBadDebtProvision.Empty,
+            SaSetupCostsSection5 = CalcResultSummaryBadDebtProvision.Empty,
+            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee }
+        };
 
         List<InvoicedProducer> invoiced =
         [
@@ -454,7 +508,16 @@ public class BillingInstructionsProducerTests
             CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
             LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
-        var summary = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty, ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
+        var summary = new CalcResultSummary {
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty,
+            TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
+            SchemeAdministratorOperatingCosts = CalcResultSummaryBadDebtProvision.Empty,
+            LaDataPrepSection4 = CalcResultSummaryBadDebtProvision.Empty,
+            SaSetupCostsSection5 = CalcResultSummaryBadDebtProvision.Empty,
+            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee }
+        };
 
         BillingInstructionsProducer.SetValues(
             summary,
@@ -508,7 +571,16 @@ public class BillingInstructionsProducerTests
             CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
             LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
-        var summary = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty, ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
+        var summary = new CalcResultSummary {
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty,
+            TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
+            SchemeAdministratorOperatingCosts = CalcResultSummaryBadDebtProvision.Empty,
+            LaDataPrepSection4 = CalcResultSummaryBadDebtProvision.Empty,
+            SaSetupCostsSection5 = CalcResultSummaryBadDebtProvision.Empty,
+            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee }
+        };
 
         List<InvoicedProducer> invoiced =
         [
@@ -545,7 +617,16 @@ public class BillingInstructionsProducerTests
             CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
             LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
-        var summary = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty, ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
+        var summary = new CalcResultSummary {
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty,
+            TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
+            SchemeAdministratorOperatingCosts = CalcResultSummaryBadDebtProvision.Empty,
+            LaDataPrepSection4 = CalcResultSummaryBadDebtProvision.Empty,
+            SaSetupCostsSection5 = CalcResultSummaryBadDebtProvision.Empty,
+            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee }
+        };
 
         List<InvoicedProducer> invoiced =
         [
@@ -600,7 +681,16 @@ public class BillingInstructionsProducerTests
             CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
             LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
-        var summary = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty, ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
+        var summary = new CalcResultSummary {
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty,
+            TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
+            SchemeAdministratorOperatingCosts = CalcResultSummaryBadDebtProvision.Empty,
+            LaDataPrepSection4 = CalcResultSummaryBadDebtProvision.Empty,
+            SaSetupCostsSection5 = CalcResultSummaryBadDebtProvision.Empty,
+            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee }
+        };
 
         List<InvoicedProducer> invoiced =
         [
@@ -655,7 +745,16 @@ public class BillingInstructionsProducerTests
             CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
             LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
-        var summary = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty, ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
+        var summary = new CalcResultSummary {
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty,
+            TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
+            SchemeAdministratorOperatingCosts = CalcResultSummaryBadDebtProvision.Empty,
+            LaDataPrepSection4 = CalcResultSummaryBadDebtProvision.Empty,
+            SaSetupCostsSection5 = CalcResultSummaryBadDebtProvision.Empty,
+            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee }
+        };
 
         List<InvoicedProducer> invoiced =
         [
@@ -711,7 +810,16 @@ public class BillingInstructionsProducerTests
             CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
             LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
-        var summary = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty, ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
+        var summary = new CalcResultSummary {
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty,
+            TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
+            SchemeAdministratorOperatingCosts = CalcResultSummaryBadDebtProvision.Empty,
+            LaDataPrepSection4 = CalcResultSummaryBadDebtProvision.Empty,
+            SaSetupCostsSection5 = CalcResultSummaryBadDebtProvision.Empty,
+            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee }
+        };
 
         List<InvoicedProducer> invoiced =
         [
@@ -767,7 +875,16 @@ public class BillingInstructionsProducerTests
             CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
             LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
-        var summary = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty, ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
+        var summary = new CalcResultSummary {
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty,
+            TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
+            SchemeAdministratorOperatingCosts = CalcResultSummaryBadDebtProvision.Empty,
+            LaDataPrepSection4 = CalcResultSummaryBadDebtProvision.Empty,
+            SaSetupCostsSection5 = CalcResultSummaryBadDebtProvision.Empty,
+            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee }
+        };
 
         List<InvoicedProducer> invoiced =
         [
@@ -805,7 +922,16 @@ public class BillingInstructionsProducerTests
             CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
             LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
-        var summary = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty, ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
+        var summary = new CalcResultSummary {
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty,
+            TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
+            SchemeAdministratorOperatingCosts = CalcResultSummaryBadDebtProvision.Empty,
+            LaDataPrepSection4 = CalcResultSummaryBadDebtProvision.Empty,
+            SaSetupCostsSection5 = CalcResultSummaryBadDebtProvision.Empty,
+            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee }
+        };
 
         List<InvoicedProducer> invoiced =
         [
@@ -861,7 +987,16 @@ public class BillingInstructionsProducerTests
             CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
             LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
-        var summary = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty, ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
+        var summary = new CalcResultSummary {
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty,
+            TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
+            SchemeAdministratorOperatingCosts = CalcResultSummaryBadDebtProvision.Empty,
+            LaDataPrepSection4 = CalcResultSummaryBadDebtProvision.Empty,
+            SaSetupCostsSection5 = CalcResultSummaryBadDebtProvision.Empty,
+            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee }
+        };
 
         List<InvoicedProducer> invoiced =
         [
@@ -917,7 +1052,16 @@ public class BillingInstructionsProducerTests
             CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
             LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty
         };
-        var summary = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty, ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee } };
+        var summary = new CalcResultSummary {
+            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
+            CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty,
+            TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
+            SchemeAdministratorOperatingCosts = CalcResultSummaryBadDebtProvision.Empty,
+            LaDataPrepSection4 = CalcResultSummaryBadDebtProvision.Empty,
+            SaSetupCostsSection5 = CalcResultSummaryBadDebtProvision.Empty,
+            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee }
+        };
 
         List<InvoicedProducer> invoiced =
         [

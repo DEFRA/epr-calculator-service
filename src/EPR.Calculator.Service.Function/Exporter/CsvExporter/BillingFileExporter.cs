@@ -94,23 +94,15 @@ public class BillingFileExporter(
     {
         return new CalcResultSummary
         {
-            LocalAuthorityDisposalCostsSectionOne                 = calcResultSummary.LocalAuthorityDisposalCostsSectionOne,
-            BadDebtProvisionFor2A                                 = calcResultSummary.BadDebtProvisionFor2A,
-            BadDebtProvisionTitleSection3                         = calcResultSummary.BadDebtProvisionTitleSection3,
-            CommsCostsHeaderFor2bTitle                            = calcResultSummary.CommsCostsHeaderFor2bTitle,
-            LaDataPrepCostsBadDebtProvisionTitleSection4          = calcResultSummary.LaDataPrepCostsBadDebtProvisionTitleSection4,
-            LaDataPrepCostsTitleSection4                          = calcResultSummary.LaDataPrepCostsTitleSection4,
-            LaDataPrepCostsWithBadDebtProvisionTitleSection4      = calcResultSummary.LaDataPrepCostsWithBadDebtProvisionTitleSection4,
-            ProducerDisposalFees                                  = GetAcceptedProducerDisposalFees(calcResultSummary.ProducerDisposalFees.ToList(), acceptedProducerIds),
-            SaOperatingCostsWithTitleSection3                     = calcResultSummary.SaOperatingCostsWithTitleSection3,
-            SaOperatingCostsWoTitleSection3                       = calcResultSummary.SaOperatingCostsWoTitleSection3,
-            SaSetupCostsBadDebtProvisionTitleSection5             = calcResultSummary.SaSetupCostsBadDebtProvisionTitleSection5,
-            SaSetupCostsTitleSection5                             = calcResultSummary.SaSetupCostsTitleSection5,
-            SaSetupCostsWithBadDebtProvisionTitleSection5         = calcResultSummary.SaSetupCostsWithBadDebtProvisionTitleSection5,
-            TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A = calcResultSummary.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A,
-            TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A   = calcResultSummary.TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A,
-            TotalOnePlus2A2B2CFeeWithBadDebtProvision             = calcResultSummary.TotalOnePlus2A2B2CFeeWithBadDebtProvision,
-            TwoCCommsCosts                                        = calcResultSummary.TwoCCommsCosts
+            LocalAuthorityDisposalCostsSectionOne     = calcResultSummary.LocalAuthorityDisposalCostsSectionOne,
+            CommsCostsSectionTwoA                     = calcResultSummary.CommsCostsSectionTwoA,
+            CommsCostsHeaderFor2bTitle                = calcResultSummary.CommsCostsHeaderFor2bTitle,
+            LaDataPrepSection4                        = calcResultSummary.LaDataPrepSection4,
+            ProducerDisposalFees                      = GetAcceptedProducerDisposalFees(calcResultSummary.ProducerDisposalFees.ToList(), acceptedProducerIds),
+            SchemeAdministratorOperatingCosts         = calcResultSummary.SchemeAdministratorOperatingCosts,
+            SaSetupCostsSection5                      = calcResultSummary.SaSetupCostsSection5,
+            TotalOnePlus2A2B2CFeeWithBadDebtProvision = calcResultSummary.TotalOnePlus2A2B2CFeeWithBadDebtProvision,
+            TwoCCommsCosts                            = calcResultSummary.TwoCCommsCosts
         };
     }
 
