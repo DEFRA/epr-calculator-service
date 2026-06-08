@@ -58,14 +58,10 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             MaterialDetail material
         )
         {
-            var isGlass = material.Code == MaterialCodes.Glass;
             decimal r = 0, a = 0, g = 0, total = 0;
 
             foreach (var item in projectedMaterialsLookup[(producer.ProducerId, producer.SubsidiaryId)]
-                .Where(p => p.MaterialId == material.Id &&
-                           (p.PackagingType == PackagingTypes.Household ||
-                            p.PackagingType == PackagingTypes.PublicBin ||
-                            (isGlass && p.PackagingType == PackagingTypes.HouseholdDrinksContainers))))
+                .Where(p => p.MaterialId == material.Id && p.PackagingType != PackagingTypes.ConsumerWaste))
             {
                 r     += (item.PackagingTonnageRed          ?? 0) + (item.PackagingTonnageRedMedical   ?? 0);
                 a     += (item.PackagingTonnageAmber         ?? 0) + (item.PackagingTonnageAmberMedical ?? 0);
