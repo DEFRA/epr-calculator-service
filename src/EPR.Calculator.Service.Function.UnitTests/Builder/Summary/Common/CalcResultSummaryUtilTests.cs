@@ -322,31 +322,6 @@ public class CalcResultSummaryUtilTests
     }
 
     [TestMethod]
-    public void CanGetCommsCostHeaderBadDebtProvisionFor2bTitle()
-    {
-        calcResult.CalcResultSummary.CommsCostHeaderWithoutBadDebtFor2bTitle = CalcResultSummaryUtil.GetCommsCostHeaderWithoutBadDebtFor2bTitle(calcResult);
-
-        // Act
-        var result = CalcResultSummaryUtil.GetCommsCostHeaderBadDebtProvisionFor2bTitle(calcResult, calcResult.CalcResultSummary);
-
-        // Assert
-        Assert.AreEqual(151.86m, result);
-    }
-
-    [TestMethod]
-    public void CanGetCommsCostHeaderWithBadDebtFor2bTitle()
-    {
-        calcResult.CalcResultSummary.CommsCostHeaderWithoutBadDebtFor2bTitle = CalcResultSummaryUtil.GetCommsCostHeaderWithoutBadDebtFor2bTitle(calcResult);
-        calcResult.CalcResultSummary.CommsCostHeaderBadDebtProvisionFor2bTitle = CalcResultSummaryUtil.GetCommsCostHeaderBadDebtProvisionFor2bTitle(calcResult, calcResult.CalcResultSummary);
-
-        // Act
-        var result = CalcResultSummaryUtil.GetCommsCostHeaderWithBadDebtFor2bTitle(calcResult.CalcResultSummary);
-
-        // Assert
-        Assert.AreEqual(2682.86m, result);
-    }
-
-    [TestMethod]
     public void CanGetReportedPublicBinTonnage()
     {
         // Arrange

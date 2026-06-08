@@ -226,10 +226,8 @@ public class CalcResultSummaryBuilder(
             result.BadDebtProvisionFor2A                                 = GetTotalFee(producerDisposalFees, fee => fee.CommunicationCostsSectionTwoA?.BadDebtProvision ?? 0);;
             result.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A = GetTotalFee(producerDisposalFees, fee => fee.TotalProducerCommsFeeWithBadDebtProvision);
 
-            // 2b comms total
-            result.CommsCostHeaderWithoutBadDebtFor2bTitle = CalcResultSummaryUtil.GetCommsCostHeaderWithoutBadDebtFor2bTitle(calcResult);
-            result.CommsCostHeaderBadDebtProvisionFor2bTitle = CalcResultSummaryUtil.GetCommsCostHeaderBadDebtProvisionFor2bTitle(calcResult, result);
-            result.CommsCostHeaderWithBadDebtFor2bTitle = CalcResultSummaryUtil.GetCommsCostHeaderWithBadDebtFor2bTitle(result);
+            // Section 2b comms cost
+            TwoBCommsCostProducer.SetValues(calcResult, result);
 
             TwoCCommsCostProducer.SetValues(calcResult, result);
 

@@ -211,21 +211,5 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
         {
             return calcResult.CalcResultCommsCostReportDetail.CommsCostUkWide.Total;
         }
-
-        public static decimal GetCommsCostHeaderBadDebtProvisionFor2bTitle(
-            CalcResult calcResult,
-            CalcResultSummary calcResultSummary)
-        {
-            var commsCost = calcResultSummary.CommsCostHeaderWithoutBadDebtFor2bTitle;
-            var badDebtProvision = calcResult.CalcResultParameterOtherCost.BadDebtValue / 100;
-            return commsCost * badDebtProvision;
-        }
-
-        public static decimal GetCommsCostHeaderWithBadDebtFor2bTitle(CalcResultSummary calcResultSummary)
-        {
-            var commsCostHeaderWithoutBadDebt = calcResultSummary.CommsCostHeaderWithoutBadDebtFor2bTitle;
-            var commsCostHeaderBadDebtProvision = calcResultSummary.CommsCostHeaderBadDebtProvisionFor2bTitle;
-            return commsCostHeaderWithoutBadDebt + commsCostHeaderBadDebtProvision;
-        }
     }
 }
