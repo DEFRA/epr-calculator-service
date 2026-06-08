@@ -194,19 +194,25 @@ public class CalcResultSummaryBuilder(
 
             foreach (var producerAndSubsidiaries in orderedProducerDetails.GroupBy(x => x.ProducerId))
             {
-                // PERF: Reuse the same materialised list across all three callers below; previous
-                // implementation invoked `.ToList()` three times per group.
                 var subsidiariesList = producerAndSubsidiaries.ToList();
+                bool hasGroupTotalRow = !(subsidiariesList.Count == 1 && subsidiariesList[0].SubsidiaryId == null);
 
-                if (!(subsidiariesList.Count == 1 && subsidiariesList[0].SubsidiaryId == null))
-                    producerDisposalFees.Add(rowBuilder.GetProducerTotalRow(runContext, projectedMaterialsLookup, subsidiariesList, materials, calcResult, producerDisposalFees, false, totalPackagingTonnage, smcw));
+                // Build L2 rows first so the L1 total can be derived by aggregation.
+                var l2Rows = subsidiariesList
+                    .Select(producer => rowBuilder.GetProducerRow(runContext, projectedMaterialsLookup, hasGroupTotalRow, subsidiariesList, producer, materials, calcResult, totalPackagingTonnage, smcw))
+                    .ToList();
 
-                foreach (var producer in subsidiariesList)
-                    producerDisposalFees.Add(rowBuilder.GetProducerRow(runContext, projectedMaterialsLookup, producerDisposalFees, subsidiariesList, producer, materials, calcResult, totalPackagingTonnage, smcw));
+                if (hasGroupTotalRow)
+                    producerDisposalFees.Add(rowBuilder.GetL1TotalRow(subsidiariesList[0].ProducerId, l2Rows, calcResult, smcw, materials));
+
+                producerDisposalFees.AddRange(l2Rows);
             };
 
-            // Calculate the total for all the producers
-            var allTotalRow = rowBuilder.GetProducerTotalRow(runContext, projectedMaterialsLookup, orderedProducerDetails, materials, calcResult, producerDisposalFees, true, totalPackagingTonnage, smcw);
+            // TODO can the overall total be moved to the exporters?
+
+            // Overall total: aggregate all Level-1 rows (one per producer group).
+            var l1Rows = producerDisposalFees.Where(r => r.Level == CommonConstants.LevelOne.ToString()).ToList();
+            var allTotalRow = rowBuilder.GetOverallTotalRow(l1Rows, materials);
             producerDisposalFees.Add(allTotalRow);
 
             result.ProducerDisposalFees = producerDisposalFees;
