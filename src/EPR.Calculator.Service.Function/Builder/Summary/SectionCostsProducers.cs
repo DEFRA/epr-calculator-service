@@ -24,7 +24,7 @@ public static class ThreeSaCostsProducer
                 summary.SaOperatingCostsWithTitleSection3 = with;
             },
             setFee: (fee, provision) => fee.SchemeAdministratorOperatingCosts = provision,
-            countryApportionment: CalcResultSummaryUtil.GetCountryOnePlusFourApportionment);
+            countryApportionment: SectionCosts.GetCountryOnePlusFourApportionment);
 
     public static decimal GetCountryTotalWithBadDebtProvision(
         CalcResult calcResult,
@@ -32,8 +32,8 @@ public static class ThreeSaCostsProducer
         decimal producerOverallPercentage,
         Countries country
     ) =>
-        CalcResultSummaryUtil.GetApportionedCountryTotal(calcResult, sectionTotal, producerOverallPercentage, country,
-            CalcResultSummaryUtil.GetCountryOnePlusFourApportionment);
+        SectionCosts.GetApportionedCountryTotal(calcResult, sectionTotal, producerOverallPercentage, country,
+            SectionCosts.GetCountryOnePlusFourApportionment);
 }
 
 public static class LaDataPrepCostsProducer
@@ -52,7 +52,7 @@ public static class LaDataPrepCostsProducer
                 summary.LaDataPrepCostsWithBadDebtProvisionTitleSection4 = with;
             },
             setFee: (fee, provision) => fee.LocalAuthorityDataPreparationCosts = provision,
-            countryApportionment: CalcResultSummaryUtil.GetParamsOtherFourCountryApportionmentPercentage
+            countryApportionment: GetParamsOtherFourCountryApportionmentPercentage
         );
 
     public static decimal GetCountryTotalWithBadDebtProvision(
@@ -61,13 +61,40 @@ public static class LaDataPrepCostsProducer
         decimal producerOverallPercentage,
         Countries country
     ) =>
-        CalcResultSummaryUtil.GetApportionedCountryTotal(
+        SectionCosts.GetApportionedCountryTotal(
             calcResult,
             sectionTotal,
             producerOverallPercentage,
             country,
-            CalcResultSummaryUtil.GetParamsOtherFourCountryApportionmentPercentage
+            GetParamsOtherFourCountryApportionmentPercentage
         );
+
+    public static decimal GetParamsOtherFourCountryApportionmentPercentage(
+        CalcResult calcResult,
+        Countries country
+    )
+    {
+        var fourCountryApportionment = calcResult.CalcResultParameterOtherCost.CountryApportionment;
+
+        if (fourCountryApportionment == null)
+        {
+            return 0;
+        }
+
+        switch (country)
+        {
+            case Countries.England:
+                return fourCountryApportionment.England;
+            case Countries.Wales:
+                return fourCountryApportionment.Wales;
+            case Countries.Scotland:
+                return fourCountryApportionment.Scotland;
+            case Countries.NorthernIreland:
+                return fourCountryApportionment.NorthernIreland;
+            default:
+                return 0;
+        }
+    }
 }
 
 public static class SaSetupCostsProducer
@@ -86,7 +113,7 @@ public static class SaSetupCostsProducer
                 summary.SaSetupCostsWithBadDebtProvisionTitleSection5 = with;
             },
             setFee: (fee, provision) => fee.OneOffSchemeAdministrationSetupCosts = provision,
-            countryApportionment: CalcResultSummaryUtil.GetCountryOnePlusFourApportionment);
+            countryApportionment: SectionCosts.GetCountryOnePlusFourApportionment);
 
     public static decimal GetCountryTotalWithBadDebtProvision(
         CalcResult calcResult,
@@ -94,8 +121,8 @@ public static class SaSetupCostsProducer
         decimal producerOverallPercentage,
         Countries country
     ) =>
-        CalcResultSummaryUtil.GetApportionedCountryTotal(calcResult, sectionTotal, producerOverallPercentage, country,
-            CalcResultSummaryUtil.GetCountryOnePlusFourApportionment);
+        SectionCosts.GetApportionedCountryTotal(calcResult, sectionTotal, producerOverallPercentage, country,
+            SectionCosts.GetCountryOnePlusFourApportionment);
 }
 
 internal static class SectionCosts
@@ -123,11 +150,47 @@ internal static class SectionCosts
                 TotalProducerFeeWithoutBadDebtProvision  = without,
                 BadDebtProvision                         = feeDebt,
                 TotalProducerFeeWithBadDebtProvision     = without + feeDebt,
-                EnglandTotalWithBadDebtProvision         = CalcResultSummaryUtil.GetApportionedCountryTotal(calcResult, sectionTotal, fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.England,         countryApportionment),
-                WalesTotalWithBadDebtProvision           = CalcResultSummaryUtil.GetApportionedCountryTotal(calcResult, sectionTotal, fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.Wales,           countryApportionment),
-                ScotlandTotalWithBadDebtProvision        = CalcResultSummaryUtil.GetApportionedCountryTotal(calcResult, sectionTotal, fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.Scotland,        countryApportionment),
-                NorthernIrelandTotalWithBadDebtProvision = CalcResultSummaryUtil.GetApportionedCountryTotal(calcResult, sectionTotal, fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.NorthernIreland, countryApportionment)
+                EnglandTotalWithBadDebtProvision         = GetApportionedCountryTotal(calcResult, sectionTotal, fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.England,         countryApportionment),
+                WalesTotalWithBadDebtProvision           = GetApportionedCountryTotal(calcResult, sectionTotal, fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.Wales,           countryApportionment),
+                ScotlandTotalWithBadDebtProvision        = GetApportionedCountryTotal(calcResult, sectionTotal, fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.Scotland,        countryApportionment),
+                NorthernIrelandTotalWithBadDebtProvision = GetApportionedCountryTotal(calcResult, sectionTotal, fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.NorthernIreland, countryApportionment)
             });
         }
     }
+
+    public static decimal GetCountryOnePlusFourApportionment(
+        CalcResult calcResult,
+        Countries country
+    )
+    {
+        var onePlusFourApportionment = calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment;
+        switch (country)
+        {
+            case Countries.England:
+                return onePlusFourApportionment.England;
+            case Countries.Wales:
+                return onePlusFourApportionment.Wales;
+            case Countries.Scotland:
+                return onePlusFourApportionment.Scotland;
+            case Countries.NorthernIreland:
+                return onePlusFourApportionment.NorthernIreland;
+            default:
+                return 0;
+        }
+    }
+
+    // A producer's country-apportioned share of a section cost total, with bad debt applied.
+    // Formula: sectionTotal × (1 + badDebt%) × producerPct% × countryApportionment%
+    // Used by sections 3, 4, and 5 which share this calculation structure.
+    public static decimal GetApportionedCountryTotal(
+        CalcResult calcResult,
+        decimal sectionTotal,
+        decimal producerPct,
+        Countries country,
+        Func<CalcResult, Countries, decimal> apportionment
+    ) =>
+        sectionTotal
+            * (1 + (calcResult.CalcResultParameterOtherCost.BadDebtValue / 100))
+            * (producerPct / 100)
+            * (apportionment(calcResult, country) / 100);
 }
