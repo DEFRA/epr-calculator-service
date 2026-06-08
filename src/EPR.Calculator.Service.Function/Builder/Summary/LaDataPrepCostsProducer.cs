@@ -10,7 +10,7 @@ public static class LaDataPrepCostsProducer
     {
         result.LaDataPrepCostsTitleSection4 = GetLaDataPrepCostsWithoutBadDebtProvision(calcResult);
         result.LaDataPrepCostsBadDebtProvisionTitleSection4 = GetLaDataPrepCostsBadDebtProvision(calcResult);
-        result.LaDataPrepCostsWithBadDebtProvisionTitleSection4 = GetLaDataPrepCostsWithBadDebtProvision(calcResult);
+        result.LaDataPrepCostsWithBadDebtProvisionTitleSection4 = GetLaDataPrepCostsWithoutBadDebtProvision(calcResult) + GetLaDataPrepCostsBadDebtProvision(calcResult);
 
         foreach (var fee in result.ProducerDisposalFees)
         {
@@ -49,10 +49,6 @@ public static class LaDataPrepCostsProducer
             / 100;
     }
 
-    private static decimal GetLaDataPrepCostsWithBadDebtProvision(CalcResult calcResult)
-    {
-        return GetLaDataPrepCostsWithoutBadDebtProvision(calcResult) + GetLaDataPrepCostsBadDebtProvision(calcResult);
-    }
 
     private static decimal GetTotalWithoutBadDebtProvision(CalcResultSummary result, CalcResultSummaryProducerDisposalFees fee)
     {
