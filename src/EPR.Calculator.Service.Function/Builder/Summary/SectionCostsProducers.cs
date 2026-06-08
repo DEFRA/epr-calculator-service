@@ -97,10 +97,9 @@ internal static class SectionCosts
 
             setFee(fee, new CalcResultSummaryBadDebtProvision
             {
-                TotalProducerFeeWithoutBadDebtProvision  = without,
-                BadDebtProvision                         = feeDebt,
-                //TotalProducerFeeWithBadDebtProvision     = without + feeDebt,
-                TotalProducerFeeWithBadDebtProvision     = apportioned
+                FeeWithoutBadDebtProvision = without,
+                BadDebtProvision           = feeDebt,
+                FeeWithBadDebtProvision    = apportioned
             });
         }
     }

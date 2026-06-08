@@ -19,14 +19,14 @@ public class SectionOneAndTwoAProducerTests
         LocalAuthorityDisposalCostsSectionOne = new CalcResultSummaryBadDebtProvision
         {
             BadDebtProvision = 265.4036628m,
-            TotalProducerFeeWithBadDebtProvision = ByCountryCost.Empty
+            FeeWithBadDebtProvision = ByCountryCost.Empty
         },
         TotalProducerCommsFee                        = 1290.778m,
         TotalProducerCommsFeeWithBadDebtProvision     = new ByCountryCost { England = 1368.22468m, Wales = 0, Scotland = 0, NorthernIreland = 0 },
         CommunicationCostsSectionTwoA = new CalcResultSummaryBadDebtProvision
         {
             BadDebtProvision = 77.44668m,
-            TotalProducerFeeWithBadDebtProvision = ByCountryCost.Empty
+            FeeWithBadDebtProvision = ByCountryCost.Empty
         },
         TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty,
     };

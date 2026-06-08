@@ -32,13 +32,13 @@ public class FeeForSaSetUpCostsWithBadDebtProvision5
         var costs = calcResultSummaryProducerDisposalFees.OneOffSchemeAdministrationSetupCosts;
         return new FeeForSaSetUpCostsWithBadDebtProvision5
         {
-            TotalProducerOneOffFeeForSASetUpCostsWithoutBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithoutBadDebtProvision),
+            TotalProducerOneOffFeeForSASetUpCostsWithoutBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(costs?.FeeWithoutBadDebtProvision),
             BadDebtProvisionFor5                                         = CurrencyConverterUtils.ConvertToCurrency(costs?.BadDebtProvision),
-            TotalProducerOneOffFeeForSASetUpCostsWithBadDebtProvision    = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithBadDebtProvision.Total),
-            EnglandTotalForSASetUpCostsWithBadDebtProvision              = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithBadDebtProvision.England),
-            WalesTotalForSASetUpCostsWithBadDebtProvision                = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithBadDebtProvision.Wales),
-            ScotlandTotalForSASetUpCostsWithBadDebtProvision             = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithBadDebtProvision.Scotland),
-            NorthernIrelandTotalForSASetUpCostsWithBadDebtProvision      = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithBadDebtProvision.NorthernIreland)
+            TotalProducerOneOffFeeForSASetUpCostsWithBadDebtProvision    = CurrencyConverterUtils.ConvertToCurrency(costs?.FeeWithBadDebtProvision.Total),
+            EnglandTotalForSASetUpCostsWithBadDebtProvision              = CurrencyConverterUtils.ConvertToCurrency(costs?.FeeWithBadDebtProvision.England),
+            WalesTotalForSASetUpCostsWithBadDebtProvision                = CurrencyConverterUtils.ConvertToCurrency(costs?.FeeWithBadDebtProvision.Wales),
+            ScotlandTotalForSASetUpCostsWithBadDebtProvision             = CurrencyConverterUtils.ConvertToCurrency(costs?.FeeWithBadDebtProvision.Scotland),
+            NorthernIrelandTotalForSASetUpCostsWithBadDebtProvision      = CurrencyConverterUtils.ConvertToCurrency(costs?.FeeWithBadDebtProvision.NorthernIreland)
         };
     }
 }

@@ -186,7 +186,7 @@ public class CalcResultSummaryBuilder(
         ProducerRowBuilder rowBuilder
     )
     {
-        var result = new CalcResultSummary();
+        var result = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty };
 
         if (orderedProducerDetails.Count > 0)
         {

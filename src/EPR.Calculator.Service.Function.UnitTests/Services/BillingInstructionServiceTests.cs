@@ -64,6 +64,7 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
             },
             CalcResultSummary = new CalcResultSummary
             {
+                TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
                 ProducerDisposalFees = fixture.Create<List<CalcResultSummaryProducerDisposalFees>>()
             },
             CalcResultCancelledProducers = new CalcResultCancelledProducersResponse
@@ -138,6 +139,7 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
             },
             CalcResultSummary = new CalcResultSummary
             {
+                TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
                 ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
                 {
                     new()
@@ -218,9 +220,8 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
             {
                 ByMaterial = []
             },
-            CalcResultSummary = new CalcResultSummary { ProducerDisposalFees = null! },
-            CalcResultProjectedProducers = new CalcResultProjectedProducers
-            {
+            CalcResultSummary = new CalcResultSummary { TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty, ProducerDisposalFees = null! },
+            CalcResultProjectedProducers = new CalcResultProjectedProducers(){
                 H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
                 H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty
             }

@@ -18,15 +18,15 @@ public static class OnePlus2A2B2CProducer
     {
         return summary.TotalFeeforLADisposalCostswithBadDebtprovision1
             + summary.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A
-            + summary.CommsCostHeaderWithBadDebtFor2bTitle
-            + summary.TwoCCommsCostsByCountryWithBadDebtProvision;
+            + summary.CommsCostsHeaderFor2bTitle.FeeWithBadDebtProvision.Total
+            + summary.TwoCCommsCosts.FeeWithBadDebtProvision.Total;
     }
 
     private static decimal? GetTotalWithBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
     {
-        return fee.LocalAuthorityDisposalCostsSectionOne?.TotalProducerFeeWithBadDebtProvision?.Total // TODO this need to be optional?
-            + fee.CommunicationCostsSectionTwoA?.TotalProducerFeeWithBadDebtProvision?.Total
-            + fee.CommunicationCostsSectionTwoB?.TotalProducerFeeWithBadDebtProvision?.Total
+        return fee.LocalAuthorityDisposalCostsSectionOne?.FeeWithBadDebtProvision?.Total // TODO this need to be optional?
+            + fee.CommunicationCostsSectionTwoA?.FeeWithBadDebtProvision?.Total
+            + fee.CommunicationCostsSectionTwoB?.FeeWithBadDebtProvision?.Total
             + fee.TwoCTotalProducerFeeForCommsCostsWithBadDebt.Total;
     }
 

@@ -45,13 +45,13 @@ public class CalculationResultsJson
             BadDebtProvision2a = CurrencyConverterUtils.ConvertToCurrency(data.BadDebtProvisionFor2A),
             FeeForCommsCostsByMaterialWitBadDebtprovision2a = CurrencyConverterUtils.ConvertToCurrency(data.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A),
 
-            FeeForCommsCostsUkWideWithoutBadDebtprovision2b = CurrencyConverterUtils.ConvertToCurrency(data.CommsCostHeaderWithoutBadDebtFor2bTitle),
-            BadDebtProvision2b = CurrencyConverterUtils.ConvertToCurrency(data.CommsCostHeaderBadDebtProvisionFor2bTitle),
-            FeeForCommsCostsUkWideWithBadDebtprovision2b = CurrencyConverterUtils.ConvertToCurrency(data.CommsCostHeaderWithBadDebtFor2bTitle),
+            FeeForCommsCostsUkWideWithoutBadDebtprovision2b = CurrencyConverterUtils.ConvertToCurrency(data.CommsCostsHeaderFor2bTitle.FeeWithoutBadDebtProvision),
+            BadDebtProvision2b = CurrencyConverterUtils.ConvertToCurrency(data.CommsCostsHeaderFor2bTitle.BadDebtProvision),
+            FeeForCommsCostsUkWideWithBadDebtprovision2b = CurrencyConverterUtils.ConvertToCurrency(data.CommsCostsHeaderFor2bTitle.FeeWithBadDebtProvision.Total),
 
-            FeeForCommsCostsByCountryWithoutBadDebtprovision2c = CurrencyConverterUtils.ConvertToCurrency(data.TwoCCommsCostsByCountryWithoutBadDebtProvision),
-            BadDebtProvision2c = CurrencyConverterUtils.ConvertToCurrency(data.TwoCBadDebtProvision),
-            FeeForCommsCostsByCountryWideWithBadDebtprovision2c = CurrencyConverterUtils.ConvertToCurrency(data.TwoCCommsCostsByCountryWithBadDebtProvision),
+            FeeForCommsCostsByCountryWithoutBadDebtprovision2c = CurrencyConverterUtils.ConvertToCurrency(data.TwoCCommsCosts.FeeWithoutBadDebtProvision),
+            BadDebtProvision2c = CurrencyConverterUtils.ConvertToCurrency(data.TwoCCommsCosts.BadDebtProvision),
+            FeeForCommsCostsByCountryWideWithBadDebtprovision2c = CurrencyConverterUtils.ConvertToCurrency(data.TwoCCommsCosts.FeeWithBadDebtProvision.Total),
 
             Total12a2b2cWithBadDebt = CurrencyConverterUtils.ConvertToCurrency(data.TotalOnePlus2A2B2CFeeWithBadDebtProvision),
 

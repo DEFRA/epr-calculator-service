@@ -6,16 +6,13 @@ public static class TwoBCommsCostProducer
 {
     public static void SetValues(CalcResult calcResult, CalcResultSummary summary)
     {
-        summary.CommsCostHeaderWithoutBadDebtFor2bTitle =
-            calcResult.CalcResultCommsCostReportDetail.CommsCostUkWide.Total;
-
-        summary.CommsCostHeaderBadDebtProvisionFor2bTitle =
-            summary.CommsCostHeaderWithoutBadDebtFor2bTitle
-            * calcResult.CalcResultParameterOtherCost.BadDebtValue
-            / 100;
-
-        summary.CommsCostHeaderWithBadDebtFor2bTitle =
-            summary.CommsCostHeaderWithoutBadDebtFor2bTitle
-            + summary.CommsCostHeaderBadDebtProvisionFor2bTitle;
+        var withoutbadDebtProvision = calcResult.CalcResultCommsCostReportDetail.CommsCostUkWide;
+        var badDebtProvision = calcResult.CalcResultParameterOtherCost.BadDebtValue / 100 * withoutbadDebtProvision;
+        summary.CommsCostsHeaderFor2bTitle = new CalcResultSummaryBadDebtProvision
+        {
+            FeeWithoutBadDebtProvision = withoutbadDebtProvision.Total,
+            BadDebtProvision           = badDebtProvision.Total,
+            FeeWithBadDebtProvision    = withoutbadDebtProvision + badDebtProvision
+        };
     }
 }

@@ -8,18 +8,14 @@ public static class TwoCCommsCostProducer
 {
     public static void SetValues(CalcResult calcResult, CalcResultSummary summary)
     {
-        // Section 2c
-        // TODO introduce type for WithoutBadDebt/BadDebt/WithBadDebt?
-        summary.TwoCCommsCostsByCountryWithoutBadDebtProvision =
-          calcResult.CalcResultCommsCostReportDetail.CommsCostByCountry.Total;
-
-        summary.TwoCBadDebtProvision =
-            calcResult.CalcResultParameterOtherCost.BadDebtValue
-            * summary.TwoCCommsCostsByCountryWithoutBadDebtProvision
-            / 100;
-
-        summary.TwoCCommsCostsByCountryWithBadDebtProvision =
-            summary.TwoCCommsCostsByCountryWithoutBadDebtProvision + summary.TwoCBadDebtProvision;
+        var commsCostByCountry = calcResult.CalcResultCommsCostReportDetail.CommsCostByCountry;
+        var badDebtProvision = calcResult.CalcResultParameterOtherCost.BadDebtValue / 100 * commsCostByCountry;
+        summary.TwoCCommsCosts = new CalcResultSummaryBadDebtProvision
+        {
+            FeeWithoutBadDebtProvision = commsCostByCountry.Total,
+            BadDebtProvision           = badDebtProvision.Total,
+            FeeWithBadDebtProvision    = commsCostByCountry + badDebtProvision
+        };
     }
 
     public static void UpdateTwoCRows(CalcResult calcResult, CalcResultSummaryProducerDisposalFees result,

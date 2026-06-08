@@ -34,8 +34,8 @@ public class OnePlus2A2B2CProducerTests
 
         data.TotalFeeforLADisposalCostswithBadDebtprovision1 = 0;
         data.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A = 0;
-        data.CommsCostHeaderWithBadDebtFor2bTitle = 0;
-        data.TwoCCommsCostsByCountryWithBadDebtProvision = 0;
+        data.CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty;
+        data.TwoCCommsCosts = new CalcResultSummaryBadDebtProvision { FeeWithoutBadDebtProvision = 0, BadDebtProvision = 0m, FeeWithBadDebtProvision = ByCountryCost.Empty };
 
         OnePlus2A2B2CProducer.SetValues(data);
 

@@ -17,13 +17,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         }
 
         [TestMethod]
-        public void CanCallExport()
+        public void CalcResultSummaryExporter_CanCallExport()
         {
             // Arrange
             var runContext = TestDataHelper.CalculatorRun2025;
             var resultSummary = new CalcResultSummary
             {
-                ProducerDisposalFees = TestDataHelper.GetProducerDisposalFees()
+                ProducerDisposalFees = TestDataHelper.GetProducerDisposalFees(),
+                TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
+                CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty
             };
 
             var materials = TestDataHelper.GetMaterialDetails();

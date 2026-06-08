@@ -10,7 +10,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.OtherCo
         private CalcResultParameterOtherCostExporter exporter = new CalcResultParameterOtherCostExporter();
 
         [TestMethod]
-        public void CanCallExportCommsCost()
+        public void CalcResultParameterOtherCostExporter_CanCallExport()
         {
             // Arrange
             var otherCost = new CalcResultParameterOtherCost

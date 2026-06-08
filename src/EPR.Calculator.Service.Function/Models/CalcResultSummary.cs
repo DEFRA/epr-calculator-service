@@ -43,17 +43,10 @@
         public decimal SaSetupCostsWithBadDebtProvisionTitleSection5 { get; set; }
         // End Section-5 SA setup costs
 
-        public decimal TwoCCommsCostsByCountryWithoutBadDebtProvision { get; set; }
+        public required CalcResultSummaryBadDebtProvision TwoCCommsCosts { get; set; }
 
-        public decimal TwoCBadDebtProvision { get; set; }
 
-        public decimal TwoCCommsCostsByCountryWithBadDebtProvision { get; set; }
-
-        public decimal CommsCostHeaderWithoutBadDebtFor2bTitle { get; set; }
-
-        public decimal CommsCostHeaderWithBadDebtFor2bTitle { get; set; }
-
-        public decimal CommsCostHeaderBadDebtProvisionFor2bTitle { get; set; }
+        public CalcResultSummaryBadDebtProvision CommsCostsHeaderFor2bTitle { get; set; }
 
         public IEnumerable<CalcResultSummaryProducerDisposalFees> ProducerDisposalFees { get; set; }
             = new List<CalcResultSummaryProducerDisposalFees>();

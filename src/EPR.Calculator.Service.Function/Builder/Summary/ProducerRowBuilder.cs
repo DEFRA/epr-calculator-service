@@ -333,25 +333,26 @@ internal sealed class ProducerRowBuilder(
         // Section 1
         result.LocalAuthorityDisposalCostsSectionOne = new CalcResultSummaryBadDebtProvision
         {
-            TotalProducerFeeWithoutBadDebtProvision = result.TotalProducerDisposalFee,
-            BadDebtProvision                        = result.BadDebtProvision,
-            TotalProducerFeeWithBadDebtProvision    = result.TotalProducerDisposalFeeWithBadDebtProvision
+            // TODO result is missing CalcResultSummaryBadDebtProvision?
+            FeeWithoutBadDebtProvision = result.TotalProducerDisposalFee,
+            BadDebtProvision           = result.BadDebtProvision,
+            FeeWithBadDebtProvision    = result.TotalProducerDisposalFeeWithBadDebtProvision
         };
 
         // Section 2a
         result.CommunicationCostsSectionTwoA = new CalcResultSummaryBadDebtProvision
         {
-            TotalProducerFeeWithoutBadDebtProvision = result.TotalProducerCommsFee,
-            BadDebtProvision                        = result.BadDebtProvisionComms,
-            TotalProducerFeeWithBadDebtProvision    = result.TotalProducerCommsFeeWithBadDebtProvision
+            FeeWithoutBadDebtProvision = result.TotalProducerCommsFee,
+            BadDebtProvision           = result.BadDebtProvisionComms,
+            FeeWithBadDebtProvision    = result.TotalProducerCommsFeeWithBadDebtProvision
         };
 
         // Section 2b
         result.CommunicationCostsSectionTwoB = new CalcResultSummaryBadDebtProvision
         {
-            TotalProducerFeeWithoutBadDebtProvision = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsProducerFeeWithoutBadDebtFor2b(calcResult, producer, totalPackagingTonnage),
-            BadDebtProvision                        = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsBadDebtProvisionFor2b(calcResult, producer, totalPackagingTonnage),
-            TotalProducerFeeWithBadDebtProvision    = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsWithBadDebt(calcResult, producer, totalPackagingTonnage)
+            FeeWithoutBadDebtProvision = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsProducerFeeWithoutBadDebtFor2b(calcResult, producer, totalPackagingTonnage),
+            BadDebtProvision           = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsBadDebtProvisionFor2b(calcResult, producer, totalPackagingTonnage),
+            FeeWithBadDebtProvision    = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsWithBadDebt(calcResult, producer, totalPackagingTonnage)
         };
 
         var (countStr, advice) = TonnageChangeUtil.ComputeCountAndAdvice(result.Level, materialCostSummary);
@@ -466,9 +467,9 @@ internal sealed class ProducerRowBuilder(
     {
         return new CalcResultSummaryBadDebtProvision
         {
-            TotalProducerFeeWithoutBadDebtProvision = materialCostSummary.Sum(m => m.Value.ProducerDisposalFee.total ?? 0),
-            BadDebtProvision                        = materialCostSummary.Values.Sum(m => m.BadDebtProvision),
-            TotalProducerFeeWithBadDebtProvision    = ByCountryCost.Sum([.. materialCostSummary.Values.Select(m => m.ProducerDisposalFeeWithBadDebtProvision)])
+            FeeWithoutBadDebtProvision = materialCostSummary.Sum(m => m.Value.ProducerDisposalFee.total ?? 0),
+            BadDebtProvision           = materialCostSummary.Values.Sum(m => m.BadDebtProvision),
+            FeeWithBadDebtProvision    = ByCountryCost.Sum([.. materialCostSummary.Values.Select(m => m.ProducerDisposalFeeWithBadDebtProvision)])
         };
     }
 
@@ -477,9 +478,9 @@ internal sealed class ProducerRowBuilder(
     {
         return new CalcResultSummaryBadDebtProvision
         {
-            TotalProducerFeeWithoutBadDebtProvision = commsCostSummary.Values.Sum(m => m.ProducerTotalCostWithoutBadDebtProvision),
-            BadDebtProvision                        = commsCostSummary.Values.Sum(m => m.BadDebtProvision),
-            TotalProducerFeeWithBadDebtProvision    = ByCountryCost.Sum([.. commsCostSummary.Values.Select(m => m.ProducerDisposalFeeWithBadDebtProvision)])
+            FeeWithoutBadDebtProvision = commsCostSummary.Values.Sum(m => m.ProducerTotalCostWithoutBadDebtProvision),
+            BadDebtProvision           = commsCostSummary.Values.Sum(m => m.BadDebtProvision),
+            FeeWithBadDebtProvision    = ByCountryCost.Sum([.. commsCostSummary.Values.Select(m => m.ProducerDisposalFeeWithBadDebtProvision)])
         };
     }
 
@@ -487,11 +488,12 @@ internal sealed class ProducerRowBuilder(
         IReadOnlyList<CalcResultSummaryProducerDisposalFees> rows,
         Func<CalcResultSummaryProducerDisposalFees, CalcResultSummaryBadDebtProvision?> selector)
     {
+        // TODO just sum the rows
         return new CalcResultSummaryBadDebtProvision
         {
-            TotalProducerFeeWithoutBadDebtProvision = rows.Sum(r => selector(r)?.TotalProducerFeeWithoutBadDebtProvision ?? 0),
-            BadDebtProvision                        = rows.Sum(r => selector(r)?.BadDebtProvision ?? 0),
-            TotalProducerFeeWithBadDebtProvision    = ByCountryCost.Sum([.. rows.Select(r => selector(r)?.TotalProducerFeeWithBadDebtProvision ?? ByCountryCost.Empty)])
+            FeeWithoutBadDebtProvision = rows.Sum(r => selector(r)?.FeeWithoutBadDebtProvision ?? 0),
+            BadDebtProvision           = rows.Sum(r => selector(r)?.BadDebtProvision ?? 0),
+            FeeWithBadDebtProvision    = ByCountryCost.Sum([.. rows.Select(r => selector(r)?.FeeWithBadDebtProvision ?? ByCountryCost.Empty)])
         };
     }
 

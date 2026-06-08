@@ -111,7 +111,7 @@ public static class BillingInstructionsProducer
         var calc = fee.TotalProducerBillBreakdownCosts;
         if (calc is null) return null;
 
-        var diff = Math.Round(calc.TotalProducerFeeWithBadDebtProvision.Total, 2) - Math.Round(currentInvoicedTotalToDate.Value, 2);
+        var diff = Math.Round(calc.FeeWithBadDebtProvision.Total, 2) - Math.Round(currentInvoicedTotalToDate.Value, 2);
 
         return diff;
     }
@@ -221,7 +221,7 @@ public static class BillingInstructionsProducer
         if (fee.Level != CommonConstants.LevelOne.ToString()) return null;
 
         if (suggestedBillingInstruction is BillingConstants.Suggestion.Initial or BillingConstants.Suggestion.Rebill)
-            return fee.TotalProducerBillBreakdownCosts?.TotalProducerFeeWithBadDebtProvision.Total;
+            return fee.TotalProducerBillBreakdownCosts?.FeeWithBadDebtProvision.Total;
 
         if (suggestedBillingInstruction == BillingConstants.Suggestion.Delta) return liabilityDifference;
 

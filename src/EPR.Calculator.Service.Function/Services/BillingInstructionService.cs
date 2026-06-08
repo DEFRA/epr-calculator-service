@@ -61,7 +61,7 @@ public class BillingInstructionService(
             {
                 CalculatorRunId = calcResult.CalcResultDetail.RunId,
                 ProducerId = producerId,
-                TotalProducerBillWithBadDebt            = producer.TotalProducerBillBreakdownCosts!.TotalProducerFeeWithBadDebtProvision.Total,
+                TotalProducerBillWithBadDebt            = producer.TotalProducerBillBreakdownCosts!.FeeWithBadDebtProvision.Total,
                 CurrentYearInvoiceTotalToDate           = billingInstructionSection?.CurrentYearInvoiceTotalToDate,
                 TonnageChangeSinceLastInvoice           = GetStringValue(billingInstructionSection?.TonnageChangeSinceLastInvoice!),
                 AmountLiabilityDifferenceCalcVsPrev     = billingInstructionSection?.LiabilityDifference!,

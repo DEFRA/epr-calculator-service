@@ -98,9 +98,7 @@ public class BillingFileExporter(
             BadDebtProvisionFor1 = calcResultSummary.BadDebtProvisionFor1,
             BadDebtProvisionFor2A = calcResultSummary.BadDebtProvisionFor2A,
             BadDebtProvisionTitleSection3 = calcResultSummary.BadDebtProvisionTitleSection3,
-            CommsCostHeaderBadDebtProvisionFor2bTitle = calcResultSummary.CommsCostHeaderBadDebtProvisionFor2bTitle,
-            CommsCostHeaderWithBadDebtFor2bTitle = calcResultSummary.CommsCostHeaderWithBadDebtFor2bTitle,
-            CommsCostHeaderWithoutBadDebtFor2bTitle = calcResultSummary.CommsCostHeaderWithoutBadDebtFor2bTitle,
+            CommsCostsHeaderFor2bTitle = calcResultSummary.CommsCostsHeaderFor2bTitle,
             LaDataPrepCostsBadDebtProvisionTitleSection4 = calcResultSummary.LaDataPrepCostsBadDebtProvisionTitleSection4,
             LaDataPrepCostsTitleSection4 = calcResultSummary.LaDataPrepCostsTitleSection4,
             LaDataPrepCostsWithBadDebtProvisionTitleSection4 = calcResultSummary.LaDataPrepCostsWithBadDebtProvisionTitleSection4,
@@ -115,9 +113,7 @@ public class BillingFileExporter(
             TotalFeeforLADisposalCostswithBadDebtprovision1 = calcResultSummary.TotalFeeforLADisposalCostswithBadDebtprovision1,
             TotalFeeforLADisposalCostswoBadDebtprovision1 = calcResultSummary.TotalFeeforLADisposalCostswoBadDebtprovision1,
             TotalOnePlus2A2B2CFeeWithBadDebtProvision = calcResultSummary.TotalOnePlus2A2B2CFeeWithBadDebtProvision,
-            TwoCBadDebtProvision = calcResultSummary.TwoCBadDebtProvision,
-            TwoCCommsCostsByCountryWithBadDebtProvision = calcResultSummary.TwoCCommsCostsByCountryWithBadDebtProvision,
-            TwoCCommsCostsByCountryWithoutBadDebtProvision = calcResultSummary.TwoCCommsCostsByCountryWithoutBadDebtProvision
+            TwoCCommsCosts = calcResultSummary.TwoCCommsCosts
         };
     }
 

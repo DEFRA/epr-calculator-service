@@ -10,22 +10,23 @@ public static class TotalBillBreakdownProducer
         {
             fee.TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision
             {
-                TotalProducerFeeWithoutBadDebtProvision  = GetTotalProducerBillWithoutBadDebtProvision(fee) ?? 0,
-                BadDebtProvision                         = GetBadDebtProvisionForTotalProducerBill(fee) ?? 0,
-                TotalProducerFeeWithBadDebtProvision     = GetTotalProducerBillWithBadDebtProvision(fee)
+                FeeWithoutBadDebtProvision = GetTotalProducerBillWithoutBadDebtProvision(fee) ?? 0,
+                BadDebtProvision           = GetBadDebtProvisionForTotalProducerBill(fee) ?? 0,
+                FeeWithBadDebtProvision    = GetTotalProducerBillWithBadDebtProvision(fee)
             };
         }
     }
 
+    // TODO add these up once, then separate out the Without/With/BadDebt
     private static decimal? GetTotalProducerBillWithoutBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
     {
-        return fee.LocalAuthorityDisposalCostsSectionOne?.TotalProducerFeeWithoutBadDebtProvision
-            + fee.CommunicationCostsSectionTwoA?.TotalProducerFeeWithoutBadDebtProvision
-            + fee.CommunicationCostsSectionTwoB?.TotalProducerFeeWithoutBadDebtProvision
+        return fee.LocalAuthorityDisposalCostsSectionOne?.FeeWithoutBadDebtProvision
+            + fee.CommunicationCostsSectionTwoA?.FeeWithoutBadDebtProvision
+            + fee.CommunicationCostsSectionTwoB?.FeeWithoutBadDebtProvision
             + fee.TwoCTotalProducerFeeForCommsCostsWithoutBadDebt
-            + fee.SchemeAdministratorOperatingCosts?.TotalProducerFeeWithoutBadDebtProvision
-            + fee.LocalAuthorityDataPreparationCosts?.TotalProducerFeeWithoutBadDebtProvision
-            + fee.OneOffSchemeAdministrationSetupCosts?.TotalProducerFeeWithoutBadDebtProvision;
+            + fee.SchemeAdministratorOperatingCosts?.FeeWithoutBadDebtProvision
+            + fee.LocalAuthorityDataPreparationCosts?.FeeWithoutBadDebtProvision
+            + fee.OneOffSchemeAdministrationSetupCosts?.FeeWithoutBadDebtProvision;
     }
 
     private static decimal? GetBadDebtProvisionForTotalProducerBill(CalcResultSummaryProducerDisposalFees fee)
@@ -41,12 +42,12 @@ public static class TotalBillBreakdownProducer
 
     private static ByCountryCost GetTotalProducerBillWithBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
     {
-        return (fee.LocalAuthorityDisposalCostsSectionOne?.TotalProducerFeeWithBadDebtProvision ?? ByCountryCost.Empty)
-            + (fee.CommunicationCostsSectionTwoA?.TotalProducerFeeWithBadDebtProvision ?? ByCountryCost.Empty)
-            + (fee.CommunicationCostsSectionTwoB?.TotalProducerFeeWithBadDebtProvision ?? ByCountryCost.Empty)
+        return (fee.LocalAuthorityDisposalCostsSectionOne?.FeeWithBadDebtProvision ?? ByCountryCost.Empty)
+            + (fee.CommunicationCostsSectionTwoA?.FeeWithBadDebtProvision ?? ByCountryCost.Empty)
+            + (fee.CommunicationCostsSectionTwoB?.FeeWithBadDebtProvision ?? ByCountryCost.Empty)
             + fee.TwoCTotalProducerFeeForCommsCostsWithBadDebt
-            + (fee.SchemeAdministratorOperatingCosts?.TotalProducerFeeWithBadDebtProvision ?? ByCountryCost.Empty)
-            + (fee.LocalAuthorityDataPreparationCosts?.TotalProducerFeeWithBadDebtProvision ?? ByCountryCost.Empty)
-            + (fee.OneOffSchemeAdministrationSetupCosts?.TotalProducerFeeWithBadDebtProvision ?? ByCountryCost.Empty);
+            + (fee.SchemeAdministratorOperatingCosts?.FeeWithBadDebtProvision ?? ByCountryCost.Empty)
+            + (fee.LocalAuthorityDataPreparationCosts?.FeeWithBadDebtProvision ?? ByCountryCost.Empty)
+            + (fee.OneOffSchemeAdministrationSetupCosts?.FeeWithBadDebtProvision ?? ByCountryCost.Empty);
     }
 }
