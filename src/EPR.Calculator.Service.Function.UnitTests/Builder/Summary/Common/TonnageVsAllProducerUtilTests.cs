@@ -15,62 +15,6 @@ public class TonnageVsAllProducerUtilTests
 
 
     [TestMethod]
-    public void CanCallGetPercentageofProducerReportedHHTonnagevsAllProducersTotal()
-    {
-        // Arrange
-        var producers = Fixture.Create<List<ProducerDetail>>();
-
-        var testProducerId = Fixture.Create<int>();
-        var testCalculatorRunId = Fixture.Create<int>();
-        var testSubsidaryId = Fixture.Create<string>();
-        var materialDetails = Fixture.Create<List<MaterialDetail>>();
-
-        var allResults = GenerateAllResults(testProducerId, testCalculatorRunId, testSubsidaryId);
-
-        producers.First().ProducerId = testProducerId;
-        producers.First().SubsidiaryId = testSubsidaryId;
-        producers.First().CalculatorRunId = testCalculatorRunId;
-        allResults.First().ProducerReportedMaterialProjected.MaterialId = materialDetails.First().Id;
-
-        var TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, producers.First().CalculatorRunId);
-        // Act
-        var result = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducersTotal(producers, TotalPackagingTonnage);
-
-        // Assert
-        Assert.AreEqual(50, result);
-    }
-
-    /// <summary>
-    ///     Check that the percentage of HH tonnage returns zero if there is no producer details corresponding
-    ///     to the ID given in the materials details.
-    /// </summary>
-    [TestMethod]
-    public void GetPercentageofProducerReportedHHTonnagevsAllProducersTotal_ReturnsZeroWhenNoMatchingProducer()
-    {
-        // Arrange
-        var producers = Fixture.Create<List<ProducerDetail>>();
-        var allResults = Fixture.Create<List<CalcResultProducerAndReportMaterialDetail>>();
-        var materialDetails = Fixture.Create<List<MaterialDetail>>();
-
-        var testProducerId = Fixture.Create<int>();
-        var testCalculatorRunId = Fixture.Create<int>();
-
-        allResults.First().ProducerReportedMaterialProjected.ProducerDetailId = testProducerId;
-        allResults.First().ProducerDetail.Id = testProducerId;
-        allResults.First().ProducerDetail.ProducerId = testProducerId;
-        allResults.First().ProducerDetail.CalculatorRunId = testCalculatorRunId;
-        allResults.First().ProducerReportedMaterialProjected.PackagingType = "HH";
-
-        var TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId);
-
-        // Act
-        var result = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducersTotal(producers, TotalPackagingTonnage);
-
-        // Assert
-        Assert.AreEqual(0, result);
-    }
-
-    [TestMethod]
     public void CanCallGetPercentageofProducerReportedHHTonnagevsAllProducers()
     {
         // Arrange
@@ -98,32 +42,6 @@ public class TonnageVsAllProducerUtilTests
 
         // Assert
         Assert.AreEqual(50, result);
-    }
-
-    [TestMethod]
-    public void GetPercentageofProducerReportedTonnagevsAllProducersTotal_ReturnsZero_WhenNoMatchingProducer()
-    {
-        // Arrange
-        var producers = Fixture.Create<List<ProducerDetail>>();
-        var allResults = Fixture.Create<List<CalcResultProducerAndReportMaterialDetail>>();
-        var materialDetails = Fixture.Create<List<MaterialDetail>>();
-
-        var testProducerId = Fixture.Create<int>();
-        var testCalculatorRunId = Fixture.Create<int>();
-
-        allResults.First().ProducerReportedMaterialProjected.ProducerDetailId = testProducerId;
-        allResults.First().ProducerDetail.Id = testProducerId;
-        allResults.First().ProducerDetail.ProducerId = testProducerId;
-        allResults.First().ProducerDetail.CalculatorRunId = testCalculatorRunId;
-        allResults.First().ProducerReportedMaterialProjected.PackagingType = "PB";
-
-        var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId);
-
-        // Act
-        var result = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducersTotal(producers, totalPackagingTonnage);
-
-        // Assert
-        Assert.AreEqual(0, result);
     }
 
     [TestMethod]

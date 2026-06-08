@@ -9,6 +9,7 @@ public static class TwoCCommsCostProducer
     public static void SetValues(CalcResult calcResult, CalcResultSummary summary)
     {
         // Section 2c
+        // TODO introduce type for WithoutBadDebt/BadDebt/WithBadDebt?
         summary.TwoCCommsCostsByCountryWithoutBadDebtProvision =
           calcResult.CalcResultCommsCostReportDetail.CommsCostByCountry.Total;
 
@@ -26,13 +27,7 @@ public static class TwoCCommsCostProducer
     {
         var commsWithBadDebt2C = GetCommWithBadDebt2C(calcResult, producer, hhTotalPackagingTonnage);
         var commsCost = calcResult.CalcResultCommsCostReportDetail.CommsCostByCountry;
-        result.TwoCTotalProducerFeeForCommsCostsWithBadDebt = new ByCountryCost
-        {
-            England         = commsWithBadDebt2C * commsCost.England,
-            Wales           = commsWithBadDebt2C * commsCost.Wales,
-            Scotland        = commsWithBadDebt2C * commsCost.Scotland,
-            NorthernIreland = commsWithBadDebt2C * commsCost.NorthernIreland
-        };
+        result.TwoCTotalProducerFeeForCommsCostsWithBadDebt = commsWithBadDebt2C * commsCost;
 
         result.TwoCTotalProducerFeeForCommsCostsWithoutBadDebt =
             calcResult.CalcResultCommsCostReportDetail.CommsCostByCountry.Total

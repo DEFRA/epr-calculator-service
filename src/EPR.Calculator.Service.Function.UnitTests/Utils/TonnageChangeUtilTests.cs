@@ -53,26 +53,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Utils
             Assert.AreEqual(5.25m, result);
         }
 
-        // ---------- GetOverallChangeTotal ----------
-
-        [TestMethod]
-        public void GetOverallChangeTotal_level1RowsAreSummed_level2Ignored()
-        {
-            const string mat = "PAPER";
-
-            var rows = new List<CalcResultSummaryProducerDisposalFees>
-            {
-                MakeProducerRow("1", mat, 10m),   // counted
-                MakeProducerRow("1", mat, null),  // treated as 0 in sum
-                MakeProducerRow("1", mat, 0m),    // counted as 0
-                MakeProducerRow("2", mat, 999m)   // ignored
-            };
-
-            var total = TonnageChangeUtil.GetOverallChangeTotal(rows, mat);
-
-            Assert.AreEqual(10m, total);
-        }
-
         // ---------- ComputeCountAndAdvice ----------
 
         [TestMethod]

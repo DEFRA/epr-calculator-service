@@ -6,13 +6,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common;
 
 public static class TonnageVsAllProducerUtil
 {
-    public static decimal GetPercentageofProducerReportedTonnagevsAllProducersTotal(IReadOnlyList<ProducerDetail> producers, IReadOnlyList<TotalPackagingTonnagePerRun> totalPackagingTonnage)
-    {
-        // PERF: route through the index so the grand total is computed once and each per-producer lookup is O(1).
-        var index = AsIndex(totalPackagingTonnage);
-        return producers.Sum(producer => GetPercentageofProducerReportedTonnagevsAllProducers(producer, index));
-    }
-
     public static decimal GetPercentageofProducerReportedTonnagevsAllProducers(ProducerDetail producer, IReadOnlyList<TotalPackagingTonnagePerRun> totalPackagingTonnage) =>
         GetPercentageofProducerReportedTonnagevsAllProducers(producer, AsIndex(totalPackagingTonnage));
 

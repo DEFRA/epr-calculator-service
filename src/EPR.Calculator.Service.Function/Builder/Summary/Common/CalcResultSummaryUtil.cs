@@ -11,30 +11,13 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
     [ExcludeFromCodeCoverage]
     public static class CalcResultSummaryUtil
     {
-        public static int GetLevelIndex(
-            IReadOnlyList<CalcResultSummaryProducerDisposalFees> producerDisposalFeesLookup,
-            ProducerDetail producer)
-        {
-            var totalRow = producerDisposalFeesLookup.FirstOrDefault(pdf => pdf.ProducerId == producer.ProducerId.ToString() && pdf.isTotalRow);
-
-            return totalRow == null ? (int)CalcResultSummaryLevelIndex.One : (int)CalcResultSummaryLevelIndex.Two;
-        }
-
-        public static bool IsProducerScaledup(
-            ProducerDetail producer,
-            IReadOnlyList<CalcResultScaledupProducer> scaledupProducers)
-        {
-            var scaledupProducer = scaledupProducers.FirstOrDefault(p => p.ProducerId == producer.ProducerId);
-            return scaledupProducer != null;
-        }
-
         public static bool IsProducerPartiallyObligated(
             ProducerDetail producer,
             IReadOnlyList<CalcResultPartialObligation> partialObligations,
             bool isTotalRow)
         {
-            var partialObligation = isTotalRow ? partialObligations.FirstOrDefault(p => p.ProducerId == producer.ProducerId) : partialObligations.FirstOrDefault(p => p.ProducerId == producer.ProducerId && p.SubsidiaryId == producer.SubsidiaryId);
-            return partialObligation != null;
+            //TODO is isTotalRow necessary?
+            return isTotalRow ? partialObligations.Any(p => p.ProducerId == producer.ProducerId) : partialObligations.Any(p => p.ProducerId == producer.ProducerId && p.SubsidiaryId == producer.SubsidiaryId);
         }
 
         public static decimal GetTonnage(
@@ -60,16 +43,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             };
         }
 
-        public static decimal GetTonnageTotal(
-            ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-            IReadOnlyList<ProducerDetail> producers,
-            MaterialDetail material,
-            string packagingType,
-            RagRating? ragRating = null)
-        {
-            return producers.Sum(producer => GetTonnage(projectedMaterialsLookup, producer, material, packagingType, ragRating));
-        }
-
         public static decimal GetReportedTonnage(
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             ProducerDetail producer,
@@ -85,15 +58,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             return householdTonnage + publicBinTonnage + glassTonnage;
         }
 
-        public static decimal GetReportedTonnageTotal(
-            ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-            IReadOnlyList<ProducerDetail> producers,
-            MaterialDetail material,
-            RagRating? ragRating = null)
-        {
-            return producers.Sum(producer => GetReportedTonnage(projectedMaterialsLookup, producer, material, ragRating));
-        }
-
         public static SelfManagedConsumerWasteData SumSelfManagedConsumerWasteData(
             IReadOnlyList<ProducerDetail> producersAndSubsidiaries,
             MaterialDetail material,
@@ -106,22 +70,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
                     .Where(x => x.Level == 1 && producersAndSubsidiaries.Any(y => x.ProducerId == y.ProducerId))
                     .Select(x => x.SelfManagedConsumerWasteDataPerMaterials[material.Code])
                     .Single();
-        }
-
-        public static decimal? GetPreviousInvoicedTonnage(
-            IReadOnlyList<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
-            IReadOnlyList<ProducerDetail> producersAndSubsidiaries,
-            IReadOnlyList<CalcResultScaledupProducer> scaledUpProducers,
-            IReadOnlyList<CalcResultPartialObligation> partialObligations,
-            MaterialDetail material,
-            bool isOverAllTotalRow,
-            decimal? previousInvoicedNetTonnage)
-        {
-            return isOverAllTotalRow
-                ? producerDisposalFees
-                    .Where(fee => fee.Level == CommonConstants.LevelOne.ToString())
-                    .Sum(row => row.ProducerDisposalFeesByMaterial?[material.Code].PreviousInvoicedTonnage)
-                : previousInvoicedNetTonnage;
         }
 
         public static (decimal? total, decimal? red,  decimal? amber, decimal? green) GetPricePerTonne(
@@ -186,13 +134,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
         {
             var total = (producerDisposalFeeTotal ?? 0) * (1 + calcResult.CalcResultParameterOtherCost.BadDebtValue / 100);
             var countryApportionment = calcResult.CalcResultLapcapData.CountryApportionment;
-            return new ByCountryCost
-            {
-                England         = total * countryApportionment.England / 100,
-                Wales           = total * countryApportionment.Wales / 100,
-                Scotland        = total * countryApportionment.Scotland / 100,
-                NorthernIreland = total * countryApportionment.NorthernIreland / 100
-            };
+            return total * countryApportionment;
         }
 
         public static decimal GetCommsCostHeaderWithoutBadDebtFor2bTitle(CalcResult calcResult)

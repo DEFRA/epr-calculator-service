@@ -277,7 +277,7 @@ internal sealed class ProducerRowBuilder(
             SubsidiaryId        = producer.SubsidiaryId ?? string.Empty,
             TradingName         = producer.TradingName ?? string.Empty,
             Level               = level.ToString(),
-            IsProducerScaledup  = CalcResultSummaryUtil.IsProducerScaledup(producer, scaledupProducers)
+            IsProducerScaledup  = scaledupProducers.Any(p => p.ProducerId == producer.ProducerId)
                 ? CommonConstants.Yes
                 : CommonConstants.No,
             IsPartialObligation = CalcResultSummaryUtil.IsProducerPartiallyObligated(producer, partialObligations, isTotalRow: false)
@@ -351,13 +351,7 @@ internal sealed class ProducerRowBuilder(
         {
             TotalProducerFeeWithoutBadDebtProvision = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsProducerFeeWithoutBadDebtFor2b(calcResult, producer, totalPackagingTonnage),
             BadDebtProvision                        = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsBadDebtProvisionFor2b(calcResult, producer, totalPackagingTonnage),
-            TotalProducerFeeWithBadDebtProvision    = new ByCountryCost
-            {
-                England         = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsEnglandWithBadDebt(calcResult, producer, totalPackagingTonnage),
-                Wales           = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsWalesWithBadDebt(calcResult, producer, totalPackagingTonnage),
-                Scotland        = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsScotlandWithBadDebt(calcResult, producer, totalPackagingTonnage),
-                NorthernIreland = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsNorthernIrelandWithBadDebt(calcResult, producer, totalPackagingTonnage),
-            }
+            TotalProducerFeeWithBadDebtProvision    = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsWithBadDebt(calcResult, producer, totalPackagingTonnage)
         };
 
         var (countStr, advice) = TonnageChangeUtil.ComputeCountAndAdvice(result.Level, materialCostSummary);
@@ -497,13 +491,7 @@ internal sealed class ProducerRowBuilder(
         {
             TotalProducerFeeWithoutBadDebtProvision = rows.Sum(r => selector(r)?.TotalProducerFeeWithoutBadDebtProvision ?? 0),
             BadDebtProvision                        = rows.Sum(r => selector(r)?.BadDebtProvision ?? 0),
-            TotalProducerFeeWithBadDebtProvision    = new ByCountryCost
-            {
-                England         = rows.Sum(r => selector(r)?.TotalProducerFeeWithBadDebtProvision?.England ?? 0),
-                Wales           = rows.Sum(r => selector(r)?.TotalProducerFeeWithBadDebtProvision?.Wales ?? 0),
-                Scotland        = rows.Sum(r => selector(r)?.TotalProducerFeeWithBadDebtProvision?.Scotland ?? 0),
-                NorthernIreland = rows.Sum(r => selector(r)?.TotalProducerFeeWithBadDebtProvision?.NorthernIreland ?? 0),
-            }
+            TotalProducerFeeWithBadDebtProvision    = ByCountryCost.Sum([.. rows.Select(r => selector(r)?.TotalProducerFeeWithBadDebtProvision ?? ByCountryCost.Empty)])
         };
     }
 

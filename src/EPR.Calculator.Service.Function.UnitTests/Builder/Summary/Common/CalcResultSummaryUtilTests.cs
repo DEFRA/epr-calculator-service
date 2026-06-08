@@ -69,20 +69,6 @@ public class CalcResultSummaryUtilTests
     }
 
     [TestMethod]
-    public void CanGetNonTotalRowLevelIndex()
-    {
-        // Arrange
-        var producerDisposalFeesLookup = TestDataHelper.GetProducerDisposalFees();
-        var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-
-        // Act
-        var result = CalcResultSummaryUtil.GetLevelIndex(producerDisposalFeesLookup, producer);
-
-        // Assert
-        Assert.AreEqual(1, result);
-    }
-
-    [TestMethod]
     public void CanGetHouseholdPackagingWasteTonnage()
     {
         // Arrange
@@ -139,62 +125,6 @@ public class CalcResultSummaryUtilTests
     }
 
     [TestMethod]
-    public void CanGetHouseholdPackagingWasteTonnageProducerTotal()
-    {
-        // Arrange
-        var producers = TestDataHelper.GetProducers();
-        var material = TestDataHelper.GetMaterialDetails().First(m => m.Code == "AL");
-
-        // Act
-        var result = CalcResultSummaryUtil.GetTonnageTotal(ProjectedMaterialsLookup(producers), producers, material, PackagingTypes.Household);
-
-        // Assert
-        Assert.AreEqual(3000.00m, result);
-    }
-
-    [TestMethod]
-    public void CanGetPublicBinTonnageProducerTotal()
-    {
-        // Arrange
-        var producers = TestDataHelper.GetProducers();
-        var material = TestDataHelper.GetMaterialDetails().First(m => m.Code == "PL");
-
-        // Act
-        var result = CalcResultSummaryUtil.GetTonnageTotal(ProjectedMaterialsLookup(producers), producers, material, PackagingTypes.PublicBin);
-
-        // Assert
-        Assert.AreEqual(60.00m, result);
-    }
-
-    [TestMethod]
-    public void CanGetReportedTonnageProducerTotal()
-    {
-        // Arrange
-        var producers = TestDataHelper.GetProducers();
-        var material = TestDataHelper.GetMaterialDetails().First(m => m.Code == "AL");
-
-        // Act
-        var result = CalcResultSummaryUtil.GetReportedTonnageTotal(ProjectedMaterialsLookup(producers), producers, material);
-
-        // Assert
-        Assert.AreEqual(3000.00m, result);
-    }
-
-    [TestMethod]
-    public void CanGetHouseholdDrinksContainersTonnageProducerTotal()
-    {
-        // Arrange
-        var producers = TestDataHelper.GetProducers();
-        var material = TestDataHelper.GetMaterialDetails().First(m => m.Code == "GL");
-
-        // Act
-        var result = CalcResultSummaryUtil.GetTonnageTotal(ProjectedMaterialsLookup(producers), producers, material, PackagingTypes.HouseholdDrinksContainers);
-
-        // Assert
-        Assert.AreEqual(60.00m, result);
-    }
-
-    [TestMethod]
     public void CanGetManagedConsumerWasteTonnage()
     {
         // Arrange
@@ -206,20 +136,6 @@ public class CalcResultSummaryUtilTests
 
         // Assert
         Assert.AreEqual(20.00m, result);
-    }
-
-    [TestMethod]
-    public void CanGetManagedConsumerWasteTonnageProducerTotal()
-    {
-        // Arrange
-        var producers = TestDataHelper.GetProducers();
-        var material = TestDataHelper.GetMaterialDetails().First(m => m.Code == "AL");
-
-        // Act
-        var result = CalcResultSummaryUtil.GetTonnageTotal(ProjectedMaterialsLookup(producers), producers, material, PackagingTypes.ConsumerWaste);
-
-        // Assert
-        Assert.AreEqual(60.00m, result);
     }
 
     [TestMethod]
@@ -329,20 +245,6 @@ public class CalcResultSummaryUtilTests
     }
 
     [TestMethod]
-    public void CanGetReportedPublicBinTonnageTotal()
-    {
-        // Arrange
-        var producers = TestDataHelper.GetProducers();
-        var material = TestDataHelper.GetMaterialDetails().First(m => m.Code == "PL");
-
-        // Act
-        var result = CalcResultSummaryUtil.GetTonnageTotal(ProjectedMaterialsLookup(producers), producers, material, PackagingTypes.PublicBin);
-
-        // Assert
-        Assert.AreEqual(60.00m, result);
-    }
-
-    [TestMethod]
     public void CanGetReportedHDCTonnage()
     {
         // Arrange
@@ -354,20 +256,6 @@ public class CalcResultSummaryUtilTests
 
         // Assert
         Assert.AreEqual(20.00m, result);
-    }
-
-    [TestMethod]
-    public void CanGetReportedHDCTonnageTotal()
-    {
-        // Arrange
-        var producers = TestDataHelper.GetProducers();
-        var material = TestDataHelper.GetMaterialDetails().First(m => m.Code == "GL");
-
-        // Act
-        var result = CalcResultSummaryUtil.GetTonnageTotal(ProjectedMaterialsLookup(producers), producers, material, PackagingTypes.HouseholdDrinksContainers);
-
-        // Assert
-        Assert.AreEqual(60.00m, result);
     }
 
     private CalcResultLateReportingTonnage GetCalcResultLateReportingTonnage() => Fixture.Create<CalcResultLateReportingTonnage>();

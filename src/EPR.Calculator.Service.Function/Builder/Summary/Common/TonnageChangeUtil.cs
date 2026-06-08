@@ -23,34 +23,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             return netReportedTonnage - previousInvoicedTonnage.Value;
         }
 
-        public static decimal? GetOverallChangeTotal(
-            IReadOnlyList<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
-            string materialCode)
-        {
-            if (producerDisposalFees == null || string.IsNullOrWhiteSpace(materialCode))
-            {
-                return 0m;
-            }
-
-            var level1 = producerDisposalFees
-                .Where(r => r != null && r.Level == CommonConstants.LevelOne.ToString());
-
-            decimal total = 0m;
-
-            foreach (var row in level1.Select(r => r.ProducerDisposalFeesByMaterial))
-            {
-                if (row != null &&
-                    row.TryGetValue(materialCode, out var mat) &&
-                    mat?.TonnageChange != null)
-                {
-                    total += mat.TonnageChange.Value;
-                }
-                // else: contribute 0 to the sum
-            }
-
-            return total;
-        }
-
         public static (string? Count, string? Advice) ComputeCountAndAdvice(
             string level,
             IDictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> byMaterial)

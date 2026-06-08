@@ -6,8 +6,6 @@
 
         public decimal BadDebtProvision { get; set; }
 
-        //public decimal TotalProducerFeeWithBadDebtProvision { get; set; }
-
-        public ByCountryCost TotalProducerFeeWithBadDebtProvision { get; set; }
+        public required ByCountryCost TotalProducerFeeWithBadDebtProvision { get; set; }
     }
 }
