@@ -2,7 +2,6 @@ using System.Text;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.UnitTests.Builder;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Summary;
 
@@ -19,6 +18,14 @@ public class SummaryExporterTestUtils
         csvContent.AppendLine();
 
         foreach (var producer in resultSummary.ProducerDisposalFees)
+        {
             exporter.AppendRow(csvContent, producer, applyModulation);
+            csvContent.AppendLine();
+        }
+
+        if (resultSummary.OverallTotal is not null)
+        {
+            exporter.AppendRow(csvContent, resultSummary.OverallTotal, applyModulation);
+        }
     }
 }

@@ -263,29 +263,21 @@ public static partial class TestDataHelper
     {
         return new CalcResultSummary
         {
-            TotalFeeforLADisposalCostswoBadDebtprovision1 = 4423.39438M,
-            BadDebtProvisionFor1 = 6021.3677166M,
-            TotalFeeforLADisposalCostswithBadDebtprovision1 = 4688.7980428M,
-            TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A = 1290.778M,
-            BadDebtProvisionFor2A = 2098.887360M,
-            TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A = 1368.22468M,
-            SaOperatingCostsWoTitleSection3 = 3077.2243678810364M,
-            BadDebtProvisionTitleSection3 = 3900.000000M,
-            SaOperatingCostsWithTitleSection3 = 3261.8578299538985M,
-            LaDataPrepCostsTitleSection4 = 1727.9798373485821M,
-            LaDataPrepCostsBadDebtProvisionTitleSection4 = 103.67879024091492M,
-            LaDataPrepCostsWithBadDebtProvisionTitleSection4 = 1831.658627589497M,
-            SaSetupCostsTitleSection5 = 17500.00M,
-            SaSetupCostsBadDebtProvisionTitleSection5 = 1050.00M,
-            SaSetupCostsWithBadDebtProvisionTitleSection5 = 18550.00M,
-            TwoCCommsCostsByCountryWithoutBadDebtProvision = 1339.100071422903M,
-            TwoCBadDebtProvision = 80.34600428537418M,
-            TwoCCommsCostsByCountryWithBadDebtProvision = 1419.446075708277M,
-            CommsCostHeaderWithoutBadDebtFor2bTitle = 1339.100071422903M,
-            CommsCostHeaderWithBadDebtFor2bTitle = 1419.446075708277M,
-            CommsCostHeaderBadDebtProvisionFor2bTitle = 80.34600428537418M,
+            LADisposalCostsSection1 = new CalcResultSummaryBadDebtProvision
+            {
+                FeeWithoutBadDebtProvision = 4423.39438M,
+                BadDebtProvision           = 6021.3677166M,
+                FeeWithBadDebtProvision    = new ByCountryCost { England = 2534.2359097426884m, Wales = 571.2417008090152m, Scotland = 1137.8673076088023m, NorthernIreland = 445.4531246394942m }
+            },
+            SaOperatingCostsSection3 = new CalcResultSummaryBadDebtProvision { FeeWithoutBadDebtProvision = 3077.2243678810364M, BadDebtProvision = 3900.000000M, FeeWithBadDebtProvision = ByCountryCost.Empty with { England = 3261.8578299538985m } },
+            SaSetupCostsSection5 = new CalcResultSummaryBadDebtProvision { FeeWithoutBadDebtProvision = 17500.00M, BadDebtProvision = 1050.00M, FeeWithBadDebtProvision = ByCountryCost.Empty with { England = 18550.00m } },
+            LaDataPrepSection4 = new CalcResultSummaryBadDebtProvision { FeeWithoutBadDebtProvision = 1727.9798373485821M, BadDebtProvision = 103.67879024091492M, FeeWithBadDebtProvision = ByCountryCost.Empty with { England = 1831.658627589497m } },
+            CommsCostsSection2a = new CalcResultSummaryBadDebtProvision { FeeWithoutBadDebtProvision = 1290.778M, BadDebtProvision = 2098.887360M, FeeWithBadDebtProvision = ByCountryCost.Empty with { England = 1368.22468m } },
+            CommsCostsSection2c = new CalcResultSummaryBadDebtProvision { FeeWithoutBadDebtProvision = 1339.100071422903M, BadDebtProvision = 80.34600428537418M, FeeWithBadDebtProvision = ByCountryCost.Empty with { England = 1419.446075708277m } },
+            CommsCostsSection2b = new CalcResultSummaryBadDebtProvision { FeeWithoutBadDebtProvision = 1339.100071422903M, BadDebtProvision = 80.34600428537418M, FeeWithBadDebtProvision = ByCountryCost.Empty with { England = 1419.446075708277m } },
             TotalOnePlus2A2B2CFeeWithBadDebtProvision = 10230.2550766M,
-            ProducerDisposalFees = GetProducerDisposalFees(applyModulation)
+            ProducerDisposalFees = GetProducerDisposalFees(applyModulation),
+            OverallTotal = GetOverallTotalRow(applyModulation)
         };
     }
 
@@ -295,95 +287,55 @@ public static partial class TestDataHelper
         {
             new()
             {
-                ProducerId = "1",
-                ProducerIdInt = 1,
+                ProducerId = 1,
                 SubsidiaryId = string.Empty,
                 ProducerName = "Allied Packaging",
                 Level = "1",
                 isTotalRow = false,
-                TotalProducerDisposalFee = 4423.39438m,
-                BadDebtProvision = 265.4036628m,
-                TotalProducerDisposalFeeWithBadDebtProvision = 4688.7980428m,
-                EnglandTotal = 2534.2359097426884m,
-                WalesTotal = 571.2417008090152m,
-                ScotlandTotal = 1137.8673076088023m,
-                NorthernIrelandTotal = 445.4531246394942m,
-                TotalProducerCommsFee = 1290.778m,
-                BadDebtProvisionComms = 77.44668m,
-                TotalProducerCommsFeeWithBadDebtProvision = 1368.22468m,
-                EnglandTotalComms = 718.2251815154783m,
-                WalesTotalComms = 181.2690740598454m,
-                ScotlandTotalComms = 332.8499847265775m,
-                NorthernIrelandTotalComms = 135.88043969809883m,
-                LocalAuthorityDisposalCostsSectionOne = new CalcResultSummaryBadDebtProvision
+                LADisposalCostsSection1 = new CalcResultSummaryBadDebtProvision
                 {
-                    TotalProducerFeeWithoutBadDebtProvision = 4423.39438m,
-                    BadDebtProvision = 265.4036628m,
-                    TotalProducerFeeWithBadDebtProvision = 4688.7980428m,
-                    EnglandTotalWithBadDebtProvision = 2534.2359097426884m,
-                    WalesTotalWithBadDebtProvision = 571.2417008090152m,
-                    ScotlandTotalWithBadDebtProvision = 1137.8673076088023m,
-                    NorthernIrelandTotalWithBadDebtProvision = 445.4531246394942m
+                    FeeWithoutBadDebtProvision = 4423.39438m,
+                    BadDebtProvision           = 265.4036628m,
+                    FeeWithBadDebtProvision    = new ByCountryCost { England = 2534.2359097426884m, Wales = 571.2417008090152m, Scotland = 1137.8673076088023m, NorthernIreland = 445.4531246394942m }
                 },
-                CommunicationCostsSectionTwoA = new CalcResultSummaryBadDebtProvision
+                CommsCostsSection2a = new CalcResultSummaryBadDebtProvision
                 {
-                    TotalProducerFeeWithoutBadDebtProvision = 1290.778m,
-                    BadDebtProvision = 77.44668m,
-                    TotalProducerFeeWithBadDebtProvision = 1368.22468m,
-                    EnglandTotalWithBadDebtProvision = 718.2251815154783m,
-                    WalesTotalWithBadDebtProvision = 181.2690740598454m,
-                    ScotlandTotalWithBadDebtProvision = 332.8499847265775m,
-                    NorthernIrelandTotalWithBadDebtProvision = 135.88043969809883m
+                    FeeWithoutBadDebtProvision = 1290.778m,
+                    BadDebtProvision           = 77.44668m,
+                    FeeWithBadDebtProvision    = new ByCountryCost { England = 718.2251815154783m, Wales = 181.2690740598454m, Scotland = 332.8499847265775m, NorthernIreland = 135.88043969809883m }
                 },
-                TwoCTotalProducerFeeForCommsCostsWithoutBadDebt = 1339.100071422903m,
-                TwoCBadDebtProvision = 80.34600428537418m,
-                TwoCTotalProducerFeeForCommsCostsWithBadDebt = 1419.446075708277m,
-                TwoCEnglandTotalWithBadDebt = 607.4748035870169m,
-                TwoCWalesTotalWithBadDebt = 300.7301007856519m,
-                TwoCScotlandTotalWithBadDebt = 360.87612094278234m,
-                TwoCNorthernIrelandTotalWithBadDebt = 150.36505039282596m,
+                CommsCostsSection2c = new CalcResultSummaryBadDebtProvision
+                {
+                    FeeWithoutBadDebtProvision = 1339.100071422903m,
+                    BadDebtProvision           = 80.34600428537418m,
+                    FeeWithBadDebtProvision    = new ByCountryCost { England = 607.4748035870169m, Wales = 300.7301007856519m, Scotland = 360.87612094278234m, NorthernIreland = 150.36505039282596m }
+                },
                 PercentageofProducerReportedTonnagevsAllProducers = 5.6741528450123m,
                 ProducerTotalOnePlus2A2B2CWithBadDeptProvision = 10491.167766844124m,
                 ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 4.7341913352015945m,
-                SchemeAdministratorOperatingCosts = new CalcResultSummaryBadDebtProvision
+                SaOperatingCostsSection3 = new CalcResultSummaryBadDebtProvision
                 {
-                    TotalProducerFeeWithoutBadDebtProvision = 3077.2243678810364m,
-                    BadDebtProvision = 184.6334620728622m,
-                    TotalProducerFeeWithBadDebtProvision = 3261.8578299538985m,
-                    EnglandTotalWithBadDebtProvision = 1712.2541832180282m,
-                    WalesTotalWithBadDebtProvision = 432.1468228710047m,
-                    ScotlandTotalWithBadDebtProvision = 793.5168432560496m,
-                    NorthernIrelandTotalWithBadDebtProvision = 323.93998060881614m
+                    FeeWithoutBadDebtProvision = 3077.2243678810364m,
+                    BadDebtProvision           = 184.6334620728622m,
+                    FeeWithBadDebtProvision    = new ByCountryCost { England = 1712.2541832180282m, Wales = 432.1468228710047m, Scotland = 793.5168432560496m, NorthernIreland = 323.93998060881614m }
                 },
-                LocalAuthorityDataPreparationCosts = new CalcResultSummaryBadDebtProvision
+                LaDataPrepSection4 = new CalcResultSummaryBadDebtProvision
                 {
-                    TotalProducerFeeWithoutBadDebtProvision = 1727.9798373485821m,
-                    BadDebtProvision = 103.67879024091492m,
-                    TotalProducerFeeWithBadDebtProvision = 1831.658627589497m,
-                    EnglandTotalWithBadDebtProvision = 802.9188504501905m,
-                    WalesTotalWithBadDebtProvision = 351.2769970719583m,
-                    ScotlandTotalWithBadDebtProvision = 451.6418533782321m,
-                    NorthernIrelandTotalWithBadDebtProvision = 225.82092668911605m
+                    FeeWithoutBadDebtProvision = 1727.9798373485821m,
+                    BadDebtProvision           = 103.67879024091492m,
+                    FeeWithBadDebtProvision    = new ByCountryCost { England = 802.9188504501905m, Wales = 351.2769970719583m, Scotland = 451.6418533782321m, NorthernIreland = 225.82092668911605m }
                 },
-                OneOffSchemeAdministrationSetupCosts = new CalcResultSummaryBadDebtProvision
+                SaSetupCostsSection5 = new CalcResultSummaryBadDebtProvision
                 {
-                    TotalProducerFeeWithoutBadDebtProvision = 2970.7050628390007m,
-                    BadDebtProvision = 178.24230377034004m,
-                    TotalProducerFeeWithBadDebtProvision = 3148.947366609341m,
-                    EnglandTotalWithBadDebtProvision = 1652.983846106635m,
-                    WalesTotalWithBadDebtProvision = 417.1878943870084m,
-                    ScotlandTotalWithBadDebtProvision = 766.0489525279556m,
-                    NorthernIrelandTotalWithBadDebtProvision = 312.72667358774174m
+                    FeeWithoutBadDebtProvision = 2970.7050628390007m,
+                    BadDebtProvision           = 178.24230377034004m,
+                    FeeWithBadDebtProvision    = new ByCountryCost { England = 1652.983846106635m, Wales = 417.1878943870084m, Scotland = 766.0489525279556m, NorthernIreland = 312.72667358774174m }
                 },
                 TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision
                 {
-                    TotalProducerFeeWithoutBadDebtProvision = 9897.32808192842m,
-                    BadDebtProvision = 593.8396849157051m,
-                    TotalProducerFeeWithBadDebtProvision = 10491.167766844124m,
-                    EnglandTotalWithBadDebtProvision = 5442.448434925617m,
-                    WalesTotalWithBadDebtProvision = 1452.6428880194774m,
-                    ScotlandTotalWithBadDebtProvision = 2564.98356493499m,
-                    NorthernIrelandTotalWithBadDebtProvision = 1031.0928789640386m
+                    FeeWithoutBadDebtProvision = 9897.32808192842m,
+                    BadDebtProvision           = 593.8396849157051m,
+                    FeeWithBadDebtProvision    = new ByCountryCost { England = 5442.448434925617m, Wales = 1452.6428880194774m, Scotland = 2564.98356493499m, NorthernIreland = 1031.0928789640386m }
                 },
                 BillingInstructionSection = new CalcResultSummaryBillingInstruction
                 {
@@ -398,15 +350,11 @@ public static partial class TestDataHelper
                     SuggestedBillingInstruction = string.Empty,
                     SuggestedInvoiceAmount = 4039m
                 },
-                CommunicationCostsSectionTwoB = new CalcResultSummaryBadDebtProvision
+                CommsCostsSection2b = new CalcResultSummaryBadDebtProvision
                 {
-                    TotalProducerFeeWithoutBadDebtProvision = 2844.0556305055156m,
-                    BadDebtProvision = 170.64333783033092m,
-                    TotalProducerFeeWithBadDebtProvision = 3014.6989683358465m,
-                    EnglandTotalWithBadDebtProvision = 1582.5125400804336m,
-                    WalesTotalWithBadDebtProvision = 399.4020123649648m,
-                    ScotlandTotalWithBadDebtProvision = 733.3901516568284m,
-                    NorthernIrelandTotalWithBadDebtProvision = 299.39426423361965m
+                    FeeWithoutBadDebtProvision = 2844.0556305055156m,
+                    BadDebtProvision           = 170.64333783033092m,
+                    FeeWithBadDebtProvision    = new ByCountryCost { England = 1582.5125400804336m, Wales = 399.4020123649648m, Scotland = 733.3901516568284m, NorthernIreland = 299.39426423361965m }
                 },
                 ProducerDisposalFeesByMaterial = GetProducerDisposalFeesByMaterial(applyModulation),
                 ProducerCommsFeesByMaterial = GetProducerCommsFeesByMaterial(),
@@ -416,101 +364,59 @@ public static partial class TestDataHelper
         };
     }
 
-    public static List<CalcResultSummaryProducerDisposalFees> GetProducerDisposalFeesForOverAllTotal(bool applyModulation = false)
+    public static CalcResultSummaryProducerDisposalFees GetOverallTotalRow(bool applyModulation = false)
     {
-        return new List<CalcResultSummaryProducerDisposalFees>
+        return new CalcResultSummaryProducerDisposalFees
         {
-            new()
-            {
-                ProducerId = "1",
-                ProducerIdInt = 1,
+                ProducerId = 1,
                 SubsidiaryId = string.Empty,
                 ProducerName = "Allied Packaging",
                 Level = "1",
                 isTotalRow = false,
-                TotalProducerDisposalFee = 4423.39438m,
-                BadDebtProvision = 265.4036628m,
-                TotalProducerDisposalFeeWithBadDebtProvision = 4688.7980428m,
-                EnglandTotal = 2534.2359097426884m,
-                WalesTotal = 571.2417008090152m,
-                ScotlandTotal = 1137.8673076088023m,
-                NorthernIrelandTotal = 445.4531246394942m,
-                TotalProducerCommsFee = 1290.778m,
-                BadDebtProvisionComms = 77.44668m,
-                TotalProducerCommsFeeWithBadDebtProvision = 1368.22468m,
-                EnglandTotalComms = 718.2251815154783m,
-                WalesTotalComms = 181.2690740598454m,
-                ScotlandTotalComms = 332.8499847265775m,
-                NorthernIrelandTotalComms = 135.88043969809883m,
-                LocalAuthorityDisposalCostsSectionOne = new CalcResultSummaryBadDebtProvision
+                LADisposalCostsSection1 = new CalcResultSummaryBadDebtProvision
                 {
-                    TotalProducerFeeWithoutBadDebtProvision = 4423.39438m,
-                    BadDebtProvision = 265.4036628m,
-                    TotalProducerFeeWithBadDebtProvision = 4688.7980428m,
-                    EnglandTotalWithBadDebtProvision = 2534.2359097426884m,
-                    WalesTotalWithBadDebtProvision = 571.2417008090152m,
-                    ScotlandTotalWithBadDebtProvision = 1137.8673076088023m,
-                    NorthernIrelandTotalWithBadDebtProvision = 445.4531246394942m
+                    FeeWithoutBadDebtProvision = 4423.39438m,
+                    BadDebtProvision           = 265.4036628m,
+                    FeeWithBadDebtProvision    = new ByCountryCost { England = 2534.2359097426884m, Wales = 571.2417008090152m, Scotland = 1137.8673076088023m, NorthernIreland = 445.4531246394942m }
                 },
-                CommunicationCostsSectionTwoA = new CalcResultSummaryBadDebtProvision
+                CommsCostsSection2a = new CalcResultSummaryBadDebtProvision
                 {
-                    TotalProducerFeeWithoutBadDebtProvision = 1290.778m,
-                    BadDebtProvision = 77.44668m,
-                    TotalProducerFeeWithBadDebtProvision = 1368.22468m,
-                    EnglandTotalWithBadDebtProvision = 718.2251815154783m,
-                    WalesTotalWithBadDebtProvision = 181.2690740598454m,
-                    ScotlandTotalWithBadDebtProvision = 332.8499847265775m,
-                    NorthernIrelandTotalWithBadDebtProvision = 135.88043969809883m
+                    FeeWithoutBadDebtProvision = 1290.778m,
+                    BadDebtProvision           = 77.44668m,
+                    FeeWithBadDebtProvision    = new ByCountryCost { England = 718.2251815154783m, Wales = 181.2690740598454m, Scotland = 332.8499847265775m, NorthernIreland = 135.88043969809883m }
                 },
-                TwoCTotalProducerFeeForCommsCostsWithoutBadDebt = 1339.100071422903m,
-                TwoCBadDebtProvision = 80.34600428537418m,
-                TwoCTotalProducerFeeForCommsCostsWithBadDebt = 1419.446075708277m,
-                TwoCEnglandTotalWithBadDebt = 607.4748035870169m,
-                TwoCWalesTotalWithBadDebt = 300.7301007856519m,
-                TwoCScotlandTotalWithBadDebt = 360.87612094278234m,
-                TwoCNorthernIrelandTotalWithBadDebt = 150.36505039282596m,
+                CommsCostsSection2c = new CalcResultSummaryBadDebtProvision
+                {
+                    FeeWithoutBadDebtProvision = 1339.100071422903m,
+                    BadDebtProvision           = 80.34600428537418m,
+                    FeeWithBadDebtProvision    = new ByCountryCost { England = 607.4748035870169m, Wales = 300.7301007856519m, Scotland = 360.87612094278234m, NorthernIreland = 150.36505039282596m }
+                },
                 PercentageofProducerReportedTonnagevsAllProducers = 5.6741528450123m,
                 ProducerTotalOnePlus2A2B2CWithBadDeptProvision = 10491.167766844124m,
                 ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 4.7341913352015945m,
-                SchemeAdministratorOperatingCosts = new CalcResultSummaryBadDebtProvision
+                SaOperatingCostsSection3 = new CalcResultSummaryBadDebtProvision
                 {
-                    TotalProducerFeeWithoutBadDebtProvision = 3077.2243678810364m,
-                    BadDebtProvision = 184.6334620728622m,
-                    TotalProducerFeeWithBadDebtProvision = 3261.8578299538985m,
-                    EnglandTotalWithBadDebtProvision = 1712.2541832180282m,
-                    WalesTotalWithBadDebtProvision = 432.1468228710047m,
-                    ScotlandTotalWithBadDebtProvision = 793.5168432560496m,
-                    NorthernIrelandTotalWithBadDebtProvision = 323.93998060881614m
+                    FeeWithoutBadDebtProvision = 3077.2243678810364m,
+                    BadDebtProvision           = 184.6334620728622m,
+                    FeeWithBadDebtProvision    = new ByCountryCost { England = 1712.2541832180282m, Wales = 432.1468228710047m, Scotland = 793.5168432560496m, NorthernIreland = 323.93998060881614m }
                 },
-                LocalAuthorityDataPreparationCosts = new CalcResultSummaryBadDebtProvision
+                LaDataPrepSection4 = new CalcResultSummaryBadDebtProvision
                 {
-                    TotalProducerFeeWithoutBadDebtProvision = 1727.9798373485821m,
-                    BadDebtProvision = 103.67879024091492m,
-                    TotalProducerFeeWithBadDebtProvision = 1831.658627589497m,
-                    EnglandTotalWithBadDebtProvision = 802.9188504501905m,
-                    WalesTotalWithBadDebtProvision = 351.2769970719583m,
-                    ScotlandTotalWithBadDebtProvision = 451.6418533782321m,
-                    NorthernIrelandTotalWithBadDebtProvision = 225.82092668911605m
+                    FeeWithoutBadDebtProvision = 1727.9798373485821m,
+                    BadDebtProvision           = 103.67879024091492m,
+                    FeeWithBadDebtProvision    = new ByCountryCost { England = 802.9188504501905m, Wales = 351.2769970719583m, Scotland = 451.6418533782321m, NorthernIreland = 225.82092668911605m }
                 },
-                OneOffSchemeAdministrationSetupCosts = new CalcResultSummaryBadDebtProvision
+                SaSetupCostsSection5 = new CalcResultSummaryBadDebtProvision
                 {
-                    TotalProducerFeeWithoutBadDebtProvision = 2970.7050628390007m,
-                    BadDebtProvision = 178.24230377034004m,
-                    TotalProducerFeeWithBadDebtProvision = 3148.947366609341m,
-                    EnglandTotalWithBadDebtProvision = 1652.983846106635m,
-                    WalesTotalWithBadDebtProvision = 417.1878943870084m,
-                    ScotlandTotalWithBadDebtProvision = 766.0489525279556m,
-                    NorthernIrelandTotalWithBadDebtProvision = 312.72667358774174m
+                    FeeWithoutBadDebtProvision = 2970.7050628390007m,
+                    BadDebtProvision           = 178.24230377034004m,
+                    FeeWithBadDebtProvision    = new ByCountryCost { England = 1652.983846106635m, Wales = 417.1878943870084m, Scotland = 766.0489525279556m, NorthernIreland = 312.72667358774174m }
                 },
                 TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision
                 {
-                    TotalProducerFeeWithoutBadDebtProvision = 9897.32808192842m,
-                    BadDebtProvision = 593.8396849157051m,
-                    TotalProducerFeeWithBadDebtProvision = 10491.167766844124m,
-                    EnglandTotalWithBadDebtProvision = 5442.448434925617m,
-                    WalesTotalWithBadDebtProvision = 1452.6428880194774m,
-                    ScotlandTotalWithBadDebtProvision = 2564.98356493499m,
-                    NorthernIrelandTotalWithBadDebtProvision = 1031.0928789640386m
+                    FeeWithoutBadDebtProvision = 9897.32808192842m,
+                    BadDebtProvision           = 593.8396849157051m,
+                    FeeWithBadDebtProvision    = new ByCountryCost { England = 5442.448434925617m, Wales = 1452.6428880194774m, Scotland = 2564.98356493499m, NorthernIreland = 1031.0928789640386m }
                 },
                 BillingInstructionSection = new CalcResultSummaryBillingInstruction
                 {
@@ -525,22 +431,17 @@ public static partial class TestDataHelper
                     SuggestedBillingInstruction = string.Empty,
                     SuggestedInvoiceAmount = 4039m
                 },
-                CommunicationCostsSectionTwoB = new CalcResultSummaryBadDebtProvision
+                CommsCostsSection2b = new CalcResultSummaryBadDebtProvision
                 {
-                    TotalProducerFeeWithoutBadDebtProvision = 2844.0556305055156m,
-                    BadDebtProvision = 170.64333783033092m,
-                    TotalProducerFeeWithBadDebtProvision = 3014.6989683358465m,
-                    EnglandTotalWithBadDebtProvision = 1582.5125400804336m,
-                    WalesTotalWithBadDebtProvision = 399.4020123649648m,
-                    ScotlandTotalWithBadDebtProvision = 733.3901516568284m,
-                    NorthernIrelandTotalWithBadDebtProvision = 299.39426423361965m
+                    FeeWithoutBadDebtProvision = 2844.0556305055156m,
+                    BadDebtProvision           = 170.64333783033092m,
+                    FeeWithBadDebtProvision    = new ByCountryCost { England = 1582.5125400804336m, Wales = 399.4020123649648m, Scotland = 733.3901516568284m, NorthernIreland = 299.39426423361965m }
                 },
                 ProducerDisposalFeesByMaterial = GetProducerDisposalFeesByMaterial(applyModulation),
                 ProducerCommsFeesByMaterial = GetProducerCommsFeesByMaterial(),
                 TonnageChangeCount = "0",
                 TonnageChangeAdvice = "",
                 isOverallTotalRow = true
-            }
         };
     }
 
@@ -550,95 +451,55 @@ public static partial class TestDataHelper
         {
             new()
             {
-                ProducerId = "1",
-                ProducerIdInt = 1,
+                ProducerId = 1,
                 SubsidiaryId = string.Empty,
                 ProducerName = "Allied Packaging",
                 Level = "2",
                 isTotalRow = false,
-                TotalProducerDisposalFee = 4423.39438m,
-                BadDebtProvision = 265.4036628m,
-                TotalProducerDisposalFeeWithBadDebtProvision = 4688.7980428m,
-                EnglandTotal = 2534.2359097426884m,
-                WalesTotal = 571.2417008090152m,
-                ScotlandTotal = 1137.8673076088023m,
-                NorthernIrelandTotal = 445.4531246394942m,
-                TotalProducerCommsFee = 1290.778m,
-                BadDebtProvisionComms = 77.44668m,
-                TotalProducerCommsFeeWithBadDebtProvision = 1368.22468m,
-                EnglandTotalComms = 718.2251815154783m,
-                WalesTotalComms = 181.2690740598454m,
-                ScotlandTotalComms = 332.8499847265775m,
-                NorthernIrelandTotalComms = 135.88043969809883m,
-                LocalAuthorityDisposalCostsSectionOne = new CalcResultSummaryBadDebtProvision
+                LADisposalCostsSection1 = new CalcResultSummaryBadDebtProvision
                 {
-                    TotalProducerFeeWithoutBadDebtProvision = 4423.39438m,
-                    BadDebtProvision = 265.4036628m,
-                    TotalProducerFeeWithBadDebtProvision = 4688.7980428m,
-                    EnglandTotalWithBadDebtProvision = 2534.2359097426884m,
-                    WalesTotalWithBadDebtProvision = 571.2417008090152m,
-                    ScotlandTotalWithBadDebtProvision = 1137.8673076088023m,
-                    NorthernIrelandTotalWithBadDebtProvision = 445.4531246394942m
+                    FeeWithoutBadDebtProvision = 4423.39438m,
+                    BadDebtProvision           = 265.4036628m,
+                    FeeWithBadDebtProvision    = new ByCountryCost { England = 2534.2359097426884m, Wales = 571.2417008090152m, Scotland = 1137.8673076088023m, NorthernIreland = 445.4531246394942m }
                 },
-                CommunicationCostsSectionTwoA = new CalcResultSummaryBadDebtProvision
+                CommsCostsSection2a = new CalcResultSummaryBadDebtProvision
                 {
-                    TotalProducerFeeWithoutBadDebtProvision = 1290.778m,
-                    BadDebtProvision = 77.44668m,
-                    TotalProducerFeeWithBadDebtProvision = 1368.22468m,
-                    EnglandTotalWithBadDebtProvision = 718.2251815154783m,
-                    WalesTotalWithBadDebtProvision = 181.2690740598454m,
-                    ScotlandTotalWithBadDebtProvision = 332.8499847265775m,
-                    NorthernIrelandTotalWithBadDebtProvision = 135.88043969809883m
+                    FeeWithoutBadDebtProvision = 1290.778m,
+                    BadDebtProvision           = 77.44668m,
+                    FeeWithBadDebtProvision    = new ByCountryCost { England = 718.2251815154783m, Wales = 181.2690740598454m, Scotland = 332.8499847265775m, NorthernIreland = 135.88043969809883m }
                 },
-                TwoCTotalProducerFeeForCommsCostsWithoutBadDebt = 1339.100071422903m,
-                TwoCBadDebtProvision = 80.34600428537418m,
-                TwoCTotalProducerFeeForCommsCostsWithBadDebt = 1419.446075708277m,
-                TwoCEnglandTotalWithBadDebt = 607.4748035870169m,
-                TwoCWalesTotalWithBadDebt = 300.7301007856519m,
-                TwoCScotlandTotalWithBadDebt = 360.87612094278234m,
-                TwoCNorthernIrelandTotalWithBadDebt = 150.36505039282596m,
+                CommsCostsSection2c = new CalcResultSummaryBadDebtProvision
+                {
+                    FeeWithoutBadDebtProvision = 1339.100071422903m,
+                    BadDebtProvision           = 80.34600428537418m,
+                    FeeWithBadDebtProvision    = new ByCountryCost { England = 607.4748035870169m, Wales = 300.7301007856519m, Scotland = 360.87612094278234m, NorthernIreland = 150.36505039282596m }
+                },
                 PercentageofProducerReportedTonnagevsAllProducers = 5.6741528450123m,
                 ProducerTotalOnePlus2A2B2CWithBadDeptProvision = 10491.167766844124m,
                 ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 4.7341913352015945m,
-                SchemeAdministratorOperatingCosts = new CalcResultSummaryBadDebtProvision
+                SaOperatingCostsSection3 = new CalcResultSummaryBadDebtProvision
                 {
-                    TotalProducerFeeWithoutBadDebtProvision = 3077.2243678810364m,
-                    BadDebtProvision = 184.6334620728622m,
-                    TotalProducerFeeWithBadDebtProvision = 3261.8578299538985m,
-                    EnglandTotalWithBadDebtProvision = 1712.2541832180282m,
-                    WalesTotalWithBadDebtProvision = 432.1468228710047m,
-                    ScotlandTotalWithBadDebtProvision = 793.5168432560496m,
-                    NorthernIrelandTotalWithBadDebtProvision = 323.93998060881614m
+                    FeeWithoutBadDebtProvision = 3077.2243678810364m,
+                    BadDebtProvision           = 184.6334620728622m,
+                    FeeWithBadDebtProvision    = new ByCountryCost { England = 1712.2541832180282m, Wales = 432.1468228710047m, Scotland = 793.5168432560496m, NorthernIreland = 323.93998060881614m }
                 },
-                LocalAuthorityDataPreparationCosts = new CalcResultSummaryBadDebtProvision
+                LaDataPrepSection4 = new CalcResultSummaryBadDebtProvision
                 {
-                    TotalProducerFeeWithoutBadDebtProvision = 1727.9798373485821m,
-                    BadDebtProvision = 103.67879024091492m,
-                    TotalProducerFeeWithBadDebtProvision = 1831.658627589497m,
-                    EnglandTotalWithBadDebtProvision = 802.9188504501905m,
-                    WalesTotalWithBadDebtProvision = 351.2769970719583m,
-                    ScotlandTotalWithBadDebtProvision = 451.6418533782321m,
-                    NorthernIrelandTotalWithBadDebtProvision = 225.82092668911605m
+                    FeeWithoutBadDebtProvision = 1727.9798373485821m,
+                    BadDebtProvision           = 103.67879024091492m,
+                    FeeWithBadDebtProvision    = new ByCountryCost { England = 802.9188504501905m, Wales = 351.2769970719583m, Scotland = 451.6418533782321m, NorthernIreland = 225.82092668911605m }
                 },
-                OneOffSchemeAdministrationSetupCosts = new CalcResultSummaryBadDebtProvision
+                SaSetupCostsSection5 = new CalcResultSummaryBadDebtProvision
                 {
-                    TotalProducerFeeWithoutBadDebtProvision = 2970.7050628390007m,
-                    BadDebtProvision = 178.24230377034004m,
-                    TotalProducerFeeWithBadDebtProvision = 3148.947366609341m,
-                    EnglandTotalWithBadDebtProvision = 1652.983846106635m,
-                    WalesTotalWithBadDebtProvision = 417.1878943870084m,
-                    ScotlandTotalWithBadDebtProvision = 766.0489525279556m,
-                    NorthernIrelandTotalWithBadDebtProvision = 312.72667358774174m
+                    FeeWithoutBadDebtProvision = 2970.7050628390007m,
+                    BadDebtProvision           = 178.24230377034004m,
+                    FeeWithBadDebtProvision    = new ByCountryCost { England = 1652.983846106635m, Wales = 417.1878943870084m, Scotland = 766.0489525279556m, NorthernIreland = 312.72667358774174m }
                 },
                 TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision
                 {
-                    TotalProducerFeeWithoutBadDebtProvision = 9897.32808192842m,
-                    BadDebtProvision = 593.8396849157051m,
-                    TotalProducerFeeWithBadDebtProvision = 10491.167766844124m,
-                    EnglandTotalWithBadDebtProvision = 5442.448434925617m,
-                    WalesTotalWithBadDebtProvision = 1452.6428880194774m,
-                    ScotlandTotalWithBadDebtProvision = 2564.98356493499m,
-                    NorthernIrelandTotalWithBadDebtProvision = 1031.0928789640386m
+                    FeeWithoutBadDebtProvision = 9897.32808192842m,
+                    BadDebtProvision           = 593.8396849157051m,
+                    FeeWithBadDebtProvision    = new ByCountryCost { England = 5442.448434925617m, Wales = 1452.6428880194774m, Scotland = 2564.98356493499m, NorthernIreland = 1031.0928789640386m }
                 },
                 BillingInstructionSection = new CalcResultSummaryBillingInstruction
                 {
@@ -653,15 +514,11 @@ public static partial class TestDataHelper
                     SuggestedBillingInstruction = string.Empty,
                     SuggestedInvoiceAmount = 4039m
                 },
-                CommunicationCostsSectionTwoB = new CalcResultSummaryBadDebtProvision
+                CommsCostsSection2b = new CalcResultSummaryBadDebtProvision
                 {
-                    TotalProducerFeeWithoutBadDebtProvision = 2844.0556305055156m,
-                    BadDebtProvision = 170.64333783033092m,
-                    TotalProducerFeeWithBadDebtProvision = 3014.6989683358465m,
-                    EnglandTotalWithBadDebtProvision = 1582.5125400804336m,
-                    WalesTotalWithBadDebtProvision = 399.4020123649648m,
-                    ScotlandTotalWithBadDebtProvision = 733.3901516568284m,
-                    NorthernIrelandTotalWithBadDebtProvision = 299.39426423361965m
+                    FeeWithoutBadDebtProvision = 2844.0556305055156m,
+                    BadDebtProvision           = 170.64333783033092m,
+                    FeeWithBadDebtProvision    = new ByCountryCost { England = 1582.5125400804336m, Wales = 399.4020123649648m, Scotland = 733.3901516568284m, NorthernIreland = 299.39426423361965m }
                 },
                 ProducerDisposalFeesByMaterial = GetProducerDisposalFeesByMaterial(applyModulation),
                 ProducerCommsFeesByMaterial = GetProducerCommsFeesByMaterial(),
@@ -724,11 +581,7 @@ public static partial class TestDataHelper
                         ? (total: 607.525000m, red: 4.525001m, amber:    5, green: 6)
                         : (total: 607.525000m, red:      null, amber: null, green: null),
                     BadDebtProvision = 36.45m,
-                    ProducerDisposalFeeWithBadDebtProvision = 643.97m,
-                    EnglandWithBadDebtProvision = 348.06m,
-                    WalesWithBadDebtProvision = 78.46m,
-                    ScotlandWithBadDebtProvision = 156.28m,
-                    NorthernIrelandWithBadDebtProvision = 61.18m,
+                    ProducerDisposalFeeWithBadDebtProvision = new ByCountryCost { England = 348.06m, Wales = 78.46m, Scotland = 156.28m, NorthernIreland = 61.18m },
                     PreviousInvoicedTonnage = null,
                     TonnageChange = 0,
                     ActionedSelfManagedConsumerWasteTonnage = (total: 90, red: 0, amber: 90, green: 0)
@@ -761,11 +614,7 @@ public static partial class TestDataHelper
                         ? (total: 1455.45m, red:    4, amber:    5, green: 6)
                         : (total: 1455.45m, red: null, amber: null, green: null),
                     BadDebtProvision = 87.33m,
-                    ProducerDisposalFeeWithBadDebtProvision = 1542.78m,
-                    EnglandWithBadDebtProvision = 833.85m,
-                    WalesWithBadDebtProvision = 187.96m,
-                    ScotlandWithBadDebtProvision = 374.40m,
-                    NorthernIrelandWithBadDebtProvision = 146.57m,
+                    ProducerDisposalFeeWithBadDebtProvision = new ByCountryCost { England = 833.85m, Wales = 187.96m, Scotland = 374.40m, NorthernIreland = 146.57m },
                     PreviousInvoicedTonnage = 0,
                     TonnageChange = 0,
                     ActionedSelfManagedConsumerWasteTonnage = (total: 140, red: 0, amber: 90, green: 140)
@@ -798,11 +647,7 @@ public static partial class TestDataHelper
                         ? (total: 2254.14m, red:    4, amber:    5, green: 6)
                         : (total: 2254.14m, red: null, amber: null, green: null),
                     BadDebtProvision = 135.25m,
-                    ProducerDisposalFeeWithBadDebtProvision = 2389.39m,
-                    EnglandWithBadDebtProvision = 1291.43m,
-                    WalesWithBadDebtProvision = 291.10m,
-                    ScotlandWithBadDebtProvision = 579.85m,
-                    NorthernIrelandWithBadDebtProvision = 227,
+                    ProducerDisposalFeeWithBadDebtProvision = new ByCountryCost { England = 1291.43m, Wales = 291.10m, Scotland = 579.85m, NorthernIreland = 227 },
                     HouseholdDrinksContainersTonnage = 220,
                     PreviousInvoicedTonnage = 0,
                     TonnageChange = 0,
@@ -836,11 +681,7 @@ public static partial class TestDataHelper
                         ? (total: 43.59m, red:    4, amber:    5, green: 6)
                         : (total: 43.59m, red: null, amber: null, green: null),
                     BadDebtProvision = 2.62m,
-                    ProducerDisposalFeeWithBadDebtProvision = 46.20m,
-                    EnglandWithBadDebtProvision = 24.97m,
-                    WalesWithBadDebtProvision = 5.63m,
-                    ScotlandWithBadDebtProvision = 11.21m,
-                    NorthernIrelandWithBadDebtProvision = 4.39m,
+                    ProducerDisposalFeeWithBadDebtProvision = new ByCountryCost { England = 24.97m, Wales = 5.63m, Scotland = 11.21m, NorthernIreland = 4.39m },
                     PreviousInvoicedTonnage = 0,
                     TonnageChange = 0,
                     ActionedSelfManagedConsumerWasteTonnage = (total: 2.200m, red: 0, amber: 2.200m, green: 0)
@@ -873,11 +714,7 @@ public static partial class TestDataHelper
                         ? (total: 9.50m, red:    4, amber:    5, green: 6)
                         : (total: 9.50m, red: null, amber: null, green: null),
                     BadDebtProvision = 0.57m,
-                    ProducerDisposalFeeWithBadDebtProvision = 10.07m,
-                    EnglandWithBadDebtProvision = 5.45m,
-                    WalesWithBadDebtProvision = 1.23m,
-                    ScotlandWithBadDebtProvision = 2.44m,
-                    NorthernIrelandWithBadDebtProvision = 0.96m,
+                    ProducerDisposalFeeWithBadDebtProvision = new ByCountryCost { England = 5.45m, Wales = 1.23m, Scotland = 2.44m, NorthernIreland = 0.96m },
                     PreviousInvoicedTonnage = 0,
                     TonnageChange = 0,
                     ActionedSelfManagedConsumerWasteTonnage = (total: 0.600m, red: 0, amber: 0.600m, green: 0)
@@ -910,11 +747,7 @@ public static partial class TestDataHelper
                         ? (total: 0.00m, red:    4, amber:    5, green: 6)
                         : (total: 0.00m, red: null, amber: null, green: null),
                     BadDebtProvision = 0.00m,
-                    ProducerDisposalFeeWithBadDebtProvision = 0.00m,
-                    EnglandWithBadDebtProvision = 0.00m,
-                    WalesWithBadDebtProvision = 0.00m,
-                    ScotlandWithBadDebtProvision = 0.00m,
-                    NorthernIrelandWithBadDebtProvision = 0.00m,
+                    ProducerDisposalFeeWithBadDebtProvision = new ByCountryCost { England = 0.00m, Wales = 0.00m, Scotland = 0.00m, NorthernIreland = 0.00m },
                     PreviousInvoicedTonnage = 0,
                     TonnageChange = 0,
                     ActionedSelfManagedConsumerWasteTonnage = (total: 0, red: 0, amber: 0, green: 0)
@@ -947,11 +780,7 @@ public static partial class TestDataHelper
                         ? (total: 810.00m, red:    4, amber:    5, green: 6)
                         : (total: 810.00m, red: null, amber: null, green: null),
                     BadDebtProvision = 48.60m,
-                    ProducerDisposalFeeWithBadDebtProvision = 858.60m,
-                    EnglandWithBadDebtProvision = 464.06m,
-                    WalesWithBadDebtProvision = 104.60m,
-                    ScotlandWithBadDebtProvision = 208.36m,
-                    NorthernIrelandWithBadDebtProvision = 81.57m,
+                    ProducerDisposalFeeWithBadDebtProvision = new ByCountryCost { England = 464.06m, Wales = 104.60m, Scotland = 208.36m, NorthernIreland = 81.57m },
                     PreviousInvoicedTonnage = 0,
                     TonnageChange = 0,
                     ActionedSelfManagedConsumerWasteTonnage = (total: 95, red: 0, amber: 95, green: 0)
@@ -984,11 +813,7 @@ public static partial class TestDataHelper
                         ? (total: 53.20m, red:    4, amber:    5, green: 6)
                         : (total: 53.20m, red: null, amber: null, green: null),
                     BadDebtProvision = 3.19m,
-                    ProducerDisposalFeeWithBadDebtProvision = 56.39m,
-                    EnglandWithBadDebtProvision = 30.48m,
-                    WalesWithBadDebtProvision = 6.87m,
-                    ScotlandWithBadDebtProvision = 13.68m,
-                    NorthernIrelandWithBadDebtProvision = 5.36m,
+                    ProducerDisposalFeeWithBadDebtProvision = new ByCountryCost { England = 30.48m, Wales = 6.87m, Scotland = 13.68m, NorthernIreland = 5.36m },
                     PreviousInvoicedTonnage = 0,
                     TonnageChange = 0,
                     ActionedSelfManagedConsumerWasteTonnage = (total: 5.500m, red: 0, amber: 5.500m, green: 0)
@@ -1008,13 +833,12 @@ public static partial class TestDataHelper
                 {
                     HouseholdPackagingWasteTonnage = 1000,
                     PriceperTonne = 0.1916m,
-                    ProducerTotalCostWithoutBadDebtProvision = 191.60m,
-                    BadDebtProvision = 11.50m,
-                    ProducerTotalCostwithBadDebtProvision = 203.10m,
-                    EnglandWithBadDebtProvision = 106.61m,
-                    WalesWithBadDebtProvision = 26.91m,
-                    ScotlandWithBadDebtProvision = 49.41m,
-                    NorthernIrelandWithBadDebtProvision = 20.17m
+                    Costs = new CalcResultSummaryBadDebtProvision
+                    {
+                        FeeWithoutBadDebtProvision = 191.60m,
+                        BadDebtProvision           = 11.50m,
+                        FeeWithBadDebtProvision    = new ByCountryCost { England = 106.61m, Wales = 26.91m, Scotland = 49.41m, NorthernIreland = 20.17m },
+                    },
                 }
             },
             {
@@ -1023,13 +847,12 @@ public static partial class TestDataHelper
                 {
                     HouseholdPackagingWasteTonnage = 2000.000m,
                     PriceperTonne = 0.4032m,
-                    ProducerTotalCostWithoutBadDebtProvision = 806.40m,
-                    BadDebtProvision = 48.38m,
-                    ProducerTotalCostwithBadDebtProvision = 854.78m,
-                    EnglandWithBadDebtProvision = 448.70m,
-                    WalesWithBadDebtProvision = 113.25m,
-                    ScotlandWithBadDebtProvision = 207.94m,
-                    NorthernIrelandWithBadDebtProvision = 84.89m
+                    Costs = new CalcResultSummaryBadDebtProvision
+                    {
+                        FeeWithoutBadDebtProvision = 806.40m,
+                        BadDebtProvision           = 48.38m,
+                        FeeWithBadDebtProvision    = new ByCountryCost { England = 448.70m, Wales = 113.25m, Scotland = 207.94m, NorthernIreland = 84.89m },
+                    },
                 }
             },
             {
@@ -1038,13 +861,12 @@ public static partial class TestDataHelper
                 {
                     HouseholdPackagingWasteTonnage = 500.000m,
                     PriceperTonne = 0.4404m,
-                    ProducerTotalCostWithoutBadDebtProvision = 220.20m,
-                    BadDebtProvision = 13.21m,
-                    ProducerTotalCostwithBadDebtProvision = 233.41m,
-                    EnglandWithBadDebtProvision = 122.53m,
-                    WalesWithBadDebtProvision = 30.92m,
-                    ScotlandWithBadDebtProvision = 56.78m,
-                    NorthernIrelandWithBadDebtProvision = 23.18m
+                    Costs = new CalcResultSummaryBadDebtProvision
+                    {
+                        FeeWithoutBadDebtProvision = 220.20m,
+                        BadDebtProvision           = 13.21m,
+                        FeeWithBadDebtProvision    = new ByCountryCost { England = 122.53m, Wales = 30.92m, Scotland = 56.78m, NorthernIreland = 23.18m },
+                    },
                 }
             },
             {
@@ -1053,13 +875,12 @@ public static partial class TestDataHelper
                 {
                     HouseholdPackagingWasteTonnage = 20.000m,
                     PriceperTonne = 1.1100m,
-                    ProducerTotalCostWithoutBadDebtProvision = 22.20m,
-                    BadDebtProvision = 1.33m,
-                    ProducerTotalCostwithBadDebtProvision = 23.53m,
-                    EnglandWithBadDebtProvision = 12.35m,
-                    WalesWithBadDebtProvision = 3.12m,
-                    ScotlandWithBadDebtProvision = 5.72m,
-                    NorthernIrelandWithBadDebtProvision = 2.34m
+                    Costs = new CalcResultSummaryBadDebtProvision
+                    {
+                        FeeWithoutBadDebtProvision = 22.20m,
+                        BadDebtProvision           = 1.33m,
+                        FeeWithBadDebtProvision    = new ByCountryCost { England = 12.35m, Wales = 3.12m, Scotland = 5.72m, NorthernIreland = 2.34m },
+                    },
                 }
             },
             {
@@ -1068,13 +889,12 @@ public static partial class TestDataHelper
                 {
                     HouseholdPackagingWasteTonnage = 5.000m,
                     PriceperTonne = 0.5356m,
-                    ProducerTotalCostWithoutBadDebtProvision = 2.68m,
-                    BadDebtProvision = 0.16m,
-                    ProducerTotalCostwithBadDebtProvision = 2.84m,
-                    EnglandWithBadDebtProvision = 1.49m,
-                    WalesWithBadDebtProvision = 0.38m,
-                    ScotlandWithBadDebtProvision = 0.69m,
-                    NorthernIrelandWithBadDebtProvision = 0.28m
+                    Costs = new CalcResultSummaryBadDebtProvision
+                    {
+                        FeeWithoutBadDebtProvision = 2.68m,
+                        BadDebtProvision           = 0.16m,
+                        FeeWithBadDebtProvision    = new ByCountryCost { England = 1.49m, Wales = 0.38m, Scotland = 0.69m, NorthernIreland = 0.28m },
+                    },
                 }
             },
             {
@@ -1083,13 +903,12 @@ public static partial class TestDataHelper
                 {
                     HouseholdPackagingWasteTonnage = 0.000m,
                     PriceperTonne = 0.8879m,
-                    ProducerTotalCostWithoutBadDebtProvision = 0.00m,
-                    BadDebtProvision = 0.00m,
-                    ProducerTotalCostwithBadDebtProvision = 0.00m,
-                    EnglandWithBadDebtProvision = 0.00m,
-                    WalesWithBadDebtProvision = 0.00m,
-                    ScotlandWithBadDebtProvision = 0.00m,
-                    NorthernIrelandWithBadDebtProvision = 0.00m
+                    Costs = new CalcResultSummaryBadDebtProvision
+                    {
+                        FeeWithoutBadDebtProvision = 0.00m,
+                        BadDebtProvision           = 0.00m,
+                        FeeWithBadDebtProvision    = new ByCountryCost { England = 0.00m, Wales = 0.00m, Scotland = 0.00m, NorthernIreland = 0.00m },
+                    },
                 }
             },
             {
@@ -1098,13 +917,12 @@ public static partial class TestDataHelper
                 {
                     HouseholdPackagingWasteTonnage = 500.000m,
                     PriceperTonne = 0.1364m,
-                    ProducerTotalCostWithoutBadDebtProvision = 68.20m,
-                    BadDebtProvision = 4.09m,
-                    ProducerTotalCostwithBadDebtProvision = 72.29m,
-                    EnglandWithBadDebtProvision = 37.95m,
-                    WalesWithBadDebtProvision = 9.58m,
-                    ScotlandWithBadDebtProvision = 17.59m,
-                    NorthernIrelandWithBadDebtProvision = 7.18m
+                    Costs = new CalcResultSummaryBadDebtProvision
+                    {
+                        FeeWithoutBadDebtProvision = 68.20m,
+                        BadDebtProvision           = 4.09m,
+                        FeeWithBadDebtProvision    = new ByCountryCost { England = 37.95m, Wales = 9.58m, Scotland = 17.59m, NorthernIreland = 7.18m },
+                    },
                 }
             },
             {
@@ -1113,13 +931,12 @@ public static partial class TestDataHelper
                 {
                     HouseholdPackagingWasteTonnage = 50.000m,
                     PriceperTonne = 0.9540m,
-                    ProducerTotalCostWithoutBadDebtProvision = 47.70m,
-                    BadDebtProvision = 2.86m,
-                    ProducerTotalCostwithBadDebtProvision = 50.56m,
-                    EnglandWithBadDebtProvision = 26.54m,
-                    WalesWithBadDebtProvision = 6.70m,
-                    ScotlandWithBadDebtProvision = 12.30m,
-                    NorthernIrelandWithBadDebtProvision = 5.02m
+                    Costs = new CalcResultSummaryBadDebtProvision
+                    {
+                        FeeWithoutBadDebtProvision = 47.70m,
+                        BadDebtProvision           = 2.86m,
+                        FeeWithBadDebtProvision    = new ByCountryCost { England = 26.54m, Wales = 6.70m, Scotland = 12.30m, NorthernIreland = 5.02m },
+                    },
                 }
             }
         };

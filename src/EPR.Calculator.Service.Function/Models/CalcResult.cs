@@ -53,7 +53,7 @@ namespace EPR.Calculator.Service.Function.Models
 
         public IEnumerable<CalcResultRejectedProducer> CalcResultRejectedProducers { get; set; } = [];
 
-        public CalcResultSummary CalcResultSummary { get; set; } = new();
+        public CalcResultSummary CalcResultSummary { get; set; } = new() {};
 
         public IEnumerable<CalcResultErrorReport> CalcResultErrorReports { get; set; } = [];
 

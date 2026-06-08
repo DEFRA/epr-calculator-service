@@ -116,14 +116,8 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
             from run in context.CalculatorRuns
             join pd in context.ProducerDetail on run.Id equals pd.CalculatorRunId
             join mat in context.ProducerReportedMaterialProjected on pd.Id equals mat.ProducerDetailId
-            join material in context.Material on mat.MaterialId equals material.Id
             where run.Id == runContext.RunId &&
-                  // TODO need the following filter?
-                  mat.PackagingType != null &&
-                  (mat.PackagingType == PackagingTypes.Household ||
-                   mat.PackagingType == PackagingTypes.PublicBin ||
-                   (mat.PackagingType == PackagingTypes.HouseholdDrinksContainers &&
-                    material.Code == MaterialCodes.Glass))
+                  mat.PackagingType != PackagingTypes.ConsumerWaste
             select mat
         ).Distinct().ToListAsync();
     }

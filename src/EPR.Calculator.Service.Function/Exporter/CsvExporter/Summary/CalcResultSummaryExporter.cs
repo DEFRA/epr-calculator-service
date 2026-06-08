@@ -1,5 +1,4 @@
 using System.Text;
-using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
@@ -53,6 +52,11 @@ public class CalcResultSummaryExporter : ICalcResultSummaryExporter
         foreach (var producer in resultSummary.ProducerDisposalFees)
         {
             AddNewRow(csvContent, producer, runContext.RequiresModulation);
+        }
+
+        if (resultSummary.OverallTotal is not null)
+        {
+            AddNewRow(csvContent, resultSummary.OverallTotal, runContext.RequiresModulation);
         }
     }
 

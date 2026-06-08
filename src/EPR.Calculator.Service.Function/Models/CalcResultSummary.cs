@@ -2,60 +2,27 @@
 {
     public class CalcResultSummary
     {
-        //Section-(1) & (2a)
-        public decimal TotalFeeforLADisposalCostswoBadDebtprovision1 { get; set; }
+        public CalcResultSummaryBadDebtProvision LADisposalCostsSection1 { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
 
-        public decimal BadDebtProvisionFor1 { get; set; }
+        public CalcResultSummaryBadDebtProvision CommsCostsSection2a { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
 
-        public decimal TotalFeeforLADisposalCostswithBadDebtprovision1 { get; set; }
+        public CalcResultSummaryBadDebtProvision CommsCostsSection2b { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
 
-        public decimal TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A { get; set; }
-
-        public decimal BadDebtProvisionFor2A { get; set; }
-
-        public decimal TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A { get; set; }
+        public CalcResultSummaryBadDebtProvision CommsCostsSection2c { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
 
         // Section Total bill (1 + 2a + 2b + 2c)
-        public decimal TotalOnePlus2A2B2CFeeWithBadDebtProvision { get; set; }
+        public decimal TotalOnePlus2A2B2CFeeWithBadDebtProvision { get; set; } // TODO is this just for exporters?
         // End Section Total bill (1 + 2a + 2b + 2c)
 
-        // Section-3
-        public decimal SaOperatingCostsWoTitleSection3 { get; set; }
+        public CalcResultSummaryBadDebtProvision LaDataPrepSection4 { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
 
-        public decimal SaOperatingCostsWithTitleSection3 { get; set; }
+        public CalcResultSummaryBadDebtProvision SaOperatingCostsSection3 { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
 
-        public decimal BadDebtProvisionTitleSection3 { get; set; }
-        //End Section-3
-
-        // Section-4 LA data prep costs
-        public decimal LaDataPrepCostsTitleSection4 { get; set; }
-
-        public decimal LaDataPrepCostsBadDebtProvisionTitleSection4 { get; set; }
-
-        public decimal LaDataPrepCostsWithBadDebtProvisionTitleSection4 { get; set; }
-        // End Section-4 LA data prep costs
-
-        // Section-5 SA setup costs
-        public decimal SaSetupCostsTitleSection5 { get; set; }
-
-        public decimal SaSetupCostsBadDebtProvisionTitleSection5 { get; set; }
-
-        public decimal SaSetupCostsWithBadDebtProvisionTitleSection5 { get; set; }
-        // End Section-5 SA setup costs
-
-        public decimal TwoCCommsCostsByCountryWithoutBadDebtProvision { get; set; }
-
-        public decimal TwoCBadDebtProvision { get; set; }
-
-        public decimal TwoCCommsCostsByCountryWithBadDebtProvision { get; set; }
-
-        public decimal CommsCostHeaderWithoutBadDebtFor2bTitle { get; set; }
-
-        public decimal CommsCostHeaderWithBadDebtFor2bTitle { get; set; }
-
-        public decimal CommsCostHeaderBadDebtProvisionFor2bTitle { get; set; }
+        public CalcResultSummaryBadDebtProvision SaSetupCostsSection5 { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
 
         public IEnumerable<CalcResultSummaryProducerDisposalFees> ProducerDisposalFees { get; set; }
             = new List<CalcResultSummaryProducerDisposalFees>();
+
+        public CalcResultSummaryProducerDisposalFees? OverallTotal { get; set; }
     }
 }

@@ -27,6 +27,7 @@ public class CommsCost2aPercentageExporterTests
             [null],
             [null],
             ["Percentage of Producer Tonnage vs All Producers"],
+            ["5.67415285%"],
             ["5.67415285%"]
         };
 

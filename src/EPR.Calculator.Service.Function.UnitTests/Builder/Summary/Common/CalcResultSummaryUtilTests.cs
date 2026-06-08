@@ -2,7 +2,6 @@ using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.Modulation;
 using EPR.Calculator.Service.Function.Builder.Summary.Common;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
@@ -26,15 +25,15 @@ public class CalcResultSummaryUtilTests
                 CalcResultPartialObligations = new CalcResultPartialObligations(){
                     PartialObligations = ImmutableList<CalcResultPartialObligation>.Empty,
                 },
-            CalcResultParameterOtherCost = TestDataHelper.GetCalcResultParameterOtherCost(),
-            CalcResultDetail = TestDataHelper.GetCalcResultDetail(),
-            CalcResultLaDisposalCostData = TestDataHelper.GetCalcResultLaDisposalCostData(),
-            CalcResultLapcapData = TestDataHelper.GetCalcResultLapcapData(),
+            CalcResultParameterOtherCost       = TestDataHelper.GetCalcResultParameterOtherCost(),
+            CalcResultDetail                   = TestDataHelper.GetCalcResultDetail(),
+            CalcResultLaDisposalCostData       = TestDataHelper.GetCalcResultLaDisposalCostData(),
+            CalcResultLapcapData               = TestDataHelper.GetCalcResultLapcapData(),
             CalcResultOnePlusFourApportionment = TestDataHelper.GetCalcResultOnePlusFourApportionment(),
-            CalcResultSummary = TestDataHelper.GetCalcResultSummary(),
-            CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
+            CalcResultSummary                  = TestDataHelper.GetCalcResultSummary(),
+            CalcResultCommsCostReportDetail    = TestDataHelper.GetCalcResultCommsCostReportDetail(),
             CalcResultLateReportingTonnageData = GetCalcResultLateReportingTonnage(),
-            CalcResultProjectedProducers = new CalcResultProjectedProducers(){
+            CalcResultProjectedProducers       = new CalcResultProjectedProducers(){
                 H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
                 H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty,
             }
@@ -50,36 +49,22 @@ public class CalcResultSummaryUtilTests
         ProducerReportedMaterialProjected ToProjected(ProducerReportedMaterial rm) =>
             new()
             {
-                MaterialId = rm.MaterialId,
-                ProducerDetailId = rm.ProducerDetailId,
-                PackagingType = rm.PackagingType,
-                PackagingTonnage = rm.PackagingTonnage,
-                PackagingTonnageRed = rm.PackagingTonnageRed,
-                PackagingTonnageAmber = rm.PackagingTonnageAmber,
-                PackagingTonnageGreen = rm.PackagingTonnageGreen,
-                PackagingTonnageRedMedical = rm.PackagingTonnageRedMedical,
+                MaterialId                   = rm.MaterialId,
+                ProducerDetailId             = rm.ProducerDetailId,
+                PackagingType                = rm.PackagingType,
+                PackagingTonnage             = rm.PackagingTonnage,
+                PackagingTonnageRed          = rm.PackagingTonnageRed,
+                PackagingTonnageAmber        = rm.PackagingTonnageAmber,
+                PackagingTonnageGreen        = rm.PackagingTonnageGreen,
+                PackagingTonnageRedMedical   = rm.PackagingTonnageRedMedical,
                 PackagingTonnageAmberMedical = rm.PackagingTonnageAmberMedical,
                 PackagingTonnageGreenMedical = rm.PackagingTonnageGreenMedical,
-                SubmissionPeriod = rm.SubmissionPeriod
+                SubmissionPeriod             = rm.SubmissionPeriod
             };
 
         return producers
             .SelectMany(p => p.ProducerReportedMaterials.Select(rm => (Key: (p.ProducerId, p.SubsidiaryId), Rm: ToProjected(rm))))
             .ToLookup(x => x.Key, x => x.Rm);
-    }
-
-    [TestMethod]
-    public void CanGetNonTotalRowLevelIndex()
-    {
-        // Arrange
-        var producerDisposalFeesLookup = TestDataHelper.GetProducerDisposalFees();
-        var producer = TestDataHelper.GetProducers().First(p => p.Id == 1);
-
-        // Act
-        var result = CalcResultSummaryUtil.GetLevelIndex(producerDisposalFeesLookup, producer);
-
-        // Assert
-        Assert.AreEqual(1, result);
     }
 
     [TestMethod]
@@ -139,62 +124,6 @@ public class CalcResultSummaryUtilTests
     }
 
     [TestMethod]
-    public void CanGetHouseholdPackagingWasteTonnageProducerTotal()
-    {
-        // Arrange
-        var producers = TestDataHelper.GetProducers();
-        var material = TestDataHelper.GetMaterialDetails().First(m => m.Code == "AL");
-
-        // Act
-        var result = CalcResultSummaryUtil.GetTonnageTotal(ProjectedMaterialsLookup(producers), producers, material, PackagingTypes.Household);
-
-        // Assert
-        Assert.AreEqual(3000.00m, result);
-    }
-
-    [TestMethod]
-    public void CanGetPublicBinTonnageProducerTotal()
-    {
-        // Arrange
-        var producers = TestDataHelper.GetProducers();
-        var material = TestDataHelper.GetMaterialDetails().First(m => m.Code == "PL");
-
-        // Act
-        var result = CalcResultSummaryUtil.GetTonnageTotal(ProjectedMaterialsLookup(producers), producers, material, PackagingTypes.PublicBin);
-
-        // Assert
-        Assert.AreEqual(60.00m, result);
-    }
-
-    [TestMethod]
-    public void CanGetReportedTonnageProducerTotal()
-    {
-        // Arrange
-        var producers = TestDataHelper.GetProducers();
-        var material = TestDataHelper.GetMaterialDetails().First(m => m.Code == "AL");
-
-        // Act
-        var result = CalcResultSummaryUtil.GetReportedTonnageTotal(ProjectedMaterialsLookup(producers), producers, material);
-
-        // Assert
-        Assert.AreEqual(3000.00m, result);
-    }
-
-    [TestMethod]
-    public void CanGetHouseholdDrinksContainersTonnageProducerTotal()
-    {
-        // Arrange
-        var producers = TestDataHelper.GetProducers();
-        var material = TestDataHelper.GetMaterialDetails().First(m => m.Code == "GL");
-
-        // Act
-        var result = CalcResultSummaryUtil.GetTonnageTotal(ProjectedMaterialsLookup(producers), producers, material, PackagingTypes.HouseholdDrinksContainers);
-
-        // Assert
-        Assert.AreEqual(60.00m, result);
-    }
-
-    [TestMethod]
     public void CanGetManagedConsumerWasteTonnage()
     {
         // Arrange
@@ -206,20 +135,6 @@ public class CalcResultSummaryUtilTests
 
         // Assert
         Assert.AreEqual(20.00m, result);
-    }
-
-    [TestMethod]
-    public void CanGetManagedConsumerWasteTonnageProducerTotal()
-    {
-        // Arrange
-        var producers = TestDataHelper.GetProducers();
-        var material = TestDataHelper.GetMaterialDetails().First(m => m.Code == "AL");
-
-        // Act
-        var result = CalcResultSummaryUtil.GetTonnageTotal(ProjectedMaterialsLookup(producers), producers, material, PackagingTypes.ConsumerWaste);
-
-        // Assert
-        Assert.AreEqual(60.00m, result);
     }
 
     [TestMethod]
@@ -301,14 +216,7 @@ public class CalcResultSummaryUtilTests
     public void GetProducerDisposalFeeWithBadDebtProvision_AddsPercentage()
     {
         var result = CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvision(calcResult, 100m);
-        Assert.AreEqual(106m, result);
-    }
-
-    [TestMethod]
-    public void GetCountryBadDebtProvision()
-    {
-        Assert.AreEqual(57.291656411518582328328821072m, CalcResultSummaryUtil.GetCountryBadDebtProvision(calcResult, Countries.England, 100m));
-        Assert.AreEqual(12.914102879645582082205267049m, CalcResultSummaryUtil.GetCountryBadDebtProvision(calcResult, Countries.Wales, 100m));
+        Assert.AreEqual(106m, Math.Round(result.Total, 10));
     }
 
     [TestMethod]
@@ -319,121 +227,6 @@ public class CalcResultSummaryUtilTests
 
         // Assert
         Assert.AreEqual(2531, result);
-    }
-
-    [TestMethod]
-    public void CanGetCommsCostHeaderBadDebtProvisionFor2bTitle()
-    {
-        calcResult.CalcResultSummary.CommsCostHeaderWithoutBadDebtFor2bTitle = CalcResultSummaryUtil.GetCommsCostHeaderWithoutBadDebtFor2bTitle(calcResult);
-
-        // Act
-        var result = CalcResultSummaryUtil.GetCommsCostHeaderBadDebtProvisionFor2bTitle(calcResult, calcResult.CalcResultSummary);
-
-        // Assert
-        Assert.AreEqual(151.86m, result);
-    }
-
-    [TestMethod]
-    public void CanGetCommsCostHeaderWithBadDebtFor2bTitle()
-    {
-        calcResult.CalcResultSummary.CommsCostHeaderWithoutBadDebtFor2bTitle = CalcResultSummaryUtil.GetCommsCostHeaderWithoutBadDebtFor2bTitle(calcResult);
-        calcResult.CalcResultSummary.CommsCostHeaderBadDebtProvisionFor2bTitle = CalcResultSummaryUtil.GetCommsCostHeaderBadDebtProvisionFor2bTitle(calcResult, calcResult.CalcResultSummary);
-
-        // Act
-        var result = CalcResultSummaryUtil.GetCommsCostHeaderWithBadDebtFor2bTitle(calcResult.CalcResultSummary);
-
-        // Assert
-        Assert.AreEqual(2682.86m, result);
-    }
-
-    [TestMethod]
-    public void CanGetCountryOnePlusFourApportionmentForEngland()
-    {
-        // Act
-        var result = CalcResultSummaryUtil.GetCountryOnePlusFourApportionment(calcResult, Countries.England);
-
-        // Assert
-        Assert.AreEqual(40m, result);
-    }
-
-    [TestMethod]
-    public void CanGetCountryOnePlusFourApportionmentForWales()
-    {
-        // Act
-        var result = CalcResultSummaryUtil.GetCountryOnePlusFourApportionment(calcResult, Countries.Wales);
-
-        // Assert
-        Assert.AreEqual(10m, result);
-    }
-
-    [TestMethod]
-    public void CanGetCountryOnePlusFourApportionmentForScotland()
-    {
-        // Act
-        var result = CalcResultSummaryUtil.GetCountryOnePlusFourApportionment(calcResult, Countries.Scotland);
-
-        // Assert
-        Assert.AreEqual(15m, result);
-    }
-
-    [TestMethod]
-    public void CanGetCountryOnePlusFourApportionmentForNorthernIreland()
-    {
-        // Act
-        var result = CalcResultSummaryUtil.GetCountryOnePlusFourApportionment(calcResult, Countries.NorthernIreland);
-
-        // Assert
-        Assert.AreEqual(35m, result);
-    }
-
-    [TestMethod]
-    public void CanGetDefaultOnePlusFourApportionment()
-    {
-        // Act
-        var result = CalcResultSummaryUtil.GetCountryOnePlusFourApportionment(calcResult, (Countries)(-1));
-
-        // Assert
-        Assert.AreEqual(0, result);
-    }
-
-    [TestMethod]
-    public void GetParamsOtherFourCountryApportionmentPercentageForEngland()
-    {
-        // Act
-        var result = CalcResultSummaryUtil.GetParamsOtherFourCountryApportionmentPercentage(calcResult, Countries.England);
-
-        // Assert
-        Assert.AreEqual(43.83561643835616m, result);
-    }
-
-    [TestMethod]
-    public void GetParamsOtherFourCountryApportionmentPercentageForWales()
-    {
-        // Act
-        var result = CalcResultSummaryUtil.GetParamsOtherFourCountryApportionmentPercentage(calcResult, Countries.Wales);
-
-        // Assert
-        Assert.AreEqual(19.17808219178082m, result);
-    }
-
-    [TestMethod]
-    public void GetParamsOtherFourCountryApportionmentPercentageForScotland()
-    {
-        // Act
-        var result = CalcResultSummaryUtil.GetParamsOtherFourCountryApportionmentPercentage(calcResult, Countries.Scotland);
-
-        // Assert
-        Assert.AreEqual(24.65753424657534m, result);
-    }
-
-    [TestMethod]
-    public void GetParamsOtherFourCountryApportionmentPercentageForNorthernIreland()
-    {
-        // Act
-        var result = CalcResultSummaryUtil.GetParamsOtherFourCountryApportionmentPercentage(calcResult, Countries.NorthernIreland);
-
-        // Assert
-        Assert.AreEqual(12.32876712328767m, result);
     }
 
     [TestMethod]
@@ -451,20 +244,6 @@ public class CalcResultSummaryUtilTests
     }
 
     [TestMethod]
-    public void CanGetReportedPublicBinTonnageTotal()
-    {
-        // Arrange
-        var producers = TestDataHelper.GetProducers();
-        var material = TestDataHelper.GetMaterialDetails().First(m => m.Code == "PL");
-
-        // Act
-        var result = CalcResultSummaryUtil.GetTonnageTotal(ProjectedMaterialsLookup(producers), producers, material, PackagingTypes.PublicBin);
-
-        // Assert
-        Assert.AreEqual(60.00m, result);
-    }
-
-    [TestMethod]
     public void CanGetReportedHDCTonnage()
     {
         // Arrange
@@ -478,33 +257,19 @@ public class CalcResultSummaryUtilTests
         Assert.AreEqual(20.00m, result);
     }
 
-    [TestMethod]
-    public void CanGetReportedHDCTonnageTotal()
-    {
-        // Arrange
-        var producers = TestDataHelper.GetProducers();
-        var material = TestDataHelper.GetMaterialDetails().First(m => m.Code == "GL");
-
-        // Act
-        var result = CalcResultSummaryUtil.GetTonnageTotal(ProjectedMaterialsLookup(producers), producers, material, PackagingTypes.HouseholdDrinksContainers);
-
-        // Assert
-        Assert.AreEqual(60.00m, result);
-    }
-
     private CalcResultLateReportingTonnage GetCalcResultLateReportingTonnage() => Fixture.Create<CalcResultLateReportingTonnage>();
 
     private MaterialModulation mkMaterialModulation(decimal adc, decimal rdc, decimal gdc, decimal at, decimal rt, decimal gt, decimal rAtAdc, decimal gAtAdc)
     {
         return new MaterialModulation
         {
-            AmberMaterialDisposalCost = adc,
-            RedMaterialDisposalCost = rdc,
-            GreenMaterialDisposalCost = gdc,
-            AmberMaterialTonnages = at,
-            RedMaterialTonnages = rt,
-            GreenMaterialTonnages = gt,
-            TotalRedMaterialAtAmberDisposalCost = rAtAdc,
+            AmberMaterialDisposalCost             = adc,
+            RedMaterialDisposalCost               = rdc,
+            GreenMaterialDisposalCost             = gdc,
+            AmberMaterialTonnages                 = at,
+            RedMaterialTonnages                   = rt,
+            GreenMaterialTonnages                 = gt,
+            TotalRedMaterialAtAmberDisposalCost   = rAtAdc,
             TotalGreenMaterialAtAmberDisposalCost = gAtAdc
         };
     }

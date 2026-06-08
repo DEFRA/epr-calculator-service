@@ -16,7 +16,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         }
 
         [TestMethod]
-        public void CanCallExport()
+        public void CalcResultDetailExporter_CanCallExport()
         {
             // Arrange
             var fixture = new Fixture();

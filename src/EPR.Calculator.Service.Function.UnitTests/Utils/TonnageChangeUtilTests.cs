@@ -53,26 +53,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Utils
             Assert.AreEqual(5.25m, result);
         }
 
-        // ---------- GetOverallChangeTotal ----------
-
-        [TestMethod]
-        public void GetOverallChangeTotal_level1RowsAreSummed_level2Ignored()
-        {
-            const string mat = "PAPER";
-
-            var rows = new List<CalcResultSummaryProducerDisposalFees>
-            {
-                MakeProducerRow("1", mat, 10m),   // counted
-                MakeProducerRow("1", mat, null),  // treated as 0 in sum
-                MakeProducerRow("1", mat, 0m),    // counted as 0
-                MakeProducerRow("2", mat, 999m)   // ignored
-            };
-
-            var total = TonnageChangeUtil.GetOverallChangeTotal(rows, mat);
-
-            Assert.AreEqual(10m, total);
-        }
-
         // ---------- ComputeCountAndAdvice ----------
 
         [TestMethod]
@@ -80,7 +60,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Utils
         {
             var byMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>
             {
-                ["PAPER"] = new() { TonnageChange = 5m }
+                ["PAPER"] = new() { TonnageChange = 5m, ProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty }
             };
 
             var (count, advice) = TonnageChangeUtil.ComputeCountAndAdvice("2", byMaterial);
@@ -94,10 +74,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Utils
         {
             var byMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>
             {
-                ["PAPER"] = new() { TonnageChange = 0m },  // ignored
-                ["GLASS"] = new() { TonnageChange = null },  // ignored
-                ["METAL"] = new() { TonnageChange = 3m },  // counted
-                ["PLASTIC"] = new() { TonnageChange = -1m }   // counted
+                ["PAPER"] = new() { TonnageChange = 0m, ProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty },  // ignored
+                ["GLASS"] = new() { TonnageChange = null, ProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty },  // ignored
+                ["METAL"] = new() { TonnageChange = 3m, ProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty },  // counted
+                ["PLASTIC"] = new() { TonnageChange = -1m, ProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty }   // counted
             };
 
             var (count, advice) = TonnageChangeUtil.ComputeCountAndAdvice(
@@ -112,8 +92,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Utils
         {
             var byMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>
             {
-                ["PAPER"] = new() { TonnageChange = 0m },
-                ["GLASS"] = new() { TonnageChange = null }
+                ["PAPER"] = new() { TonnageChange = 0m, ProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty },
+                ["GLASS"] = new() { TonnageChange = null, ProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty }
             };
 
             var (count, advice) = TonnageChangeUtil.ComputeCountAndAdvice(
@@ -121,31 +101,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Utils
 
             Assert.AreEqual("0", count);
             Assert.AreEqual(string.Empty, advice);
-        }
-
-        // ---------- Inline helpers (no external classes) ----------
-
-        private static CalcResultSummaryProducerDisposalFees MakeProducerRow(
-            string level, string materialCode, decimal? tonnageChange)
-        {
-            return new CalcResultSummaryProducerDisposalFees
-            {
-                // minimal required fields (set to dummy values)
-                ProducerIdInt = 1,
-                ProducerId = "1",
-                ProducerName = "Test Producer",
-                SubsidiaryId = string.Empty,
-                TradingName = string.Empty,
-                Level = level,
-                ProducerDisposalFeesByMaterial =
-                    new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>
-                    {
-                        [materialCode] = new CalcResultSummaryProducerDisposalFeesByMaterial
-                        {
-                            TonnageChange = tonnageChange
-                        }
-                    }
-            };
         }
     }
 }

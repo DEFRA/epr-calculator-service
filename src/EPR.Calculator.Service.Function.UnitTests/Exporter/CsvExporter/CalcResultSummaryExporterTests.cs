@@ -17,7 +17,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
         }
 
         [TestMethod]
-        public void CanCallExport()
+        public void CalcResultSummaryExporter_CanCallExport()
         {
             // Arrange
             var runContext = TestDataHelper.CalculatorRun2025;

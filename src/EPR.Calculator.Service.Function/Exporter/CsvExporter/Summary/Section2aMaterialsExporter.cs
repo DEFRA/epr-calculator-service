@@ -3,7 +3,6 @@ using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
-using static EPR.Calculator.Service.Function.Constants.MaterialCodes;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 
@@ -68,7 +67,7 @@ public class Section2aMaterialsExporter : ICalcResultSummaryPartExporter
     {
         if (producer.ProducerCommsFeesByMaterial == null) { return; }
 
-        bool isNotTotal = producer.LeaverDate != CommonConstants.Totals;
+        bool isNotTotal = !producer.isOverallTotalRow;
 
         foreach (var disposalFee in producer.ProducerCommsFeesByMaterial!)
         {
@@ -80,13 +79,13 @@ public class Section2aMaterialsExporter : ICalcResultSummaryPartExporter
             }
             csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.TotalReportedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
             csvContent.Append(isNotTotal ? CsvSanitiser.SanitiseData(disposalFee.Value.PriceperTonne, DecimalPlaces.Four, DecimalFormats.F4, isCurrency: true) : CommonConstants.CsvFileDelimiter);
-            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ProducerTotalCostWithoutBadDebtProvision, DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.BadDebtProvision                        , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ProducerTotalCostwithBadDebtProvision   , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.EnglandWithBadDebtProvision             , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.WalesWithBadDebtProvision               , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.ScotlandWithBadDebtProvision            , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
-            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.NorthernIrelandWithBadDebtProvision     , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.Costs.FeeWithoutBadDebtProvision             , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.Costs.BadDebtProvision                       , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.Costs.FeeWithBadDebtProvision.Total          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.Costs.FeeWithBadDebtProvision.England        , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.Costs.FeeWithBadDebtProvision.Wales          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.Costs.FeeWithBadDebtProvision.Scotland       , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
+            csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.Costs.FeeWithBadDebtProvision.NorthernIreland, DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
         }
     }
 }

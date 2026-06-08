@@ -50,13 +50,7 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
             },
             CalcResultParameterOtherCost = new CalcResultParameterOtherCost
             {
-                SchemeSetupCost = new ByCountryCost
-                {
-                    England = 0,
-                    Wales = 0,
-                    Scotland = 0,
-                    NorthernIreland = 0
-                }
+                SchemeSetupCost = ByCountryCost.Empty
             },
             CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
             {
@@ -124,13 +118,7 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
             },
             CalcResultParameterOtherCost = new CalcResultParameterOtherCost
             {
-                SchemeSetupCost = new ByCountryCost
-                {
-                    England = 0,
-                    Wales = 0,
-                    Scotland = 0,
-                    NorthernIreland = 0
-                }
+                SchemeSetupCost = ByCountryCost.Empty
             },
             CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
             {
@@ -144,10 +132,8 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
                     {
                         ProducerCommsFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>(),
                         ProducerDisposalFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>(),
-                        ProducerId = "1",
+                        ProducerId = 1,
                         ProducerName = "Test",
-                        TotalProducerDisposalFeeWithBadDebtProvision = 100,
-                        TotalProducerCommsFeeWithBadDebtProvision = 100,
                         SubsidiaryId = "1",
                         Level = CommonConstants.LevelTwo.ToString(),
                         BillingInstructionSection = new CalcResultSummaryBillingInstruction
@@ -205,21 +191,16 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
             },
             CalcResultParameterOtherCost = new CalcResultParameterOtherCost
             {
-                SchemeSetupCost = new ByCountryCost
-                {
-                    England = 0,
-                    Wales = 0,
-                    Scotland = 0,
-                    NorthernIreland = 0
-                }
+                SchemeSetupCost = ByCountryCost.Empty
             },
             CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
             {
                 ByMaterial = []
             },
-            CalcResultSummary = new CalcResultSummary { ProducerDisposalFees = null! },
-            CalcResultProjectedProducers = new CalcResultProjectedProducers
-            {
+            CalcResultSummary = new CalcResultSummary {
+                ProducerDisposalFees = null!
+            },
+            CalcResultProjectedProducers = new CalcResultProjectedProducers(){
                 H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
                 H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty
             }

@@ -37,8 +37,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 return new ProducerReportedMaterial
                 {
-                    //MaterialId = int.Parse(material), // TODO look up materialId
-                    //ProducerDetailId = { get; set; } // TODO how to get this?
                     PackagingType = packagingType,
                     PackagingTonnage = total,
                     PackagingTonnageRed = r,

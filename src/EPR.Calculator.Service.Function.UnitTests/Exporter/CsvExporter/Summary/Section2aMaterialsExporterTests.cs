@@ -21,6 +21,10 @@ public class Section2aMaterialsExporterTests
             producer.ProducerCommsFeesByMaterial!
                 .Where(kv => kv.Key == "AL")
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
+        resultSummary.OverallTotal!.ProducerCommsFeesByMaterial =
+            resultSummary.OverallTotal.ProducerCommsFeesByMaterial!
+                .Where(kv => kv.Key == "AL")
+                .ToDictionary(kv => kv.Key, kv => kv.Value);
         var csvContent = new StringBuilder();
 
         // Act
@@ -56,6 +60,18 @@ public class Section2aMaterialsExporterTests
              "£26.91",
              "£49.41",
              "£20.17"
+            ],
+            ["1000.000",
+             "0.000",
+             "0.000",
+             null,
+             "£191.60",
+             "£11.50",
+             "£203.10",
+             "£106.61",
+             "£26.91",
+             "£49.41",
+             "£20.17"
             ]
         };
 
@@ -72,6 +88,10 @@ public class Section2aMaterialsExporterTests
         var producer = resultSummary.ProducerDisposalFees.First();
         producer.ProducerCommsFeesByMaterial =
             producer.ProducerCommsFeesByMaterial!
+                .Where(kv => kv.Key == "GL")
+                .ToDictionary(kv => kv.Key, kv => kv.Value);
+        resultSummary.OverallTotal!.ProducerCommsFeesByMaterial =
+            resultSummary.OverallTotal.ProducerCommsFeesByMaterial!
                 .Where(kv => kv.Key == "GL")
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
         var csvContent = new StringBuilder();
@@ -104,6 +124,19 @@ public class Section2aMaterialsExporterTests
              "0.000",
              "0.000",
              "£0.4404",
+             "£220.20",
+             "£13.21",
+             "£233.41",
+             "£122.53",
+             "£30.92",
+             "£56.78",
+             "£23.18"
+            ],
+            ["500.000",
+             "0.000",
+             "0.000",
+             "0.000",
+             null,
              "£220.20",
              "£13.21",
              "£233.41",

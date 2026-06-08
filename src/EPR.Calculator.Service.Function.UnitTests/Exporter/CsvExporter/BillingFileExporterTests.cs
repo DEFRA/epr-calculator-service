@@ -50,7 +50,7 @@ public class BillingFileExporterTests : TestsFor<BillingFileExporter>
     }
 
     [TestMethod]
-    public async Task CanCallExport()
+    public async Task BillingFileExporter_CanCallExport()
     {
         // Arrange
         var calcResult = fixture.Create<CalcResult>();
@@ -77,7 +77,7 @@ public class BillingFileExporterTests : TestsFor<BillingFileExporter>
     }
 
     [TestMethod]
-    public async Task CanCallExport_Modulation()
+    public async Task BillingFileExporter_CanCallExport_Modulation()
     {
         // Arrange
         var calcResult = fixture.Create<CalcResult>();

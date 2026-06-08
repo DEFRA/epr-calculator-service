@@ -35,6 +35,7 @@ public class Section1DisposalFeeExporterTests
              "Northern Ireland Total",
              "Tonnage Change Count",
              "Tonnage Change Advice"],
+            ["£4423.39", "£265.40", "£4688.80", "£2534.24", "£571.24", "£1137.87", "£445.45", "0", ""],
             ["£4423.39", "£265.40", "£4688.80", "£2534.24", "£571.24", "£1137.87", "£445.45", "0", ""]
         };
 

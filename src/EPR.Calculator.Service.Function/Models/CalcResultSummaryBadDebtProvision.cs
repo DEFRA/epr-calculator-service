@@ -1,19 +1,34 @@
-﻿namespace EPR.Calculator.Service.Function.Models
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace EPR.Calculator.Service.Function.Models;
+
+public class CalcResultSummaryBadDebtProvision
 {
-    public class CalcResultSummaryBadDebtProvision
+    public decimal FeeWithoutBadDebtProvision { get; set; }
+
+    public decimal BadDebtProvision { get; set; }
+
+    public required ByCountryCost FeeWithBadDebtProvision { get; set; }
+
+    public static readonly CalcResultSummaryBadDebtProvision Empty = new()
     {
-        public decimal TotalProducerFeeWithoutBadDebtProvision { get; set; }
+        FeeWithoutBadDebtProvision = 0,
+        BadDebtProvision           = 0,
+        FeeWithBadDebtProvision    = ByCountryCost.Empty
+    };
 
-        public decimal BadDebtProvision { get; set; }
+    public static CalcResultSummaryBadDebtProvision operator +(CalcResultSummaryBadDebtProvision a, CalcResultSummaryBadDebtProvision b) =>
+        new()
+        {
+            FeeWithoutBadDebtProvision = a.FeeWithoutBadDebtProvision + b.FeeWithoutBadDebtProvision,
+            BadDebtProvision           = a.BadDebtProvision           + b.BadDebtProvision,
+            FeeWithBadDebtProvision    = a.FeeWithBadDebtProvision    + b.FeeWithBadDebtProvision,
+        };
+}
 
-        public decimal TotalProducerFeeWithBadDebtProvision { get; set; }
-
-        public decimal EnglandTotalWithBadDebtProvision { get; set; }
-
-        public decimal WalesTotalWithBadDebtProvision { get; set; }
-
-        public decimal ScotlandTotalWithBadDebtProvision { get; set; }
-
-        public decimal NorthernIrelandTotalWithBadDebtProvision { get; set; }
-    }
+public static class CalcResultSummaryBadDebtProvisionExtensions
+{
+    public static CalcResultSummaryBadDebtProvision Sum(this IEnumerable<CalcResultSummaryBadDebtProvision> source) =>
+        source.Aggregate(CalcResultSummaryBadDebtProvision.Empty, (acc, r) => acc + r);
 }

@@ -62,7 +62,7 @@ public class ProducerInvoiceNetTonnageService(
                     invoiced = new ProducerInvoicedMaterialNetTonnage
                     {
                         CalculatorRunId = runId,
-                        ProducerId = producer.ProducerIdInt,
+                        ProducerId = producer.ProducerId,
                         InvoicedNetTonnage = feeSummary.NetReportedTonnage.total,
                         MaterialId = material.Id
                     };

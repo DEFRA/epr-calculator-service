@@ -47,6 +47,17 @@ public class ProducerIdentityExporterTests
              null,
              null,
              null
+            ],
+            ["1",
+             "",
+             "Allied Packaging",
+             null,
+             "1",
+             "No",
+             "No",
+             null,
+             null,
+             null
             ]
         };
 

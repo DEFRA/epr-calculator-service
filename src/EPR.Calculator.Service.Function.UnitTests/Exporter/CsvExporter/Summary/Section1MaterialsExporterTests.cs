@@ -21,6 +21,10 @@ public class Section1MaterialsExporterTests
             producer.ProducerDisposalFeesByMaterial
                 .Where(kv => kv.Key == "AL")
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
+        resultSummary.OverallTotal!.ProducerDisposalFeesByMaterial =
+            resultSummary.OverallTotal.ProducerDisposalFeesByMaterial
+                .Where(kv => kv.Key == "AL")
+                .ToDictionary(kv => kv.Key, kv => kv.Value);
         var csvContent = new StringBuilder();
 
         // Act
@@ -58,7 +62,22 @@ public class Section1MaterialsExporterTests
              "£0.6676",
              "£607.52",
              "£36.45",
-             "£643.97",
+             "£643.98",
+             "£348.06",
+             "£78.46",
+             "£156.28",
+             "£61.18"],
+            ["0.000",
+             "1000.000",
+             "0.000",
+             "0.000",
+             "90.000",
+             "910.000",
+             "0.000",
+             null,
+             "£607.52",
+             "£36.45",
+             "£643.98",
              "£348.06",
              "£78.46",
              "£156.28",
@@ -78,6 +97,10 @@ public class Section1MaterialsExporterTests
         var producer = resultSummary.ProducerDisposalFees.First();
         producer.ProducerDisposalFeesByMaterial =
             producer.ProducerDisposalFeesByMaterial
+                .Where(kv => kv.Key == "GL")
+                .ToDictionary(kv => kv.Key, kv => kv.Value);
+        resultSummary.OverallTotal!.ProducerDisposalFeesByMaterial =
+            resultSummary.OverallTotal.ProducerDisposalFeesByMaterial
                 .Where(kv => kv.Key == "GL")
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
         var csvContent = new StringBuilder();
@@ -119,7 +142,23 @@ public class Section1MaterialsExporterTests
              "£6.4404",
              "£2254.14",
              "£135.25",
-             "£2389.39",
+             "£2389.38",
+             "£1291.43",
+             "£291.10",
+             "£579.85",
+             "£227.00"],
+            ["0.000",
+             "500.000",
+             "0.000",
+             "220.000",
+             "0.000",
+             "150.000",
+             "350.000",
+             "0.000",
+             null,
+             "£2254.14",
+             "£135.25",
+             "£2389.38",
              "£1291.43",
              "£291.10",
              "£579.85",
@@ -139,6 +178,10 @@ public class Section1MaterialsExporterTests
         var producer = resultSummary.ProducerDisposalFees.First();
         producer.ProducerDisposalFeesByMaterial =
             producer.ProducerDisposalFeesByMaterial
+                .Where(kv => kv.Key == "AL")
+                .ToDictionary(kv => kv.Key, kv => kv.Value);
+        resultSummary.OverallTotal!.ProducerDisposalFeesByMaterial =
+            resultSummary.OverallTotal.ProducerDisposalFeesByMaterial
                 .Where(kv => kv.Key == "AL")
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
         var csvContent = new StringBuilder();
@@ -221,10 +264,29 @@ public class Section1MaterialsExporterTests
             "0.000",                                              // TonnageChange
             "£1.0000", "£2.0000", "£3.0000",                      // Price: red,amber,green
             "£4.53"  ,   "£5.00",   "£6.00",                      // DisposalFee: red(4.525001→4.53),amber,green
-            "£607.52", "£36.45", "£643.97", "£348.06", "£78.46", "£156.28", "£61.18",  // common 7
+            "£607.52", "£36.45", "£643.98", "£348.06", "£78.46", "£156.28", "£61.18",  // common 7
         ];
 
-        var expected = new string?[][] { sectionHeader, groupHeader, columnHeaders, dataRow };
+        string?[] overallTotalRow = [
+            "0.000",                                              // PIT=0.000 for overall total (not hyphen)
+            "1000.000",
+            "11.000", "12.000", "13.000", "14.000", "15.000", "16.000",
+            "0.000",
+            "21.000", "22.000", "23.000", "24.000", "25.000", "26.000",
+            "0.000",
+            "1.000", "2.000", "3.000", "4.000", "5.000", "6.000",
+            "5.000", "7.000", "9.000",
+            "90.000",
+            "90.000", "0.000", "90.000", "0.000",
+            "910.000", "300.000", "200.000", "410.000",
+            "-",
+            "0.000",
+            null, null, null,                                     // Price per tonne: blank for overall total
+            "£4.53", "£5.00", "£6.00",
+            "£607.52", "£36.45", "£643.98", "£348.06", "£78.46", "£156.28", "£61.18",
+        ];
+
+        var expected = new string?[][] { sectionHeader, groupHeader, columnHeaders, dataRow, overallTotalRow };
         CsvTestUtils.AssertSquareCsv(expected, result, expectedLength: 49);
     }
 
@@ -238,6 +300,10 @@ public class Section1MaterialsExporterTests
         var producer = resultSummary.ProducerDisposalFees.First();
         producer.ProducerDisposalFeesByMaterial =
             producer.ProducerDisposalFeesByMaterial
+                .Where(kv => kv.Key == "GL")
+                .ToDictionary(kv => kv.Key, kv => kv.Value);
+        resultSummary.OverallTotal!.ProducerDisposalFeesByMaterial =
+            resultSummary.OverallTotal.ProducerDisposalFeesByMaterial
                 .Where(kv => kv.Key == "GL")
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
         var csvContent = new StringBuilder();
@@ -329,10 +395,15 @@ public class Section1MaterialsExporterTests
             "0.000",                                              // TonnageChange
             "£1.0000", "£2.0000", "£3.0000",                      // Price: red,amber,green
             "£4.00"  ,   "£5.00",   "£6.00",                      // DisposalFee: red,amber,green
-            "£2254.14", "£135.25", "£2389.39", "£1291.43", "£291.10", "£579.85", "£227.00",  // common 7
+            "£2254.14", "£135.25", "£2389.38", "£1291.43", "£291.10", "£579.85", "£227.00",  // common 7
         ];
 
-        var expected = new string?[][] { sectionHeader, groupHeader, columnHeaders, dataRow };
+        string?[] overallTotalRow = [.. dataRow];
+        overallTotalRow[43] = null; // Red Price per Tonne: blank for overall total
+        overallTotalRow[44] = null; // Amber Price per Tonne: blank for overall total
+        overallTotalRow[45] = null; // Green Price per Tonne: blank for overall total
+
+        var expected = new string?[][] { sectionHeader, groupHeader, columnHeaders, dataRow, overallTotalRow };
         CsvTestUtils.AssertSquareCsv(expected, result, expectedLength: 56);
     }
 }

@@ -16,7 +16,6 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 using EPR.Calculator.Service.Function.Features.BillingRun.Contexts;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
-using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter;
 
@@ -95,29 +94,16 @@ public class BillingFileExporter(
     {
         return new CalcResultSummary
         {
-            BadDebtProvisionFor1 = calcResultSummary.BadDebtProvisionFor1,
-            BadDebtProvisionFor2A = calcResultSummary.BadDebtProvisionFor2A,
-            BadDebtProvisionTitleSection3 = calcResultSummary.BadDebtProvisionTitleSection3,
-            CommsCostHeaderBadDebtProvisionFor2bTitle = calcResultSummary.CommsCostHeaderBadDebtProvisionFor2bTitle,
-            CommsCostHeaderWithBadDebtFor2bTitle = calcResultSummary.CommsCostHeaderWithBadDebtFor2bTitle,
-            CommsCostHeaderWithoutBadDebtFor2bTitle = calcResultSummary.CommsCostHeaderWithoutBadDebtFor2bTitle,
-            LaDataPrepCostsBadDebtProvisionTitleSection4 = calcResultSummary.LaDataPrepCostsBadDebtProvisionTitleSection4,
-            LaDataPrepCostsTitleSection4 = calcResultSummary.LaDataPrepCostsTitleSection4,
-            LaDataPrepCostsWithBadDebtProvisionTitleSection4 = calcResultSummary.LaDataPrepCostsWithBadDebtProvisionTitleSection4,
-            ProducerDisposalFees = GetAcceptedProducerDisposalFees(calcResultSummary.ProducerDisposalFees.ToList(), acceptedProducerIds),
-            SaOperatingCostsWithTitleSection3 = calcResultSummary.SaOperatingCostsWithTitleSection3,
-            SaOperatingCostsWoTitleSection3 = calcResultSummary.SaOperatingCostsWoTitleSection3,
-            SaSetupCostsBadDebtProvisionTitleSection5 = calcResultSummary.SaSetupCostsBadDebtProvisionTitleSection5,
-            SaSetupCostsTitleSection5 = calcResultSummary.SaSetupCostsTitleSection5,
-            SaSetupCostsWithBadDebtProvisionTitleSection5 = calcResultSummary.SaSetupCostsWithBadDebtProvisionTitleSection5,
-            TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A = calcResultSummary.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A,
-            TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A = calcResultSummary.TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A,
-            TotalFeeforLADisposalCostswithBadDebtprovision1 = calcResultSummary.TotalFeeforLADisposalCostswithBadDebtprovision1,
-            TotalFeeforLADisposalCostswoBadDebtprovision1 = calcResultSummary.TotalFeeforLADisposalCostswoBadDebtprovision1,
+            LADisposalCostsSection1                   = calcResultSummary.LADisposalCostsSection1,
+            CommsCostsSection2a                       = calcResultSummary.CommsCostsSection2a,
+            CommsCostsSection2b                       = calcResultSummary.CommsCostsSection2b,
+            CommsCostsSection2c                       = calcResultSummary.CommsCostsSection2c,
+            SaOperatingCostsSection3                  = calcResultSummary.SaOperatingCostsSection3,
+            LaDataPrepSection4                        = calcResultSummary.LaDataPrepSection4,
+            SaSetupCostsSection5                      = calcResultSummary.SaSetupCostsSection5,
             TotalOnePlus2A2B2CFeeWithBadDebtProvision = calcResultSummary.TotalOnePlus2A2B2CFeeWithBadDebtProvision,
-            TwoCBadDebtProvision = calcResultSummary.TwoCBadDebtProvision,
-            TwoCCommsCostsByCountryWithBadDebtProvision = calcResultSummary.TwoCCommsCostsByCountryWithBadDebtProvision,
-            TwoCCommsCostsByCountryWithoutBadDebtProvision = calcResultSummary.TwoCCommsCostsByCountryWithoutBadDebtProvision
+            ProducerDisposalFees                      = GetAcceptedProducerDisposalFees(calcResultSummary.ProducerDisposalFees.ToList(), acceptedProducerIds),
+            OverallTotal                              = ZeroedTotalRow
         };
     }
 
@@ -125,22 +111,30 @@ public class BillingFileExporter(
         IReadOnlyCollection<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
         ImmutableHashSet<int> acceptedProducerIds)
     {
-        var acceptedProducerFees = producerDisposalFees
-            .Where(x => acceptedProducerIds
-                            .Contains(x.ProducerIdInt) || x.ProducerIdInt == 0)
+        return producerDisposalFees
+            .Where(x => acceptedProducerIds.Contains(x.ProducerId))
             .ToImmutableList();
-
-        acceptedProducerFees.ForEach(x =>
-        {
-            if (x.isOverallTotalRow)
-            {
-                x.ProducerCommsFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>();
-                x.ProducerDisposalFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>();
-                ResetObjectUtil.ResetObject(x);
-            }
-        });
-        return acceptedProducerFees;
     }
+
+    // TODO can we remove this row? // NOSONAR
+    private static readonly CalcResultSummaryProducerDisposalFees ZeroedTotalRow = new()
+    {
+        ProducerId                 = 0,
+        SubsidiaryId               = string.Empty,
+        ProducerName               = string.Empty,
+        TradingName                = string.Empty,
+        Level                      = string.Empty,
+        StatusCode                 = string.Empty,
+        IsProducerScaledup         = string.Empty,
+        IsPartialObligation        = string.Empty,
+        JoinerDate                 = string.Empty,
+        LeaverDate                 = CommonConstants.Totals,
+        TonnageChangeCount         = string.Empty,
+        TonnageChangeAdvice        = string.Empty,
+        isTotalRow                 = true,
+        isOverallTotalRow          = true,
+        BillingInstructionSection  = new CalcResultSummaryBillingInstruction { SuggestedBillingInstruction = string.Empty }
+    };
 
     private static CalcResultScaledupProducers GetScaledUpProducersForExport(
         CalcResultScaledupProducers producers,

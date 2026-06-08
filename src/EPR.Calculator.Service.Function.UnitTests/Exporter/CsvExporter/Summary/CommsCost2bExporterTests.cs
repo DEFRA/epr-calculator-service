@@ -40,6 +40,7 @@ public class CommsCost2bExporterTests
              "Wales Total with Bad Debt provision",
              "Scotland Total with Bad Debt provision",
              "Northern Ireland Total with Bad Debt provision"],
+            ["£2844.06", "£170.64", "£3014.70", "£1582.51", "£399.40", "£733.39", "£299.39"],
             ["£2844.06", "£170.64", "£3014.70", "£1582.51", "£399.40", "£733.39", "£299.39"]
         };
 

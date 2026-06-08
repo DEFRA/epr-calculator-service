@@ -3,7 +3,7 @@ using System.Text.Json;
 using EPR.Calculator.Service.Function.Converter;
 using EPR.Calculator.Service.Function.Features.BillingRun.Contexts;
 using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.Models.JsonExporter;
+using EPR.Calculator.Service.Function.JsonExporter.Model;
 using EPR.Calculator.Service.Function.Services;
 
 namespace EPR.Calculator.Service.Function.Exporter.JsonExporter;

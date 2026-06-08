@@ -1,5 +1,4 @@
 using System.Text;
-using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 
@@ -26,7 +25,7 @@ public class ProducerIdentityExporter : ICalcResultSummaryPartExporter
 
     public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
     {
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerId));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerId == 0 ? string.Empty : producer.ProducerId.ToString()));
         csvContent.Append(CsvSanitiser.SanitiseData(producer.SubsidiaryId));
         csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerName));
         csvContent.Append(CsvSanitiser.SanitiseData(producer.TradingName));

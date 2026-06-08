@@ -18,11 +18,11 @@ namespace EPR.Calculator.Service.Function.Models
 
         public static RAMTonnage ToRAMTonnage(string packagingType, List<ProducerReportedMaterial> reportedMaterials) {
             return new RAMTonnage {
-                RedTonnage = GetReportedTonnage(reportedMaterials, packagingType, t => t.PackagingTonnageRed),
-                RedMedicalTonnage = GetReportedTonnage(reportedMaterials, packagingType, t => t.PackagingTonnageRedMedical),
-                AmberTonnage = GetReportedTonnage(reportedMaterials, packagingType, t => t.PackagingTonnageAmber),
+                RedTonnage          = GetReportedTonnage(reportedMaterials, packagingType, t => t.PackagingTonnageRed),
+                RedMedicalTonnage   = GetReportedTonnage(reportedMaterials, packagingType, t => t.PackagingTonnageRedMedical),
+                AmberTonnage        = GetReportedTonnage(reportedMaterials, packagingType, t => t.PackagingTonnageAmber),
                 AmberMedicalTonnage = GetReportedTonnage(reportedMaterials, packagingType, t => t.PackagingTonnageAmberMedical),
-                GreenTonnage = GetReportedTonnage(reportedMaterials, packagingType, t => t.PackagingTonnageGreen),
+                GreenTonnage        = GetReportedTonnage(reportedMaterials, packagingType, t => t.PackagingTonnageGreen),
                 GreenMedicalTonnage = GetReportedTonnage(reportedMaterials, packagingType, t => t.PackagingTonnageGreenMedical),
             };
         }
