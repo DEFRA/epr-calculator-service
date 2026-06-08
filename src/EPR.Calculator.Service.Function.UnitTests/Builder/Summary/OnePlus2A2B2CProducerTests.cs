@@ -1,9 +1,9 @@
-﻿using EPR.Calculator.Service.Function.Builder.Summary.OnePlus2A2B2C;
+﻿using EPR.Calculator.Service.Function.Builder.Summary;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 
-namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.OnePlus2A2B2C;
+namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary;
 
 [TestCategory(TestCategories.ResultBuilder)]
 [TestClass]

@@ -1,5 +1,5 @@
 using System.Text;
-using EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions;
+using EPR.Calculator.Service.Function.Builder.Summary;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Misc;

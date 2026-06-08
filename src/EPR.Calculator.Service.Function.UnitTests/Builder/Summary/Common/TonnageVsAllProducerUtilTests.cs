@@ -1,11 +1,11 @@
 ﻿using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.Summary;
-using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer;
+using EPR.Calculator.Service.Function.Builder.Summary.Common;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 
-namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TonnageVsAllProducer;
+namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common;
 
 [TestCategory(TestCategories.ResultBuilder)]
 [TestClass]

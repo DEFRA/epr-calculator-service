@@ -2,7 +2,7 @@ using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using EPR.Calculator.API.Data.DataModels;
 
-namespace EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer;
+namespace EPR.Calculator.Service.Function.Builder.Summary.Common;
 
 public static class TonnageVsAllProducerUtil
 {

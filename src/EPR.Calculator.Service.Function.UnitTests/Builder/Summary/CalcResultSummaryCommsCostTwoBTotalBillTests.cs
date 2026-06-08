@@ -1,13 +1,11 @@
 ﻿using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.Summary;
-using EPR.Calculator.Service.Function.Builder.Summary.CommsCostTwoBTotalBill;
-using EPR.Calculator.Service.Function.Builder.Summary.TonnageVsAllProducer;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 
-namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.CommsCostTwoBTotalBill;
+namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary;
 
 [TestCategory(TestCategories.ResultBuilder)]
 [TestClass]

@@ -26,15 +26,15 @@ public class CalcResultSummaryUtilTests
                 CalcResultPartialObligations = new CalcResultPartialObligations(){
                     PartialObligations = ImmutableList<CalcResultPartialObligation>.Empty,
                 },
-            CalcResultParameterOtherCost = TestDataHelper.GetCalcResultParameterOtherCost(),
-            CalcResultDetail = TestDataHelper.GetCalcResultDetail(),
-            CalcResultLaDisposalCostData = TestDataHelper.GetCalcResultLaDisposalCostData(),
-            CalcResultLapcapData = TestDataHelper.GetCalcResultLapcapData(),
+            CalcResultParameterOtherCost       = TestDataHelper.GetCalcResultParameterOtherCost(),
+            CalcResultDetail                   = TestDataHelper.GetCalcResultDetail(),
+            CalcResultLaDisposalCostData       = TestDataHelper.GetCalcResultLaDisposalCostData(),
+            CalcResultLapcapData               = TestDataHelper.GetCalcResultLapcapData(),
             CalcResultOnePlusFourApportionment = TestDataHelper.GetCalcResultOnePlusFourApportionment(),
-            CalcResultSummary = TestDataHelper.GetCalcResultSummary(),
-            CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
+            CalcResultSummary                  = TestDataHelper.GetCalcResultSummary(),
+            CalcResultCommsCostReportDetail    = TestDataHelper.GetCalcResultCommsCostReportDetail(),
             CalcResultLateReportingTonnageData = GetCalcResultLateReportingTonnage(),
-            CalcResultProjectedProducers = new CalcResultProjectedProducers(){
+            CalcResultProjectedProducers       = new CalcResultProjectedProducers(){
                 H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
                 H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty,
             }
@@ -50,17 +50,17 @@ public class CalcResultSummaryUtilTests
         ProducerReportedMaterialProjected ToProjected(ProducerReportedMaterial rm) =>
             new()
             {
-                MaterialId = rm.MaterialId,
-                ProducerDetailId = rm.ProducerDetailId,
-                PackagingType = rm.PackagingType,
-                PackagingTonnage = rm.PackagingTonnage,
-                PackagingTonnageRed = rm.PackagingTonnageRed,
-                PackagingTonnageAmber = rm.PackagingTonnageAmber,
-                PackagingTonnageGreen = rm.PackagingTonnageGreen,
-                PackagingTonnageRedMedical = rm.PackagingTonnageRedMedical,
+                MaterialId                   = rm.MaterialId,
+                ProducerDetailId             = rm.ProducerDetailId,
+                PackagingType                = rm.PackagingType,
+                PackagingTonnage             = rm.PackagingTonnage,
+                PackagingTonnageRed          = rm.PackagingTonnageRed,
+                PackagingTonnageAmber        = rm.PackagingTonnageAmber,
+                PackagingTonnageGreen        = rm.PackagingTonnageGreen,
+                PackagingTonnageRedMedical   = rm.PackagingTonnageRedMedical,
                 PackagingTonnageAmberMedical = rm.PackagingTonnageAmberMedical,
                 PackagingTonnageGreenMedical = rm.PackagingTonnageGreenMedical,
-                SubmissionPeriod = rm.SubmissionPeriod
+                SubmissionPeriod             = rm.SubmissionPeriod
             };
 
         return producers
@@ -498,13 +498,13 @@ public class CalcResultSummaryUtilTests
     {
         return new MaterialModulation
         {
-            AmberMaterialDisposalCost = adc,
-            RedMaterialDisposalCost = rdc,
-            GreenMaterialDisposalCost = gdc,
-            AmberMaterialTonnages = at,
-            RedMaterialTonnages = rt,
-            GreenMaterialTonnages = gt,
-            TotalRedMaterialAtAmberDisposalCost = rAtAdc,
+            AmberMaterialDisposalCost             = adc,
+            RedMaterialDisposalCost               = rdc,
+            GreenMaterialDisposalCost             = gdc,
+            AmberMaterialTonnages                 = at,
+            RedMaterialTonnages                   = rt,
+            GreenMaterialTonnages                 = gt,
+            TotalRedMaterialAtAmberDisposalCost   = rAtAdc,
             TotalGreenMaterialAtAmberDisposalCost = gAtAdc
         };
     }

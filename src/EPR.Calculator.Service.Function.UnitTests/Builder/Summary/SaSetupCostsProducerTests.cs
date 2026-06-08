@@ -1,15 +1,15 @@
 ﻿using EPR.Calculator.API.Data.DataTypes;
-using EPR.Calculator.Service.Function.Builder.Summary.ThreeSa;
+using EPR.Calculator.Service.Function.Builder.Summary;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 
-namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.ThreeSa;
+namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.SaSetupCosts;
 
 [TestCategory(TestCategories.ResultBuilder)]
 [TestClass]
-public class ThreeSaCostsProducerTests
+public class SaSetupCostsProducerTests
 {
     private readonly CalcResult calcResult = new()
     {
@@ -23,7 +23,7 @@ public class ThreeSaCostsProducerTests
         {
             BadDebtValue = 6m,
             LaDataPrepCharge = new ByCountryCost { England = 40, Wales = 30, Scotland = 20, NorthernIreland = 10 },
-            SaOperatingCost = new ByCountryCost { England = 40, Wales = 30, Scotland = 20, NorthernIreland = 10 },
+            SaOperatingCost = new ByCountryCost { England = 0, Wales = 0, Scotland = 0, NorthernIreland = 0 },
             SchemeSetupCost = new ByCountryCost { England = 40, Wales = 30, Scotland = 20, NorthernIreland = 10 }
         },
         CalcResultDetail = new CalcResultDetail { RunId = 1, RelativeYear = new RelativeYear(2024) },
@@ -31,20 +31,20 @@ public class ThreeSaCostsProducerTests
         {
             ByMaterial = new Dictionary<string, CalcResultLaDisposalCostDataDetail>
             {
-                ["AL"] =
+                ["Material1"] =
                     new()
                     {
                         Cost = ByCountryCost.Empty,
-                        HouseholdPackagingWasteTonnage = 0,
-                        PublicBinTonnage = 0,
+                        HouseholdPackagingWasteTonnage = 33m,
+                        PublicBinTonnage = 66m,
                         HouseholdDrinkContainersTonnage = 0
                     },
-                ["PL"] =
+                ["Material2"] =
                     new()
                     {
                         Cost = ByCountryCost.Empty,
-                        HouseholdPackagingWasteTonnage = 0,
-                        PublicBinTonnage = 0,
+                        HouseholdPackagingWasteTonnage = 133m,
+                        PublicBinTonnage = 166m,
                         HouseholdDrinkContainersTonnage = 0
                     }
             }
@@ -60,10 +60,8 @@ public class ThreeSaCostsProducerTests
             {
                 new()
                 {
-                    ProducerCommsFeesByMaterial =
-                        new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>(),
-                    ProducerDisposalFeesByMaterial =
-                        new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>(),
+                    ProducerCommsFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>(),
+                    ProducerDisposalFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>(),
                     ProducerId = "1",
                     ProducerName = "Test",
                     TotalProducerDisposalFeeWithBadDebtProvision = 100,
@@ -74,7 +72,7 @@ public class ThreeSaCostsProducerTests
             }
         },
         CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
-        CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage { ByMaterial = [] },
+        CalcResultLateReportingTonnageData = TestDataHelper.GetCalcResultLateReportingTonnage(),
         CalcResultProjectedProducers = new CalcResultProjectedProducers(){
             H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
             H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty,
@@ -85,33 +83,23 @@ public class ThreeSaCostsProducerTests
     public void CanCallSaSetupCostsProducerFeeWithoutBadDebtProvision()
     {
         // Act
-        ThreeSaCostsProducer.GetProducerSetUpCostsSection3(calcResult, calcResult.CalcResultSummary);
+        SaSetupCostsProducer.GetProducerSetUpCosts(calcResult, calcResult.CalcResultSummary);
 
         // Assert
-        Assert.AreEqual(100, calcResult.CalcResultSummary.SaOperatingCostsWoTitleSection3);
-        Assert.AreEqual(6, calcResult.CalcResultSummary.BadDebtProvisionTitleSection3);
-        Assert.AreEqual(106, calcResult.CalcResultSummary.SaOperatingCostsWithTitleSection3);
-        Assert.AreEqual(1,
-            calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0]
-                .SchemeAdministratorOperatingCosts!.TotalProducerFeeWithoutBadDebtProvision);
-        Assert.AreEqual(0.06m,
-            calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].SchemeAdministratorOperatingCosts!.BadDebtProvision);
-        Assert.AreEqual(1.06m,
-            calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0]
-                .SchemeAdministratorOperatingCosts!.TotalProducerFeeWithBadDebtProvision);
+        Assert.AreEqual(100, calcResult.CalcResultSummary.SaSetupCostsTitleSection5);
+        Assert.AreEqual(6, calcResult.CalcResultSummary.SaSetupCostsBadDebtProvisionTitleSection5);
+        Assert.AreEqual(106, calcResult.CalcResultSummary.SaSetupCostsWithBadDebtProvisionTitleSection5);
+        Assert.AreEqual(1, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].OneOffSchemeAdministrationSetupCosts!.TotalProducerFeeWithoutBadDebtProvision);
+        Assert.AreEqual(0.06m, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].OneOffSchemeAdministrationSetupCosts!.BadDebtProvision);
+        Assert.AreEqual(1.06m, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].OneOffSchemeAdministrationSetupCosts!.TotalProducerFeeWithBadDebtProvision);
     }
 
     [TestMethod]
     public void CanCallGetSaSetupCostsEnglandOverallTotalWithBadDebtProvision()
     {
-        ThreeSaCostsProducer.GetProducerSetUpCostsSection3(calcResult, calcResult.CalcResultSummary);
+        SaSetupCostsProducer.GetProducerSetUpCosts(calcResult, calcResult.CalcResultSummary);
         // Act
-        var result = ThreeSaCostsProducer.GetCountryTotalWithBadDebtProvision(
-            calcResult,
-            calcResult.CalcResultSummary.SaOperatingCostsWoTitleSection3,
-            calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C,
-            Countries.England
-        );
+        var result = SaSetupCostsProducer.GetCountryTotalWithBadDebtProvision(calcResult, calcResult.CalcResultSummary.SaSetupCostsTitleSection5, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.England);
 
         // Assert
         Assert.AreEqual(0.42m, Math.Round(result, 2));
@@ -120,15 +108,10 @@ public class ThreeSaCostsProducerTests
     [TestMethod]
     public void CanCallGetSaSetupCostsScotlandOverallTotalWithBadDebtProvision()
     {
-        ThreeSaCostsProducer.GetProducerSetUpCostsSection3(calcResult, calcResult.CalcResultSummary);
+        SaSetupCostsProducer.GetProducerSetUpCosts(calcResult, calcResult.CalcResultSummary);
 
         // Act
-        var result = ThreeSaCostsProducer.GetCountryTotalWithBadDebtProvision(
-            calcResult,
-            calcResult.CalcResultSummary.SaOperatingCostsWoTitleSection3,
-            calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C,
-            Countries.Scotland
-        );
+        var result = SaSetupCostsProducer.GetCountryTotalWithBadDebtProvision(calcResult, calcResult.CalcResultSummary.SaSetupCostsTitleSection5, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.Scotland);
 
         // Assert
         Assert.AreEqual(0.16m, Math.Round(result, 2));
@@ -137,15 +120,10 @@ public class ThreeSaCostsProducerTests
     [TestMethod]
     public void CanCallGetSaSetupCostsWalesOverallTotalWithBadDebtProvision()
     {
-        ThreeSaCostsProducer.GetProducerSetUpCostsSection3(calcResult, calcResult.CalcResultSummary);
+        SaSetupCostsProducer.GetProducerSetUpCosts(calcResult, calcResult.CalcResultSummary);
 
         // Act
-        var result = ThreeSaCostsProducer.GetCountryTotalWithBadDebtProvision(
-            calcResult,
-            calcResult.CalcResultSummary.SaOperatingCostsWoTitleSection3,
-            calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C,
-            Countries.Wales
-        );
+        var result = SaSetupCostsProducer.GetCountryTotalWithBadDebtProvision(calcResult, calcResult.CalcResultSummary.SaSetupCostsTitleSection5, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.Wales);
 
         // Assert
         Assert.AreEqual(0.11m, Math.Round(result, 2));

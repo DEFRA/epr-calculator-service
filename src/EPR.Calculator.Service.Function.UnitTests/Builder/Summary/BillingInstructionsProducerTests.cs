@@ -1,12 +1,12 @@
 ﻿using EPR.Calculator.Service.Function.Builder.ParametersOther;
-using EPR.Calculator.Service.Function.Builder.Summary.BillingInstructions;
+using EPR.Calculator.Service.Function.Builder.Summary;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Features.BillingRun.Constants;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 
-namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.BillingInstructions;
+namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary;
 
 [TestCategory(TestCategories.ResultBuilder)]
 [TestClass]

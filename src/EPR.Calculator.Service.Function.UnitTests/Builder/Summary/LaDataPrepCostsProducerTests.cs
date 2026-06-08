@@ -1,10 +1,10 @@
-﻿using EPR.Calculator.API.Data.DataTypes;
-using EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts;
+using EPR.Calculator.API.Data.DataTypes;
+using EPR.Calculator.Service.Function.Builder.Summary;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 
-namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.LaDataPrepCosts;
+namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary;
 
 [TestCategory(TestCategories.ResultBuilder)]
 [TestClass]
