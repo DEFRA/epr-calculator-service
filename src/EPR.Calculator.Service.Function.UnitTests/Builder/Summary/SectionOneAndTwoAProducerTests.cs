@@ -26,6 +26,7 @@ public class SectionOneAndTwoAProducerTests
         {
             BadDebtProvision = 77.44668m,
         },
+        TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty,
     };
 
     [TestMethod]

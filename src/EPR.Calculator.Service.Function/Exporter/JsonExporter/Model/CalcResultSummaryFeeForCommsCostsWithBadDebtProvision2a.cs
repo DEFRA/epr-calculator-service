@@ -38,11 +38,11 @@ public class CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2A
         {
             TotalProducerFeeForCommsCostsWithoutBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithoutBadDebtProvision),
             BadDebtProvisionFor2a                                = CurrencyConverterUtils.ConvertToCurrency(costs?.BadDebtProvision),
-            TotalProducerFeeForCommsCostsWithBadDebtProvision    = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithBadDebtProvision),
-            EnglandTotalWithBadDebtProvision                     = CurrencyConverterUtils.ConvertToCurrency(costs?.EnglandTotalWithBadDebtProvision),
-            WalesTotalWithBadDebtProvision                       = CurrencyConverterUtils.ConvertToCurrency(costs?.WalesTotalWithBadDebtProvision),
-            ScotlandTotalWithBadDebtProvision                    = CurrencyConverterUtils.ConvertToCurrency(costs?.ScotlandTotalWithBadDebtProvision),
-            NorthernIrelandTotalWithBadDebtProvision             = CurrencyConverterUtils.ConvertToCurrency(costs?.NorthernIrelandTotalWithBadDebtProvision),
+            TotalProducerFeeForCommsCostsWithBadDebtProvision    = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithBadDebtProvision.Total),
+            EnglandTotalWithBadDebtProvision                     = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithBadDebtProvision.England),
+            WalesTotalWithBadDebtProvision                       = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithBadDebtProvision.Wales),
+            ScotlandTotalWithBadDebtProvision                    = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithBadDebtProvision.Scotland),
+            NorthernIrelandTotalWithBadDebtProvision             = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithBadDebtProvision.NorthernIreland),
             PercentageOfProducerTonnageVsAllProducers            = $"{Math.Round(calcResultSummaryProducerDisposalFees.PercentageofProducerReportedTonnagevsAllProducers, (int)DecimalPlaces.Eight).ToString()}%"
         };
     }

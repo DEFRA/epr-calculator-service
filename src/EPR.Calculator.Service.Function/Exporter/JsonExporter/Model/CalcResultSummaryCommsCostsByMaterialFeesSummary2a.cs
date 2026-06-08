@@ -34,11 +34,11 @@ public class CalcResultSummaryCommsCostsByMaterialFeesSummary2A
         {
             TotalProducerFeeForCommsCostsWithoutBadDebtProvision2a = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithoutBadDebtProvision),
             TotalBadDebtProvision                                  = CurrencyConverterUtils.ConvertToCurrency(costs?.BadDebtProvision),
-            TotalProducerFeeForCommsCostsWithBadDebtProvision2a    = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithBadDebtProvision),
-            EnglandTotalWithBadDebtProvision                       = CurrencyConverterUtils.ConvertToCurrency(costs?.EnglandTotalWithBadDebtProvision),
-            WalesTotalWithBadDebtProvision                         = CurrencyConverterUtils.ConvertToCurrency(costs?.WalesTotalWithBadDebtProvision),
-            ScotlandTotalWithBadDebtProvision                      = CurrencyConverterUtils.ConvertToCurrency(costs?.ScotlandTotalWithBadDebtProvision),
-            NorthernIrelandTotalWithBadDebtProvision               = CurrencyConverterUtils.ConvertToCurrency(costs?.NorthernIrelandTotalWithBadDebtProvision)
+            TotalProducerFeeForCommsCostsWithBadDebtProvision2a    = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithBadDebtProvision?.Total),
+            EnglandTotalWithBadDebtProvision                       = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithBadDebtProvision?.England),
+            WalesTotalWithBadDebtProvision                         = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithBadDebtProvision?.Wales),
+            ScotlandTotalWithBadDebtProvision                      = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithBadDebtProvision?.Scotland),
+            NorthernIrelandTotalWithBadDebtProvision               = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithBadDebtProvision?.NorthernIreland)
         };
     }
 }

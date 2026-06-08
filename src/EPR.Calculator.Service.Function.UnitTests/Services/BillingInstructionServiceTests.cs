@@ -150,6 +150,7 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
                         TotalProducerCommsFeeWithBadDebtProvision = 100,
                         SubsidiaryId = "1",
                         Level = CommonConstants.LevelTwo.ToString(),
+                        TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty,
                         BillingInstructionSection = new CalcResultSummaryBillingInstruction
                         {
                             CurrentYearInvoiceTotalToDate = 1000m,

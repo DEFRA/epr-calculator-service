@@ -99,11 +99,8 @@ internal static class SectionCosts
             {
                 TotalProducerFeeWithoutBadDebtProvision  = without,
                 BadDebtProvision                         = feeDebt,
-                TotalProducerFeeWithBadDebtProvision     = without + feeDebt,
-                EnglandTotalWithBadDebtProvision         = apportioned.England,
-                WalesTotalWithBadDebtProvision           = apportioned.Wales,
-                ScotlandTotalWithBadDebtProvision        = apportioned.Scotland,
-                NorthernIrelandTotalWithBadDebtProvision = apportioned.NorthernIreland
+                //TotalProducerFeeWithBadDebtProvision     = without + feeDebt,
+                TotalProducerFeeWithBadDebtProvision     = apportioned
             });
         }
     }

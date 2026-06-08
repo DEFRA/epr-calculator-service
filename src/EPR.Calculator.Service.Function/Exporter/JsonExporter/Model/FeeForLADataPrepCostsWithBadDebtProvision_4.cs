@@ -36,11 +36,11 @@ public class FeeForLADataPrepCostsWithBadDebtProvision_4
         {
             TotalProducerFeeForLADataPrepCostsWithoutBadDebtProvision  = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithoutBadDebtProvision),
             BadDebtProvisionFor4                                       = CurrencyConverterUtils.ConvertToCurrency(costs?.BadDebtProvision),
-            TotalProducerFeeForLADataPrepCostsWithBadDebtProvision     = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithBadDebtProvision),
-            EnglandTotalForLADataPrepCostsWithBadDebtProvision         = CurrencyConverterUtils.ConvertToCurrency(costs?.EnglandTotalWithBadDebtProvision),
-            WalesTotalForLADataPrepCostsWithBadDebtProvision           = CurrencyConverterUtils.ConvertToCurrency(costs?.WalesTotalWithBadDebtProvision),
-            ScotlandTotalForLADataPrepCostsWithBadDebtProvision        = CurrencyConverterUtils.ConvertToCurrency(costs?.ScotlandTotalWithBadDebtProvision),
-            NorthernIrelandTotalForLADataPrepCostsWithBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(costs?.NorthernIrelandTotalWithBadDebtProvision)
+            TotalProducerFeeForLADataPrepCostsWithBadDebtProvision     = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithBadDebtProvision.Total),
+            EnglandTotalForLADataPrepCostsWithBadDebtProvision         = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithBadDebtProvision.England),
+            WalesTotalForLADataPrepCostsWithBadDebtProvision           = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithBadDebtProvision.Wales),
+            ScotlandTotalForLADataPrepCostsWithBadDebtProvision        = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithBadDebtProvision.Scotland),
+            NorthernIrelandTotalForLADataPrepCostsWithBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithBadDebtProvision.NorthernIreland)
         };
     }
 }

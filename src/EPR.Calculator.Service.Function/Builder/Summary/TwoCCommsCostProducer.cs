@@ -26,11 +26,13 @@ public static class TwoCCommsCostProducer
     {
         var commsWithBadDebt2C = GetCommWithBadDebt2C(calcResult, producer, hhTotalPackagingTonnage);
         var commsCost = calcResult.CalcResultCommsCostReportDetail.CommsCostByCountry;
-        // TODO use TwoCWithBadDebt: CostByCountry
-        result.TwoCEnglandTotalWithBadDebt         = commsWithBadDebt2C * commsCost.England;
-        result.TwoCWalesTotalWithBadDebt           = commsWithBadDebt2C * commsCost.Wales;
-        result.TwoCScotlandTotalWithBadDebt        = commsWithBadDebt2C * commsCost.Scotland;
-        result.TwoCNorthernIrelandTotalWithBadDebt = commsWithBadDebt2C * commsCost.NorthernIreland;
+        result.TwoCTotalProducerFeeForCommsCostsWithBadDebt = new ByCountryCost
+        {
+            England         = commsWithBadDebt2C * commsCost.England,
+            Wales           = commsWithBadDebt2C * commsCost.Wales,
+            Scotland        = commsWithBadDebt2C * commsCost.Scotland,
+            NorthernIreland = commsWithBadDebt2C * commsCost.NorthernIreland
+        };
 
         result.TwoCTotalProducerFeeForCommsCostsWithoutBadDebt =
             calcResult.CalcResultCommsCostReportDetail.CommsCostByCountry.Total
@@ -46,10 +48,6 @@ public static class TwoCCommsCostProducer
             badDebtProvisionValue
             * result.PercentageofProducerReportedTonnagevsAllProducers
             / 100;
-
-        result.TwoCTotalProducerFeeForCommsCostsWithBadDebt =
-            result.TwoCTotalProducerFeeForCommsCostsWithoutBadDebt
-            + result.TwoCBadDebtProvision;
     }
 
     private static decimal GetCommWithBadDebt2C(CalcResult calcResult, ProducerDetail producer, IReadOnlyList<TotalPackagingTonnagePerRun> hhTotalPackagingTonnage)

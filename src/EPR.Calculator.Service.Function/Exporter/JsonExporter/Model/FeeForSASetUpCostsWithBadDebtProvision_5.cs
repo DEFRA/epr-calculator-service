@@ -34,11 +34,11 @@ public class FeeForSaSetUpCostsWithBadDebtProvision5
         {
             TotalProducerOneOffFeeForSASetUpCostsWithoutBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithoutBadDebtProvision),
             BadDebtProvisionFor5                                         = CurrencyConverterUtils.ConvertToCurrency(costs?.BadDebtProvision),
-            TotalProducerOneOffFeeForSASetUpCostsWithBadDebtProvision    = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithBadDebtProvision),
-            EnglandTotalForSASetUpCostsWithBadDebtProvision              = CurrencyConverterUtils.ConvertToCurrency(costs?.EnglandTotalWithBadDebtProvision),
-            WalesTotalForSASetUpCostsWithBadDebtProvision                = CurrencyConverterUtils.ConvertToCurrency(costs?.WalesTotalWithBadDebtProvision),
-            ScotlandTotalForSASetUpCostsWithBadDebtProvision             = CurrencyConverterUtils.ConvertToCurrency(costs?.ScotlandTotalWithBadDebtProvision),
-            NorthernIrelandTotalForSASetUpCostsWithBadDebtProvision      = CurrencyConverterUtils.ConvertToCurrency(costs?.NorthernIrelandTotalWithBadDebtProvision)
+            TotalProducerOneOffFeeForSASetUpCostsWithBadDebtProvision    = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithBadDebtProvision.Total),
+            EnglandTotalForSASetUpCostsWithBadDebtProvision              = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithBadDebtProvision.England),
+            WalesTotalForSASetUpCostsWithBadDebtProvision                = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithBadDebtProvision.Wales),
+            ScotlandTotalForSASetUpCostsWithBadDebtProvision             = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithBadDebtProvision.Scotland),
+            NorthernIrelandTotalForSASetUpCostsWithBadDebtProvision      = CurrencyConverterUtils.ConvertToCurrency(costs?.TotalProducerFeeWithBadDebtProvision.NorthernIreland)
         };
     }
 }

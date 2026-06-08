@@ -15,6 +15,15 @@
         public static readonly ByCountryCost Empty =
             new(){ England = 0, Wales = 0, Scotland = 0, NorthernIreland = 0 };
 
+        public static ByCountryCost operator +(ByCountryCost a, ByCountryCost b) =>
+            new()
+            {
+                England         = a.England         + b.England,
+                Wales           = a.Wales           + b.Wales,
+                Scotland        = a.Scotland        + b.Scotland,
+                NorthernIreland = a.NorthernIreland + b.NorthernIreland,
+            };
+
         public static ByCountryCost Sum(IReadOnlyCollection<ByCountryCost> costs)
         {
             return new ByCountryCost

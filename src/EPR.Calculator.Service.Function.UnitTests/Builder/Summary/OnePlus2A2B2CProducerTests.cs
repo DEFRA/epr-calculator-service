@@ -19,8 +19,8 @@ public class OnePlus2A2B2CProducerTests
 
         // Assert
         Assert.AreEqual(8895.914874216554m, calcResult.CalcResultSummary.TotalOnePlus2A2B2CFeeWithBadDebtProvision);
-        Assert.AreEqual(10491.1677668441235m, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerTotalOnePlus2A2B2CWithBadDeptProvision);
-        Assert.AreEqual(117.93242083791927397189538682m, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C);
+        Assert.AreEqual(10491.16776684412368m, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerTotalOnePlus2A2B2CWithBadDeptProvision);
+        Assert.AreEqual(117.93242083791927599529604369m, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C);
     }
 
     [TestMethod]

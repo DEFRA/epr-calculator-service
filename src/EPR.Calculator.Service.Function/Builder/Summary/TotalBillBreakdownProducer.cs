@@ -12,12 +12,7 @@ public static class TotalBillBreakdownProducer
             {
                 TotalProducerFeeWithoutBadDebtProvision  = GetTotalProducerBillWithoutBadDebtProvision(fee) ?? 0,
                 BadDebtProvision                         = GetBadDebtProvisionForTotalProducerBill(fee) ?? 0,
-                TotalProducerFeeWithBadDebtProvision     = GetTotalProducerBillWithBadDebtProvision(fee) ?? 0,
-                // TODO CostByCountry will reduce all the duplication
-                EnglandTotalWithBadDebtProvision         = GetEnglandTotalWithBadDebtProvision(fee) ?? 0,
-                WalesTotalWithBadDebtProvision           = GetWalesTotalWithBadDebtProvision(fee) ?? 0,
-                ScotlandTotalWithBadDebtProvision        = GetScotlandTotalWithBadDebtProvision(fee) ?? 0,
-                NorthernIrelandTotalWithBadDebtProvision = GetNorthernIrelandTotalWithBadDebtProvision(fee) ?? 0
+                TotalProducerFeeWithBadDebtProvision     = GetTotalProducerBillWithBadDebtProvision(fee)
             };
         }
     }
@@ -44,58 +39,14 @@ public static class TotalBillBreakdownProducer
             + fee.OneOffSchemeAdministrationSetupCosts?.BadDebtProvision;
     }
 
-    private static decimal? GetTotalProducerBillWithBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
+    private static ByCountryCost GetTotalProducerBillWithBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
     {
-        return fee.LocalAuthorityDisposalCostsSectionOne?.TotalProducerFeeWithBadDebtProvision
-            + fee.CommunicationCostsSectionTwoA?.TotalProducerFeeWithBadDebtProvision
-            + fee.CommunicationCostsSectionTwoB?.TotalProducerFeeWithBadDebtProvision
+        return (fee.LocalAuthorityDisposalCostsSectionOne?.TotalProducerFeeWithBadDebtProvision ?? ByCountryCost.Empty)
+            + (fee.CommunicationCostsSectionTwoA?.TotalProducerFeeWithBadDebtProvision ?? ByCountryCost.Empty)
+            + (fee.CommunicationCostsSectionTwoB?.TotalProducerFeeWithBadDebtProvision ?? ByCountryCost.Empty)
             + fee.TwoCTotalProducerFeeForCommsCostsWithBadDebt
-            + fee.SchemeAdministratorOperatingCosts?.TotalProducerFeeWithBadDebtProvision
-            + fee.LocalAuthorityDataPreparationCosts?.TotalProducerFeeWithBadDebtProvision
-            + fee.OneOffSchemeAdministrationSetupCosts?.TotalProducerFeeWithBadDebtProvision;
-    }
-
-    private static decimal? GetEnglandTotalWithBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
-    {
-        return fee.LocalAuthorityDisposalCostsSectionOne?.EnglandTotalWithBadDebtProvision
-            + fee.CommunicationCostsSectionTwoA?.EnglandTotalWithBadDebtProvision
-            + fee.CommunicationCostsSectionTwoB?.EnglandTotalWithBadDebtProvision
-            + fee.TwoCEnglandTotalWithBadDebt
-            + fee.SchemeAdministratorOperatingCosts?.EnglandTotalWithBadDebtProvision
-            + fee.LocalAuthorityDataPreparationCosts?.EnglandTotalWithBadDebtProvision
-            + fee.OneOffSchemeAdministrationSetupCosts?.EnglandTotalWithBadDebtProvision;
-    }
-
-    private static decimal? GetWalesTotalWithBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
-    {
-        return fee.LocalAuthorityDisposalCostsSectionOne?.WalesTotalWithBadDebtProvision
-            + fee.CommunicationCostsSectionTwoA?.WalesTotalWithBadDebtProvision
-            + fee.CommunicationCostsSectionTwoB?.WalesTotalWithBadDebtProvision
-            + fee.TwoCWalesTotalWithBadDebt
-            + fee.SchemeAdministratorOperatingCosts?.WalesTotalWithBadDebtProvision
-            + fee.LocalAuthorityDataPreparationCosts?.WalesTotalWithBadDebtProvision
-            + fee.OneOffSchemeAdministrationSetupCosts?.WalesTotalWithBadDebtProvision;
-    }
-
-    private static decimal? GetScotlandTotalWithBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
-    {
-        return fee.LocalAuthorityDisposalCostsSectionOne?.ScotlandTotalWithBadDebtProvision
-            + fee.CommunicationCostsSectionTwoA?.ScotlandTotalWithBadDebtProvision
-            + fee.CommunicationCostsSectionTwoB?.ScotlandTotalWithBadDebtProvision
-            + fee.TwoCScotlandTotalWithBadDebt
-            + fee.SchemeAdministratorOperatingCosts?.ScotlandTotalWithBadDebtProvision
-            + fee.LocalAuthorityDataPreparationCosts?.ScotlandTotalWithBadDebtProvision
-            + fee.OneOffSchemeAdministrationSetupCosts?.ScotlandTotalWithBadDebtProvision;
-    }
-
-    private static decimal? GetNorthernIrelandTotalWithBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
-    {
-        return fee.LocalAuthorityDisposalCostsSectionOne?.NorthernIrelandTotalWithBadDebtProvision
-            + fee.CommunicationCostsSectionTwoA?.NorthernIrelandTotalWithBadDebtProvision
-            + fee.CommunicationCostsSectionTwoB?.NorthernIrelandTotalWithBadDebtProvision
-            + fee.TwoCNorthernIrelandTotalWithBadDebt
-            + fee.SchemeAdministratorOperatingCosts?.NorthernIrelandTotalWithBadDebtProvision
-            + fee.LocalAuthorityDataPreparationCosts?.NorthernIrelandTotalWithBadDebtProvision
-            + fee.OneOffSchemeAdministrationSetupCosts?.NorthernIrelandTotalWithBadDebtProvision;
+            + (fee.SchemeAdministratorOperatingCosts?.TotalProducerFeeWithBadDebtProvision ?? ByCountryCost.Empty)
+            + (fee.LocalAuthorityDataPreparationCosts?.TotalProducerFeeWithBadDebtProvision ?? ByCountryCost.Empty)
+            + (fee.OneOffSchemeAdministrationSetupCosts?.TotalProducerFeeWithBadDebtProvision ?? ByCountryCost.Empty);
     }
 }
