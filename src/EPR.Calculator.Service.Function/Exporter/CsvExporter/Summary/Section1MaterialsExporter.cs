@@ -142,7 +142,7 @@ public class Section1MaterialsExporter : ICalcResultSummaryPartExporter
 
     public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
     {
-        bool isNotTotal = producer.LeaverDate != CommonConstants.Totals;
+        bool isNotTotal = !producer.isOverallTotalRow;
 
         foreach (var (key, disposalFee) in producer.ProducerDisposalFeesByMaterial)
         {

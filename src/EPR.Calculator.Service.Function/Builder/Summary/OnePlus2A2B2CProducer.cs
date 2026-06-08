@@ -12,6 +12,11 @@ public static class OnePlus2A2B2CProducer
             fee.ProducerTotalOnePlus2A2B2CWithBadDeptProvision = GetTotalWithBadDebtProvision(fee);
             fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C = GetOverallProducerPercentage(fee, summary.TotalOnePlus2A2B2CFeeWithBadDebtProvision);
         }
+        if (summary.OverallTotal is not null)
+        {
+            summary.OverallTotal.ProducerTotalOnePlus2A2B2CWithBadDeptProvision = GetTotalWithBadDebtProvision(summary.OverallTotal);
+            summary.OverallTotal.ProducerOverallPercentageOfCostsForOnePlus2A2B2C = GetOverallProducerPercentage(summary.OverallTotal, summary.TotalOnePlus2A2B2CFeeWithBadDebtProvision);
+        }
     }
 
     private static decimal GetHeaderTotalFeeWithBadDebtProvision(CalcResultSummary summary)

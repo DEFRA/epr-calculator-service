@@ -6,7 +6,7 @@ public static class TotalBillBreakdownProducer
 {
     public static void SetValues(CalcResultSummary summary)
     {
-        foreach (var fee in summary.ProducerDisposalFees)
+        foreach (var fee in summary.ProducerDisposalFees.Append(summary.OverallTotal).OfType<CalcResultSummaryProducerDisposalFees>())
         {
             fee.TotalProducerBillBreakdownCosts =
                 fee.LADisposalCostsSection1

@@ -276,7 +276,8 @@ public static partial class TestDataHelper
             CommsCostsSection2c = new CalcResultSummaryBadDebtProvision { FeeWithoutBadDebtProvision = 1339.100071422903M, BadDebtProvision = 80.34600428537418M, FeeWithBadDebtProvision = ByCountryCost.Empty with { England = 1419.446075708277m } },
             CommsCostsSection2b = new CalcResultSummaryBadDebtProvision { FeeWithoutBadDebtProvision = 1339.100071422903M, BadDebtProvision = 80.34600428537418M, FeeWithBadDebtProvision = ByCountryCost.Empty with { England = 1419.446075708277m } },
             TotalOnePlus2A2B2CFeeWithBadDebtProvision = 10230.2550766M,
-            ProducerDisposalFees = GetProducerDisposalFees(applyModulation)
+            ProducerDisposalFees = GetProducerDisposalFees(applyModulation),
+            OverallTotal = GetOverallTotalRow(applyModulation)
         };
     }
 
@@ -363,12 +364,10 @@ public static partial class TestDataHelper
         };
     }
 
-    public static List<CalcResultSummaryProducerDisposalFees> GetProducerDisposalFeesForOverAllTotal(bool applyModulation = false)
+    public static CalcResultSummaryProducerDisposalFees GetOverallTotalRow(bool applyModulation = false)
     {
-        return new List<CalcResultSummaryProducerDisposalFees>
+        return new CalcResultSummaryProducerDisposalFees
         {
-            new()
-            {
                 ProducerId = 1,
                 SubsidiaryId = string.Empty,
                 ProducerName = "Allied Packaging",
@@ -443,7 +442,6 @@ public static partial class TestDataHelper
                 TonnageChangeCount = "0",
                 TonnageChangeAdvice = "",
                 isOverallTotalRow = true
-            }
         };
     }
 

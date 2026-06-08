@@ -22,5 +22,7 @@
 
         public IEnumerable<CalcResultSummaryProducerDisposalFees> ProducerDisposalFees { get; set; }
             = new List<CalcResultSummaryProducerDisposalFees>();
+
+        public CalcResultSummaryProducerDisposalFees? OverallTotal { get; set; }
     }
 }

@@ -28,6 +28,7 @@ public class OnePlus2a2b2cExporterTests
             ["£10230.26", null],
             ["Producer Total (1+2a+2b+2c) with Bad Debt provision",
              "Producer Percentage of Overall Producer Cost for (1+2a+2b+2c)"],
+            ["£10491.17", "4.73419134%"],
             ["£10491.17", "4.73419134%"]
         };
 

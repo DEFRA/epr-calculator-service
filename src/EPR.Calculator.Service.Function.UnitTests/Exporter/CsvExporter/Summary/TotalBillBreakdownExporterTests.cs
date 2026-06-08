@@ -33,6 +33,7 @@ public class TotalBillBreakdownExporterTests
              "Wales Total with Bad Debt provision",
              "Scotland Total with Bad Debt provision",
              "Northern Ireland Total with Bad Debt provision"],
+            ["£9897.33", "£593.84", "£10491.17", "£5442.45", "£1452.64", "£2564.98", "£1031.09"],
             ["£9897.33", "£593.84", "£10491.17", "£5442.45", "£1452.64", "£2564.98", "£1031.09"]
         };
 

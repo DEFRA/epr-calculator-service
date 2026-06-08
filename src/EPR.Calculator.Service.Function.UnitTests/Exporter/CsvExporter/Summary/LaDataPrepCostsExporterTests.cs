@@ -40,6 +40,7 @@ public class LaDataPrepCostsExporterTests
              "Wales Total with Bad Debt provision",
              "Scotland Total with Bad Debt provision",
              "Northern Ireland Total with Bad Debt provision"],
+            ["£1727.98", "£103.68", "£1831.66", "£802.92", "£351.28", "£451.64", "£225.82"],
             ["£1727.98", "£103.68", "£1831.66", "£802.92", "£351.28", "£451.64", "£225.82"]
         };
 

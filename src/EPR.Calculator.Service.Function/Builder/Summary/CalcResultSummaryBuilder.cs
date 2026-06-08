@@ -211,13 +211,12 @@ public class CalcResultSummaryBuilder(
             // Overall total: aggregate all Level-1 rows (one per producer group).
             var l1Rows = producerDisposalFees.Where(r => r.Level == CommonConstants.LevelOne.ToString()).ToList();
             var allTotalRow = rowBuilder.GetOverallTotalRow(l1Rows, materials);
-            producerDisposalFees.Add(allTotalRow);
+            result.OverallTotal = allTotalRow;
 
             result.ProducerDisposalFees = producerDisposalFees;
 
-            // Section-(1) & (2a)
-            SectionOneAndTwoAProducer.SetValues(allTotalRow, result);
-
+            result.LADisposalCostsSection1 = allTotalRow.LADisposalCostsSection1;
+            result.CommsCostsSection2a     = allTotalRow.CommsCostsSection2a;
 
             // Section 2b comms cost
             TwoBCommsCostProducer.SetValues(calcResult, result);

@@ -13,12 +13,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
     {
         public static bool IsProducerPartiallyObligated(
             ProducerDetail producer,
-            IReadOnlyList<CalcResultPartialObligation> partialObligations,
-            bool isTotalRow)
-        {
-            //TODO is isTotalRow necessary?
-            return isTotalRow ? partialObligations.Any(p => p.ProducerId == producer.ProducerId) : partialObligations.Any(p => p.ProducerId == producer.ProducerId && p.SubsidiaryId == producer.SubsidiaryId);
-        }
+            IReadOnlyList<CalcResultPartialObligation> partialObligations) =>
+            partialObligations.Any(p => p.ProducerId == producer.ProducerId && p.SubsidiaryId == producer.SubsidiaryId);
 
         public static decimal GetTonnage(
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,

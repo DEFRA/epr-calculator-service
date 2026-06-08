@@ -40,6 +40,7 @@ public class ThreeSaCostsExporterTests
              "Wales Total with Bad Debt provision",
              "Scotland Total with Bad Debt provision",
              "Northern Ireland Total with Bad Debt provision"],
+            ["£3077.22", "£184.63", "£3261.86", "£1712.25", "£432.15", "£793.52", "£323.94"],
             ["£3077.22", "£184.63", "£3261.86", "£1712.25", "£432.15", "£793.52", "£323.94"]
         };
 

@@ -102,7 +102,8 @@ public class BillingFileExporter(
             LaDataPrepSection4                        = calcResultSummary.LaDataPrepSection4,
             SaSetupCostsSection5                      = calcResultSummary.SaSetupCostsSection5,
             TotalOnePlus2A2B2CFeeWithBadDebtProvision = calcResultSummary.TotalOnePlus2A2B2CFeeWithBadDebtProvision,
-            ProducerDisposalFees                      = GetAcceptedProducerDisposalFees(calcResultSummary.ProducerDisposalFees.ToList(), acceptedProducerIds)
+            ProducerDisposalFees                      = GetAcceptedProducerDisposalFees(calcResultSummary.ProducerDisposalFees.ToList(), acceptedProducerIds),
+            OverallTotal                              = ZeroedTotalRow
         };
     }
 
@@ -111,8 +112,7 @@ public class BillingFileExporter(
         ImmutableHashSet<int> acceptedProducerIds)
     {
         return producerDisposalFees
-            .Where(x => acceptedProducerIds.Contains(x.ProducerId) || x.ProducerId == 0)
-            .Select(x => x.isOverallTotalRow ? ZeroedTotalRow : x)
+            .Where(x => acceptedProducerIds.Contains(x.ProducerId))
             .ToImmutableList();
     }
 

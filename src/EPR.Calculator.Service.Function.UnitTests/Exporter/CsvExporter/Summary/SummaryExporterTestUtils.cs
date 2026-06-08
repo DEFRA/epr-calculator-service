@@ -19,6 +19,14 @@ public class SummaryExporterTestUtils
         csvContent.AppendLine();
 
         foreach (var producer in resultSummary.ProducerDisposalFees)
+        {
             exporter.AppendRow(csvContent, producer, applyModulation);
+            csvContent.AppendLine();
+        }
+
+        if (resultSummary.OverallTotal is not null)
+        {
+            exporter.AppendRow(csvContent, resultSummary.OverallTotal, applyModulation);
+        }
     }
 }

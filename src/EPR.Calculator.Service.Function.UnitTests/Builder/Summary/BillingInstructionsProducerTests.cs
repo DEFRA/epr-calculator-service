@@ -229,13 +229,14 @@ public class BillingInstructionsProducerTests
         {
             ProducerId = 0,
             Level = string.Empty,
-            LeaverDate = CommonConstants.Totals,
             ProducerName = "Totals",
             SubsidiaryId = string.Empty
         };
 
-        var summary = new CalcResultSummary {
-            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { a, b, total }
+        var summary = new CalcResultSummary
+        {
+            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { a, b },
+            OverallTotal = total
         };
 
         List<InvoicedProducer> invoiced =
@@ -268,11 +269,9 @@ public class BillingInstructionsProducerTests
 
         BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
 
-        var fees = summary.ProducerDisposalFees.ToList();
-        var totalsRow = fees[2].BillingInstructionSection!;
         var d1 = Math.Round(50m, 2) - Math.Round(20m, 2);
         var d2 = Math.Round(70m, 2) - Math.Round(80m, 2);
-        Assert.AreEqual(d1 + d2, totalsRow.LiabilityDifference);
+        Assert.AreEqual(d1 + d2, summary.OverallTotal!.BillingInstructionSection!.LiabilityDifference);
     }
 
     [TestMethod]
@@ -300,13 +299,14 @@ public class BillingInstructionsProducerTests
         {
             ProducerId = 0,
             Level = string.Empty,
-            LeaverDate = CommonConstants.Totals,
             ProducerName = "Totals",
             SubsidiaryId = string.Empty
         };
 
-        var summary = new CalcResultSummary {
-            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { a, b, total }
+        var summary = new CalcResultSummary
+        {
+            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { a, b },
+            OverallTotal = total
         };
 
         List<InvoicedProducer> invoiced =
@@ -339,8 +339,7 @@ public class BillingInstructionsProducerTests
 
         BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
 
-        var totalsRow = summary.ProducerDisposalFees.ToList()[2].BillingInstructionSection!;
-        Assert.IsNull(totalsRow.LiabilityDifference);
+        Assert.IsNull(summary.OverallTotal!.BillingInstructionSection!.LiabilityDifference);
     }
 
 
@@ -351,18 +350,18 @@ public class BillingInstructionsProducerTests
         {
             ProducerId = 0,
             Level = string.Empty,
-            LeaverDate = CommonConstants.Totals,
             ProducerName = "Totals",
             SubsidiaryId = string.Empty
         };
 
-        var summary = new CalcResultSummary {
-            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { total }
+        var summary = new CalcResultSummary
+        {
+            OverallTotal = total
         };
 
         BillingInstructionsProducer.SetValues(summary, new List<InvoicedProducer>(), new List<DefaultParamResultsClass>());
 
-        Assert.AreEqual(string.Empty, summary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!.MaterialThresholdBreached);
+        Assert.AreEqual(string.Empty, summary.OverallTotal!.BillingInstructionSection!.MaterialThresholdBreached);
     }
 
     [TestMethod]
@@ -925,12 +924,11 @@ public class BillingInstructionsProducerTests
     [TestMethod]
     public void CalculatePercentageLiabilityDifference_Total_ReturnsNull()
     {
-        calcResult.CalcResultSummary.ProducerDisposalFees.First().LeaverDate = CommonConstants.Totals;
+        var summary = TestDataHelper.GetCalcResultSummary();
 
-        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], new List<DefaultParamResultsClass>());
+        BillingInstructionsProducer.SetValues(summary, [defaultInvoicedProducer], new List<DefaultParamResultsClass>());
 
-        var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
-        Assert.IsNull(fee.PercentageLiabilityDifference);
+        Assert.IsNull(summary.OverallTotal!.BillingInstructionSection!.PercentageLiabilityDifference);
     }
 
     [TestMethod]

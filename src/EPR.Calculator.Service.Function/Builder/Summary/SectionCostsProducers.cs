@@ -62,6 +62,8 @@ internal static class SectionCosts
         setHeader(summary, BadDebtProvision(badDebt, total, apportionment, 100m));
         foreach (var fee in summary.ProducerDisposalFees)
             setFee(fee, BadDebtProvision(badDebt, total, apportionment, fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C));
+        if (summary.OverallTotal is not null)
+            setFee(summary.OverallTotal, BadDebtProvision(badDebt, total, apportionment, summary.OverallTotal.ProducerOverallPercentageOfCostsForOnePlus2A2B2C));
     }
 
     internal static CalcResultSummaryBadDebtProvision BadDebtProvision(

@@ -37,7 +37,8 @@ public class BillingInstructionsExporterTests
              "Tonnage % Threshold Breached (if tonnage changed)",
              "Suggested Billing Instruction",
              "Suggested Invoice Amount"],
-            ["£1250.89", "Tonnage Changed", "£580.73", "", "", "123.45%", "", "", "", "£4039.00"]
+            ["£1250.89", "Tonnage Changed", "£580.73", "", "", "123.45%", "", "", "", "£4039.00"],
+            ["-", "-", "£580.73", "", "", "-", "", "", "", "£4039.00"]
         };
 
         CsvTestUtils.AssertSquareCsv(expected, result, expectedLength: 10);

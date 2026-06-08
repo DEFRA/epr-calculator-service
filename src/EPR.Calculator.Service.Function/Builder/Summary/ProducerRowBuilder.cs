@@ -256,7 +256,7 @@ internal sealed class ProducerRowBuilder(
             IsProducerScaledup  = scaledupProducers.Any(p => p.ProducerId == producer.ProducerId)
                 ? CommonConstants.Yes
                 : CommonConstants.No,
-            IsPartialObligation = CalcResultSummaryUtil.IsProducerPartiallyObligated(producer, partialObligations, isTotalRow: false)
+            IsPartialObligation = CalcResultSummaryUtil.IsProducerPartiallyObligated(producer, partialObligations)
                 ? CommonConstants.Yes
                 : CommonConstants.No,
             StatusCode          = orgData?.StatusCode,
