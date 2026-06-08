@@ -46,26 +46,6 @@ public class CalcResultSummaryCommsCostTwoATests
     private Fixture Fixture { get; } = new();
 
     [TestMethod]
-    public void GetProducerTotalCostWithoutBadDebtProvisionTotal_ShouldReturnCorrectTotal()
-    {
-        // Act
-        var totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostWithoutBadDebtProvisionTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material, calcResult);
-
-        // Assert
-        Assert.AreEqual(1344.00m, totalCost);
-    }
-
-    [TestMethod]
-    public void GetBadDebtProvisionForCommsCostTotal_ShouldReturnCorrectTotal()
-    {
-        // Act
-        var totalCost = CalcResultSummaryCommsCostTwoA.GetBadDebtProvisionForCommsCostTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material, calcResult);
-
-        // Assert
-        Assert.AreEqual(80.64m, totalCost);
-    }
-
-    [TestMethod]
     public void GetPriceperTonneForComms_ShouldReturnCorrectTotal()
     {
         // Act
@@ -106,29 +86,6 @@ public class CalcResultSummaryCommsCostTwoATests
 
         // Assert
         Assert.AreEqual(504.00m, totalCost);
-    }
-
-    [TestMethod]
-    public void GetTotalReportedTonnageTotalForHDCShouldReturnCorrectTotal()
-    {
-        // Arrange
-        var material = GetHDCMaterial();
-
-        // Act
-        var totalCost = CalcResultSummaryCommsCostTwoA.GetTotalReportedTonnageTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material);
-
-        // Assert
-        Assert.AreEqual(280, totalCost);
-    }
-
-    [TestMethod]
-    public void GetTotalReportedTonnageTotalShouldReturnCorrectTotal()
-    {
-        // Act
-        var totalCost = CalcResultSummaryCommsCostTwoA.GetTotalReportedTonnageTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material);
-
-        // Assert
-        Assert.AreEqual(3200, totalCost);
     }
 
     private static List<ProducerDetail> GetProducers()

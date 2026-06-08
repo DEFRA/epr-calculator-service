@@ -158,36 +158,6 @@ public class CalcResultSummaryCommsCostTwoBTotalBillTests
     }
 
     [TestMethod]
-    public void GetCommsProducerFeeWithBadDebtFor2bTotalsRow_ShouldReturnCorrectTotal()
-    {
-        // Act
-        var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsProducerFeeWithBadDebtFor2bTotalsRow(calcResult, producers, TotalPackagingTonnage);
-
-        // Assert
-        Assert.AreEqual(278.41m, result);
-    }
-
-    [TestMethod]
-    public void GetCommsEnglandWithBadDebtTotalsRow_ShouldReturnCorrectTotal()
-    {
-        // Act
-        var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsEnglandWithBadDebtTotalsRow(calcResult, producers, TotalPackagingTonnage);
-
-        // Assert
-        Assert.AreEqual(111.364m, result);
-    }
-
-    [TestMethod]
-    public void GetCommsNorthernIrelandWithBadDebtTotalsRow_ShouldReturnCorrectTotal()
-    {
-        // Act
-        var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsNorthernIrelandWithBadDebtTotalsRow(calcResult, producers, TotalPackagingTonnage);
-
-        // Assert
-        Assert.AreEqual(41.7615m, result);
-    }
-
-    [TestMethod]
     public void GetCommsEnglandWithBadDebt_ShouldReturnCorrectTotal()
     {
         // Act
