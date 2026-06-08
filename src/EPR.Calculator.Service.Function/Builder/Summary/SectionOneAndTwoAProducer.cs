@@ -11,7 +11,7 @@ public static class SectionOneAndTwoAProducer
     {
         // TODO why are we copying from totals to summary?
         // TODO inline them into Summary Builder
-        summary.LocalAuthorityDisposalCostsSectionOne = totals.LocalAuthorityDisposalCostsSectionOne ?? CalcResultSummaryBadDebtProvision.Empty;
-        summary.CommsCostsSectionTwoA                 = totals.CommsCostsSectionTwoA;
+        summary.LADisposalCostsSection1 = totals.LADisposalCostsSection1;
+        summary.CommsCostsSection2a     = totals.CommsCostsSection2a;
     }
 }

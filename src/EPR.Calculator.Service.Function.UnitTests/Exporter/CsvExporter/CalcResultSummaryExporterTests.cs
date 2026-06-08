@@ -23,14 +23,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var runContext = TestDataHelper.CalculatorRun2025;
             var resultSummary = new CalcResultSummary
             {
-                ProducerDisposalFees = TestDataHelper.GetProducerDisposalFees(),
-                LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-                CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
-                TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
-                CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty,
-                SchemeAdministratorOperatingCosts = CalcResultSummaryBadDebtProvision.Empty,
-                LaDataPrepSection4 = CalcResultSummaryBadDebtProvision.Empty,
-                SaSetupCostsSection5 = CalcResultSummaryBadDebtProvision.Empty
+                ProducerDisposalFees = TestDataHelper.GetProducerDisposalFees()
             };
 
             var materials = TestDataHelper.GetMaterialDetails();

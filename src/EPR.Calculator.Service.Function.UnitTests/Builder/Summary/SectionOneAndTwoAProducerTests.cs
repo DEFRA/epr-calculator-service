@@ -14,19 +14,19 @@ public class SectionOneAndTwoAProducerTests
         ProducerId   = string.Empty,
         SubsidiaryId = string.Empty,
         ProducerName = string.Empty,
-        LocalAuthorityDisposalCostsSectionOne = new CalcResultSummaryBadDebtProvision
+        LADisposalCostsSection1 = new CalcResultSummaryBadDebtProvision
         {
           FeeWithoutBadDebtProvision = 4423.39438m,
           BadDebtProvision           = 265.4036628m,
           FeeWithBadDebtProvision = new ByCountryCost { England = 4688.7980428m, Wales = 0, Scotland = 0, NorthernIreland = 0 }
         },
-        CommsCostsSectionTwoA = new CalcResultSummaryBadDebtProvision
+        CommsCostsSection2a = new CalcResultSummaryBadDebtProvision
         {
             FeeWithoutBadDebtProvision = 1290.778m,
             BadDebtProvision           = 77.44668m,
             FeeWithBadDebtProvision    = new ByCountryCost { England = 1368.22468m, Wales = 0, Scotland = 0, NorthernIreland = 0 }
         },
-        CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
+        CommsCostsSection2c = CalcResultSummaryBadDebtProvision.Empty,
     };
 
     [TestMethod]
@@ -36,11 +36,11 @@ public class SectionOneAndTwoAProducerTests
 
         SectionOneAndTwoAProducer.SetValues(TotalsRow, summary);
 
-        Assert.AreEqual(4423.39438m,   summary.LocalAuthorityDisposalCostsSectionOne.FeeWithoutBadDebtProvision);
-        Assert.AreEqual(265.4036628m,  summary.LocalAuthorityDisposalCostsSectionOne.BadDebtProvision);
-        Assert.AreEqual(4688.7980428m, summary.LocalAuthorityDisposalCostsSectionOne.FeeWithBadDebtProvision.Total);
-        Assert.AreEqual(1290.778m,     summary.CommsCostsSectionTwoA.FeeWithoutBadDebtProvision);
-        Assert.AreEqual(77.44668m,     summary.CommsCostsSectionTwoA.BadDebtProvision);
-        Assert.AreEqual(1368.22468m,   summary.CommsCostsSectionTwoA.FeeWithBadDebtProvision.Total);
+        Assert.AreEqual(4423.39438m,   summary.LADisposalCostsSection1.FeeWithoutBadDebtProvision);
+        Assert.AreEqual(265.4036628m,  summary.LADisposalCostsSection1.BadDebtProvision);
+        Assert.AreEqual(4688.7980428m, summary.LADisposalCostsSection1.FeeWithBadDebtProvision.Total);
+        Assert.AreEqual(1290.778m,     summary.CommsCostsSection2a.FeeWithoutBadDebtProvision);
+        Assert.AreEqual(77.44668m,     summary.CommsCostsSection2a.BadDebtProvision);
+        Assert.AreEqual(1368.22468m,   summary.CommsCostsSection2a.FeeWithBadDebtProvision.Total);
     }
 }

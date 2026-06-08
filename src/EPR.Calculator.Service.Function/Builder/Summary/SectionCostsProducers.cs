@@ -21,13 +21,13 @@ public static class ThreeSaCostsProducer
             sectionTotal: calcResult.CalcResultParameterOtherCost.SaOperatingCost.Total,
             apportionment: calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment,
             setHeaders: (wo, bd, with) => {
-                summary.SchemeAdministratorOperatingCosts = new CalcResultSummaryBadDebtProvision {
+                summary.SaOperatingCostsSection3 = new CalcResultSummaryBadDebtProvision {
                     FeeWithoutBadDebtProvision = wo,
                     BadDebtProvision           = bd,
                     FeeWithBadDebtProvision    = with
                 };
             },
-            setFee: (fee, provision) => fee.SchemeAdministratorOperatingCosts = provision
+            setFee: (fee, provision) => fee.SaOperatingCostsSection3 = provision
         );
 }
 
@@ -49,7 +49,7 @@ public static class LaDataPrepCostsProducer
                     FeeWithBadDebtProvision    = with
                 };
             },
-            setFee: (fee, provision) => fee.LocalAuthorityDataPreparationCosts = provision
+            setFee: (fee, provision) => fee.LaDataPrepSection4 = provision
         );
 }
 
@@ -71,7 +71,7 @@ public static class SaSetupCostsProducer
                     FeeWithBadDebtProvision    = with
                 };
             },
-            setFee: (fee, provision) => fee.OneOffSchemeAdministrationSetupCosts = provision
+            setFee: (fee, provision) => fee.SaSetupCostsSection5 = provision
         );
 }
 

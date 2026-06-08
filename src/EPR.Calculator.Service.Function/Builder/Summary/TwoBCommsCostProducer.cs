@@ -8,7 +8,7 @@ public static class TwoBCommsCostProducer
     {
         var withoutbadDebtProvision = calcResult.CalcResultCommsCostReportDetail.CommsCostUkWide;
         var badDebtProvision = calcResult.CalcResultParameterOtherCost.BadDebtValue / 100 * withoutbadDebtProvision;
-        summary.CommsCostsHeaderFor2bTitle = new CalcResultSummaryBadDebtProvision
+        summary.CommsCostsSection2b = new CalcResultSummaryBadDebtProvision
         {
             FeeWithoutBadDebtProvision = withoutbadDebtProvision.Total,
             BadDebtProvision           = badDebtProvision.Total,

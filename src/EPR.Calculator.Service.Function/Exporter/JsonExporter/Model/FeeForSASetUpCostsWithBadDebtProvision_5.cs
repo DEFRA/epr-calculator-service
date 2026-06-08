@@ -29,7 +29,7 @@ public class FeeForSaSetUpCostsWithBadDebtProvision5
 
     public static FeeForSaSetUpCostsWithBadDebtProvision5 From(CalcResultSummaryProducerDisposalFees calcResultSummaryProducerDisposalFees)
     {
-        var costs = calcResultSummaryProducerDisposalFees.OneOffSchemeAdministrationSetupCosts;
+        var costs = calcResultSummaryProducerDisposalFees.SaSetupCostsSection5;
         return new FeeForSaSetUpCostsWithBadDebtProvision5
         {
             TotalProducerOneOffFeeForSASetUpCostsWithoutBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(costs?.FeeWithoutBadDebtProvision),

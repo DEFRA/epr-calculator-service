@@ -108,10 +108,7 @@ public static class BillingInstructionsProducer
         if (fee.Level != CommonConstants.LevelOne.ToString()) return null;
         if (!currentInvoicedTotalToDate.HasValue) return null;
 
-        var calc = fee.TotalProducerBillBreakdownCosts;
-        if (calc is null) return null;
-
-        var diff = Math.Round(calc.FeeWithBadDebtProvision.Total, 2) - Math.Round(currentInvoicedTotalToDate.Value, 2);
+        var diff = Math.Round(fee.TotalProducerBillBreakdownCosts.FeeWithBadDebtProvision.Total, 2) - Math.Round(currentInvoicedTotalToDate.Value, 2);
 
         return diff;
     }

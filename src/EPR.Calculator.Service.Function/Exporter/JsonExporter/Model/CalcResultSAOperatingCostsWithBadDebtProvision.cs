@@ -30,7 +30,7 @@ public class CalcResultSAOperatingCostsWithBadDebtProvision
 
      public static CalcResultSAOperatingCostsWithBadDebtProvision From(CalcResultSummaryProducerDisposalFees calcResultSummaryProducerDisposalFees)
     {
-        var costs = calcResultSummaryProducerDisposalFees.SchemeAdministratorOperatingCosts;
+        var costs = calcResultSummaryProducerDisposalFees.SaOperatingCostsSection3;
         return new CalcResultSAOperatingCostsWithBadDebtProvision
         {
             TotalProducerFeeForSAOperatingCosts_1_2a_2b_2c_WithoutBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(costs?.FeeWithoutBadDebtProvision),

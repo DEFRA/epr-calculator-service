@@ -24,21 +24,21 @@
 
         public bool isTotalRow { get; set; }
 
-        public required CalcResultSummaryBadDebtProvision? LocalAuthorityDisposalCostsSectionOne { get; set; }
+        public CalcResultSummaryBadDebtProvision LADisposalCostsSection1 { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
 
-        public required CalcResultSummaryBadDebtProvision CommsCostsSectionTwoA { get; set; }
+        public CalcResultSummaryBadDebtProvision CommsCostsSection2a { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
 
-        public CalcResultSummaryBadDebtProvision? CommsCostsSectionTwoB { get; set; }
+        public CalcResultSummaryBadDebtProvision CommsCostsSection2b { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
 
-        public required CalcResultSummaryBadDebtProvision CommsCostsSectionTwoC { get; set; }
+        public CalcResultSummaryBadDebtProvision CommsCostsSection2c { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
 
-        public CalcResultSummaryBadDebtProvision? SchemeAdministratorOperatingCosts { get; set; }
+        public CalcResultSummaryBadDebtProvision SaOperatingCostsSection3 { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
 
-        public CalcResultSummaryBadDebtProvision? LocalAuthorityDataPreparationCosts { get; set; }
+        public CalcResultSummaryBadDebtProvision LaDataPrepSection4 { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
 
-        public CalcResultSummaryBadDebtProvision? OneOffSchemeAdministrationSetupCosts { get; set; }
+        public CalcResultSummaryBadDebtProvision SaSetupCostsSection5 { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
 
-        public CalcResultSummaryBadDebtProvision? TotalProducerBillBreakdownCosts { get; set; }
+        public CalcResultSummaryBadDebtProvision TotalProducerBillBreakdownCosts { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
 
         public decimal PercentageofProducerReportedTonnagevsAllProducers { get; set; }
 

@@ -33,15 +33,15 @@ public class Section1DisposalExporter : ICalcResultSummaryPartExporter
     public void AppendGroupHeader(StringBuilder csvContent, CalcResultSummary resultSummary, IReadOnlyList<MaterialDetail> materials, bool applyModulation)
     {
         int count = GetColumnHeaders(materials, applyModulation).Count();
-        csvContent.Append(CsvSanitiser.SanitiseData(resultSummary.LocalAuthorityDisposalCostsSectionOne.FeeWithoutBadDebtProvision   , DecimalPlaces.Two, null, isCurrency: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(resultSummary.LocalAuthorityDisposalCostsSectionOne.BadDebtProvision             , DecimalPlaces.Two, null, isCurrency: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(resultSummary.LocalAuthorityDisposalCostsSectionOne.FeeWithBadDebtProvision.Total, DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(resultSummary.LADisposalCostsSection1.FeeWithoutBadDebtProvision   , DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(resultSummary.LADisposalCostsSection1.BadDebtProvision             , DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(resultSummary.LADisposalCostsSection1.FeeWithBadDebtProvision.Total, DecimalPlaces.Two, null, isCurrency: true));
         csvContent.Append(',', count - 3);
     }
 
     public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
     {
-        var costs = producer.LocalAuthorityDisposalCostsSectionOne;
+        var costs = producer.LADisposalCostsSection1;
         csvContent.Append(CsvSanitiser.SanitiseData(costs?.FeeWithoutBadDebtProvision             , DecimalPlaces.Two, null, isCurrency: true));
         csvContent.Append(CsvSanitiser.SanitiseData(costs?.BadDebtProvision                       , DecimalPlaces.Two, null, isCurrency: true));
         csvContent.Append(CsvSanitiser.SanitiseData(costs?.FeeWithBadDebtProvision.Total          , DecimalPlaces.Two, null, isCurrency: true));

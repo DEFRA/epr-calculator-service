@@ -18,8 +18,8 @@ public class TwoBCommsCostProducerTests
         TwoBCommsCostProducer.SetValues(calcResult, calcResult.CalcResultSummary);
 
         // Assert
-        Assert.AreEqual(2531m   , calcResult.CalcResultSummary.CommsCostsHeaderFor2bTitle.FeeWithoutBadDebtProvision);
-        Assert.AreEqual(151.86m , calcResult.CalcResultSummary.CommsCostsHeaderFor2bTitle.BadDebtProvision);
-        Assert.AreEqual(2682.86m, calcResult.CalcResultSummary.CommsCostsHeaderFor2bTitle.FeeWithBadDebtProvision.Total);
+        Assert.AreEqual(2531m   , calcResult.CalcResultSummary.CommsCostsSection2b.FeeWithoutBadDebtProvision);
+        Assert.AreEqual(151.86m , calcResult.CalcResultSummary.CommsCostsSection2b.BadDebtProvision);
+        Assert.AreEqual(2682.86m, calcResult.CalcResultSummary.CommsCostsSection2b.FeeWithBadDebtProvision.Total);
     }
 }

@@ -94,15 +94,15 @@ public class BillingFileExporter(
     {
         return new CalcResultSummary
         {
-            LocalAuthorityDisposalCostsSectionOne     = calcResultSummary.LocalAuthorityDisposalCostsSectionOne,
-            CommsCostsSectionTwoA                     = calcResultSummary.CommsCostsSectionTwoA,
-            CommsCostsHeaderFor2bTitle                = calcResultSummary.CommsCostsHeaderFor2bTitle,
+            LADisposalCostsSection1                   = calcResultSummary.LADisposalCostsSection1,
+            CommsCostsSection2a                       = calcResultSummary.CommsCostsSection2a,
+            CommsCostsSection2b                       = calcResultSummary.CommsCostsSection2b,
+            CommsCostsSection2c                       = calcResultSummary.CommsCostsSection2c,
+            SaOperatingCostsSection3                  = calcResultSummary.SaOperatingCostsSection3,
             LaDataPrepSection4                        = calcResultSummary.LaDataPrepSection4,
-            ProducerDisposalFees                      = GetAcceptedProducerDisposalFees(calcResultSummary.ProducerDisposalFees.ToList(), acceptedProducerIds),
-            SchemeAdministratorOperatingCosts         = calcResultSummary.SchemeAdministratorOperatingCosts,
             SaSetupCostsSection5                      = calcResultSummary.SaSetupCostsSection5,
             TotalOnePlus2A2B2CFeeWithBadDebtProvision = calcResultSummary.TotalOnePlus2A2B2CFeeWithBadDebtProvision,
-            TwoCCommsCosts                            = calcResultSummary.TwoCCommsCosts
+            ProducerDisposalFees                      = GetAcceptedProducerDisposalFees(calcResultSummary.ProducerDisposalFees.ToList(), acceptedProducerIds)
         };
     }
 
@@ -121,24 +121,21 @@ public class BillingFileExporter(
     // TODO we should just write this directly into the CSV if it's needed
     private static CalcResultSummaryProducerDisposalFees ZeroedTotalRow => new()
     {
-        ProducerId                            = string.Empty,
-        SubsidiaryId                          = string.Empty,
-        ProducerName                          = string.Empty,
-        TradingName                           = string.Empty,
-        Level                                 = string.Empty,
-        StatusCode                            = string.Empty,
-        IsProducerScaledup                    = string.Empty,
-        IsPartialObligation                   = string.Empty,
-        JoinerDate                            = string.Empty,
-        LeaverDate                            = CommonConstants.Totals,
-        TonnageChangeCount                    = string.Empty,
-        TonnageChangeAdvice                   = string.Empty,
-        isTotalRow                            = true,
-        isOverallTotalRow                     = true,
-        LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-        CommsCostsSectionTwoA                 = CalcResultSummaryBadDebtProvision.Empty,
-        CommsCostsSectionTwoC                 = CalcResultSummaryBadDebtProvision.Empty,
-        BillingInstructionSection             = new CalcResultSummaryBillingInstruction { SuggestedBillingInstruction = string.Empty }
+        ProducerId                 = string.Empty,
+        SubsidiaryId               = string.Empty,
+        ProducerName               = string.Empty,
+        TradingName                = string.Empty,
+        Level                      = string.Empty,
+        StatusCode                 = string.Empty,
+        IsProducerScaledup         = string.Empty,
+        IsPartialObligation        = string.Empty,
+        JoinerDate                 = string.Empty,
+        LeaverDate                 = CommonConstants.Totals,
+        TonnageChangeCount         = string.Empty,
+        TonnageChangeAdvice        = string.Empty,
+        isTotalRow                 = true,
+        isOverallTotalRow          = true,
+        BillingInstructionSection  = new CalcResultSummaryBillingInstruction { SuggestedBillingInstruction = string.Empty }
     };
 
     private static CalcResultScaledupProducers GetScaledUpProducersForExport(

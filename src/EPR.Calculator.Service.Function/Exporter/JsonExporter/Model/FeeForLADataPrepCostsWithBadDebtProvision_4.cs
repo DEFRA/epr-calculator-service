@@ -31,7 +31,7 @@ public class FeeForLADataPrepCostsWithBadDebtProvision_4
 
     public static FeeForLADataPrepCostsWithBadDebtProvision_4 From(CalcResultSummaryProducerDisposalFees calcResultSummaryProducerDisposalFees)
     {
-        var costs = calcResultSummaryProducerDisposalFees.LocalAuthorityDataPreparationCosts;
+        var costs = calcResultSummaryProducerDisposalFees.LaDataPrepSection4;
         return new FeeForLADataPrepCostsWithBadDebtProvision_4
         {
             TotalProducerFeeForLADataPrepCostsWithoutBadDebtProvision  = CurrencyConverterUtils.ConvertToCurrency(costs?.FeeWithoutBadDebtProvision),

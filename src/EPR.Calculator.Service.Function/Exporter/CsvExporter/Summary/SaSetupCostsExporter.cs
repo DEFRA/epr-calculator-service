@@ -42,7 +42,7 @@ public class SaSetupCostsExporter : ICalcResultSummaryPartExporter
 
     public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
     {
-        var costs = producer.OneOffSchemeAdministrationSetupCosts;
+        var costs = producer.SaSetupCostsSection5;
         csvContent.Append(CsvSanitiser.SanitiseData(costs?.FeeWithoutBadDebtProvision             , DecimalPlaces.Two, null, isCurrency: true));
         csvContent.Append(CsvSanitiser.SanitiseData(costs?.BadDebtProvision                       , DecimalPlaces.Two, null, isCurrency: true));
         csvContent.Append(CsvSanitiser.SanitiseData(costs?.FeeWithBadDebtProvision.Total          , DecimalPlaces.Two, null, isCurrency: true));

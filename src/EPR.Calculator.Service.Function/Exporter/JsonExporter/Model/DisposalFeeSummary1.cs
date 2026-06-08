@@ -38,13 +38,13 @@ public class DisposalFeeSummary1
     {
         return new DisposalFeeSummary1
         {
-            TotalProducerDisposalFeeWithoutBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(summary.LocalAuthorityDisposalCostsSectionOne.FeeWithoutBadDebtProvision),
-            BadDebtProvision                                = CurrencyConverterUtils.ConvertToCurrency(summary.LocalAuthorityDisposalCostsSectionOne.BadDebtProvision),
-            TotalProducerDisposalFeeWithBadDebtProvision    = CurrencyConverterUtils.ConvertToCurrency(summary.LocalAuthorityDisposalCostsSectionOne.FeeWithBadDebtProvision.Total),
-            EnglandTotal                                    = CurrencyConverterUtils.ConvertToCurrency(summary.LocalAuthorityDisposalCostsSectionOne.FeeWithBadDebtProvision.England),
-            WalesTotal                                      = CurrencyConverterUtils.ConvertToCurrency(summary.LocalAuthorityDisposalCostsSectionOne.FeeWithBadDebtProvision.Wales),
-            ScotlandTotal                                   = CurrencyConverterUtils.ConvertToCurrency(summary.LocalAuthorityDisposalCostsSectionOne.FeeWithBadDebtProvision.Scotland),
-            NorthernIrelandTotal                            = CurrencyConverterUtils.ConvertToCurrency(summary.LocalAuthorityDisposalCostsSectionOne.FeeWithBadDebtProvision.NorthernIreland),
+            TotalProducerDisposalFeeWithoutBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(summary.LADisposalCostsSection1.FeeWithoutBadDebtProvision),
+            BadDebtProvision                                = CurrencyConverterUtils.ConvertToCurrency(summary.LADisposalCostsSection1.BadDebtProvision),
+            TotalProducerDisposalFeeWithBadDebtProvision    = CurrencyConverterUtils.ConvertToCurrency(summary.LADisposalCostsSection1.FeeWithBadDebtProvision.Total),
+            EnglandTotal                                    = CurrencyConverterUtils.ConvertToCurrency(summary.LADisposalCostsSection1.FeeWithBadDebtProvision.England),
+            WalesTotal                                      = CurrencyConverterUtils.ConvertToCurrency(summary.LADisposalCostsSection1.FeeWithBadDebtProvision.Wales),
+            ScotlandTotal                                   = CurrencyConverterUtils.ConvertToCurrency(summary.LADisposalCostsSection1.FeeWithBadDebtProvision.Scotland),
+            NorthernIrelandTotal                            = CurrencyConverterUtils.ConvertToCurrency(summary.LADisposalCostsSection1.FeeWithBadDebtProvision.NorthernIreland),
             TonnageChangeCount                              = summary.TonnageChangeCount ?? CommonConstants.Hyphen,
             TonnageChangeAdvice                             = summary.TonnageChangeAdvice ?? CommonConstants.Hyphen,
         };

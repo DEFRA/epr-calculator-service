@@ -30,12 +30,12 @@ public class Section2aCommsExporter : ICalcResultSummaryPartExporter
 
     public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
     {
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.CommsCostsSectionTwoA.FeeWithoutBadDebtProvision             , DecimalPlaces.Two, null, isCurrency: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.CommsCostsSectionTwoA.BadDebtProvision                       , DecimalPlaces.Two, null, isCurrency: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.CommsCostsSectionTwoA.FeeWithBadDebtProvision.Total          , DecimalPlaces.Two, null, isCurrency: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.CommsCostsSectionTwoA.FeeWithBadDebtProvision.England        , DecimalPlaces.Two, null, isCurrency: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.CommsCostsSectionTwoA.FeeWithBadDebtProvision.Wales          , DecimalPlaces.Two, null, isCurrency: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.CommsCostsSectionTwoA.FeeWithBadDebtProvision.Scotland       , DecimalPlaces.Two, null, isCurrency: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.CommsCostsSectionTwoA.FeeWithBadDebtProvision.NorthernIreland, DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.CommsCostsSection2a.FeeWithoutBadDebtProvision             , DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.CommsCostsSection2a.BadDebtProvision                       , DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.CommsCostsSection2a.FeeWithBadDebtProvision.Total          , DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.CommsCostsSection2a.FeeWithBadDebtProvision.England        , DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.CommsCostsSection2a.FeeWithBadDebtProvision.Wales          , DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.CommsCostsSection2a.FeeWithBadDebtProvision.Scotland       , DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.CommsCostsSection2a.FeeWithBadDebtProvision.NorthernIreland, DecimalPlaces.Two, null, isCurrency: true));
     }
 }

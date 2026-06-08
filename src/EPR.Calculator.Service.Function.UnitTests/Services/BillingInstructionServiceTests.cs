@@ -50,13 +50,7 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
             },
             CalcResultParameterOtherCost = new CalcResultParameterOtherCost
             {
-                SchemeSetupCost = new ByCountryCost
-                {
-                    England = 0,
-                    Wales = 0,
-                    Scotland = 0,
-                    NorthernIreland = 0
-                }
+                SchemeSetupCost = ByCountryCost.Empty
             },
             CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
             {
@@ -64,13 +58,6 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
             },
             CalcResultSummary = new CalcResultSummary
             {
-                LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-                CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
-                CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty,
-                TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
-                SchemeAdministratorOperatingCosts = CalcResultSummaryBadDebtProvision.Empty,
-                LaDataPrepSection4 = CalcResultSummaryBadDebtProvision.Empty,
-                SaSetupCostsSection5 = CalcResultSummaryBadDebtProvision.Empty,
                 ProducerDisposalFees = fixture.Create<List<CalcResultSummaryProducerDisposalFees>>()
             },
             CalcResultCancelledProducers = new CalcResultCancelledProducersResponse
@@ -131,13 +118,7 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
             },
             CalcResultParameterOtherCost = new CalcResultParameterOtherCost
             {
-                SchemeSetupCost = new ByCountryCost
-                {
-                    England = 0,
-                    Wales = 0,
-                    Scotland = 0,
-                    NorthernIreland = 0
-                }
+                SchemeSetupCost = ByCountryCost.Empty
             },
             CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
             {
@@ -145,13 +126,6 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
             },
             CalcResultSummary = new CalcResultSummary
             {
-                LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-                CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
-                CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty,
-                TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
-                SchemeAdministratorOperatingCosts = CalcResultSummaryBadDebtProvision.Empty,
-                LaDataPrepSection4 = CalcResultSummaryBadDebtProvision.Empty,
-                SaSetupCostsSection5 = CalcResultSummaryBadDebtProvision.Empty,
                 ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
                 {
                     new()
@@ -162,9 +136,6 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
                         ProducerName = "Test",
                         SubsidiaryId = "1",
                         Level = CommonConstants.LevelTwo.ToString(),
-                        CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
-                        CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty,
-                        LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
                         BillingInstructionSection = new CalcResultSummaryBillingInstruction
                         {
                             CurrentYearInvoiceTotalToDate = 1000m,
@@ -220,26 +191,13 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
             },
             CalcResultParameterOtherCost = new CalcResultParameterOtherCost
             {
-                SchemeSetupCost = new ByCountryCost
-                {
-                    England = 0,
-                    Wales = 0,
-                    Scotland = 0,
-                    NorthernIreland = 0
-                }
+                SchemeSetupCost = ByCountryCost.Empty
             },
             CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
             {
                 ByMaterial = []
             },
             CalcResultSummary = new CalcResultSummary {
-                LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-                CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
-                CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty,
-                TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
-                SchemeAdministratorOperatingCosts = CalcResultSummaryBadDebtProvision.Empty,
-                LaDataPrepSection4 = CalcResultSummaryBadDebtProvision.Empty,
-                SaSetupCostsSection5 = CalcResultSummaryBadDebtProvision.Empty,
                 ProducerDisposalFees = null!
             },
             CalcResultProjectedProducers = new CalcResultProjectedProducers(){

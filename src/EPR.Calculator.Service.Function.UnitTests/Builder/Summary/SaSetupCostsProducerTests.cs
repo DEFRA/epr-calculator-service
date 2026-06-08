@@ -56,13 +56,6 @@ public class SaSetupCostsProducerTests
         CalcResultOnePlusFourApportionment = TestDataHelper.GetCalcResultOnePlusFourApportionment(),
         CalcResultSummary = new CalcResultSummary
         {
-            LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-            CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
-            CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty,
-            TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
-            SchemeAdministratorOperatingCosts = CalcResultSummaryBadDebtProvision.Empty,
-            LaDataPrepSection4 = CalcResultSummaryBadDebtProvision.Empty,
-            SaSetupCostsSection5 = CalcResultSummaryBadDebtProvision.Empty,
             ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
             {
                 new()
@@ -71,11 +64,8 @@ public class SaSetupCostsProducerTests
                     ProducerDisposalFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>(),
                     ProducerId = "1",
                     ProducerName = "Test",
-                    LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
                     SubsidiaryId = "1",
-                    ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 1,
-                    CommsCostsSectionTwoA = CalcResultSummaryBadDebtProvision.Empty,
-                    CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty
+                    ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 1
                 }
             }
         },
@@ -97,12 +87,12 @@ public class SaSetupCostsProducerTests
         Assert.AreEqual(100    , calcResult.CalcResultSummary.SaSetupCostsSection5.FeeWithoutBadDebtProvision);
         Assert.AreEqual(6      , calcResult.CalcResultSummary.SaSetupCostsSection5.BadDebtProvision);
         Assert.AreEqual(106    , calcResult.CalcResultSummary.SaSetupCostsSection5.FeeWithBadDebtProvision.Total);
-        Assert.AreEqual(1      , calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].OneOffSchemeAdministrationSetupCosts!.FeeWithoutBadDebtProvision);
-        Assert.AreEqual(0.06m  , calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].OneOffSchemeAdministrationSetupCosts!.BadDebtProvision);
-        Assert.AreEqual(1.06m  , calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].OneOffSchemeAdministrationSetupCosts!.FeeWithBadDebtProvision.Total);
-        Assert.AreEqual(0.4240m, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].OneOffSchemeAdministrationSetupCosts!.FeeWithBadDebtProvision.England);
-        Assert.AreEqual(0.1060m, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].OneOffSchemeAdministrationSetupCosts!.FeeWithBadDebtProvision.Wales);
-        Assert.AreEqual(0.1590m, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].OneOffSchemeAdministrationSetupCosts!.FeeWithBadDebtProvision.Scotland);
-        Assert.AreEqual(0.3710m, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].OneOffSchemeAdministrationSetupCosts!.FeeWithBadDebtProvision.NorthernIreland);
+        Assert.AreEqual(1      , calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].SaSetupCostsSection5!.FeeWithoutBadDebtProvision);
+        Assert.AreEqual(0.06m  , calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].SaSetupCostsSection5!.BadDebtProvision);
+        Assert.AreEqual(1.06m  , calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].SaSetupCostsSection5!.FeeWithBadDebtProvision.Total);
+        Assert.AreEqual(0.4240m, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].SaSetupCostsSection5!.FeeWithBadDebtProvision.England);
+        Assert.AreEqual(0.1060m, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].SaSetupCostsSection5!.FeeWithBadDebtProvision.Wales);
+        Assert.AreEqual(0.1590m, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].SaSetupCostsSection5!.FeeWithBadDebtProvision.Scotland);
+        Assert.AreEqual(0.3710m, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].SaSetupCostsSection5!.FeeWithBadDebtProvision.NorthernIreland);
     }
 }

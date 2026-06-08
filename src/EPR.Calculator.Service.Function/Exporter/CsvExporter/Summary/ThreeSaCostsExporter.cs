@@ -34,15 +34,15 @@ public class ThreeSaCostsExporter : ICalcResultSummaryPartExporter
     public void AppendGroupHeader(StringBuilder csvContent, CalcResultSummary resultSummary, IReadOnlyList<MaterialDetail> materials, bool applyModulation)
     {
         int count = GetColumnHeaders(materials, applyModulation).Count();
-        csvContent.Append(CsvSanitiser.SanitiseData(resultSummary.SchemeAdministratorOperatingCosts.FeeWithoutBadDebtProvision   , DecimalPlaces.Two, null, isCurrency: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(resultSummary.SchemeAdministratorOperatingCosts.BadDebtProvision             , DecimalPlaces.Two, null, isCurrency: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(resultSummary.SchemeAdministratorOperatingCosts.FeeWithBadDebtProvision.Total, DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(resultSummary.SaOperatingCostsSection3.FeeWithoutBadDebtProvision   , DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(resultSummary.SaOperatingCostsSection3.BadDebtProvision             , DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(resultSummary.SaOperatingCostsSection3.FeeWithBadDebtProvision.Total, DecimalPlaces.Two, null, isCurrency: true));
         csvContent.Append(',', count - 3);
     }
 
     public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
     {
-        var costs = producer.SchemeAdministratorOperatingCosts;
+        var costs = producer.SaOperatingCostsSection3;
         csvContent.Append(CsvSanitiser.SanitiseData(costs?.FeeWithoutBadDebtProvision             , DecimalPlaces.Two, null, isCurrency: true));
         csvContent.Append(CsvSanitiser.SanitiseData(costs?.BadDebtProvision                       , DecimalPlaces.Two, null, isCurrency: true));
         csvContent.Append(CsvSanitiser.SanitiseData(costs?.FeeWithBadDebtProvision.Total          , DecimalPlaces.Two, null, isCurrency: true));

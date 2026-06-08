@@ -3,24 +3,23 @@
     public class CalcResultSummary
     {
         //Section-(1) & (2a)
-        public required CalcResultSummaryBadDebtProvision LocalAuthorityDisposalCostsSectionOne { get; set; }
+        public CalcResultSummaryBadDebtProvision LADisposalCostsSection1 { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
 
-        public required CalcResultSummaryBadDebtProvision CommsCostsSectionTwoA { get; set; }
+        public CalcResultSummaryBadDebtProvision CommsCostsSection2a { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
 
-        // TODO rename CommsCostsSectionTwoB
-        public required CalcResultSummaryBadDebtProvision CommsCostsHeaderFor2bTitle { get; set; }
+        public CalcResultSummaryBadDebtProvision CommsCostsSection2b { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
 
-        public required CalcResultSummaryBadDebtProvision TwoCCommsCosts { get; set; }
+        public CalcResultSummaryBadDebtProvision CommsCostsSection2c { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
 
         // Section Total bill (1 + 2a + 2b + 2c)
         public decimal TotalOnePlus2A2B2CFeeWithBadDebtProvision { get; set; }
         // End Section Total bill (1 + 2a + 2b + 2c)
 
-        public required CalcResultSummaryBadDebtProvision LaDataPrepSection4 { get; set; }
+        public CalcResultSummaryBadDebtProvision LaDataPrepSection4 { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
 
-        public required CalcResultSummaryBadDebtProvision SchemeAdministratorOperatingCosts{ get; set; }
+        public CalcResultSummaryBadDebtProvision SaOperatingCostsSection3 { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
 
-        public required CalcResultSummaryBadDebtProvision SaSetupCostsSection5 { get; set; }
+        public CalcResultSummaryBadDebtProvision SaSetupCostsSection5 { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
 
         public IEnumerable<CalcResultSummaryProducerDisposalFees> ProducerDisposalFees { get; set; }
             = new List<CalcResultSummaryProducerDisposalFees>();
