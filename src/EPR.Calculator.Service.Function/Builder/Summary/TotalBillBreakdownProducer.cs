@@ -21,7 +21,7 @@ public static class TotalBillBreakdownProducer
     private static decimal? GetTotalProducerBillWithoutBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
     {
         return fee.LocalAuthorityDisposalCostsSectionOne?.FeeWithoutBadDebtProvision
-            + fee.CommunicationCostsSectionTwoA?.FeeWithoutBadDebtProvision
+            + fee.CommsCosts.FeeWithoutBadDebtProvision
             + fee.CommunicationCostsSectionTwoB?.FeeWithoutBadDebtProvision
             + fee.TwoCTotalProducerFeeForCommsCostsWithoutBadDebt
             + fee.SchemeAdministratorOperatingCosts?.FeeWithoutBadDebtProvision
@@ -32,7 +32,7 @@ public static class TotalBillBreakdownProducer
     private static decimal? GetBadDebtProvisionForTotalProducerBill(CalcResultSummaryProducerDisposalFees fee)
     {
         return fee.LocalAuthorityDisposalCostsSectionOne?.BadDebtProvision
-            + fee.CommunicationCostsSectionTwoA?.BadDebtProvision
+            + fee.CommsCosts.BadDebtProvision
             + fee.CommunicationCostsSectionTwoB?.BadDebtProvision
             + fee.TwoCBadDebtProvision
             + fee.SchemeAdministratorOperatingCosts?.BadDebtProvision
@@ -43,7 +43,7 @@ public static class TotalBillBreakdownProducer
     private static ByCountryCost GetTotalProducerBillWithBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
     {
         return (fee.LocalAuthorityDisposalCostsSectionOne?.FeeWithBadDebtProvision ?? ByCountryCost.Empty)
-            + (fee.CommunicationCostsSectionTwoA?.FeeWithBadDebtProvision ?? ByCountryCost.Empty)
+            + fee.CommsCosts.FeeWithBadDebtProvision
             + (fee.CommunicationCostsSectionTwoB?.FeeWithBadDebtProvision ?? ByCountryCost.Empty)
             + fee.TwoCTotalProducerFeeForCommsCostsWithBadDebt
             + (fee.SchemeAdministratorOperatingCosts?.FeeWithBadDebtProvision ?? ByCountryCost.Empty)

@@ -149,7 +149,7 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
                         ProducerId = "1",
                         ProducerName = "Test",
                         LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-                        TotalProducerCommsFeeWithBadDebtProvision = ByCountryCost.Empty,
+                        CommsCosts = CalcResultSummaryBadDebtProvision.Empty,
                         SubsidiaryId = "1",
                         Level = CommonConstants.LevelTwo.ToString(),
                         TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty,

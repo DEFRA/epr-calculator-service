@@ -297,16 +297,13 @@ public static partial class TestDataHelper
                 ProducerName = "Allied Packaging",
                 Level = "1",
                 isTotalRow = false,
-                TotalProducerCommsFee = 1290.778m,
-                BadDebtProvisionComms = 77.44668m,
-                TotalProducerCommsFeeWithBadDebtProvision = new ByCountryCost { England = 718.2251815154783m, Wales = 181.2690740598454m, Scotland = 332.8499847265775m, NorthernIreland = 135.88043969809883m },
                 LocalAuthorityDisposalCostsSectionOne = new CalcResultSummaryBadDebtProvision
                 {
                     FeeWithoutBadDebtProvision = 4423.39438m,
                     BadDebtProvision           = 265.4036628m,
                     FeeWithBadDebtProvision    = new ByCountryCost { England = 2534.2359097426884m, Wales = 571.2417008090152m, Scotland = 1137.8673076088023m, NorthernIreland = 445.4531246394942m }
                 },
-                CommunicationCostsSectionTwoA = new CalcResultSummaryBadDebtProvision
+                CommsCosts = new CalcResultSummaryBadDebtProvision
                 {
                     FeeWithoutBadDebtProvision = 1290.778m,
                     BadDebtProvision           = 77.44668m,
@@ -381,16 +378,13 @@ public static partial class TestDataHelper
                 ProducerName = "Allied Packaging",
                 Level = "1",
                 isTotalRow = false,
-                TotalProducerCommsFee = 1290.778m,
-                BadDebtProvisionComms = 77.44668m,
-                TotalProducerCommsFeeWithBadDebtProvision = new ByCountryCost { England = 718.2251815154783m, Wales = 181.2690740598454m, Scotland = 332.8499847265775m, NorthernIreland = 135.88043969809883m },
                 LocalAuthorityDisposalCostsSectionOne = new CalcResultSummaryBadDebtProvision
                 {
                     FeeWithoutBadDebtProvision = 4423.39438m,
                     BadDebtProvision           = 265.4036628m,
                     FeeWithBadDebtProvision    = new ByCountryCost { England = 2534.2359097426884m, Wales = 571.2417008090152m, Scotland = 1137.8673076088023m, NorthernIreland = 445.4531246394942m }
                 },
-                CommunicationCostsSectionTwoA = new CalcResultSummaryBadDebtProvision
+                CommsCosts = new CalcResultSummaryBadDebtProvision
                 {
                     FeeWithoutBadDebtProvision = 1290.778m,
                     BadDebtProvision           = 77.44668m,
@@ -466,16 +460,13 @@ public static partial class TestDataHelper
                 ProducerName = "Allied Packaging",
                 Level = "2",
                 isTotalRow = false,
-                TotalProducerCommsFee = 1290.778m,
-                BadDebtProvisionComms = 77.44668m,
-                TotalProducerCommsFeeWithBadDebtProvision = new ByCountryCost { England = 718.2251815154783m, Wales = 181.2690740598454m, Scotland = 332.8499847265775m, NorthernIreland = 135.88043969809883m },
                 LocalAuthorityDisposalCostsSectionOne = new CalcResultSummaryBadDebtProvision
                 {
                     FeeWithoutBadDebtProvision = 4423.39438m,
                     BadDebtProvision           = 265.4036628m,
                     FeeWithBadDebtProvision    = new ByCountryCost { England = 2534.2359097426884m, Wales = 571.2417008090152m, Scotland = 1137.8673076088023m, NorthernIreland = 445.4531246394942m }
                 },
-                CommunicationCostsSectionTwoA = new CalcResultSummaryBadDebtProvision
+                CommsCosts = new CalcResultSummaryBadDebtProvision
                 {
                     FeeWithoutBadDebtProvision = 1290.778m,
                     BadDebtProvision           = 77.44668m,

@@ -39,7 +39,7 @@ public class TotalBillBreakdownProducerTests
         // Arrange
         var data = calcResult.CalcResultSummary;
         data.ProducerDisposalFees.ToList()[0].LocalAuthorityDisposalCostsSectionOne = null;
-        data.ProducerDisposalFees.ToList()[0].CommunicationCostsSectionTwoA = null;
+        data.ProducerDisposalFees.ToList()[0].CommsCosts = CalcResultSummaryBadDebtProvision.Empty;
         data.ProducerDisposalFees.ToList()[0].CommunicationCostsSectionTwoB = null;
         data.ProducerDisposalFees.ToList()[0].TwoCTotalProducerFeeForCommsCostsWithoutBadDebt = 0;
         data.ProducerDisposalFees.ToList()[0].TwoCBadDebtProvision = 0;

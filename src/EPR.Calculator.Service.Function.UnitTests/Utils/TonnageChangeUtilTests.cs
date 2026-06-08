@@ -119,7 +119,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Utils
                 Level = level,
                 TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty,
                 LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-                TotalProducerCommsFeeWithBadDebtProvision = ByCountryCost.Empty,
+                CommsCosts = CalcResultSummaryBadDebtProvision.Empty,
                 ProducerDisposalFeesByMaterial =
                     new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>
                     {

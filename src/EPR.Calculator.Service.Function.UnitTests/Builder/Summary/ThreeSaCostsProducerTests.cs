@@ -67,7 +67,7 @@ public class ThreeSaCostsProducerTests
                     ProducerId = "1",
                     ProducerName = "Test",
                     LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
-                    TotalProducerCommsFeeWithBadDebtProvision = ByCountryCost.Empty,
+                    CommsCosts = CalcResultSummaryBadDebtProvision.Empty,
                     SubsidiaryId = "1",
                     ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 1,
                     TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty

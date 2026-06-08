@@ -29,7 +29,7 @@ public class OnePlus2A2B2CProducerTests
         // Act
         var data = calcResult.CalcResultSummary;
         data.ProducerDisposalFees.ToList()[0].LocalAuthorityDisposalCostsSectionOne = null;
-        data.ProducerDisposalFees.ToList()[0].CommunicationCostsSectionTwoA = null;
+        data.ProducerDisposalFees.ToList()[0].CommsCosts = CalcResultSummaryBadDebtProvision.Empty;
         data.ProducerDisposalFees.ToList()[0].CommunicationCostsSectionTwoB = null;
 
         data.TotalFeeforLADisposalCostswithBadDebtprovision1 = 0;

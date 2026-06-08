@@ -33,7 +33,7 @@ public class CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2A
 
     public static CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2A From(CalcResultSummaryProducerDisposalFees calcResultSummaryProducerDisposalFees)
     {
-        var costs = calcResultSummaryProducerDisposalFees.CommunicationCostsSectionTwoA;
+        var costs = calcResultSummaryProducerDisposalFees.CommsCosts;
         return new CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2A
         {
             TotalProducerFeeForCommsCostsWithoutBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(costs?.FeeWithoutBadDebtProvision),

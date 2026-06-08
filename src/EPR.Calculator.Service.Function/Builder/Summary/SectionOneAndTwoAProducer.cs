@@ -14,8 +14,8 @@ public static class SectionOneAndTwoAProducer
         summary.BadDebtProvisionFor1                            = totals.LocalAuthorityDisposalCostsSectionOne.BadDebtProvision;
         summary.TotalFeeforLADisposalCostswithBadDebtprovision1 = totals.LocalAuthorityDisposalCostsSectionOne.FeeWithBadDebtProvision.Total;
 
-        summary.TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A   = totals.TotalProducerCommsFee;
-        summary.BadDebtProvisionFor2A                                 = totals.CommunicationCostsSectionTwoA?.BadDebtProvision ?? 0m;
-        summary.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A = totals.TotalProducerCommsFeeWithBadDebtProvision.Total;
+        summary.TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A   = totals.CommsCosts.FeeWithoutBadDebtProvision;
+        summary.BadDebtProvisionFor2A                                 = totals.CommsCosts.BadDebtProvision;
+        summary.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A = totals.CommsCosts.FeeWithBadDebtProvision.Total;
     }
 }

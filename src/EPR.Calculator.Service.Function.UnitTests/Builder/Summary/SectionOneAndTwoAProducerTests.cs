@@ -20,12 +20,11 @@ public class SectionOneAndTwoAProducerTests
           BadDebtProvision           = 265.4036628m,
           FeeWithBadDebtProvision = new ByCountryCost { England = 4688.7980428m, Wales = 0, Scotland = 0, NorthernIreland = 0 }
         },
-        TotalProducerCommsFee                        = 1290.778m,
-        TotalProducerCommsFeeWithBadDebtProvision     = new ByCountryCost { England = 1368.22468m, Wales = 0, Scotland = 0, NorthernIreland = 0 },
-        CommunicationCostsSectionTwoA = new CalcResultSummaryBadDebtProvision
+        CommsCosts = new CalcResultSummaryBadDebtProvision
         {
-            BadDebtProvision = 77.44668m,
-            FeeWithBadDebtProvision = ByCountryCost.Empty
+            FeeWithoutBadDebtProvision = 1290.778m,
+            BadDebtProvision           = 77.44668m,
+            FeeWithBadDebtProvision    = new ByCountryCost { England = 1368.22468m, Wales = 0, Scotland = 0, NorthernIreland = 0 }
         },
         TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty,
     };

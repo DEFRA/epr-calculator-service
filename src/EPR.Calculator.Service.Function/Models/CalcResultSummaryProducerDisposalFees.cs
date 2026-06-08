@@ -24,16 +24,10 @@
 
         public bool isTotalRow { get; set; }
 
-        // TODO Comms CalcResultSummaryBadDebtProvision? we already have this?
-        public decimal TotalProducerCommsFee { get; set; }
-
-        public decimal BadDebtProvisionComms { get; set; }
-
-        public required ByCountryCost TotalProducerCommsFeeWithBadDebtProvision { get; set; }
-
         public CalcResultSummaryBadDebtProvision? LocalAuthorityDisposalCostsSectionOne { get; set; }
 
-        public CalcResultSummaryBadDebtProvision? CommunicationCostsSectionTwoA { get; set; }
+        // aka CommsCost Section 2a
+        public required CalcResultSummaryBadDebtProvision CommsCosts { get; set; }
 
         public CalcResultSummaryBadDebtProvision? CommunicationCostsSectionTwoB { get; set; }
 
