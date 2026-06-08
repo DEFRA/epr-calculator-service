@@ -1,6 +1,4 @@
-using System.Diagnostics;
 using EPR.Calculator.API.Data;
-using EPR.Calculator.Service.Function.Logging;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.Services.CommonDataApi;
 using Microsoft.EntityFrameworkCore;
@@ -16,12 +14,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.IntegrationTests;
 
 public abstract class BaseIntegrationTest
 {
-    protected static ServiceProvider Provider { get; private set; } = null!;
-
     private static readonly MsSqlContainer SqlContainer =
         new MsSqlBuilder("mcr.microsoft.com/mssql/server:2022-latest")
             .WithReuse(true)
             .Build();
+
+    protected static ServiceProvider Provider { get; private set; } = null!;
 
     public static async Task InitializeAsync()
     {
@@ -68,13 +66,10 @@ public abstract class BaseIntegrationTest
             .AddLogging(x =>
             {
                 x.ClearProviders();
-                x.AddSerilog(Log.Logger, dispose: true);
+                x.AddSerilog(Log.Logger, true);
             })
             .AddAppDependencies()
-            .AddDbContextFactory<ApplicationDBContext>(options =>
-            {
-                options.UseSqlServer(SqlContainer.GetConnectionString());
-            })
+            .AddDbContextFactory<ApplicationDBContext>(options => { options.UseSqlServer(SqlContainer.GetConnectionString()); })
             .RemoveAll<CommonDataApiHttpClient>()
             .AddSingleton<FakeCommonDataApiClient>()
             .AddSingleton<ICommonDataApiClient>(sp => sp.GetRequiredService<FakeCommonDataApiClient>())
@@ -88,10 +83,28 @@ public abstract class BaseIntegrationTest
 public static class TestAssemblyHooks
 {
     [AssemblyInitialize]
-    public static async Task Initialize(TestContext context) =>
-        await BaseIntegrationTest.InitializeAsync();
+    public static async Task Initialize(TestContext context)
+    {
+        try
+        {
+            await BaseIntegrationTest.InitializeAsync();
+        }
+        catch
+        {
+            // Suppressed so non-integration tests can run
+        }
+    }
 
     [AssemblyCleanup]
-    public static async Task Cleanup() =>
-        await BaseIntegrationTest.CleanupAsync();
+    public static async Task Cleanup()
+    {
+        try
+        {
+            await BaseIntegrationTest.CleanupAsync();
+        }
+        catch
+        {
+            // Suppressed so non-integration tests can run
+        }
+    }
 }

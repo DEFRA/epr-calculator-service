@@ -24,8 +24,8 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             IReadOnlyCollection<L1Producer> producers
         )
         {
-            var h2Period = $"{runContext.RelativeYear.Value - 1}-H2";
-            var h1Period = $"{runContext.RelativeYear.Value - 1}-H1";
+            var h2Period = $"{runContext.RelativeYear - 1}-H2";
+            var h1Period = $"{runContext.RelativeYear - 1}-H1";
 
             var allH2Rows = new List<CalcResultH2ProjectedProducer>();
             var allH1Rows = new List<CalcResultH1ProjectedProducer>();

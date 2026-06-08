@@ -1,5 +1,5 @@
 using System.Runtime.CompilerServices;
-using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.API.Data.DataTypes;
 using EPR.Calculator.Service.Function.Services.CommonDataApi;
 
 namespace EPR.Calculator.Service.Function.UnitTests.IntegrationTests;

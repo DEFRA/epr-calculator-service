@@ -1,4 +1,4 @@
-﻿using EPR.Calculator.API.Data.Models;
+﻿using EPR.Calculator.API.Data.DataTypes;
 using EPR.Calculator.Service.Function.Builder.Summary.LaDataPrepCosts;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;

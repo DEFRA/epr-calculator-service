@@ -1,6 +1,6 @@
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.API.Data.Models;
+using EPR.Calculator.API.Data.DataTypes;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 using Microsoft.Data.Sqlite;
@@ -36,7 +36,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         private async Task<(RelativeYear, CalculatorRunClassification, PomData)> SeedData()
         {
-            var calculatorRunRelativeYear = new CalculatorRunRelativeYear { Value  = 2024 };
+            var calculatorRunRelativeYear = new CalculatorRunRelativeYear { Value  = new RelativeYear(2024) };
             context.CalculatorRunRelativeYears.Add(calculatorRunRelativeYear);
 
             var classification = new CalculatorRunClassification { Status = "Test Classification" };
@@ -62,7 +62,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 VALUES ({pomData.OrganisationId}, {pomData.PackagingActivity}, {pomData.PackagingType}, {pomData.PackagingClass}, {pomData.PackagingMaterial}, {pomData.PackagingMaterialWeight}, {pomData.LoadTimeStamp}, {pomData.SubmissionPeriod}, {pomData.SubmissionPeriodDesc}, {pomData.SubsidiaryId})");
 
             await context.SaveChangesAsync();
-            return (new RelativeYear(calculatorRunRelativeYear.Value), classification, pomData);
+            return (calculatorRunRelativeYear.Value, classification, pomData);
 
         }
 

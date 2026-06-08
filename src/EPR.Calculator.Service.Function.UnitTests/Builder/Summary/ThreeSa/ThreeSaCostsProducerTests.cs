@@ -1,4 +1,4 @@
-﻿using EPR.Calculator.API.Data.Models;
+﻿using EPR.Calculator.API.Data.DataTypes;
 using EPR.Calculator.Service.Function.Builder.Summary.ThreeSa;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Models;

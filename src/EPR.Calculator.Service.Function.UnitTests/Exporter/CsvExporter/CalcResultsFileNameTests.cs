@@ -3,6 +3,7 @@ using System.Text;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 using Moq.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
@@ -13,7 +14,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
     [TestClass]
     public class CalcResultsFileNameTests
     {
-        private Fixture Fixture { get; init; }
+        private IFixture Fixture { get; } = TestFixtures.New();
 
         private int RunId { get; init; }
 
@@ -21,7 +22,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
 
         public CalcResultsFileNameTests()
         {
-            Fixture = new Fixture();
             Fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
                 .ForEach(b => Fixture.Behaviors.Remove(b));
             Fixture.Behaviors.Add(new OmitOnRecursionBehavior());
@@ -139,8 +139,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             // Arrange
             var mockRun = Fixture.Build<CalculatorRun>().Create();
             mockRun.Name = Fixture.Create<string>();
-            var context = new Mock<ApplicationDBContext>();
-            context.Setup(c => c.CalculatorRuns).ReturnsDbSet([mockRun]);
+            var context = Fixture.Create<ApplicationDBContext>();
+            context.CalculatorRuns.Add(mockRun);
+            context.SaveChanges();
             var expectedFileName = $"{mockRun.Id}" +
                 $"-{mockRun.Name[..30]}" +
                 $"_Results File" +
@@ -148,7 +149,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                 $".csv";
 
             // Act
-            var result = CalcResultsAndBillingFileName.FromDatabase(context.Object, mockRun.Id);
+            var result = CalcResultsAndBillingFileName.FromDatabase(context, mockRun.Id);
 
             // Assert
             Assert.AreEqual(expectedFileName, (string)result);

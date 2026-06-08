@@ -18,7 +18,7 @@ public class CalcResultRejectedProducersBuilderTests : TestsFor<CalcResultReject
         var runContextLatest = runContextOld with { RunId = runContextOld.RunId + 1 };
 
         const int organisationId = 100;
-        dbContext.CalculatorRunRelativeYears.Add(new CalculatorRunRelativeYear { Value = runContextOld.RelativeYear.Value });
+        dbContext.CalculatorRunRelativeYears.Add(new CalculatorRunRelativeYear { Value = runContextOld.RelativeYear });
 
         var masterOld = new CalculatorRunOrganisationDataMaster
         {

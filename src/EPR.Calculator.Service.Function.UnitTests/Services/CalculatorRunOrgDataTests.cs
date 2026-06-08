@@ -1,5 +1,6 @@
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.DataTypes;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 using Microsoft.Data.Sqlite;
@@ -35,7 +36,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
         private async Task<(CalculatorRunClassification, OrganisationData)> SeedData()
         {
-            var calculatorRunRelativeYear = new CalculatorRunRelativeYear { Value  = 2024 };
+            var calculatorRunRelativeYear = new CalculatorRunRelativeYear { Value  = new RelativeYear(2024) };
             context.CalculatorRunRelativeYears.Add(calculatorRunRelativeYear);
 
             var classification = new CalculatorRunClassification { Status = "Test Classification" };
