@@ -1,4 +1,3 @@
-﻿using EPR.Calculator.Service.Function.Builder.ParametersOther;
 using EPR.Calculator.Service.Function.Builder.Summary;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Features.BillingRun.Constants;
@@ -27,17 +26,6 @@ public class BillingInstructionsProducerTests
         CurrentYearInvoicedTotalAfterThisRun = 20.003m
     };
 
-    private readonly List<DefaultParamResultsClass> defaultParam =
-    [
-        new()
-        {
-            ParameterUniqueReference = "MATT-PI",
-            ParameterValue = 50m,
-            ParameterCategory = "Percentage Increase",
-            ParameterType = "Material threshold"
-        }
-    ];
-
     [TestMethod]
     public void BillingInstructionsProducer_CanCallSetValues()
     {
@@ -58,10 +46,13 @@ public class BillingInstructionsProducerTests
             }
         ];
 
-        defaultParam.First().ParameterValue = 55000m;
-        defaultParam.First().ParameterUniqueReference = "MATT-PD";
+        var otherCost = new CalcResultParameterOtherCost
+        {
+            MaterialityIncrease = new Materiality { Amount = 99999m, Percentage = 99999m },
+            MaterialityDecrease = new Materiality { Amount = -99999m, Percentage = 55000m }
+        };
 
-        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, producerInvoicedMaterialNetTonnage, defaultParam);
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, producerInvoicedMaterialNetTonnage, otherCost);
         var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection;
 
         var calcTotal = calcResult.CalcResultSummary.ProducerDisposalFees.First().TotalProducerBillBreakdownCosts!.FeeWithBadDebtProvision.Total;
@@ -117,7 +108,7 @@ public class BillingInstructionsProducerTests
             }
         ];
 
-        BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
+        BillingInstructionsProducer.SetValues(summary, invoiced, new CalcResultParameterOtherCost());
 
         var fee = summary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         var expected = Math.Round(120.004m, 2) - Math.Round(20.003m, 2);
@@ -161,7 +152,7 @@ public class BillingInstructionsProducerTests
             }
         ];
 
-        BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
+        BillingInstructionsProducer.SetValues(summary, invoiced, new CalcResultParameterOtherCost());
         Assert.IsNull(summary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!.LiabilityDifference);
     }
 
@@ -199,7 +190,7 @@ public class BillingInstructionsProducerTests
             }
         ];
 
-        BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
+        BillingInstructionsProducer.SetValues(summary, invoiced, new CalcResultParameterOtherCost());
 
         Assert.AreEqual(15m, summary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!.LiabilityDifference);
     }
@@ -267,7 +258,7 @@ public class BillingInstructionsProducerTests
             }
         ];
 
-        BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
+        BillingInstructionsProducer.SetValues(summary, invoiced, new CalcResultParameterOtherCost());
 
         var d1 = Math.Round(50m, 2) - Math.Round(20m, 2);
         var d2 = Math.Round(70m, 2) - Math.Round(80m, 2);
@@ -337,7 +328,7 @@ public class BillingInstructionsProducerTests
             }
         ];
 
-        BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
+        BillingInstructionsProducer.SetValues(summary, invoiced, new CalcResultParameterOtherCost());
 
         Assert.IsNull(summary.OverallTotal!.BillingInstructionSection!.LiabilityDifference);
     }
@@ -359,7 +350,7 @@ public class BillingInstructionsProducerTests
             OverallTotal = total
         };
 
-        BillingInstructionsProducer.SetValues(summary, new List<InvoicedProducer>(), new List<DefaultParamResultsClass>());
+        BillingInstructionsProducer.SetValues(summary, new List<InvoicedProducer>(), new CalcResultParameterOtherCost());
 
         Assert.AreEqual(string.Empty, summary.OverallTotal!.BillingInstructionSection!.MaterialThresholdBreached);
     }
@@ -395,7 +386,7 @@ public class BillingInstructionsProducerTests
             }
         ];
 
-        BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
+        BillingInstructionsProducer.SetValues(summary, invoiced, new CalcResultParameterOtherCost());
 
         Assert.AreEqual("-", fee.BillingInstructionSection!.MaterialThresholdBreached);
     }
@@ -418,6 +409,12 @@ public class BillingInstructionsProducerTests
             ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee }
         };
 
+        var otherCost = new CalcResultParameterOtherCost
+        {
+            MaterialityIncrease = new Materiality { Amount = 50m, Percentage = 0 },
+            MaterialityDecrease = new Materiality { Amount = -50m, Percentage = 0 }
+        };
+
         BillingInstructionsProducer.SetValues(
             summary,
             [
@@ -434,29 +431,13 @@ public class BillingInstructionsProducerTests
                     CurrentYearInvoicedTotalAfterThisRun = 90m
                 }
             ],
-            new List<DefaultParamResultsClass>
-            {
-                new()
-                {
-                    ParameterUniqueReference = "MATT-AI",
-                    ParameterValue = 50m,
-                    ParameterCategory = "Amount Increase",
-                    ParameterType = "Materiality threshold"
-                },
-                new()
-                {
-                    ParameterUniqueReference = "MATT-AD",
-                    ParameterValue = -50m,
-                    ParameterCategory = "Amount Decrease",
-                    ParameterType = "Materiality threshold"
-                }
-            });
+            otherCost);
 
         Assert.AreEqual("-", fee.BillingInstructionSection!.MaterialThresholdBreached);
     }
 
     [TestMethod]
-    public void GetMaterialThresholdBreached_ParamsMissing_ReturnsHyphen()
+    public void GetMaterialThresholdBreached_DiffWithinThresholds_ReturnsHyphen()
     {
         var fee = new CalcResultSummaryProducerDisposalFees
         {
@@ -486,7 +467,13 @@ public class BillingInstructionsProducerTests
             }
         ];
 
-        BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
+        var otherCost = new CalcResultParameterOtherCost
+        {
+            MaterialityIncrease = new Materiality { Amount = 200m, Percentage = 0 },
+            MaterialityDecrease = new Materiality { Amount = -200m, Percentage = 0 }
+        };
+
+        BillingInstructionsProducer.SetValues(summary, invoiced, otherCost);
         Assert.AreEqual("-", fee.BillingInstructionSection!.MaterialThresholdBreached);
     }
 
@@ -521,25 +508,13 @@ public class BillingInstructionsProducerTests
             }
         ];
 
-        var dp = new List<DefaultParamResultsClass>
+        var otherCost = new CalcResultParameterOtherCost
         {
-            new()
-            {
-                ParameterUniqueReference = "MATT-AI",
-                ParameterValue = 50m,
-                ParameterCategory = "Amount Increase",
-                ParameterType = "Materiality threshold"
-            },
-            new()
-            {
-                ParameterUniqueReference = "MATT-AD",
-                ParameterValue = -50m,
-                ParameterCategory = "Amount Decrease",
-                ParameterType = "Materiality threshold"
-            }
+            MaterialityIncrease = new Materiality { Amount = 50m, Percentage = 0 },
+            MaterialityDecrease = new Materiality { Amount = -50m, Percentage = 0 }
         };
 
-        BillingInstructionsProducer.SetValues(summary, invoiced, dp);
+        BillingInstructionsProducer.SetValues(summary, invoiced, otherCost);
         Assert.AreEqual("+ve", fee.BillingInstructionSection!.MaterialThresholdBreached);
     }
 
@@ -574,25 +549,13 @@ public class BillingInstructionsProducerTests
             }
         ];
 
-        var dp = new List<DefaultParamResultsClass>
+        var otherCost = new CalcResultParameterOtherCost
         {
-            new()
-            {
-                ParameterUniqueReference = "MATT-AI",
-                ParameterValue = 50m,
-                ParameterCategory = "Amount Increase",
-                ParameterType = "Materiality threshold"
-            },
-            new()
-            {
-                ParameterUniqueReference = "MATT-AD",
-                ParameterValue = -50m,
-                ParameterCategory = "Amount Decrease",
-                ParameterType = "Materiality threshold"
-            }
+            MaterialityIncrease = new Materiality { Amount = 50m, Percentage = 0 },
+            MaterialityDecrease = new Materiality { Amount = -50m, Percentage = 0 }
         };
 
-        BillingInstructionsProducer.SetValues(summary, invoiced, dp);
+        BillingInstructionsProducer.SetValues(summary, invoiced, otherCost);
         Assert.AreEqual("-ve", fee.BillingInstructionSection!.MaterialThresholdBreached);
     }
 
@@ -627,25 +590,13 @@ public class BillingInstructionsProducerTests
             }
         ];
 
-        var dp = new List<DefaultParamResultsClass>
+        var otherCost = new CalcResultParameterOtherCost
         {
-            new()
-            {
-                ParameterUniqueReference = "MATT-AI",
-                ParameterValue = 50m,
-                ParameterCategory = "Amount Increase",
-                ParameterType = "Materiality threshold"
-            },
-            new()
-            {
-                ParameterUniqueReference = "MATT-AD",
-                ParameterValue = -50m,
-                ParameterType = "Materiality threshold",
-                ParameterCategory = "Amount Decrease"
-            }
+            MaterialityIncrease = new Materiality { Amount = 50m, Percentage = 0 },
+            MaterialityDecrease = new Materiality { Amount = -50m, Percentage = 0 }
         };
 
-        BillingInstructionsProducer.SetValues(summary, invoiced, dp);
+        BillingInstructionsProducer.SetValues(summary, invoiced, otherCost);
         Assert.AreEqual("-", fee.BillingInstructionSection!.MaterialThresholdBreached);
     }
 
@@ -681,30 +632,18 @@ public class BillingInstructionsProducerTests
             }
         ];
 
-        var dp = new List<DefaultParamResultsClass>
+        var otherCost = new CalcResultParameterOtherCost
         {
-            new()
-            {
-                ParameterUniqueReference = "TONT-AI",
-                ParameterValue = 50m,
-                ParameterCategory = "Amount Increase",
-                ParameterType = "Tonnage change threshold"
-            },
-            new()
-            {
-                ParameterUniqueReference = "TONT-AD",
-                ParameterValue = -50m,
-                ParameterCategory = "Amount Decrease",
-                ParameterType = "Tonnage change threshold"
-            }
+            TonnageChangeIncrease = new Materiality { Amount = 50m, Percentage = 0 },
+            TonnageChangeDecrease = new Materiality { Amount = -50m, Percentage = 0 }
         };
 
-        BillingInstructionsProducer.SetValues(summary, invoiced, dp);
+        BillingInstructionsProducer.SetValues(summary, invoiced, otherCost);
         Assert.AreEqual("-", fee.BillingInstructionSection!.TonnageThresholdBreached);
     }
 
     [TestMethod]
-    public void GetTonnageThresholdBreached_Change_ParamsMissing_ReturnsHyphen()
+    public void GetTonnageThresholdBreached_Change_DiffWithinThresholds_ReturnsHyphen()
     {
         var fee = new CalcResultSummaryProducerDisposalFees
         {
@@ -735,7 +674,13 @@ public class BillingInstructionsProducerTests
             }
         ];
 
-        BillingInstructionsProducer.SetValues(summary, invoiced, new List<DefaultParamResultsClass>());
+        var otherCost = new CalcResultParameterOtherCost
+        {
+            TonnageChangeIncrease = new Materiality { Amount = 200m, Percentage = 0 },
+            TonnageChangeDecrease = new Materiality { Amount = -200m, Percentage = 0 }
+        };
+
+        BillingInstructionsProducer.SetValues(summary, invoiced, otherCost);
         Assert.AreEqual("-", fee.BillingInstructionSection!.TonnageThresholdBreached);
     }
 
@@ -771,25 +716,13 @@ public class BillingInstructionsProducerTests
             }
         ];
 
-        var dp = new List<DefaultParamResultsClass>
+        var otherCost = new CalcResultParameterOtherCost
         {
-            new()
-            {
-                ParameterUniqueReference = "TONT-AI",
-                ParameterValue = 50m,
-                ParameterCategory = "Amount Increase",
-                ParameterType = "Tonnage change threshold"
-            },
-            new()
-            {
-                ParameterUniqueReference = "TONT-AD",
-                ParameterValue = -50m,
-                ParameterCategory = "Amount Decrease",
-                ParameterType = "Tonnage change threshold"
-            }
+            TonnageChangeIncrease = new Materiality { Amount = 50m, Percentage = 0 },
+            TonnageChangeDecrease = new Materiality { Amount = -50m, Percentage = 0 }
         };
 
-        BillingInstructionsProducer.SetValues(summary, invoiced, dp);
+        BillingInstructionsProducer.SetValues(summary, invoiced, otherCost);
         Assert.AreEqual("+ve", fee.BillingInstructionSection!.TonnageThresholdBreached);
     }
 
@@ -825,25 +758,13 @@ public class BillingInstructionsProducerTests
             }
         ];
 
-        var dp = new List<DefaultParamResultsClass>
+        var otherCost = new CalcResultParameterOtherCost
         {
-            new()
-            {
-                ParameterUniqueReference = "TONT-AI",
-                ParameterValue = 50m,
-                ParameterCategory = "Amount Increase",
-                ParameterType = "Tonnage change threshold"
-            },
-            new()
-            {
-                ParameterUniqueReference = "TONT-AD",
-                ParameterValue = -50m,
-                ParameterCategory = "Amount Decrease",
-                ParameterType = "Tonnage change threshold"
-            }
+            TonnageChangeIncrease = new Materiality { Amount = 50m, Percentage = 0 },
+            TonnageChangeDecrease = new Materiality { Amount = -50m, Percentage = 0 }
         };
 
-        BillingInstructionsProducer.SetValues(summary, invoiced, dp);
+        BillingInstructionsProducer.SetValues(summary, invoiced, otherCost);
         Assert.AreEqual("-ve", fee.BillingInstructionSection!.TonnageThresholdBreached);
     }
 
@@ -879,25 +800,13 @@ public class BillingInstructionsProducerTests
             }
         ];
 
-        var dp = new List<DefaultParamResultsClass>
+        var otherCost = new CalcResultParameterOtherCost
         {
-            new()
-            {
-                ParameterUniqueReference = "TONT-AI",
-                ParameterValue = 50m,
-                ParameterCategory = "Amount Increase",
-                ParameterType = "Tonnage change threshold"
-            },
-            new()
-            {
-                ParameterUniqueReference = "TONT-AD",
-                ParameterValue = -50m,
-                ParameterCategory = "Amount Decrease",
-                ParameterType = "Tonnage change threshold"
-            }
+            TonnageChangeIncrease = new Materiality { Amount = 50m, Percentage = 0 },
+            TonnageChangeDecrease = new Materiality { Amount = -50m, Percentage = 0 }
         };
 
-        BillingInstructionsProducer.SetValues(summary, invoiced, dp);
+        BillingInstructionsProducer.SetValues(summary, invoiced, otherCost);
         Assert.AreEqual("-", fee.BillingInstructionSection!.TonnageThresholdBreached);
     }
 
@@ -906,7 +815,7 @@ public class BillingInstructionsProducerTests
     {
         calcResult.CalcResultSummary.ProducerDisposalFees.First().Level = "2";
 
-        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], new List<DefaultParamResultsClass>());
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], new CalcResultParameterOtherCost());
 
         var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.IsNull(fee.PercentageLiabilityDifference);
@@ -915,7 +824,7 @@ public class BillingInstructionsProducerTests
     [TestMethod]
     public void CalculatePercentageLiabilityDifference_Level1_ComputesRoundedDifference()
     {
-        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], new List<DefaultParamResultsClass>());
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], new CalcResultParameterOtherCost());
 
         var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.AreEqual(52348.00m, fee.PercentageLiabilityDifference);
@@ -926,7 +835,7 @@ public class BillingInstructionsProducerTests
     {
         var summary = TestDataHelper.GetCalcResultSummary();
 
-        BillingInstructionsProducer.SetValues(summary, [defaultInvoicedProducer], new List<DefaultParamResultsClass>());
+        BillingInstructionsProducer.SetValues(summary, [defaultInvoicedProducer], new CalcResultParameterOtherCost());
 
         Assert.IsNull(summary.OverallTotal!.BillingInstructionSection!.PercentageLiabilityDifference);
     }
@@ -936,7 +845,7 @@ public class BillingInstructionsProducerTests
     {
         calcResult.CalcResultSummary.ProducerDisposalFees.First().Level = "2";
 
-        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], new List<DefaultParamResultsClass>());
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], new CalcResultParameterOtherCost());
 
         var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.AreEqual(CommonConstants.Hyphen, fee.MaterialPercentageThresholdBreached);
@@ -945,7 +854,12 @@ public class BillingInstructionsProducerTests
     [TestMethod]
     public void CalculateMaterialPercentageThresholdBreached_Level1_ReturnsPositive()
     {
-        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], defaultParam);
+        var otherCost = new CalcResultParameterOtherCost
+        {
+            MaterialityIncrease = new Materiality { Amount = 0, Percentage = 50m }
+        };
+
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], otherCost);
 
         var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.AreEqual(CommonConstants.Positive, fee.MaterialPercentageThresholdBreached);
@@ -954,10 +868,13 @@ public class BillingInstructionsProducerTests
     [TestMethod]
     public void CalculateMaterialPercentageThresholdBreached_Level1_ReturnsNegative()
     {
-        defaultParam.First().ParameterValue = 55000m;
-        defaultParam.First().ParameterUniqueReference = "MATT-PD";
+        var otherCost = new CalcResultParameterOtherCost
+        {
+            MaterialityIncrease = new Materiality { Amount = 0, Percentage = 99999m },
+            MaterialityDecrease = new Materiality { Amount = 0, Percentage = 55000m }
+        };
 
-        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], defaultParam);
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], otherCost);
 
         var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.AreEqual(CommonConstants.Negative, fee.MaterialPercentageThresholdBreached);
@@ -966,8 +883,13 @@ public class BillingInstructionsProducerTests
     [TestMethod]
     public void CalculateMaterialPercentageThresholdBreached_Level1_ReturnsHypen()
     {
-        defaultParam.First().ParameterUniqueReference = "";
-        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], defaultParam);
+        var otherCost = new CalcResultParameterOtherCost
+        {
+            MaterialityIncrease = new Materiality { Amount = 0, Percentage = 99999m },
+            MaterialityDecrease = new Materiality { Amount = 0, Percentage = -99999m }
+        };
+
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], otherCost);
 
         var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.AreEqual(CommonConstants.Hyphen, fee.MaterialPercentageThresholdBreached);
@@ -978,7 +900,7 @@ public class BillingInstructionsProducerTests
     {
         calcResult.CalcResultSummary.ProducerDisposalFees.First().Level = "2";
 
-        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], new List<DefaultParamResultsClass>());
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], new CalcResultParameterOtherCost());
 
         var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.AreEqual(CommonConstants.Hyphen, fee.TonnagePercentageThresholdBreached);
@@ -987,8 +909,12 @@ public class BillingInstructionsProducerTests
     [TestMethod]
     public void CalculateTonnagePercentageThresholdBreached_WhenTonnageChangeIsNull_ReturnsHypen()
     {
-        defaultParam.First().ParameterUniqueReference = "TONT-PI";
-        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], defaultParam);
+        var otherCost = new CalcResultParameterOtherCost
+        {
+            TonnageChangeIncrease = new Materiality { Amount = 0, Percentage = 50m }
+        };
+
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], otherCost);
 
         var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.AreEqual(CommonConstants.Hyphen, fee.TonnagePercentageThresholdBreached);
@@ -998,8 +924,13 @@ public class BillingInstructionsProducerTests
     public void CalculateTonnagePercentageThresholdBreached_Level1_ReturnsPositive()
     {
         calcResult.CalcResultSummary.ProducerDisposalFees.First().TonnageChangeAdvice = "CHANGE";
-        defaultParam.First().ParameterUniqueReference = "TONT-PI";
-        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], defaultParam);
+
+        var otherCost = new CalcResultParameterOtherCost
+        {
+            TonnageChangeIncrease = new Materiality { Amount = 0, Percentage = 50m }
+        };
+
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], otherCost);
 
         var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.AreEqual(CommonConstants.Positive, fee.TonnagePercentageThresholdBreached);
@@ -1009,10 +940,14 @@ public class BillingInstructionsProducerTests
     public void CalculateTonnagePercentageThresholdBreached_Level1_ReturnsNegative()
     {
         calcResult.CalcResultSummary.ProducerDisposalFees.First().TonnageChangeAdvice = "CHANGE";
-        defaultParam.First().ParameterValue = 55000m;
-        defaultParam.First().ParameterUniqueReference = "TONT-PD";
 
-        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], defaultParam);
+        var otherCost = new CalcResultParameterOtherCost
+        {
+            TonnageChangeIncrease = new Materiality { Amount = 0, Percentage = 99999m },
+            TonnageChangeDecrease = new Materiality { Amount = 0, Percentage = 55000m }
+        };
+
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], otherCost);
 
         var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.AreEqual(CommonConstants.Negative, fee.TonnagePercentageThresholdBreached);
@@ -1021,7 +956,7 @@ public class BillingInstructionsProducerTests
     [TestMethod]
     public void CalculateTonnagePercentageThresholdBreached_Level1_ReturnsHypen()
     {
-        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], defaultParam);
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], new CalcResultParameterOtherCost());
 
         var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.AreEqual(CommonConstants.Hyphen, fee.TonnagePercentageThresholdBreached);
@@ -1032,7 +967,7 @@ public class BillingInstructionsProducerTests
     {
         calcResult.CalcResultSummary.ProducerDisposalFees.First().Level = "2";
 
-        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], defaultParam);
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], new CalcResultParameterOtherCost());
 
         var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.AreEqual(CommonConstants.Hyphen, fee.SuggestedBillingInstruction);
@@ -1043,10 +978,13 @@ public class BillingInstructionsProducerTests
     {
         var invoicedProducer = defaultInvoicedProducer with { CurrentYearInvoicedTotalAfterThisRun = 100m };
 
-        defaultParam.First().ParameterValue = 55000m;
-        defaultParam.First().ParameterUniqueReference = "MATT-PD";
+        var otherCost = new CalcResultParameterOtherCost
+        {
+            MaterialityIncrease = new Materiality { Amount = 0, Percentage = 99999m },
+            MaterialityDecrease = new Materiality { Amount = 0, Percentage = 55000m }
+        };
 
-        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [invoicedProducer], defaultParam);
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [invoicedProducer], otherCost);
 
         var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.AreEqual(BillingConstants.Suggestion.Delta, fee.SuggestedBillingInstruction);
@@ -1057,10 +995,13 @@ public class BillingInstructionsProducerTests
     {
         var invoicedProducer = defaultInvoicedProducer with { CurrentYearInvoicedTotalAfterThisRun = 15000m };
 
-        defaultParam.First().ParameterValue = 55000m;
-        defaultParam.First().ParameterUniqueReference = "MATT-PD";
+        var otherCost = new CalcResultParameterOtherCost
+        {
+            MaterialityIncrease = new Materiality { Amount = 0, Percentage = 99999m },
+            MaterialityDecrease = new Materiality { Amount = 0, Percentage = 55000m }
+        };
 
-        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [invoicedProducer], defaultParam);
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [invoicedProducer], otherCost);
 
         var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.AreEqual(BillingConstants.Suggestion.Rebill, fee.SuggestedBillingInstruction);
@@ -1071,7 +1012,7 @@ public class BillingInstructionsProducerTests
     {
         var invoicedProducer = defaultInvoicedProducer with { CurrentYearInvoicedTotalAfterThisRun = 10491.17m };
 
-        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [invoicedProducer], new List<DefaultParamResultsClass>());
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [invoicedProducer], new CalcResultParameterOtherCost());
 
         var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.AreEqual(CommonConstants.Hyphen, fee.SuggestedBillingInstruction);
@@ -1082,7 +1023,7 @@ public class BillingInstructionsProducerTests
     {
         calcResult.CalcResultSummary.ProducerDisposalFees.First().Level = "2";
 
-        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], defaultParam);
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [defaultInvoicedProducer], new CalcResultParameterOtherCost());
 
         var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.IsNull(fee.SuggestedInvoiceAmount);
@@ -1093,10 +1034,13 @@ public class BillingInstructionsProducerTests
     {
         var invoicedProducer = defaultInvoicedProducer with { CurrentYearInvoicedTotalAfterThisRun = 100m };
 
-        defaultParam.First().ParameterValue = 55000m;
-        defaultParam.First().ParameterUniqueReference = "MATT-PD";
+        var otherCost = new CalcResultParameterOtherCost
+        {
+            MaterialityIncrease = new Materiality { Amount = 0, Percentage = 99999m },
+            MaterialityDecrease = new Materiality { Amount = 0, Percentage = 55000m }
+        };
 
-        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [invoicedProducer], defaultParam);
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [invoicedProducer], otherCost);
 
         var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.AreEqual(fee.LiabilityDifference, fee.SuggestedInvoiceAmount);
@@ -1107,10 +1051,13 @@ public class BillingInstructionsProducerTests
     {
         var invoicedProducer = defaultInvoicedProducer with { CurrentYearInvoicedTotalAfterThisRun = 15000m };
 
-        defaultParam.First().ParameterValue = 55000m;
-        defaultParam.First().ParameterUniqueReference = "MATT-PD";
+        var otherCost = new CalcResultParameterOtherCost
+        {
+            MaterialityIncrease = new Materiality { Amount = 0, Percentage = 99999m },
+            MaterialityDecrease = new Materiality { Amount = 0, Percentage = 55000m }
+        };
 
-        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [invoicedProducer], defaultParam);
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [invoicedProducer], otherCost);
 
         var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.AreEqual(10491.17m, Math.Round(fee.SuggestedInvoiceAmount ?? 0m, 2));
@@ -1121,7 +1068,7 @@ public class BillingInstructionsProducerTests
     {
         var invoicedProducer = defaultInvoicedProducer with { CurrentYearInvoicedTotalAfterThisRun = 10491.17m };
 
-        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [invoicedProducer], new List<DefaultParamResultsClass>());
+        BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [invoicedProducer], new CalcResultParameterOtherCost());
 
         var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
         Assert.IsNull(fee.SuggestedInvoiceAmount);

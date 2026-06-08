@@ -2,7 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Enums;
-using EPR.Calculator.Service.Function.Builder.ParametersOther;
 using EPR.Calculator.Service.Function.Builder.Summary.Common;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
@@ -69,8 +68,6 @@ public class CalcResultSummaryBuilder(
         // PERF: Replace per-(producer, material) linear scans of the invoiced records collection with an O(1) lookup.
         var invoicedNetTonnageByProducerMaterial = BuildInvoicedNetTonnageByProducerMaterial(producerInvoicedMaterialNetTonnage);
 
-        var defaultParams = await GetDefaultParamsAsync(runContext.RunId);
-
         // Household + PublicBin + HDC.
         // PERF: wrap in an index so downstream callers (TonnageVsAllProducerUtil / 2B / 2C) get O(1)
         // per-producer percentage lookups instead of paying O(producers) per call.
@@ -115,7 +112,6 @@ public class CalcResultSummaryBuilder(
             calcResult,
             totalPackagingTonnage,
             producerInvoicedMaterialNetTonnage,
-            defaultParams,
             smcw,
             rowBuilder
         );
@@ -155,24 +151,6 @@ public class CalcResultSummaryBuilder(
         return builder.ToImmutable();
     }
 
-    private Task<List<DefaultParamResultsClass>> GetDefaultParamsAsync(int runId)
-    {
-        return (
-            from run in context.CalculatorRuns.AsNoTracking()
-            join defaultMaster in context.DefaultParameterSettings.AsNoTracking() on run.DefaultParameterSettingMasterId equals defaultMaster.Id
-            join defaultDetail in context.DefaultParameterSettingDetail.AsNoTracking() on defaultMaster.Id equals defaultDetail.DefaultParameterSettingMasterId
-            join defaultTemplate in context.DefaultParameterTemplateMasterList.AsNoTracking() on defaultDetail.ParameterUniqueReferenceId equals defaultTemplate.ParameterUniqueReferenceId
-            where run.Id == runId
-            select new DefaultParamResultsClass
-            {
-                ParameterValue = defaultDetail.ParameterValue,
-                ParameterCategory = defaultTemplate.ParameterCategory,
-                ParameterType = defaultTemplate.ParameterType,
-                ParameterUniqueReference = defaultDetail.ParameterUniqueReferenceId
-            }
-        ).ToListAsync();
-    }
-
     private static CalcResultSummary GetCalcResultSummary(
         RunContext runContext,
         ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
@@ -181,7 +159,6 @@ public class CalcResultSummaryBuilder(
         CalcResult calcResult,
         IReadOnlyList<TotalPackagingTonnagePerRun> totalPackagingTonnage,
         IReadOnlyList<InvoicedProducer> producerInvoicedMaterialNetTonnage,
-        IReadOnlyList<DefaultParamResultsClass> defaultParams,
         SelfManagedConsumerWaste smcw,
         ProducerRowBuilder rowBuilder
     )
@@ -239,7 +216,7 @@ public class CalcResultSummaryBuilder(
             TotalBillBreakdownProducer.SetValues(result);
 
             // Billing instructions section
-            BillingInstructionsProducer.SetValues(result, producerInvoicedMaterialNetTonnage, defaultParams);
+            BillingInstructionsProducer.SetValues(result, producerInvoicedMaterialNetTonnage, calcResult.CalcResultParameterOtherCost);
         }
 
         return result;

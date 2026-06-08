@@ -1,4 +1,3 @@
-using EPR.Calculator.Service.Function.Builder.ParametersOther;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Features.BillingRun.Constants;
 using EPR.Calculator.Service.Function.Models;
@@ -7,23 +6,20 @@ namespace EPR.Calculator.Service.Function.Builder.Summary;
 
 public static class BillingInstructionsProducer
 {
-    public static void SetValues(CalcResultSummary result, IReadOnlyList<InvoicedProducer> ProducerInvoicedMaterialNetTonnage, IReadOnlyList<DefaultParamResultsClass> defaultParams)
+    public static void SetValues(CalcResultSummary result, IReadOnlyList<InvoicedProducer> ProducerInvoicedMaterialNetTonnage, CalcResultParameterOtherCost otherCost)
     {
         decimal totalTonnage = 0;
         decimal liabilityDifferenceRunningTotal = 0m;
         decimal SuggestedInvoiceAmountTotal = 0m;
 
-        // TODO reuse CalcResultParameterOtherCostBuilder output rather than going to db and working with raw
-        var dpList = defaultParams as IList<DefaultParamResultsClass> ?? defaultParams.ToList();
-
-        decimal? param_MATT_AI = dpList.FirstOrDefault(p => p.ParameterUniqueReference == CommonConstants.MaterialAmountIncrease)?.ParameterValue;
-        decimal? param_MATT_AD = dpList.FirstOrDefault(p => p.ParameterUniqueReference == CommonConstants.MaterialAmountDecrease)?.ParameterValue;
-        decimal? param_TONT_AI = dpList.FirstOrDefault(p => p.ParameterUniqueReference == CommonConstants.TonnageAmountIncrease)?.ParameterValue;
-        decimal? param_TONT_AD = dpList.FirstOrDefault(p => p.ParameterUniqueReference == CommonConstants.TonnageAmountDecrease)?.ParameterValue;
-        decimal? param_MATT_PI = dpList.FirstOrDefault(p => p.ParameterUniqueReference == CommonConstants.MaterialPercentageIncrease)?.ParameterValue;
-        decimal? param_MATT_PD = dpList.FirstOrDefault(p => p.ParameterUniqueReference == CommonConstants.MaterialPercentageDecrease)?.ParameterValue;
-        decimal? param_TONT_PI = dpList.FirstOrDefault(p => p.ParameterUniqueReference == CommonConstants.TonnagePercentageIncrease)?.ParameterValue;
-        decimal? param_TONT_PD = dpList.FirstOrDefault(p => p.ParameterUniqueReference == CommonConstants.TonnagePercentageDecrease)?.ParameterValue;
+        var param_MATT_AI = otherCost.MaterialityIncrease.Amount;
+        var param_MATT_AD = otherCost.MaterialityDecrease.Amount;
+        var param_TONT_AI = otherCost.TonnageChangeIncrease.Amount;
+        var param_TONT_AD = otherCost.TonnageChangeDecrease.Amount;
+        var param_MATT_PI = otherCost.MaterialityIncrease.Percentage;
+        var param_MATT_PD = otherCost.MaterialityDecrease.Percentage;
+        var param_TONT_PI = otherCost.TonnageChangeIncrease.Percentage;
+        var param_TONT_PD = otherCost.TonnageChangeDecrease.Percentage;
 
         // PERF: Pre-index the invoiced records by ProducerId (as string) once.
         // Replaces O(fees * invoiced records) scan that previously ran inside the loop.
@@ -109,28 +105,24 @@ public static class BillingInstructionsProducer
         ? null
         : Math.Round(fee.TotalProducerBillBreakdownCosts.FeeWithBadDebtProvision.Total, 2) - Math.Round(currentInvoicedTotalToDate.Value, 2);
 
-    private static string GetMaterialThresholdBreached(CalcResultSummaryProducerDisposalFees fee, decimal? currentInvoicedTotalToDate, decimal? liabilityDifferenceCalculated, decimal? param_MATT_AI, decimal? param_MATT_AD)
+    private static string GetMaterialThresholdBreached(CalcResultSummaryProducerDisposalFees fee, decimal? currentInvoicedTotalToDate, decimal? liabilityDifferenceCalculated, decimal param_MATT_AI, decimal param_MATT_AD)
     {
         if (fee.Level != CommonConstants.LevelOne.ToString()) return CommonConstants.Hyphen;
         if (!currentInvoicedTotalToDate.HasValue) return CommonConstants.Hyphen;
         if (!liabilityDifferenceCalculated.HasValue) return CommonConstants.Hyphen;
 
-        if (!param_MATT_AI.HasValue || !param_MATT_AD.HasValue) return CommonConstants.Hyphen;
-
-        if (liabilityDifferenceCalculated >= param_MATT_AI.Value) return "+ve";
-        if (liabilityDifferenceCalculated <= param_MATT_AD.Value) return "-ve";
+        if (liabilityDifferenceCalculated >= param_MATT_AI) return "+ve";
+        if (liabilityDifferenceCalculated <= param_MATT_AD) return "-ve";
 
         return CommonConstants.Hyphen;
     }
 
-    private static string GetTonnageThresholdBreached(CalcResultSummaryProducerDisposalFees fee, decimal? currentInvoicedTotalToDate, decimal? liabilityDifferenceCalculated, decimal? param_TONT_AI, decimal? param_TONT_AD)
+    private static string GetTonnageThresholdBreached(CalcResultSummaryProducerDisposalFees fee, decimal? currentInvoicedTotalToDate, decimal? liabilityDifferenceCalculated, decimal param_TONT_AI, decimal param_TONT_AD)
     {
         if (fee.Level != CommonConstants.LevelOne.ToString()) return CommonConstants.Hyphen;
         if (!currentInvoicedTotalToDate.HasValue) return CommonConstants.Hyphen;
         if (fee.TonnageChangeAdvice != "CHANGE") return CommonConstants.Hyphen;
         if (!liabilityDifferenceCalculated.HasValue) return CommonConstants.Hyphen;
-
-        if (!param_TONT_AI.HasValue || !param_TONT_AD.HasValue) return CommonConstants.Hyphen;
 
         if (liabilityDifferenceCalculated >= param_TONT_AI) return "+ve";
         if (liabilityDifferenceCalculated <= param_TONT_AD) return "-ve";
@@ -151,7 +143,7 @@ public static class BillingInstructionsProducer
         ? null
         : Math.Round(liabilityDifference.Value / currentYearInvoiceTotalToDate.Value * 100, 2);
 
-    private static string GetMaterialPercentageThresholdBreached(CalcResultSummaryProducerDisposalFees fee, decimal? currentYearInvoiceTotalToDate, decimal? percentageLiabilityDifference, decimal? param_MATT_PI, decimal? param_MATT_PD)
+    private static string GetMaterialPercentageThresholdBreached(CalcResultSummaryProducerDisposalFees fee, decimal? currentYearInvoiceTotalToDate, decimal? percentageLiabilityDifference, decimal param_MATT_PI, decimal param_MATT_PD)
     {
         if (fee.Level != CommonConstants.LevelOne.ToString()) return CommonConstants.Hyphen;
         if (!currentYearInvoiceTotalToDate.HasValue) return CommonConstants.Hyphen;
@@ -162,7 +154,7 @@ public static class BillingInstructionsProducer
         return CommonConstants.Hyphen;
     }
 
-    private static string GetTonnagePercentageThresholdBreached(CalcResultSummaryProducerDisposalFees fee, decimal? currentYearInvoiceTotalToDate, string? tonnageChangeSinceLastInvoice, decimal? percentageLiabilityDifference, decimal? param_TONT_PI, decimal? param_TONT_PD)
+    private static string GetTonnagePercentageThresholdBreached(CalcResultSummaryProducerDisposalFees fee, decimal? currentYearInvoiceTotalToDate, string? tonnageChangeSinceLastInvoice, decimal? percentageLiabilityDifference, decimal param_TONT_PI, decimal param_TONT_PD)
     {
         if (fee.Level != CommonConstants.LevelOne.ToString()) return CommonConstants.Hyphen;
 
