@@ -362,21 +362,21 @@ public class CalculationResultsJsonFromTests
         var producer = data.ProducerDisposalFees.SingleOrDefault(t => !string.IsNullOrEmpty(t.Level))!;
 
         // Disposal Fee
-        AssertAreEqual(producer.TotalProducerDisposalFee,
+        AssertAreEqual(producer.LocalAuthorityDisposalCostsSectionOne.FeeWithoutBadDebtProvision,
             disposalFeeSummary1["totalProducerDisposalFeeWithoutBadDebtProvision"]!);
-        AssertAreEqual(producer.BadDebtProvision,
+        AssertAreEqual(producer.LocalAuthorityDisposalCostsSectionOne.BadDebtProvision,
             disposalFeeSummary1["badDebtProvision"]!);
-        AssertAreEqual(producer.TotalProducerDisposalFeeWithBadDebtProvision.Total,
+        AssertAreEqual(producer.LocalAuthorityDisposalCostsSectionOne.FeeWithBadDebtProvision.Total,
             disposalFeeSummary1["totalProducerDisposalFeeWithBadDebtProvision"]!);
 
         // Countries
-        AssertAreEqual(producer.TotalProducerDisposalFeeWithBadDebtProvision.England,
+        AssertAreEqual(producer.LocalAuthorityDisposalCostsSectionOne.FeeWithBadDebtProvision.England,
             disposalFeeSummary1["englandTotal"]!);
-        AssertAreEqual(producer.TotalProducerDisposalFeeWithBadDebtProvision.Wales,
+        AssertAreEqual(producer.LocalAuthorityDisposalCostsSectionOne.FeeWithBadDebtProvision.Wales,
             disposalFeeSummary1["walesTotal"]!);
-        AssertAreEqual(producer.TotalProducerDisposalFeeWithBadDebtProvision.Scotland,
+        AssertAreEqual(producer.LocalAuthorityDisposalCostsSectionOne.FeeWithBadDebtProvision.Scotland,
             disposalFeeSummary1["scotlandTotal"]!);
-        AssertAreEqual(producer.TotalProducerDisposalFeeWithBadDebtProvision.NorthernIreland,
+        AssertAreEqual(producer.LocalAuthorityDisposalCostsSectionOne.FeeWithBadDebtProvision.NorthernIreland,
             disposalFeeSummary1["northernIrelandTotal"]!);
 
         // Tonnage Change

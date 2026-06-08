@@ -148,7 +148,7 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
                         ProducerDisposalFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>(),
                         ProducerId = "1",
                         ProducerName = "Test",
-                        TotalProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty,
+                        LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
                         TotalProducerCommsFeeWithBadDebtProvision = ByCountryCost.Empty,
                         SubsidiaryId = "1",
                         Level = CommonConstants.LevelTwo.ToString(),

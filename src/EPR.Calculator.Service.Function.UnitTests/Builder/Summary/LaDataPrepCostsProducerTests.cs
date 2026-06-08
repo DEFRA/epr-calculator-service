@@ -46,7 +46,6 @@ public class LaDataPrepCostsProducerTests
                         new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>(),
                     ProducerId = "1",
                     ProducerName = "Test",
-                    TotalProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty,
                     TotalProducerCommsFeeWithBadDebtProvision = ByCountryCost.Empty,
                     SubsidiaryId = "1",
                     TwoCTotalProducerFeeForCommsCostsWithBadDebt = new ByCountryCost { England = 10, Wales = 0, Scotland = 0, NorthernIreland = 0 },

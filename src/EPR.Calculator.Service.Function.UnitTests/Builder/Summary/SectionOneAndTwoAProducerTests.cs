@@ -14,12 +14,11 @@ public class SectionOneAndTwoAProducerTests
         ProducerId   = string.Empty,
         SubsidiaryId = string.Empty,
         ProducerName = string.Empty,
-        TotalProducerDisposalFee             = 4423.39438m,
-        TotalProducerDisposalFeeWithBadDebtProvision = new ByCountryCost { England = 4688.7980428m, Wales = 0, Scotland = 0, NorthernIreland = 0 },
         LocalAuthorityDisposalCostsSectionOne = new CalcResultSummaryBadDebtProvision
         {
-            BadDebtProvision = 265.4036628m,
-            FeeWithBadDebtProvision = ByCountryCost.Empty
+          FeeWithoutBadDebtProvision = 4423.39438m,
+          BadDebtProvision           = 265.4036628m,
+          FeeWithBadDebtProvision = new ByCountryCost { England = 4688.7980428m, Wales = 0, Scotland = 0, NorthernIreland = 0 }
         },
         TotalProducerCommsFee                        = 1290.778m,
         TotalProducerCommsFeeWithBadDebtProvision     = new ByCountryCost { England = 1368.22468m, Wales = 0, Scotland = 0, NorthernIreland = 0 },

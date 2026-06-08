@@ -65,7 +65,7 @@ public class SaSetupCostsProducerTests
                     ProducerDisposalFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>(),
                     ProducerId = "1",
                     ProducerName = "Test",
-                    TotalProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty,
+                    LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
                     TotalProducerCommsFeeWithBadDebtProvision = ByCountryCost.Empty,
                     SubsidiaryId = "1",
                     ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 1,
