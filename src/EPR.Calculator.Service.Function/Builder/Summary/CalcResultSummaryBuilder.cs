@@ -246,6 +246,7 @@ public class CalcResultSummaryBuilder(
         return result;
     }
 
+    // TODO shouldn't need to call ths repeatedly
     public static ImmutableList<TotalPackagingTonnagePerRun> GetTotalPackagingTonnagePerRun(
         IReadOnlyList<CalcResultProducerAndReportMaterialDetail> allResults,
         IReadOnlyList<MaterialDetail> materials,
@@ -276,6 +277,4 @@ public class CalcResultSummaryBuilder(
 
         return result;
     }
-
-
 }

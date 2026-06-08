@@ -13,6 +13,7 @@ public static class TotalBillBreakdownProducer
                 TotalProducerFeeWithoutBadDebtProvision  = GetTotalProducerBillWithoutBadDebtProvision(fee) ?? 0,
                 BadDebtProvision                         = GetBadDebtProvisionForTotalProducerBill(fee) ?? 0,
                 TotalProducerFeeWithBadDebtProvision     = GetTotalProducerBillWithBadDebtProvision(fee) ?? 0,
+                // TODO CostByCountry will reduce all the duplication
                 EnglandTotalWithBadDebtProvision         = GetEnglandTotalWithBadDebtProvision(fee) ?? 0,
                 WalesTotalWithBadDebtProvision           = GetWalesTotalWithBadDebtProvision(fee) ?? 0,
                 ScotlandTotalWithBadDebtProvision        = GetScotlandTotalWithBadDebtProvision(fee) ?? 0,
