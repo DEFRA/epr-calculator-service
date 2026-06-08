@@ -15,6 +15,26 @@
         public static readonly ByCountryCost Empty =
             new(){ England = 0, Wales = 0, Scotland = 0, NorthernIreland = 0 };
 
+        public static ByCountryCost operator *(ByCountryCost a, decimal scalar) =>
+            new()
+            {
+                England         = a.England         * scalar,
+                Wales           = a.Wales           * scalar,
+                Scotland        = a.Scotland        * scalar,
+                NorthernIreland = a.NorthernIreland * scalar,
+            };
+
+        public static ByCountryCost operator *(decimal scalar, ByCountryCost a) => a * scalar;
+
+        public static ByCountryCost operator *(ByCountryCost c, ByCountryApportionment a) =>
+            new()
+            {
+                England         = c.England         * a.England,
+                Wales           = c.Wales           * a.Wales,
+                Scotland        = c.Scotland        * a.Scotland,
+                NorthernIreland = c.NorthernIreland * a.NorthernIreland,
+            };
+
         public static ByCountryCost operator +(ByCountryCost a, ByCountryCost b) =>
             new()
             {
@@ -50,5 +70,16 @@
 
         public static readonly ByCountryApportionment Empty =
             new(){ England = 0, Wales = 0, Scotland = 0, NorthernIreland = 0 };
+
+        public static ByCountryCost operator *(decimal value, ByCountryApportionment a) =>
+            new()
+            {
+                England         = value * a.England         / 100,
+                Wales           = value * a.Wales           / 100,
+                Scotland        = value * a.Scotland        / 100,
+                NorthernIreland = value * a.NorthernIreland / 100,
+            };
+
+        public static ByCountryCost operator *(ByCountryApportionment a, decimal value) => value * a;
     }
 }

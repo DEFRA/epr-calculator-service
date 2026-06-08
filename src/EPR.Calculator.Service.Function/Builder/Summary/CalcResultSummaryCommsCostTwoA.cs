@@ -44,14 +44,7 @@ public static class CalcResultSummaryCommsCostTwoA
     {
         var badDebtProvision = calcResult.CalcResultParameterOtherCost.BadDebtValue;
         var total = GetProducerTotalCostWithoutBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult) * (1 + badDebtProvision / 100);
-        var apportionment = calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment;
-        return new ByCountryCost
-        {
-            England         = total * apportionment.England / 100,
-            Wales           = total * apportionment.Wales / 100,
-            Scotland        = total * apportionment.Scotland / 100,
-            NorthernIreland = total * apportionment.NorthernIreland / 100,
-        };
+        return total * calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment;
     }
 
     public static decimal GetTotalReportedTonnage(
@@ -94,14 +87,7 @@ public static class CalcResultSummaryCommsCostTwoA
     {
         var badDebtProvision = calcResult.CalcResultParameterOtherCost.BadDebtValue;
         var totalBadDebt = GetProducerTotalCostWithoutBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult) * badDebtProvision / 100;
-        var apportionment = calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment;
-        return new ByCountryCost
-        {
-            England         = totalBadDebt * apportionment.England / 100,
-            Wales           = totalBadDebt * apportionment.Wales / 100,
-            Scotland        = totalBadDebt * apportionment.Scotland / 100,
-            NorthernIreland = totalBadDebt * apportionment.NorthernIreland / 100,
-        };
+        return totalBadDebt * calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment;
     }
 
     public static decimal GetTotalReportedTonnageTotal(
