@@ -63,7 +63,7 @@ public class LaDataPrepCostsProducerTests
                     }
                 }
             },
-            TotalFeeforLADisposalCostswithBadDebtprovision1 = 100,
+            LocalAuthorityDisposalCostsSectionOne = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = ByCountryCost.Empty with { England = 100 } },
             TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A = 100,
             CommsCostsHeaderFor2bTitle = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = ByCountryCost.Empty with { England = 100 }},
             TwoCCommsCosts = new CalcResultSummaryBadDebtProvision { FeeWithoutBadDebtProvision = 0, BadDebtProvision = 0, FeeWithBadDebtProvision = ByCountryCost.Empty with { England = 100 } }

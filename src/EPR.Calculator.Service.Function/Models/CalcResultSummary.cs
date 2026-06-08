@@ -3,11 +3,7 @@
     public class CalcResultSummary
     {
         //Section-(1) & (2a)
-        public decimal TotalFeeforLADisposalCostswoBadDebtprovision1 { get; set; }
-
-        public decimal BadDebtProvisionFor1 { get; set; }
-
-        public decimal TotalFeeforLADisposalCostswithBadDebtprovision1 { get; set; }
+        public CalcResultSummaryBadDebtProvision LocalAuthorityDisposalCostsSectionOne { get; set; }
 
         public decimal TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A { get; set; }
 

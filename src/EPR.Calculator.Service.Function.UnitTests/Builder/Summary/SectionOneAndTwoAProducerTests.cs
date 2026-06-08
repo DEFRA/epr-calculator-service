@@ -36,9 +36,9 @@ public class SectionOneAndTwoAProducerTests
 
         SectionOneAndTwoAProducer.SetValues(TotalsRow, summary);
 
-        Assert.AreEqual(4423.39438m,   summary.TotalFeeforLADisposalCostswoBadDebtprovision1);
-        Assert.AreEqual(265.4036628m,  summary.BadDebtProvisionFor1);
-        Assert.AreEqual(4688.7980428m, summary.TotalFeeforLADisposalCostswithBadDebtprovision1);
+        Assert.AreEqual(4423.39438m,   summary.LocalAuthorityDisposalCostsSectionOne.FeeWithoutBadDebtProvision);
+        Assert.AreEqual(265.4036628m,  summary.LocalAuthorityDisposalCostsSectionOne.BadDebtProvision);
+        Assert.AreEqual(4688.7980428m, summary.LocalAuthorityDisposalCostsSectionOne.FeeWithBadDebtProvision.Total);
         Assert.AreEqual(1290.778m,     summary.TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A);
         Assert.AreEqual(77.44668m,     summary.BadDebtProvisionFor2A);
         Assert.AreEqual(1368.22468m,   summary.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A);

@@ -37,9 +37,9 @@ public class CalculationResultsJson
     {
         return new ProducerCalculationResultsSummary
         {
-            FeeForLaDisposalCostsWithoutBadDebtprovision1 = CurrencyConverterUtils.ConvertToCurrency(data.TotalFeeforLADisposalCostswoBadDebtprovision1),
-            BadDebtProvision1 = CurrencyConverterUtils.ConvertToCurrency(data.BadDebtProvisionFor1),
-            FeeForLaDisposalCostsWithBadDebtprovision1 = CurrencyConverterUtils.ConvertToCurrency(data.TotalFeeforLADisposalCostswithBadDebtprovision1),
+            FeeForLaDisposalCostsWithoutBadDebtprovision1 = CurrencyConverterUtils.ConvertToCurrency(data.LocalAuthorityDisposalCostsSectionOne.FeeWithoutBadDebtProvision),
+            BadDebtProvision1 = CurrencyConverterUtils.ConvertToCurrency(data.LocalAuthorityDisposalCostsSectionOne.BadDebtProvision),
+            FeeForLaDisposalCostsWithBadDebtprovision1 = CurrencyConverterUtils.ConvertToCurrency(data.LocalAuthorityDisposalCostsSectionOne.FeeWithBadDebtProvision.Total),
 
             FeeForCommsCostsByMaterialWithoutBadDebtprovision2a = CurrencyConverterUtils.ConvertToCurrency(data.TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A),
             BadDebtProvision2a = CurrencyConverterUtils.ConvertToCurrency(data.BadDebtProvisionFor2A),

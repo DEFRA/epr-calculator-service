@@ -33,11 +33,11 @@ public class CalculationResultsJsonFromTests
         Assert.IsNotNull(roundTrippedData);
 
         // 1
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.TotalFeeforLADisposalCostswoBadDebtprovision1),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.LocalAuthorityDisposalCostsSectionOne.FeeWithoutBadDebtProvision),
             roundTrippedData["feeForLaDisposalCostsWithoutBadDebtprovision1"]);
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.BadDebtProvisionFor1),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.LocalAuthorityDisposalCostsSectionOne.BadDebtProvision),
             roundTrippedData["badDebtProvision1"]);
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.TotalFeeforLADisposalCostswithBadDebtprovision1),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.LocalAuthorityDisposalCostsSectionOne.FeeWithBadDebtProvision.Total),
             roundTrippedData["feeForLaDisposalCostsWithBadDebtprovision1"]);
 
         // 2a

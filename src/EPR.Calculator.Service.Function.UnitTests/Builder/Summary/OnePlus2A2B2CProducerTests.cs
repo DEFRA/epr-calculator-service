@@ -18,9 +18,9 @@ public class OnePlus2A2B2CProducerTests
         OnePlus2A2B2CProducer.SetValues(calcResult.CalcResultSummary);
 
         // Assert
-        Assert.AreEqual(8895.914874216554m, calcResult.CalcResultSummary.TotalOnePlus2A2B2CFeeWithBadDebtProvision);
+        Assert.AreEqual(8895.9148742165541m, calcResult.CalcResultSummary.TotalOnePlus2A2B2CFeeWithBadDebtProvision);
         Assert.AreEqual(10491.16776684412368m, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerTotalOnePlus2A2B2CWithBadDeptProvision);
-        Assert.AreEqual(117.93242083791927599529604369m, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C);
+        Assert.AreEqual(117.93242083791927466960416708m, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C);
     }
 
     [TestMethod]
@@ -33,7 +33,7 @@ public class OnePlus2A2B2CProducerTests
         data.ProducerDisposalFees.ToList()[0].CommsCostsSectionTwoB = CalcResultSummaryBadDebtProvision.Empty;
         data.ProducerDisposalFees.ToList()[0].CommsCostsSectionTwoC = CalcResultSummaryBadDebtProvision.Empty;
 
-        data.TotalFeeforLADisposalCostswithBadDebtprovision1 = 0;
+        data.LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty;
         data.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A = 0;
         data.CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty;
         data.TwoCCommsCosts = new CalcResultSummaryBadDebtProvision { FeeWithoutBadDebtProvision = 0, BadDebtProvision = 0m, FeeWithBadDebtProvision = ByCountryCost.Empty };

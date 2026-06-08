@@ -24,6 +24,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var resultSummary = new CalcResultSummary
             {
                 ProducerDisposalFees = TestDataHelper.GetProducerDisposalFees(),
+                LocalAuthorityDisposalCostsSectionOne = CalcResultSummaryBadDebtProvision.Empty,
                 TwoCCommsCosts = CalcResultSummaryBadDebtProvision.Empty,
                 CommsCostsHeaderFor2bTitle = CalcResultSummaryBadDebtProvision.Empty
             };

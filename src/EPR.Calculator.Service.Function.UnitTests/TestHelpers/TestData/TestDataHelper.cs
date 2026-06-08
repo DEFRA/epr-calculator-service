@@ -263,9 +263,12 @@ public static partial class TestDataHelper
     {
         return new CalcResultSummary
         {
-            TotalFeeforLADisposalCostswoBadDebtprovision1 = 4423.39438M,
-            BadDebtProvisionFor1 = 6021.3677166M,
-            TotalFeeforLADisposalCostswithBadDebtprovision1 = 4688.7980428M,
+            LocalAuthorityDisposalCostsSectionOne = new CalcResultSummaryBadDebtProvision
+            {
+                FeeWithoutBadDebtProvision = 4423.39438M,
+                BadDebtProvision           = 6021.3677166M,
+                FeeWithBadDebtProvision    = new ByCountryCost { England = 2534.2359097426884m, Wales = 571.2417008090152m, Scotland = 1137.8673076088023m, NorthernIreland = 445.4531246394942m }
+            },
             TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A = 1290.778M,
             BadDebtProvisionFor2A = 2098.887360M,
             TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A = 1368.22468M,

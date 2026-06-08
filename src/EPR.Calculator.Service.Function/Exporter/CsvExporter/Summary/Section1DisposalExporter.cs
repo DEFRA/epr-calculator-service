@@ -33,9 +33,9 @@ public class Section1DisposalExporter : ICalcResultSummaryPartExporter
     public void AppendGroupHeader(StringBuilder csvContent, CalcResultSummary resultSummary, IReadOnlyList<MaterialDetail> materials, bool applyModulation)
     {
         int count = GetColumnHeaders(materials, applyModulation).Count();
-        csvContent.Append(CsvSanitiser.SanitiseData(resultSummary.TotalFeeforLADisposalCostswoBadDebtprovision1  , DecimalPlaces.Two, null, isCurrency: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(resultSummary.BadDebtProvisionFor1                           , DecimalPlaces.Two, null, isCurrency: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(resultSummary.TotalFeeforLADisposalCostswithBadDebtprovision1, DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(resultSummary.LocalAuthorityDisposalCostsSectionOne.FeeWithoutBadDebtProvision   , DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(resultSummary.LocalAuthorityDisposalCostsSectionOne.BadDebtProvision             , DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(resultSummary.LocalAuthorityDisposalCostsSectionOne.FeeWithBadDebtProvision.Total, DecimalPlaces.Two, null, isCurrency: true));
         csvContent.Append(',', count - 3);
     }
 
