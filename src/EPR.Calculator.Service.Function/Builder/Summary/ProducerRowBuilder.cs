@@ -110,8 +110,8 @@ internal sealed class ProducerRowBuilder(
             SubsidiaryId        = string.Empty,
             TradingName         = producerForTotalRow?.TradingName ?? string.Empty,
             Level               = CommonConstants.LevelOne.ToString(),
-            IsProducerScaledup  = scaledupProducers.Any(p => p.ProducerId == producerId) ? CommonConstants.Yes : CommonConstants.No,
-            IsPartialObligation = partialObligations.Any(p => p.ProducerId == producerId) ? CommonConstants.Yes : CommonConstants.No,
+            IsProducerScaledup  = scaledupProducers.Exists(p => p.ProducerId == producerId) ? CommonConstants.Yes : CommonConstants.No,
+            IsPartialObligation = partialObligations.Exists(p => p.ProducerId == producerId) ? CommonConstants.Yes : CommonConstants.No,
             StatusCode          = producerForTotalRow?.StatusCode,
             JoinerDate          = producerForTotalRow?.JoinerDate,
             LeaverDate          = producerForTotalRow?.LeaverDate,
@@ -140,7 +140,7 @@ internal sealed class ProducerRowBuilder(
     /// All fields — including SMCW — are additive: the overall SMCW equals the sum of the
     /// Level-1 SMCW records by construction in <see cref="SelfManagedConsumerWasteService"/>.
     /// </summary>
-    public CalcResultSummaryProducerDisposalFees GetOverallTotalRow(
+    public static CalcResultSummaryProducerDisposalFees GetOverallTotalRow(
         IReadOnlyList<CalcResultSummaryProducerDisposalFees> l1Rows,
         IReadOnlyList<MaterialDetail> materials
     )
@@ -163,21 +163,21 @@ internal sealed class ProducerRowBuilder(
             percentageOfProducerTonnage     += row.PercentageofProducerReportedTonnagevsAllProducers;
             commsCostsSection2c             += row.CommsCostsSection2c;
 
-            foreach (var material in materials)
+            foreach (var materialCode in materials.Select(material => material.Code))
             {
-                if (row.ProducerDisposalFeesByMaterial.TryGetValue(material.Code, out var mat))
-                    matRowsByCode[material.Code].Add(mat);
-                if (row.ProducerCommsFeesByMaterial.TryGetValue(material.Code, out var comms))
-                    commsRowsByCode[material.Code].Add(comms);
+                if (row.ProducerDisposalFeesByMaterial.TryGetValue(materialCode, out var mat))
+                    matRowsByCode[materialCode].Add(mat);
+                if (row.ProducerCommsFeesByMaterial.TryGetValue(materialCode, out var comms))
+                    commsRowsByCode[materialCode].Add(comms);
             }
         }
 
-        foreach (var material in materials)
+        foreach (var materialCode in materials.Select(material => material.Code))
         {
-            var l1MatRows   = matRowsByCode[material.Code];
-            var l1CommsRows = commsRowsByCode[material.Code];
+            var l1MatRows   = matRowsByCode[materialCode];
+            var l1CommsRows = commsRowsByCode[materialCode];
 
-            materialCosts[material.Code] = new CalcResultSummaryProducerDisposalFeesByMaterial
+            materialCosts[materialCode] = new CalcResultSummaryProducerDisposalFeesByMaterial
             {
                 HouseholdPackagingWasteTonnage            = l1MatRows.Sum(r => r.HouseholdPackagingWasteTonnage),
                 HouseholdPackagingWasteTonnageRagRating   = AggregateRagDict(l1MatRows, r => r.HouseholdPackagingWasteTonnageRagRating),
@@ -202,7 +202,7 @@ internal sealed class ProducerRowBuilder(
                 PreviousInvoicedTonnage                   = l1MatRows.Sum(r => r.PreviousInvoicedTonnage),
             };
 
-            commsCosts[material.Code] = new CalcResultSummaryProducerCommsFeesCostByMaterial
+            commsCosts[materialCode] = new CalcResultSummaryProducerCommsFeesCostByMaterial
             {
                 HouseholdPackagingWasteTonnage   = l1CommsRows.Sum(r => r.HouseholdPackagingWasteTonnage),
                 PublicBinTonnage                 = l1CommsRows.Sum(r => r.PublicBinTonnage),
@@ -270,10 +270,10 @@ internal sealed class ProducerRowBuilder(
             SubsidiaryId        = producer.SubsidiaryId ?? string.Empty,
             TradingName         = producer.TradingName ?? string.Empty,
             Level               = level.ToString(),
-            IsProducerScaledup  = scaledupProducers.Any(p => p.ProducerId == producer.ProducerId)
+            IsProducerScaledup  = scaledupProducers.Exists(p => p.ProducerId == producer.ProducerId)
                 ? CommonConstants.Yes
                 : CommonConstants.No,
-            IsPartialObligation = partialObligations.Any(p => p.ProducerId == producer.ProducerId && p.SubsidiaryId == producer.SubsidiaryId)
+            IsPartialObligation = partialObligations.Exists(p => p.ProducerId == producer.ProducerId && p.SubsidiaryId == producer.SubsidiaryId)
                 ? CommonConstants.Yes
                 : CommonConstants.No,
             StatusCode          = orgData?.StatusCode,

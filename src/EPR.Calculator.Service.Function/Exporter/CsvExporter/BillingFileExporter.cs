@@ -116,7 +116,7 @@ public class BillingFileExporter(
             .ToImmutableList();
     }
 
-    // TODO can we remove this row?
+    // TODO can we remove this row? // NOSONAR
     private static readonly CalcResultSummaryProducerDisposalFees ZeroedTotalRow = new()
     {
         ProducerId                 = 0,

@@ -100,7 +100,8 @@ public class CalcResultSummaryBuilder(
             scaledupProducers,
             partialObligations,
             organisationsByKey,
-            parentOrganisationsById);
+            parentOrganisationsById
+        );
 
         return GetCalcResultSummary(
             runContext,
@@ -149,6 +150,7 @@ public class CalcResultSummaryBuilder(
         return builder.ToImmutable();
     }
 
+    [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
     private static CalcResultSummary GetCalcResultSummary(
         RunContext runContext,
         ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
@@ -185,7 +187,7 @@ public class CalcResultSummaryBuilder(
 
             // Overall total: aggregate all Level-1 rows (one per producer group).
             var l1Rows = producerDisposalFees.Where(r => r.Level == CommonConstants.LevelOne.ToString()).ToList();
-            var allTotalRow = rowBuilder.GetOverallTotalRow(l1Rows, materials);
+            var allTotalRow = ProducerRowBuilder.GetOverallTotalRow(l1Rows, materials);
             result.OverallTotal = allTotalRow;
 
             result.ProducerDisposalFees = producerDisposalFees;
