@@ -3,7 +3,7 @@ using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 
-namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.TotalBillBreakdown;
+namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary;
 
 [TestCategory(TestCategories.ResultBuilder)]
 [TestClass]

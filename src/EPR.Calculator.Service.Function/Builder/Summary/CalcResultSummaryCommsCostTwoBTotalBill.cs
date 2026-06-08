@@ -6,6 +6,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary;
 
 public static class CalcResultSummaryCommsCostTwoBTotalBill
 {
+    // TODO clean all this up
+
     #region Constants
     private const string England = "England";
     private const string Wales = "Wales";

@@ -208,8 +208,6 @@ public class CalcResultSummaryBuilder(
                 producerDisposalFees.AddRange(l2Rows);
             };
 
-            // TODO can the overall total be moved to the exporters?
-
             // Overall total: aggregate all Level-1 rows (one per producer group).
             var l1Rows = producerDisposalFees.Where(r => r.Level == CommonConstants.LevelOne.ToString()).ToList();
             var allTotalRow = rowBuilder.GetOverallTotalRow(l1Rows, materials);
@@ -218,13 +216,8 @@ public class CalcResultSummaryBuilder(
             result.ProducerDisposalFees = producerDisposalFees;
 
             // Section-(1) & (2a)
-            result.TotalFeeforLADisposalCostswoBadDebtprovision1   = GetTotalFee(producerDisposalFees, fee => fee.TotalProducerDisposalFee);
-            result.BadDebtProvisionFor1                            = GetTotalFee(producerDisposalFees, fee => fee.LocalAuthorityDisposalCostsSectionOne?.BadDebtProvision ?? 0);;
-            result.TotalFeeforLADisposalCostswithBadDebtprovision1 = GetTotalFee(producerDisposalFees, fee => fee.TotalProducerDisposalFeeWithBadDebtProvision);
+            SectionOneAndTwoAProducer.SetValues(allTotalRow, result);
 
-            result.TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A   = GetTotalFee(producerDisposalFees, fee => fee.TotalProducerCommsFee);
-            result.BadDebtProvisionFor2A                                 = GetTotalFee(producerDisposalFees, fee => fee.CommunicationCostsSectionTwoA?.BadDebtProvision ?? 0);;
-            result.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A = GetTotalFee(producerDisposalFees, fee => fee.TotalProducerCommsFeeWithBadDebtProvision);
 
             // Section 2b comms cost
             TwoBCommsCostProducer.SetValues(calcResult, result);
@@ -284,21 +277,5 @@ public class CalcResultSummaryBuilder(
         return result;
     }
 
-    public static decimal GetTotalFee(IReadOnlyList<CalcResultSummaryProducerDisposalFees>? producerDisposalFees, Func<CalcResultSummaryProducerDisposalFees, decimal> selector)
-    {
-        if (producerDisposalFees == null)
-        {
-            return 0m;
-        }
 
-        var totalFee = producerDisposalFees
-            .FirstOrDefault(t => t.LeaverDate == CommonConstants.Totals);
-
-        if (totalFee is null)
-        {
-            return 0m;
-        }
-
-        return selector(totalFee);
-    }
 }

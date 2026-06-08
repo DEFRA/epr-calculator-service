@@ -6,20 +6,22 @@ namespace EPR.Calculator.Service.Function.Builder.Summary;
 
 public static class TwoCCommsCostProducer
 {
-    public static void SetValues(CalcResult calcResult, CalcResultSummary result)
+    public static void SetValues(CalcResult calcResult, CalcResultSummary summary)
     {
         // Section 2c
-        result.TwoCCommsCostsByCountryWithoutBadDebtProvision =
+        summary.TwoCCommsCostsByCountryWithoutBadDebtProvision =
           calcResult.CalcResultCommsCostReportDetail.CommsCostByCountry.Total;
 
-        result.TwoCBadDebtProvision =
+        summary.TwoCBadDebtProvision =
             calcResult.CalcResultParameterOtherCost.BadDebtValue
-            * result.TwoCCommsCostsByCountryWithoutBadDebtProvision
+            * summary.TwoCCommsCostsByCountryWithoutBadDebtProvision
             / 100;
 
-        result.TwoCCommsCostsByCountryWithBadDebtProvision =
-            result.TwoCCommsCostsByCountryWithoutBadDebtProvision + result.TwoCBadDebtProvision;
+        summary.TwoCCommsCostsByCountryWithBadDebtProvision =
+            summary.TwoCCommsCostsByCountryWithoutBadDebtProvision + summary.TwoCBadDebtProvision;
     }
+
+    // TODO clean this up
 
     public static void UpdateTwoCRows(CalcResult calcResult, CalcResultSummaryProducerDisposalFees result,
         ProducerDetail producer, IReadOnlyList<TotalPackagingTonnagePerRun> hhTotalPackagingTonnage)

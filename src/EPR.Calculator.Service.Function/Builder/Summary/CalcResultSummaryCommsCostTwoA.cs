@@ -7,6 +7,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary;
 
 public static class CalcResultSummaryCommsCostTwoA
 {
+    // TODO clean this up
+
     public static decimal GetEnglandWithBadDebtProvisionForCommsTotal(
         ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
         IReadOnlyList<ProducerDetail> producers,

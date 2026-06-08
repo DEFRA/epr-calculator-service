@@ -4,22 +4,22 @@ namespace EPR.Calculator.Service.Function.Builder.Summary;
 
 public static class OnePlus2A2B2CProducer
 {
-    public static void SetValues(CalcResultSummary result)
+    public static void SetValues(CalcResultSummary summary)
     {
-        result.TotalOnePlus2A2B2CFeeWithBadDebtProvision = GetHeaderTotalFeeWithBadDebtProvision(result);
-        foreach (var fee in result.ProducerDisposalFees)
+        summary.TotalOnePlus2A2B2CFeeWithBadDebtProvision = GetHeaderTotalFeeWithBadDebtProvision(summary);
+        foreach (var fee in summary.ProducerDisposalFees)
         {
             fee.ProducerTotalOnePlus2A2B2CWithBadDeptProvision = GetTotalWithBadDebtProvision(fee) ?? 0;
-            fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C = GetOverallProducerPercentage(fee, result.TotalOnePlus2A2B2CFeeWithBadDebtProvision);
+            fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C = GetOverallProducerPercentage(fee, summary.TotalOnePlus2A2B2CFeeWithBadDebtProvision);
         }
     }
 
-    private static decimal GetHeaderTotalFeeWithBadDebtProvision(CalcResultSummary result)
+    private static decimal GetHeaderTotalFeeWithBadDebtProvision(CalcResultSummary summary)
     {
-        return result.TotalFeeforLADisposalCostswithBadDebtprovision1
-            + result.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A
-            + result.CommsCostHeaderWithBadDebtFor2bTitle
-            + result.TwoCCommsCostsByCountryWithBadDebtProvision;
+        return summary.TotalFeeforLADisposalCostswithBadDebtprovision1
+            + summary.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A
+            + summary.CommsCostHeaderWithBadDebtFor2bTitle
+            + summary.TwoCCommsCostsByCountryWithBadDebtProvision;
     }
 
     private static decimal? GetTotalWithBadDebtProvision(CalcResultSummaryProducerDisposalFees fee)
