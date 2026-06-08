@@ -82,72 +82,21 @@ public class ThreeSaCostsProducerTests
     };
 
     [TestMethod]
-    public void CanCallSaSetupCostsProducerFeeWithoutBadDebtProvision()
+    public void ThreeSaCostsProducer_CanCallSetValues()
     {
         // Act
         ThreeSaCostsProducer.SetValues(calcResult, calcResult.CalcResultSummary);
 
         // Assert
-        Assert.AreEqual(100, calcResult.CalcResultSummary.SaOperatingCostsWoTitleSection3);
-        Assert.AreEqual(6, calcResult.CalcResultSummary.BadDebtProvisionTitleSection3);
-        Assert.AreEqual(106, calcResult.CalcResultSummary.SaOperatingCostsWithTitleSection3);
-        Assert.AreEqual(1,
-            calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0]
-                .SchemeAdministratorOperatingCosts!.TotalProducerFeeWithoutBadDebtProvision);
-        Assert.AreEqual(0.06m,
-            calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].SchemeAdministratorOperatingCosts!.BadDebtProvision);
-        Assert.AreEqual(1.06m,
-            calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0]
-                .SchemeAdministratorOperatingCosts!.TotalProducerFeeWithBadDebtProvision);
-    }
-
-    [TestMethod]
-    public void CanCallGetSaSetupCostsEnglandOverallTotalWithBadDebtProvision()
-    {
-        ThreeSaCostsProducer.SetValues(calcResult, calcResult.CalcResultSummary);
-        // Act
-        var result = ThreeSaCostsProducer.GetCountryTotalWithBadDebtProvision(
-            calcResult,
-            calcResult.CalcResultSummary.SaOperatingCostsWoTitleSection3,
-            calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C,
-            Countries.England
-        );
-
-        // Assert
-        Assert.AreEqual(0.42m, Math.Round(result, 2));
-    }
-
-    [TestMethod]
-    public void CanCallGetSaSetupCostsScotlandOverallTotalWithBadDebtProvision()
-    {
-        ThreeSaCostsProducer.SetValues(calcResult, calcResult.CalcResultSummary);
-
-        // Act
-        var result = ThreeSaCostsProducer.GetCountryTotalWithBadDebtProvision(
-            calcResult,
-            calcResult.CalcResultSummary.SaOperatingCostsWoTitleSection3,
-            calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C,
-            Countries.Scotland
-        );
-
-        // Assert
-        Assert.AreEqual(0.16m, Math.Round(result, 2));
-    }
-
-    [TestMethod]
-    public void CanCallGetSaSetupCostsWalesOverallTotalWithBadDebtProvision()
-    {
-        ThreeSaCostsProducer.SetValues(calcResult, calcResult.CalcResultSummary);
-
-        // Act
-        var result = ThreeSaCostsProducer.GetCountryTotalWithBadDebtProvision(
-            calcResult,
-            calcResult.CalcResultSummary.SaOperatingCostsWoTitleSection3,
-            calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C,
-            Countries.Wales
-        );
-
-        // Assert
-        Assert.AreEqual(0.11m, Math.Round(result, 2));
+        Assert.AreEqual(100    , calcResult.CalcResultSummary.SaOperatingCostsWoTitleSection3);
+        Assert.AreEqual(6      , calcResult.CalcResultSummary.BadDebtProvisionTitleSection3);
+        Assert.AreEqual(106    , calcResult.CalcResultSummary.SaOperatingCostsWithTitleSection3);
+        Assert.AreEqual(1      , calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].SchemeAdministratorOperatingCosts!.TotalProducerFeeWithoutBadDebtProvision);
+        Assert.AreEqual(0.06m  , calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].SchemeAdministratorOperatingCosts!.BadDebtProvision);
+        Assert.AreEqual(1.06m  , calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].SchemeAdministratorOperatingCosts!.TotalProducerFeeWithBadDebtProvision);
+        Assert.AreEqual(0.4240m, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].SchemeAdministratorOperatingCosts!.EnglandTotalWithBadDebtProvision);
+        Assert.AreEqual(0.1060m, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].SchemeAdministratorOperatingCosts!.WalesTotalWithBadDebtProvision);
+        Assert.AreEqual(0.1590m, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].SchemeAdministratorOperatingCosts!.ScotlandTotalWithBadDebtProvision);
+        Assert.AreEqual(0.3710m, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].SchemeAdministratorOperatingCosts!.NorthernIrelandTotalWithBadDebtProvision);
     }
 }

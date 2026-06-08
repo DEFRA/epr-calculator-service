@@ -12,7 +12,7 @@ public class OnePlus2A2B2CProducerTests
     private readonly CalcResult calcResult = TestDataHelper.GetCalcResult();
 
     [TestMethod]
-    public void CanCallSetValues()
+    public void OnePlus2A2B2CProducer_CanCallSetValues()
     {
         // Act
         OnePlus2A2B2CProducer.SetValues(calcResult.CalcResultSummary);
@@ -24,7 +24,7 @@ public class OnePlus2A2B2CProducerTests
     }
 
     [TestMethod]
-    public void CanCallSetValues_NullLocalAuthority()
+    public void OnePlus2A2B2CProducer_CanCallSetValues_NullLocalAuthority()
     {
         // Act
         var data = calcResult.CalcResultSummary;

@@ -15,7 +15,7 @@ public class TotalBillBreakdownProducerTests
     ///     The CanCallSetValues
     /// </summary>
     [TestMethod]
-    public void CanCallSetValues()
+    public void TotalBillBreakdownProducer_CanCallSetValues()
     {
         // Act
         TotalBillBreakdownProducer.SetValues(calcResult.CalcResultSummary);
@@ -34,7 +34,7 @@ public class TotalBillBreakdownProducerTests
     ///     The CanCallSetValues
     /// </summary>
     [TestMethod]
-    public void CanCallSetValues_NullValues()
+    public void TotalBillBreakdownProducer_CanCallSetValues_NullValues()
     {
         // Arrange
         var data = calcResult.CalcResultSummary;

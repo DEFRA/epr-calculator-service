@@ -81,18 +81,18 @@ public class LaDataPrepCostsProducerTests
     };
 
     [TestMethod]
-    public void CanCallSetValues()
+    public void LaDataPrepCostsProducer_CanCallSetValues()
     {
         // Act
         LaDataPrepCostsProducer.SetValues(calcResult, calcResult.CalcResultSummary);
 
         // Assert
-        Assert.AreEqual(100, calcResult.CalcResultSummary.LaDataPrepCostsTitleSection4);
-        Assert.AreEqual(6, calcResult.CalcResultSummary.LaDataPrepCostsBadDebtProvisionTitleSection4);
-        Assert.AreEqual(106, calcResult.CalcResultSummary.LaDataPrepCostsWithBadDebtProvisionTitleSection4);
-        Assert.AreEqual(100, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts!.TotalProducerFeeWithoutBadDebtProvision);
-        Assert.AreEqual(6, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts!.BadDebtProvision);
-        Assert.AreEqual(106, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts!.TotalProducerFeeWithBadDebtProvision);
+        Assert.AreEqual(100   , calcResult.CalcResultSummary.LaDataPrepCostsTitleSection4);
+        Assert.AreEqual(6     , calcResult.CalcResultSummary.LaDataPrepCostsBadDebtProvisionTitleSection4);
+        Assert.AreEqual(106   , calcResult.CalcResultSummary.LaDataPrepCostsWithBadDebtProvisionTitleSection4);
+        Assert.AreEqual(100   , calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts!.TotalProducerFeeWithoutBadDebtProvision);
+        Assert.AreEqual(6     , calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts!.BadDebtProvision);
+        Assert.AreEqual(106   , calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts!.TotalProducerFeeWithBadDebtProvision);
         Assert.AreEqual(42.40m, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts!.EnglandTotalWithBadDebtProvision);
         Assert.AreEqual(31.80m, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts!.WalesTotalWithBadDebtProvision);
         Assert.AreEqual(21.20m, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].LocalAuthorityDataPreparationCosts!.ScotlandTotalWithBadDebtProvision);

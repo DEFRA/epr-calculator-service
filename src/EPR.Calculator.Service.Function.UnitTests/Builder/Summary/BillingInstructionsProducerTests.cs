@@ -39,7 +39,7 @@ public class BillingInstructionsProducerTests
     ];
 
     [TestMethod]
-    public void CanCallSetValues()
+    public void BillingInstructionsProducer_CanCallSetValues()
     {
         // Act
         List<InvoicedProducer> producerInvoicedMaterialNetTonnage =
