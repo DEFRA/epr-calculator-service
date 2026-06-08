@@ -466,7 +466,7 @@ public class CalculationResultsJsonFromTests
         {
             Assert.Fail("Producer not found.");
         }
-        Assert.AreEqual(producer.ProducerId, roundTrippedData[0]!["producerID"]?.ToString());
+        Assert.AreEqual(producer.ProducerId.ToString(), roundTrippedData[0]!["producerID"]?.ToString());
         Assert.AreEqual(producer.SubsidiaryId, roundTrippedData[0]!["subsidiaryID"]?.ToString());
         Assert.AreEqual(producer.ProducerName, roundTrippedData[0]!["producerName"]?.ToString());
         Assert.AreEqual(producer.TradingName, roundTrippedData[0]!["tradingName"]?.ToString());
@@ -542,7 +542,7 @@ public class CalculationResultsJsonFromTests
         var producer = data.ProducerDisposalFees.SingleOrDefault(t => !string.IsNullOrEmpty(t.Level))!;
 
         // Main Fields
-        Assert.AreEqual(producer.ProducerId, calculationResult["producerID"]?.GetValue<string>());
+        Assert.AreEqual(producer.ProducerId.ToString(), calculationResult["producerID"]?.GetValue<string>());
         Assert.AreEqual(producer.SubsidiaryId, calculationResult["subsidiaryID"]?.GetValue<string>());
         Assert.AreEqual(producer.ProducerName, calculationResult["producerName"]?.GetValue<string>());
         Assert.AreEqual(producer.TradingName!, calculationResult["tradingName"]?.GetValue<string>());
@@ -602,7 +602,7 @@ public class CalculationResultsJsonFromTests
         var producer = data.ProducerDisposalFees.SingleOrDefault(t => !string.IsNullOrEmpty(t.Level))!;
 
         // Main Fields
-        AssertAreEqual(producer.ProducerId, calculationResult["producerID"]);
+        AssertAreEqual(producer.ProducerId.ToString(), calculationResult["producerID"]);
     }
 
     private static decimal? ReadNullableDecimal(JsonNode obj, string prop)

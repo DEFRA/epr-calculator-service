@@ -102,31 +102,5 @@ namespace EPR.Calculator.Service.Function.UnitTests.Utils
             Assert.AreEqual("0", count);
             Assert.AreEqual(string.Empty, advice);
         }
-
-        // ---------- Inline helpers (no external classes) ----------
-
-        private static CalcResultSummaryProducerDisposalFees MakeProducerRow(
-            string level, string materialCode, decimal? tonnageChange)
-        {
-            return new CalcResultSummaryProducerDisposalFees
-            {
-                // minimal required fields (set to dummy values)
-                ProducerIdInt = 1,
-                ProducerId = "1",
-                ProducerName = "Test Producer",
-                SubsidiaryId = string.Empty,
-                TradingName = string.Empty,
-                Level = level,
-                ProducerDisposalFeesByMaterial =
-                    new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>
-                    {
-                        [materialCode] = new CalcResultSummaryProducerDisposalFeesByMaterial
-                        {
-                            TonnageChange = tonnageChange,
-                            ProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty
-                        }
-                    }
-            };
-        }
     }
 }

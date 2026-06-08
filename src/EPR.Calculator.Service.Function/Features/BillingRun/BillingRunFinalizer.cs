@@ -72,7 +72,7 @@ public class BillingRunFinalizer(
         {
             var level1FeesByProducerId = calcResults.CalcResultSummary.ProducerDisposalFees
                 .Where(f => f.Level == CommonConstants.LevelOne.ToString())
-                .ToImmutableDictionary(f => f.ProducerIdInt, f => f);
+                .ToImmutableDictionary(f => f.ProducerId, f => f);
 
             if (level1FeesByProducerId.Count == 0) return;
 

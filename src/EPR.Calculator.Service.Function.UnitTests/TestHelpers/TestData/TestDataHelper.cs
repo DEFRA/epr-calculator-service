@@ -286,8 +286,7 @@ public static partial class TestDataHelper
         {
             new()
             {
-                ProducerId = "1",
-                ProducerIdInt = 1,
+                ProducerId = 1,
                 SubsidiaryId = string.Empty,
                 ProducerName = "Allied Packaging",
                 Level = "1",
@@ -370,8 +369,7 @@ public static partial class TestDataHelper
         {
             new()
             {
-                ProducerId = "1",
-                ProducerIdInt = 1,
+                ProducerId = 1,
                 SubsidiaryId = string.Empty,
                 ProducerName = "Allied Packaging",
                 Level = "1",
@@ -455,8 +453,7 @@ public static partial class TestDataHelper
         {
             new()
             {
-                ProducerId = "1",
-                ProducerIdInt = 1,
+                ProducerId = 1,
                 SubsidiaryId = string.Empty,
                 ProducerName = "Allied Packaging",
                 Level = "2",

@@ -11,7 +11,7 @@ public class SectionOneAndTwoAProducerTests
 {
     private static readonly CalcResultSummaryProducerDisposalFees TotalsRow = new()
     {
-        ProducerId   = string.Empty,
+        ProducerId   = 0,
         SubsidiaryId = string.Empty,
         ProducerName = string.Empty,
         LADisposalCostsSection1 = new CalcResultSummaryBadDebtProvision

@@ -27,11 +27,11 @@ public static class BillingInstructionsProducer
 
         // PERF: Pre-index the invoiced records by ProducerId (as string) once.
         // Replaces O(fees * invoiced records) scan that previously ran inside the loop.
-        var currentYearInvoicedByProducerId = new Dictionary<string, decimal?>();
+        var currentYearInvoicedByProducerId = new Dictionary<int, decimal?>();
         foreach (var record in ProducerInvoicedMaterialNetTonnage)
         {
             // Preserves the original semantics of choosing the first encountered record per producerId.
-            currentYearInvoicedByProducerId.TryAdd(record.ProducerId.ToString(), record.CurrentYearInvoicedTotalAfterThisRun);
+            currentYearInvoicedByProducerId.TryAdd(record.ProducerId, record.CurrentYearInvoicedTotalAfterThisRun);
         }
 
         foreach (var fee in result.ProducerDisposalFees)

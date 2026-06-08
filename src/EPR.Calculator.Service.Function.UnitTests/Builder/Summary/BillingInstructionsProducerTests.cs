@@ -89,8 +89,7 @@ public class BillingInstructionsProducerTests
             [
                 new CalcResultSummaryProducerDisposalFees
                 {
-                    ProducerId = "101",
-                    ProducerIdInt = 101,
+                    ProducerId = 101,
                     Level = "1",
                     SubsidiaryId = "1000",
                     ProducerName = "P1",
@@ -134,8 +133,7 @@ public class BillingInstructionsProducerTests
             [
                 new CalcResultSummaryProducerDisposalFees
                 {
-                    ProducerId = "301",
-                    ProducerIdInt = 301,
+                    ProducerId = 301,
                     Level = "2",
                     SubsidiaryId = "3000",
                     ProducerName = "P3",
@@ -176,8 +174,7 @@ public class BillingInstructionsProducerTests
             [
                 new CalcResultSummaryProducerDisposalFees
                 {
-                    ProducerId = "11",
-                    ProducerIdInt = 11,
+                    ProducerId = 11,
                     Level = "1",
                     SubsidiaryId = "S-11",
                     ProducerName = "P11",
@@ -212,8 +209,7 @@ public class BillingInstructionsProducerTests
     {
         var a = new CalcResultSummaryProducerDisposalFees
         {
-            ProducerId = "1",
-            ProducerIdInt = 1,
+            ProducerId = 1,
             Level = "1",
             SubsidiaryId = "S-1",
             ProducerName = "P1",
@@ -222,8 +218,7 @@ public class BillingInstructionsProducerTests
 
         var b = new CalcResultSummaryProducerDisposalFees
         {
-            ProducerId = "2",
-            ProducerIdInt = 2,
+            ProducerId = 2,
             Level = "1",
             SubsidiaryId = "S-2",
             ProducerName = "P2",
@@ -232,8 +227,7 @@ public class BillingInstructionsProducerTests
 
         var total = new CalcResultSummaryProducerDisposalFees
         {
-            ProducerId = string.Empty,
-            ProducerIdInt = 0,
+            ProducerId = 0,
             Level = string.Empty,
             LeaverDate = CommonConstants.Totals,
             ProducerName = "Totals",
@@ -286,8 +280,7 @@ public class BillingInstructionsProducerTests
     {
         var a = new CalcResultSummaryProducerDisposalFees
         {
-            ProducerId = "1",
-            ProducerIdInt = 1,
+            ProducerId = 1,
             Level = "1",
             SubsidiaryId = "S-1",
             ProducerName = "P1",
@@ -296,8 +289,7 @@ public class BillingInstructionsProducerTests
 
         var b = new CalcResultSummaryProducerDisposalFees
         {
-            ProducerId = "2",
-            ProducerIdInt = 2,
+            ProducerId = 2,
             Level = "1",
             SubsidiaryId = "S-2",
             ProducerName = "P2",
@@ -306,8 +298,7 @@ public class BillingInstructionsProducerTests
 
         var total = new CalcResultSummaryProducerDisposalFees
         {
-            ProducerId = string.Empty,
-            ProducerIdInt = 0,
+            ProducerId = 0,
             Level = string.Empty,
             LeaverDate = CommonConstants.Totals,
             ProducerName = "Totals",
@@ -358,8 +349,7 @@ public class BillingInstructionsProducerTests
     {
         var total = new CalcResultSummaryProducerDisposalFees
         {
-            ProducerId = string.Empty,
-            ProducerIdInt = 0,
+            ProducerId = 0,
             Level = string.Empty,
             LeaverDate = CommonConstants.Totals,
             ProducerName = "Totals",
@@ -380,8 +370,7 @@ public class BillingInstructionsProducerTests
     {
         var fee = new CalcResultSummaryProducerDisposalFees
         {
-            ProducerId = "1",
-            ProducerIdInt = 1,
+            ProducerId = 1,
             Level = "2",
             SubsidiaryId = "S-1",
             ProducerName = "P1",
@@ -417,8 +406,7 @@ public class BillingInstructionsProducerTests
     {
         var fee = new CalcResultSummaryProducerDisposalFees
         {
-            ProducerId = "1",
-            ProducerIdInt = 1,
+            ProducerId = 1,
             Level = "1",
             SubsidiaryId = "S-1",
             ProducerName = "P1",
@@ -473,8 +461,7 @@ public class BillingInstructionsProducerTests
     {
         var fee = new CalcResultSummaryProducerDisposalFees
         {
-            ProducerId = "1",
-            ProducerIdInt = 1,
+            ProducerId = 1,
             Level = "1",
             SubsidiaryId = "S-1",
             ProducerName = "P1",
@@ -509,8 +496,7 @@ public class BillingInstructionsProducerTests
     {
         var fee = new CalcResultSummaryProducerDisposalFees
         {
-            ProducerId = "1",
-            ProducerIdInt = 1,
+            ProducerId = 1,
             Level = "1",
             SubsidiaryId = "S-1",
             ProducerName = "P1",
@@ -563,8 +549,7 @@ public class BillingInstructionsProducerTests
     {
         var fee = new CalcResultSummaryProducerDisposalFees
         {
-            ProducerId = "1",
-            ProducerIdInt = 1,
+            ProducerId = 1,
             Level = "1",
             SubsidiaryId = "S-1",
             ProducerName = "P1",
@@ -617,8 +602,7 @@ public class BillingInstructionsProducerTests
     {
         var fee = new CalcResultSummaryProducerDisposalFees
         {
-            ProducerId = "1",
-            ProducerIdInt = 1,
+            ProducerId = 1,
             Level = "1",
             SubsidiaryId = "S-1",
             ProducerName = "P1",
@@ -671,8 +655,7 @@ public class BillingInstructionsProducerTests
     {
         var fee = new CalcResultSummaryProducerDisposalFees
         {
-            ProducerId = "1",
-            ProducerIdInt = 1,
+            ProducerId = 1,
             Level = "1",
             SubsidiaryId = "S-1",
             ProducerName = "P1",
@@ -726,8 +709,7 @@ public class BillingInstructionsProducerTests
     {
         var fee = new CalcResultSummaryProducerDisposalFees
         {
-            ProducerId = "1",
-            ProducerIdInt = 1,
+            ProducerId = 1,
             Level = "1",
             SubsidiaryId = "S-1",
             ProducerName = "P1",
@@ -763,8 +745,7 @@ public class BillingInstructionsProducerTests
     {
         var fee = new CalcResultSummaryProducerDisposalFees
         {
-            ProducerId = "1",
-            ProducerIdInt = 1,
+            ProducerId = 1,
             Level = "1",
             SubsidiaryId = "S-1",
             ProducerName = "P1",
@@ -818,8 +799,7 @@ public class BillingInstructionsProducerTests
     {
         var fee = new CalcResultSummaryProducerDisposalFees
         {
-            ProducerId = "1",
-            ProducerIdInt = 1,
+            ProducerId = 1,
             Level = "1",
             SubsidiaryId = "S-1",
             ProducerName = "P1",
@@ -873,8 +853,7 @@ public class BillingInstructionsProducerTests
     {
         var fee = new CalcResultSummaryProducerDisposalFees
         {
-            ProducerId = "1",
-            ProducerIdInt = 1,
+            ProducerId = 1,
             Level = "1",
             SubsidiaryId = "S-1",
             ProducerName = "P1",

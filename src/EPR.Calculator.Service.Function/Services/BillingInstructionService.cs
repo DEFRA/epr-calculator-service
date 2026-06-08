@@ -52,15 +52,12 @@ public class BillingInstructionService(
 
         foreach (var producer in producers)
         {
-            if (!int.TryParse(producer.ProducerId, out var producerId))
-                continue;
-
             var billingInstructionSection = producer.BillingInstructionSection;
 
             var billingInstruction = new ProducerResultFileSuggestedBillingInstruction
             {
-                CalculatorRunId = calcResult.CalcResultDetail.RunId,
-                ProducerId = producerId,
+                CalculatorRunId                         = calcResult.CalcResultDetail.RunId,
+                ProducerId                              = producer.ProducerId,
                 TotalProducerBillWithBadDebt            = producer.TotalProducerBillBreakdownCosts!.FeeWithBadDebtProvision.Total,
                 CurrentYearInvoiceTotalToDate           = billingInstructionSection?.CurrentYearInvoiceTotalToDate,
                 TonnageChangeSinceLastInvoice           = GetStringValue(billingInstructionSection?.TonnageChangeSinceLastInvoice!),

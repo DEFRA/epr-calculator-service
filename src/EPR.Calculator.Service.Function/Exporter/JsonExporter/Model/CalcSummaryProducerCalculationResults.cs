@@ -70,7 +70,7 @@ public class CalcSummaryProducerCalculationResults
     {
         return new CalcSummaryProducerCalculationResults
             {
-                ProducerID                                   = producer.ProducerId,
+                ProducerID                                   = producer.ProducerId.ToString(),
                 SubsidiaryID                                 = producer.SubsidiaryId,
                 ProducerName                                 = producer.ProducerName,
                 TradingName                                  = producer.TradingName,

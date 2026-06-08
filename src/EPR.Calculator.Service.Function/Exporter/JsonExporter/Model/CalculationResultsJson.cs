@@ -77,7 +77,7 @@ public class CalculationResultsJson
         var results = new List<CalcSummaryProducerCalculationResults>();
 
         var filteredProducers = calcResult.CalcResultSummary.ProducerDisposalFees
-            .Where(producer => runContext.AcceptedProducerIds.Contains(producer.ProducerIdInt)
+            .Where(producer => runContext.AcceptedProducerIds.Contains(producer.ProducerId)
                                && !string.IsNullOrWhiteSpace(producer.Level));
 
         foreach (var producer in filteredProducers)

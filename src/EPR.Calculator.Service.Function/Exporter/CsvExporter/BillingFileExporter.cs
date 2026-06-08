@@ -111,7 +111,7 @@ public class BillingFileExporter(
         ImmutableHashSet<int> acceptedProducerIds)
     {
         return producerDisposalFees
-            .Where(x => acceptedProducerIds.Contains(x.ProducerIdInt) || x.ProducerIdInt == 0)
+            .Where(x => acceptedProducerIds.Contains(x.ProducerId) || x.ProducerId == 0)
             .Select(x => x.isOverallTotalRow ? ZeroedTotalRow : x)
             .ToImmutableList();
     }
@@ -121,7 +121,7 @@ public class BillingFileExporter(
     // TODO we should just write this directly into the CSV if it's needed
     private static CalcResultSummaryProducerDisposalFees ZeroedTotalRow => new()
     {
-        ProducerId                 = string.Empty,
+        ProducerId                 = 0,
         SubsidiaryId               = string.Empty,
         ProducerName               = string.Empty,
         TradingName                = string.Empty,

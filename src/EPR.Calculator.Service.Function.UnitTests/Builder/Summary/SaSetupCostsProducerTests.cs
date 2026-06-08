@@ -62,7 +62,7 @@ public class SaSetupCostsProducerTests
                 {
                     ProducerCommsFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>(),
                     ProducerDisposalFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>(),
-                    ProducerId = "1",
+                    ProducerId = 1,
                     ProducerName = "Test",
                     SubsidiaryId = "1",
                     ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 1

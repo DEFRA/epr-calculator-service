@@ -108,8 +108,7 @@ internal sealed class ProducerRowBuilder(
 
         return new CalcResultSummaryProducerDisposalFees
         {
-            ProducerIdInt       = producerId,
-            ProducerId          = producerId.ToString(),
+            ProducerId          = producerId,
             ProducerName        = producerForTotalRow?.OrganisationName ?? string.Empty,
             SubsidiaryId        = string.Empty,
             TradingName         = producerForTotalRow?.TradingName ?? string.Empty,
@@ -209,8 +208,7 @@ internal sealed class ProducerRowBuilder(
 
         return new CalcResultSummaryProducerDisposalFees
         {
-            ProducerIdInt       = 0,
-            ProducerId          = string.Empty,
+            ProducerId          = 0,
             ProducerName        = string.Empty,
             SubsidiaryId        = string.Empty,
             TradingName         = string.Empty,
@@ -265,8 +263,7 @@ internal sealed class ProducerRowBuilder(
 
         var result = new CalcResultSummaryProducerDisposalFees
         {
-            ProducerIdInt       = producer.ProducerId,
-            ProducerId          = producer.ProducerId.ToString(),
+            ProducerId          = producer.ProducerId,
             ProducerName        = producer.ProducerName ?? string.Empty,
             SubsidiaryId        = producer.SubsidiaryId ?? string.Empty,
             TradingName         = producer.TradingName ?? string.Empty,

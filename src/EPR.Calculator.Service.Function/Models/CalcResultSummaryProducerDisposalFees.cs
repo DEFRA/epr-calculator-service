@@ -2,7 +2,7 @@
 {
     public class CalcResultSummaryProducerDisposalFees
     {
-        public required string ProducerId { get; set; }
+        public required int ProducerId { get; set; }
 
         public required string SubsidiaryId { get; set; }
 
@@ -43,7 +43,7 @@
         public decimal PercentageofProducerReportedTonnagevsAllProducers { get; set; }
 
         // Section Total bill (1 + 2a + 2b + 2c)
-        public decimal ProducerTotalOnePlus2A2B2CWithBadDeptProvision { get; set; }
+        public decimal ProducerTotalOnePlus2A2B2CWithBadDeptProvision { get; set; } // TODO derived for exporter?
 
         public decimal ProducerOverallPercentageOfCostsForOnePlus2A2B2C { get; set; }
         // End Section Total bill (1 + 2a + 2b + 2c)
@@ -59,6 +59,5 @@
         public CalcResultSummaryBillingInstruction? BillingInstructionSection { get; set; }
 
         public bool isOverallTotalRow { get; set; }
-        public int ProducerIdInt { get; set; }
     }
 }

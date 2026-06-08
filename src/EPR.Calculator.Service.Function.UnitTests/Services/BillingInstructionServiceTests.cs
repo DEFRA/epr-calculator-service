@@ -132,7 +132,7 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
                     {
                         ProducerCommsFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>(),
                         ProducerDisposalFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>(),
-                        ProducerId = "1",
+                        ProducerId = 1,
                         ProducerName = "Test",
                         SubsidiaryId = "1",
                         Level = CommonConstants.LevelTwo.ToString(),
