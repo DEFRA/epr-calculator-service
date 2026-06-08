@@ -273,5 +273,20 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
                     return 0;
             }
         }
+
+        // A producer's country-apportioned share of a section cost total, with bad debt applied.
+        // Formula: sectionTotal × (1 + badDebt%) × producerPct% × countryApportionment%
+        // Used by sections 3, 4, and 5 which share this calculation structure.
+        public static decimal GetApportionedCountryTotal(
+            CalcResult calcResult,
+            decimal sectionTotal,
+            decimal producerPct,
+            Countries country,
+            Func<CalcResult, Countries, decimal> apportionment
+        ) =>
+            sectionTotal
+                * (1 + (calcResult.CalcResultParameterOtherCost.BadDebtValue / 100))
+                * (producerPct / 100)
+                * (apportionment(calcResult, country) / 100);
     }
 }
