@@ -237,13 +237,13 @@ public class CalcResultSummaryBuilder(
             OnePlus2A2B2CProducer.SetValues(result);
 
             // Section-3 SA Operating costs section
-            ThreeSaCostsProducer.GetProducerSetUpCostsSection3(calcResult, result);
+            ThreeSaCostsProducer.SetValues(calcResult, result);
 
             // Section-4 LA data prep costs
             LaDataPrepCostsProducer.SetValues(calcResult, result);
 
             // Section-5 SA setup costs
-            SaSetupCostsProducer.GetProducerSetUpCosts(calcResult, result);
+            SaSetupCostsProducer.SetValues(calcResult, result);
 
             // Total bill section
             TotalBillBreakdownProducer.SetValues(result);

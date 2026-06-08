@@ -85,7 +85,7 @@ public class ThreeSaCostsProducerTests
     public void CanCallSaSetupCostsProducerFeeWithoutBadDebtProvision()
     {
         // Act
-        ThreeSaCostsProducer.GetProducerSetUpCostsSection3(calcResult, calcResult.CalcResultSummary);
+        ThreeSaCostsProducer.SetValues(calcResult, calcResult.CalcResultSummary);
 
         // Assert
         Assert.AreEqual(100, calcResult.CalcResultSummary.SaOperatingCostsWoTitleSection3);
@@ -104,7 +104,7 @@ public class ThreeSaCostsProducerTests
     [TestMethod]
     public void CanCallGetSaSetupCostsEnglandOverallTotalWithBadDebtProvision()
     {
-        ThreeSaCostsProducer.GetProducerSetUpCostsSection3(calcResult, calcResult.CalcResultSummary);
+        ThreeSaCostsProducer.SetValues(calcResult, calcResult.CalcResultSummary);
         // Act
         var result = ThreeSaCostsProducer.GetCountryTotalWithBadDebtProvision(
             calcResult,
@@ -120,7 +120,7 @@ public class ThreeSaCostsProducerTests
     [TestMethod]
     public void CanCallGetSaSetupCostsScotlandOverallTotalWithBadDebtProvision()
     {
-        ThreeSaCostsProducer.GetProducerSetUpCostsSection3(calcResult, calcResult.CalcResultSummary);
+        ThreeSaCostsProducer.SetValues(calcResult, calcResult.CalcResultSummary);
 
         // Act
         var result = ThreeSaCostsProducer.GetCountryTotalWithBadDebtProvision(
@@ -137,7 +137,7 @@ public class ThreeSaCostsProducerTests
     [TestMethod]
     public void CanCallGetSaSetupCostsWalesOverallTotalWithBadDebtProvision()
     {
-        ThreeSaCostsProducer.GetProducerSetUpCostsSection3(calcResult, calcResult.CalcResultSummary);
+        ThreeSaCostsProducer.SetValues(calcResult, calcResult.CalcResultSummary);
 
         // Act
         var result = ThreeSaCostsProducer.GetCountryTotalWithBadDebtProvision(

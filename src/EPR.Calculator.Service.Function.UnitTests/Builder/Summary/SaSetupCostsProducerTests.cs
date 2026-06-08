@@ -83,7 +83,7 @@ public class SaSetupCostsProducerTests
     public void CanCallSaSetupCostsProducerFeeWithoutBadDebtProvision()
     {
         // Act
-        SaSetupCostsProducer.GetProducerSetUpCosts(calcResult, calcResult.CalcResultSummary);
+        SaSetupCostsProducer.SetValues(calcResult, calcResult.CalcResultSummary);
 
         // Assert
         Assert.AreEqual(100, calcResult.CalcResultSummary.SaSetupCostsTitleSection5);
@@ -97,7 +97,7 @@ public class SaSetupCostsProducerTests
     [TestMethod]
     public void CanCallGetSaSetupCostsEnglandOverallTotalWithBadDebtProvision()
     {
-        SaSetupCostsProducer.GetProducerSetUpCosts(calcResult, calcResult.CalcResultSummary);
+        SaSetupCostsProducer.SetValues(calcResult, calcResult.CalcResultSummary);
         // Act
         var result = SaSetupCostsProducer.GetCountryTotalWithBadDebtProvision(calcResult, calcResult.CalcResultSummary.SaSetupCostsTitleSection5, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.England);
 
@@ -108,7 +108,7 @@ public class SaSetupCostsProducerTests
     [TestMethod]
     public void CanCallGetSaSetupCostsScotlandOverallTotalWithBadDebtProvision()
     {
-        SaSetupCostsProducer.GetProducerSetUpCosts(calcResult, calcResult.CalcResultSummary);
+        SaSetupCostsProducer.SetValues(calcResult, calcResult.CalcResultSummary);
 
         // Act
         var result = SaSetupCostsProducer.GetCountryTotalWithBadDebtProvision(calcResult, calcResult.CalcResultSummary.SaSetupCostsTitleSection5, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.Scotland);
@@ -120,7 +120,7 @@ public class SaSetupCostsProducerTests
     [TestMethod]
     public void CanCallGetSaSetupCostsWalesOverallTotalWithBadDebtProvision()
     {
-        SaSetupCostsProducer.GetProducerSetUpCosts(calcResult, calcResult.CalcResultSummary);
+        SaSetupCostsProducer.SetValues(calcResult, calcResult.CalcResultSummary);
 
         // Act
         var result = SaSetupCostsProducer.GetCountryTotalWithBadDebtProvision(calcResult, calcResult.CalcResultSummary.SaSetupCostsTitleSection5, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].ProducerOverallPercentageOfCostsForOnePlus2A2B2C, Countries.Wales);

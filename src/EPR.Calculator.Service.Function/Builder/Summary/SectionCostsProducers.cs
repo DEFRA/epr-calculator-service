@@ -11,7 +11,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary;
 
 public static class ThreeSaCostsProducer
 {
-    public static void GetProducerSetUpCostsSection3(
+    public static void SetValues(
         CalcResult calcResult,
         CalcResultSummary summary
     ) =>
@@ -72,7 +72,7 @@ public static class LaDataPrepCostsProducer
 
 public static class SaSetupCostsProducer
 {
-    public static void GetProducerSetUpCosts(
+    public static void SetValues(
         CalcResult calcResult,
         CalcResultSummary summary
     ) =>
