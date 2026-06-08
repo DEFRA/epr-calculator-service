@@ -7,9 +7,7 @@ namespace EPR.Calculator.Service.Function.Models
         public decimal HouseholdDrinksContainersTonnage { get; set; }
         public decimal TotalReportedTonnage { get; set; }
         public decimal BadDebtProvision { get; set; }
-        public decimal EnglandWithBadDebtProvision { get; set; }
-        public decimal WalesWithBadDebtProvision { get; set; }
-        public decimal ScotlandWithBadDebtProvision { get; set; }
-        public decimal NorthernIrelandWithBadDebtProvision { get; set; }
+
+        public required ByCountryCost ProducerDisposalFeeWithBadDebtProvision { get; set; }
     }
 }

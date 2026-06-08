@@ -40,11 +40,11 @@ public class DisposalFeeSummary1
         {
             TotalProducerDisposalFeeWithoutBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(summary.TotalProducerDisposalFee),
             BadDebtProvision                                = CurrencyConverterUtils.ConvertToCurrency(summary.BadDebtProvision),
-            TotalProducerDisposalFeeWithBadDebtProvision    = CurrencyConverterUtils.ConvertToCurrency(summary.TotalProducerDisposalFeeWithBadDebtProvision),
-            EnglandTotal                                    = CurrencyConverterUtils.ConvertToCurrency(summary.EnglandTotal),
-            WalesTotal                                      = CurrencyConverterUtils.ConvertToCurrency(summary.WalesTotal),
-            ScotlandTotal                                   = CurrencyConverterUtils.ConvertToCurrency(summary.ScotlandTotal),
-            NorthernIrelandTotal                            = CurrencyConverterUtils.ConvertToCurrency(summary.NorthernIrelandTotal),
+            TotalProducerDisposalFeeWithBadDebtProvision    = CurrencyConverterUtils.ConvertToCurrency(summary.TotalProducerDisposalFeeWithBadDebtProvision.Total),
+            EnglandTotal                                    = CurrencyConverterUtils.ConvertToCurrency(summary.TotalProducerDisposalFeeWithBadDebtProvision.England),
+            WalesTotal                                      = CurrencyConverterUtils.ConvertToCurrency(summary.TotalProducerDisposalFeeWithBadDebtProvision.Wales),
+            ScotlandTotal                                   = CurrencyConverterUtils.ConvertToCurrency(summary.TotalProducerDisposalFeeWithBadDebtProvision.Scotland),
+            NorthernIrelandTotal                            = CurrencyConverterUtils.ConvertToCurrency(summary.TotalProducerDisposalFeeWithBadDebtProvision.NorthernIreland),
             TonnageChangeCount                              = summary.TonnageChangeCount ?? CommonConstants.Hyphen,
             TonnageChangeAdvice                             = summary.TonnageChangeAdvice ?? CommonConstants.Hyphen,
         };

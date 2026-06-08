@@ -7,7 +7,5 @@ namespace EPR.Calculator.Service.Function.Models
         public decimal PriceperTonne { get; set; }
 
         public decimal ProducerTotalCostWithoutBadDebtProvision { get; set; }
-
-        public decimal ProducerTotalCostwithBadDebtProvision { get; set; }
     }
 }

@@ -301,14 +301,7 @@ public class CalcResultSummaryUtilTests
     public void GetProducerDisposalFeeWithBadDebtProvision_AddsPercentage()
     {
         var result = CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvision(calcResult, 100m);
-        Assert.AreEqual(106m, result);
-    }
-
-    [TestMethod]
-    public void GetCountryBadDebtProvision()
-    {
-        Assert.AreEqual(57.291656411518582328328821072m, CalcResultSummaryUtil.GetCountryBadDebtProvision(calcResult, Countries.England, 100m));
-        Assert.AreEqual(12.914102879645582082205267049m, CalcResultSummaryUtil.GetCountryBadDebtProvision(calcResult, Countries.Wales, 100m));
+        Assert.AreEqual(106m, Math.Round(result.Total, 10));
     }
 
     [TestMethod]

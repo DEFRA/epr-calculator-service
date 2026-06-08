@@ -11,10 +11,10 @@ public static class SectionOneAndTwoAProducer
     {
         summary.TotalFeeforLADisposalCostswoBadDebtprovision1   = totals.TotalProducerDisposalFee;
         summary.BadDebtProvisionFor1                            = totals.LocalAuthorityDisposalCostsSectionOne?.BadDebtProvision ?? 0m;
-        summary.TotalFeeforLADisposalCostswithBadDebtprovision1 = totals.TotalProducerDisposalFeeWithBadDebtProvision;
+        summary.TotalFeeforLADisposalCostswithBadDebtprovision1 = totals.TotalProducerDisposalFeeWithBadDebtProvision.Total;
 
         summary.TotalFeeforCommsCostsbyMaterialwoBadDebtProvision2A   = totals.TotalProducerCommsFee;
         summary.BadDebtProvisionFor2A                                 = totals.CommunicationCostsSectionTwoA?.BadDebtProvision ?? 0m;
-        summary.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A = totals.TotalProducerCommsFeeWithBadDebtProvision;
+        summary.TotalFeeforCommsCostsbyMaterialwithBadDebtprovision2A = totals.TotalProducerCommsFeeWithBadDebtProvision.Total;
     }
 }

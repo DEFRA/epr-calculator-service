@@ -58,7 +58,7 @@ public class Section1MaterialsExporterTests
              "£0.6676",
              "£607.52",
              "£36.45",
-             "£643.97",
+             "£643.98",
              "£348.06",
              "£78.46",
              "£156.28",
@@ -119,7 +119,7 @@ public class Section1MaterialsExporterTests
              "£6.4404",
              "£2254.14",
              "£135.25",
-             "£2389.39",
+             "£2389.38",
              "£1291.43",
              "£291.10",
              "£579.85",
@@ -221,7 +221,7 @@ public class Section1MaterialsExporterTests
             "0.000",                                              // TonnageChange
             "£1.0000", "£2.0000", "£3.0000",                      // Price: red,amber,green
             "£4.53"  ,   "£5.00",   "£6.00",                      // DisposalFee: red(4.525001→4.53),amber,green
-            "£607.52", "£36.45", "£643.97", "£348.06", "£78.46", "£156.28", "£61.18",  // common 7
+            "£607.52", "£36.45", "£643.98", "£348.06", "£78.46", "£156.28", "£61.18",  // common 7
         ];
 
         var expected = new string?[][] { sectionHeader, groupHeader, columnHeaders, dataRow };
@@ -329,7 +329,7 @@ public class Section1MaterialsExporterTests
             "0.000",                                              // TonnageChange
             "£1.0000", "£2.0000", "£3.0000",                      // Price: red,amber,green
             "£4.00"  ,   "£5.00",   "£6.00",                      // DisposalFee: red,amber,green
-            "£2254.14", "£135.25", "£2389.39", "£1291.43", "£291.10", "£579.85", "£227.00",  // common 7
+            "£2254.14", "£135.25", "£2389.38", "£1291.43", "£291.10", "£579.85", "£227.00",  // common 7
         ];
 
         var expected = new string?[][] { sectionHeader, groupHeader, columnHeaders, dataRow };

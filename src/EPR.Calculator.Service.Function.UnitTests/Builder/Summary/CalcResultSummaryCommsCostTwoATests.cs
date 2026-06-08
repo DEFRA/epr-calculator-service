@@ -46,59 +46,6 @@ public class CalcResultSummaryCommsCostTwoATests
     private Fixture Fixture { get; } = new();
 
     [TestMethod]
-    public void GetEnglandWithBadDebtProvisionForCommsTotal_WhenNoProducers_ShouldReturn0()
-    {
-        // Arrange
-        producers.Clear();
-
-        // Act
-        var totalCost = CalcResultSummaryCommsCostTwoA.GetEnglandWithBadDebtProvisionForCommsTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material, calcResult);
-
-        // Assert
-        Assert.AreEqual(0m, totalCost);
-    }
-
-    [TestMethod]
-    public void GetEnglandWithBadDebtProvisionForCommsTotal_ShouldReturnCorrectTotal()
-    {
-        // Act
-        var totalCost = CalcResultSummaryCommsCostTwoA.GetEnglandWithBadDebtProvisionForCommsTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material, calcResult);
-
-        // Assert
-        Assert.AreEqual(569.856m, totalCost);
-    }
-
-    [TestMethod]
-    public void GetWalesWithBadDebtProvisionForCommsTotal_ShouldReturnCorrectTotal()
-    {
-        // Act
-        var totalCost = CalcResultSummaryCommsCostTwoA.GetWalesWithBadDebtProvisionForCommsTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material, calcResult);
-
-        // Assert
-        Assert.AreEqual(142.464m, totalCost);
-    }
-
-    [TestMethod]
-    public void GetScotlandWithBadDebtProvisionForCommsTotal_ShouldReturnCorrectTotal()
-    {
-        // Act
-        var totalCost = CalcResultSummaryCommsCostTwoA.GetScotlandWithBadDebtProvisionForCommsTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material, calcResult);
-
-        // Assert
-        Assert.AreEqual(213.696m, totalCost);
-    }
-
-    [TestMethod]
-    public void GetNorthernIrelandWithBadDebtProvisionForCommsTotal_ShouldReturnCorrectTotal()
-    {
-        // Act
-        var totalCost = CalcResultSummaryCommsCostTwoA.GetNorthernIrelandWithBadDebtProvisionForCommsTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material, calcResult);
-
-        // Assert
-        Assert.AreEqual(498.624m, totalCost);
-    }
-
-    [TestMethod]
     public void GetProducerTotalCostWithoutBadDebtProvisionTotal_ShouldReturnCorrectTotal()
     {
         // Act
@@ -116,46 +63,6 @@ public class CalcResultSummaryCommsCostTwoATests
 
         // Assert
         Assert.AreEqual(80.64m, totalCost);
-    }
-
-    [TestMethod]
-    public void GetEnglandWithBadDebtProvisionForComms_ShouldReturnCorrectTotal()
-    {
-        // Act
-        var totalCost = CalcResultSummaryCommsCostTwoA.GetEnglandWithBadDebtProvisionForComms(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers[0], material, calcResult);
-
-        // Assert
-        Assert.AreEqual(213.696m, totalCost);
-    }
-
-    [TestMethod]
-    public void GetWalesWithBadDebtProvisionForComms_ShouldReturnCorrectTotal()
-    {
-        // Act
-        var totalCost = CalcResultSummaryCommsCostTwoA.GetWalesWithBadDebtProvisionForComms(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers[0], material, calcResult);
-
-        // Assert
-        Assert.AreEqual(53.424m, totalCost);
-    }
-
-    [TestMethod]
-    public void GetScotlandWithBadDebtProvisionForComms_ShouldReturnCorrectTotal()
-    {
-        // Act
-        var totalCost = CalcResultSummaryCommsCostTwoA.GetScotlandWithBadDebtProvisionForComms(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers[0], material, calcResult);
-
-        // Assert
-        Assert.AreEqual(80.136m, totalCost);
-    }
-
-    [TestMethod]
-    public void GetNorthernIrelandWithBadDebtProvisionForComms_ShouldReturnCorrectTotal()
-    {
-        // Act
-        var totalCost = CalcResultSummaryCommsCostTwoA.GetNorthernIrelandWithBadDebtProvisionForComms(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers[0], material, calcResult);
-
-        // Assert
-        Assert.AreEqual(186.984m, totalCost);
     }
 
     [TestMethod]
@@ -188,7 +95,7 @@ public class CalcResultSummaryCommsCostTwoATests
         var totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostwithBadDebtProvision(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers[0], material, calcResult);
 
         // Assert
-        Assert.AreEqual(534.2400m, totalCost);
+        Assert.AreEqual(534.2400m, totalCost.Total);
     }
 
     [TestMethod]
@@ -199,16 +106,6 @@ public class CalcResultSummaryCommsCostTwoATests
 
         // Assert
         Assert.AreEqual(504.00m, totalCost);
-    }
-
-    [TestMethod]
-    public void GetProducerTotalCostwithBadDebtProvisionTotal_ShouldReturnCorrectTotal()
-    {
-        // Act
-        var totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostwithBadDebtProvisionTotal(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers, material, calcResult);
-
-        // Assert
-        Assert.AreEqual(1424.6400m, totalCost);
     }
 
     [TestMethod]

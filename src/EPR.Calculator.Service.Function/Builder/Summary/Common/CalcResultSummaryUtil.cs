@@ -179,32 +179,20 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             return (producerDisposalFeeTotal ?? 0) * calcResult.CalcResultParameterOtherCost.BadDebtValue / 100;
         }
 
-        public static decimal GetProducerDisposalFeeWithBadDebtProvision(
+        public static ByCountryCost GetProducerDisposalFeeWithBadDebtProvision(
             CalcResult calcResult,
-            decimal? producerDisposalFeeTotal)
+            decimal? producerDisposalFeeTotal
+        )
         {
-            return (producerDisposalFeeTotal ?? 0) * (1 + (calcResult.CalcResultParameterOtherCost.BadDebtValue / 100));
-        }
-
-        public static decimal GetCountryBadDebtProvision(
-            CalcResult calcResult,
-            Countries country,
-            decimal? producerDisposalFeeTotal)
-        {
-            var producerDisposalFeeWithBadDebtProvision = GetProducerDisposalFeeWithBadDebtProvision(calcResult, producerDisposalFeeTotal);
-
+            var total = (producerDisposalFeeTotal ?? 0) * (1 + calcResult.CalcResultParameterOtherCost.BadDebtValue / 100);
             var countryApportionment = calcResult.CalcResultLapcapData.CountryApportionment;
-
-            var disposalCostPercentage = country switch
+            return new ByCountryCost
             {
-                Countries.England         => countryApportionment.England,
-                Countries.Wales           => countryApportionment.Wales,
-                Countries.Scotland        => countryApportionment.Scotland,
-                Countries.NorthernIreland => countryApportionment.NorthernIreland,
-                _                         => throw new ArgumentOutOfRangeException(nameof(country), country, null),
+                England         = total * countryApportionment.England / 100,
+                Wales           = total * countryApportionment.Wales / 100,
+                Scotland        = total * countryApportionment.Scotland / 100,
+                NorthernIreland = total * countryApportionment.NorthernIreland / 100
             };
-
-            return producerDisposalFeeWithBadDebtProvision * disposalCostPercentage / 100;
         }
 
         public static decimal GetCommsCostHeaderWithoutBadDebtFor2bTitle(CalcResult calcResult)

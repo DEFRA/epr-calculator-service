@@ -9,48 +9,6 @@ public static class CalcResultSummaryCommsCostTwoA
 {
     // TODO clean this up
 
-    public static decimal GetEnglandWithBadDebtProvisionForCommsTotal(
-        ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-        IReadOnlyList<ProducerDetail> producers,
-        MaterialDetail material,
-        CalcResult calcResult
-    )
-    {
-        return producers.Sum(producer =>
-            GetEnglandWithBadDebtProvisionForComms(projectedMaterialsLookup, producer, material, calcResult)
-        );
-    }
-
-    public static decimal GetWalesWithBadDebtProvisionForCommsTotal(
-        ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-        IReadOnlyList<ProducerDetail> producers,
-        MaterialDetail material,
-        CalcResult calcResult
-    )
-    {
-        return producers.Sum(producer => GetWalesWithBadDebtProvisionForComms(projectedMaterialsLookup, producer, material, calcResult));
-    }
-
-    public static decimal GetScotlandWithBadDebtProvisionForCommsTotal(
-        ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-        IReadOnlyList<ProducerDetail> producers,
-        MaterialDetail material,
-        CalcResult calcResult
-    )
-    {
-        return producers.Sum(producer => GetScotlandWithBadDebtProvisionForComms(projectedMaterialsLookup, producer, material, calcResult));
-    }
-
-    public static decimal GetNorthernIrelandWithBadDebtProvisionForCommsTotal(
-        ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-        IReadOnlyList<ProducerDetail> producers,
-        MaterialDetail material,
-        CalcResult calcResult
-    )
-    {
-        return producers.Sum(producer => GetNorthernIrelandWithBadDebtProvisionForComms(projectedMaterialsLookup, producer, material, calcResult));
-    }
-
     public static decimal GetProducerTotalCostWithoutBadDebtProvisionTotal(
         ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
         IReadOnlyList<ProducerDetail> producers,
@@ -68,51 +26,7 @@ public static class CalcResultSummaryCommsCostTwoA
         CalcResult calcResult
     )
     {
-        return producers.Sum(producer => GetBadDebtProvisionForCommsCost(projectedMaterialsLookup, producer, material, calcResult));
-    }
-
-    public static decimal GetEnglandWithBadDebtProvisionForComms(
-        ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-        ProducerDetail producer,
-        MaterialDetail material,
-        CalcResult calcResult
-    )
-    {
-        var producerTotalCostwithBadDebtProvision = GetProducerTotalCostwithBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
-        return producerTotalCostwithBadDebtProvision * calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment.England / 100;
-    }
-
-    public static decimal GetWalesWithBadDebtProvisionForComms(
-        ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-        ProducerDetail producer,
-        MaterialDetail material,
-        CalcResult calcResult
-    )
-    {
-        var producerTotalCostwithBadDebtProvision = GetProducerTotalCostwithBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
-        return producerTotalCostwithBadDebtProvision * calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment.Wales / 100;
-    }
-
-    public static decimal GetScotlandWithBadDebtProvisionForComms(
-        ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-        ProducerDetail producer,
-        MaterialDetail material,
-        CalcResult calcResult
-    )
-    {
-        var producerTotalCostwithBadDebtProvision = GetProducerTotalCostwithBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
-        return producerTotalCostwithBadDebtProvision * calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment.Scotland / 100;
-    }
-
-    public static decimal GetNorthernIrelandWithBadDebtProvisionForComms(
-        ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-        ProducerDetail producer,
-        MaterialDetail material,
-        CalcResult calcResult
-    )
-    {
-        var producerTotalCostwithBadDebtProvision = GetProducerTotalCostwithBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
-        return producerTotalCostwithBadDebtProvision * calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment.NorthernIreland / 100;
+        return producers.Sum(producer => GetBadDebtProvisionForCommsCost(projectedMaterialsLookup, producer, material, calcResult).Total);
     }
 
     public static decimal GetPriceperTonneForComms(MaterialDetail material, CalcResult calcResult)
@@ -121,7 +35,7 @@ public static class CalcResultSummaryCommsCostTwoA
         return commsCostDataDetail?.PricePerTonne ?? 0m;
     }
 
-    public static decimal GetProducerTotalCostwithBadDebtProvision(
+    public static ByCountryCost GetProducerTotalCostwithBadDebtProvision(
         ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
         ProducerDetail producer,
         MaterialDetail material,
@@ -129,8 +43,15 @@ public static class CalcResultSummaryCommsCostTwoA
     )
     {
         var badDebtProvision = calcResult.CalcResultParameterOtherCost.BadDebtValue;
-        var producerTotalCostWithoutBadDebtProvision = GetProducerTotalCostWithoutBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
-        return producerTotalCostWithoutBadDebtProvision * (1 + badDebtProvision / 100);
+        var total = GetProducerTotalCostWithoutBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult) * (1 + badDebtProvision / 100);
+        var apportionment = calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment;
+        return new ByCountryCost
+        {
+            England         = total * apportionment.England / 100,
+            Wales           = total * apportionment.Wales / 100,
+            Scotland        = total * apportionment.Scotland / 100,
+            NorthernIreland = total * apportionment.NorthernIreland / 100,
+        };
     }
 
     public static decimal GetTotalReportedTonnage(
@@ -164,7 +85,7 @@ public static class CalcResultSummaryCommsCostTwoA
         return GetTotalReportedTonnage(projectedMaterialsLookup, producer, material) * priceperTonne;
     }
 
-    public static decimal GetBadDebtProvisionForCommsCost(
+    public static ByCountryCost GetBadDebtProvisionForCommsCost(
         ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
         ProducerDetail producer,
         MaterialDetail material,
@@ -172,18 +93,15 @@ public static class CalcResultSummaryCommsCostTwoA
     )
     {
         var badDebtProvision = calcResult.CalcResultParameterOtherCost.BadDebtValue;
-        var producerTotalCostWithoutBadDebtProvision = GetProducerTotalCostWithoutBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
-        return producerTotalCostWithoutBadDebtProvision * badDebtProvision / 100;
-    }
-
-    public static decimal GetProducerTotalCostwithBadDebtProvisionTotal(
-        ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-        IReadOnlyList<ProducerDetail> producers,
-        MaterialDetail material,
-        CalcResult calcResult
-    )
-    {
-        return producers.Sum(producer => GetProducerTotalCostwithBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult));
+        var totalBadDebt = GetProducerTotalCostWithoutBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult) * badDebtProvision / 100;
+        var apportionment = calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment;
+        return new ByCountryCost
+        {
+            England         = totalBadDebt * apportionment.England / 100,
+            Wales           = totalBadDebt * apportionment.Wales / 100,
+            Scotland        = totalBadDebt * apportionment.Scotland / 100,
+            NorthernIreland = totalBadDebt * apportionment.NorthernIreland / 100,
+        };
     }
 
     public static decimal GetTotalReportedTonnageTotal(

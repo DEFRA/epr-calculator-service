@@ -26,8 +26,6 @@ namespace EPR.Calculator.Service.Function.Models
 
         public (decimal? total, decimal? red,  decimal? amber, decimal? green) ProducerDisposalFee { get; set; }
 
-        public decimal ProducerDisposalFeeWithBadDebtProvision { get; set; }
-
         public decimal? PreviousInvoicedTonnage { get; set; }
 
         public decimal? TonnageChange { get; set; }

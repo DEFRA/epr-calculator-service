@@ -136,7 +136,7 @@ public class CalculationResultsJsonFromTests
         Assert.AreEqual("£0.6676", actual["pricePerTonne"]!.GetValue<string>());
         Assert.AreEqual("£607.52", actual["producerDisposalFeeWithoutBadDebtProvision"]!.GetValue<string>());
         Assert.AreEqual("£36.45" , actual["badDebtProvision"]!.GetValue<string>());
-        Assert.AreEqual("£643.97", actual["producerDisposalFeeWithBadDebtProvision"]!.GetValue<string>());
+        Assert.AreEqual("£643.98", actual["producerDisposalFeeWithBadDebtProvision"]!.GetValue<string>());
         Assert.AreEqual("£348.06", actual["englandWithBadDebtProvision"]!.GetValue<string>());
         Assert.AreEqual("£78.46" , actual["walesWithBadDebtProvision"]!.GetValue<string>());
         Assert.AreEqual("£156.28", actual["scotlandWithBadDebtProvision"]!.GetValue<string>());
@@ -366,17 +366,17 @@ public class CalculationResultsJsonFromTests
             disposalFeeSummary1["totalProducerDisposalFeeWithoutBadDebtProvision"]!);
         AssertAreEqual(producer.BadDebtProvision,
             disposalFeeSummary1["badDebtProvision"]!);
-        AssertAreEqual(producer.TotalProducerDisposalFeeWithBadDebtProvision,
+        AssertAreEqual(producer.TotalProducerDisposalFeeWithBadDebtProvision.Total,
             disposalFeeSummary1["totalProducerDisposalFeeWithBadDebtProvision"]!);
 
         // Countries
-        AssertAreEqual(producer.EnglandTotal,
+        AssertAreEqual(producer.TotalProducerDisposalFeeWithBadDebtProvision.England,
             disposalFeeSummary1["englandTotal"]!);
-        AssertAreEqual(producer.WalesTotal,
+        AssertAreEqual(producer.TotalProducerDisposalFeeWithBadDebtProvision.Wales,
             disposalFeeSummary1["walesTotal"]!);
-        AssertAreEqual(producer.ScotlandTotal,
+        AssertAreEqual(producer.TotalProducerDisposalFeeWithBadDebtProvision.Scotland,
             disposalFeeSummary1["scotlandTotal"]!);
-        AssertAreEqual(producer.NorthernIrelandTotal,
+        AssertAreEqual(producer.TotalProducerDisposalFeeWithBadDebtProvision.NorthernIreland,
             disposalFeeSummary1["northernIrelandTotal"]!);
 
         // Tonnage Change

@@ -80,7 +80,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Utils
         {
             var byMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>
             {
-                ["PAPER"] = new() { TonnageChange = 5m }
+                ["PAPER"] = new() { TonnageChange = 5m, ProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty }
             };
 
             var (count, advice) = TonnageChangeUtil.ComputeCountAndAdvice("2", byMaterial);
@@ -94,10 +94,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Utils
         {
             var byMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>
             {
-                ["PAPER"] = new() { TonnageChange = 0m },  // ignored
-                ["GLASS"] = new() { TonnageChange = null },  // ignored
-                ["METAL"] = new() { TonnageChange = 3m },  // counted
-                ["PLASTIC"] = new() { TonnageChange = -1m }   // counted
+                ["PAPER"] = new() { TonnageChange = 0m, ProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty },  // ignored
+                ["GLASS"] = new() { TonnageChange = null, ProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty },  // ignored
+                ["METAL"] = new() { TonnageChange = 3m, ProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty },  // counted
+                ["PLASTIC"] = new() { TonnageChange = -1m, ProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty }   // counted
             };
 
             var (count, advice) = TonnageChangeUtil.ComputeCountAndAdvice(
@@ -112,8 +112,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Utils
         {
             var byMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>
             {
-                ["PAPER"] = new() { TonnageChange = 0m },
-                ["GLASS"] = new() { TonnageChange = null }
+                ["PAPER"] = new() { TonnageChange = 0m, ProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty },
+                ["GLASS"] = new() { TonnageChange = null, ProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty }
             };
 
             var (count, advice) = TonnageChangeUtil.ComputeCountAndAdvice(
@@ -138,12 +138,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Utils
                 TradingName = string.Empty,
                 Level = level,
                 TwoCTotalProducerFeeForCommsCostsWithBadDebt = ByCountryCost.Empty,
+                TotalProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty,
+                TotalProducerCommsFeeWithBadDebtProvision = ByCountryCost.Empty,
                 ProducerDisposalFeesByMaterial =
                     new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>
                     {
                         [materialCode] = new CalcResultSummaryProducerDisposalFeesByMaterial
                         {
-                            TonnageChange = tonnageChange
+                            TonnageChange = tonnageChange,
+                            ProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty
                         }
                     }
             };

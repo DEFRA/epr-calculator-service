@@ -96,11 +96,11 @@ public record CalcResultCommsCostByMaterial2AMaterialBreakdown
             PricePerTonne                            = CurrencyConverterUtils.ConvertToCurrency(item.PriceperTonne, (int)DecimalPlaces.Four),
             ProducerTotalCostWithoutBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(item.ProducerTotalCostWithoutBadDebtProvision),
             BadDebtProvision                         = CurrencyConverterUtils.ConvertToCurrency(item.BadDebtProvision),
-            ProducerTotalCostwithBadDebtProvision    = CurrencyConverterUtils.ConvertToCurrency(item.ProducerTotalCostwithBadDebtProvision),
-            EnglandWithBadDebtProvision              = CurrencyConverterUtils.ConvertToCurrency(item.EnglandWithBadDebtProvision),
-            WalesWithBadDebtProvision                = CurrencyConverterUtils.ConvertToCurrency(item.WalesWithBadDebtProvision),
-            ScotlandWithBadDebtProvision             = CurrencyConverterUtils.ConvertToCurrency(item.ScotlandWithBadDebtProvision),
-            NorthernIrelandWithBadDebtProvision      = CurrencyConverterUtils.ConvertToCurrency(item.NorthernIrelandWithBadDebtProvision)
+            ProducerTotalCostwithBadDebtProvision    = CurrencyConverterUtils.ConvertToCurrency(item.ProducerDisposalFeeWithBadDebtProvision.Total),
+            EnglandWithBadDebtProvision              = CurrencyConverterUtils.ConvertToCurrency(item.ProducerDisposalFeeWithBadDebtProvision.England),
+            WalesWithBadDebtProvision                = CurrencyConverterUtils.ConvertToCurrency(item.ProducerDisposalFeeWithBadDebtProvision.Wales),
+            ScotlandWithBadDebtProvision             = CurrencyConverterUtils.ConvertToCurrency(item.ProducerDisposalFeeWithBadDebtProvision.Scotland),
+            NorthernIrelandWithBadDebtProvision      = CurrencyConverterUtils.ConvertToCurrency(item.ProducerDisposalFeeWithBadDebtProvision.NorthernIreland)
         };
     }
 }

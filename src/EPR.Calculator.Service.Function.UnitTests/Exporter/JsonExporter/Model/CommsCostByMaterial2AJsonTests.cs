@@ -25,11 +25,7 @@ public class CommsCostByMaterial2AJsonTests
                 PriceperTonne = 0.42m,
                 ProducerTotalCostWithoutBadDebtProvision = 10m,
                 BadDebtProvision = 1m,
-                ProducerTotalCostwithBadDebtProvision = 11m,
-                EnglandWithBadDebtProvision = 4m,
-                WalesWithBadDebtProvision = 3m,
-                ScotlandWithBadDebtProvision = 2m,
-                NorthernIrelandWithBadDebtProvision = 1m,
+                ProducerDisposalFeeWithBadDebtProvision = new ByCountryCost { England = 4m, Wales = 3m, Scotland = 2m, NorthernIreland = 1m },
             },
             ["GL"] = new CalcResultSummaryProducerCommsFeesCostByMaterial
             {
@@ -40,11 +36,7 @@ public class CommsCostByMaterial2AJsonTests
                 PriceperTonne = 0.3m,
                 ProducerTotalCostWithoutBadDebtProvision = 20m,
                 BadDebtProvision = 2m,
-                ProducerTotalCostwithBadDebtProvision = 22m,
-                EnglandWithBadDebtProvision = 8m,
-                WalesWithBadDebtProvision = 7m,
-                ScotlandWithBadDebtProvision = 6m,
-                NorthernIrelandWithBadDebtProvision = 5m,
+                ProducerDisposalFeeWithBadDebtProvision = new ByCountryCost { England = 8m, Wales = 7m, Scotland = 6m, NorthernIreland = 5m },
             }
         };
 
@@ -68,7 +60,7 @@ public class CommsCostByMaterial2AJsonTests
                 "pricePerTonne": "£0.4200",
                 "producerTotalCostWithoutBadDebtProvision": "£10.00",
                 "badDebtProvision": "£1.00",
-                "producerTotalCostWithBadDebtProvision": "£11.00",
+                "producerTotalCostWithBadDebtProvision": "£10.00",
                 "englandWithBadDebtProvision": "£4.00",
                 "walesWithBadDebtProvision": "£3.00",
                 "scotlandWithBadDebtProvision": "£2.00",
@@ -83,7 +75,7 @@ public class CommsCostByMaterial2AJsonTests
                 "pricePerTonne": "£0.3000",
                 "producerTotalCostWithoutBadDebtProvision": "£20.00",
                 "badDebtProvision": "£2.00",
-                "producerTotalCostWithBadDebtProvision": "£22.00",
+                "producerTotalCostWithBadDebtProvision": "£26.00",
                 "englandWithBadDebtProvision": "£8.00",
                 "walesWithBadDebtProvision": "£7.00",
                 "scotlandWithBadDebtProvision": "£6.00",
