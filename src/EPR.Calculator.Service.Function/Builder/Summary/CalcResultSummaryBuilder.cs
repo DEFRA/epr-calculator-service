@@ -231,7 +231,7 @@ public class CalcResultSummaryBuilder(
             result.CommsCostHeaderBadDebtProvisionFor2bTitle = CalcResultSummaryUtil.GetCommsCostHeaderBadDebtProvisionFor2bTitle(calcResult, result);
             result.CommsCostHeaderWithBadDebtFor2bTitle = CalcResultSummaryUtil.GetCommsCostHeaderWithBadDebtFor2bTitle(result);
 
-            TwoCCommsCostUtil.UpdateHeaderTotal(calcResult, result);
+            TwoCCommsCostProducer.SetValues(calcResult, result);
 
             // Section Total bill (1 + 2a + 2b + 2c)
             OnePlus2A2B2CProducer.SetValues(result);

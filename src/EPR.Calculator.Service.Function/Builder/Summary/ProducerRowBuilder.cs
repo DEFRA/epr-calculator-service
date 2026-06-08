@@ -418,7 +418,7 @@ internal sealed class ProducerRowBuilder(
         // Section-3: Percentage of Producer Reported Tonnage vs All Producers
         result.PercentageofProducerReportedTonnagevsAllProducers = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducers(producer, totalPackagingTonnage);
 
-        TwoCCommsCostUtil.UpdateTwoCRows(calcResult, result, producer, totalPackagingTonnage);
+        TwoCCommsCostProducer.UpdateTwoCRows(calcResult, result, producer, totalPackagingTonnage);
 
         return result;
     }
