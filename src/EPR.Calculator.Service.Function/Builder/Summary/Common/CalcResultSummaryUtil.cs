@@ -11,17 +11,13 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
     [ExcludeFromCodeCoverage]
     public static class CalcResultSummaryUtil
     {
-        public static bool IsProducerPartiallyObligated(
-            ProducerDetail producer,
-            IReadOnlyList<CalcResultPartialObligation> partialObligations) =>
-            partialObligations.Any(p => p.ProducerId == producer.ProducerId && p.SubsidiaryId == producer.SubsidiaryId);
-
         public static decimal GetTonnage(
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             ProducerDetail producer,
             MaterialDetail material,
             string packagingType,
-            RagRating? ragRating = null)
+            RagRating? ragRating = null
+        )
         {
             var prms = projectedMaterialsLookup[(producer.ProducerId, producer.SubsidiaryId)]
                 .Where(p => p.MaterialId == material.Id && p.PackagingType == packagingType);
@@ -43,7 +39,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
             ProducerDetail producer,
             MaterialDetail material,
-            RagRating? ragRating = null)
+            RagRating? ragRating = null
+        )
         {
             var householdTonnage = GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.Household, ragRating);
             var publicBinTonnage = GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.PublicBin, ragRating);
@@ -57,20 +54,17 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
         public static SelfManagedConsumerWasteData SumSelfManagedConsumerWasteData(
             IReadOnlyList<ProducerDetail> producersAndSubsidiaries,
             MaterialDetail material,
-            bool isOverAllTotalRow,
-            SelfManagedConsumerWaste smcw)
-        {
-            return isOverAllTotalRow
-                ? smcw.OverallTotalPerMaterials.GetValueOrDefault(material.Code) ?? SelfManagedConsumerWasteData.Zero
-                : smcw.ProducerTotals
-                    .Where(x => x.Level == 1 && producersAndSubsidiaries.Any(y => x.ProducerId == y.ProducerId))
-                    .Select(x => x.SelfManagedConsumerWasteDataPerMaterials[material.Code])
-                    .Single();
-        }
+            SelfManagedConsumerWaste smcw
+        ) =>
+            smcw.ProducerTotals
+                .Where(x => x.Level == 1 && producersAndSubsidiaries.Any(y => x.ProducerId == y.ProducerId))
+                .Select(x => x.SelfManagedConsumerWasteDataPerMaterials[material.Code])
+                .Single();
 
         public static (decimal? total, decimal? red,  decimal? amber, decimal? green) GetPricePerTonne(
             MaterialDetail material,
-            CalcResult calcResult)
+            CalcResult calcResult
+        )
         {
             var laDisposalCostDataDetail = calcResult.CalcResultLaDisposalCostData.ByMaterial.GetValueOrDefault(material.Code);
 
@@ -96,7 +90,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
         public static (decimal? total, decimal? red,  decimal? amber, decimal? green) GetProducerDisposalFee(
             MaterialDetail material,
             CalcResult calcResult,
-            SelfManagedConsumerWasteData smcw)
+            SelfManagedConsumerWasteData smcw
+        )
         {
             var pricePerTonne = GetPricePerTonne(material, calcResult);
 
@@ -118,10 +113,9 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         public static decimal GetBadDebtProvision(
             CalcResult calcResult,
-            decimal? producerDisposalFeeTotal)
-        {
-            return (producerDisposalFeeTotal ?? 0) * calcResult.CalcResultParameterOtherCost.BadDebtValue / 100;
-        }
+            decimal? producerDisposalFeeTotal
+        ) =>
+           (producerDisposalFeeTotal ?? 0) * calcResult.CalcResultParameterOtherCost.BadDebtValue / 100;
 
         public static ByCountryCost GetProducerDisposalFeeWithBadDebtProvision(
             CalcResult calcResult,
@@ -133,9 +127,8 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             return total * countryApportionment;
         }
 
-        public static decimal GetCommsCostHeaderWithoutBadDebtFor2bTitle(CalcResult calcResult)
-        {
-            return calcResult.CalcResultCommsCostReportDetail.CommsCostUkWide.Total;
-        }
+        public static decimal GetCommsCostHeaderWithoutBadDebtFor2bTitle(
+            CalcResult calcResult
+        ) => calcResult.CalcResultCommsCostReportDetail.CommsCostUkWide.Total;
     }
 }

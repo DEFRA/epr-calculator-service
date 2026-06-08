@@ -158,36 +158,18 @@ public class CalcResultSummaryCommsCostTwoBTotalBillTests
     }
 
     [TestMethod]
-    public void GetCommsWithBadDebt_ShouldReturnCorrectTotal()
+    public void GetCommsCosts_ShouldReturnCorrectValues()
     {
         // Act
-        var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsWithBadDebt(calcResult, producers[0], TotalPackagingTonnage);
+        var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsCosts(calcResult, producers[0], TotalPackagingTonnage);
 
         // Assert
-        Assert.AreEqual(111.364m, result.England);
-        Assert.AreEqual(83.523m , result.Wales);
-        Assert.AreEqual(41.7615m, result.Scotland);
-        Assert.AreEqual(41.7615m, result.NorthernIreland);
-    }
-
-    [TestMethod]
-    public void GetCommsBadDebtProvisionFor2b_ShouldReturnCorrectTotal()
-    {
-        // Act
-        var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsBadDebtProvisionFor2b(calcResult, producers[0], TotalPackagingTonnage);
-
-        // Assert
-        Assert.AreEqual(25.31m, result);
-    }
-
-    [TestMethod]
-    public void GetCommsProducerFeeWithoutBadDebtFor2b_ShouldReturnCorrectTotal()
-    {
-        // Act
-        var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsProducerFeeWithoutBadDebtFor2b(calcResult, producers[0], TotalPackagingTonnage);
-
-        // Assert
-        Assert.AreEqual(253.1m, result);
+        Assert.AreEqual(253.1m,   result.FeeWithoutBadDebtProvision);
+        Assert.AreEqual(25.31m,   result.BadDebtProvision);
+        Assert.AreEqual(111.364m, result.FeeWithBadDebtProvision.England);
+        Assert.AreEqual(83.523m,  result.FeeWithBadDebtProvision.Wales);
+        Assert.AreEqual(41.7615m, result.FeeWithBadDebtProvision.Scotland);
+        Assert.AreEqual(41.7615m, result.FeeWithBadDebtProvision.NorthernIreland);
     }
 
     private List<ProducerDetail> GetProducers()

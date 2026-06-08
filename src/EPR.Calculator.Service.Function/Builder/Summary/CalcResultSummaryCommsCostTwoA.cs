@@ -13,18 +13,6 @@ public static class CalcResultSummaryCommsCostTwoA
         return commsCostDataDetail?.PricePerTonne ?? 0m;
     }
 
-    public static ByCountryCost GetProducerTotalCostwithBadDebtProvision(
-        ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-        ProducerDetail producer,
-        MaterialDetail material,
-        CalcResult calcResult
-    )
-    {
-        var badDebtProvision = calcResult.CalcResultParameterOtherCost.BadDebtValue;
-        var total = GetProducerTotalCostWithoutBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult) * (1 + badDebtProvision / 100);
-        return total * calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment;
-    }
-
     public static decimal GetTotalReportedTonnage(
         ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
         ProducerDetail producer,
@@ -56,15 +44,21 @@ public static class CalcResultSummaryCommsCostTwoA
         return GetTotalReportedTonnage(projectedMaterialsLookup, producer, material) * priceperTonne;
     }
 
-    public static ByCountryCost GetBadDebtProvisionForCommsCost(
+    public static CalcResultSummaryBadDebtProvision GetCommsFeesCosts(
         ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
         ProducerDetail producer,
         MaterialDetail material,
         CalcResult calcResult
     )
     {
-        var badDebtProvision = calcResult.CalcResultParameterOtherCost.BadDebtValue;
-        var totalBadDebt = GetProducerTotalCostWithoutBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult) * badDebtProvision / 100;
-        return totalBadDebt * calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment;
+        var feeWithoutBadDebt = GetProducerTotalCostWithoutBadDebtProvision(projectedMaterialsLookup, producer, material, calcResult);
+        var badDebtRate = calcResult.CalcResultParameterOtherCost.BadDebtValue;
+        var apportionment = calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment;
+        return new CalcResultSummaryBadDebtProvision
+        {
+            FeeWithoutBadDebtProvision = feeWithoutBadDebt,
+            BadDebtProvision           = (feeWithoutBadDebt * badDebtRate / 100 * apportionment).Total,
+            FeeWithBadDebtProvision    = (feeWithoutBadDebt * (1 + badDebtRate / 100)) * apportionment,
+        };
     }
 }

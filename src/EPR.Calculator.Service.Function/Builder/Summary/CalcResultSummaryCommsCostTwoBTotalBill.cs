@@ -6,34 +6,22 @@ namespace EPR.Calculator.Service.Function.Builder.Summary;
 
 public static class CalcResultSummaryCommsCostTwoBTotalBill
 {
-    #region Single RowbyRow
-    public static ByCountryCost GetCommsWithBadDebt(
+    public static CalcResultSummaryBadDebtProvision GetCommsCosts(
         CalcResult calcResult,
         ProducerDetail producer,
         IReadOnlyList<TotalPackagingTonnagePerRun> hhTotalPackagingTonnage
     )
     {
-        decimal commsCostHeaderWithoutBadDebtFor2bTitle = CalcResultSummaryUtil.GetCommsCostHeaderWithoutBadDebtFor2bTitle(calcResult);
-        decimal percentageOfProducerReportedHHTonnagevsAllProducers = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducers(producer, hhTotalPackagingTonnage) / 100;
+        var commsCostHeader = CalcResultSummaryUtil.GetCommsCostHeaderWithoutBadDebtFor2bTitle(calcResult);
+        var percentage = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducers(producer, hhTotalPackagingTonnage) / 100;
+        var feeWithoutBadDebt = commsCostHeader * percentage;
+        var badDebtRate = calcResult.CalcResultParameterOtherCost.BadDebtValue / 100;
         var apportionment = calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment;
-        decimal badDebtProvision = calcResult.CalcResultParameterOtherCost.BadDebtValue / 100;
-        return commsCostHeaderWithoutBadDebtFor2bTitle * (1 + badDebtProvision) * percentageOfProducerReportedHHTonnagevsAllProducers * apportionment;
+        return new CalcResultSummaryBadDebtProvision
+        {
+            FeeWithoutBadDebtProvision = feeWithoutBadDebt,
+            BadDebtProvision           = feeWithoutBadDebt * badDebtRate,
+            FeeWithBadDebtProvision    = (feeWithoutBadDebt * (1 + badDebtRate)) * apportionment,
+        };
     }
-
-    public static decimal GetCommsBadDebtProvisionFor2b(CalcResult calcResult, ProducerDetail producer, IReadOnlyList<TotalPackagingTonnagePerRun> hhTotalPackagingTonnage)
-    {
-        decimal producerFeeWithoutBadDebtFor2b = GetCommsProducerFeeWithoutBadDebtFor2b(calcResult, producer, hhTotalPackagingTonnage);
-        decimal badDebtProvision = calcResult.CalcResultParameterOtherCost.BadDebtValue / 100;
-        return producerFeeWithoutBadDebtFor2b * badDebtProvision;
-    }
-
-    public static decimal GetCommsProducerFeeWithoutBadDebtFor2b(CalcResult calcResult, ProducerDetail producer, IReadOnlyList<TotalPackagingTonnagePerRun> hhTotalPackagingTonnage)
-    {
-        decimal commsCostHeaderWithoutBadDebtFor2bTitle = CalcResultSummaryUtil.GetCommsCostHeaderWithoutBadDebtFor2bTitle(calcResult);
-        decimal percentageOfProducerReportedHHTonnagevsAllProducers = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducers(producer, hhTotalPackagingTonnage) / 100;
-
-        return commsCostHeaderWithoutBadDebtFor2bTitle * percentageOfProducerReportedHHTonnagevsAllProducers;
-    }
-
-    #endregion
 }

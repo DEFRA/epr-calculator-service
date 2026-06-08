@@ -69,23 +69,15 @@ public class CalcResultSummaryCommsCostTwoATests
     }
 
     [TestMethod]
-    public void GetProducerTotalCostwithBadDebtProvision_ShouldReturnCorrectTotal()
+    public void GetCommsFeesCosts_ShouldReturnCorrectValues()
     {
         // Act
-        var totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostwithBadDebtProvision(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers[0], material, calcResult);
+        var result = CalcResultSummaryCommsCostTwoA.GetCommsFeesCosts(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers[0], material, calcResult);
 
         // Assert
-        Assert.AreEqual(534.2400m, totalCost.Total);
-    }
-
-    [TestMethod]
-    public void GetProducerTotalCostWithoutBadDebtProvision_ShouldReturnCorrectTotal()
-    {
-        // Act
-        var totalCost = CalcResultSummaryCommsCostTwoA.GetProducerTotalCostWithoutBadDebtProvision(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers[0], material, calcResult);
-
-        // Assert
-        Assert.AreEqual(504.00m, totalCost);
+        Assert.AreEqual(504.00m, result.FeeWithoutBadDebtProvision);
+        Assert.AreEqual(30.24m, result.BadDebtProvision);
+        Assert.AreEqual(534.2400m, result.FeeWithBadDebtProvision.Total);
     }
 
     private static List<ProducerDetail> GetProducers()

@@ -45,7 +45,7 @@ public static class BillingInstructionsProducer
                 liabilityDifferenceRunningTotal += liabilityDifferenceCalculated.Value;
             var currentYearInvoiceTotalToDate      = GetCurrentYearInvoicedTotalToDate(fee, currentYearInvoicedTotalTonnage);
             var tonnageChangeSinceLastInvoice       = GetTonnageChangeSinceLastInvoice(fee);
-            var liabilityDifference                = GetLiabilityDifference(liabilityDifferenceCalculated);
+            var liabilityDifference                = liabilityDifferenceCalculated;
             var percentageLiabilityDifference      = GetPercentageLiabilityDifference(fee, currentYearInvoiceTotalToDate, liabilityDifference);
             var materialThresholdBreached           = GetMaterialThresholdBreached(fee, currentYearInvoicedTotalTonnage, liabilityDifferenceCalculated, param_MATT_AI, param_MATT_AD);
             var tonnageThresholdBreached            = GetTonnageThresholdBreached(fee, currentYearInvoicedTotalTonnage, liabilityDifferenceCalculated, param_TONT_AI, param_TONT_AD);
@@ -97,24 +97,17 @@ public static class BillingInstructionsProducer
         return null;
     }
 
-    private static string? GetTonnageChangeSinceLastInvoice(CalcResultSummaryProducerDisposalFees fee)
-    {
-        if (fee.TonnageChangeAdvice == "CHANGE")
-            return "Tonnage Changed";
-        return null;
-    }
+    private static string? GetTonnageChangeSinceLastInvoice(
+        CalcResultSummaryProducerDisposalFees fee
+    ) => fee.TonnageChangeAdvice == "CHANGE" ? "Tonnage Changed" : null;
 
-    private static decimal? CalculateLiabilityDifference(CalcResultSummaryProducerDisposalFees fee, decimal? currentInvoicedTotalToDate)
-    {
-        if (fee.Level != CommonConstants.LevelOne.ToString()) return null;
-        if (!currentInvoicedTotalToDate.HasValue) return null;
-
-        var diff = Math.Round(fee.TotalProducerBillBreakdownCosts.FeeWithBadDebtProvision.Total, 2) - Math.Round(currentInvoicedTotalToDate.Value, 2);
-
-        return diff;
-    }
-
-    private static decimal? GetLiabilityDifference(decimal? liabilityDifferenceCalculated) => liabilityDifferenceCalculated;
+    private static decimal? CalculateLiabilityDifference(
+        CalcResultSummaryProducerDisposalFees fee,
+        decimal? currentInvoicedTotalToDate
+    ) =>
+        (fee.Level != CommonConstants.LevelOne.ToString()) || (!currentInvoicedTotalToDate.HasValue)
+        ? null
+        : Math.Round(fee.TotalProducerBillBreakdownCosts.FeeWithBadDebtProvision.Total, 2) - Math.Round(currentInvoicedTotalToDate.Value, 2);
 
     private static string GetMaterialThresholdBreached(CalcResultSummaryProducerDisposalFees fee, decimal? currentInvoicedTotalToDate, decimal? liabilityDifferenceCalculated, decimal? param_MATT_AI, decimal? param_MATT_AD)
     {
@@ -145,17 +138,18 @@ public static class BillingInstructionsProducer
         return CommonConstants.Hyphen;
     }
 
-    private static decimal? GetPercentageLiabilityDifference(CalcResultSummaryProducerDisposalFees fee, decimal? currentYearInvoiceTotalToDate, decimal? liabilityDifference)
-    {
-        if (fee.Level != CommonConstants.LevelOne.ToString() ||
-            !currentYearInvoiceTotalToDate.HasValue ||
-            !liabilityDifference.HasValue ||
-            currentYearInvoiceTotalToDate == 0m)
-        {
-            return null;
-        }
-        return Math.Round(liabilityDifference.Value / currentYearInvoiceTotalToDate.Value * 100, 2);
-    }
+    private static decimal? GetPercentageLiabilityDifference(
+        CalcResultSummaryProducerDisposalFees fee,
+        decimal? currentYearInvoiceTotalToDate,
+        decimal? liabilityDifference
+    ) =>
+        (fee.Level != CommonConstants.LevelOne.ToString()
+        || !currentYearInvoiceTotalToDate.HasValue
+        || !liabilityDifference.HasValue
+        || currentYearInvoiceTotalToDate == 0m
+        )
+        ? null
+        : Math.Round(liabilityDifference.Value / currentYearInvoiceTotalToDate.Value * 100, 2);
 
     private static string GetMaterialPercentageThresholdBreached(CalcResultSummaryProducerDisposalFees fee, decimal? currentYearInvoiceTotalToDate, decimal? percentageLiabilityDifference, decimal? param_MATT_PI, decimal? param_MATT_PD)
     {
