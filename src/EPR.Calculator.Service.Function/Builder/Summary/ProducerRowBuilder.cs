@@ -148,17 +148,34 @@ internal sealed class ProducerRowBuilder(
         var materialCosts = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>();
         var commsCosts    = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>();
 
+        // Accumulators for the post-loop row-level sums, folded into a single pass.
+        var commsCostsSection2b = CalcResultSummaryBadDebtProvision.Empty;
+        decimal percentageOfProducerTonnage = 0;
+        var commsCostsSection2c = CalcResultSummaryBadDebtProvision.Empty;
+
+        // Per-material sub-lists built in a single pass over l1Rows per material.
+        var matRowsByCode   = materials.ToDictionary(m => m.Code, _ => new List<CalcResultSummaryProducerDisposalFeesByMaterial>());
+        var commsRowsByCode = materials.ToDictionary(m => m.Code, _ => new List<CalcResultSummaryProducerCommsFeesCostByMaterial>());
+
+        foreach (var row in l1Rows)
+        {
+            commsCostsSection2b             += row.CommsCostsSection2b;
+            percentageOfProducerTonnage     += row.PercentageofProducerReportedTonnagevsAllProducers;
+            commsCostsSection2c             += row.CommsCostsSection2c;
+
+            foreach (var material in materials)
+            {
+                if (row.ProducerDisposalFeesByMaterial.TryGetValue(material.Code, out var mat))
+                    matRowsByCode[material.Code].Add(mat);
+                if (row.ProducerCommsFeesByMaterial.TryGetValue(material.Code, out var comms))
+                    commsRowsByCode[material.Code].Add(comms);
+            }
+        }
+
         foreach (var material in materials)
         {
-            var l1MatRows = l1Rows
-                .Where(r => r.ProducerDisposalFeesByMaterial.ContainsKey(material.Code))
-                .Select(r => r.ProducerDisposalFeesByMaterial[material.Code])
-                .ToList();
-
-            var l1CommsRows = l1Rows
-                .Where(r => r.ProducerCommsFeesByMaterial.ContainsKey(material.Code))
-                .Select(r => r.ProducerCommsFeesByMaterial[material.Code])
-                .ToList();
+            var l1MatRows   = matRowsByCode[material.Code];
+            var l1CommsRows = commsRowsByCode[material.Code];
 
             materialCosts[material.Code] = new CalcResultSummaryProducerDisposalFeesByMaterial
             {
@@ -215,11 +232,11 @@ internal sealed class ProducerRowBuilder(
             CommsCostsSection2a            = GetCommunicationCostsSectionTwoA(commsCosts),
 
             LADisposalCostsSection1       = GetLocalAuthorityDisposalCostsSectionOne(materialCosts),
-            CommsCostsSection2b           = l1Rows.Select(r => r.CommsCostsSection2b).Sum(),
+            CommsCostsSection2b           = commsCostsSection2b,
 
-            PercentageofProducerReportedTonnagevsAllProducers = l1Rows.Sum(r => r.PercentageofProducerReportedTonnagevsAllProducers),
+            PercentageofProducerReportedTonnagevsAllProducers = percentageOfProducerTonnage,
 
-            CommsCostsSection2c = l1Rows.Select(r => r.CommsCostsSection2c).Sum(),
+            CommsCostsSection2c = commsCostsSection2c,
 
             isTotalRow        = true,
             isOverallTotalRow = true,
