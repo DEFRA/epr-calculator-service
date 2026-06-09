@@ -15,7 +15,7 @@ public static class ThreeSaCostsProducer
             badDebt:       calcResult.CalcResultParameterOtherCost.BadDebtValue,
             total:         calcResult.CalcResultParameterOtherCost.SaOperatingCost.Total,
             apportionment: calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment,
-            setHeader: (s, p) => s.SaOperatingCostsSection3 = p,
+            setHeader: (s, p) => s.SaOperatingCostsSection3 = p, // gitleaks:allow
             setFee:    (f, p) => f.SaOperatingCostsSection3 = p
         );
 }
