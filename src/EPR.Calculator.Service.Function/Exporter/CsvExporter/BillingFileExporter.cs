@@ -131,8 +131,8 @@ public class BillingFileExporter(
         LeaverDate                 = CommonConstants.Totals,
         TonnageChangeCount         = string.Empty,
         TonnageChangeAdvice        = string.Empty,
-        isTotalRow                 = true,
-        isOverallTotalRow          = true,
+        IsTotalRow                 = true,
+        IsOverallTotalRow          = true,
         BillingInstructionSection  = new CalcResultSummaryBillingInstruction { SuggestedBillingInstruction = string.Empty }
     };
 

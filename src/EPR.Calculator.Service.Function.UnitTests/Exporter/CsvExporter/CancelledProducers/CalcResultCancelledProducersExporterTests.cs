@@ -40,7 +40,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Cancell
                         LatestInvoice = new LatestInvoice
                         {
                             LatestInvoice_Header = CommonConstants.LatestInvoice,
-                            CurrentYearInvoicedTotalToDate_Header = CommonConstants.LastInvoicedTotal,
                             RunNumber_Header = CommonConstants.RunNumber,
                             RunName_Header = CommonConstants.RunName,
                             BillingInstructionId_Header = CommonConstants.BillingInstructionId,
@@ -109,7 +108,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Cancell
         [TestMethod]
         public void Export_ShouldAddEmptyLinesAndHeaders()
         {
-            // Arrange  
+            // Arrange
             var exporter = new CalcResultCancelledProducersExporter();
             var response = new CalcResultCancelledProducersResponse
             {
@@ -118,22 +117,22 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Cancell
             };
             var csvContent = new StringBuilder();
 
-            // Act  
+            // Act
             exporter.Export(response, csvContent);
 
-            // Assert  
+            // Assert
             var result = csvContent.ToString();
             Assert.IsTrue(result.Contains("Cancelled Producers"));
             Assert.IsTrue(result.Contains("Last Tonnage"));
             Assert.IsTrue(result.Contains("Latest Invoice"));
-            Assert.IsTrue(result.Contains(",,,,,")); // Check for empty values         
+            Assert.IsTrue(result.Contains(",,,,,")); // Check for empty values
 
         }
 
         [TestMethod]
         public void Export_ShouldHandleLastInvoiceNull()
         {
-            // Arrange  
+            // Arrange
             var exporter = new CalcResultCancelledProducersExporter();
             var cancelledProducersResponse = new CalcResultCancelledProducersResponse
             {
@@ -160,7 +159,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Cancell
                         LatestInvoice = new LatestInvoice
                         {
                             LatestInvoice_Header = CommonConstants.LatestInvoice,
-                            CurrentYearInvoicedTotalToDate_Header = CommonConstants.LastInvoicedTotal,
                             RunNumber_Header = CommonConstants.RunNumber,
                             RunName_Header = CommonConstants.RunName,
                             BillingInstructionId_Header = CommonConstants.BillingInstructionId,
@@ -185,22 +183,22 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Cancell
             };
             var csvContent = new StringBuilder();
 
-            // Act  
+            // Act
             exporter.Export(cancelledProducersResponse, csvContent);
 
-            // Assert  
+            // Assert
             var result = csvContent.ToString();
             Assert.IsTrue(result.Contains("Cancelled Producers"));
             Assert.IsTrue(result.Contains("Last Tonnage"));
             Assert.IsTrue(result.Contains("Latest Invoice"));
-            Assert.IsTrue(result.Contains(",,,,,")); // Check for empty values         
+            Assert.IsTrue(result.Contains(",,,,,")); // Check for empty values
 
         }
 
         [TestMethod]
         public void Export_ShouldHandleEmptyCancelledProducers()
         {
-            // Arrange  
+            // Arrange
             var exporter = new CalcResultCancelledProducersExporter();
             var response = new CalcResultCancelledProducersResponse
             {
@@ -209,10 +207,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Cancell
             };
             var csvContent = new StringBuilder();
 
-            // Act  
+            // Act
             exporter.Export(response, csvContent);
 
-            // Assert  
+            // Assert
             var result = csvContent.ToString();
             Assert.IsTrue(result.Contains("Cancelled Producers"));
             Assert.IsFalse(result.Contains("ProducerId"));

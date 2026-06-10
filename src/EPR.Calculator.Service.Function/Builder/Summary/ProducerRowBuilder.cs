@@ -130,8 +130,8 @@ internal sealed class ProducerRowBuilder(
 
             CommsCostsSection2c = l2Rows.Select(r => r.CommsCostsSection2c).Sum(),
 
-            isTotalRow        = true,
-            isOverallTotalRow = false,
+            IsTotalRow        = true,
+            IsOverallTotalRow = false,
         };
     }
 
@@ -238,8 +238,8 @@ internal sealed class ProducerRowBuilder(
 
             CommsCostsSection2c = commsCostsSection2c,
 
-            isTotalRow        = true,
-            isOverallTotalRow = true,
+            IsTotalRow        = true,
+            IsOverallTotalRow = true,
         };
     }
 

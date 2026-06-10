@@ -67,7 +67,7 @@ public class Section2aMaterialsExporter : ICalcResultSummaryPartExporter
     {
         if (producer.ProducerCommsFeesByMaterial == null) { return; }
 
-        bool isNotTotal = !producer.isOverallTotalRow;
+        bool isNotTotal = !producer.IsOverallTotalRow;
 
         foreach (var disposalFee in producer.ProducerCommsFeesByMaterial!)
         {

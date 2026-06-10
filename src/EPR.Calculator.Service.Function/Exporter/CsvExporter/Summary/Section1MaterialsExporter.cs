@@ -142,7 +142,7 @@ public class Section1MaterialsExporter : ICalcResultSummaryPartExporter
 
     public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
     {
-        bool isNotTotal = !producer.isOverallTotalRow;
+        bool isNotTotal = !producer.IsOverallTotalRow;
 
         foreach (var (key, disposalFee) in producer.ProducerDisposalFeesByMaterial)
         {
@@ -171,7 +171,7 @@ public class Section1MaterialsExporter : ICalcResultSummaryPartExporter
         bool isNotTotal)
     {
         csvContent.Append(
-            !producer.isOverallTotalRow && (producer.Level != "1" || disposalFee.PreviousInvoicedTonnage == null)
+            !producer.IsOverallTotalRow && (producer.Level != "1" || disposalFee.PreviousInvoicedTonnage == null)
                 ? CsvSanitiser.SanitiseData(CommonConstants.Hyphen)
                 : CsvSanitiser.SanitiseData(disposalFee.PreviousInvoicedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
 
@@ -208,7 +208,7 @@ public class Section1MaterialsExporter : ICalcResultSummaryPartExporter
             csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.NetReportedTonnage.total, DecimalPlaces.Three, DecimalFormats.F3));
         }
 
-        AppendCsvValue(csvContent, disposalFee.TonnageChange, producer.isOverallTotalRow, DecimalPlaces.Three, DecimalFormats.F3);
+        AppendCsvValue(csvContent, disposalFee.TonnageChange, producer.IsOverallTotalRow, DecimalPlaces.Three, DecimalFormats.F3);
 
         if (applyModulation) {
             csvContent.Append(isNotTotal ? CsvSanitiser.SanitiseData(disposalFee.PricePerTonne.red  , DecimalPlaces.Four, DecimalFormats.F4, isCurrency: true, canBeEmpty: true) : CommonConstants.CsvFileDelimiter);

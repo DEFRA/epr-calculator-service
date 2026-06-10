@@ -291,7 +291,7 @@ public static partial class TestDataHelper
                 SubsidiaryId = string.Empty,
                 ProducerName = "Allied Packaging",
                 Level = "1",
-                isTotalRow = false,
+                IsTotalRow = false,
                 LADisposalCostsSection1 = new CalcResultSummaryBadDebtProvision
                 {
                     FeeWithoutBadDebtProvision = 4423.39438m,
@@ -372,7 +372,7 @@ public static partial class TestDataHelper
                 SubsidiaryId = string.Empty,
                 ProducerName = "Allied Packaging",
                 Level = "1",
-                isTotalRow = false,
+                IsTotalRow = false,
                 LADisposalCostsSection1 = new CalcResultSummaryBadDebtProvision
                 {
                     FeeWithoutBadDebtProvision = 4423.39438m,
@@ -441,7 +441,7 @@ public static partial class TestDataHelper
                 ProducerCommsFeesByMaterial = GetProducerCommsFeesByMaterial(),
                 TonnageChangeCount = "0",
                 TonnageChangeAdvice = "",
-                isOverallTotalRow = true
+                IsOverallTotalRow = true
         };
     }
 
@@ -455,7 +455,7 @@ public static partial class TestDataHelper
                 SubsidiaryId = string.Empty,
                 ProducerName = "Allied Packaging",
                 Level = "2",
-                isTotalRow = false,
+                IsTotalRow = false,
                 LADisposalCostsSection1 = new CalcResultSummaryBadDebtProvision
                 {
                     FeeWithoutBadDebtProvision = 4423.39438m,
