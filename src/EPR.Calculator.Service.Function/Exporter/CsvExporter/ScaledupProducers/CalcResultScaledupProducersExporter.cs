@@ -176,7 +176,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers
             csvContent.AppendLine();
         }
 
-        private class CalcResultScaledupProducerHeader
+        private sealed class CalcResultScaledupProducerHeader
         {
             required public string Name { get; set; }
 

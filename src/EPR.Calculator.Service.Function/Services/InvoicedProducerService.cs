@@ -18,7 +18,6 @@ public interface IInvoicedProducerService
     public Task<ImmutableList<InvoicedProducer>> GetLatestAcceptedInvoicedProducers(RelativeYear relativeYear, CancellationToken cancellationToken = default);
 }
 
-[ExcludeFromCodeCoverage(Justification = "Tests to be re-added within ECV-473")]
 public class InvoicedProducerService(
     ApplicationDBContext dbContext,
     ILogger<InvoicedProducerService> logger)

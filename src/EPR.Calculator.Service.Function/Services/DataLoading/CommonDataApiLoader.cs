@@ -31,8 +31,6 @@ public interface IDataLoader
 /// <summary>
 ///     Loads POM and Organisation data by streaming from the Common Data API and bulk-inserting into the database.
 /// </summary>
-[ExcludeFromCodeCoverage(Justification =
-    "The bulk insert/transaction behaviour here is not compatible with SQLite or InMemory databases.")]
 public class CommonDataApiLoader(
     IOptions<CommonDataApiLoaderOptions> options,
     IDbContextFactory<ApplicationDBContext> dbContextFactory,

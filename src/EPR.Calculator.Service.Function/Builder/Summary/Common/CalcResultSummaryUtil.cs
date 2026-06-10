@@ -7,7 +7,6 @@ using EPR.Calculator.Service.Function.Services;
 
 namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 {
-    [ExcludeFromCodeCoverage]
     public static class CalcResultSummaryUtil
     {
         public static decimal GetTonnage(

@@ -21,7 +21,6 @@ public interface ICalcResultSummaryBuilder
     );
 }
 
-[ExcludeFromCodeCoverage]
 public class CalcResultSummaryBuilder(
     ApplicationDBContext context,
     IInvoicedProducerService invoicedProducerService)

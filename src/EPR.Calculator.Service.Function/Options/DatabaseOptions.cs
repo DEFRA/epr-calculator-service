@@ -8,7 +8,6 @@ namespace EPR.Calculator.Service.Function.Options;
 ///     Configuration options for <see cref="ApplicationDBContext" />.
 /// </summary>
 [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
-[ExcludeFromCodeCoverage]
 public record DatabaseOptions
 {
     public const string SectionKey = "Database";

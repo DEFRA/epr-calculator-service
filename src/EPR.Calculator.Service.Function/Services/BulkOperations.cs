@@ -16,7 +16,6 @@ public interface IBulkOperations
 /// <summary>
 ///     Abstraction over <see cref="EFCore.BulkExtensions" /> to allow bulk operations to be verified in unit tests.
 /// </summary>
-[ExcludeFromCodeCoverage]
 public class BulkOperationsWrapper
     : IBulkOperations
 {

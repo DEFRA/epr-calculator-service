@@ -128,7 +128,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligation
             csvContent.AppendLine();
         }
 
-        private class CalcResultPartialObligationHeader
+        private sealed class CalcResultPartialObligationHeader
         {
             required public string Name { get; set; }
 

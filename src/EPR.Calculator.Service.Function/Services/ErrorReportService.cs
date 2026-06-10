@@ -18,7 +18,6 @@ public interface IErrorReportService
         CancellationToken cancellationToken);
 }
 
-[ExcludeFromCodeCoverage(Justification = "Tests to be re-added within ECV-473")]
 public class ErrorReportService(
     ApplicationDBContext dbContext,
     IBulkOperations bulkOps,

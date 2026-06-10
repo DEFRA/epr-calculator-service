@@ -5,7 +5,6 @@ namespace EPR.Calculator.Service.Function.Services.CommonDataApi
     /// <summary>
     ///     API response model for organisation data from the Common Data API.
     /// </summary>
-    [ExcludeFromCodeCoverage]
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     public sealed record OrganisationResponse
