@@ -74,7 +74,8 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             ICalcResultProjectedProducer h2Row,
             IImmutableList<MaterialDetail> materials,
             string h1Period,
-            string h2Period)
+            string h2Period
+        )
         {
             var h1ById = h1Row.ProjectedTonnageByMaterial
                 .ToDictionary(kvp => materials.FirstOrDefault(m => m.Code == kvp.Key)?.Id ?? -1, kvp => kvp.Value);
@@ -86,28 +87,28 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                 if (!projectedById.TryGetValue(rm.MaterialId, out var projected)) return rm;
                 var projectedRam = rm.PackagingType switch
                 {
-                    PackagingTypes.Household => projected.ProjectedHouseholdRAMTonnage,
-                    PackagingTypes.PublicBin => projected.ProjectedPublicBinRAMTonnage,
+                    PackagingTypes.Household                 => projected.ProjectedHouseholdRAMTonnage,
+                    PackagingTypes.PublicBin                 => projected.ProjectedPublicBinRAMTonnage,
                     PackagingTypes.HouseholdDrinksContainers => projected.ProjectedHouseholdDrinksContainerRAMTonnage,
-                    _ => null
+                    _                                        => null
                 };
                 if (projectedRam == null) return rm;
                 return new ProducerReportedMaterial
                 {
-                    Id = rm.Id,
-                    MaterialId = rm.MaterialId,
-                    ProducerDetailId = rm.ProducerDetailId,
-                    PackagingType = rm.PackagingType,
-                    PackagingTonnage = rm.PackagingTonnage,
-                    PackagingTonnageRed = projectedRam.RedTonnage,
-                    PackagingTonnageAmber = projectedRam.AmberTonnage,
-                    PackagingTonnageGreen = projectedRam.GreenTonnage,
-                    PackagingTonnageRedMedical = projectedRam.RedMedicalTonnage,
+                    Id                           = rm.Id,
+                    MaterialId                   = rm.MaterialId,
+                    ProducerDetailId             = rm.ProducerDetailId,
+                    PackagingType                = rm.PackagingType,
+                    PackagingTonnage             = rm.PackagingTonnage,
+                    PackagingTonnageRed          = projectedRam.RedTonnage,
+                    PackagingTonnageAmber        = projectedRam.AmberTonnage,
+                    PackagingTonnageGreen        = projectedRam.GreenTonnage,
+                    PackagingTonnageRedMedical   = projectedRam.RedMedicalTonnage,
                     PackagingTonnageAmberMedical = projectedRam.AmberMedicalTonnage,
                     PackagingTonnageGreenMedical = projectedRam.GreenMedicalTonnage,
-                    SubmissionPeriod = rm.SubmissionPeriod,
-                    ProducerDetail = rm.ProducerDetail,
-                    Material = rm.Material
+                    SubmissionPeriod            = rm.SubmissionPeriod,
+                    ProducerDetail              = rm.ProducerDetail,
+                    Material                    = rm.Material
                 };
             }
 
@@ -138,21 +139,21 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                 var ram = getRAMTonnage(material);
                 if (ram == null) continue;
 
-                red += ram.RedTonnage;
-                redMed += ram.RedMedicalTonnage;
-                amber += ram.AmberTonnage;
+                red      += ram.RedTonnage;
+                redMed   += ram.RedMedicalTonnage;
+                amber    += ram.AmberTonnage;
                 amberMed += ram.AmberMedicalTonnage;
-                green += ram.GreenTonnage;
+                green    += ram.GreenTonnage;
                 greenMed += ram.GreenMedicalTonnage;
             }
 
             return new RAMTonnage
             {
-                RedTonnage = red,
-                RedMedicalTonnage = redMed,
-                AmberTonnage = amber,
+                RedTonnage          = red,
+                RedMedicalTonnage   = redMed,
+                AmberTonnage        = amber,
                 AmberMedicalTonnage = amberMed,
-                GreenTonnage = green,
+                GreenTonnage        = green,
                 GreenMedicalTonnage = greenMed
             };
         }

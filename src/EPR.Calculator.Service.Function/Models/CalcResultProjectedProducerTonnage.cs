@@ -13,6 +13,8 @@
         {
             return Red > 0 || Amber > 0 || Green > 0 || RedMedical > 0 || AmberMedical > 0 || GreenMedical > 0;
         }
+
+        public static RAMProportions Empty = new RAMProportions();
     }
 
     public abstract record CalcResultProjectedProducerMaterialTonnage
