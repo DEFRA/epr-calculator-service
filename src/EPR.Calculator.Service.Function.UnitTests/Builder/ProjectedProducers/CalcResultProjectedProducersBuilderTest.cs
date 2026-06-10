@@ -268,13 +268,13 @@ public class CalcResultProjectedProducersBuilderTest : TestsFor<CalcResultProjec
         // Incomplete H1 - reflects proportions from H2
         var given = new[]
         {
-            new[] { "101", "", "2025-H1", "", "AL", "HH", "42", "", "", "", "", "", "" },
+            new[] { "101", "", "2025-H1", "", "AL", "HH", "42", "" , "" , "" , "" , "" , ""  },
             new[] { "101", "", "2025-H2", "", "AL", "HH", "21", "6", "5", "4", "3", "2", "1" }
         };
         var expected = new []
         {
             new[] { "101", "", "2025-H1", "1", "AL", "HH", "42", "12.000", "10.000", "8.000", "6.000", "4.000", "2.000" },
-            new[] { "101", "", "2025-H2", "1", "AL", "HH", "21", "6", "5", "4", "3", "2", "1" }
+            new[] { "101", "", "2025-H2", "1", "AL", "HH", "21", "6"     , "5"     , "4"    , "3"    , "2"    , "1"     }
         };
         AssertExcepted(expected, FillGaps(given));
     }
@@ -285,13 +285,13 @@ public class CalcResultProjectedProducersBuilderTest : TestsFor<CalcResultProjec
         // Incomplete H1 - reflects proportions from H2, perserving any H1
         var given = new[]
         {
-            new[] { "101", "", "2025-H1", "", "AL", "HH", "43", "1", "", "", "", "", "" },
+            new[] { "101", "", "2025-H1", "", "AL", "HH", "43", "1", "" , "" , "" , "" , ""  },
             new[] { "101", "", "2025-H2", "", "AL", "HH", "21", "6", "5", "4", "3", "2", "1" }
         };
         var expected = new []
         {
             new[] { "101", "", "2025-H1", "1", "AL", "HH", "43", "13.000", "10.000", "8.000", "6.000", "4.000", "2.000" },
-            new[] { "101", "", "2025-H2", "1", "AL", "HH", "21", "6", "5", "4", "3", "2", "1" }
+            new[] { "101", "", "2025-H2", "1", "AL", "HH", "21", "6"     , "5"     , "4"    , "3"    , "2"    , "1"     }
         };
         AssertExcepted(expected, FillGaps(given));
     }
@@ -303,12 +303,12 @@ public class CalcResultProjectedProducersBuilderTest : TestsFor<CalcResultProjec
         // Incomplete H1 - reflects proportions from H2, perserving any H1
         var given = new[]
         {
-            new[] { "101", "", "2025-H1", "", "AL", "HH", "43", "", "", "3", "", "", "" },
-            new[] { "101", "", "2025-H2", "", "AL", "HH", "100", "50", "", "", "", "", "" }
+            new[] { "101", "", "2025-H1", "", "AL", "HH", "43", ""   , "", "3", "", "", "" },
+            new[] { "101", "", "2025-H2", "", "AL", "HH", "100", "50", "", "" , "", "", "" }
         };
         var expected = new []
         {
-            new[] { "101", "", "2025-H1", "1", "AL", "HH", "43", "40", "0", "3", "0", "0", "0" },
+            new[] { "101", "", "2025-H1", "1", "AL", "HH",  "43",  "40", "0", "3", "0", "0", "0" },
             new[] { "101", "", "2025-H2", "1", "AL", "HH", "100", "100", "0", "0", "0", "0", "0" }
         };
         AssertExcepted(expected, FillGaps(given));
@@ -335,14 +335,14 @@ public class CalcResultProjectedProducersBuilderTest : TestsFor<CalcResultProjec
         // Level 1 subtotal added for parent who reports for themselves too
         var given = new[]
         {
-            new[] { "101", "", "2025-H1", "", "PL", "PB", "100", "", "10", "10", "", "", "" },
-            new[] { "101", "A", "2025-H1", "", "PL", "PB", "200", "", "", "20", "", "", "20" }
+            new[] { "101", "" , "2025-H1", "", "PL", "PB", "100", "", "10", "10", "", "", ""  },
+            new[] { "101", "A", "2025-H1", "", "PL", "PB", "200", "", ""  , "20", "", "", "20" }
         };
         var expected = new []
         {
             //new[] { "101", "", "2025-H1", "1", "PL", "PB", "300", "240", "10", "30", "0", "0", "20" },
-            new[] { "101", "", "2025-H1", "2", "PL", "PB", "100", "80", "10", "10", "0", "0", "0" },
-            new[] { "101", "A", "2025-H1", "2", "PL", "PB", "200", "160", "0", "20", "0", "0", "20" }
+            new[] { "101", "" , "2025-H1", "2", "PL", "PB", "100", "80" , "10", "10", "0", "0",  "0" },
+            new[] { "101", "A", "2025-H1", "2", "PL", "PB", "200", "160",  "0", "20", "0", "0", "20" }
         };
         AssertExcepted(expected, FillGaps(given));
     }
@@ -353,7 +353,7 @@ public class CalcResultProjectedProducersBuilderTest : TestsFor<CalcResultProjec
         // Part of holding group but subsidiary reports individually - expected subtotal row for parent
         var given = new[]
         {
-            new[] { "101", "A", "2025-H1", "", "GL", "HDC", "43", "1", "", "", "", "", "" },
+            new[] { "101", "A", "2025-H1", "", "GL", "HDC", "43", "1", "" , "" , "" , "" , ""  },
             new[] { "101", "A", "2025-H2", "", "GL", "HDC", "21", "6", "5", "4", "3", "2", "1" }
         };
         var expected = new []
@@ -481,6 +481,25 @@ public class CalcResultProjectedProducersBuilderTest : TestsFor<CalcResultProjec
             new[] { "101", "B", "2025-H2", "2", "AL", "HH", "300",    "250",      "25",      "25", "0", "0", "0" }
         };
         AssertExcepted(expected, FillGapsPrevious(given));
+    }
+
+    [TestMethod]
+    public void H1H2Projection_Standalone_L1HasProportionsFromH2()
+    {
+        var given = new[]
+        {
+            new[] { "101", "", "2025-H1", "", "AL", "HH", "100", ""  , "", ""  , "", "", "" },
+            new[] { "101", "", "2025-H2", "", "AL", "HH", "100", "60", "", "40", "", "", "" }
+        };
+        var (materialDetails, runContext) = InsertData(given);
+        var (_, result) = testSubject.Construct(runContext, materialDetails, ToL1Producers(given));
+
+        var l1 = result.H1ProjectedProducers.Single(p => p.Level == "1");
+        var proportions = l1.H1ProjectedTonnageByMaterial["AL"].H2RamProportions;
+
+        Assert.AreEqual(0.6m, proportions.Red);
+        Assert.AreEqual(0.4m, proportions.Amber);
+        Assert.IsTrue(proportions.AnyProportions());
     }
 
     private (IImmutableList<MaterialDetail>, RunContext) InsertData(string[][] given)

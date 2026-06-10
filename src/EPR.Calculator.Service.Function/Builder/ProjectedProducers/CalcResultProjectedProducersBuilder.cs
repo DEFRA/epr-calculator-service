@@ -38,9 +38,9 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                 var groupList = l1.Producers;
 
                 var h2Rows = H2ProjectedProducersBuilderUtils.GetProjectedProducers(groupList, materialDetails, h2Period);
-                var h2WithGroupSubtotals = AddSubtotals<CalcResultH2ProjectedProducer>(
+                var h2WithGroupSubtotals = AssignLevels(
                     h2Rows,
-                    createSubtotal: H2ProjectedProducersBuilderUtils.CreateParentProducer,
+                    deriveL1: H2ProjectedProducersBuilderUtils.CreateParentProducer,
                     sumProducerGroupTonnages: H2ProjectedProducersBuilderUtils.SumProducerGroupTonnages
                 );
 
@@ -52,9 +52,9 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                 updatedProducers.Add(new L1Producer(l1.OrganisationId, updatedPds));
 
                 allH2Rows.AddRange(h2WithGroupSubtotals);
-                allH1Rows.AddRange(AddSubtotals<CalcResultH1ProjectedProducer>(
+                allH1Rows.AddRange(AssignLevels(
                     h1Rows,
-                    createSubtotal: p => H1ProjectedProducersBuilderUtils.CreateParentProducer(p, h2WithGroupSubtotals),
+                    deriveL1: p => H1ProjectedProducersBuilderUtils.CreateParentProducer(p, h2WithGroupSubtotals),
                     sumProducerGroupTonnages: group => H1ProjectedProducersBuilderUtils.SumProducerGroupTonnages(group, h2WithGroupSubtotals)
                 ));
             }
@@ -158,25 +158,21 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             };
         }
 
-        private static List<TSubmissionPeriodProducer> AddSubtotals<TSubmissionPeriodProducer>(
+        private static List<TSubmissionPeriodProducer> AssignLevels<TSubmissionPeriodProducer>(
             List<TSubmissionPeriodProducer> projectedProducers,
-            Func<TSubmissionPeriodProducer, TSubmissionPeriodProducer> createSubtotal,
+            Func<TSubmissionPeriodProducer, TSubmissionPeriodProducer> deriveL1,
             Func<List<TSubmissionPeriodProducer>, TSubmissionPeriodProducer> sumProducerGroupTonnages)
             where TSubmissionPeriodProducer : ICalcResultProjectedProducer
         {
-            var result = new List<TSubmissionPeriodProducer>();
+            List<TSubmissionPeriodProducer> result = [];
             var producerGroups = projectedProducers.GroupBy(p => p.ProducerId);
 
             foreach (var group in producerGroups)
             {
                 if (group.Count() > 1)
                 {
-                    var updatedGroup = group.Select(p => p with { Level = CommonConstants.LevelTwo.ToString()});
-
-                    result.AddRange(updatedGroup);
-                    result.Add(
-                        sumProducerGroupTonnages(group.ToList())
-                    );
+                    result.AddRange(group.Select(p => p with { Level = CommonConstants.LevelTwo.ToString() }));
+                    result.Add(sumProducerGroupTonnages(group.ToList()));
                 }
                 else
                 {
@@ -184,21 +180,12 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 
                     if (producer.SubsidiaryId != null)
                     {
-                        var levelTwoProd = producer with { Level = CommonConstants.LevelTwo.ToString() };
-
-                        var subtotal = createSubtotal(producer) with {
-                            Level = CommonConstants.LevelOne.ToString(),
-                            IsSubtotal = true,
-                            SubsidiaryId = null
-                        };
-
-                        result.Add(subtotal);
-                        result.Add(levelTwoProd);
+                        result.Add(deriveL1(producer) with { Level = CommonConstants.LevelOne.ToString(), IsSubtotal = true, SubsidiaryId = null });
+                        result.Add(producer with { Level = CommonConstants.LevelTwo.ToString() });
                     }
                     else
                     {
-                        var levelOneProd = producer with { Level = CommonConstants.LevelOne.ToString()};
-                        result.Add(levelOneProd);
+                        result.Add(deriveL1(producer) with { Level = CommonConstants.LevelOne.ToString() });
                     }
                 }
             }

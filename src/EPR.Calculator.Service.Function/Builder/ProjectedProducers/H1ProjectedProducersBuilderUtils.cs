@@ -147,7 +147,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 
         public static CalcResultH1ProjectedProducer CreateParentProducer(CalcResultH1ProjectedProducer p, List<CalcResultH2ProjectedProducer> h2Producers)
         {
-            var h2Subtotal = h2Producers.FirstOrDefault(h2 => h2.IsSubtotal);
+            var h2Subtotal = h2Producers.FirstOrDefault(h2 => h2.IsSubtotal) ?? h2Producers.FirstOrDefault();
             return new CalcResultH1ProjectedProducer
                 {
                     ProducerId                   = p.ProducerId,
