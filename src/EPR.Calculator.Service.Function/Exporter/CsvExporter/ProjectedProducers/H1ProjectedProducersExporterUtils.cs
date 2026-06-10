@@ -10,6 +10,13 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
     {
         public static void AppendProjectedProducers(IImmutableList<CalcResultH1ProjectedProducer> h1ProjectedProducers, StringBuilder csvContent)
         {
+            var l1ProportionsByProducer = h1ProjectedProducers
+                .Where(p => p.Level == CommonConstants.LevelOne.ToString())
+                .ToDictionary(
+                    p => p.ProducerId,
+                    p => (IReadOnlyDictionary<string, RAMProportions>)p.H1ProjectedTonnageByMaterial
+                        .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.H2RamProportions));
+
             foreach (var producer in h1ProjectedProducers)
             {
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerId));
@@ -17,24 +24,27 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.Level));
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.SubmissionPeriodCode));
 
-                AppendProjectedProducerTonnageByMaterial(csvContent, producer.H1ProjectedTonnageByMaterial);
+                var l1Proportions = l1ProportionsByProducer.GetValueOrDefault(producer.ProducerId);
+                AppendProjectedProducerTonnageByMaterial(csvContent, producer.H1ProjectedTonnageByMaterial, l1Proportions);
 
                 csvContent.AppendLine();
             }
         }
 
-        private static void AppendProjectedProducerTonnageByMaterial(StringBuilder csvContent, IReadOnlyDictionary<string, CalcResultH1ProjectedProducerMaterialTonnage> h1ProjectedProducerTonnageByMaterial)
+        private static void AppendProjectedProducerTonnageByMaterial(StringBuilder csvContent, IReadOnlyDictionary<string, CalcResultH1ProjectedProducerMaterialTonnage> h1ProjectedProducerTonnageByMaterial, IReadOnlyDictionary<string, RAMProportions>? l1Proportions)
         {
             foreach (var producerTonnage in h1ProjectedProducerTonnageByMaterial)
             {
-                AppendMaterialTonnage(csvContent, producerTonnage.Key, producerTonnage.Value);
+                var materialL1Proportions = l1Proportions?.GetValueOrDefault(producerTonnage.Key);
+                AppendMaterialTonnage(csvContent, producerTonnage.Key, producerTonnage.Value, materialL1Proportions);
             }
         }
 
-        private static void AppendMaterialTonnage(StringBuilder csvContent, string materialCode, CalcResultH1ProjectedProducerMaterialTonnage tonnage)
+        private static void AppendMaterialTonnage(StringBuilder csvContent, string materialCode, CalcResultH1ProjectedProducerMaterialTonnage tonnage, RAMProportions? l1Proportions)
         {
+            var proportions = l1Proportions ?? tonnage.H2RamProportions;
             string GetProportionPercentage(decimal proportion) {
-                var showProportion = tonnage.IsWithoutRamTonnage() && tonnage.H2RamProportions.AnyProportions();
+                var showProportion = tonnage.IsWithoutRamTonnage() && proportions.AnyProportions();
                 return showProportion ? CsvSanitiser.SanitiseData(proportion * 100, DecimalPlaces.Two, DecimalFormats.F2, isPercentage: true) : CsvSanitiser.SanitiseData(CommonConstants.Hyphen);
             }
 
@@ -53,12 +63,12 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
                 csvContent.Append(CsvSanitiser.SanitiseData(tonnage.HouseholdDrinksContainerTonnageWithoutRAM, DecimalPlaces.Three, DecimalFormats.F3));
             }
 
-            csvContent.Append(GetProportionPercentage(tonnage.H2RamProportions.Red));
-            csvContent.Append(GetProportionPercentage(tonnage.H2RamProportions.Amber));
-            csvContent.Append(GetProportionPercentage(tonnage.H2RamProportions.Green));
-            csvContent.Append(GetProportionPercentage(tonnage.H2RamProportions.RedMedical));
-            csvContent.Append(GetProportionPercentage(tonnage.H2RamProportions.AmberMedical));
-            csvContent.Append(GetProportionPercentage(tonnage.H2RamProportions.GreenMedical));
+            csvContent.Append(GetProportionPercentage(proportions.Red));
+            csvContent.Append(GetProportionPercentage(proportions.Amber));
+            csvContent.Append(GetProportionPercentage(proportions.Green));
+            csvContent.Append(GetProportionPercentage(proportions.RedMedical));
+            csvContent.Append(GetProportionPercentage(proportions.AmberMedical));
+            csvContent.Append(GetProportionPercentage(proportions.GreenMedical));
 
             csvContent.Append(CsvSanitiser.SanitiseData(tonnage.ProjectedHouseholdTonnage, DecimalPlaces.Three, DecimalFormats.F3));
             AppendRamTonnage(csvContent, tonnage.ProjectedHouseholdRAMTonnage);

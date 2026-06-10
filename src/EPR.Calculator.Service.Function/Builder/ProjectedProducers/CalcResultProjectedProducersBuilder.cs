@@ -54,8 +54,8 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                 allH2Rows.AddRange(h2WithGroupSubtotals);
                 allH1Rows.AddRange(AddSubtotals<CalcResultH1ProjectedProducer>(
                     h1Rows,
-                    createSubtotal: H1ProjectedProducersBuilderUtils.CreateParentProducer,
-                    sumProducerGroupTonnages: H1ProjectedProducersBuilderUtils.SumProducerGroupTonnages
+                    createSubtotal: p => H1ProjectedProducersBuilderUtils.CreateParentProducer(p, h2WithGroupSubtotals),
+                    sumProducerGroupTonnages: group => H1ProjectedProducersBuilderUtils.SumProducerGroupTonnages(group, h2WithGroupSubtotals)
                 ));
             }
 
