@@ -10,19 +10,17 @@ public class CalcResultLateReportingTonnageJson
     public string Name { get; set; } = null!;
 
     [JsonPropertyName("calcResultLateReportingTonnageDetails")]
-    public List<CalcResultLateReportingTonnageDetailsJson> calcResultLateReportingTonnageDetails { get; set; } = null!;
+    public List<CalcResultLateReportingTonnageDetailsJson> CalcResultLateReportingTonnageDetails { get; set; } = null!;
 
     [JsonPropertyName("calcResultLateReportingTonnageTotal")]
     [JsonConverter(typeof(DecimalPrecision3Converter))]
     public decimal CalcResultLateReportingTonnageTotal { get; set; }
 
-    public static CalcResultLateReportingTonnageJson From(CalcResultLateReportingTonnage? calcResultLateReportingTonnage, IImmutableList<MaterialDetail> materials)
-    {
-        if (calcResultLateReportingTonnage is null) return new CalcResultLateReportingTonnageJson();
-        return new CalcResultLateReportingTonnageJson
+    public static CalcResultLateReportingTonnageJson From(CalcResultLateReportingTonnage calcResultLateReportingTonnage, IImmutableList<MaterialDetail> materials) =>
+        new ()
         {
             Name = "Late Reporting Tonnage",
-            calcResultLateReportingTonnageDetails = calcResultLateReportingTonnage.ByMaterial
+            CalcResultLateReportingTonnageDetails = calcResultLateReportingTonnage.ByMaterial
                 .Select(kv => new CalcResultLateReportingTonnageDetailsJson
                 {
                     MaterialName = materials.First(m => m.Code == kv.Key).Name,
@@ -31,7 +29,6 @@ public class CalcResultLateReportingTonnageJson
                 .ToList(),
             CalcResultLateReportingTonnageTotal = calcResultLateReportingTonnage.Total.Total
         };
-    }
 }
 
 public class CalcResultLateReportingTonnageDetailsJson

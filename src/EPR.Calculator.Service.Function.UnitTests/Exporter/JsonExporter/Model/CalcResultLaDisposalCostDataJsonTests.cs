@@ -13,7 +13,7 @@ public class CalcResultLaDisposalCostDataJsonTests
     {
         var la = TestDataHelper.GetCalcResultLaDisposalCostData();
         var materials = TestDataHelper.GetMaterialDetails();
-        var result = CalcResultLaDisposalCostDataJson.From(TestDataHelper.CalculatorRun2025, la.ByMaterial, la.Total, materials);
+        var result = CalcResultLaDisposalCostDataJson.From(la.ByMaterial, la.Total, materials);
 
         Assert.IsNotNull(result);
         Assert.IsTrue(result.CalcResultLaDisposalCostDetails.Any());

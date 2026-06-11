@@ -176,8 +176,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligation
             return materialsBreakdownHeaders.ToImmutable();
         }
 
-        private
-         static ImmutableList<CalcResultPartialObligationHeader> GetColumnHeaders(IReadOnlyCollection<MaterialDetail> materials, bool showModulation)
+        private static ImmutableList<CalcResultPartialObligationHeader> GetColumnHeaders(IReadOnlyCollection<MaterialDetail> materials, bool showModulation)
         {
             var columnHeaders = ImmutableList.CreateBuilder<CalcResultPartialObligationHeader>();
 

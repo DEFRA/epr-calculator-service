@@ -36,13 +36,13 @@ public class CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2A
         var costs = calcResultSummaryProducerDisposalFees.CommsCostsSection2a;
         return new CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2A
         {
-            TotalProducerFeeForCommsCostsWithoutBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(costs?.FeeWithoutBadDebtProvision),
-            BadDebtProvisionFor2a                                = CurrencyConverterUtils.ConvertToCurrency(costs?.BadDebtProvision),
-            TotalProducerFeeForCommsCostsWithBadDebtProvision    = CurrencyConverterUtils.ConvertToCurrency(costs?.FeeWithBadDebtProvision.Total),
-            EnglandTotalWithBadDebtProvision                     = CurrencyConverterUtils.ConvertToCurrency(costs?.FeeWithBadDebtProvision.England),
-            WalesTotalWithBadDebtProvision                       = CurrencyConverterUtils.ConvertToCurrency(costs?.FeeWithBadDebtProvision.Wales),
-            ScotlandTotalWithBadDebtProvision                    = CurrencyConverterUtils.ConvertToCurrency(costs?.FeeWithBadDebtProvision.Scotland),
-            NorthernIrelandTotalWithBadDebtProvision             = CurrencyConverterUtils.ConvertToCurrency(costs?.FeeWithBadDebtProvision.NorthernIreland),
+            TotalProducerFeeForCommsCostsWithoutBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(costs.FeeWithoutBadDebtProvision),
+            BadDebtProvisionFor2a                                = CurrencyConverterUtils.ConvertToCurrency(costs.BadDebtProvision),
+            TotalProducerFeeForCommsCostsWithBadDebtProvision    = CurrencyConverterUtils.ConvertToCurrency(costs.FeeWithBadDebtProvision.Total),
+            EnglandTotalWithBadDebtProvision                     = CurrencyConverterUtils.ConvertToCurrency(costs.FeeWithBadDebtProvision.England),
+            WalesTotalWithBadDebtProvision                       = CurrencyConverterUtils.ConvertToCurrency(costs.FeeWithBadDebtProvision.Wales),
+            ScotlandTotalWithBadDebtProvision                    = CurrencyConverterUtils.ConvertToCurrency(costs.FeeWithBadDebtProvision.Scotland),
+            NorthernIrelandTotalWithBadDebtProvision             = CurrencyConverterUtils.ConvertToCurrency(costs.FeeWithBadDebtProvision.NorthernIreland),
             PercentageOfProducerTonnageVsAllProducers            = $"{Math.Round(calcResultSummaryProducerDisposalFees.PercentageofProducerReportedTonnagevsAllProducers, (int)DecimalPlaces.Eight).ToString()}%"
         };
     }

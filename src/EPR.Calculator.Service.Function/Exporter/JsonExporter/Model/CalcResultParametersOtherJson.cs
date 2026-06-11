@@ -27,9 +27,6 @@ namespace EPR.Calculator.Service.Function.Models
         [JsonPropertyName("eightTonnageChange")]
         public ChangeJson EightTonnageChange { get; set; } = new ChangeJson();
 
-        private const string FourCountryApportionmentPercentage = "4 Country Apportionment %s";
-        private const string EightTonnageChangeHeader = "8 Tonnage Change";
-
         public static CalcResultParametersOtherJson From(CalcResultParameterOtherCost otherCost)
         {
             return new CalcResultParametersOtherJson
@@ -65,11 +62,8 @@ namespace EPR.Calculator.Service.Function.Models
         [JsonPropertyName("total")]
         public string Total { get; set; } = string.Empty;
 
-        public static CountryAmountJson From(ByCountryCost? costDetail)
-        {
-            if (costDetail == null) return new CountryAmountJson();
-
-            return new CountryAmountJson
+        public static CountryAmountJson From(ByCountryCost costDetail) =>
+            new ()
             {
                 England         = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(costDetail.England        , 2, ","),
                 Wales           = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(costDetail.Wales          , 2, ","),
@@ -77,13 +71,9 @@ namespace EPR.Calculator.Service.Function.Models
                 NorthernIreland = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(costDetail.NorthernIreland, 2, ","),
                 Total           = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(costDetail.Total          , 2, ",")
             };
-        }
 
-        public static CountryAmountJson From(ByCountryApportionment? apportionment)
-        {
-            if (apportionment == null) return new CountryAmountJson();
-
-            return new CountryAmountJson
+        public static CountryAmountJson From(ByCountryApportionment apportionment) =>
+            new()
             {
                 England         = $"{Math.Round(apportionment.England        , (int)DecimalPlaces.Eight):0.00000000}%",
                 Wales           = $"{Math.Round(apportionment.Wales          , (int)DecimalPlaces.Eight):0.00000000}%",
@@ -91,7 +81,6 @@ namespace EPR.Calculator.Service.Function.Models
                 NorthernIreland = $"{Math.Round(apportionment.NorthernIreland, (int)DecimalPlaces.Eight):0.00000000}%",
                 Total           = $"{100                                                                :0.00000000}%"
             };
-        }
     }
 
     public class PercentageJson

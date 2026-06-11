@@ -147,40 +147,33 @@ public class BillingFileExporter(
     }
 
     private static ImmutableList<CalcResultScaledupProducer> GetScaledupProducers(
-        IReadOnlyCollection<CalcResultScaledupProducer>? scaledUpProducers,
+        IReadOnlyCollection<CalcResultScaledupProducer> scaledUpProducers,
         ImmutableHashSet<int> acceptedProducerIds)
     {
-        return scaledUpProducers?
+        return scaledUpProducers
             .Where(x => acceptedProducerIds.Contains(x.ProducerId))
-            .ToImmutableList() ?? [];
+            .ToImmutableList();
     }
 
     private static CalcResultPartialObligations GetPartialObligationsForExport(
         CalcResultPartialObligations producers,
-        ImmutableHashSet<int> acceptedProducerIds)
-    {
-        var acceptedProducers = producers.PartialObligations?
-            .Where(x => acceptedProducerIds.Contains(x.ProducerId) || x.ProducerId == 0)
-            .ToImmutableList() ?? [];
-
-        return new CalcResultPartialObligations
+        ImmutableHashSet<int> acceptedProducerIds
+    ) => new ()
         {
-            PartialObligations = acceptedProducers
+            PartialObligations = producers.PartialObligations.Where(x => acceptedProducerIds.Contains(x.ProducerId) || x.ProducerId == 0).ToImmutableList()
         };
-    }
 
     private static CalcResultProjectedProducers GetProjectedProducerForExport(
         CalcResultProjectedProducers producers,
         ImmutableHashSet<int> acceptedProducerIds)
     {
-        var isAccepted = (int producerId) => acceptedProducerIds.Contains(producerId) || producerId == 0;
-        var acceptedH2Producers = producers.H2ProjectedProducers?.Where(x => isAccepted(x.ProducerId)).ToImmutableList() ?? [];
-        var acceptedH1Producers = producers.H1ProjectedProducers?.Where(x => isAccepted(x.ProducerId)).ToImmutableList() ?? [];
+        bool isAccepted(int producerId) =>
+            acceptedProducerIds.Contains(producerId) || producerId == 0;
 
         return new CalcResultProjectedProducers
         {
-            H2ProjectedProducers = acceptedH2Producers,
-            H1ProjectedProducers = acceptedH1Producers
+            H1ProjectedProducers = producers.H1ProjectedProducers.Where(x => isAccepted(x.ProducerId)).ToImmutableList(),
+            H2ProjectedProducers = producers.H2ProjectedProducers.Where(x => isAccepted(x.ProducerId)).ToImmutableList()
         };
     }
 

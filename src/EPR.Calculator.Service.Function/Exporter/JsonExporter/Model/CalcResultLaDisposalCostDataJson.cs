@@ -19,7 +19,6 @@ public class CalcResultLaDisposalCostDataJson
     public required CalcResultLaDisposalCostDataDetailsTotal CalcResultLaDisposalCostDataDetailsTotal { get; set; }
 
     public static CalcResultLaDisposalCostDataJson From(
-        RunContext runContext,
         Dictionary<string, CalcResultLaDisposalCostDataDetail> detailsByMaterial,
         CalcResultLaDisposalCostDataDetail total,
         IImmutableList<MaterialDetail> materials
@@ -32,7 +31,7 @@ public class CalcResultLaDisposalCostDataJson
                 detailsByMaterial.Select(item =>
                 {
                     var material = materials.First(m => m.Code == item.Key);
-                    return CalcResultLaDisposalCostDetailsJson.From(material, item.Value, runContext.RequiresModulation);
+                    return CalcResultLaDisposalCostDetailsJson.From(material, item.Value);
                 }).ToList(),
             CalcResultLaDisposalCostDataDetailsTotal = CalcResultLaDisposalCostDataDetailsTotal.From(total)
         };
@@ -62,9 +61,8 @@ public class CalcResultLaDisposalCostDetailsJson : BaseLaDisposalcostAnd2ACommsD
     [JsonPropertyName("disposalCostPricePerTonne")]
     public required string? DisposalCostPricePerTonne { get; init; }
 
-    public static CalcResultLaDisposalCostDetailsJson From(MaterialDetail material, CalcResultLaDisposalCostDataDetail item, bool applyModulation)
-    {
-        return new CalcResultLaDisposalCostDetailsJson
+    public static CalcResultLaDisposalCostDetailsJson From(MaterialDetail material, CalcResultLaDisposalCostDataDetail item) =>
+        new ()
         {
             MaterialName                           = material.Name,
             EnglandLaDisposalCost                  = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(item.Cost.England        , 2, ","),
@@ -79,7 +77,6 @@ public class CalcResultLaDisposalCostDetailsJson : BaseLaDisposalcostAnd2ACommsD
             TotalTonnage                           = item.TotalTonnage,
             DisposalCostPricePerTonne              = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(item.DisposalCostPricePerTonne == null ? 0 : item.DisposalCostPricePerTonne.Value, 4, ",")
         };
-    }
 }
 
 public class CalcResultLaDisposalCostDataDetailsTotal
@@ -122,26 +119,8 @@ public class CalcResultLaDisposalCostDataDetailsTotal
     [JsonConverter(typeof(DecimalPrecision3Converter))]
     public required decimal? TotalTonnageTotal { get; init; }
 
-    public static CalcResultLaDisposalCostDataDetailsTotal From(CalcResultLaDisposalCostDataDetail total)
-    {
-        if (total == null)
-        {
-            return new CalcResultLaDisposalCostDataDetailsTotal
-            {
-                EnglandLaDisposalCostTotal                  = string.Empty,
-                HouseholdDrinksContainersTonnageTotal       = 0,
-                LateReportingTonnageTotal                   = 0,
-                NorthernIrelandLaDisposalCostTotal          = string.Empty,
-                ProducerHouseholdPackagingWasteTonnageTotal = 0,
-                PublicBinTonnage                            = 0,
-                ScotlandLaDisposalCostTotal                 = string.Empty,
-                Total                                       = string.Empty,
-                TotalLaDisposalCostTotal                    = string.Empty,
-                TotalTonnageTotal                           = 0,
-                WalesLaDisposalCostTotal                    = string.Empty
-            };
-        }
-        return new CalcResultLaDisposalCostDataDetailsTotal
+    public static CalcResultLaDisposalCostDataDetailsTotal From(CalcResultLaDisposalCostDataDetail total) =>
+        new ()
         {
             Total                                       = "Total",
             EnglandLaDisposalCostTotal                  = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(total.Cost.England        , 2, ","),
@@ -155,6 +134,4 @@ public class CalcResultLaDisposalCostDataDetailsTotal
             LateReportingTonnageTotal                   = total.LateReportingTonnage,
             TotalTonnageTotal                           = total.TotalTonnage
         };
-
-    }
 }

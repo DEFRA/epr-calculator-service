@@ -26,7 +26,7 @@ public static class LaDataPrepCostsProducer
         SectionCosts.Apply(
             summary,
             badDebt:       calcResult.CalcResultParameterOtherCost.BadDebtValue,
-            total:         calcResult.CalcResultParameterOtherCost.LaDataPrepCharge?.Total ?? 0m,
+            total:         calcResult.CalcResultParameterOtherCost.LaDataPrepCharge.Total,
             apportionment: calcResult.CalcResultParameterOtherCost.CountryApportionment,
             setHeader: (s, p) => s.LaDataPrepSection4 = p,
             setFee:    (f, p) => f.LaDataPrepSection4 = p

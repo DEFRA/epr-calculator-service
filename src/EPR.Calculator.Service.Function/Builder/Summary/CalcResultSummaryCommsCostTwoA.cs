@@ -7,49 +7,30 @@ namespace EPR.Calculator.Service.Function.Builder.Summary;
 
 public static class CalcResultSummaryCommsCostTwoA
 {
-    public static decimal GetPriceperTonneForComms(MaterialDetail material, CalcResult calcResult)
-    {
-        var commsCostDataDetail = calcResult.CalcResultCommsCostReportDetail.ByMaterial.GetValueOrDefault(material.Code);
-        return commsCostDataDetail?.PricePerTonne ?? 0m;
-    }
+    public static decimal GetPriceperTonneForComms(
+        MaterialDetail material,
+        CalcResult calcResult
+    ) =>
+        calcResult.CalcResultCommsCostReportDetail.ByMaterial.GetValueOrDefault(material.Code)?.PricePerTonne ?? 0m;
 
     public static decimal GetTotalReportedTonnage(
         ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
         ProducerDetail producer,
         MaterialDetail material
-    )
-    {
-        decimal hdcTonnage = 0;
-        var hhPackagingWasteTonnage = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.Household);
-        var reportedPublicBinTonnage = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.PublicBin);
-
-        if (material.Code == MaterialCodes.Glass)
-        {
-            hdcTonnage = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.HouseholdDrinksContainers);
-        }
-
-        return material.Code == MaterialCodes.Glass
-            ? hhPackagingWasteTonnage + reportedPublicBinTonnage + hdcTonnage
-            : hhPackagingWasteTonnage + reportedPublicBinTonnage;
-    }
-
-    public static decimal GetProducerTotalCostWithoutBadDebtProvision(
-        ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
-        ProducerDetail producer,
-        MaterialDetail material,
-        CalcResult calcResult
-    )
-    {
-        var priceperTonne = GetPriceperTonneForComms(material, calcResult);
-        return GetTotalReportedTonnage(projectedMaterialsLookup, producer, material) * priceperTonne;
-    }
+    ) =>
+        CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.Household) +
+        CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.PublicBin) +
+        (material.Code == MaterialCodes.Glass
+            ? CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.HouseholdDrinksContainers)
+            : 0);
 
     public static CalcResultSummaryBadDebtProvision GetCommsFeesCosts(
         ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
         ProducerDetail producer,
         MaterialDetail material,
         CalcResult calcResult
-    ) => GetCommsFeesCosts(GetTotalReportedTonnage(projectedMaterialsLookup, producer, material), material, calcResult);
+    ) =>
+        GetCommsFeesCosts(GetTotalReportedTonnage(projectedMaterialsLookup, producer, material), material, calcResult);
 
     public static CalcResultSummaryBadDebtProvision GetCommsFeesCosts(
         decimal totalReportedTonnage,
@@ -58,8 +39,8 @@ public static class CalcResultSummaryCommsCostTwoA
     )
     {
         var feeWithoutBadDebt = totalReportedTonnage * GetPriceperTonneForComms(material, calcResult);
-        var badDebtRate = calcResult.CalcResultParameterOtherCost.BadDebtValue;
-        var apportionment = calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment;
+        var badDebtRate       = calcResult.CalcResultParameterOtherCost.BadDebtValue;
+        var apportionment     = calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment;
         return new CalcResultSummaryBadDebtProvision
         {
             FeeWithoutBadDebtProvision = feeWithoutBadDebt,

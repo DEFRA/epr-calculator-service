@@ -25,14 +25,8 @@ public class CalcResultCommsCostOnePlusFourApportionmentUKWide
     [JsonPropertyName("totalCommsCostUKWide")]
     public required string TotalCommsCostUKWide { get; set; }
 
-    public static CalcResultCommsCostOnePlusFourApportionmentUKWide? From(ByCountryCost? record)
-    {
-        if (record == null)
-        {
-            return null;
-        }
-
-        return new CalcResultCommsCostOnePlusFourApportionmentUKWide
+    public static CalcResultCommsCostOnePlusFourApportionmentUKWide From(ByCountryCost record) =>
+        new ()
         {
             Name                           = CalcResultCommsCostBuilder.TwoBCommsCostUkWide,
             EnglandCommsCostUKWide         = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.England        , 2, ","),
@@ -41,5 +35,4 @@ public class CalcResultCommsCostOnePlusFourApportionmentUKWide
             NorthernIrelandCommsCostUKWide = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.NorthernIreland, 2, ","),
             TotalCommsCostUKWide           = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Total          , 2, ",")
          };
-     }
 }

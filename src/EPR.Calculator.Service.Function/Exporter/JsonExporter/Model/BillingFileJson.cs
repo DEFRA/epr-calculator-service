@@ -60,7 +60,7 @@ public class BillingFileJson
             CalcResult2aCommsDataByMaterial    = CalcResult2ACommsDataByMaterial.From(materials, calcResult.CalcResultCommsCostReportDetail.ByMaterial, calcResult.CalcResultCommsCostReportDetail.Total),
             CalcResult2bCommsDataByUkWide      = CalcResultCommsCostOnePlusFourApportionmentUKWide.From(calcResult.CalcResultCommsCostReportDetail.CommsCostUkWide),
             CalcResult2cCommsDataByCountry     = CalcResultCommsCostOnePlusFourApportionmentCountryWide.From(calcResult.CalcResultCommsCostReportDetail.CommsCostByCountry),
-            CalcResultLaDisposalCostData       = CalcResultLaDisposalCostDataJson.From(runContext, calcResult.CalcResultLaDisposalCostData.ByMaterial, calcResult.CalcResultLaDisposalCostData.Total, materials),
+            CalcResultLaDisposalCostData       = CalcResultLaDisposalCostDataJson.From(calcResult.CalcResultLaDisposalCostData.ByMaterial, calcResult.CalcResultLaDisposalCostData.Total, materials),
             CancelledProducers                 = CancelledProducers.From(calcResult.CalcResultCancelledProducers),
             ScaleUpProducers                   = CalcResultScaledupProducersJson.From(runContext, calcResult.CalcResultScaledupProducers, materials),
             ModulationResults                  = runContext.RequiresModulation && calcResult.CalcResultModulation is not null ? CalcResultModulationResults.From(calcResult.CalcResultModulation) : null,

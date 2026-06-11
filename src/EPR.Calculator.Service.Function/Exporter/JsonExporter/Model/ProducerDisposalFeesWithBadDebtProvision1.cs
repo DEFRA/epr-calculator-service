@@ -15,25 +15,16 @@ public record ProducerDisposalFeesWithBadDebtProvision1
     public required IEnumerable<ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown> MaterialBreakdown { get; set; }
 
     public static ProducerDisposalFeesWithBadDebtProvision1 From(
-        Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>? producerDisposalFeesByMaterial,
+        Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> producerDisposalFeesByMaterial,
         IImmutableList<MaterialDetail> materials,
         string level,
-        bool applyModulation)
-    {
-        IEnumerable<ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown> GetMaterialBreakdown()
+        bool applyModulation
+    ) => new ()
         {
-            if (producerDisposalFeesByMaterial == null) return [];
-
-            return producerDisposalFeesByMaterial
+            MaterialBreakdown = producerDisposalFeesByMaterial
                 .Select(x => ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown.From(x.Value, materials.Single(m => m.Code == x.Key), level, applyModulation))
-                .ToList();
-        }
-
-        return new ProducerDisposalFeesWithBadDebtProvision1
-        {
-            MaterialBreakdown = GetMaterialBreakdown()
+                .ToList()
         };
-    }
 }
 
 public abstract record ValueOrModulated<TValue, TModulated>
