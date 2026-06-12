@@ -1,0 +1,227 @@
+{
+  "$schema": "../../../../../src/Schemas/2026-billing-proposal.schema.json",
+  "runId": 1,
+  "financialYear": "2026-27",
+  "badDebtProvisionPercentage": "4.00",
+  "modulationResults": {
+    "redFactor": 1.200,
+    "greenDiscountFactor": 0.843916
+  },
+  "materials": [
+    {
+      "materialName": "Aluminium",
+      "disposalPricePerTonne": {
+        "redAndRedMedical":     "0.0055",
+        "amberAndAmberMedical": "0.0046",
+        "greenAndGreenMedical": "0.0039"
+      },
+      "commsPricePerTonne": "0.0013"
+    },
+    {
+      "materialName": "Fibre composite",
+      "disposalPricePerTonne": {
+        "redAndRedMedical":     "0.0008",
+        "amberAndAmberMedical": "0.0007",
+        "greenAndGreenMedical": "0.0006"
+      },
+      "commsPricePerTonne": "0.0004"
+    },
+    {
+      "materialName": "Glass",
+      "disposalPricePerTonne": {
+        "redAndRedMedical":     "0.0064",
+        "amberAndAmberMedical": "0.0053",
+        "greenAndGreenMedical": "0.0045"
+      },
+      "commsPricePerTonne": "0.0004"
+    },
+    {
+      "materialName": "Paper or card",
+      "disposalPricePerTonne": {
+        "redAndRedMedical":     "0.0158",
+        "amberAndAmberMedical": "0.0132",
+        "greenAndGreenMedical": "0.0111"
+      },
+      "commsPricePerTonne": "0.0060"
+    },
+    {
+      "materialName": "Plastic",
+      "disposalPricePerTonne": {
+        "redAndRedMedical":     "0.0059",
+        "amberAndAmberMedical": "0.0049",
+        "greenAndGreenMedical": "0.0041"
+      },
+      "commsPricePerTonne": "0.0012"
+    },
+    {
+      "materialName": "Steel",
+      "disposalPricePerTonne": {
+        "redAndRedMedical":     "0.0151",
+        "amberAndAmberMedical": "0.0126",
+        "greenAndGreenMedical": "0.0106"
+      },
+      "commsPricePerTonne": "0.0057"
+    },
+    {
+      "materialName": "Wood",
+      "disposalPricePerTonne": {
+        "redAndRedMedical":     "0.0097",
+        "amberAndAmberMedical": "0.0081",
+        "greenAndGreenMedical": "0.0068"
+      },
+      "commsPricePerTonne": "0.0006"
+    },
+    {
+      "materialName": "Other materials",
+      "disposalPricePerTonne": {
+        "redAndRedMedical":     "0.0010",
+        "amberAndAmberMedical": "0.0008",
+        "greenAndGreenMedical": "0.0007"
+      },
+      "commsPricePerTonne": "0.0007"
+    }
+  ],
+  "producers": [
+    {
+      "producerName": "",
+      "producerID":   "100001",
+      "subsidiaryID": "",
+      "level": 1,
+
+      "totalBill": {
+        "base":             "37783126.24",
+        "badDebtProvision": "1511325.05",
+        "total":            "39294451.29",
+        "england":          "21250486.88",
+        "wales":            "4787431.80",
+        "scotland":         "9526920.24",
+        "northernIreland":  "3729612.38"
+      },
+
+      "invoice": {
+        "instruction":     "INITIAL",
+        "suggestedAmount": "39294451.29",
+        "invoicedToDate":  "-"
+      },
+
+      "disposalFeesByMaterial": [
+        {
+          "materialName": "Aluminium",
+          "householdPackagingWasteTonnage": {
+            "total": 4620.000, "red": 220.000, "redMedical": 440.000,
+            "amber": 660.000, "amberMedical": 880.000,
+            "green": 1100.000, "greenMedical": 1320.000
+          },
+          "publicBinTonnage": {
+            "total": 0, "red": 0, "redMedical": 0,
+            "amber": 0, "amberMedical": 0,
+            "green": 0, "greenMedical": 0
+          },
+          "totalTonnage": {
+            "total": 4620.000, "red": 220.000, "redMedical": 440.000,
+            "amber": 660.000, "amberMedical": 880.000,
+            "green": 1100.000, "greenMedical": 1320.000
+          },
+          "selfManagedConsumerWasteTonnage": 2200.000,
+          "actionedSelfManagedConsumerWasteTonnage": {
+            "total": 2200.000,
+            "redAndRedMedical":     660.000,
+            "amberAndAmberMedical": 1540.000,
+            "greenAndGreenMedical": 0
+          },
+          "residualSelfManagedConsumerWasteTonnage": 0,
+          "netTonnage": {
+            "total": 2420.000,
+            "redAndRedMedical":     0,
+            "amberAndAmberMedical": 0,
+            "greenAndGreenMedical": 2420.000
+          },
+          "feeWithoutBadDebt": {
+            "total":                "9.44",
+            "redAndRedMedical":     "0.00",
+            "amberAndAmberMedical": "0.00",
+            "greenAndGreenMedical": "9.44"
+          },
+          "badDebtProvision": "0.38",
+          "fee":              "9.82",
+          "england":          "5.31",
+          "wales":            "1.20",
+          "scotland":         "2.38",
+          "northernIreland":  "0.93",
+          "previousInvoicedTonnage": "-",
+          "tonnageChange":           "-"
+        }
+      ],
+
+      "disposalCosts": {
+        "base":             "9.44",
+        "badDebtProvision": "0.38",
+        "total":            "9.82",
+        "england":          "5.31",
+        "wales":            "1.20",
+        "scotland":         "2.38",
+        "northernIreland":  "0.93"
+      },
+
+      "commsCostsByMaterial": {
+        "base":             "6.01",
+        "badDebtProvision": "0.24",
+        "total":            "6.25",
+        "england":          "3.38",
+        "wales":            "0.76",
+        "scotland":         "1.52",
+        "northernIreland":  "0.59"
+      },
+
+      "commsCostsUKWide": {
+        "base":             "31927.23",
+        "badDebtProvision": "1277.09",
+        "total":            "33204.32",
+        "england":          "17946.51",
+        "wales":            "4045.32",
+        "scotland":         "8057.95",
+        "northernIreland":  "3154.53"
+      },
+
+      "commsCostsByCountry": {
+        "base":             "37128.69",
+        "badDebtProvision": "1485.15",
+        "total":            "38613.84",
+        "england":          "33204.32",
+        "wales":            "4847.62",
+        "scotland":         "399.01",
+        "northernIreland":  "162.89"
+      },
+
+      "saOperatingCosts": {
+        "base":             "18857027.44",
+        "badDebtProvision": "754281.10",
+        "total":            "19611308.54",
+        "england":          "10599663.68",
+        "wales":            "2389268.45",
+        "scotland":         "4759229.69",
+        "northernIreland":  "1863146.71"
+      },
+
+      "laDataPrepCosts": {
+        "base":             "0.00",
+        "badDebtProvision": "0.00",
+        "total":            "0.00",
+        "england":          "0.00",
+        "wales":            "0.00",
+        "scotland":         "0.00",
+        "northernIreland":  "0.00"
+      },
+
+      "saSetUpCosts": {
+        "base":             "18857027.44",
+        "badDebtProvision": "754281.10",
+        "total":            "19611308.54",
+        "england":          "10599663.68",
+        "wales":            "2389268.45",
+        "scotland":         "4759229.69",
+        "northernIreland":  "1863146.71"
+      }
+    }
+  ]
+}

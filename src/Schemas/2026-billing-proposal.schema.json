@@ -1,0 +1,224 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "currency": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]{2}$",
+      "description": "GBP amount, 2 decimal places (e.g. \"1234.56\")"
+    },
+    "currencyOrHyphen": {
+      "type": "string",
+      "pattern": "^([0-9]+\\.[0-9]{2}|-)$",
+      "description": "GBP amount, 2 decimal places, or \"-\" when not applicable"
+    },
+    "pricePerTonne": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]{4}$",
+      "description": "GBP per tonne, 4 decimal places (e.g. \"0.2105\")"
+    },
+    "badDebtPercent": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]{2}$",
+      "description": "Percentage, 2 decimal places (e.g. \"6.00\")"
+    },
+    "feeWithCountries": {
+      "type": "object",
+      "description": "A fee breakdown: base amount, bad debt provision, total (with bad debt), and country splits",
+      "required": ["base", "badDebtProvision", "total", "england", "wales", "scotland", "northernIreland"],
+      "properties": {
+        "base":             { "$ref": "#/$defs/currency" },
+        "badDebtProvision": { "$ref": "#/$defs/currency" },
+        "total":            { "$ref": "#/$defs/currency" },
+        "england":          { "$ref": "#/$defs/currency" },
+        "wales":            { "$ref": "#/$defs/currency" },
+        "scotland":         { "$ref": "#/$defs/currency" },
+        "northernIreland":  { "$ref": "#/$defs/currency" }
+      },
+      "additionalProperties": false
+    },
+    "tonnageBreakdown": {
+      "type": "object",
+      "description": "Tonnage split by RAG rating and medical sub-category",
+      "required": ["total", "red", "redMedical", "amber", "amberMedical", "green", "greenMedical"],
+      "properties": {
+        "total":        { "type": "number" },
+        "red":          { "type": "number" },
+        "redMedical":   { "type": "number" },
+        "amber":        { "type": "number" },
+        "amberMedical": { "type": "number" },
+        "green":        { "type": "number" },
+        "greenMedical": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "ragTonnage": {
+      "type": "object",
+      "description": "Tonnage split by combined RAG pairs (red+redMedical, amber+amberMedical, green+greenMedical)",
+      "required": ["total", "redAndRedMedical", "amberAndAmberMedical", "greenAndGreenMedical"],
+      "properties": {
+        "total":                { "type": "number" },
+        "redAndRedMedical":     { "type": "number" },
+        "amberAndAmberMedical": { "type": "number" },
+        "greenAndGreenMedical": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "ragCurrency": {
+      "type": "object",
+      "description": "Currency amount split by combined RAG pairs",
+      "required": ["total", "redAndRedMedical", "amberAndAmberMedical", "greenAndGreenMedical"],
+      "properties": {
+        "total":                { "$ref": "#/$defs/currency" },
+        "redAndRedMedical":     { "$ref": "#/$defs/currency" },
+        "amberAndAmberMedical": { "$ref": "#/$defs/currency" },
+        "greenAndGreenMedical": { "$ref": "#/$defs/currency" }
+      },
+      "additionalProperties": false
+    },
+    "ragPricePerTonne": {
+      "type": "object",
+      "description": "Price per tonne split by combined RAG pairs",
+      "required": ["redAndRedMedical", "amberAndAmberMedical", "greenAndGreenMedical"],
+      "properties": {
+        "redAndRedMedical":     { "$ref": "#/$defs/pricePerTonne" },
+        "amberAndAmberMedical": { "$ref": "#/$defs/pricePerTonne" },
+        "greenAndGreenMedical": { "$ref": "#/$defs/pricePerTonne" }
+      },
+      "additionalProperties": false
+    }
+  },
+
+  "type": "object",
+  "required": [
+    "runId",
+    "financialYear",
+    "badDebtProvisionPercentage",
+    "modulationResults",
+    "materials",
+    "producers"
+  ],
+  "properties": {
+    "runId": { "type": "integer" },
+    "financialYear": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}$",
+      "description": "Financial year in YYYY-YY format (e.g. \"2026-27\")"
+    },
+    "badDebtProvisionPercentage": { "$ref": "#/$defs/badDebtPercent" },
+
+    "modulationResults": {
+      "type": "object",
+      "required": ["redFactor", "greenDiscountFactor"],
+      "properties": {
+        "redFactor":           { "type": "number" },
+        "greenDiscountFactor": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+
+    "materials": {
+      "type": "array",
+      "description": "Run-level per-material price data; same for all producers — join by materialName",
+      "items": {
+        "type": "object",
+        "required": ["materialName", "disposalPricePerTonne", "commsPricePerTonne"],
+        "properties": {
+          "materialName":          { "type": "string" },
+          "disposalPricePerTonne": { "$ref": "#/$defs/ragPricePerTonne" },
+          "commsPricePerTonne":    { "$ref": "#/$defs/pricePerTonne" }
+        },
+        "additionalProperties": false
+      }
+    },
+
+    "producers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "producerName", "producerID", "subsidiaryID", "level",
+          "totalBill", "invoice",
+          "disposalFeesByMaterial",
+          "disposalCosts",
+          "commsCostsByMaterial",
+          "commsCostsUKWide",
+          "commsCostsByCountry",
+          "saOperatingCosts",
+          "laDataPrepCosts",
+          "saSetUpCosts"
+        ],
+        "properties": {
+          "producerName": { "type": "string" },
+          "producerID":   { "type": "string" },
+          "subsidiaryID": { "type": "string" },
+          "level":        { "type": "integer" },
+
+          "totalBill": { "$ref": "#/$defs/feeWithCountries" },
+
+          "invoice": {
+            "type": "object",
+            "required": ["instruction", "suggestedAmount", "invoicedToDate"],
+            "properties": {
+              "instruction":     { "type": "string", "enum": ["", "-", "INITIAL", "DELTA", "REBILL"] },
+              "suggestedAmount": { "$ref": "#/$defs/currencyOrHyphen" },
+              "invoicedToDate":  { "$ref": "#/$defs/currencyOrHyphen" }
+            },
+            "additionalProperties": false
+          },
+
+          "disposalFeesByMaterial": {
+            "type": "array",
+            "description": "Per-material tonnage and fee breakdown for LA disposal costs (section 1)",
+            "items": {
+              "type": "object",
+              "required": [
+                "materialName",
+                "householdPackagingWasteTonnage",
+                "publicBinTonnage",
+                "totalTonnage",
+                "selfManagedConsumerWasteTonnage",
+                "actionedSelfManagedConsumerWasteTonnage",
+                "residualSelfManagedConsumerWasteTonnage",
+                "netTonnage",
+                "feeWithoutBadDebt",
+                "badDebtProvision",
+                "fee",
+                "england", "wales", "scotland", "northernIreland",
+                "previousInvoicedTonnage",
+                "tonnageChange"
+              ],
+              "properties": {
+                "materialName":                        { "type": "string" },
+                "householdPackagingWasteTonnage":       { "$ref": "#/$defs/tonnageBreakdown" },
+                "publicBinTonnage":                    { "$ref": "#/$defs/tonnageBreakdown" },
+                "householdDrinksContainersTonnageGlass": { "$ref": "#/$defs/tonnageBreakdown" },
+                "totalTonnage":                        { "$ref": "#/$defs/tonnageBreakdown" },
+                "selfManagedConsumerWasteTonnage":      { "type": "number" },
+                "actionedSelfManagedConsumerWasteTonnage": { "$ref": "#/$defs/ragTonnage" },
+                "residualSelfManagedConsumerWasteTonnage": { "type": "number" },
+                "netTonnage":                          { "$ref": "#/$defs/ragTonnage" },
+                "feeWithoutBadDebt":                   { "$ref": "#/$defs/ragCurrency" },
+                "badDebtProvision":                    { "$ref": "#/$defs/currency" },
+                "fee":                                 { "$ref": "#/$defs/currency" },
+                "england":                             { "$ref": "#/$defs/currency" },
+                "wales":                               { "$ref": "#/$defs/currency" },
+                "scotland":                            { "$ref": "#/$defs/currency" },
+                "northernIreland":                     { "$ref": "#/$defs/currency" },
+                "previousInvoicedTonnage":             { "type": "string" },
+                "tonnageChange":                       { "type": "string" }
+              }
+            }
+          },
+
+          "disposalCosts":        { "$ref": "#/$defs/feeWithCountries" },
+          "commsCostsByMaterial": { "$ref": "#/$defs/feeWithCountries" },
+          "commsCostsUKWide":     { "$ref": "#/$defs/feeWithCountries" },
+          "commsCostsByCountry":  { "$ref": "#/$defs/feeWithCountries" },
+          "saOperatingCosts":     { "$ref": "#/$defs/feeWithCountries" },
+          "laDataPrepCosts":      { "$ref": "#/$defs/feeWithCountries" },
+          "saSetUpCosts":         { "$ref": "#/$defs/feeWithCountries" }
+        }
+      }
+    }
+  }
+}
