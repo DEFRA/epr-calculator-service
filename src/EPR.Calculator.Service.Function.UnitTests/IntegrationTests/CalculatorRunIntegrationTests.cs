@@ -115,7 +115,8 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
         // Simulates the billing run being started by a user in the FE
         var calcRun = await dbContext.CalculatorRuns.SingleAsync(r => r.Id == runId);
         calcRun.CalculatorRunClassificationId = RunClassificationStatusIds.INITIALRUNID;
-        calcRun.IsBillingFileGenerating = true;
+        calcRun.BillingRunStatus = BillingRunStatus.Running;
+        calcRun.BillingRunStartedAt = DateTime.UtcNow;
         await dbContext.SaveChangesAsync();
 
         var runContext = await Provider.GetRequiredService<IBillingRunContextBuilder>().Build(runId, user, CancellationToken.None);
@@ -166,7 +167,7 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
             CalculatorRunClassificationId   = (int)RunClassification.RUNNING,
             DefaultParameterSettingMasterId = parameterMaster.Id,
             LapcapDataMasterId              = lapcap.Id,
-            IsBillingFileGenerating         = null
+            BillingRunStatus                = BillingRunStatus.None
         };
         db.CalculatorRuns.Add(run);
         await db.SaveChangesAsync();

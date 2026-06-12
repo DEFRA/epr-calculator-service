@@ -1,4 +1,5 @@
 ﻿using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.DataTypes;
 using EPR.Calculator.Service.Function.Features.BillingRun.Contexts;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
 using FluentValidation.TestHelper;
@@ -24,7 +25,7 @@ public class BillingRunValidatorTests : TestsFor<BillingRunValidator>
             LapcapDataMasterId = 1,
             CalculatorRunOrganisationDataMasterId = 1,
             CalculatorRunPomDataMasterId = 1,
-            IsBillingFileGenerating = true
+            BillingRunStatus = BillingRunStatus.Running
         };
 
         var result = testSubject.TestValidate(run);
@@ -46,7 +47,7 @@ public class BillingRunValidatorTests : TestsFor<BillingRunValidator>
             LapcapDataMasterId = 1,
             CalculatorRunOrganisationDataMasterId = 1,
             CalculatorRunPomDataMasterId = 1,
-            IsBillingFileGenerating = true
+            BillingRunStatus = BillingRunStatus.Running
         };
 
         var result = testSubject.TestValidate(run);
@@ -67,7 +68,7 @@ public class BillingRunValidatorTests : TestsFor<BillingRunValidator>
             LapcapDataMasterId = 1,
             CalculatorRunOrganisationDataMasterId = 1,
             CalculatorRunPomDataMasterId = 1,
-            IsBillingFileGenerating = true
+            BillingRunStatus = BillingRunStatus.Running
         };
 
         var result = testSubject.TestValidate(run);
@@ -88,7 +89,7 @@ public class BillingRunValidatorTests : TestsFor<BillingRunValidator>
             LapcapDataMasterId = id,
             CalculatorRunOrganisationDataMasterId = 1,
             CalculatorRunPomDataMasterId = 1,
-            IsBillingFileGenerating = true
+            BillingRunStatus = BillingRunStatus.Running
         };
 
         var result = testSubject.TestValidate(run);
@@ -109,7 +110,7 @@ public class BillingRunValidatorTests : TestsFor<BillingRunValidator>
             LapcapDataMasterId = id,
             CalculatorRunOrganisationDataMasterId = id,
             CalculatorRunPomDataMasterId = 1,
-            IsBillingFileGenerating = true
+            BillingRunStatus = BillingRunStatus.Running
         };
 
         var result = testSubject.TestValidate(run);
@@ -130,7 +131,7 @@ public class BillingRunValidatorTests : TestsFor<BillingRunValidator>
             LapcapDataMasterId = id,
             CalculatorRunOrganisationDataMasterId = 1,
             CalculatorRunPomDataMasterId = id,
-            IsBillingFileGenerating = true
+            BillingRunStatus = BillingRunStatus.Running
         };
 
         var result = testSubject.TestValidate(run);
@@ -138,10 +139,12 @@ public class BillingRunValidatorTests : TestsFor<BillingRunValidator>
         result.ShouldHaveValidationErrorFor(r => r.CalculatorRunPomDataMasterId);
     }
 
-    [DataRow(null)]
-    [DataRow(false)]
+    [DataRow(BillingRunStatus.Completed)]
+    [DataRow(BillingRunStatus.Errored)]
+    [DataRow(BillingRunStatus.None)]
+    [DataRow(BillingRunStatus.Unknown)]
     [TestMethod]
-    public void Should_error_when_billing_status_is_incorrect(bool? status)
+    public void Should_error_when_billing_status_is_incorrect(BillingRunStatus status)
     {
         var run = new CalculatorRun
         {
@@ -151,11 +154,11 @@ public class BillingRunValidatorTests : TestsFor<BillingRunValidator>
             CalculatorRunOrganisationDataMasterId = 1,
             CalculatorRunPomDataMasterId = 1,
             LapcapDataMasterId = 1,
-            IsBillingFileGenerating = status
+            BillingRunStatus = status
         };
 
         var result = testSubject.TestValidate(run);
 
-        result.ShouldHaveValidationErrorFor(r => r.IsBillingFileGenerating);
+        result.ShouldHaveValidationErrorFor(r => r.BillingRunStatus);
     }
 }
