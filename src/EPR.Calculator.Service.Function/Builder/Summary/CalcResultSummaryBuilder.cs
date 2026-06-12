@@ -21,7 +21,6 @@ public interface ICalcResultSummaryBuilder
     );
 }
 
-[ExcludeFromCodeCoverage]
 public class CalcResultSummaryBuilder(
     ApplicationDBContext context,
     IInvoicedProducerService invoicedProducerService)
@@ -34,8 +33,8 @@ public class CalcResultSummaryBuilder(
         SelfManagedConsumerWaste smcw
     )
     {
-        var scaledupProducers = calcResult.CalcResultScaledupProducers.ScaledupProducers ?? [];
-        var partialObligations = calcResult.CalcResultPartialObligations.PartialObligations ?? [];
+        var scaledupProducers = calcResult.CalcResultScaledupProducers.ScaledupProducers;
+        var partialObligations = calcResult.CalcResultPartialObligations.PartialObligations;
 
         var runProducerMaterialDetails = await (
             from pd in context.ProducerDetail

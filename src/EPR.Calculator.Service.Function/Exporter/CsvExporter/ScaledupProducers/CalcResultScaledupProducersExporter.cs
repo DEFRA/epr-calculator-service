@@ -176,6 +176,13 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers
             csvContent.AppendLine();
         }
 
+        private sealed class CalcResultScaledupProducerHeader
+        {
+            required public string Name { get; set; }
+
+            public int? ColumnIndex { get; set; }
+        }
+
         private static void WriteScaledupProducersSecondaryHeaders(IReadOnlyCollection<CalcResultScaledupProducerHeader> headers, StringBuilder csvContent)
         {
             var maxColumnSize = headers.MaxBy(h => h.ColumnIndex ?? 0)?.ColumnIndex ?? throw new ArgumentException("No headers specified");
@@ -198,7 +205,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers
             }
         }
 
-        public static ImmutableList<CalcResultScaledupProducerHeader> GetMaterialsBreakdownHeader(IEnumerable<MaterialDetail> materials)
+        private static ImmutableList<CalcResultScaledupProducerHeader> GetMaterialsBreakdownHeader(IEnumerable<MaterialDetail> materials)
         {
             var materialsBreakdownHeaders = ImmutableList.CreateBuilder<CalcResultScaledupProducerHeader>();
             var columnIndex = MaterialsBreakdownHeaderInitialColumnIndex;
@@ -225,7 +232,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers
             return materialsBreakdownHeaders.ToImmutable();
         }
 
-        public static ImmutableList<CalcResultScaledupProducerHeader> GetColumnHeaders(IReadOnlyCollection<MaterialDetail> materials)
+        private static ImmutableList<CalcResultScaledupProducerHeader> GetColumnHeaders(IReadOnlyCollection<MaterialDetail> materials)
         {
             var columnHeaders = ImmutableList.CreateBuilder<CalcResultScaledupProducerHeader>();
 

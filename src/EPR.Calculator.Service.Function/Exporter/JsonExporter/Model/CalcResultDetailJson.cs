@@ -54,7 +54,7 @@ public class CalcResultDetailJson
 
     public static CalcResultDetailJson From(CalcResultDetail calcResultDetail)
     {
-        string[] GetFileInfo(string filePath)
+        static string[] GetFileInfo(string filePath)
         {
             return filePath.Split(CommonConstants.Comma);
         }

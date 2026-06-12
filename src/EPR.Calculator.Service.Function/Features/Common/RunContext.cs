@@ -8,7 +8,6 @@ namespace EPR.Calculator.Service.Function.Features.Common;
 ///     Base class for all run contexts, encapsulating common properties derived from the underlying
 ///     <see cref="CalculatorRun" /> and elsewhere.
 /// </summary>
-[ExcludeFromCodeCoverage]
 public abstract record RunContext
 {
     /// <summary>

@@ -23,7 +23,7 @@ public record CalcResultScaledupProducersJson
         {
             var producerSubmissions = new List<ProducerSubmission>();
 
-            var filteredProducers = calcResultScaledupProducers?.ScaledupProducers?.Where(producer => runContext.AcceptedProducerIds.Contains(producer.ProducerId)) ?? [];
+            var filteredProducers = calcResultScaledupProducers.ScaledupProducers.Where(producer => runContext.AcceptedProducerIds.Contains(producer.ProducerId));
 
             foreach (var item in filteredProducers)
             {
@@ -37,11 +37,6 @@ public record CalcResultScaledupProducersJson
             }
 
             return producerSubmissions;
-        }
-
-        if (calcResultScaledupProducers == null)
-        {
-            return new CalcResultScaledupProducersJson();
         }
 
         return new CalcResultScaledupProducersJson

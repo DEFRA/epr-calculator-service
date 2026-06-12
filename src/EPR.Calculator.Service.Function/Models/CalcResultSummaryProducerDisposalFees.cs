@@ -22,7 +22,7 @@
 
         public string? LeaverDate { get; set; }
 
-        public bool isTotalRow { get; set; }
+        public bool IsTotalRow { get; set; }
 
         public CalcResultSummaryBadDebtProvision LADisposalCostsSection1 { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
 
@@ -58,6 +58,6 @@
 
         public CalcResultSummaryBillingInstruction? BillingInstructionSection { get; set; }
 
-        public bool isOverallTotalRow { get; set; }
+        public bool IsOverallTotalRow { get; set; }
     }
 }

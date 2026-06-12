@@ -74,33 +74,22 @@ namespace EPR.Calculator.Service.Function.Builder.ErrorReport
             return results;
         }
 
-        private static string GetProducerName(CalculatorRunOrganisationDataDetail prodLeft)
-        {
-            if(prodLeft != null && !string.IsNullOrWhiteSpace(prodLeft.OrganisationName))
-            {
-               return prodLeft.SubsidiaryId == null ? CommonConstants.Hyphen : prodLeft.OrganisationName;
-            }
-            return CommonConstants.Hyphen;
-        }
+        private static string GetProducerName(CalculatorRunOrganisationDataDetail prodLeft) =>
+            string.IsNullOrWhiteSpace(prodLeft.OrganisationName) || prodLeft.SubsidiaryId == null
+                ? CommonConstants.Hyphen
+                : prodLeft.OrganisationName;
 
-        private static string GetTradingName(CalculatorRunOrganisationDataDetail prodLeft)
-        {
-            if (prodLeft != null && !string.IsNullOrWhiteSpace(prodLeft.OrganisationName))
-            {
-                return (prodLeft.SubsidiaryId == null || prodLeft.TradingName is null) ? CommonConstants.Hyphen :
-                    GetFormatedTradingName(prodLeft.TradingName);
-            }
-            return CommonConstants.Hyphen;
-        }
+        private static string GetTradingName(CalculatorRunOrganisationDataDetail prodLeft) =>
+            string.IsNullOrWhiteSpace(prodLeft.OrganisationName) || prodLeft.SubsidiaryId == null
+                ? CommonConstants.Hyphen
+                : GetFormatedTradingName(prodLeft.TradingName);
 
-        private static string GetFormatedTradingName(string? tradingName)
-        {
-            return string.IsNullOrEmpty(tradingName) ? CommonConstants.Hyphen : tradingName;
-        }
+        private static string GetFormatedTradingName(string? tradingName) =>
+            string.IsNullOrEmpty(tradingName)
+                ? CommonConstants.Hyphen
+                : tradingName;
 
-        private static bool IsSubsidary(CalculatorRunOrganisationDataDetail subLeft)
-        {
-            return (subLeft != null && !string.IsNullOrWhiteSpace(subLeft.OrganisationName));
-        }
+        private static bool IsSubsidary(CalculatorRunOrganisationDataDetail? subLeft) =>
+            subLeft != null && !string.IsNullOrWhiteSpace(subLeft.OrganisationName);
     }
 }

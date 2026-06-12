@@ -128,6 +128,13 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligation
             csvContent.AppendLine();
         }
 
+        private sealed class CalcResultPartialObligationHeader
+        {
+            required public string Name { get; set; }
+
+            public int? ColumnIndex { get; set; }
+        }
+
         private static void WritePartialObligationsSecondaryHeaders(IReadOnlyCollection<CalcResultPartialObligationHeader> headers, StringBuilder csvContent)
         {
             var maxColumnSize = headers.MaxBy(h => h.ColumnIndex ?? 0)?.ColumnIndex ?? throw new ArgumentException("No headers specified");
@@ -150,7 +157,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligation
             }
         }
 
-        public static ImmutableList<CalcResultPartialObligationHeader> GetMaterialsBreakdownHeader(IReadOnlyCollection<MaterialDetail> materials, bool showModulation)
+        private static ImmutableList<CalcResultPartialObligationHeader> GetMaterialsBreakdownHeader(IReadOnlyCollection<MaterialDetail> materials, bool showModulation)
         {
             var materialsBreakdownHeaders = ImmutableList.CreateBuilder<CalcResultPartialObligationHeader>();
             var columnIndex = GetInitialHeaders().Count + 1;
@@ -169,7 +176,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligation
             return materialsBreakdownHeaders.ToImmutable();
         }
 
-        public static ImmutableList<CalcResultPartialObligationHeader> GetColumnHeaders(IReadOnlyCollection<MaterialDetail> materials, bool showModulation)
+        private static ImmutableList<CalcResultPartialObligationHeader> GetColumnHeaders(IReadOnlyCollection<MaterialDetail> materials, bool showModulation)
         {
             var columnHeaders = ImmutableList.CreateBuilder<CalcResultPartialObligationHeader>();
 

@@ -44,7 +44,6 @@
     public class LatestInvoice
     {
         public string? LatestInvoice_Header { get; set; }
-        public string? CurrentYearInvoicedTotalToDate_Header { get; set; }
         public string? RunNumber_Header { get; set; }
         public string? RunName_Header { get; set; }
         public string? BillingInstructionId_Header { get; set; }

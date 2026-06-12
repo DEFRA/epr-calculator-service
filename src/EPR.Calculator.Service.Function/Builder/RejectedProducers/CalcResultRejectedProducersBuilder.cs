@@ -78,7 +78,7 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                 where crodd.SubsidiaryId == null
                 select new CalcResultRejectedProducer
                 {
-                    runId = cr.Id,
+                    RunId = cr.Id,
                     ProducerId = crodd.OrganisationId,
                     ProducerName = crodd.OrganisationName,
                     TradingName = crodd.TradingName ?? "",

@@ -17,7 +17,6 @@ public interface IProducerDataTransposer
     Task Transpose(CalculatorRunContext runContext, CancellationToken cancellationToken);
 }
 
-[ExcludeFromCodeCoverage]
 public class ProducerDataTransposer(
     ApplicationDBContext dbContext,
     IBulkOperations bulkOps,

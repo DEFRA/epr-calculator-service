@@ -25,7 +25,8 @@ namespace EPR.Calculator.Service.Function.Models
 
         public required ByCountryCost ProducerDisposalFeeWithBadDebtProvision { get; set; }
 
-        public decimal SelfManagedConsumerWasteTonnage { get; set; }
+        public decimal SelfManagedConsumerWasteTonnage {
+            get; set; }
 
         public (decimal? total, decimal? red,  decimal? amber, decimal? green) ActionedSelfManagedConsumerWasteTonnage { get; set; }
 

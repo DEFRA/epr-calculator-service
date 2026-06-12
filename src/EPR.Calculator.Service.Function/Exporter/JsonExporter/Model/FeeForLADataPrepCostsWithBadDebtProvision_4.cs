@@ -34,13 +34,13 @@ public class FeeForLADataPrepCostsWithBadDebtProvision_4
         var costs = calcResultSummaryProducerDisposalFees.LaDataPrepSection4;
         return new FeeForLADataPrepCostsWithBadDebtProvision_4
         {
-            TotalProducerFeeForLADataPrepCostsWithoutBadDebtProvision  = CurrencyConverterUtils.ConvertToCurrency(costs?.FeeWithoutBadDebtProvision),
-            BadDebtProvisionFor4                                       = CurrencyConverterUtils.ConvertToCurrency(costs?.BadDebtProvision),
-            TotalProducerFeeForLADataPrepCostsWithBadDebtProvision     = CurrencyConverterUtils.ConvertToCurrency(costs?.FeeWithBadDebtProvision.Total),
-            EnglandTotalForLADataPrepCostsWithBadDebtProvision         = CurrencyConverterUtils.ConvertToCurrency(costs?.FeeWithBadDebtProvision.England),
-            WalesTotalForLADataPrepCostsWithBadDebtProvision           = CurrencyConverterUtils.ConvertToCurrency(costs?.FeeWithBadDebtProvision.Wales),
-            ScotlandTotalForLADataPrepCostsWithBadDebtProvision        = CurrencyConverterUtils.ConvertToCurrency(costs?.FeeWithBadDebtProvision.Scotland),
-            NorthernIrelandTotalForLADataPrepCostsWithBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(costs?.FeeWithBadDebtProvision.NorthernIreland)
+            TotalProducerFeeForLADataPrepCostsWithoutBadDebtProvision  = CurrencyConverterUtils.ConvertToCurrency(costs.FeeWithoutBadDebtProvision),
+            BadDebtProvisionFor4                                       = CurrencyConverterUtils.ConvertToCurrency(costs.BadDebtProvision),
+            TotalProducerFeeForLADataPrepCostsWithBadDebtProvision     = CurrencyConverterUtils.ConvertToCurrency(costs.FeeWithBadDebtProvision.Total),
+            EnglandTotalForLADataPrepCostsWithBadDebtProvision         = CurrencyConverterUtils.ConvertToCurrency(costs.FeeWithBadDebtProvision.England),
+            WalesTotalForLADataPrepCostsWithBadDebtProvision           = CurrencyConverterUtils.ConvertToCurrency(costs.FeeWithBadDebtProvision.Wales),
+            ScotlandTotalForLADataPrepCostsWithBadDebtProvision        = CurrencyConverterUtils.ConvertToCurrency(costs.FeeWithBadDebtProvision.Scotland),
+            NorthernIrelandTotalForLADataPrepCostsWithBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(costs.FeeWithBadDebtProvision.NorthernIreland)
         };
     }
 }

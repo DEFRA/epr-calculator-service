@@ -18,7 +18,6 @@ public interface ICalcResultCommsCostBuilder
     );
 }
 
-[ExcludeFromCodeCoverage]
 public class CalcResultCommsCostBuilder(ApplicationDBContext context)
     : ICalcResultCommsCostBuilder
 {

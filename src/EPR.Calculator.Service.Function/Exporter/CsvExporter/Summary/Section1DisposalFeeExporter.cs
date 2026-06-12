@@ -39,8 +39,8 @@ public class Section1DisposalFeeExporter : ICalcResultSummaryPartExporter
         csvContent.Append(CsvSanitiser.SanitiseData(producer.LADisposalCostsSection1.FeeWithBadDebtProvision.Wales          , DecimalPlaces.Two, null, isCurrency: true));
         csvContent.Append(CsvSanitiser.SanitiseData(producer.LADisposalCostsSection1.FeeWithBadDebtProvision.Scotland       , DecimalPlaces.Two, null, isCurrency: true));
         csvContent.Append(CsvSanitiser.SanitiseData(producer.LADisposalCostsSection1.FeeWithBadDebtProvision.NorthernIreland, DecimalPlaces.Two, null, isCurrency: true));
-        AppendCsvValue(csvContent, producer.TonnageChangeCount, producer.isOverallTotalRow);
-        AppendCsvValue(csvContent, producer.TonnageChangeAdvice, producer.isOverallTotalRow);
+        AppendCsvValue(csvContent, producer.TonnageChangeCount, producer.IsOverallTotalRow);
+        AppendCsvValue(csvContent, producer.TonnageChangeAdvice, producer.IsOverallTotalRow);
     }
 
     private static void AppendCsvValue(

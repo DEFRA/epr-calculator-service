@@ -588,7 +588,7 @@ public class CalculationResultsJsonFromTests
         var data = calcResult.CalcResultSummary;
         var materials = TestDataHelper.GetMaterialDetails();
 
-        data.ProducerDisposalFees.First().isTotalRow = true;
+        data.ProducerDisposalFees.First().IsTotalRow = true;
         data.ProducerDisposalFees.First().Level = "1";
 
         // Act
