@@ -1,4 +1,5 @@
 ﻿using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.DataTypes;
 using FluentValidation;
 
 namespace EPR.Calculator.Service.Function.Features.BillingRun.Contexts;
@@ -46,8 +47,8 @@ public class BillingRunValidator : AbstractValidator<API.Data.DataModels.Calcula
             .Must(classification => ValidClassifications.Contains(classification))
             .WithMessage($"Run classification must be one of [{string.Join(", ", ValidClassifications)}]");
 
-        RuleFor(run => run.IsBillingFileGenerating)
-            .Equal(true)
-            .WithMessage("Run IsBillingFileGenerating must be true");
+        RuleFor(run => run.BillingRunStatus)
+            .Equal(BillingRunStatus.Running)
+            .WithMessage("Run BillingRunStatus must be running");
     }
 }

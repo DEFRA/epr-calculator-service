@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.DataTypes;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Exceptions;
 using EPR.Calculator.Service.Function.Features.BillingRun.Contexts;
@@ -55,8 +56,7 @@ public class BillingRunFinalizer(
                 .CalculatorRuns
                 .SingleAsync(run => run.Id == runContext.RunId, cancellationToken);
 
-            calcRun.IsBillingFileGenerating = null;
-            calcRun.CalculatorRunClassificationId = RunClassificationStatusIds.ERRORID;
+            calcRun.BillingRunStatus = BillingRunStatus.Errored;
 
             await dbContext.SaveChangesAsync(cancellationToken);
         }
@@ -114,7 +114,7 @@ public class BillingRunFinalizer(
             .CalculatorRuns
             .SingleAsync(run => run.Id == runContext.RunId, cancellationToken);
 
-        calcRun.IsBillingFileGenerating = false;
+        calcRun.BillingRunStatus = BillingRunStatus.Completed;
 
         await dbContext.SaveChangesAsync(cancellationToken);
     }
