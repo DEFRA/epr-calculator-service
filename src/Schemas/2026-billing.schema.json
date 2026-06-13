@@ -6,15 +6,15 @@
       "pattern": "^[0-9]+\\.[0-9]{2}%$",
       "description": "Percentage with 2 decimal places and % suffix (e.g. 6.00%)"
     },
-    "currency": {
+    "cost": {
       "type": "string",
       "pattern": "^-?[0-9]+\\.[0-9]{2}$",
-      "description": "GBP amount, 2 decimal places, no £ prefix (e.g. \"1234.56\")"
+      "description": "GBP cost, 2 decimal places, no £ prefix (e.g. \"1234.56\")"
     },
-    "currencyOrHyphen": {
-      "type": "string",
-      "pattern": "^(-?[0-9]+\\.[0-9]{2}|-)$",
-      "description": "GBP amount, 2 decimal places, no £ prefix, or '-' when not applicable"
+    "costOrNull": {
+      "type": ["string", "null"],
+      "pattern": "^-?[0-9]+\\.[0-9]{2}$",
+      "description": "GBP cost, 2 decimal places, no £ prefix, or null when not applicable"
     },
     "pricePerTonne": {
       "type": "string",
@@ -26,13 +26,13 @@
       "description": "A fee breakdown: base amount, bad debt provision, total (with bad debt), and country splits",
       "required": ["base", "badDebtProvision", "total", "england", "wales", "scotland", "northernIreland"],
       "properties": {
-        "base":             { "$ref": "#/$defs/currency" },
-        "badDebtProvision": { "$ref": "#/$defs/currency" },
-        "total":            { "$ref": "#/$defs/currency" },
-        "england":          { "$ref": "#/$defs/currency" },
-        "wales":            { "$ref": "#/$defs/currency" },
-        "scotland":         { "$ref": "#/$defs/currency" },
-        "northernIreland":  { "$ref": "#/$defs/currency" }
+        "base":             { "$ref": "#/$defs/cost" },
+        "badDebtProvision": { "$ref": "#/$defs/cost" },
+        "total":            { "$ref": "#/$defs/cost" },
+        "england":          { "$ref": "#/$defs/cost" },
+        "wales":            { "$ref": "#/$defs/cost" },
+        "scotland":         { "$ref": "#/$defs/cost" },
+        "northernIreland":  { "$ref": "#/$defs/cost" }
       }
     },
     "tonnageBreakdown": {
@@ -60,15 +60,15 @@
         "greenAndGreenMedical": { "type": "number" }
       }
     },
-    "ragCurrency": {
+    "ragCost": {
       "type": "object",
-      "description": "Currency amount split by combined RAG pairs",
+      "description": "Cost split by combined RAG pairs",
       "required": ["total", "redAndRedMedical", "amberAndAmberMedical", "greenAndGreenMedical"],
       "properties": {
-        "total":                { "$ref": "#/$defs/currency" },
-        "redAndRedMedical":     { "$ref": "#/$defs/currency" },
-        "amberAndAmberMedical": { "$ref": "#/$defs/currency" },
-        "greenAndGreenMedical": { "$ref": "#/$defs/currency" }
+        "total":                { "$ref": "#/$defs/cost" },
+        "redAndRedMedical":     { "$ref": "#/$defs/cost" },
+        "amberAndAmberMedical": { "$ref": "#/$defs/cost" },
+        "greenAndGreenMedical": { "$ref": "#/$defs/cost" }
       }
     },
     "ragPricePerTonne": {
@@ -160,8 +160,8 @@
             "required": ["instruction", "suggestedAmount", "invoicedToDate"],
             "properties": {
               "instruction":     { "type": "string" },
-              "suggestedAmount": { "$ref": "#/$defs/currencyOrHyphen" },
-              "invoicedToDate":  { "$ref": "#/$defs/currencyOrHyphen" }
+              "suggestedAmount": { "$ref": "#/$defs/costOrNull" },
+              "invoicedToDate":  { "$ref": "#/$defs/costOrNull" }
             }
           },
 
@@ -195,13 +195,13 @@
                 "actionedSelfManagedConsumerWasteTonnage": { "$ref": "#/$defs/ragTonnage" },
                 "residualSelfManagedConsumerWasteTonnage": { "type": "number" },
                 "netTonnage":                             { "$ref": "#/$defs/ragTonnage" },
-                "feeWithoutBadDebt":                      { "$ref": "#/$defs/ragCurrency" },
-                "badDebtProvision":                       { "$ref": "#/$defs/currency" },
-                "fee":                                    { "$ref": "#/$defs/currency" },
-                "england":                                { "$ref": "#/$defs/currency" },
-                "wales":                                  { "$ref": "#/$defs/currency" },
-                "scotland":                               { "$ref": "#/$defs/currency" },
-                "northernIreland":                        { "$ref": "#/$defs/currency" },
+                "feeWithoutBadDebt":                      { "$ref": "#/$defs/ragCost" },
+                "badDebtProvision":                       { "$ref": "#/$defs/cost" },
+                "fee":                                    { "$ref": "#/$defs/cost" },
+                "england":                                { "$ref": "#/$defs/cost" },
+                "wales":                                  { "$ref": "#/$defs/cost" },
+                "scotland":                               { "$ref": "#/$defs/cost" },
+                "northernIreland":                        { "$ref": "#/$defs/cost" },
                 "previousInvoicedTonnage":                { "type": "string" },
                 "tonnageChange":                          { "type": "string" }
               }

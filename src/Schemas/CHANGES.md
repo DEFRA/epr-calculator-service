@@ -165,3 +165,25 @@ The pattern for 2 decimal place values is now `^-?[0-9]+\.[0-9]{2}$`; for 4 deci
 | `2025-billing.schema.json` | Validates billing JSON for 2025 runs (non-modulated) |
 | `2026-billing.schema.json` | Validates billing JSON for 2026 runs (with RAG modulation) |
 | `2026-billing-proposal.schema.json` | Original design proposal that informed the 2026 schema |
+
+---
+
+## Post-initial review changes (2026-06-13)
+
+### Removed unused £-prefixed currency defs
+
+`currency2dp`, `currency2pOrHyphen`, `currency2dpOrNull`, and `currency4dp` were defined but never referenced. They appear to be leftovers from an earlier design where monetary strings carried a `£` prefix. All active monetary values use the no-prefix `currency` / `pricePerTonne` / `currencyOrNull` defs, so these four were deleted.
+
+### `currencyOrHyphen` → `currencyOrNull`
+
+The original `currencyOrHyphen` def allowed either a decimal string or the literal `"-"`, matching a spreadsheet/CSV convention for "not applicable". This was used for `invoice.suggestedAmount` and `invoice.invoicedToDate`.
+
+**Why changed:** `-` is a display value, not a data value. Using it in JSON conflates presentation with data, requiring every consumer to special-case the string rather than handling a standard JSON null. The rest of the schema already uses plain decimal strings with no display formatting, so `-` was inconsistent.
+
+**Decision:** replaced with `currencyOrNull` (`type: ["string", "null"]`). The `JsonExporter` (or any rendering layer) is responsible for mapping `null → "-"` at the point of display.
+
+Note, `costOrNull` could be dropped entirely with an optional (not required) `cost`, which is more idiomatic JSON. The decision to keep `costOrNull` is incase consumers rely on a fixed shape without a key-existence check (e.g. always destructuring `{ suggestedAmount, invoicedToDate }`)
+
+### `currency` → `cost`, `currencyOrNull` → `costOrNull`, `ragCurrency` → `ragCost`
+
+Renamed the three monetary def names from `currency*` to `cost*`. The `currency` prefix described the value format (GBP decimal string); `cost` describes what the value represents. This aligns with the rest of the schema's naming convention (`disposalCosts`, `commsCosts`, etc.) and makes the defs easier to read in context. No C# changes required — def names are internal to the schema and not referenced by the exporter.

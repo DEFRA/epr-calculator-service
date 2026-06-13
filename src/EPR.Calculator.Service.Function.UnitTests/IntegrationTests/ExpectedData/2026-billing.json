@@ -612,7 +612,7 @@
       "invoice": {
         "instruction": "INITIAL",
         "suggestedAmount": "39294451.29",
-        "invoicedToDate": "-"
+        "invoicedToDate": null
       },
       "disposalFeesByMaterial": [
         {
@@ -1169,8 +1169,8 @@
       },
       "invoice": {
         "instruction": "-",
-        "suggestedAmount": "-",
-        "invoicedToDate": "-"
+        "suggestedAmount": null,
+        "invoicedToDate": null
       },
       "disposalFeesByMaterial": [
         {
@@ -1727,8 +1727,8 @@
       },
       "invoice": {
         "instruction": "-",
-        "suggestedAmount": "-",
-        "invoicedToDate": "-"
+        "suggestedAmount": null,
+        "invoicedToDate": null
       },
       "disposalFeesByMaterial": [
         {
@@ -2286,7 +2286,7 @@
       "invoice": {
         "instruction": "INITIAL",
         "suggestedAmount": "3746571.45",
-        "invoicedToDate": "-"
+        "invoicedToDate": null
       },
       "disposalFeesByMaterial": [
         {
@@ -2843,8 +2843,8 @@
       },
       "invoice": {
         "instruction": "-",
-        "suggestedAmount": "-",
-        "invoicedToDate": "-"
+        "suggestedAmount": null,
+        "invoicedToDate": null
       },
       "disposalFeesByMaterial": [
         {
@@ -3401,8 +3401,8 @@
       },
       "invoice": {
         "instruction": "-",
-        "suggestedAmount": "-",
-        "invoicedToDate": "-"
+        "suggestedAmount": null,
+        "invoicedToDate": null
       },
       "disposalFeesByMaterial": [
         {
@@ -3960,7 +3960,7 @@
       "invoice": {
         "instruction": "INITIAL",
         "suggestedAmount": "832826.65",
-        "invoicedToDate": "-"
+        "invoicedToDate": null
       },
       "disposalFeesByMaterial": [
         {
@@ -4518,7 +4518,7 @@
       "invoice": {
         "instruction": "INITIAL",
         "suggestedAmount": "2302089.87",
-        "invoicedToDate": "-"
+        "invoicedToDate": null
       },
       "disposalFeesByMaterial": [
         {
@@ -5075,8 +5075,8 @@
       },
       "invoice": {
         "instruction": "-",
-        "suggestedAmount": "-",
-        "invoicedToDate": "-"
+        "suggestedAmount": null,
+        "invoicedToDate": null
       },
       "disposalFeesByMaterial": [
         {
@@ -5633,8 +5633,8 @@
       },
       "invoice": {
         "instruction": "-",
-        "suggestedAmount": "-",
-        "invoicedToDate": "-"
+        "suggestedAmount": null,
+        "invoicedToDate": null
       },
       "disposalFeesByMaterial": [
         {
@@ -6192,7 +6192,7 @@
       "invoice": {
         "instruction": "INITIAL",
         "suggestedAmount": "1479608.05",
-        "invoicedToDate": "-"
+        "invoicedToDate": null
       },
       "disposalFeesByMaterial": [
         {
@@ -6750,7 +6750,7 @@
       "invoice": {
         "instruction": "INITIAL",
         "suggestedAmount": "3746349.53",
-        "invoicedToDate": "-"
+        "invoicedToDate": null
       },
       "disposalFeesByMaterial": [
         {
@@ -7307,8 +7307,8 @@
       },
       "invoice": {
         "instruction": "-",
-        "suggestedAmount": "-",
-        "invoicedToDate": "-"
+        "suggestedAmount": null,
+        "invoicedToDate": null
       },
       "disposalFeesByMaterial": [
         {
@@ -7865,8 +7865,8 @@
       },
       "invoice": {
         "instruction": "-",
-        "suggestedAmount": "-",
-        "invoicedToDate": "-"
+        "suggestedAmount": null,
+        "invoicedToDate": null
       },
       "disposalFeesByMaterial": [
         {
@@ -8424,7 +8424,7 @@
       "invoice": {
         "instruction": "INITIAL",
         "suggestedAmount": "832826.65",
-        "invoicedToDate": "-"
+        "invoicedToDate": null
       },
       "disposalFeesByMaterial": [
         {
@@ -8982,7 +8982,7 @@
       "invoice": {
         "instruction": "INITIAL",
         "suggestedAmount": "2973619.74",
-        "invoicedToDate": "-"
+        "invoicedToDate": null
       },
       "disposalFeesByMaterial": [
         {
@@ -9539,8 +9539,8 @@
       },
       "invoice": {
         "instruction": "-",
-        "suggestedAmount": "-",
-        "invoicedToDate": "-"
+        "suggestedAmount": null,
+        "invoicedToDate": null
       },
       "disposalFeesByMaterial": [
         {
@@ -10098,7 +10098,7 @@
       "invoice": {
         "instruction": "INITIAL",
         "suggestedAmount": "1479608.05",
-        "invoicedToDate": "-"
+        "invoicedToDate": null
       },
       "disposalFeesByMaterial": [
         {
