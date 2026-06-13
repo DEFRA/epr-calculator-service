@@ -78,7 +78,7 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
 
             actualLines.Length.ShouldBe(expectedLines.Length, $"Billing JSON mismatch: {DisplayFullContents(contents)}");
 
-            var ignoreLines = new List<int> {4, 5, 9, 11, 13, 16}; // Ignore run id and date fields
+            var ignoreLines = new List<int> {2, 7, 8, 12, 14, 16, 19}; // Ignore run id and date fields
             AssertLines(actualLines, expectedLines, ignoreLines, "Billing JSON", contents);
         }
     }

@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+using System.Globalization;
+using System.Text.Json.Serialization;
 using EPR.Calculator.Service.Function.Features.BillingRun.Contexts;
 using EPR.Calculator.Service.Function.Models;
 
@@ -6,6 +7,15 @@ namespace EPR.Calculator.Service.Function.JsonExporter.Model;
 
 public class BillingFileJson
 {
+    [JsonPropertyName("runId")]
+    public int RunId { get; set; }
+
+    [JsonPropertyName("financialYear")]
+    public string? FinancialYear { get; set; }
+
+    [JsonPropertyName("badDebtProvisionPercentage")]
+    public string? BadDebtProvisionPercentage { get; set; }
+
     [JsonPropertyName("calcResultDetail")]
     public CalcResultDetailJson? CalcResultDetail { get; set; }
 
@@ -45,12 +55,18 @@ public class BillingFileJson
     [JsonPropertyName("modulationResults")]
     public CalcResultModulationResults? ModulationResults { get; set; }
 
-    [JsonPropertyName("calculationResults")]
-    public object? CalculationResults { get; set; }
+    [JsonPropertyName("materials")]
+    public IEnumerable<MaterialPrices>? Materials { get; set; }
+
+    [JsonPropertyName("producers")]
+    public IEnumerable<ProducerResult>? Producers { get; set; }
 
     public static BillingFileJson From(BillingRunContext runContext, CalcResult calcResult, IImmutableList<MaterialDetail> materials)
     {
         return new BillingFileJson {
+            RunId                              = calcResult.CalcResultDetail.RunId,
+            FinancialYear                      = calcResult.CalcResultDetail.RelativeYear.ToFinancialYear(),
+            BadDebtProvisionPercentage         = calcResult.CalcResultParameterOtherCost.BadDebtValue.ToString("F2", CultureInfo.InvariantCulture),
             CalcResultDetail                   = CalcResultDetailJson.From(calcResult.CalcResultDetail),
             CalcResultLapcapData               = CalcResultLapcapDataJson.From(calcResult.CalcResultLapcapData, materials),
             CalcResultLateReportingTonnageData = CalcResultLateReportingTonnageJson.From(calcResult.CalcResultLateReportingTonnageData, materials),
@@ -64,7 +80,11 @@ public class BillingFileJson
             CancelledProducers                 = CancelledProducers.From(calcResult.CalcResultCancelledProducers),
             ScaleUpProducers                   = CalcResultScaledupProducersJson.From(runContext, calcResult.CalcResultScaledupProducers, materials),
             ModulationResults                  = runContext.RequiresModulation && calcResult.CalcResultModulation is not null ? CalcResultModulationResults.From(calcResult.CalcResultModulation) : null,
-            CalculationResults                 = CalculationResultsJson.From(runContext, calcResult, materials)
+            Materials                          = MaterialPrices.FromAll(materials, calcResult),
+            Producers                          = calcResult.CalcResultSummary.ProducerDisposalFees
+                                                    .Where(p => runContext.AcceptedProducerIds.Contains(p.ProducerId))
+                                                    .Select(p => ProducerResult.From(p, materials, runContext.RequiresModulation))
+                                                    .ToList(),
         };
     }
 }
