@@ -34,6 +34,7 @@ public class BillingFileJsonWriter(IMaterialService materialService)
         {
             var content = new BillingFileJson2026
             {
+                Schema                     = "https://epr.gov.uk/schemas/billing/2026/v1",
                 RunId                      = calcResult.CalcResultDetail.RunId,
                 FinancialYear              = calcResult.CalcResultDetail.RelativeYear.ToFinancialYear(),
                 BadDebtProvisionPercentage = $"{calcResult.CalcResultParameterOtherCost.BadDebtValue:0.00}",
@@ -49,6 +50,7 @@ public class BillingFileJsonWriter(IMaterialService materialService)
 
         var content2025 = new BillingFileJson2025
         {
+            Schema                     = "https://epr.gov.uk/schemas/billing/2025/v1",
             RunId                      = calcResult.CalcResultDetail.RunId,
             FinancialYear              = calcResult.CalcResultDetail.RelativeYear.ToFinancialYear(),
             BadDebtProvisionPercentage = $"{calcResult.CalcResultParameterOtherCost.BadDebtValue:0.00}",

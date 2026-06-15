@@ -56,8 +56,9 @@
     }
   },
   "type": "object",
-  "required": ["runId", "financialYear", "badDebtProvisionPercentage", "materials", "producers"],
+  "required": ["$schema", "runId", "financialYear", "badDebtProvisionPercentage", "materials", "producers"],
   "properties": {
+    "$schema": { "const": "https://epr.gov.uk/schemas/billing/2025/v1" },
     "runId": { "type": "integer" },
     "financialYear": {
       "type": "string",

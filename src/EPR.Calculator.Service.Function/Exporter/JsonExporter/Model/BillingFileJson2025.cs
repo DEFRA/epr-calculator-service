@@ -4,6 +4,9 @@ namespace EPR.Calculator.Service.Function.JsonExporter.Model;
 
 public class BillingFileJson2025
 {
+    [JsonPropertyName("$schema")]
+    public required string Schema { get; init; }
+
     [JsonPropertyName("runId")]
     public required int RunId { get; init; }
 

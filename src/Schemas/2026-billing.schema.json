@@ -92,8 +92,9 @@
     }
   },
   "type": "object",
-  "required": ["runId", "financialYear", "badDebtProvisionPercentage", "modulationResults", "materials", "producers"],
+  "required": ["$schema", "runId", "financialYear", "badDebtProvisionPercentage", "modulationResults", "materials", "producers"],
   "properties": {
+    "$schema": { "const": "https://epr.gov.uk/schemas/billing/2026/v1" },
     "runId": { "type": "integer" },
     "financialYear": {
       "type": "string",

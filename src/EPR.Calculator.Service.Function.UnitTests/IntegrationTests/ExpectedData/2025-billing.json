@@ -1,4 +1,5 @@
 {
+  "$schema": "https://epr.gov.uk/schemas/billing/2025/v1",
   "runId": 2536,
   "financialYear": "2025-26",
   "badDebtProvisionPercentage": "4.00",
