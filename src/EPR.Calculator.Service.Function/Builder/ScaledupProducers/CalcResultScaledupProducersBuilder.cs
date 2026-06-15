@@ -201,7 +201,7 @@ namespace EPR.Calculator.Service.Function.Builder.ScaledupProducers
         private ProducerReportedMaterial Scale(ProducerReportedMaterial reportedMaterial, decimal scaleupFactor)
         {
             // only scale total - Ram doesn't apply to 2025 relative year (2024 pom)
-            var tonnage  = Math.Round(scaleupFactor * reportedMaterial.PackagingTonnage, 3);
+            var tonnage  = MathUtils.RoundAwayFromZero(scaleupFactor * reportedMaterial.PackagingTonnage, 3);
             return new ProducerReportedMaterial
             {
                 Id               = reportedMaterial.Id,

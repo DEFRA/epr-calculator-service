@@ -13,7 +13,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Utils
             var detail = 100.00m;
 
             // Act
-            var result = CurrencyConverterUtils.ConvertToCurrency(detail);
+            var result = FormatUtils.FormatCurrency(detail);
             bool iscurrency = decimal.TryParse(result, NumberStyles.Currency, new CultureInfo("en-GB"), out _);
 
             // Assert

@@ -262,7 +262,7 @@ public class Section1MaterialsExporter : ICalcResultSummaryPartExporter
 
     private static void AppendCsvValue(
         StringBuilder csvContent,
-        object? value,
+        decimal? value,
         bool isOverallTotalRow = false,
         DecimalPlaces decimalPlaces = DecimalPlaces.Zero,
         DecimalFormats decimalFormat = DecimalFormats.F2)
@@ -270,14 +270,8 @@ public class Section1MaterialsExporter : ICalcResultSummaryPartExporter
         if (value == null && !isOverallTotalRow)
         {
             csvContent.Append(CsvSanitiser.SanitiseData(CommonConstants.Hyphen));
-        }
-        else if (value is int or decimal or double)
-        {
+        } else {
             csvContent.Append(CsvSanitiser.SanitiseData(value, decimalPlaces, decimalFormat));
-        }
-        else
-        {
-            csvContent.Append(CsvSanitiser.SanitiseData(value));
         }
     }
 }

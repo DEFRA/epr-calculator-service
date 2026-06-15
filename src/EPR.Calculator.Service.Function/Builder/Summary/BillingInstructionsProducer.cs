@@ -1,6 +1,7 @@
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Features.BillingRuns.Constants;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Builder.Summary;
 
@@ -103,7 +104,7 @@ public static class BillingInstructionsProducer
     ) =>
         (fee.Level != CommonConstants.LevelOne.ToString()) || (!currentInvoicedTotalToDate.HasValue)
         ? null
-        : Math.Round(fee.TotalProducerBillBreakdownCosts.FeeWithBadDebtProvision.Total, 2) - Math.Round(currentInvoicedTotalToDate.Value, 2);
+        : MathUtils.RoundAwayFromZero(fee.TotalProducerBillBreakdownCosts.FeeWithBadDebtProvision.Total, 2) - MathUtils.RoundAwayFromZero(currentInvoicedTotalToDate.Value, 2);
 
     private static string GetMaterialThresholdBreached(CalcResultSummaryProducerDisposalFees fee, decimal? currentInvoicedTotalToDate, decimal? liabilityDifferenceCalculated, decimal param_MATT_AI, decimal param_MATT_AD)
     {
@@ -141,7 +142,7 @@ public static class BillingInstructionsProducer
         || currentYearInvoiceTotalToDate == 0m
         )
         ? null
-        : Math.Round(liabilityDifference.Value / currentYearInvoiceTotalToDate.Value * 100, 2);
+        : MathUtils.RoundAwayFromZero(liabilityDifference.Value / currentYearInvoiceTotalToDate.Value * 100, 2);
 
     private static string GetMaterialPercentageThresholdBreached(CalcResultSummaryProducerDisposalFees fee, decimal? currentYearInvoiceTotalToDate, decimal? percentageLiabilityDifference, decimal param_MATT_PI, decimal param_MATT_PD)
     {

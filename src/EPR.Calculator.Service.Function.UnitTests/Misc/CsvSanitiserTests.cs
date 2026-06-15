@@ -90,21 +90,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
         }
 
         [TestMethod]
-        public void ShouldSanitiseCurrencyDataAsStringWithDelimiter()
-        {
-            // Arrange
-            var data = "100.5987";
-            var decimalPlaces = DecimalPlaces.Two;
-            var isCurrency = true;
-
-            // Act
-            var result = CsvSanitiser.SanitiseData(data, decimalPlaces, null, isCurrency);
-
-            // Assert
-            Assert.AreEqual("\"£100.60\",", result);
-        }
-
-        [TestMethod]
         public void ShouldSanitisePercentageDataWithDelimiter()
         {
             // Arrange

@@ -3,6 +3,7 @@ using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
+using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 {
@@ -683,10 +684,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         }
 
         private static decimal To3DP(decimal value) =>
-            Math.Round(value, 3);
+            MathUtils.RoundAwayFromZero(value, 3);
 
         private static decimal To6DP(decimal value) =>
-            Math.Round(value, 6);
+            MathUtils.RoundAwayFromZero(value, 6);
 
         private static void AssertWithin(decimal expected, decimal actual, decimal tolerance = 0.001m) =>
             Assert.IsTrue(Math.Abs(expected - actual) <= tolerance);

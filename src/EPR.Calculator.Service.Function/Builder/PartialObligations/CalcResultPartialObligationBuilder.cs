@@ -4,6 +4,7 @@ using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.PartialObligations
@@ -37,7 +38,7 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
                     MaterialId       = reportedMaterial.MaterialId,
                     ProducerDetailId = reportedMaterial.ProducerDetailId,
                     PackagingType    = reportedMaterial.PackagingType,
-                    PackagingTonnage = Math.Round(p * reportedMaterial.PackagingTonnage, 3),
+                    PackagingTonnage = MathUtils.RoundAwayFromZero(p * reportedMaterial.PackagingTonnage, 3),
                     SubmissionPeriod = reportedMaterial.SubmissionPeriod,
                     ProducerDetail   = reportedMaterial.ProducerDetail,
                     Material         = reportedMaterial.Material
@@ -45,12 +46,12 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
             }
             else
             {
-                var r  = Math.Round(p * reportedMaterial.PackagingTonnageRed          ?? 0m, 3);
-                var a  = Math.Round(p * reportedMaterial.PackagingTonnageAmber        ?? 0m, 3);
-                var g  = Math.Round(p * reportedMaterial.PackagingTonnageGreen        ?? 0m, 3);
-                var rm = Math.Round(p * reportedMaterial.PackagingTonnageRedMedical   ?? 0m, 3);
-                var am = Math.Round(p * reportedMaterial.PackagingTonnageAmberMedical ?? 0m, 3);
-                var gm = Math.Round(p * reportedMaterial.PackagingTonnageGreenMedical ?? 0m, 3);
+                var r  = MathUtils.RoundAwayFromZero(p * reportedMaterial.PackagingTonnageRed          ?? 0m, 3);
+                var a  = MathUtils.RoundAwayFromZero(p * reportedMaterial.PackagingTonnageAmber        ?? 0m, 3);
+                var g  = MathUtils.RoundAwayFromZero(p * reportedMaterial.PackagingTonnageGreen        ?? 0m, 3);
+                var rm = MathUtils.RoundAwayFromZero(p * reportedMaterial.PackagingTonnageRedMedical   ?? 0m, 3);
+                var am = MathUtils.RoundAwayFromZero(p * reportedMaterial.PackagingTonnageAmberMedical ?? 0m, 3);
+                var gm = MathUtils.RoundAwayFromZero(p * reportedMaterial.PackagingTonnageGreenMedical ?? 0m, 3);
                 return new ProducerReportedMaterial
                 {
                     Id                           = reportedMaterial.Id,

@@ -16,8 +16,8 @@ public class TotalProducerFeeWithBadDebtProvisionFor2Con12A2B2CMapper
     {
         return new TotalProducerFeeWithBadDebtProvisionFor2Con12A2B2CMapper
         {
-            TotalFeeWithBadDebtProvision            = CurrencyConverterUtils.ConvertToCurrency(calcResultSummaryProducerDisposalFees.ProducerTotalOnePlus2A2B2CWithBadDeptProvision),
-            ProducerPercentageOfOverallProducerCost = $"{calcResultSummaryProducerDisposalFees.ProducerOverallPercentageOfCostsForOnePlus2A2B2C.ToString("F8")}%"
+            TotalFeeWithBadDebtProvision            = FormatUtils.FormatCurrency(calcResultSummaryProducerDisposalFees.ProducerTotalOnePlus2A2B2CWithBadDeptProvision),
+            ProducerPercentageOfOverallProducerCost = FormatUtils.FormatPercentage(calcResultSummaryProducerDisposalFees.ProducerOverallPercentageOfCostsForOnePlus2A2B2C)
         };
 
     }

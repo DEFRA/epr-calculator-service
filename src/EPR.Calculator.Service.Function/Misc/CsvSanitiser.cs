@@ -43,8 +43,8 @@ namespace EPR.Calculator.Service.Function.Misc
                 : stringToSanitise;
         }
 
-        public static string SanitiseData<T>(
-            T value,
+        public static string SanitiseData(
+            Decimal? value,
             DecimalPlaces? roundTo,
             DecimalFormats? valueFormat,
             bool isCurrency = false,
@@ -56,41 +56,28 @@ namespace EPR.Calculator.Service.Function.Misc
             if (canBeEmpty && value is null)
                 return CsvSanitiser.SanitiseData(CommonConstants.Hyphen, delimiterRequired);
 
-            decimal decimalValue;
-            if (value is string)
-            {
-                var isParseSuccessful = decimal.TryParse(value.ToString(), CultureInfo.InvariantCulture, out decimal result);
-                if (!isParseSuccessful)
-                {
-                    return SanitiseData(value, delimiterRequired);
-                }
-
-                decimalValue = result;
-            }
-            else
-            {
-                decimalValue = Convert.ToDecimal(value);
-            }
-
-            var roundedValue = roundTo == null
-                ? decimalValue
-                : Math.Round(decimalValue, (int)roundTo);
-
-            var formattedValue = valueFormat == null
-                ? roundedValue.ToString()
-                : roundedValue.ToString(valueFormat.ToString());
+            var decimalValue = value.GetValueOrDefault();
 
             if (isCurrency)
             {
-                formattedValue = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(roundedValue, ((int?)roundTo) ?? 2);
+                return SanitiseData(FormatUtils.FormatCurrency(decimalValue, ((int?)roundTo) ?? 2), delimiterRequired);
             }
-
-            if (isPercentage)
+            else if (isPercentage)
             {
-                formattedValue = $"{formattedValue}%";
+                return SanitiseData(FormatUtils.FormatPercentage(decimalValue, ((int?)roundTo) ?? 8), delimiterRequired);
             }
+            else
+            {
+                var roundedValue = roundTo == null
+                    ? decimalValue
+                    : MathUtils.RoundAwayFromZero(decimalValue, (int)roundTo);
 
-            return SanitiseData(formattedValue, delimiterRequired);
+                var formattedValue = valueFormat == null
+                    ? roundedValue.ToString()
+                    : roundedValue.ToString(valueFormat.ToString());
+
+                return SanitiseData(formattedValue, delimiterRequired);
+            }
         }
     }
 }

@@ -55,16 +55,16 @@ public record CalcResult2ACommsDataDetailsTotal
         return new CalcResult2ACommsDataDetailsTotal
         {
             Total                                 = "Total",
-            EnglandCommsCostTotal                 = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.Cost.England),
-            WalesCommsCostTotal                   = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.Cost.Wales),
-            ScotlandCommsCostTotal                = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.Cost.Scotland),
-            NorthernIrelandCommsCostTotal         = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.Cost.NorthernIreland),
-            TotalCommsCostTotal                   = CurrencyConverterUtils.ConvertToCurrency(commsCostByMaterial.Cost.Total),
-            HouseholdPackagingWasteTonnageTotal   = Math.Round(commsCostByMaterial.HouseholdPackagingWasteTonnage  , 3),
-            PublicBinTonnageTotal                 = Math.Round(commsCostByMaterial.PublicBinTonnage                , 3),
-            HouseholdDrinksContainersTonnageTotal = Math.Round(commsCostByMaterial.HouseholdDrinksContainersTonnage, 3),
-            LateReportingTonnageTotal             = Math.Round(commsCostByMaterial.LateReportingTonnage            , 3),
-            TotalTonnageTotal                     = Math.Round(commsCostByMaterial.TotalTonnage                    , 3)
+            EnglandCommsCostTotal                 = FormatUtils.FormatCurrency(commsCostByMaterial.Cost.England),
+            WalesCommsCostTotal                   = FormatUtils.FormatCurrency(commsCostByMaterial.Cost.Wales),
+            ScotlandCommsCostTotal                = FormatUtils.FormatCurrency(commsCostByMaterial.Cost.Scotland),
+            NorthernIrelandCommsCostTotal         = FormatUtils.FormatCurrency(commsCostByMaterial.Cost.NorthernIreland),
+            TotalCommsCostTotal                   = FormatUtils.FormatCurrency(commsCostByMaterial.Cost.Total),
+            HouseholdPackagingWasteTonnageTotal   = MathUtils.RoundAwayFromZero(commsCostByMaterial.HouseholdPackagingWasteTonnage  , 3),
+            PublicBinTonnageTotal                 = MathUtils.RoundAwayFromZero(commsCostByMaterial.PublicBinTonnage                , 3),
+            HouseholdDrinksContainersTonnageTotal = MathUtils.RoundAwayFromZero(commsCostByMaterial.HouseholdDrinksContainersTonnage, 3),
+            LateReportingTonnageTotal             = MathUtils.RoundAwayFromZero(commsCostByMaterial.LateReportingTonnage            , 3),
+            TotalTonnageTotal                     = MathUtils.RoundAwayFromZero(commsCostByMaterial.TotalTonnage                    , 3)
         };
     }
 }

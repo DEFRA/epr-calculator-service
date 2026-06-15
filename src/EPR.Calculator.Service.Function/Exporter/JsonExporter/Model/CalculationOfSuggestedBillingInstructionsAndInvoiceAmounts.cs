@@ -40,21 +40,15 @@ public record CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts
 
     public static CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts From(CalcResultSummaryProducerDisposalFees fees)
     {
-        string GetPercentageLiabilityDifference(decimal? percentageLiabilityDifference)
-        {
-            if (percentageLiabilityDifference == null)
-                return CommonConstants.Hyphen;
+        string GetPercentageLiabilityDifference(decimal? percentageLiabilityDifference) =>
+            percentageLiabilityDifference == null
+                ? CommonConstants.Hyphen
+                : FormatUtils.FormatPercentage(percentageLiabilityDifference.Value, 2);
 
-            return $"{Math.Round((decimal)percentageLiabilityDifference, (int)DecimalPlaces.Two).ToString()}%";
-        }
-
-        string GetFormattedCurrencyValue(decimal? value)
-        {
-            if (value == null)
-                return CommonConstants.Hyphen;
-
-            return CurrencyConverterUtils.ConvertToCurrency(value.Value);
-        }
+        string GetFormattedCurrencyValue(decimal? value) =>
+            value == null
+                ? CommonConstants.Hyphen
+                : FormatUtils.FormatCurrency(value.Value);
 
         var costs = fees.BillingInstructionSection;
         return new CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts

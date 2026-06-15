@@ -29,10 +29,10 @@ public class CalcResultCommsCostOnePlusFourApportionmentUKWide
         new ()
         {
             Name                           = CalcResultCommsCostBuilder.TwoBCommsCostUkWide,
-            EnglandCommsCostUKWide         = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.England        , 2, ","),
-            WalesCommsCostUKWide           = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Wales          , 2, ","),
-            ScotlandCommsCostUKWide        = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Scotland       , 2, ","),
-            NorthernIrelandCommsCostUKWide = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.NorthernIreland, 2, ","),
-            TotalCommsCostUKWide           = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Total          , 2, ",")
+            EnglandCommsCostUKWide         = FormatUtils.FormatCurrency(record.England        , 2, ","),
+            WalesCommsCostUKWide           = FormatUtils.FormatCurrency(record.Wales          , 2, ","),
+            ScotlandCommsCostUKWide        = FormatUtils.FormatCurrency(record.Scotland       , 2, ","),
+            NorthernIrelandCommsCostUKWide = FormatUtils.FormatCurrency(record.NorthernIreland, 2, ","),
+            TotalCommsCostUKWide           = FormatUtils.FormatCurrency(record.Total          , 2, ",")
          };
 }

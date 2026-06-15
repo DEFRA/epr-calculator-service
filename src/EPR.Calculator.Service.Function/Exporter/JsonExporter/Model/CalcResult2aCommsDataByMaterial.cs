@@ -60,17 +60,17 @@ public class CalcResult2ACommsDataDetails : BaseLaDisposalcostAnd2ACommsData
         return new CalcResult2ACommsDataDetails
         {
             MaterialName                           = material.Name,
-            ProducerHouseholdPackagingWasteTonnage = Math.Round(commsCost.HouseholdPackagingWasteTonnage, 3),
-            PublicBinTonnage                       = Math.Round(commsCost.PublicBinTonnage, 3),
-            HouseholdDrinksContainersTonnage       = Math.Round(commsCost.HouseholdDrinksContainersTonnage, 3),
-            TotalTonnage                           = Math.Round(commsCost.TotalTonnage, 3),
-            CommsCostByMaterialPricePerTonne       = CurrencyConverterUtils.ConvertToCurrency(commsCost.PricePerTonne, precision : 4),
-            EnglandCommsCost                       = CurrencyConverterUtils.ConvertToCurrency(commsCost.Cost.England),
-            WalesCommsCost                         = CurrencyConverterUtils.ConvertToCurrency(commsCost.Cost.Wales),
-            ScotlandCommsCost                      = CurrencyConverterUtils.ConvertToCurrency(commsCost.Cost.Scotland),
-            NorthernIrelandCommsCost               = CurrencyConverterUtils.ConvertToCurrency(commsCost.Cost.NorthernIreland),
-            TotalCommsCost                         = CurrencyConverterUtils.ConvertToCurrency(commsCost.Cost.Total),
-            LateReportingTonnage                   = Math.Round(commsCost.LateReportingTonnage, 3)
+            ProducerHouseholdPackagingWasteTonnage = MathUtils.RoundAwayFromZero(commsCost.HouseholdPackagingWasteTonnage, 3),
+            PublicBinTonnage                       = MathUtils.RoundAwayFromZero(commsCost.PublicBinTonnage, 3),
+            HouseholdDrinksContainersTonnage       = MathUtils.RoundAwayFromZero(commsCost.HouseholdDrinksContainersTonnage, 3),
+            TotalTonnage                           = MathUtils.RoundAwayFromZero(commsCost.TotalTonnage, 3),
+            CommsCostByMaterialPricePerTonne       = FormatUtils.FormatCurrency(commsCost.PricePerTonne, precision : 4),
+            EnglandCommsCost                       = FormatUtils.FormatCurrency(commsCost.Cost.England),
+            WalesCommsCost                         = FormatUtils.FormatCurrency(commsCost.Cost.Wales),
+            ScotlandCommsCost                      = FormatUtils.FormatCurrency(commsCost.Cost.Scotland),
+            NorthernIrelandCommsCost               = FormatUtils.FormatCurrency(commsCost.Cost.NorthernIreland),
+            TotalCommsCost                         = FormatUtils.FormatCurrency(commsCost.Cost.Total),
+            LateReportingTonnage                   = MathUtils.RoundAwayFromZero(commsCost.LateReportingTonnage, 3)
         };
     }
 }

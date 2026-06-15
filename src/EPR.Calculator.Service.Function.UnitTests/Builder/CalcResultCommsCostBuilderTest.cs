@@ -7,6 +7,7 @@ using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
+using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder;
 
@@ -62,7 +63,7 @@ public class CalcResultCommsCostBuilderTest : TestsFor<CalcResultCommsCostBuilde
         Assert.AreEqual(1000, aluminiumCost.HouseholdPackagingWasteTonnage);
         Assert.AreEqual(8000, aluminiumCost.LateReportingTonnage);
         Assert.AreEqual(9000, aluminiumCost.TotalTonnage);
-        Assert.AreEqual(0.0011m, Math.Round(aluminiumCost.PricePerTonne, 4));
+        Assert.AreEqual(0.0011m, MathUtils.RoundAwayFromZero(aluminiumCost.PricePerTonne, 4));
 
         var fibreCompositeCost = materialCosts["FC"];
         Assert.AreEqual(4, fibreCompositeCost.Cost.England);
@@ -73,7 +74,7 @@ public class CalcResultCommsCostBuilderTest : TestsFor<CalcResultCommsCostBuilde
         Assert.AreEqual(2000, fibreCompositeCost.HouseholdPackagingWasteTonnage);
         Assert.AreEqual(10, fibreCompositeCost.LateReportingTonnage);
         Assert.AreEqual(2210, fibreCompositeCost.TotalTonnage);
-        Assert.AreEqual(0.0045m, Math.Round(fibreCompositeCost.PricePerTonne, 4));
+        Assert.AreEqual(0.0045m, MathUtils.RoundAwayFromZero(fibreCompositeCost.PricePerTonne, 4));
 
         var glassCost = materialCosts["GL"];
         Assert.AreEqual(4, glassCost.Cost.England);
@@ -84,7 +85,7 @@ public class CalcResultCommsCostBuilderTest : TestsFor<CalcResultCommsCostBuilde
         Assert.AreEqual(3000, glassCost.HouseholdPackagingWasteTonnage);
         Assert.AreEqual(10, glassCost.LateReportingTonnage);
         Assert.AreEqual(3210, glassCost.TotalTonnage);
-        Assert.AreEqual(0.0031m, Math.Round(glassCost.PricePerTonne, 4));
+        Assert.AreEqual(0.0031m, MathUtils.RoundAwayFromZero(glassCost.PricePerTonne, 4));
         Assert.AreEqual(200, glassCost.HouseholdDrinksContainersTonnage);
 
         var totalMaterialCost = result.Total;

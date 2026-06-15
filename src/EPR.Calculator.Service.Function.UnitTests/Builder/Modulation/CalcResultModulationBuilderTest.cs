@@ -122,11 +122,11 @@ public class CalcResultModulationBuilderTest
             {
                 [al] = mkMaterialModulation(100, 120, 77.2567m, 332, 221, 553, 22100, 55300),
                 [fc] = mkMaterialModulation(130, 156, 100.4337m, 57, 276, 58, 35880, 7540),
-                [gl] = mkMaterialModulation(150, 180, 115.8850m, 222, 111, 223, 16650, 33450),
+                [gl] = mkMaterialModulation(150, 180, 115.8851m, 222, 111, 223, 16650, 33450),
                 [pc] = mkMaterialModulation(200, 240, 154.5134m, 1052, 401, 2403, 80200, 480600),
                 [pl] = mkMaterialModulation(250, 300, 193.1418m, 277, 2151, 273, 537750, 68250),
                 [st] = mkMaterialModulation(175, 210, 135.1992m, 42, 34, 77, 5950, 13475),
-                [wd] = mkMaterialModulation(150, 180, 115.8850m, 2, 266, 3, 39900, 450),
+                [wd] = mkMaterialModulation(150, 180, 115.8851m, 2, 266, 3, 39900, 450),
                 [ot] = mkMaterialModulation(400, 480, 309.0268m, 2, 31, 3, 12400, 1200)
             };
 

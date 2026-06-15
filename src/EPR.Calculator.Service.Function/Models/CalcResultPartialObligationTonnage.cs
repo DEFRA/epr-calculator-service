@@ -1,4 +1,6 @@
-﻿namespace EPR.Calculator.Service.Function.Models
+﻿using EPR.Calculator.Service.Function.Utils;
+
+namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResultPartialObligationTonnage
     {
@@ -13,7 +15,7 @@
         public decimal PartialHouseholdTonnage()
         {
             var partialRam = PartialHouseholdRAMTonnage();
-            return partialRam != null ? partialRam.TotalRamTonnage() : Math.Round(HouseholdTonnage * ObligatedFactor, 3);
+            return partialRam != null ? partialRam.TotalRamTonnage() : MathUtils.RoundAwayFromZero(HouseholdTonnage * ObligatedFactor, 3);
         }
         public RAMTonnage? PartialHouseholdRAMTonnage()
         {
@@ -22,7 +24,7 @@
         public decimal PartialPublicBinTonnage()
         {
             var partialRam = PartialPublicBinRAMTonnage();
-            return partialRam != null ? partialRam.TotalRamTonnage() : Math.Round(PublicBinTonnage * ObligatedFactor, 3);
+            return partialRam != null ? partialRam.TotalRamTonnage() : MathUtils.RoundAwayFromZero(PublicBinTonnage * ObligatedFactor, 3);
         }
         public RAMTonnage? PartialPublicBinRAMTonnage()
         {
@@ -35,7 +37,7 @@
             {
                 return partialRam.TotalRamTonnage();
             }
-            return HouseholdDrinksContainersTonnage != null ? Math.Round(HouseholdDrinksContainersTonnage.Value * ObligatedFactor, 3) : null;
+            return HouseholdDrinksContainersTonnage != null ? MathUtils.RoundAwayFromZero(HouseholdDrinksContainersTonnage.Value * ObligatedFactor, 3) : null;
         }
         public RAMTonnage? PartialHouseholdDrinksContainersRAMTonnage()
         {
@@ -43,7 +45,7 @@
         }
         public decimal PartialSelfManagedConsumerWasteTonnage()
         {
-            return Math.Round(SelfManagedConsumerWasteTonnage * ObligatedFactor, 3);
+            return MathUtils.RoundAwayFromZero(SelfManagedConsumerWasteTonnage * ObligatedFactor, 3);
         }
         public decimal TotalTonnage()
         {
@@ -56,12 +58,12 @@
 
          private RAMTonnage ToPartialRam(RAMTonnage ram, decimal partialAmount) {
             return new RAMTonnage {
-                RedTonnage          = Math.Round(ram.RedTonnage * partialAmount, 3),
-                AmberTonnage        = Math.Round(ram.AmberTonnage * partialAmount, 3),
-                GreenTonnage        = Math.Round(ram.GreenTonnage * partialAmount, 3),
-                RedMedicalTonnage   = Math.Round(ram.RedMedicalTonnage * partialAmount, 3),
-                AmberMedicalTonnage = Math.Round(ram.AmberMedicalTonnage * partialAmount, 3),
-                GreenMedicalTonnage = Math.Round(ram.GreenMedicalTonnage * partialAmount, 3),
+                RedTonnage          = MathUtils.RoundAwayFromZero(ram.RedTonnage * partialAmount, 3),
+                AmberTonnage        = MathUtils.RoundAwayFromZero(ram.AmberTonnage * partialAmount, 3),
+                GreenTonnage        = MathUtils.RoundAwayFromZero(ram.GreenTonnage * partialAmount, 3),
+                RedMedicalTonnage   = MathUtils.RoundAwayFromZero(ram.RedMedicalTonnage * partialAmount, 3),
+                AmberMedicalTonnage = MathUtils.RoundAwayFromZero(ram.AmberMedicalTonnage * partialAmount, 3),
+                GreenMedicalTonnage = MathUtils.RoundAwayFromZero(ram.GreenMedicalTonnage * partialAmount, 3),
             };
         }
     }

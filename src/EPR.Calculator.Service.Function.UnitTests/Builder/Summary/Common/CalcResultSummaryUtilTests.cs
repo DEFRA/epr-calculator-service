@@ -6,6 +6,7 @@ using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
+using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common;
 
@@ -216,7 +217,7 @@ public class CalcResultSummaryUtilTests
     public void GetProducerDisposalFeeWithBadDebtProvision_AddsPercentage()
     {
         var result = CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvision(calcResult, 100m);
-        Assert.AreEqual(106m, Math.Round(result.Total, 10));
+        Assert.AreEqual(106m, MathUtils.RoundAwayFromZero(result.Total, 10));
     }
 
     [TestMethod]
