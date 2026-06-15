@@ -17,10 +17,11 @@ public class ProducerResultsTests
     {
         var calcResult = TestDataHelper.GetCalcResult();
         var materials  = TestDataHelper.GetMaterialDetails();
-        var result = BillingFileJson.From(TestDataHelper.BillingRun2025, calcResult, materials);
-        var json = JsonSerializer.Serialize(result);
-        var node = JsonNode.Parse(json)!;
-        return node["producers"]!;
+        var producers  = calcResult.CalcResultSummary.ProducerDisposalFees
+            .Where(p => TestDataHelper.BillingRun2025.AcceptedProducerIds.Contains(p.ProducerId))
+            .Select(p => ProducerResult.From(p, materials, applyModulation: false))
+            .ToList();
+        return JsonNode.Parse(JsonSerializer.Serialize(producers))!;
     }
 
     private static CalcResultSummaryProducerDisposalFees GetFirstProducer()
@@ -212,12 +213,10 @@ public class ProducerResultsTests
     [TestMethod]
     public void From_Materials_ContainsAllMaterials()
     {
-        var calcResult = TestDataHelper.GetCalcResult();
-        var materials  = TestDataHelper.GetMaterialDetails();
-        var result     = BillingFileJson.From(TestDataHelper.BillingRun2025, calcResult, materials);
+        var calcResult    = TestDataHelper.GetCalcResult();
+        var materials     = TestDataHelper.GetMaterialDetails();
+        var materialsList = MaterialPrices.FromAll(materials, calcResult).ToList();
 
-        Assert.IsNotNull(result.Materials);
-        var materialsList = result.Materials.ToList();
         Assert.AreEqual(materials.Count, materialsList.Count);
         Assert.IsTrue(materialsList.All(m => m.DisposalPricePerTonne != null));
         Assert.IsTrue(materialsList.All(m => m.CommsPricePerTonne != null));

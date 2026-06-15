@@ -78,7 +78,7 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
 
             actualLines.Length.ShouldBe(expectedLines.Length, $"Billing JSON mismatch: {DisplayFullContents(contents)}");
 
-            var ignoreLines = new List<int> {2, 7, 8, 12, 14, 16, 19}; // Ignore run id and date fields
+            var ignoreLines = new List<int> {3}; // runId is the only volatile line in both 2025 and 2026 schemas
             AssertLines(actualLines, expectedLines, ignoreLines, "Billing JSON", contents);
         }
     }
