@@ -6,7 +6,7 @@ namespace EPR.Calculator.Service.Function.JsonExporter.Model;
 
 public record MaterialPrices
 {
-    [JsonPropertyName("materialName")]
+    [JsonPropertyName("material")]
     public required string MaterialName { get; init; }
 
     [JsonPropertyName("disposalPricePerTonne")]

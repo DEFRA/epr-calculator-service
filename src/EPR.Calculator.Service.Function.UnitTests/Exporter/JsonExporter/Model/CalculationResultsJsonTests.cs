@@ -71,13 +71,8 @@ public class ProducerResultsTests
         var actual    = producers[0]!["commsCostsByMaterial"]!;
         var expected  = producer.CommsCostsSection2a;
 
-        Assert.AreEqual(F2(expected.FeeWithoutBadDebtProvision),       actual["base"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.BadDebtProvision),                  actual["badDebtProvision"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.Total),     actual["total"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.England),   actual["england"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.Wales),     actual["wales"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.Scotland),  actual["scotland"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.NorthernIreland), actual["northernIreland"]!.GetValue<string>());
+        Assert.AreEqual(F2(expected.FeeWithoutBadDebtProvision), actual["base"]!.GetValue<string>());
+        Assert.AreEqual(F2(expected.BadDebtProvision),            actual["badDebtProvision"]!.GetValue<string>());
     }
 
     [TestMethod]
@@ -88,13 +83,8 @@ public class ProducerResultsTests
         var actual    = producers[0]!["commsCostsUKWide"]!;
         var expected  = producer.CommsCostsSection2b;
 
-        Assert.AreEqual(F2(expected.FeeWithoutBadDebtProvision),       actual["base"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.BadDebtProvision),                  actual["badDebtProvision"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.Total),     actual["total"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.England),   actual["england"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.Wales),     actual["wales"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.Scotland),  actual["scotland"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.NorthernIreland), actual["northernIreland"]!.GetValue<string>());
+        Assert.AreEqual(F2(expected.FeeWithoutBadDebtProvision), actual["base"]!.GetValue<string>());
+        Assert.AreEqual(F2(expected.BadDebtProvision),            actual["badDebtProvision"]!.GetValue<string>());
     }
 
     [TestMethod]
@@ -105,13 +95,8 @@ public class ProducerResultsTests
         var actual    = producers[0]!["commsCostsByCountry"]!;
         var expected  = producer.CommsCostsSection2c;
 
-        Assert.AreEqual(F2(expected.FeeWithoutBadDebtProvision),       actual["base"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.BadDebtProvision),                  actual["badDebtProvision"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.Total),     actual["total"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.England),   actual["england"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.Wales),     actual["wales"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.Scotland),  actual["scotland"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.NorthernIreland), actual["northernIreland"]!.GetValue<string>());
+        Assert.AreEqual(F2(expected.FeeWithoutBadDebtProvision), actual["base"]!.GetValue<string>());
+        Assert.AreEqual(F2(expected.BadDebtProvision),            actual["badDebtProvision"]!.GetValue<string>());
     }
 
     [TestMethod]
@@ -122,13 +107,8 @@ public class ProducerResultsTests
         var actual    = producers[0]!["saOperatingCosts"]!;
         var expected  = producer.SaOperatingCostsSection3;
 
-        Assert.AreEqual(F2(expected.FeeWithoutBadDebtProvision),       actual["base"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.BadDebtProvision),                  actual["badDebtProvision"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.Total),     actual["total"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.England),   actual["england"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.Wales),     actual["wales"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.Scotland),  actual["scotland"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.NorthernIreland), actual["northernIreland"]!.GetValue<string>());
+        Assert.AreEqual(F2(expected.FeeWithoutBadDebtProvision), actual["base"]!.GetValue<string>());
+        Assert.AreEqual(F2(expected.BadDebtProvision),            actual["badDebtProvision"]!.GetValue<string>());
     }
 
     [TestMethod]
@@ -139,9 +119,8 @@ public class ProducerResultsTests
         var actual    = producers[0]!["laDataPrepCosts"]!;
         var expected  = producer.LaDataPrepSection4;
 
-        Assert.AreEqual(F2(expected.FeeWithoutBadDebtProvision),       actual["base"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.BadDebtProvision),                  actual["badDebtProvision"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.Total),     actual["total"]!.GetValue<string>());
+        Assert.AreEqual(F2(expected.FeeWithoutBadDebtProvision), actual["base"]!.GetValue<string>());
+        Assert.AreEqual(F2(expected.BadDebtProvision),            actual["badDebtProvision"]!.GetValue<string>());
     }
 
     [TestMethod]
@@ -152,13 +131,8 @@ public class ProducerResultsTests
         var actual    = producers[0]!["saSetUpCosts"]!;
         var expected  = producer.SaSetupCostsSection5;
 
-        Assert.AreEqual(F2(expected.FeeWithoutBadDebtProvision),       actual["base"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.BadDebtProvision),                  actual["badDebtProvision"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.Total),     actual["total"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.England),   actual["england"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.Wales),     actual["wales"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.Scotland),  actual["scotland"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.NorthernIreland), actual["northernIreland"]!.GetValue<string>());
+        Assert.AreEqual(F2(expected.FeeWithoutBadDebtProvision), actual["base"]!.GetValue<string>());
+        Assert.AreEqual(F2(expected.BadDebtProvision),            actual["badDebtProvision"]!.GetValue<string>());
     }
 
     [TestMethod]
@@ -166,16 +140,9 @@ public class ProducerResultsTests
     {
         var producers = GetProducers();
         var producer  = GetFirstProducer();
-        var actual    = producers[0]!["totalBill"]!;
         var expected  = producer.TotalProducerBillBreakdownCosts;
 
-        Assert.AreEqual(F2(expected.FeeWithoutBadDebtProvision),       actual["base"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.BadDebtProvision),                  actual["badDebtProvision"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.Total),     actual["total"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.England),   actual["england"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.Wales),     actual["wales"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.Scotland),  actual["scotland"]!.GetValue<string>());
-        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.NorthernIreland), actual["northernIreland"]!.GetValue<string>());
+        Assert.AreEqual(F2(expected.FeeWithBadDebtProvision.Total), producers[0]!["totalBill"]!.GetValue<string>());
     }
 
     [TestMethod]
@@ -200,7 +167,7 @@ public class ProducerResultsTests
         var firstMaterial = producer.ProducerDisposalFeesByMaterial.First();
         var actual = byMaterial[0]!;
 
-        Assert.IsNotNull(actual["materialName"]);
+        Assert.IsNotNull(actual["material"]);
         Assert.IsNotNull(actual["feeWithoutBadDebt"]);
         Assert.IsNotNull(actual["fee"]);
         Assert.IsNotNull(actual["badDebtProvision"]);

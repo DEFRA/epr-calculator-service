@@ -1,16 +1,10 @@
 {
-  "calcResultDetail": {
-    "runId": 2497,
-    "financialYear": "2025-26"
-  },
-  "parametersOther": {
-    "sixBadDebtProvision": {
-      "percentage": "4.00%"
-    }
-  },
+  "runId": 2536,
+  "financialYear": "2025-26",
+  "badDebtProvisionPercentage": "4.00",
   "materials": [
     {
-      "materialName": "Aluminium",
+      "material": "Aluminium",
       "disposalPricePerTonne": {
         "redAndRedMedical": "0.0000",
         "amberAndAmberMedical": "0.0000",
@@ -19,7 +13,7 @@
       "commsPricePerTonne": "0.0013"
     },
     {
-      "materialName": "Fibre composite",
+      "material": "Fibre composite",
       "disposalPricePerTonne": {
         "redAndRedMedical": "0.0000",
         "amberAndAmberMedical": "0.0000",
@@ -28,7 +22,7 @@
       "commsPricePerTonne": "0.0004"
     },
     {
-      "materialName": "Glass",
+      "material": "Glass",
       "disposalPricePerTonne": {
         "redAndRedMedical": "0.0000",
         "amberAndAmberMedical": "0.0000",
@@ -37,7 +31,7 @@
       "commsPricePerTonne": "0.0004"
     },
     {
-      "materialName": "Paper or card",
+      "material": "Paper or card",
       "disposalPricePerTonne": {
         "redAndRedMedical": "0.0000",
         "amberAndAmberMedical": "0.0000",
@@ -46,7 +40,7 @@
       "commsPricePerTonne": "0.0060"
     },
     {
-      "materialName": "Plastic",
+      "material": "Plastic",
       "disposalPricePerTonne": {
         "redAndRedMedical": "0.0000",
         "amberAndAmberMedical": "0.0000",
@@ -55,7 +49,7 @@
       "commsPricePerTonne": "0.0012"
     },
     {
-      "materialName": "Steel",
+      "material": "Steel",
       "disposalPricePerTonne": {
         "redAndRedMedical": "0.0000",
         "amberAndAmberMedical": "0.0000",
@@ -64,7 +58,7 @@
       "commsPricePerTonne": "0.0057"
     },
     {
-      "materialName": "Wood",
+      "material": "Wood",
       "disposalPricePerTonne": {
         "redAndRedMedical": "0.0000",
         "amberAndAmberMedical": "0.0000",
@@ -73,7 +67,7 @@
       "commsPricePerTonne": "0.0006"
     },
     {
-      "materialName": "Other materials",
+      "material": "Other materials",
       "disposalPricePerTonne": {
         "redAndRedMedical": "0.0000",
         "amberAndAmberMedical": "0.0000",
@@ -88,15 +82,7 @@
       "producerID": "100001",
       "subsidiaryID": "",
       "level": 1,
-      "totalBill": {
-        "base": "36773124.48",
-        "badDebtProvision": "1470924.98",
-        "total": "38244049.46",
-        "england": "20682427.50",
-        "wales": "4659456.29",
-        "scotland": "9272251.41",
-        "northernIreland": "3629914.26"
-      },
+      "totalBill": "38244049.46",
       "invoice": {
         "instruction": "INITIAL",
         "suggestedAmount": "38244049.46",
@@ -104,7 +90,7 @@
       },
       "disposalFeesByMaterial": [
         {
-          "materialName": "Aluminium",
+          "material": "Aluminium",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 6384.989,
           "publicBinTonnage": 0,
@@ -121,7 +107,7 @@
           "northernIreland": "2.90"
         },
         {
-          "materialName": "Fibre composite",
+          "material": "Fibre composite",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -138,7 +124,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Glass",
+          "material": "Glass",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -156,7 +142,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Paper or card",
+          "material": "Paper or card",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -173,7 +159,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Plastic",
+          "material": "Plastic",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -190,7 +176,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Steel",
+          "material": "Steel",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -207,7 +193,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Wood",
+          "material": "Wood",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -224,7 +210,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Other materials",
+          "material": "Other materials",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -252,57 +238,27 @@
       },
       "commsCostsByMaterial": {
         "base": "8.30",
-        "badDebtProvision": "0.33",
-        "total": "8.63",
-        "england": "4.67",
-        "wales": "1.05",
-        "scotland": "2.09",
-        "northernIreland": "0.82"
+        "badDebtProvision": "0.33"
       },
       "commsCostsUKWide": {
         "base": "31071.70",
-        "badDebtProvision": "1242.87",
-        "total": "32314.57",
-        "england": "17465.62",
-        "wales": "3936.92",
-        "scotland": "7842.03",
-        "northernIreland": "3070.00"
+        "badDebtProvision": "1242.87"
       },
       "commsCostsByCountry": {
         "base": "36133.79",
-        "badDebtProvision": "1445.35",
-        "total": "37579.14",
-        "england": "32314.57",
-        "wales": "4717.72",
-        "scotland": "388.32",
-        "northernIreland": "158.53"
+        "badDebtProvision": "1445.35"
       },
       "saOperatingCosts": {
         "base": "18352940.66",
-        "badDebtProvision": "734117.63",
-        "total": "19087058.29",
-        "england": "10316313.07",
-        "wales": "2325398.44",
-        "scotland": "4632005.78",
-        "northernIreland": "1813341.00"
+        "badDebtProvision": "734117.63"
       },
       "laDataPrepCosts": {
         "base": "0.00",
-        "badDebtProvision": "0.00",
-        "total": "0.00",
-        "england": "0.00",
-        "wales": "0.00",
-        "scotland": "0.00",
-        "northernIreland": "0.00"
+        "badDebtProvision": "0.00"
       },
       "saSetUpCosts": {
         "base": "18352940.66",
-        "badDebtProvision": "734117.63",
-        "total": "19087058.29",
-        "england": "10316313.07",
-        "wales": "2325398.44",
-        "scotland": "4632005.78",
-        "northernIreland": "1813341.00"
+        "badDebtProvision": "734117.63"
       }
     },
     {
@@ -310,15 +266,7 @@
       "producerID": "100001",
       "subsidiaryID": "100001",
       "level": 2,
-      "totalBill": {
-        "base": "10342411.56",
-        "badDebtProvision": "413696.46",
-        "total": "10756108.03",
-        "england": "5816916.03",
-        "wales": "1310468.32",
-        "scotland": "2607813.22",
-        "northernIreland": "1020910.45"
-      },
+      "totalBill": "10756108.03",
       "invoice": {
         "instruction": "-",
         "suggestedAmount": null,
@@ -326,7 +274,7 @@
       },
       "disposalFeesByMaterial": [
         {
-          "materialName": "Aluminium",
+          "material": "Aluminium",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 1795.773,
           "publicBinTonnage": 0,
@@ -343,7 +291,7 @@
           "northernIreland": "0.82"
         },
         {
-          "materialName": "Fibre composite",
+          "material": "Fibre composite",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -360,7 +308,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Glass",
+          "material": "Glass",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -378,7 +326,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Paper or card",
+          "material": "Paper or card",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -395,7 +343,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Plastic",
+          "material": "Plastic",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -412,7 +360,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Steel",
+          "material": "Steel",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -429,7 +377,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Wood",
+          "material": "Wood",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -446,7 +394,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Other materials",
+          "material": "Other materials",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -474,57 +422,27 @@
       },
       "commsCostsByMaterial": {
         "base": "2.33",
-        "badDebtProvision": "0.09",
-        "total": "2.43",
-        "england": "1.31",
-        "wales": "0.30",
-        "scotland": "0.59",
-        "northernIreland": "0.23"
+        "badDebtProvision": "0.09"
       },
       "commsCostsUKWide": {
         "base": "8738.89",
-        "badDebtProvision": "349.56",
-        "total": "9088.45",
-        "england": "4912.19",
-        "wales": "1107.26",
-        "scotland": "2205.56",
-        "northernIreland": "863.44"
+        "badDebtProvision": "349.56"
       },
       "commsCostsByCountry": {
         "base": "10162.60",
-        "badDebtProvision": "406.50",
-        "total": "10569.10",
-        "england": "9088.45",
-        "wales": "1326.85",
-        "scotland": "109.22",
-        "northernIreland": "44.59"
+        "badDebtProvision": "406.50"
       },
       "saOperatingCosts": {
         "base": "5161749.74",
-        "badDebtProvision": "206469.99",
-        "total": "5368219.73",
-        "england": "2901454.72",
-        "wales": "654016.43",
-        "scotland": "1302747.88",
-        "northernIreland": "510000.69"
+        "badDebtProvision": "206469.99"
       },
       "laDataPrepCosts": {
         "base": "0.00",
-        "badDebtProvision": "0.00",
-        "total": "0.00",
-        "england": "0.00",
-        "wales": "0.00",
-        "scotland": "0.00",
-        "northernIreland": "0.00"
+        "badDebtProvision": "0.00"
       },
       "saSetUpCosts": {
         "base": "5161749.74",
-        "badDebtProvision": "206469.99",
-        "total": "5368219.73",
-        "england": "2901454.72",
-        "wales": "654016.43",
-        "scotland": "1302747.88",
-        "northernIreland": "510000.69"
+        "badDebtProvision": "206469.99"
       }
     },
     {
@@ -532,15 +450,7 @@
       "producerID": "100001",
       "subsidiaryID": "100002",
       "level": 2,
-      "totalBill": {
-        "base": "26430712.92",
-        "badDebtProvision": "1057228.52",
-        "total": "27487941.43",
-        "england": "14865511.47",
-        "wales": "3348987.97",
-        "scotland": "6664438.19",
-        "northernIreland": "2609003.80"
-      },
+      "totalBill": "27487941.43",
       "invoice": {
         "instruction": "-",
         "suggestedAmount": null,
@@ -548,7 +458,7 @@
       },
       "disposalFeesByMaterial": [
         {
-          "materialName": "Aluminium",
+          "material": "Aluminium",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 4589.216,
           "publicBinTonnage": 0,
@@ -565,7 +475,7 @@
           "northernIreland": "2.09"
         },
         {
-          "materialName": "Fibre composite",
+          "material": "Fibre composite",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -582,7 +492,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Glass",
+          "material": "Glass",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -600,7 +510,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Paper or card",
+          "material": "Paper or card",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -617,7 +527,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Plastic",
+          "material": "Plastic",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -634,7 +544,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Steel",
+          "material": "Steel",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -651,7 +561,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Wood",
+          "material": "Wood",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -668,7 +578,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Other materials",
+          "material": "Other materials",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -696,57 +606,27 @@
       },
       "commsCostsByMaterial": {
         "base": "5.97",
-        "badDebtProvision": "0.24",
-        "total": "6.20",
-        "england": "3.35",
-        "wales": "0.76",
-        "scotland": "1.51",
-        "northernIreland": "0.59"
+        "badDebtProvision": "0.24"
       },
       "commsCostsUKWide": {
         "base": "22332.81",
-        "badDebtProvision": "893.31",
-        "total": "23226.12",
-        "england": "12553.43",
-        "wales": "2829.67",
-        "scotland": "5636.47",
-        "northernIreland": "2206.57"
+        "badDebtProvision": "893.31"
       },
       "commsCostsByCountry": {
         "base": "25971.19",
-        "badDebtProvision": "1038.85",
-        "total": "27010.04",
-        "england": "23226.12",
-        "wales": "3390.86",
-        "scotland": "279.11",
-        "northernIreland": "113.94"
+        "badDebtProvision": "1038.85"
       },
       "saOperatingCosts": {
         "base": "13191190.92",
-        "badDebtProvision": "527647.64",
-        "total": "13718838.56",
-        "england": "7414858.35",
-        "wales": "1671382.00",
-        "scotland": "3329257.89",
-        "northernIreland": "1303340.31"
+        "badDebtProvision": "527647.64"
       },
       "laDataPrepCosts": {
         "base": "0.00",
-        "badDebtProvision": "0.00",
-        "total": "0.00",
-        "england": "0.00",
-        "wales": "0.00",
-        "scotland": "0.00",
-        "northernIreland": "0.00"
+        "badDebtProvision": "0.00"
       },
       "saSetUpCosts": {
         "base": "13191190.92",
-        "badDebtProvision": "527647.64",
-        "total": "13718838.56",
-        "england": "7414858.35",
-        "wales": "1671382.00",
-        "scotland": "3329257.89",
-        "northernIreland": "1303340.31"
+        "badDebtProvision": "527647.64"
       }
     },
     {
@@ -754,15 +634,7 @@
       "producerID": "100002",
       "subsidiaryID": "",
       "level": 1,
-      "totalBill": {
-        "base": "1728933.04",
-        "badDebtProvision": "69157.32",
-        "total": "1798090.36",
-        "england": "972409.41",
-        "wales": "219069.99",
-        "scotland": "435946.14",
-        "northernIreland": "170664.82"
-      },
+      "totalBill": "1798090.36",
       "invoice": {
         "instruction": "INITIAL",
         "suggestedAmount": "1798090.36",
@@ -770,7 +642,7 @@
       },
       "disposalFeesByMaterial": [
         {
-          "materialName": "Aluminium",
+          "material": "Aluminium",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 300.198,
           "publicBinTonnage": 0,
@@ -787,7 +659,7 @@
           "northernIreland": "0.14"
         },
         {
-          "materialName": "Fibre composite",
+          "material": "Fibre composite",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -804,7 +676,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Glass",
+          "material": "Glass",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -822,7 +694,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Paper or card",
+          "material": "Paper or card",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -839,7 +711,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Plastic",
+          "material": "Plastic",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -856,7 +728,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Steel",
+          "material": "Steel",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -873,7 +745,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Wood",
+          "material": "Wood",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -890,7 +762,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Other materials",
+          "material": "Other materials",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -918,57 +790,27 @@
       },
       "commsCostsByMaterial": {
         "base": "0.39",
-        "badDebtProvision": "0.02",
-        "total": "0.41",
-        "england": "0.22",
-        "wales": "0.05",
-        "scotland": "0.10",
-        "northernIreland": "0.04"
+        "badDebtProvision": "0.02"
       },
       "commsCostsUKWide": {
         "base": "1460.87",
-        "badDebtProvision": "58.43",
-        "total": "1519.31",
-        "england": "821.17",
-        "wales": "185.10",
-        "scotland": "368.70",
-        "northernIreland": "144.34"
+        "badDebtProvision": "58.43"
       },
       "commsCostsByCountry": {
         "base": "1698.87",
-        "badDebtProvision": "67.95",
-        "total": "1766.83",
-        "england": "1519.31",
-        "wales": "221.81",
-        "scotland": "18.26",
-        "northernIreland": "7.45"
+        "badDebtProvision": "67.95"
       },
       "saOperatingCosts": {
         "base": "862885.76",
-        "badDebtProvision": "34515.43",
-        "total": "897401.19",
-        "england": "485033.97",
-        "wales": "109331.43",
-        "scotland": "217779.37",
-        "northernIreland": "85256.43"
+        "badDebtProvision": "34515.43"
       },
       "laDataPrepCosts": {
         "base": "0.00",
-        "badDebtProvision": "0.00",
-        "total": "0.00",
-        "england": "0.00",
-        "wales": "0.00",
-        "scotland": "0.00",
-        "northernIreland": "0.00"
+        "badDebtProvision": "0.00"
       },
       "saSetUpCosts": {
         "base": "862885.76",
-        "badDebtProvision": "34515.43",
-        "total": "897401.19",
-        "england": "485033.97",
-        "wales": "109331.43",
-        "scotland": "217779.37",
-        "northernIreland": "85256.43"
+        "badDebtProvision": "34515.43"
       }
     },
     {
@@ -976,15 +818,7 @@
       "producerID": "100002",
       "subsidiaryID": "100002",
       "level": 2,
-      "totalBill": {
-        "base": "576501.07",
-        "badDebtProvision": "23060.04",
-        "total": "599561.11",
-        "england": "324243.36",
-        "wales": "73047.41",
-        "scotland": "145363.30",
-        "northernIreland": "56907.03"
-      },
+      "totalBill": "599561.11",
       "invoice": {
         "instruction": "-",
         "suggestedAmount": null,
@@ -992,7 +826,7 @@
       },
       "disposalFeesByMaterial": [
         {
-          "materialName": "Aluminium",
+          "material": "Aluminium",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 100.099,
           "publicBinTonnage": 0,
@@ -1009,7 +843,7 @@
           "northernIreland": "0.05"
         },
         {
-          "materialName": "Fibre composite",
+          "material": "Fibre composite",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1026,7 +860,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Glass",
+          "material": "Glass",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1044,7 +878,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Paper or card",
+          "material": "Paper or card",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1061,7 +895,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Plastic",
+          "material": "Plastic",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1078,7 +912,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Steel",
+          "material": "Steel",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1095,7 +929,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Wood",
+          "material": "Wood",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1112,7 +946,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Other materials",
+          "material": "Other materials",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1140,57 +974,27 @@
       },
       "commsCostsByMaterial": {
         "base": "0.13",
-        "badDebtProvision": "0.01",
-        "total": "0.14",
-        "england": "0.07",
-        "wales": "0.02",
-        "scotland": "0.03",
-        "northernIreland": "0.01"
+        "badDebtProvision": "0.01"
       },
       "commsCostsUKWide": {
         "base": "487.12",
-        "badDebtProvision": "19.48",
-        "total": "506.60",
-        "england": "273.81",
-        "wales": "61.72",
-        "scotland": "122.94",
-        "northernIreland": "48.13"
+        "badDebtProvision": "19.48"
       },
       "commsCostsByCountry": {
         "base": "566.48",
-        "badDebtProvision": "22.66",
-        "total": "589.14",
-        "england": "506.60",
-        "wales": "73.96",
-        "scotland": "6.09",
-        "northernIreland": "2.49"
+        "badDebtProvision": "22.66"
       },
       "saOperatingCosts": {
         "base": "287723.44",
-        "badDebtProvision": "11508.94",
-        "total": "299232.38",
-        "england": "161731.31",
-        "wales": "36455.83",
-        "scotland": "72617.06",
-        "northernIreland": "28428.18"
+        "badDebtProvision": "11508.94"
       },
       "laDataPrepCosts": {
         "base": "0.00",
-        "badDebtProvision": "0.00",
-        "total": "0.00",
-        "england": "0.00",
-        "wales": "0.00",
-        "scotland": "0.00",
-        "northernIreland": "0.00"
+        "badDebtProvision": "0.00"
       },
       "saSetUpCosts": {
         "base": "287723.44",
-        "badDebtProvision": "11508.94",
-        "total": "299232.38",
-        "england": "161731.31",
-        "wales": "36455.83",
-        "scotland": "72617.06",
-        "northernIreland": "28428.18"
+        "badDebtProvision": "11508.94"
       }
     },
     {
@@ -1198,15 +1002,7 @@
       "producerID": "100002",
       "subsidiaryID": "100003",
       "level": 2,
-      "totalBill": {
-        "base": "1152431.97",
-        "badDebtProvision": "46097.28",
-        "total": "1198529.25",
-        "england": "648166.04",
-        "wales": "146022.58",
-        "scotland": "290582.84",
-        "northernIreland": "113757.79"
-      },
+      "totalBill": "1198529.25",
       "invoice": {
         "instruction": "-",
         "suggestedAmount": null,
@@ -1214,7 +1010,7 @@
       },
       "disposalFeesByMaterial": [
         {
-          "materialName": "Aluminium",
+          "material": "Aluminium",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 200.099,
           "publicBinTonnage": 0,
@@ -1231,7 +1027,7 @@
           "northernIreland": "0.09"
         },
         {
-          "materialName": "Fibre composite",
+          "material": "Fibre composite",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1248,7 +1044,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Glass",
+          "material": "Glass",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1266,7 +1062,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Paper or card",
+          "material": "Paper or card",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1283,7 +1079,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Plastic",
+          "material": "Plastic",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1300,7 +1096,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Steel",
+          "material": "Steel",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1317,7 +1113,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Wood",
+          "material": "Wood",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1334,7 +1130,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Other materials",
+          "material": "Other materials",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1362,57 +1158,27 @@
       },
       "commsCostsByMaterial": {
         "base": "0.26",
-        "badDebtProvision": "0.01",
-        "total": "0.27",
-        "england": "0.15",
-        "wales": "0.03",
-        "scotland": "0.07",
-        "northernIreland": "0.03"
+        "badDebtProvision": "0.01"
       },
       "commsCostsUKWide": {
         "base": "973.76",
-        "badDebtProvision": "38.95",
-        "total": "1012.71",
-        "england": "547.35",
-        "wales": "123.38",
-        "scotland": "245.76",
-        "northernIreland": "96.21"
+        "badDebtProvision": "38.95"
       },
       "commsCostsByCountry": {
         "base": "1132.40",
-        "badDebtProvision": "45.30",
-        "total": "1177.69",
-        "england": "1012.71",
-        "wales": "147.85",
-        "scotland": "12.17",
-        "northernIreland": "4.97"
+        "badDebtProvision": "45.30"
       },
       "saOperatingCosts": {
         "base": "575162.32",
-        "badDebtProvision": "23006.49",
-        "total": "598168.81",
-        "england": "323302.66",
-        "wales": "72875.60",
-        "scotland": "145162.31",
-        "northernIreland": "56828.25"
+        "badDebtProvision": "23006.49"
       },
       "laDataPrepCosts": {
         "base": "0.00",
-        "badDebtProvision": "0.00",
-        "total": "0.00",
-        "england": "0.00",
-        "wales": "0.00",
-        "scotland": "0.00",
-        "northernIreland": "0.00"
+        "badDebtProvision": "0.00"
       },
       "saSetUpCosts": {
         "base": "575162.32",
-        "badDebtProvision": "23006.49",
-        "total": "598168.81",
-        "england": "323302.66",
-        "wales": "72875.60",
-        "scotland": "145162.31",
-        "northernIreland": "56828.25"
+        "badDebtProvision": "23006.49"
       }
     },
     {
@@ -1420,15 +1186,7 @@
       "producerID": "100004",
       "subsidiaryID": "",
       "level": 1,
-      "totalBill": {
-        "base": "3457866.07",
-        "badDebtProvision": "138314.64",
-        "total": "3596180.72",
-        "england": "1944818.81",
-        "wales": "438139.97",
-        "scotland": "871892.29",
-        "northernIreland": "341329.64"
-      },
+      "totalBill": "3596180.72",
       "invoice": {
         "instruction": "INITIAL",
         "suggestedAmount": "3596180.72",
@@ -1436,7 +1194,7 @@
       },
       "disposalFeesByMaterial": [
         {
-          "materialName": "Aluminium",
+          "material": "Aluminium",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 600.396,
           "publicBinTonnage": 0,
@@ -1453,7 +1211,7 @@
           "northernIreland": "0.27"
         },
         {
-          "materialName": "Fibre composite",
+          "material": "Fibre composite",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1470,7 +1228,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Glass",
+          "material": "Glass",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1488,7 +1246,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Paper or card",
+          "material": "Paper or card",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1505,7 +1263,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Plastic",
+          "material": "Plastic",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1522,7 +1280,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Steel",
+          "material": "Steel",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1539,7 +1297,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Wood",
+          "material": "Wood",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1556,7 +1314,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Other materials",
+          "material": "Other materials",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1584,57 +1342,27 @@
       },
       "commsCostsByMaterial": {
         "base": "0.78",
-        "badDebtProvision": "0.03",
-        "total": "0.81",
-        "england": "0.44",
-        "wales": "0.10",
-        "scotland": "0.20",
-        "northernIreland": "0.08"
+        "badDebtProvision": "0.03"
       },
       "commsCostsUKWide": {
         "base": "2921.75",
-        "badDebtProvision": "116.87",
-        "total": "3038.62",
-        "england": "1642.33",
-        "wales": "370.20",
-        "scotland": "737.41",
-        "northernIreland": "288.68"
+        "badDebtProvision": "116.87"
       },
       "commsCostsByCountry": {
         "base": "3397.75",
-        "badDebtProvision": "135.91",
-        "total": "3533.66",
-        "england": "3038.62",
-        "wales": "443.62",
-        "scotland": "36.51",
-        "northernIreland": "14.91"
+        "badDebtProvision": "135.91"
       },
       "saOperatingCosts": {
         "base": "1725771.52",
-        "badDebtProvision": "69030.86",
-        "total": "1794802.38",
-        "england": "970067.94",
-        "wales": "218662.85",
-        "scotland": "435558.74",
-        "northernIreland": "170512.85"
+        "badDebtProvision": "69030.86"
       },
       "laDataPrepCosts": {
         "base": "0.00",
-        "badDebtProvision": "0.00",
-        "total": "0.00",
-        "england": "0.00",
-        "wales": "0.00",
-        "scotland": "0.00",
-        "northernIreland": "0.00"
+        "badDebtProvision": "0.00"
       },
       "saSetUpCosts": {
         "base": "1725771.52",
-        "badDebtProvision": "69030.86",
-        "total": "1794802.38",
-        "england": "970067.94",
-        "wales": "218662.85",
-        "scotland": "435558.74",
-        "northernIreland": "170512.85"
+        "badDebtProvision": "69030.86"
       }
     },
     {
@@ -1642,15 +1370,7 @@
       "producerID": "100004",
       "subsidiaryID": "100004",
       "level": 2,
-      "totalBill": {
-        "base": "1153002.14",
-        "badDebtProvision": "46120.09",
-        "total": "1199122.22",
-        "england": "648486.73",
-        "wales": "146094.82",
-        "scotland": "290726.61",
-        "northernIreland": "113814.07"
-      },
+      "totalBill": "1199122.22",
       "invoice": {
         "instruction": "-",
         "suggestedAmount": null,
@@ -1658,7 +1378,7 @@
       },
       "disposalFeesByMaterial": [
         {
-          "materialName": "Aluminium",
+          "material": "Aluminium",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 200.198,
           "publicBinTonnage": 0,
@@ -1675,7 +1395,7 @@
           "northernIreland": "0.09"
         },
         {
-          "materialName": "Fibre composite",
+          "material": "Fibre composite",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1692,7 +1412,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Glass",
+          "material": "Glass",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1710,7 +1430,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Paper or card",
+          "material": "Paper or card",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1727,7 +1447,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Plastic",
+          "material": "Plastic",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1744,7 +1464,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Steel",
+          "material": "Steel",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1761,7 +1481,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Wood",
+          "material": "Wood",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1778,7 +1498,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Other materials",
+          "material": "Other materials",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1806,57 +1526,27 @@
       },
       "commsCostsByMaterial": {
         "base": "0.26",
-        "badDebtProvision": "0.01",
-        "total": "0.27",
-        "england": "0.15",
-        "wales": "0.03",
-        "scotland": "0.07",
-        "northernIreland": "0.03"
+        "badDebtProvision": "0.01"
       },
       "commsCostsUKWide": {
         "base": "974.24",
-        "badDebtProvision": "38.97",
-        "total": "1013.21",
-        "england": "547.63",
-        "wales": "123.44",
-        "scotland": "245.88",
-        "northernIreland": "96.26"
+        "badDebtProvision": "38.97"
       },
       "commsCostsByCountry": {
         "base": "1132.96",
-        "badDebtProvision": "45.32",
-        "total": "1178.27",
-        "england": "1013.21",
-        "wales": "147.92",
-        "scotland": "12.18",
-        "northernIreland": "4.97"
+        "badDebtProvision": "45.32"
       },
       "saOperatingCosts": {
         "base": "575446.88",
-        "badDebtProvision": "23017.88",
-        "total": "598464.76",
-        "england": "323462.62",
-        "wales": "72911.66",
-        "scotland": "145234.13",
-        "northernIreland": "56856.36"
+        "badDebtProvision": "23017.88"
       },
       "laDataPrepCosts": {
         "base": "0.00",
-        "badDebtProvision": "0.00",
-        "total": "0.00",
-        "england": "0.00",
-        "wales": "0.00",
-        "scotland": "0.00",
-        "northernIreland": "0.00"
+        "badDebtProvision": "0.00"
       },
       "saSetUpCosts": {
         "base": "575446.88",
-        "badDebtProvision": "23017.88",
-        "total": "598464.76",
-        "england": "323462.62",
-        "wales": "72911.66",
-        "scotland": "145234.13",
-        "northernIreland": "56856.36"
+        "badDebtProvision": "23017.88"
       }
     },
     {
@@ -1864,15 +1554,7 @@
       "producerID": "100004",
       "subsidiaryID": "100005",
       "level": 2,
-      "totalBill": {
-        "base": "2304863.93",
-        "badDebtProvision": "92194.56",
-        "total": "2397058.49",
-        "england": "1296332.09",
-        "wales": "292045.15",
-        "scotland": "581165.68",
-        "northernIreland": "227515.57"
-      },
+      "totalBill": "2397058.49",
       "invoice": {
         "instruction": "-",
         "suggestedAmount": null,
@@ -1880,7 +1562,7 @@
       },
       "disposalFeesByMaterial": [
         {
-          "materialName": "Aluminium",
+          "material": "Aluminium",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 400.198,
           "publicBinTonnage": 0,
@@ -1897,7 +1579,7 @@
           "northernIreland": "0.18"
         },
         {
-          "materialName": "Fibre composite",
+          "material": "Fibre composite",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1914,7 +1596,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Glass",
+          "material": "Glass",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1932,7 +1614,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Paper or card",
+          "material": "Paper or card",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1949,7 +1631,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Plastic",
+          "material": "Plastic",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1966,7 +1648,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Steel",
+          "material": "Steel",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -1983,7 +1665,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Wood",
+          "material": "Wood",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -2000,7 +1682,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Other materials",
+          "material": "Other materials",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -2028,57 +1710,27 @@
       },
       "commsCostsByMaterial": {
         "base": "0.52",
-        "badDebtProvision": "0.02",
-        "total": "0.54",
-        "england": "0.29",
-        "wales": "0.07",
-        "scotland": "0.13",
-        "northernIreland": "0.05"
+        "badDebtProvision": "0.02"
       },
       "commsCostsUKWide": {
         "base": "1947.51",
-        "badDebtProvision": "77.90",
-        "total": "2025.41",
-        "england": "1094.71",
-        "wales": "246.76",
-        "scotland": "491.52",
-        "northernIreland": "192.42"
+        "badDebtProvision": "77.90"
       },
       "commsCostsByCountry": {
         "base": "2264.79",
-        "badDebtProvision": "90.59",
-        "total": "2355.38",
-        "england": "2025.41",
-        "wales": "295.70",
-        "scotland": "24.34",
-        "northernIreland": "9.94"
+        "badDebtProvision": "90.59"
       },
       "saOperatingCosts": {
         "base": "1150324.64",
-        "badDebtProvision": "46012.99",
-        "total": "1196337.62",
-        "england": "646605.32",
-        "wales": "145751.20",
-        "scotland": "290324.61",
-        "northernIreland": "113656.49"
+        "badDebtProvision": "46012.99"
       },
       "laDataPrepCosts": {
         "base": "0.00",
-        "badDebtProvision": "0.00",
-        "total": "0.00",
-        "england": "0.00",
-        "wales": "0.00",
-        "scotland": "0.00",
-        "northernIreland": "0.00"
+        "badDebtProvision": "0.00"
       },
       "saSetUpCosts": {
         "base": "1150324.64",
-        "badDebtProvision": "46012.99",
-        "total": "1196337.62",
-        "england": "646605.32",
-        "wales": "145751.20",
-        "scotland": "290324.61",
-        "northernIreland": "113656.49"
+        "badDebtProvision": "46012.99"
       }
     },
     {
@@ -2086,15 +1738,7 @@
       "producerID": "100006",
       "subsidiaryID": "",
       "level": 1,
-      "totalBill": {
-        "base": "5158457.55",
-        "badDebtProvision": "206338.30",
-        "total": "5364795.85",
-        "england": "2901287.99",
-        "wales": "653618.85",
-        "scotland": "1300692.18",
-        "northernIreland": "509196.84"
-      },
+      "totalBill": "5364795.85",
       "invoice": {
         "instruction": "INITIAL",
         "suggestedAmount": "5364795.85",
@@ -2102,7 +1746,7 @@
       },
       "disposalFeesByMaterial": [
         {
-          "materialName": "Aluminium",
+          "material": "Aluminium",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 895.673,
           "publicBinTonnage": 0,
@@ -2119,7 +1763,7 @@
           "northernIreland": "0.41"
         },
         {
-          "materialName": "Fibre composite",
+          "material": "Fibre composite",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -2136,7 +1780,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Glass",
+          "material": "Glass",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -2154,7 +1798,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Paper or card",
+          "material": "Paper or card",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -2171,7 +1815,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Plastic",
+          "material": "Plastic",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -2188,7 +1832,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Steel",
+          "material": "Steel",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -2205,7 +1849,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Wood",
+          "material": "Wood",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -2222,7 +1866,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Other materials",
+          "material": "Other materials",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -2250,57 +1894,27 @@
       },
       "commsCostsByMaterial": {
         "base": "1.16",
-        "badDebtProvision": "0.05",
-        "total": "1.21",
-        "england": "0.65",
-        "wales": "0.15",
-        "scotland": "0.29",
-        "northernIreland": "0.12"
+        "badDebtProvision": "0.05"
       },
       "commsCostsUKWide": {
         "base": "4358.67",
-        "badDebtProvision": "174.35",
-        "total": "4533.02",
-        "england": "2450.04",
-        "wales": "552.26",
-        "scotland": "1100.06",
-        "northernIreland": "430.65"
+        "badDebtProvision": "174.35"
       },
       "commsCostsByCountry": {
         "base": "5068.77",
-        "badDebtProvision": "202.75",
-        "total": "5271.52",
-        "england": "4533.02",
-        "wales": "661.79",
-        "scotland": "54.47",
-        "northernIreland": "22.24"
+        "badDebtProvision": "202.75"
       },
       "saOperatingCosts": {
         "base": "2574512.41",
-        "badDebtProvision": "102980.50",
-        "total": "2677492.91",
-        "england": "1447150.98",
-        "wales": "326202.06",
-        "scotland": "649768.15",
-        "northernIreland": "254371.71"
+        "badDebtProvision": "102980.50"
       },
       "laDataPrepCosts": {
         "base": "0.00",
-        "badDebtProvision": "0.00",
-        "total": "0.00",
-        "england": "0.00",
-        "wales": "0.00",
-        "scotland": "0.00",
-        "northernIreland": "0.00"
+        "badDebtProvision": "0.00"
       },
       "saSetUpCosts": {
         "base": "2574512.41",
-        "badDebtProvision": "102980.50",
-        "total": "2677492.91",
-        "england": "1447150.98",
-        "wales": "326202.06",
-        "scotland": "649768.15",
-        "northernIreland": "254371.71"
+        "badDebtProvision": "102980.50"
       }
     },
     {
@@ -2308,15 +1922,7 @@
       "producerID": "100006",
       "subsidiaryID": "100006",
       "level": 2,
-      "totalBill": {
-        "base": "1720052.18",
-        "badDebtProvision": "68802.09",
-        "total": "1788854.27",
-        "england": "967414.52",
-        "wales": "217944.71",
-        "scotland": "433706.86",
-        "northernIreland": "169788.18"
-      },
+      "totalBill": "1788854.27",
       "invoice": {
         "instruction": "-",
         "suggestedAmount": null,
@@ -2324,7 +1930,7 @@
       },
       "disposalFeesByMaterial": [
         {
-          "materialName": "Aluminium",
+          "material": "Aluminium",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 298.656,
           "publicBinTonnage": 0,
@@ -2341,7 +1947,7 @@
           "northernIreland": "0.14"
         },
         {
-          "materialName": "Fibre composite",
+          "material": "Fibre composite",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -2358,7 +1964,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Glass",
+          "material": "Glass",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -2376,7 +1982,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Paper or card",
+          "material": "Paper or card",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -2393,7 +1999,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Plastic",
+          "material": "Plastic",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -2410,7 +2016,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Steel",
+          "material": "Steel",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -2427,7 +2033,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Wood",
+          "material": "Wood",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -2444,7 +2050,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Other materials",
+          "material": "Other materials",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -2472,57 +2078,27 @@
       },
       "commsCostsByMaterial": {
         "base": "0.39",
-        "badDebtProvision": "0.02",
-        "total": "0.40",
-        "england": "0.22",
-        "wales": "0.05",
-        "scotland": "0.10",
-        "northernIreland": "0.04"
+        "badDebtProvision": "0.02"
       },
       "commsCostsUKWide": {
         "base": "1453.37",
-        "badDebtProvision": "58.13",
-        "total": "1511.50",
-        "england": "816.95",
-        "wales": "184.15",
-        "scotland": "366.81",
-        "northernIreland": "143.60"
+        "badDebtProvision": "58.13"
       },
       "commsCostsByCountry": {
         "base": "1690.15",
-        "badDebtProvision": "67.61",
-        "total": "1757.75",
-        "england": "1511.50",
-        "wales": "220.67",
-        "scotland": "18.16",
-        "northernIreland": "7.41"
+        "badDebtProvision": "67.61"
       },
       "saOperatingCosts": {
         "base": "858453.45",
-        "badDebtProvision": "34338.14",
-        "total": "892791.59",
-        "england": "482542.54",
-        "wales": "108769.83",
-        "scotland": "216660.72",
-        "northernIreland": "84818.50"
+        "badDebtProvision": "34338.14"
       },
       "laDataPrepCosts": {
         "base": "0.00",
-        "badDebtProvision": "0.00",
-        "total": "0.00",
-        "england": "0.00",
-        "wales": "0.00",
-        "scotland": "0.00",
-        "northernIreland": "0.00"
+        "badDebtProvision": "0.00"
       },
       "saSetUpCosts": {
         "base": "858453.45",
-        "badDebtProvision": "34338.14",
-        "total": "892791.59",
-        "england": "482542.54",
-        "wales": "108769.83",
-        "scotland": "216660.72",
-        "northernIreland": "84818.50"
+        "badDebtProvision": "34338.14"
       }
     },
     {
@@ -2530,15 +2106,7 @@
       "producerID": "100006",
       "subsidiaryID": "100007",
       "level": 2,
-      "totalBill": {
-        "base": "3438405.37",
-        "badDebtProvision": "137536.21",
-        "total": "3575941.58",
-        "england": "1933873.47",
-        "wales": "435674.14",
-        "scotland": "866985.32",
-        "northernIreland": "339408.65"
-      },
+      "totalBill": "3575941.58",
       "invoice": {
         "instruction": "-",
         "suggestedAmount": null,
@@ -2546,7 +2114,7 @@
       },
       "disposalFeesByMaterial": [
         {
-          "materialName": "Aluminium",
+          "material": "Aluminium",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 597.017,
           "publicBinTonnage": 0,
@@ -2563,7 +2131,7 @@
           "northernIreland": "0.27"
         },
         {
-          "materialName": "Fibre composite",
+          "material": "Fibre composite",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -2580,7 +2148,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Glass",
+          "material": "Glass",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -2598,7 +2166,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Paper or card",
+          "material": "Paper or card",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -2615,7 +2183,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Plastic",
+          "material": "Plastic",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -2632,7 +2200,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Steel",
+          "material": "Steel",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -2649,7 +2217,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Wood",
+          "material": "Wood",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -2666,7 +2234,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Other materials",
+          "material": "Other materials",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -2694,57 +2262,27 @@
       },
       "commsCostsByMaterial": {
         "base": "0.78",
-        "badDebtProvision": "0.03",
-        "total": "0.81",
-        "england": "0.44",
-        "wales": "0.10",
-        "scotland": "0.20",
-        "northernIreland": "0.08"
+        "badDebtProvision": "0.03"
       },
       "commsCostsUKWide": {
         "base": "2905.30",
-        "badDebtProvision": "116.21",
-        "total": "3021.52",
-        "england": "1633.09",
-        "wales": "368.11",
-        "scotland": "733.25",
-        "northernIreland": "287.06"
+        "badDebtProvision": "116.21"
       },
       "commsCostsByCountry": {
         "base": "3378.63",
-        "badDebtProvision": "135.15",
-        "total": "3513.77",
-        "england": "3021.52",
-        "wales": "441.12",
-        "scotland": "36.31",
-        "northernIreland": "14.82"
+        "badDebtProvision": "135.15"
       },
       "saOperatingCosts": {
         "base": "1716058.96",
-        "badDebtProvision": "68642.36",
-        "total": "1784701.32",
-        "england": "964608.44",
-        "wales": "217432.23",
-        "scotland": "433107.43",
-        "northernIreland": "169553.21"
+        "badDebtProvision": "68642.36"
       },
       "laDataPrepCosts": {
         "base": "0.00",
-        "badDebtProvision": "0.00",
-        "total": "0.00",
-        "england": "0.00",
-        "wales": "0.00",
-        "scotland": "0.00",
-        "northernIreland": "0.00"
+        "badDebtProvision": "0.00"
       },
       "saSetUpCosts": {
         "base": "1716058.96",
-        "badDebtProvision": "68642.36",
-        "total": "1784701.32",
-        "england": "964608.44",
-        "wales": "217432.23",
-        "scotland": "433107.43",
-        "northernIreland": "169553.21"
+        "badDebtProvision": "68642.36"
       }
     },
     {
@@ -2752,15 +2290,7 @@
       "producerID": "100008",
       "subsidiaryID": "",
       "level": 1,
-      "totalBill": {
-        "base": "1728933.04",
-        "badDebtProvision": "69157.32",
-        "total": "1798090.36",
-        "england": "972409.41",
-        "wales": "219069.99",
-        "scotland": "435946.14",
-        "northernIreland": "170664.82"
-      },
+      "totalBill": "1798090.36",
       "invoice": {
         "instruction": "INITIAL",
         "suggestedAmount": "1798090.36",
@@ -2768,7 +2298,7 @@
       },
       "disposalFeesByMaterial": [
         {
-          "materialName": "Aluminium",
+          "material": "Aluminium",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 300.198,
           "publicBinTonnage": 0,
@@ -2785,7 +2315,7 @@
           "northernIreland": "0.14"
         },
         {
-          "materialName": "Fibre composite",
+          "material": "Fibre composite",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -2802,7 +2332,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Glass",
+          "material": "Glass",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -2820,7 +2350,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Paper or card",
+          "material": "Paper or card",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -2837,7 +2367,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Plastic",
+          "material": "Plastic",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -2854,7 +2384,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Steel",
+          "material": "Steel",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -2871,7 +2401,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Wood",
+          "material": "Wood",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -2888,7 +2418,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Other materials",
+          "material": "Other materials",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -2916,57 +2446,27 @@
       },
       "commsCostsByMaterial": {
         "base": "0.39",
-        "badDebtProvision": "0.02",
-        "total": "0.41",
-        "england": "0.22",
-        "wales": "0.05",
-        "scotland": "0.10",
-        "northernIreland": "0.04"
+        "badDebtProvision": "0.02"
       },
       "commsCostsUKWide": {
         "base": "1460.87",
-        "badDebtProvision": "58.43",
-        "total": "1519.31",
-        "england": "821.17",
-        "wales": "185.10",
-        "scotland": "368.70",
-        "northernIreland": "144.34"
+        "badDebtProvision": "58.43"
       },
       "commsCostsByCountry": {
         "base": "1698.87",
-        "badDebtProvision": "67.95",
-        "total": "1766.83",
-        "england": "1519.31",
-        "wales": "221.81",
-        "scotland": "18.26",
-        "northernIreland": "7.45"
+        "badDebtProvision": "67.95"
       },
       "saOperatingCosts": {
         "base": "862885.76",
-        "badDebtProvision": "34515.43",
-        "total": "897401.19",
-        "england": "485033.97",
-        "wales": "109331.43",
-        "scotland": "217779.37",
-        "northernIreland": "85256.43"
+        "badDebtProvision": "34515.43"
       },
       "laDataPrepCosts": {
         "base": "0.00",
-        "badDebtProvision": "0.00",
-        "total": "0.00",
-        "england": "0.00",
-        "wales": "0.00",
-        "scotland": "0.00",
-        "northernIreland": "0.00"
+        "badDebtProvision": "0.00"
       },
       "saSetUpCosts": {
         "base": "862885.76",
-        "badDebtProvision": "34515.43",
-        "total": "897401.19",
-        "england": "485033.97",
-        "wales": "109331.43",
-        "scotland": "217779.37",
-        "northernIreland": "85256.43"
+        "badDebtProvision": "34515.43"
       }
     },
     {
@@ -2974,15 +2474,7 @@
       "producerID": "100008",
       "subsidiaryID": "100008",
       "level": 2,
-      "totalBill": {
-        "base": "576501.07",
-        "badDebtProvision": "23060.04",
-        "total": "599561.11",
-        "england": "324243.36",
-        "wales": "73047.41",
-        "scotland": "145363.30",
-        "northernIreland": "56907.03"
-      },
+      "totalBill": "599561.11",
       "invoice": {
         "instruction": "-",
         "suggestedAmount": null,
@@ -2990,7 +2482,7 @@
       },
       "disposalFeesByMaterial": [
         {
-          "materialName": "Aluminium",
+          "material": "Aluminium",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 100.099,
           "publicBinTonnage": 0,
@@ -3007,7 +2499,7 @@
           "northernIreland": "0.05"
         },
         {
-          "materialName": "Fibre composite",
+          "material": "Fibre composite",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3024,7 +2516,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Glass",
+          "material": "Glass",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3042,7 +2534,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Paper or card",
+          "material": "Paper or card",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3059,7 +2551,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Plastic",
+          "material": "Plastic",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3076,7 +2568,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Steel",
+          "material": "Steel",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3093,7 +2585,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Wood",
+          "material": "Wood",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3110,7 +2602,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Other materials",
+          "material": "Other materials",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3138,57 +2630,27 @@
       },
       "commsCostsByMaterial": {
         "base": "0.13",
-        "badDebtProvision": "0.01",
-        "total": "0.14",
-        "england": "0.07",
-        "wales": "0.02",
-        "scotland": "0.03",
-        "northernIreland": "0.01"
+        "badDebtProvision": "0.01"
       },
       "commsCostsUKWide": {
         "base": "487.12",
-        "badDebtProvision": "19.48",
-        "total": "506.60",
-        "england": "273.81",
-        "wales": "61.72",
-        "scotland": "122.94",
-        "northernIreland": "48.13"
+        "badDebtProvision": "19.48"
       },
       "commsCostsByCountry": {
         "base": "566.48",
-        "badDebtProvision": "22.66",
-        "total": "589.14",
-        "england": "506.60",
-        "wales": "73.96",
-        "scotland": "6.09",
-        "northernIreland": "2.49"
+        "badDebtProvision": "22.66"
       },
       "saOperatingCosts": {
         "base": "287723.44",
-        "badDebtProvision": "11508.94",
-        "total": "299232.38",
-        "england": "161731.31",
-        "wales": "36455.83",
-        "scotland": "72617.06",
-        "northernIreland": "28428.18"
+        "badDebtProvision": "11508.94"
       },
       "laDataPrepCosts": {
         "base": "0.00",
-        "badDebtProvision": "0.00",
-        "total": "0.00",
-        "england": "0.00",
-        "wales": "0.00",
-        "scotland": "0.00",
-        "northernIreland": "0.00"
+        "badDebtProvision": "0.00"
       },
       "saSetUpCosts": {
         "base": "287723.44",
-        "badDebtProvision": "11508.94",
-        "total": "299232.38",
-        "england": "161731.31",
-        "wales": "36455.83",
-        "scotland": "72617.06",
-        "northernIreland": "28428.18"
+        "badDebtProvision": "11508.94"
       }
     },
     {
@@ -3196,15 +2658,7 @@
       "producerID": "100008",
       "subsidiaryID": "100009",
       "level": 2,
-      "totalBill": {
-        "base": "1152431.97",
-        "badDebtProvision": "46097.28",
-        "total": "1198529.25",
-        "england": "648166.04",
-        "wales": "146022.58",
-        "scotland": "290582.84",
-        "northernIreland": "113757.79"
-      },
+      "totalBill": "1198529.25",
       "invoice": {
         "instruction": "-",
         "suggestedAmount": null,
@@ -3212,7 +2666,7 @@
       },
       "disposalFeesByMaterial": [
         {
-          "materialName": "Aluminium",
+          "material": "Aluminium",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 200.099,
           "publicBinTonnage": 0,
@@ -3229,7 +2683,7 @@
           "northernIreland": "0.09"
         },
         {
-          "materialName": "Fibre composite",
+          "material": "Fibre composite",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3246,7 +2700,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Glass",
+          "material": "Glass",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3264,7 +2718,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Paper or card",
+          "material": "Paper or card",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3281,7 +2735,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Plastic",
+          "material": "Plastic",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3298,7 +2752,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Steel",
+          "material": "Steel",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3315,7 +2769,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Wood",
+          "material": "Wood",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3332,7 +2786,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Other materials",
+          "material": "Other materials",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3360,57 +2814,27 @@
       },
       "commsCostsByMaterial": {
         "base": "0.26",
-        "badDebtProvision": "0.01",
-        "total": "0.27",
-        "england": "0.15",
-        "wales": "0.03",
-        "scotland": "0.07",
-        "northernIreland": "0.03"
+        "badDebtProvision": "0.01"
       },
       "commsCostsUKWide": {
         "base": "973.76",
-        "badDebtProvision": "38.95",
-        "total": "1012.71",
-        "england": "547.35",
-        "wales": "123.38",
-        "scotland": "245.76",
-        "northernIreland": "96.21"
+        "badDebtProvision": "38.95"
       },
       "commsCostsByCountry": {
         "base": "1132.40",
-        "badDebtProvision": "45.30",
-        "total": "1177.69",
-        "england": "1012.71",
-        "wales": "147.85",
-        "scotland": "12.17",
-        "northernIreland": "4.97"
+        "badDebtProvision": "45.30"
       },
       "saOperatingCosts": {
         "base": "575162.32",
-        "badDebtProvision": "23006.49",
-        "total": "598168.81",
-        "england": "323302.66",
-        "wales": "72875.60",
-        "scotland": "145162.31",
-        "northernIreland": "56828.25"
+        "badDebtProvision": "23006.49"
       },
       "laDataPrepCosts": {
         "base": "0.00",
-        "badDebtProvision": "0.00",
-        "total": "0.00",
-        "england": "0.00",
-        "wales": "0.00",
-        "scotland": "0.00",
-        "northernIreland": "0.00"
+        "badDebtProvision": "0.00"
       },
       "saSetUpCosts": {
         "base": "575162.32",
-        "badDebtProvision": "23006.49",
-        "total": "598168.81",
-        "england": "323302.66",
-        "wales": "72875.60",
-        "scotland": "145162.31",
-        "northernIreland": "56828.25"
+        "badDebtProvision": "23006.49"
       }
     },
     {
@@ -3418,15 +2842,7 @@
       "producerID": "200001",
       "subsidiaryID": "",
       "level": 1,
-      "totalBill": {
-        "base": "2536382.40",
-        "badDebtProvision": "101455.30",
-        "total": "2637837.69",
-        "england": "1426545.77",
-        "wales": "321380.44",
-        "scotland": "639542.48",
-        "northernIreland": "250369.01"
-      },
+      "totalBill": "2637837.69",
       "invoice": {
         "instruction": "INITIAL",
         "suggestedAmount": "2637837.69",
@@ -3434,7 +2850,7 @@
       },
       "disposalFeesByMaterial": [
         {
-          "materialName": "Aluminium",
+          "material": "Aluminium",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 440.397,
           "publicBinTonnage": 0,
@@ -3451,7 +2867,7 @@
           "northernIreland": "0.20"
         },
         {
-          "materialName": "Fibre composite",
+          "material": "Fibre composite",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3468,7 +2884,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Glass",
+          "material": "Glass",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3486,7 +2902,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Paper or card",
+          "material": "Paper or card",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3503,7 +2919,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Plastic",
+          "material": "Plastic",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3520,7 +2936,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Steel",
+          "material": "Steel",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3537,7 +2953,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Wood",
+          "material": "Wood",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3554,7 +2970,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Other materials",
+          "material": "Other materials",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3582,57 +2998,27 @@
       },
       "commsCostsByMaterial": {
         "base": "0.57",
-        "badDebtProvision": "0.02",
-        "total": "0.60",
-        "england": "0.32",
-        "wales": "0.07",
-        "scotland": "0.14",
-        "northernIreland": "0.06"
+        "badDebtProvision": "0.02"
       },
       "commsCostsUKWide": {
         "base": "2143.13",
-        "badDebtProvision": "85.73",
-        "total": "2228.86",
-        "england": "1204.67",
-        "wales": "271.54",
-        "scotland": "540.89",
-        "northernIreland": "211.75"
+        "badDebtProvision": "85.73"
       },
       "commsCostsByCountry": {
         "base": "2492.28",
-        "badDebtProvision": "99.69",
-        "total": "2591.98",
-        "england": "2228.86",
-        "wales": "325.40",
-        "scotland": "26.78",
-        "northernIreland": "10.93"
+        "badDebtProvision": "99.69"
       },
       "saOperatingCosts": {
         "base": "1265872.19",
-        "badDebtProvision": "50634.89",
-        "total": "1316507.08",
-        "england": "711555.39",
-        "wales": "160391.58",
-        "scotland": "319487.07",
-        "northernIreland": "125073.03"
+        "badDebtProvision": "50634.89"
       },
       "laDataPrepCosts": {
         "base": "0.00",
-        "badDebtProvision": "0.00",
-        "total": "0.00",
-        "england": "0.00",
-        "wales": "0.00",
-        "scotland": "0.00",
-        "northernIreland": "0.00"
+        "badDebtProvision": "0.00"
       },
       "saSetUpCosts": {
         "base": "1265872.19",
-        "badDebtProvision": "50634.89",
-        "total": "1316507.08",
-        "england": "711555.39",
-        "wales": "160391.58",
-        "scotland": "319487.07",
-        "northernIreland": "125073.03"
+        "badDebtProvision": "50634.89"
       }
     },
     {
@@ -3640,15 +3026,7 @@
       "producerID": "200001",
       "subsidiaryID": "200001",
       "level": 2,
-      "totalBill": {
-        "base": "2496222.73",
-        "badDebtProvision": "99848.91",
-        "total": "2596071.64",
-        "england": "1403958.64",
-        "wales": "316291.88",
-        "scotland": "629416.32",
-        "northernIreland": "246404.80"
-      },
+      "totalBill": "2596071.64",
       "invoice": {
         "instruction": "-",
         "suggestedAmount": null,
@@ -3656,7 +3034,7 @@
       },
       "disposalFeesByMaterial": [
         {
-          "materialName": "Aluminium",
+          "material": "Aluminium",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 433.424,
           "publicBinTonnage": 0,
@@ -3673,7 +3051,7 @@
           "northernIreland": "0.20"
         },
         {
-          "materialName": "Fibre composite",
+          "material": "Fibre composite",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3690,7 +3068,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Glass",
+          "material": "Glass",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3708,7 +3086,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Paper or card",
+          "material": "Paper or card",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3725,7 +3103,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Plastic",
+          "material": "Plastic",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3742,7 +3120,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Steel",
+          "material": "Steel",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3759,7 +3137,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Wood",
+          "material": "Wood",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3776,7 +3154,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Other materials",
+          "material": "Other materials",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3804,57 +3182,27 @@
       },
       "commsCostsByMaterial": {
         "base": "0.56",
-        "badDebtProvision": "0.02",
-        "total": "0.59",
-        "england": "0.32",
-        "wales": "0.07",
-        "scotland": "0.14",
-        "northernIreland": "0.06"
+        "badDebtProvision": "0.02"
       },
       "commsCostsUKWide": {
         "base": "2109.20",
-        "badDebtProvision": "84.37",
-        "total": "2193.57",
-        "england": "1185.60",
-        "wales": "267.24",
-        "scotland": "532.33",
-        "northernIreland": "208.40"
+        "badDebtProvision": "84.37"
       },
       "commsCostsByCountry": {
         "base": "2452.82",
-        "badDebtProvision": "98.11",
-        "total": "2550.94",
-        "england": "2193.57",
-        "wales": "320.25",
-        "scotland": "26.36",
-        "northernIreland": "10.76"
+        "badDebtProvision": "98.11"
       },
       "saOperatingCosts": {
         "base": "1245829.08",
-        "badDebtProvision": "49833.16",
-        "total": "1295662.24",
-        "england": "700289.02",
-        "wales": "157852.03",
-        "scotland": "314428.49",
-        "northernIreland": "123092.70"
+        "badDebtProvision": "49833.16"
       },
       "laDataPrepCosts": {
         "base": "0.00",
-        "badDebtProvision": "0.00",
-        "total": "0.00",
-        "england": "0.00",
-        "wales": "0.00",
-        "scotland": "0.00",
-        "northernIreland": "0.00"
+        "badDebtProvision": "0.00"
       },
       "saSetUpCosts": {
         "base": "1245829.08",
-        "badDebtProvision": "49833.16",
-        "total": "1295662.24",
-        "england": "700289.02",
-        "wales": "157852.03",
-        "scotland": "314428.49",
-        "northernIreland": "123092.70"
+        "badDebtProvision": "49833.16"
       }
     },
     {
@@ -3862,15 +3210,7 @@
       "producerID": "200001",
       "subsidiaryID": "200002",
       "level": 2,
-      "totalBill": {
-        "base": "40159.66",
-        "badDebtProvision": "1606.39",
-        "total": "41766.05",
-        "england": "22587.13",
-        "wales": "5088.56",
-        "scotland": "10126.16",
-        "northernIreland": "3964.20"
-      },
+      "totalBill": "41766.05",
       "invoice": {
         "instruction": "-",
         "suggestedAmount": null,
@@ -3878,7 +3218,7 @@
       },
       "disposalFeesByMaterial": [
         {
-          "materialName": "Aluminium",
+          "material": "Aluminium",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 6.973,
           "publicBinTonnage": 0,
@@ -3895,7 +3235,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Fibre composite",
+          "material": "Fibre composite",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3912,7 +3252,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Glass",
+          "material": "Glass",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3930,7 +3270,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Paper or card",
+          "material": "Paper or card",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3947,7 +3287,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Plastic",
+          "material": "Plastic",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3964,7 +3304,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Steel",
+          "material": "Steel",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3981,7 +3321,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Wood",
+          "material": "Wood",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -3998,7 +3338,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Other materials",
+          "material": "Other materials",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -4026,57 +3366,27 @@
       },
       "commsCostsByMaterial": {
         "base": "0.01",
-        "badDebtProvision": "0.00",
-        "total": "0.01",
-        "england": "0.01",
-        "wales": "0.00",
-        "scotland": "0.00",
-        "northernIreland": "0.00"
+        "badDebtProvision": "0.00"
       },
       "commsCostsUKWide": {
         "base": "33.93",
-        "badDebtProvision": "1.36",
-        "total": "35.29",
-        "england": "19.07",
-        "wales": "4.30",
-        "scotland": "8.56",
-        "northernIreland": "3.35"
+        "badDebtProvision": "1.36"
       },
       "commsCostsByCountry": {
         "base": "39.46",
-        "badDebtProvision": "1.58",
-        "total": "41.04",
-        "england": "35.29",
-        "wales": "5.15",
-        "scotland": "0.42",
-        "northernIreland": "0.17"
+        "badDebtProvision": "1.58"
       },
       "saOperatingCosts": {
         "base": "20043.11",
-        "badDebtProvision": "801.72",
-        "total": "20844.84",
-        "england": "11266.37",
-        "wales": "2539.55",
-        "scotland": "5058.58",
-        "northernIreland": "1980.34"
+        "badDebtProvision": "801.72"
       },
       "laDataPrepCosts": {
         "base": "0.00",
-        "badDebtProvision": "0.00",
-        "total": "0.00",
-        "england": "0.00",
-        "wales": "0.00",
-        "scotland": "0.00",
-        "northernIreland": "0.00"
+        "badDebtProvision": "0.00"
       },
       "saSetUpCosts": {
         "base": "20043.11",
-        "badDebtProvision": "801.72",
-        "total": "20844.84",
-        "england": "11266.37",
-        "wales": "2539.55",
-        "scotland": "5058.58",
-        "northernIreland": "1980.34"
+        "badDebtProvision": "801.72"
       }
     },
     {
@@ -4084,15 +3394,7 @@
       "producerID": "200003",
       "subsidiaryID": "",
       "level": 1,
-      "totalBill": {
-        "base": "563813.31",
-        "badDebtProvision": "22552.53",
-        "total": "586365.84",
-        "england": "317107.35",
-        "wales": "71439.77",
-        "scotland": "142164.12",
-        "northernIreland": "55654.61"
-      },
+      "totalBill": "586365.84",
       "invoice": {
         "instruction": "INITIAL",
         "suggestedAmount": "586365.84",
@@ -4100,7 +3402,7 @@
       },
       "disposalFeesByMaterial": [
         {
-          "materialName": "Aluminium",
+          "material": "Aluminium",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 97.896,
           "publicBinTonnage": 0,
@@ -4117,7 +3419,7 @@
           "northernIreland": "0.04"
         },
         {
-          "materialName": "Fibre composite",
+          "material": "Fibre composite",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -4134,7 +3436,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Glass",
+          "material": "Glass",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -4152,7 +3454,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Paper or card",
+          "material": "Paper or card",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -4169,7 +3471,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Plastic",
+          "material": "Plastic",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -4186,7 +3488,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Steel",
+          "material": "Steel",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -4203,7 +3505,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Wood",
+          "material": "Wood",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -4220,7 +3522,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Other materials",
+          "material": "Other materials",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -4248,57 +3550,27 @@
       },
       "commsCostsByMaterial": {
         "base": "0.13",
-        "badDebtProvision": "0.01",
-        "total": "0.13",
-        "england": "0.07",
-        "wales": "0.02",
-        "scotland": "0.03",
-        "northernIreland": "0.01"
+        "badDebtProvision": "0.01"
       },
       "commsCostsUKWide": {
         "base": "476.40",
-        "badDebtProvision": "19.06",
-        "total": "495.45",
-        "england": "267.79",
-        "wales": "60.36",
-        "scotland": "120.24",
-        "northernIreland": "47.07"
+        "badDebtProvision": "19.06"
       },
       "commsCostsByCountry": {
         "base": "554.01",
-        "badDebtProvision": "22.16",
-        "total": "576.17",
-        "england": "495.45",
-        "wales": "72.33",
-        "scotland": "5.95",
-        "northernIreland": "2.43"
+        "badDebtProvision": "22.16"
       },
       "saOperatingCosts": {
         "base": "281391.16",
-        "badDebtProvision": "11255.65",
-        "total": "292646.81",
-        "england": "158171.89",
-        "wales": "35653.50",
-        "scotland": "71018.89",
-        "northernIreland": "27802.53"
+        "badDebtProvision": "11255.65"
       },
       "laDataPrepCosts": {
         "base": "0.00",
-        "badDebtProvision": "0.00",
-        "total": "0.00",
-        "england": "0.00",
-        "wales": "0.00",
-        "scotland": "0.00",
-        "northernIreland": "0.00"
+        "badDebtProvision": "0.00"
       },
       "saSetUpCosts": {
         "base": "281391.16",
-        "badDebtProvision": "11255.65",
-        "total": "292646.81",
-        "england": "158171.89",
-        "wales": "35653.50",
-        "scotland": "71018.89",
-        "northernIreland": "27802.53"
+        "badDebtProvision": "11255.65"
       }
     },
     {
@@ -4306,15 +3578,7 @@
       "producerID": "200004",
       "subsidiaryID": "",
       "level": 1,
-      "totalBill": {
-        "base": "1558486.29",
-        "badDebtProvision": "62339.45",
-        "total": "1620825.74",
-        "england": "876544.49",
-        "wales": "197472.99",
-        "scotland": "392968.42",
-        "northernIreland": "153839.84"
-      },
+      "totalBill": "1620825.74",
       "invoice": {
         "instruction": "INITIAL",
         "suggestedAmount": "1620825.74",
@@ -4322,7 +3586,7 @@
       },
       "disposalFeesByMaterial": [
         {
-          "materialName": "Aluminium",
+          "material": "Aluminium",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 270.603,
           "publicBinTonnage": 0,
@@ -4339,7 +3603,7 @@
           "northernIreland": "0.12"
         },
         {
-          "materialName": "Fibre composite",
+          "material": "Fibre composite",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -4356,7 +3620,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Glass",
+          "material": "Glass",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -4374,7 +3638,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Paper or card",
+          "material": "Paper or card",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -4391,7 +3655,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Plastic",
+          "material": "Plastic",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -4408,7 +3672,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Steel",
+          "material": "Steel",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -4425,7 +3689,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Wood",
+          "material": "Wood",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -4442,7 +3706,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Other materials",
+          "material": "Other materials",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -4470,57 +3734,27 @@
       },
       "commsCostsByMaterial": {
         "base": "0.35",
-        "badDebtProvision": "0.01",
-        "total": "0.37",
-        "england": "0.20",
-        "wales": "0.04",
-        "scotland": "0.09",
-        "northernIreland": "0.03"
+        "badDebtProvision": "0.01"
       },
       "commsCostsUKWide": {
         "base": "1316.85",
-        "badDebtProvision": "52.67",
-        "total": "1369.53",
-        "england": "740.21",
-        "wales": "166.85",
-        "scotland": "332.35",
-        "northernIreland": "130.11"
+        "badDebtProvision": "52.67"
       },
       "commsCostsByCountry": {
         "base": "1531.39",
-        "badDebtProvision": "61.26",
-        "total": "1592.65",
-        "england": "1369.53",
-        "wales": "199.94",
-        "scotland": "16.46",
-        "northernIreland": "6.72"
+        "badDebtProvision": "61.26"
       },
       "saOperatingCosts": {
         "base": "777818.22",
-        "badDebtProvision": "31112.73",
-        "total": "808930.95",
-        "england": "437216.93",
-        "wales": "98553.00",
-        "scotland": "196309.60",
-        "northernIreland": "76851.43"
+        "badDebtProvision": "31112.73"
       },
       "laDataPrepCosts": {
         "base": "0.00",
-        "badDebtProvision": "0.00",
-        "total": "0.00",
-        "england": "0.00",
-        "wales": "0.00",
-        "scotland": "0.00",
-        "northernIreland": "0.00"
+        "badDebtProvision": "0.00"
       },
       "saSetUpCosts": {
         "base": "777818.22",
-        "badDebtProvision": "31112.73",
-        "total": "808930.95",
-        "england": "437216.93",
-        "wales": "98553.00",
-        "scotland": "196309.60",
-        "northernIreland": "76851.43"
+        "badDebtProvision": "31112.73"
       }
     },
     {
@@ -4528,15 +3762,7 @@
       "producerID": "200004",
       "subsidiaryID": "200004",
       "level": 2,
-      "totalBill": {
-        "base": "755932.34",
-        "badDebtProvision": "30237.29",
-        "total": "786169.63",
-        "england": "425161.47",
-        "wales": "95782.82",
-        "scotland": "190606.45",
-        "northernIreland": "74618.89"
-      },
+      "totalBill": "786169.63",
       "invoice": {
         "instruction": "-",
         "suggestedAmount": null,
@@ -4544,7 +3770,7 @@
       },
       "disposalFeesByMaterial": [
         {
-          "materialName": "Aluminium",
+          "material": "Aluminium",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 131.254,
           "publicBinTonnage": 0,
@@ -4561,7 +3787,7 @@
           "northernIreland": "0.06"
         },
         {
-          "materialName": "Fibre composite",
+          "material": "Fibre composite",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -4578,7 +3804,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Glass",
+          "material": "Glass",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -4596,7 +3822,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Paper or card",
+          "material": "Paper or card",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -4613,7 +3839,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Plastic",
+          "material": "Plastic",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -4630,7 +3856,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Steel",
+          "material": "Steel",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -4647,7 +3873,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Wood",
+          "material": "Wood",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -4664,7 +3890,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Other materials",
+          "material": "Other materials",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -4692,57 +3918,27 @@
       },
       "commsCostsByMaterial": {
         "base": "0.17",
-        "badDebtProvision": "0.01",
-        "total": "0.18",
-        "england": "0.10",
-        "wales": "0.02",
-        "scotland": "0.04",
-        "northernIreland": "0.02"
+        "badDebtProvision": "0.01"
       },
       "commsCostsUKWide": {
         "base": "638.73",
-        "badDebtProvision": "25.55",
-        "total": "664.28",
-        "england": "359.03",
-        "wales": "80.93",
-        "scotland": "161.21",
-        "northernIreland": "63.11"
+        "badDebtProvision": "25.55"
       },
       "commsCostsByCountry": {
         "base": "742.79",
-        "badDebtProvision": "29.71",
-        "total": "772.50",
-        "england": "664.28",
-        "wales": "96.98",
-        "scotland": "7.98",
-        "northernIreland": "3.26"
+        "badDebtProvision": "29.71"
       },
       "saOperatingCosts": {
         "base": "377275.02",
-        "badDebtProvision": "15091.00",
-        "total": "392366.02",
-        "england": "212068.86",
-        "wales": "47802.41",
-        "scotland": "95218.53",
-        "northernIreland": "37276.22"
+        "badDebtProvision": "15091.00"
       },
       "laDataPrepCosts": {
         "base": "0.00",
-        "badDebtProvision": "0.00",
-        "total": "0.00",
-        "england": "0.00",
-        "wales": "0.00",
-        "scotland": "0.00",
-        "northernIreland": "0.00"
+        "badDebtProvision": "0.00"
       },
       "saSetUpCosts": {
         "base": "377275.02",
-        "badDebtProvision": "15091.00",
-        "total": "392366.02",
-        "england": "212068.86",
-        "wales": "47802.41",
-        "scotland": "95218.53",
-        "northernIreland": "37276.22"
+        "badDebtProvision": "15091.00"
       }
     },
     {
@@ -4750,15 +3946,7 @@
       "producerID": "200004",
       "subsidiaryID": "200005",
       "level": 2,
-      "totalBill": {
-        "base": "802553.95",
-        "badDebtProvision": "32102.16",
-        "total": "834656.10",
-        "england": "451383.02",
-        "wales": "101690.16",
-        "scotland": "202361.97",
-        "northernIreland": "79220.95"
-      },
+      "totalBill": "834656.10",
       "invoice": {
         "instruction": "-",
         "suggestedAmount": null,
@@ -4766,7 +3954,7 @@
       },
       "disposalFeesByMaterial": [
         {
-          "materialName": "Aluminium",
+          "material": "Aluminium",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 139.349,
           "publicBinTonnage": 0,
@@ -4783,7 +3971,7 @@
           "northernIreland": "0.06"
         },
         {
-          "materialName": "Fibre composite",
+          "material": "Fibre composite",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -4800,7 +3988,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Glass",
+          "material": "Glass",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -4818,7 +4006,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Paper or card",
+          "material": "Paper or card",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -4835,7 +4023,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Plastic",
+          "material": "Plastic",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -4852,7 +4040,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Steel",
+          "material": "Steel",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -4869,7 +4057,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Wood",
+          "material": "Wood",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -4886,7 +4074,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Other materials",
+          "material": "Other materials",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -4914,57 +4102,27 @@
       },
       "commsCostsByMaterial": {
         "base": "0.18",
-        "badDebtProvision": "0.01",
-        "total": "0.19",
-        "england": "0.10",
-        "wales": "0.02",
-        "scotland": "0.05",
-        "northernIreland": "0.02"
+        "badDebtProvision": "0.01"
       },
       "commsCostsUKWide": {
         "base": "678.12",
-        "badDebtProvision": "27.12",
-        "total": "705.25",
-        "england": "381.18",
-        "wales": "85.92",
-        "scotland": "171.15",
-        "northernIreland": "67.00"
+        "badDebtProvision": "27.12"
       },
       "commsCostsByCountry": {
         "base": "788.60",
-        "badDebtProvision": "31.54",
-        "total": "820.14",
-        "england": "705.25",
-        "wales": "102.96",
-        "scotland": "8.47",
-        "northernIreland": "3.46"
+        "badDebtProvision": "31.54"
       },
       "saOperatingCosts": {
         "base": "400543.20",
-        "badDebtProvision": "16021.73",
-        "total": "416564.93",
-        "england": "225148.06",
-        "wales": "50750.59",
-        "scotland": "101091.07",
-        "northernIreland": "39575.21"
+        "badDebtProvision": "16021.73"
       },
       "laDataPrepCosts": {
         "base": "0.00",
-        "badDebtProvision": "0.00",
-        "total": "0.00",
-        "england": "0.00",
-        "wales": "0.00",
-        "scotland": "0.00",
-        "northernIreland": "0.00"
+        "badDebtProvision": "0.00"
       },
       "saSetUpCosts": {
         "base": "400543.20",
-        "badDebtProvision": "16021.73",
-        "total": "416564.93",
-        "england": "225148.06",
-        "wales": "50750.59",
-        "scotland": "101091.07",
-        "northernIreland": "39575.21"
+        "badDebtProvision": "16021.73"
       }
     },
     {
@@ -4972,15 +4130,7 @@
       "producerID": "200006",
       "subsidiaryID": "",
       "level": 1,
-      "totalBill": {
-        "base": "1001676.30",
-        "badDebtProvision": "40067.05",
-        "total": "1041743.35",
-        "england": "563376.04",
-        "wales": "126920.60",
-        "scotland": "252570.17",
-        "northernIreland": "98876.53"
-      },
+      "totalBill": "1041743.35",
       "invoice": {
         "instruction": "INITIAL",
         "suggestedAmount": "1041743.35",
@@ -4988,7 +4138,7 @@
       },
       "disposalFeesByMaterial": [
         {
-          "materialName": "Aluminium",
+          "material": "Aluminium",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 173.923,
           "publicBinTonnage": 0,
@@ -5005,7 +4155,7 @@
           "northernIreland": "0.08"
         },
         {
-          "materialName": "Fibre composite",
+          "material": "Fibre composite",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -5022,7 +4172,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Glass",
+          "material": "Glass",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -5040,7 +4190,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Paper or card",
+          "material": "Paper or card",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -5057,7 +4207,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Plastic",
+          "material": "Plastic",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -5074,7 +4224,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Steel",
+          "material": "Steel",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -5091,7 +4241,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Wood",
+          "material": "Wood",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -5108,7 +4258,7 @@
           "northernIreland": "0.00"
         },
         {
-          "materialName": "Other materials",
+          "material": "Other materials",
           "previousInvoicedTonnage": "-",
           "householdPackagingWasteTonnage": 0,
           "publicBinTonnage": 0,
@@ -5136,57 +4286,27 @@
       },
       "commsCostsByMaterial": {
         "base": "0.23",
-        "badDebtProvision": "0.01",
-        "total": "0.24",
-        "england": "0.13",
-        "wales": "0.03",
-        "scotland": "0.06",
-        "northernIreland": "0.02"
+        "badDebtProvision": "0.01"
       },
       "commsCostsUKWide": {
         "base": "846.37",
-        "badDebtProvision": "33.85",
-        "total": "880.23",
-        "england": "475.75",
-        "wales": "107.24",
-        "scotland": "213.61",
-        "northernIreland": "83.62"
+        "badDebtProvision": "33.85"
       },
       "commsCostsByCountry": {
         "base": "984.26",
-        "badDebtProvision": "39.37",
-        "total": "1023.63",
-        "england": "880.23",
-        "wales": "128.51",
-        "scotland": "10.58",
-        "northernIreland": "4.32"
+        "badDebtProvision": "39.37"
       },
       "saOperatingCosts": {
         "base": "499922.32",
-        "badDebtProvision": "19996.89",
-        "total": "519919.21",
-        "england": "281009.74",
-        "wales": "63342.36",
-        "scotland": "126172.86",
-        "northernIreland": "49394.24"
+        "badDebtProvision": "19996.89"
       },
       "laDataPrepCosts": {
         "base": "0.00",
-        "badDebtProvision": "0.00",
-        "total": "0.00",
-        "england": "0.00",
-        "wales": "0.00",
-        "scotland": "0.00",
-        "northernIreland": "0.00"
+        "badDebtProvision": "0.00"
       },
       "saSetUpCosts": {
         "base": "499922.32",
-        "badDebtProvision": "19996.89",
-        "total": "519919.21",
-        "england": "281009.74",
-        "wales": "63342.36",
-        "scotland": "126172.86",
-        "northernIreland": "49394.24"
+        "badDebtProvision": "19996.89"
       }
     }
   ]

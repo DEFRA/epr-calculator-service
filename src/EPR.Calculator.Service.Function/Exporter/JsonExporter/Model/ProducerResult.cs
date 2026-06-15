@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json.Serialization;
 using EPR.Calculator.Service.Function.Models;
 
@@ -18,7 +19,7 @@ public record ProducerResult
     public required int Level { get; init; }
 
     [JsonPropertyName("totalBill")]
-    public required FeeWithCountries TotalBill { get; init; }
+    public required string TotalBill { get; init; }
 
     [JsonPropertyName("invoice")]
     public required ProducerInvoice Invoice { get; init; }
@@ -30,43 +31,43 @@ public record ProducerResult
     public required FeeWithCountries DisposalCosts { get; init; }
 
     [JsonPropertyName("commsCostsByMaterial")]
-    public required FeeWithCountries CommsCostsByMaterial { get; init; }
+    public required Fee CommsCostsByMaterial { get; init; }
 
     [JsonPropertyName("commsCostsUKWide")]
-    public required FeeWithCountries CommsCostsUKWide { get; init; }
+    public required Fee CommsCostsUKWide { get; init; }
 
     [JsonPropertyName("commsCostsByCountry")]
-    public required FeeWithCountries CommsCostsByCountry { get; init; }
+    public required Fee CommsCostsByCountry { get; init; }
 
     [JsonPropertyName("saOperatingCosts")]
-    public required FeeWithCountries SaOperatingCosts { get; init; }
+    public required Fee SaOperatingCosts { get; init; }
 
     [JsonPropertyName("laDataPrepCosts")]
-    public required FeeWithCountries LaDataPrepCosts { get; init; }
+    public required Fee LaDataPrepCosts { get; init; }
 
     [JsonPropertyName("saSetUpCosts")]
-    public required FeeWithCountries SaSetUpCosts { get; init; }
+    public required Fee SaSetUpCosts { get; init; }
 
     public static ProducerResult From(
         CalcResultSummaryProducerDisposalFees producer,
         IImmutableList<MaterialDetail> materials,
         bool applyModulation) => new()
     {
-        ProducerName          = producer.ProducerName,
-        ProducerID            = producer.ProducerId.ToString(),
-        SubsidiaryID          = producer.SubsidiaryId,
-        Level                 = string.IsNullOrWhiteSpace(producer.Level) ? 1 : int.Parse(producer.Level),
-        TotalBill             = FeeWithCountries.From(producer.TotalProducerBillBreakdownCosts),
-        Invoice               = ProducerInvoice.From(producer.BillingInstructionSection),
+        ProducerName           = producer.ProducerName,
+        ProducerID             = producer.ProducerId.ToString(),
+        SubsidiaryID           = producer.SubsidiaryId,
+        Level                  = string.IsNullOrWhiteSpace(producer.Level) ? 1 : int.Parse(producer.Level),
+        TotalBill              = producer.TotalProducerBillBreakdownCosts.FeeWithBadDebtProvision.Total.ToString("F2", CultureInfo.InvariantCulture),
+        Invoice                = ProducerInvoice.From(producer.BillingInstructionSection),
         DisposalFeesByMaterial = ProducerDisposalFeesWithBadDebtProvision1
             .From(producer.ProducerDisposalFeesByMaterial, materials, producer.Level ?? "1", applyModulation)
             .MaterialBreakdown,
         DisposalCosts        = FeeWithCountries.From(producer.LADisposalCostsSection1),
-        CommsCostsByMaterial  = FeeWithCountries.From(producer.CommsCostsSection2a),
-        CommsCostsUKWide     = FeeWithCountries.From(producer.CommsCostsSection2b),
-        CommsCostsByCountry  = FeeWithCountries.From(producer.CommsCostsSection2c),
-        SaOperatingCosts     = FeeWithCountries.From(producer.SaOperatingCostsSection3),
-        LaDataPrepCosts      = FeeWithCountries.From(producer.LaDataPrepSection4),
-        SaSetUpCosts         = FeeWithCountries.From(producer.SaSetupCostsSection5),
+        CommsCostsByMaterial = Fee.From(producer.CommsCostsSection2a),
+        CommsCostsUKWide     = Fee.From(producer.CommsCostsSection2b),
+        CommsCostsByCountry  = Fee.From(producer.CommsCostsSection2c),
+        SaOperatingCosts     = Fee.From(producer.SaOperatingCostsSection3),
+        LaDataPrepCosts      = Fee.From(producer.LaDataPrepSection4),
+        SaSetUpCosts         = Fee.From(producer.SaSetupCostsSection5),
     };
 }

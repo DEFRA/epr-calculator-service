@@ -34,47 +34,29 @@ public class BillingFileJsonWriter(IMaterialService materialService)
         {
             var content = new BillingFileJson2026
             {
-                CalcResultDetail = new CalcResultDetailJson
-                {
-                    RunId         = calcResult.CalcResultDetail.RunId,
-                    FinancialYear = calcResult.CalcResultDetail.RelativeYear.ToFinancialYear(),
-                },
-                ParametersOther = new ParametersOtherJson
-                {
-                    SixBadDebtProvision = new BadDebtProvisionJson
-                    {
-                        Percentage = $"{calcResult.CalcResultParameterOtherCost.BadDebtValue:0.00}%"
-                    }
-                },
-                ModulationResults = CalcResultModulationResults.From(calcResult.CalcResultModulation!),
-                Materials         = MaterialPrices.FromAll(materials, calcResult).ToList(),
-                Producers         = calcResult.CalcResultSummary.ProducerDisposalFees
-                                        .Where(p => runContext.AcceptedProducerIds.Contains(p.ProducerId))
-                                        .Select(p => ProducerResult.From(p, materials, applyModulation: true))
-                                        .ToList(),
+                RunId                      = calcResult.CalcResultDetail.RunId,
+                FinancialYear              = calcResult.CalcResultDetail.RelativeYear.ToFinancialYear(),
+                BadDebtProvisionPercentage = $"{calcResult.CalcResultParameterOtherCost.BadDebtValue:0.00}",
+                ModulationResults          = CalcResultModulationResults.From(calcResult.CalcResultModulation!),
+                Materials                  = MaterialPrices.FromAll(materials, calcResult).ToList(),
+                Producers                  = calcResult.CalcResultSummary.ProducerDisposalFees
+                                                 .Where(p => runContext.AcceptedProducerIds.Contains(p.ProducerId))
+                                                 .Select(p => ProducerResult.From(p, materials, applyModulation: true))
+                                                 .ToList(),
             };
             return JsonSerializer.Serialize(content, JsonSerializerOptions);
         }
 
         var content2025 = new BillingFileJson2025
         {
-            CalcResultDetail = new CalcResultDetailJson
-            {
-                RunId         = calcResult.CalcResultDetail.RunId,
-                FinancialYear = calcResult.CalcResultDetail.RelativeYear.ToFinancialYear(),
-            },
-            ParametersOther = new ParametersOtherJson
-            {
-                SixBadDebtProvision = new BadDebtProvisionJson
-                {
-                    Percentage = $"{calcResult.CalcResultParameterOtherCost.BadDebtValue:0.00}%"
-                }
-            },
-            Materials = MaterialPrices.FromAll(materials, calcResult).ToList(),
-            Producers = calcResult.CalcResultSummary.ProducerDisposalFees
-                            .Where(p => runContext.AcceptedProducerIds.Contains(p.ProducerId))
-                            .Select(p => ProducerResult.From(p, materials, applyModulation: false))
-                            .ToList(),
+            RunId                      = calcResult.CalcResultDetail.RunId,
+            FinancialYear              = calcResult.CalcResultDetail.RelativeYear.ToFinancialYear(),
+            BadDebtProvisionPercentage = $"{calcResult.CalcResultParameterOtherCost.BadDebtValue:0.00}",
+            Materials                  = MaterialPrices.FromAll(materials, calcResult).ToList(),
+            Producers                  = calcResult.CalcResultSummary.ProducerDisposalFees
+                                             .Where(p => runContext.AcceptedProducerIds.Contains(p.ProducerId))
+                                             .Select(p => ProducerResult.From(p, materials, applyModulation: false))
+                                             .ToList(),
         };
         return JsonSerializer.Serialize(content2025, JsonSerializerOptions);
     }

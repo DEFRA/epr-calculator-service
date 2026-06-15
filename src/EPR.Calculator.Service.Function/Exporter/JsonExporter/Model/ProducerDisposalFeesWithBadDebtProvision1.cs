@@ -187,7 +187,7 @@ public record CombinedModulatedCostBreakdown
 
 public record ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown
 {
-    [JsonPropertyName("materialName")]
+    [JsonPropertyName("material")]
     public required string MaterialName { get; init; }
 
     [JsonPropertyName("previousInvoicedTonnage")]

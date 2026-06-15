@@ -186,4 +186,14 @@ Note, `costOrNull` could be dropped entirely with an optional (not required) `co
 
 ### `currency` → `cost`, `currencyOrNull` → `costOrNull`, `ragCurrency` → `ragCost`
 
-Renamed the three monetary def names from `currency*` to `cost*`. The `currency` prefix described the value format (GBP decimal string); `cost` describes what the value represents. This aligns with the rest of the schema's naming convention (`disposalCosts`, `commsCosts`, etc.) and makes the defs easier to read in context. No C# changes required — def names are internal to the schema and not referenced by the exporter.
+Renamed the three monetary def names from `currency*` to `cost*`. The `currency` prefix described the value format (GBP decimal string); `cost` describes what the value represents. This aligns with the rest of the schema's naming convention (`disposalCosts`, `commsCosts`, etc.) and makes the defs easier to read in context. No C# changes required - def names are internal to the schema and not referenced by the exporter.
+
+## Why string rather than jsnumber for costs?
+
+two related precision concerns:
+
+JSON number precision loss - JSON numbers are parsed as IEEE 754 doubles by most consumers. A value like 38244049.46 can't be represented exactly as a double, so round-tripping through a JSON parser can silently introduce drift (e.g. 38244049.459999999...). As a string, "38244049.46" is exact.
+
+Rounding semantics - financial amounts need to be rounded to exactly 2 decimal places before serialisation, not after. If you emit a raw decimal as a JSON number, the consumer sees 1234.5600000001 or similar depending on their parser. By converting to "F2" format in C# first, you're asserting "this is the canonical rounded value" - the string is the number, not a float approximation of it.
+
+The tradeoff is that consumers can't do arithmetic directly on the values without parsing them back, but for billing data the expectation is display/audit/summation, not in-place computation, so that's acceptable.

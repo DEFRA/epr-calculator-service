@@ -3,8 +3,8 @@
   "$defs": {
     "badDebtPercent": {
       "type": "string",
-      "pattern": "^[0-9]+\\.[0-9]{2}%$",
-      "description": "Percentage with 2 decimal places and % suffix (e.g. 6.00%)"
+      "pattern": "^[0-9]+\\.[0-9]{2}$",
+      "description": "Percentage, 2 decimal places, no % suffix (e.g. \"6.00\")"
     },
     "cost": {
       "type": "string",
@@ -20,6 +20,15 @@
       "type": "string",
       "pattern": "^[0-9]+\\.[0-9]{4}$",
       "description": "Price per tonne, 4 decimal places, no £ prefix (e.g. \"0.2105\")"
+    },
+    "fee": {
+      "type": "object",
+      "description": "A fee with base amount and bad debt provision",
+      "required": ["base", "badDebtProvision"],
+      "properties": {
+        "base":             { "$ref": "#/$defs/cost" },
+        "badDebtProvision": { "$ref": "#/$defs/cost" }
+      }
     },
     "feeWithCountries": {
       "type": "object",
@@ -83,33 +92,16 @@
     }
   },
   "type": "object",
-  "required": ["calcResultDetail", "parametersOther", "modulationResults", "producers", "materials"],
+  "required": ["runId", "financialYear", "badDebtProvisionPercentage", "modulationResults", "materials", "producers"],
   "properties": {
-    "calcResultDetail": {
-      "type": "object",
-      "required": ["runId", "financialYear"],
-      "properties": {
-        "runId": { "type": "integer" },
-        "financialYear": {
-          "type": "string",
-          "pattern": "^[0-9]{4}-[0-9]{2}$",
-          "description": "Financial year in YYYY-YY format (e.g. 2026-27)"
-        }
-      }
+    "runId": { "type": "integer" },
+    "financialYear": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}$",
+      "description": "Financial year in YYYY-YY format (e.g. \"2026-27\")"
     },
-    "parametersOther": {
-      "type": "object",
-      "required": ["sixBadDebtProvision"],
-      "properties": {
-        "sixBadDebtProvision": {
-          "type": "object",
-          "required": ["percentage"],
-          "properties": {
-            "percentage": { "$ref": "#/$defs/badDebtPercent" }
-          }
-        }
-      }
-    },
+    "badDebtProvisionPercentage": { "$ref": "#/$defs/badDebtPercent" },
+
     "modulationResults": {
       "type": "object",
       "required": ["redFactor", "greenDiscountFactor"],
@@ -123,9 +115,9 @@
       "description": "Run-level per-material price data; same for all producers — join by materialName",
       "items": {
         "type": "object",
-        "required": ["materialName", "disposalPricePerTonne", "commsPricePerTonne"],
+        "required": ["material", "disposalPricePerTonne", "commsPricePerTonne"],
         "properties": {
-          "materialName":          { "type": "string" },
+          "material":          { "type": "string" },
           "disposalPricePerTonne": { "$ref": "#/$defs/ragPricePerTonne" },
           "commsPricePerTonne":    { "$ref": "#/$defs/pricePerTonne" }
         }
@@ -153,13 +145,13 @@
           "subsidiaryID": { "type": "string" },
           "level":        { "type": "integer" },
 
-          "totalBill": { "$ref": "#/$defs/feeWithCountries" },
+          "totalBill": { "$ref": "#/$defs/cost" },
 
           "invoice": {
             "type": "object",
             "required": ["instruction", "suggestedAmount", "invoicedToDate"],
             "properties": {
-              "instruction":     { "type": "string" },
+              "instruction":     { "type": "string", "enum": ["", "-", "INITIAL", "DELTA", "REBILL"] },
               "suggestedAmount": { "$ref": "#/$defs/costOrNull" },
               "invoicedToDate":  { "$ref": "#/$defs/costOrNull" }
             }
@@ -171,7 +163,7 @@
             "items": {
               "type": "object",
               "required": [
-                "materialName",
+                "material",
                 "householdPackagingWasteTonnage",
                 "publicBinTonnage",
                 "totalTonnage",
@@ -186,7 +178,7 @@
                 "tonnageChange"
               ],
               "properties": {
-                "materialName":                           { "type": "string" },
+                "material":                           { "type": "string" },
                 "householdPackagingWasteTonnage":          { "$ref": "#/$defs/tonnageBreakdown" },
                 "publicBinTonnage":                       { "$ref": "#/$defs/tonnageBreakdown" },
                 "householdDrinksContainersTonnageGlass":  { "$ref": "#/$defs/tonnageBreakdown" },
@@ -209,12 +201,12 @@
           },
 
           "disposalCosts":        { "$ref": "#/$defs/feeWithCountries" },
-          "commsCostsByMaterial": { "$ref": "#/$defs/feeWithCountries" },
-          "commsCostsUKWide":     { "$ref": "#/$defs/feeWithCountries" },
-          "commsCostsByCountry":  { "$ref": "#/$defs/feeWithCountries" },
-          "saOperatingCosts":     { "$ref": "#/$defs/feeWithCountries" },
-          "laDataPrepCosts":      { "$ref": "#/$defs/feeWithCountries" },
-          "saSetUpCosts":         { "$ref": "#/$defs/feeWithCountries" }
+          "commsCostsByMaterial": { "$ref": "#/$defs/fee" },
+          "commsCostsUKWide":     { "$ref": "#/$defs/fee" },
+          "commsCostsByCountry":  { "$ref": "#/$defs/fee" },
+          "saOperatingCosts":     { "$ref": "#/$defs/fee" },
+          "laDataPrepCosts":      { "$ref": "#/$defs/fee" },
+          "saSetUpCosts":         { "$ref": "#/$defs/fee" }
         }
       }
     }

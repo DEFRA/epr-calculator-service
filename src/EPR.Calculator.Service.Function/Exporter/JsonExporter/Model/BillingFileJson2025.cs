@@ -1,15 +1,17 @@
 using System.Text.Json.Serialization;
-using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.JsonExporter.Model;
 
 public class BillingFileJson2025
 {
-    [JsonPropertyName("calcResultDetail")]
-    public required CalcResultDetailJson CalcResultDetail { get; init; }
+    [JsonPropertyName("runId")]
+    public required int RunId { get; init; }
 
-    [JsonPropertyName("parametersOther")]
-    public required ParametersOtherJson ParametersOther { get; init; }
+    [JsonPropertyName("financialYear")]
+    public required string FinancialYear { get; init; }
+
+    [JsonPropertyName("badDebtProvisionPercentage")]
+    public required string BadDebtProvisionPercentage { get; init; }
 
     [JsonPropertyName("materials")]
     public required IEnumerable<MaterialPrices> Materials { get; init; }

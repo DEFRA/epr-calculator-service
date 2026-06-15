@@ -32,7 +32,8 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
     [TestMethod]
     public async Task IntegrationTest_2026() => await RunTest("test2026", new RelativeYear(2026), "some-user");
 
-    private async Task RunTest(string name, RelativeYear relativeYear, String rundBy)
+
+    private async Task RunTest(string name, RelativeYear relativeYear, String runBy)
     {
         await using var db = await Provider
             .CreateScope()
@@ -48,7 +49,7 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
 
         var fakeBlobStorage = Provider.GetRequiredService<FakeBlobStorageService>();
 
-        var calculatorRunResult = await PerformCalculatorRun(calculatorRunId, rundBy);
+        var calculatorRunResult = await PerformCalculatorRun(calculatorRunId, runBy);
         {
             var contents       = fakeBlobStorage.Get(calculatorRunResult.ExportResult.CsvMetadata.FileName);
             var actualLines   = string.Join(Environment.NewLine, contents.Split(Environment.NewLine, StringSplitOptions.None                                   )).Trim().Split(Environment.NewLine);
@@ -60,9 +61,9 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
             AssertLines(actualLines, expectedLines, ignoreLines, "Results CSV", contents);
         }
 
-        await SeedAcceptOrRejectProducers(db, calculatorRunId, rundBy, $"IntegrationTests/TestData/{relativeYear}-accept-or-reject-producers.csv");
+        await SeedAcceptOrRejectProducers(db, calculatorRunId, runBy, $"IntegrationTests/TestData/{relativeYear}-accept-or-reject-producers.csv");
 
-        var billingRunResult = await PerformBillingRun(db, calculatorRunId, rundBy);
+        var billingRunResult = await PerformBillingRun(db, calculatorRunId, runBy);
         {
             var contents      = fakeBlobStorage.Get(billingRunResult.ExportResult.CsvMetadata.FileName);
             var actualLines   = string.Join(Environment.NewLine, contents.Split(Environment.NewLine, StringSplitOptions.None                                     )).Trim().Split(Environment.NewLine);
@@ -76,7 +77,7 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
         {
             var contents    = fakeBlobStorage.Get(billingRunResult.ExportResult.JsonMetadata.BillingJsonFileName!);
             var expected    = await File.ReadAllTextAsync($"IntegrationTests/ExpectedData/{relativeYear}-billing.json");
-            var ignorePaths = new List<string> { "calcResultDetail.runId" };
+            var ignorePaths = new List<string> { "runId" };
             AssertJson(contents, expected, ignorePaths, "Billing JSON", contents);
         }
     }
