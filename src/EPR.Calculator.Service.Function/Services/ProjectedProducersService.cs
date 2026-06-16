@@ -6,15 +6,15 @@ namespace EPR.Calculator.Service.Function.Services
     // TODO rename this - not just projected producers
     public interface IProjectedProducersService
     {
-        Task StoreProjectedProducers(List<L1Producer> producerDetails);
+        Task StoreProjectedProducers(List<L1Producer> producerDetails, CancellationToken cancellationToken);
     }
 
     public class ProjectedProducersService(
         ApplicationDBContext dbContext,
         IBulkOperations bulkOps)
         : IProjectedProducersService
-    {
-        public async Task StoreProjectedProducers(List<L1Producer> producerDetails)
+        {
+        public async Task StoreProjectedProducers(List<L1Producer> producerDetails, CancellationToken cancellationToken)
         {
             var producerProjected =
                 producerDetails
@@ -37,7 +37,7 @@ namespace EPR.Calculator.Service.Function.Services
                     )
                 ).ToList();
 
-            await bulkOps.BulkInsertAsync(dbContext, producerProjected);
+            await bulkOps.BulkInsertAsync(dbContext, producerProjected, cancellationToken);
         }
     }
 }

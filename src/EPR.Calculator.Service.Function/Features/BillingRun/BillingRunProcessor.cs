@@ -23,7 +23,7 @@ public class BillingRunProcessor(
         {
             // This reads the required data to memory and builds the CalcResult object.
             // For BillingRunContext, it does not cause any external state mutations.
-            var calcResult = await resultBuilder.BuildAsync(runContext);
+            var calcResult = await resultBuilder.BuildAsync(runContext, cancellationToken);
 
             // This writes the CSV/JSON files to blob storage.
             // It does not mutate the database state (handled in the finalizer).

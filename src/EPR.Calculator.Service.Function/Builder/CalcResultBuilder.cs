@@ -23,7 +23,7 @@ namespace EPR.Calculator.Service.Function.Builder;
 
 public interface ICalcResultBuilder
 {
-    Task<CalcResult> BuildAsync(RunContext runContext);
+    Task<CalcResult> BuildAsync(RunContext runContext, CancellationToken cancellationToken);
 }
 
 [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
@@ -53,10 +53,10 @@ public class CalcResultBuilder(
     ILogger<CalcResultBuilder> logger
 )  : ICalcResultBuilder
 {
-    public Task<CalcResult> BuildAsync(RunContext runContext) =>
-        telemetryClient.TrackDuration($"{runContext.RunType}RunResultBuilder", () => BuildResult(runContext));
+    public Task<CalcResult> BuildAsync(RunContext runContext, CancellationToken cancellationToken) =>
+        telemetryClient.TrackDuration($"{runContext.RunType}RunResultBuilder", () => BuildResult(runContext, cancellationToken));
 
-    private async Task<CalcResult> BuildResult(RunContext runContext)
+    private async Task<CalcResult> BuildResult(RunContext runContext, CancellationToken cancellationToken)
     {
         var result = new CalcResult
         {
@@ -113,23 +113,23 @@ public class CalcResultBuilder(
             if (runContext.RequiresModulation)
             {
                 result.CalcResultProjectedProducers.H1ProjectedProducers = (await logger.LogDuration(
-                    () => calcResultService.ReadH1ProjectedData(runContext.RunId),
+                    () => calcResultService.ReadH1ProjectedData(runContext.RunId, cancellationToken),
                     nameof(calcResultService.ReadH1ProjectedData))).ToImmutableList();
 
                 result.CalcResultProjectedProducers.H2ProjectedProducers = (await logger.LogDuration(
-                    () => calcResultService.ReadH2ProjectedData(runContext.RunId),
+                    () => calcResultService.ReadH2ProjectedData(runContext.RunId, cancellationToken),
                     nameof(calcResultService.ReadH2ProjectedData))).ToImmutableList();
             }
 
             if (runContext.RequiresScaling)
             {
                 result.CalcResultScaledupProducers.ScaledupProducers = (await logger.LogDuration(
-                    () => calcResultService.ReadScaledData(runContext.RunId),
+                    () => calcResultService.ReadScaledData(runContext.RunId, cancellationToken),
                     nameof(calcResultService.ReadScaledData))).ToImmutableList();
             }
 
             result.CalcResultPartialObligations.PartialObligations = (await logger.LogDuration(
-                () => calcResultService.ReadPartialData(runContext.RunId),
+                () => calcResultService.ReadPartialData(runContext.RunId, cancellationToken),
                 nameof(calcResultService.ReadPartialData))).ToImmutableList();
 
             result.CalcResultRejectedProducers = await logger.LogDuration(
@@ -146,11 +146,11 @@ public class CalcResultBuilder(
                     nameof(projectedProducersBuilder));
 
                 await logger.LogDuration(
-                    () => calcResultService.StoreProjectedH1Data(runContext.RunId, result.CalcResultProjectedProducers.H1ProjectedProducers),
+                    () => calcResultService.StoreProjectedH1Data(runContext.RunId, result.CalcResultProjectedProducers.H1ProjectedProducers, cancellationToken),
                     nameof(calcResultService.StoreProjectedH1Data));
 
                 await logger.LogDuration(
-                    () => calcResultService.StoreProjectedH2Data(runContext.RunId, result.CalcResultProjectedProducers.H2ProjectedProducers),
+                    () => calcResultService.StoreProjectedH2Data(runContext.RunId, result.CalcResultProjectedProducers.H2ProjectedProducers, cancellationToken),
                     nameof(calcResultService.StoreProjectedH2Data));
             }
 
@@ -161,7 +161,7 @@ public class CalcResultBuilder(
                     nameof(scaledUpProducersBuilder));
 
                 await logger.LogDuration(
-                    () => calcResultService.StoreScaledData(runContext.RunId, result.CalcResultScaledupProducers.ScaledupProducers),
+                    () => calcResultService.StoreScaledData(runContext.RunId, result.CalcResultScaledupProducers.ScaledupProducers, cancellationToken),
                     nameof(calcResultService.StoreScaledData));
             }
 
@@ -170,11 +170,11 @@ public class CalcResultBuilder(
                 nameof(partialObligationsBuilder));
 
             await logger.LogDuration(
-                () => calcResultService.StorePartialData(runContext.RunId, result.CalcResultPartialObligations.PartialObligations),
+                () => calcResultService.StorePartialData(runContext.RunId, result.CalcResultPartialObligations.PartialObligations, cancellationToken),
                 nameof(calcResultService.StorePartialData));
 
             await logger.LogDuration(
-                () => projectedProducersService.StoreProjectedProducers(producers),
+                () => projectedProducersService.StoreProjectedProducers(producers, cancellationToken),
                 nameof(projectedProducersService.StoreProjectedProducers));
         }
 

@@ -77,7 +77,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     }
                 }
             );
-            await _sut.StoreProjectedH1Data(1, projectedProducers);
+            await _sut.StoreProjectedH1Data(1, projectedProducers, CancellationToken.None);
 
             var storedH1 = await _dbContext.TransformProjectedH1.ToImmutableListAsync();
             storedH1.Count.ShouldBe(9);
@@ -133,7 +133,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     }
                 }
             );
-            await _sut.StoreProjectedH2Data(1, projectedProducers);
+            await _sut.StoreProjectedH2Data(1, projectedProducers, CancellationToken.None);
 
             var storedH2 = await _dbContext.TransformProjectedH2.ToImmutableListAsync();
             storedH2.Count.ShouldBe(9);
@@ -162,7 +162,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
              });
             await _dbContext.SaveChangesAsync();
             
-            var result = await _sut.ReadH1ProjectedData(1);
+            var result = await _sut.ReadH1ProjectedData(1, CancellationToken.None);
             result.Count.ShouldBe(3);
             result.First(p => p.ProducerId == 1 && p.SubsidiaryId == null && p.Level == "1").H1ProjectedTonnageByMaterial.Count.ShouldBe(3);
             result.First(p => p.ProducerId == 1 && p.SubsidiaryId == null && p.Level == "2").H1ProjectedTonnageByMaterial.Count.ShouldBe(3);
@@ -189,7 +189,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
              });
             await _dbContext.SaveChangesAsync();
             
-            var result = await _sut.ReadH2ProjectedData(1);
+            var result = await _sut.ReadH2ProjectedData(1, CancellationToken.None);
             result.Count.ShouldBe(3);
             result.First(p => p.ProducerId == 1 && p.SubsidiaryId == null && p.Level == "1").H2ProjectedTonnageByMaterial.Count.ShouldBe(3);
             result.First(p => p.ProducerId == 1 && p.SubsidiaryId == null && p.Level == "2").H2ProjectedTonnageByMaterial.Count.ShouldBe(3);
@@ -222,7 +222,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     },
                 }
             );
-            await _sut.StoreScaledData(1, scaled);
+            await _sut.StoreScaledData(1, scaled, CancellationToken.None);
 
             var storedScaled = await _dbContext.TransformScaled.ToImmutableListAsync();
             storedScaled.Count.ShouldBe(7);
@@ -247,7 +247,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             });
             await _dbContext.SaveChangesAsync();
             
-            var result = await _sut.ReadScaledData(1);
+            var result = await _sut.ReadScaledData(1, CancellationToken.None);
             result.Count.ShouldBe(3);
             result.First(p => p.ProducerId == 1 && p.SubsidiaryId == null).PomData.Count.ShouldBe(2);
             result.First(p => p.ProducerId == 1 && p.SubsidiaryId == "A").PomData.Count.ShouldBe(2);
@@ -277,7 +277,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     }
                 }
             );
-            await _sut.StorePartialData(1, partial);
+            await _sut.StorePartialData(1, partial, CancellationToken.None);
 
             var storedPartial = await _dbContext.TransformPartial.ToImmutableListAsync();
             storedPartial.Count.ShouldBe(3);
@@ -302,7 +302,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             });
             await _dbContext.SaveChangesAsync();
             
-            var result = await _sut.ReadPartialData(1);
+            var result = await _sut.ReadPartialData(1, CancellationToken.None);
             result.Count.ShouldBe(3);
             result.First(p => p.ProducerId == 1 && p.SubsidiaryId == null).PartialObligationTonnageByMaterial.Count.ShouldBe(2);
             result.First(p => p.ProducerId == 1 && p.SubsidiaryId == "A").PartialObligationTonnageByMaterial.Count.ShouldBe(2);

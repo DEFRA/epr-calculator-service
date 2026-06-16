@@ -3,43 +3,42 @@ using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Utils;
-using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Services
 {
     public interface ICalcResultService
     {
-        Task StoreProjectedH1Data(int runId, IReadOnlyList<CalcResultH1ProjectedProducer> projectedProducers);
-        Task StoreProjectedH2Data(int runId, IReadOnlyList<CalcResultH2ProjectedProducer> projectedProducers);
-        Task StoreScaledData(int runId, IReadOnlyList<CalcResultScaledupProducer> scaled);
-        Task StorePartialData(int runId, IReadOnlyList<CalcResultPartialObligation> partial);
-        Task<IReadOnlyList<CalcResultH1ProjectedProducer>> ReadH1ProjectedData(int runId);
-        Task<IReadOnlyList<CalcResultH2ProjectedProducer>> ReadH2ProjectedData(int runId);
-        Task<IReadOnlyList<CalcResultScaledupProducer>> ReadScaledData(int runId);
-        Task<IReadOnlyList<CalcResultPartialObligation>> ReadPartialData(int runId);
+        Task StoreProjectedH1Data(int runId, IReadOnlyList<CalcResultH1ProjectedProducer> projectedProducers, CancellationToken cancellationToken);
+        Task StoreProjectedH2Data(int runId, IReadOnlyList<CalcResultH2ProjectedProducer> projectedProducers, CancellationToken cancellationToken);
+        Task StoreScaledData(int runId, IReadOnlyList<CalcResultScaledupProducer> scaled, CancellationToken cancellationToken);
+        Task StorePartialData(int runId, IReadOnlyList<CalcResultPartialObligation> partial, CancellationToken cancellationToken);
+        Task<IReadOnlyList<CalcResultH1ProjectedProducer>> ReadH1ProjectedData(int runId, CancellationToken cancellationToken);
+        Task<IReadOnlyList<CalcResultH2ProjectedProducer>> ReadH2ProjectedData(int runId, CancellationToken cancellationToken);
+        Task<IReadOnlyList<CalcResultScaledupProducer>> ReadScaledData(int runId, CancellationToken cancellationToken);
+        Task<IReadOnlyList<CalcResultPartialObligation>> ReadPartialData(int runId, CancellationToken cancellationToken);
     }
 
-    public class CalcResultService(ApplicationDBContext dbContext) : ICalcResultService
+    public class CalcResultService(IBulkOperations bulkOps, ApplicationDBContext dbContext) : ICalcResultService
     {
-        public async Task StoreProjectedH1Data(int runId, IReadOnlyList<CalcResultH1ProjectedProducer> projectedProducers)
+        public async Task StoreProjectedH1Data(int runId, IReadOnlyList<CalcResultH1ProjectedProducer> projectedProducers, CancellationToken cancellationToken)
         {
-            await StoreData(dbContext.TransformProjectedH1, projectedProducers, p => 
+            await bulkOps.BulkInsertAsync(dbContext, projectedProducers.SelectMany(p => 
                 p.H1ProjectedTonnageByMaterial.Select(m => 
                     MapToTransformProjectedH1(runId, p.ProducerId, p.SubsidiaryId, m.Key, p.SubmissionPeriodCode, p.Level, m.Value)
                 )
-            );
+            ), cancellationToken);
         }
 
-        public async Task StoreProjectedH2Data(int runId, IReadOnlyList<CalcResultH2ProjectedProducer> projectedProducers)
+        public async Task StoreProjectedH2Data(int runId, IReadOnlyList<CalcResultH2ProjectedProducer> projectedProducers, CancellationToken cancellationToken)
         {
-            await StoreData(dbContext.TransformProjectedH2, projectedProducers, p => 
+            await bulkOps.BulkInsertAsync(dbContext, projectedProducers.SelectMany(p => 
                 p.H2ProjectedTonnageByMaterial.Select(m => 
                     MapToTransformProjectedH2(runId, p.ProducerId, p.SubsidiaryId, m.Key, p.SubmissionPeriodCode, p.Level, m.Value)
                 )
-            );
+            ), cancellationToken);
         }
 
-        public async Task<IReadOnlyList<CalcResultH1ProjectedProducer>> ReadH1ProjectedData(int runId)
+        public async Task<IReadOnlyList<CalcResultH1ProjectedProducer>> ReadH1ProjectedData(int runId, CancellationToken cancellationToken)
         {
             return await dbContext.TransformProjectedH1
                         .Where(p => p.CalculatorRunId == runId)
@@ -55,10 +54,10 @@ namespace EPR.Calculator.Service.Function.Services
                         .OrderBy(p => p.ProducerId)
                         .ThenBy(p => p.Level)
                         .ThenBy(p => p.SubsidiaryId)
-                        .ToImmutableListAsync();
+                        .ToImmutableListAsync(cancellationToken);
         }
 
-        public async Task<IReadOnlyList<CalcResultH2ProjectedProducer>> ReadH2ProjectedData(int runId)
+        public async Task<IReadOnlyList<CalcResultH2ProjectedProducer>> ReadH2ProjectedData(int runId, CancellationToken cancellationToken)
         {
             return await dbContext.TransformProjectedH2
                         .Where(p => p.CalculatorRunId == runId)
@@ -74,12 +73,12 @@ namespace EPR.Calculator.Service.Function.Services
                         .OrderBy(p => p.ProducerId)
                         .ThenBy(p => p.Level)
                         .ThenBy(p => p.SubsidiaryId)
-                        .ToImmutableListAsync();
+                        .ToImmutableListAsync(cancellationToken);
         }
 
-        public async Task StoreScaledData(int runId, IReadOnlyList<CalcResultScaledupProducer> scaled)
+        public async Task StoreScaledData(int runId, IReadOnlyList<CalcResultScaledupProducer> scaled, CancellationToken cancellationToken)
         {
-             await StoreData(dbContext.TransformScaled, scaled, p => 
+             await bulkOps.BulkInsertAsync(dbContext, scaled.SelectMany(p => 
                 p.PomData.Select(m => 
                     new TransformScaled
                     {
@@ -100,10 +99,10 @@ namespace EPR.Calculator.Service.Function.Services
                         ScaledTonnage = m.ScaledTonnage
                     }
                 )
-            );
+            ), cancellationToken);
         }
         
-        public async Task<IReadOnlyList<CalcResultScaledupProducer>> ReadScaledData(int runId)
+        public async Task<IReadOnlyList<CalcResultScaledupProducer>> ReadScaledData(int runId, CancellationToken cancellationToken)
         {
             return await dbContext.TransformScaled
                         .Where(p => p.CalculatorRunId == runId)
@@ -128,18 +127,18 @@ namespace EPR.Calculator.Service.Function.Services
                         .ThenBy(p => p.Level)
                         .ThenBy(p => p.SubsidiaryId)
                         .ThenBy(p => p.SubmissionPeriodCode)
-                        .ToImmutableListAsync();
+                        .ToImmutableListAsync(cancellationToken);
         }
 
-        public async Task StorePartialData(int runId, IReadOnlyList<CalcResultPartialObligation> partial){
-            await StoreData(dbContext.TransformPartial, partial, p => 
+        public async Task StorePartialData(int runId, IReadOnlyList<CalcResultPartialObligation> partial, CancellationToken cancellationToken){
+            await bulkOps.BulkInsertAsync(dbContext, partial.SelectMany(p => 
                 p.PartialObligationTonnageByMaterial.Select(m => 
                     MapToTransformPartial(runId, m.Key, p, m.Value)
                 )
-            );
+            ), cancellationToken);
         }
 
-        public async Task<IReadOnlyList<CalcResultPartialObligation>> ReadPartialData(int runId){
+        public async Task<IReadOnlyList<CalcResultPartialObligation>> ReadPartialData(int runId, CancellationToken cancellationToken){
             return await dbContext.TransformPartial
                         .Where(p => p.CalculatorRunId == runId)
                         .GroupBy(p => new { p.ProducerId, p.SubsidiaryId, p.ProducerName, p.TradingName, p.SubmissionYear, p.Level, p.DaysInSubmissionYear, p.JoiningDate, p.DaysObligated, p.ObligatedFactor })
@@ -162,13 +161,7 @@ namespace EPR.Calculator.Service.Function.Services
                         .OrderBy(p => p.ProducerId)
                         .ThenBy(p => p.Level)
                         .ThenBy(p => p.SubsidiaryId)
-                        .ToImmutableListAsync();
-        }
-
-        private async Task StoreData<TSource, TEntity>(DbSet<TEntity> dbSet, IReadOnlyList<TSource> data, Func<TSource, IEnumerable<TEntity>> mapper) where TEntity : class
-        {
-            await dbSet.AddRangeAsync(data.SelectMany(mapper));
-            await dbContext.SaveChangesAsync();
+                        .ToImmutableListAsync(cancellationToken);
         }
 
         private static Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage> MapToH1MaterialTonnages(List<TransformProjectedH1> transformProjectedH1s)

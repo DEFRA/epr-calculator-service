@@ -68,7 +68,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 new L1Producer(1, [producer1, producer2])
             };
 
-            await sut.StoreProjectedProducers(producers);
+            await sut.StoreProjectedProducers(producers, CancellationToken.None);
 
             var stored = await dbContext.ProducerReportedMaterialProjected.ToImmutableListAsync();
             stored.Count.ShouldBe(6);
