@@ -14,7 +14,7 @@ public static class CalcResultSummaryCommsCostTwoA
         calcResult.CalcResultCommsCostReportDetail.ByMaterial.GetValueOrDefault(material.Code)?.PricePerTonne ?? 0m;
 
     public static decimal GetTotalReportedTonnage(
-        ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
+        ILookup<(int, string?), TransformProducerReportedMaterial> projectedMaterialsLookup,
         ProducerDetail producer,
         MaterialDetail material
     ) =>
@@ -25,7 +25,7 @@ public static class CalcResultSummaryCommsCostTwoA
             : 0);
 
     public static CalcResultSummaryBadDebtProvision GetCommsFeesCosts(
-        ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
+        ILookup<(int, string?), TransformProducerReportedMaterial> projectedMaterialsLookup,
         ProducerDetail producer,
         MaterialDetail material,
         CalcResult calcResult

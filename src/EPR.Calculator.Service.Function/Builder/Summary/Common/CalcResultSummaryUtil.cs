@@ -10,7 +10,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
     public static class CalcResultSummaryUtil
     {
         public static decimal GetTonnage(
-            ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
+            ILookup<(int, string?), TransformProducerReportedMaterial> projectedMaterialsLookup,
             ProducerDetail producer,
             MaterialDetail material,
             string packagingType,
@@ -34,7 +34,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
         }
 
         public static decimal GetReportedTonnage(
-            ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
+            ILookup<(int, string?), TransformProducerReportedMaterial> projectedMaterialsLookup,
             ProducerDetail producer,
             MaterialDetail material,
             RagRating? ragRating = null
@@ -51,7 +51,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         // Single-pass equivalent of calling GetReportedTonnage seven times with each RagRating and once without.
         public static (decimal R, decimal A, decimal G, decimal Total) GetReportedTonnagesByRag(
-            ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
+            ILookup<(int, string?), TransformProducerReportedMaterial> projectedMaterialsLookup,
             ProducerDetail producer,
             MaterialDetail material
         )

@@ -6,6 +6,6 @@ namespace EPR.Calculator.Service.Function.Models
     {
         required public ProducerDetail ProducerDetail { get; set; }
 
-        required public ProducerReportedMaterialProjected ProducerReportedMaterialProjected { get; set; }
+        required public TransformProducerReportedMaterial TransformProducerReportedMaterial { get; set; }
     }
 }

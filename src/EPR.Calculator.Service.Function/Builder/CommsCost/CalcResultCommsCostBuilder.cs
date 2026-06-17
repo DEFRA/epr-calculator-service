@@ -109,12 +109,12 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
         };
     }
 
-    public async Task<List<ProducerReportedMaterialProjected>> GetProducerReportedMaterials(RunContext runContext)
+    public async Task<List<TransformProducerReportedMaterial>> GetProducerReportedMaterials(RunContext runContext)
     {
         return await (
             from run in context.CalculatorRuns
             join pd in context.ProducerDetail on run.Id equals pd.CalculatorRunId
-            join mat in context.ProducerReportedMaterialProjected on pd.Id equals mat.ProducerDetailId
+            join mat in context.TransformProducerReportedMaterial on pd.Id equals mat.ProducerDetailId
             where run.Id == runContext.RunId &&
                   mat.PackagingType != PackagingTypes.ConsumerWaste
             select mat

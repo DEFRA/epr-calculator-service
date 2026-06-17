@@ -44,7 +44,6 @@ public class CalcResultBuilder(
     ICalcResultSummaryBuilder summaryBuilder,
     ICalcResultRejectedProducersBuilder rejectedProducersBuilder,
     ICalcResultErrorReportBuilder errorReportBuilder,
-    IProjectedProducersService projectedProducersService,
     ISelfManagedConsumerWasteService selfManagedConsumerWasteService,
     ICalcResultModulationBuilder modulationBuilder,
     ICalcResultService calcResultService,
@@ -174,8 +173,8 @@ public class CalcResultBuilder(
                 nameof(calcResultService.StorePartialData));
 
             await logger.LogDuration(
-                () => projectedProducersService.StoreProjectedProducers(producers, cancellationToken),
-                nameof(projectedProducersService.StoreProjectedProducers));
+                () => calcResultService.StoreTransformedProducers(producers, cancellationToken),
+                nameof(calcResultService.StoreTransformedProducers));
         }
 
         result.Smcw = await logger.LogDuration(

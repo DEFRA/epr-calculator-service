@@ -246,7 +246,7 @@ internal sealed class ProducerRowBuilder(
     [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
     public CalcResultSummaryProducerDisposalFees GetProducerRow(
         RunContext runContext,
-        ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
+        ILookup<(int, string?), TransformProducerReportedMaterial> projectedMaterialsLookup,
         bool hasGroupTotalRow,
         IReadOnlyList<ProducerDetail> producerAndSubsidiaries,
         ProducerDetail producer,
@@ -344,7 +344,7 @@ internal sealed class ProducerRowBuilder(
     [SuppressMessage("Critical Code Smell", "S3776:Cognitive Complexity of methods should not be too high", Justification = "This is suppressed for now and will be refactored later.")]
     private CalcResultSummaryProducerDisposalFeesByMaterial BuildProducerDisposalFeesByMaterial(
         RunContext runContext,
-        ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
+        ILookup<(int, string?), TransformProducerReportedMaterial> projectedMaterialsLookup,
         ProducerDetail producer,
         MaterialDetail material,
         CalcResult calcResult,
@@ -419,7 +419,7 @@ internal sealed class ProducerRowBuilder(
     }
 
     private static CalcResultSummaryProducerCommsFeesCostByMaterial BuildProducerCommsFeesCostByMaterial(
-        ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
+        ILookup<(int, string?), TransformProducerReportedMaterial> projectedMaterialsLookup,
         ProducerDetail producer,
         MaterialDetail material,
         CalcResult calcResult

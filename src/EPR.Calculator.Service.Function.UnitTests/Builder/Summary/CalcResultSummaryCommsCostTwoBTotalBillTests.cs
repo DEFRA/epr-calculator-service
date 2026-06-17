@@ -64,8 +64,8 @@ public class CalcResultSummaryCommsCostTwoBTotalBillTests
             new()
             {
                 ProducerDetail = producer1,
-                ProducerReportedMaterialProjected =
-                    new ProducerReportedMaterialProjected
+                TransformProducerReportedMaterial =
+                    new TransformProducerReportedMaterial
                     {
                         MaterialId = 1,
                         ProducerDetailId = 1,
@@ -84,8 +84,8 @@ public class CalcResultSummaryCommsCostTwoBTotalBillTests
             new()
             {
                 ProducerDetail = producer1,
-                ProducerReportedMaterialProjected =
-                    new ProducerReportedMaterialProjected
+                TransformProducerReportedMaterial =
+                    new TransformProducerReportedMaterial
                     {
                         MaterialId = 1,
                         ProducerDetailId = 1,
@@ -104,8 +104,8 @@ public class CalcResultSummaryCommsCostTwoBTotalBillTests
             new()
             {
                 ProducerDetail = producer2,
-                ProducerReportedMaterialProjected =
-                    new ProducerReportedMaterialProjected
+                TransformProducerReportedMaterial =
+                    new TransformProducerReportedMaterial
                     {
                         MaterialId = 1,
                         ProducerDetailId = 2,
@@ -124,8 +124,8 @@ public class CalcResultSummaryCommsCostTwoBTotalBillTests
             new()
             {
                 ProducerDetail = producer2,
-                ProducerReportedMaterialProjected =
-                    new ProducerReportedMaterialProjected
+                TransformProducerReportedMaterial =
+                    new TransformProducerReportedMaterial
                     {
                         MaterialId = 1,
                         ProducerDetailId = 2,

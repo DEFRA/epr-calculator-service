@@ -12,6 +12,7 @@ namespace EPR.Calculator.Service.Function.Services
         Task StoreProjectedH2Data(int runId, IReadOnlyList<CalcResultH2ProjectedProducer> projectedProducers, CancellationToken cancellationToken);
         Task StoreScaledData(int runId, IReadOnlyList<CalcResultScaledupProducer> scaled, CancellationToken cancellationToken);
         Task StorePartialData(int runId, IReadOnlyList<CalcResultPartialObligation> partial, CancellationToken cancellationToken);
+        Task StoreTransformedProducers(List<L1Producer> producerDetails, CancellationToken cancellationToken);
         Task<IReadOnlyList<CalcResultH1ProjectedProducer>> ReadH1ProjectedData(int runId, CancellationToken cancellationToken);
         Task<IReadOnlyList<CalcResultH2ProjectedProducer>> ReadH2ProjectedData(int runId, CancellationToken cancellationToken);
         Task<IReadOnlyList<CalcResultScaledupProducer>> ReadScaledData(int runId, CancellationToken cancellationToken);
@@ -164,6 +165,29 @@ namespace EPR.Calculator.Service.Function.Services
                         .ToImmutableListAsync(cancellationToken);
         }
 
+        public async Task StoreTransformedProducers(List<L1Producer> producerDetails, CancellationToken cancellationToken)
+        {
+            await bulkOps.BulkInsertAsync(dbContext, producerDetails
+                    .SelectMany(p => p.Producers)
+                    .SelectMany(p => p.ProducerReportedMaterials.Select(rm =>
+                        new TransformProducerReportedMaterial
+                        {
+                            ProducerDetailId             = rm.ProducerDetailId,
+                            MaterialId                   = rm.MaterialId,
+                            SubmissionPeriod             = rm.SubmissionPeriod,
+                            PackagingType                = rm.PackagingType,
+                            PackagingTonnage             = rm.PackagingTonnage,
+                            PackagingTonnageRed          = rm.PackagingTonnageRed,
+                            PackagingTonnageAmber        = rm.PackagingTonnageAmber,
+                            PackagingTonnageGreen        = rm.PackagingTonnageGreen,
+                            PackagingTonnageRedMedical   = rm.PackagingTonnageRedMedical,
+                            PackagingTonnageAmberMedical = rm.PackagingTonnageAmberMedical,
+                            PackagingTonnageGreenMedical = rm.PackagingTonnageGreenMedical
+                        }
+                    )
+                ).ToList(), cancellationToken);
+        }
+    
         private static Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage> MapToH1MaterialTonnages(List<TransformProjectedH1> transformProjectedH1s)
         {
             return transformProjectedH1s.ToDictionary(

@@ -33,7 +33,6 @@ public class CalcResultBuilderTests : TestsFor<CalcResultBuilder>
     private Mock<ICalcResultLapcapDataBuilder> mockLapcapBuilder = null!;
     private Mock<ICalcResultLateReportingBuilder> mockLateReportingBuilder = null!;
     private Mock<ICalcResultOnePlusFourApportionmentBuilder> mockOnePlusFourApportionmentBuilder = null!;
-    private Mock<IProjectedProducersService> mockProjectedProducerService = null!;
     private Mock<IReportedProducerService> mockReportedProducerService = null!;
     private Mock<ISelfManagedConsumerWasteService> mockSelfManagedConsumerWasteService = null!;
     private Mock<ICalcResultSummaryBuilder> mockSummaryBuilder = null!;
@@ -52,7 +51,6 @@ public class CalcResultBuilderTests : TestsFor<CalcResultBuilder>
         mockCalcResultScaledupProducersBuilder = fixture.Freeze<Mock<ICalcResultScaledupProducersBuilder>>();
         mockCalcResultPartialObligationBuilder = fixture.Freeze<Mock<ICalcResultPartialObligationBuilder>>();
         mockCalcResultProjectedProducersBuilder = fixture.Freeze<Mock<ICalcResultProjectedProducersBuilder>>();
-        mockProjectedProducerService = fixture.Freeze<Mock<IProjectedProducersService>>();
         mockSelfManagedConsumerWasteService = fixture.Freeze<Mock<ISelfManagedConsumerWasteService>>();
         mockReportedProducerService = fixture.Freeze<Mock<IReportedProducerService>>();
         mockCalcResultService = fixture.Freeze<Mock<ICalcResultService>>();
@@ -172,7 +170,7 @@ public class CalcResultBuilderTests : TestsFor<CalcResultBuilder>
         mockCalcResultService.Verify(m => m.StoreProjectedH1Data(runContext.RunId, It.IsAny<IReadOnlyList<CalcResultH1ProjectedProducer>>(), CancellationToken.None), Times.Once);
         mockCalcResultService.Verify(m => m.StoreProjectedH2Data(runContext.RunId, It.IsAny<IReadOnlyList<CalcResultH2ProjectedProducer>>(), CancellationToken.None), Times.Once);
         mockCalcResultService.Verify(m => m.StorePartialData(runContext.RunId, It.IsAny<IReadOnlyList<CalcResultPartialObligation>>(), CancellationToken.None), Times.Once);
-        mockProjectedProducerService.Verify(m => m.StoreProjectedProducers(It.IsAny<List<L1Producer>>(), CancellationToken.None), Times.Once);
+        mockCalcResultService.Verify(m => m.StoreTransformedProducers(It.IsAny<List<L1Producer>>(), CancellationToken.None), Times.Once);
     }
 
     [TestMethod]
@@ -210,7 +208,7 @@ public class CalcResultBuilderTests : TestsFor<CalcResultBuilder>
         mockCalcResultScaledupProducersBuilder.Verify(m => m.ConstructAsync(runContext, It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<L1Producer>>()), Times.Never);
         mockCalcResultProjectedProducersBuilder.Verify(m => m.Construct(runContext, It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<L1Producer>>()), Times.Never);
         mockCalcResultPartialObligationBuilder.Verify(m => m.ConstructAsync(runContext,It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<L1Producer>>()), Times.Never);
-        mockProjectedProducerService.Verify(m => m.StoreProjectedProducers(It.IsAny<List<L1Producer>>(), CancellationToken.None), Times.Never);
+        mockCalcResultService.Verify(m => m.StoreTransformedProducers(It.IsAny<List<L1Producer>>(), CancellationToken.None), Times.Never);
     }
 
     [TestMethod]
@@ -248,7 +246,7 @@ public class CalcResultBuilderTests : TestsFor<CalcResultBuilder>
             mockCalcResultProjectedProducersBuilder.Verify(m => m.Construct(runContext,It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<L1Producer>>()), Times.Never);
             mockCalcResultService.Verify(m => m.StoreScaledData(runContext.RunId, It.IsAny<IReadOnlyList<CalcResultScaledupProducer>>(), CancellationToken.None), Times.Once);
             mockCalcResultService.Verify(m => m.StorePartialData(runContext.RunId, It.IsAny<IReadOnlyList<CalcResultPartialObligation>>(), CancellationToken.None), Times.Once);
-            mockProjectedProducerService.Verify(m => m.StoreProjectedProducers(It.IsAny<List<L1Producer>>(), CancellationToken.None), Times.Once);
+            mockCalcResultService.Verify(m => m.StoreTransformedProducers(It.IsAny<List<L1Producer>>(), CancellationToken.None), Times.Once);
         }
 
         [TestMethod]
@@ -272,6 +270,6 @@ public class CalcResultBuilderTests : TestsFor<CalcResultBuilder>
             mockCalcResultScaledupProducersBuilder.Verify(m => m.ConstructAsync(runContext,It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<L1Producer>>()), Times.Never);
             mockCalcResultPartialObligationBuilder.Verify(m => m.ConstructAsync(runContext,It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<L1Producer>>()), Times.Never);
             mockCalcResultProjectedProducersBuilder.Verify(m => m.Construct(runContext,It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<L1Producer>>()), Times.Never);
-            mockProjectedProducerService.Verify(m => m.StoreProjectedProducers(It.IsAny<List<L1Producer>>(), CancellationToken.None), Times.Never);
+            mockCalcResultService.Verify(m => m.StoreTransformedProducers(It.IsAny<List<L1Producer>>(), CancellationToken.None), Times.Never);
         }
 }

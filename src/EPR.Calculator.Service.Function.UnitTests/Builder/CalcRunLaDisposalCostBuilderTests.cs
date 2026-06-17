@@ -248,7 +248,7 @@ public class CalcRunLaDisposalCostBuilderTests : TestsFor<CalcRunLaDisposalCostB
         };
         dbContext.Material.AddRange(materials);
 
-        var producerReportedMaterials = new List<ProducerReportedMaterialProjected>
+        var producerReportedMaterials = new List<TransformProducerReportedMaterial>
         {
             new() { ProducerDetailId = 3, MaterialId = 1, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.Household, PackagingTonnage = 25 },
             new() { ProducerDetailId = 3, MaterialId = 1, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.Household, PackagingTonnage = 75 },
@@ -263,7 +263,7 @@ public class CalcRunLaDisposalCostBuilderTests : TestsFor<CalcRunLaDisposalCostB
             new() { ProducerDetailId = 2, MaterialId = 3, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 200 },
             new() { ProducerDetailId = 2, MaterialId = 3, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 300 }
         };
-        dbContext.ProducerReportedMaterialProjected.AddRange(producerReportedMaterials);
+        dbContext.TransformProducerReportedMaterial.AddRange(producerReportedMaterials);
 
         dbContext.SaveChanges();
     }

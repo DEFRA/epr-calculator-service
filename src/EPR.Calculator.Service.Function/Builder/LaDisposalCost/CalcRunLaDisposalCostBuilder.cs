@@ -83,12 +83,12 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
 
         private async Task<List<ProducerData>> GetProducerData(RunContext runContext)
         {
-            // TODO note returns duplicates for SubmissionPeriod - should remove it from ProducerReportedMaterialProjected - it's not needed
+            // TODO note returns duplicates for SubmissionPeriod - should remove it from TransformProducerReportedMaterial - it's not needed
             // TODO why filter PackagingType/Material? should already be done
             return await (
                 from run in context.CalculatorRuns
                 join producerDetail in context.ProducerDetail on run.Id equals producerDetail.CalculatorRunId
-                join producerMaterial in context.ProducerReportedMaterialProjected on producerDetail.Id equals producerMaterial.ProducerDetailId
+                join producerMaterial in context.TransformProducerReportedMaterial on producerDetail.Id equals producerMaterial.ProducerDetailId
                 join material in context.Material on producerMaterial.MaterialId equals material.Id
                 where run.Id == runContext.RunId &&
                     producerMaterial.PackagingType != null &&

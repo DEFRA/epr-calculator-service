@@ -34,7 +34,7 @@
     <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2"/>
     <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="8.0.0"/>
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.5.0"/>
-    <PackageReference Include="EPR.Calculator.API.Data" Version="2.6.0"/>
+    <PackageReference Include="EPR.Calculator.API.Data" Version="2.7.0"/>
     <PackageReference Include="Serilog.Expressions" Version="5.0.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="8.0.4" />

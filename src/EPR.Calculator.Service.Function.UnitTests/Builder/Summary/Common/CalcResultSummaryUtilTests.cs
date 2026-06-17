@@ -42,11 +42,11 @@ public class CalcResultSummaryUtilTests
 
     private Fixture Fixture { get; } = new();
 
-    public static ILookup<(int, string?), ProducerReportedMaterialProjected> ProjectedMaterialsLookup(List<ProducerDetail> producers)
+    public static ILookup<(int, string?), TransformProducerReportedMaterial> ProjectedMaterialsLookup(List<ProducerDetail> producers)
     {
         // This allows us to retrofit into existing test setup, but ProducerReportedMaterials normally
         // refers to pre-processed data, which is _not_ what we want to display in the ResultsSummary
-        ProducerReportedMaterialProjected ToProjected(ProducerReportedMaterial rm) =>
+        TransformProducerReportedMaterial ToProjected(ProducerReportedMaterial rm) =>
             new()
             {
                 MaterialId                   = rm.MaterialId,

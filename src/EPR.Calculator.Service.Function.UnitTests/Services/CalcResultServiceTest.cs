@@ -4,8 +4,8 @@ using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 using EPR.Calculator.Service.Function.Utils;
-using Microsoft.Identity.Client.AppConfig;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
@@ -307,6 +307,59 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             result.First(p => p.ProducerId == 1 && p.SubsidiaryId == null).PartialObligationTonnageByMaterial.Count.ShouldBe(2);
             result.First(p => p.ProducerId == 1 && p.SubsidiaryId == "A").PartialObligationTonnageByMaterial.Count.ShouldBe(2);
             result.First(p => p.ProducerId == 2 && p.SubsidiaryId == "B").PartialObligationTonnageByMaterial.Count.ShouldBe(2);
+        }
+
+        [TestMethod]
+        public async Task StoreTransformedProducers_WorksAsExpected()
+        {
+            TestDataHelper.SeedDatabaseForInitialRun(_dbContext);
+
+            ProducerReportedMaterial mkProducerReportedMaterial(string submissionPeriod, string material, string packagingType, decimal total, decimal? r, decimal? a)
+            {
+                return new ProducerReportedMaterial
+                {
+                    PackagingType = packagingType,
+                    MaterialId = material switch 
+                    {
+                        "ST" => 1,
+                        "AL" => 2,
+                        "PL" => 3,
+                        _ => throw new ArgumentException($"Unknown material code: {material}")
+                    },
+                    PackagingTonnage = total,
+                    PackagingTonnageRed = r,
+                    PackagingTonnageAmber = a,
+                    PackagingTonnageGreen = 0m,
+                    PackagingTonnageRedMedical = null,
+                    PackagingTonnageAmberMedical = null,
+                    PackagingTonnageGreenMedical = null,
+                    SubmissionPeriod = submissionPeriod
+                };
+            }
+
+            var producer1 = new ProducerDetail{
+                ProducerId = 1,
+                SubsidiaryId = null
+            };
+            producer1.ProducerReportedMaterials.Add(mkProducerReportedMaterial(submissionPeriod: "2025-H1", material: "ST", packagingType: "PB", total:   7, r:   2, a: 5 ));
+            producer1.ProducerReportedMaterials.Add(mkProducerReportedMaterial(submissionPeriod: "2025-H2", material: "PL", packagingType: "HH", total:  12, r:   0, a: 11));
+            producer1.ProducerReportedMaterials.Add(mkProducerReportedMaterial(submissionPeriod: "2025-H1", material: "ST", packagingType: "HH", total: 201, r: 201, a: 0 ));
+            var producer2 = new ProducerDetail{
+                ProducerId = 1,
+                SubsidiaryId = "A"
+            };
+            producer2.ProducerReportedMaterials.Add(mkProducerReportedMaterial(submissionPeriod: "2025-H2", material: "ST", packagingType: "PB", total:   5, r:   1, a: 4 ));
+            producer2.ProducerReportedMaterials.Add(mkProducerReportedMaterial(submissionPeriod: "2025-H2", material: "PL", packagingType: "HH", total:  10, r:   0, a: 10));
+            producer2.ProducerReportedMaterials.Add(mkProducerReportedMaterial(submissionPeriod: "2025-H2", material: "ST", packagingType: "HH", total: 200, r: 200, a: 0 ));
+            var producers = new List<L1Producer>
+            {
+                new L1Producer(1, [producer1, producer2])
+            };
+
+            await _sut.StoreTransformedProducers(producers, CancellationToken.None);
+
+            var stored = await _dbContext.TransformProducerReportedMaterial.ToImmutableListAsync();
+            stored.Count.ShouldBe(6);
         }
 
         private TransformProjectedH1 MkTransformProjectedH1(int runId, int producerId, string? subsidiaryId, string materialCode, string level, bool isGlass = false) {

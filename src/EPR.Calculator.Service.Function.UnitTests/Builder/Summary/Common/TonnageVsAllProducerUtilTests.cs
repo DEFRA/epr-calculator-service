@@ -31,7 +31,7 @@ public class TonnageVsAllProducerUtilTests
         producer.ProducerId = testProducerId;
         producer.SubsidiaryId = testSubsidaryId;
         producer.CalculatorRunId = testCalculatorRunId;
-        allResults.First().ProducerReportedMaterialProjected.MaterialId = materialDetails.First().Id;
+        allResults.First().TransformProducerReportedMaterial.MaterialId = materialDetails.First().Id;
 
         var TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId);
 
@@ -56,8 +56,8 @@ public class TonnageVsAllProducerUtilTests
         var producer = Fixture.Create<ProducerDetail>();
         var allResults = GenerateAllResults(testProducerId, testCalculatorRunId, testSubsidaryId);
 
-        allResults.First().ProducerReportedMaterialProjected.MaterialId = materialDetails.First().Id;
-        allResults.First().ProducerReportedMaterialProjected.PackagingType = "PB";
+        allResults.First().TransformProducerReportedMaterial.MaterialId = materialDetails.First().Id;
+        allResults.First().TransformProducerReportedMaterial.PackagingType = "PB";
 
         producer.ProducerId = testProducerId;
         producer.SubsidiaryId = testSubsidaryId;
@@ -82,19 +82,19 @@ public class TonnageVsAllProducerUtilTests
         string testSubsidaryId)
     {
         var allResults = Fixture.Create<List<CalcResultProducerAndReportMaterialDetail>>();
-        allResults.First().ProducerReportedMaterialProjected.ProducerDetailId = testProducerId;
+        allResults.First().TransformProducerReportedMaterial.ProducerDetailId = testProducerId;
         allResults.First().ProducerDetail.Id = testProducerId;
         allResults.First().ProducerDetail.ProducerId = testProducerId;
         allResults.First().ProducerDetail.CalculatorRunId = testCalculatorRunId;
         allResults.First().ProducerDetail.SubsidiaryId = testSubsidaryId;
-        allResults.First().ProducerReportedMaterialProjected.PackagingType = "HH";
+        allResults.First().TransformProducerReportedMaterial.PackagingType = "HH";
 
-        allResults.Last().ProducerReportedMaterialProjected.ProducerDetailId = testProducerId;
+        allResults.Last().TransformProducerReportedMaterial.ProducerDetailId = testProducerId;
         allResults.Last().ProducerDetail.Id = testProducerId;
         allResults.Last().ProducerDetail.ProducerId = testProducerId;
         allResults.Last().ProducerDetail.CalculatorRunId = testCalculatorRunId;
         allResults.Last().ProducerDetail.SubsidiaryId = Fixture.Create<string>();
-        allResults.Last().ProducerReportedMaterialProjected.PackagingType = "HH";
+        allResults.Last().TransformProducerReportedMaterial.PackagingType = "HH";
 
         return allResults;
     }

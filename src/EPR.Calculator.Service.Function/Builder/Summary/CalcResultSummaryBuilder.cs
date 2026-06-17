@@ -38,19 +38,19 @@ public class CalcResultSummaryBuilder(
 
         var runProducerMaterialDetails = await (
             from pd in context.ProducerDetail
-            join prm in context.ProducerReportedMaterialProjected on pd.Id equals prm.ProducerDetailId
+            join prm in context.TransformProducerReportedMaterial on pd.Id equals prm.ProducerDetailId
             where pd.CalculatorRunId == runContext.RunId
             select new CalcResultProducerAndReportMaterialDetail
             {
                 ProducerDetail = pd,
-                ProducerReportedMaterialProjected = prm,
+                TransformProducerReportedMaterial = prm,
             }
         ).ToListAsync();
 
         var projectedMaterialsLookup = runProducerMaterialDetails
             .ToLookup(
                 x => (x.ProducerDetail.ProducerId, x.ProducerDetail.SubsidiaryId),
-                x => x.ProducerReportedMaterialProjected
+                x => x.TransformProducerReportedMaterial
             );
 
         var producerDetails = runProducerMaterialDetails
@@ -152,7 +152,7 @@ public class CalcResultSummaryBuilder(
     [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
     private static CalcResultSummary GetCalcResultSummary(
         RunContext runContext,
-        ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
+        ILookup<(int, string?), TransformProducerReportedMaterial> projectedMaterialsLookup,
         IReadOnlyList<ProducerDetail> orderedProducerDetails,
         IReadOnlyList<MaterialDetail> materials,
         CalcResult calcResult,
@@ -228,7 +228,7 @@ public class CalcResultSummaryBuilder(
     )
     {
         var allProducerDetails = allResults.Select(x => x.ProducerDetail).DistinctBy(x => (x.ProducerId, x.SubsidiaryId));
-        var allProducerReportedMaterials = allResults.Select(x => x.ProducerReportedMaterialProjected);
+        var allProducerReportedMaterials = allResults.Select(x => x.TransformProducerReportedMaterial);
 
         var result =
             (from p in allProducerDetails

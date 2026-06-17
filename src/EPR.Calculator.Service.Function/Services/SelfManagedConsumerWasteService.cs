@@ -34,19 +34,19 @@ namespace EPR.Calculator.Service.Function.Services
             // TODO also used by CalcResultSummaryBuilder - look up in CalcResultBuilder...
             var producerMaterialDetails = await (
                 from pd in context.ProducerDetail
-                join prm in context.ProducerReportedMaterialProjected on pd.Id equals prm.ProducerDetailId
+                join prm in context.TransformProducerReportedMaterial on pd.Id equals prm.ProducerDetailId
                 where pd.CalculatorRunId == runContext.RunId
                 select new CalcResultProducerAndReportMaterialDetail
                 {
                     ProducerDetail = pd,
-                    ProducerReportedMaterialProjected = prm,
+                    TransformProducerReportedMaterial = prm,
                 }
             ).ToListAsync();
 
             var projectedMaterialsLookup = producerMaterialDetails
                 .ToLookup(
                     x => (x.ProducerDetail.ProducerId, x.ProducerDetail.SubsidiaryId),
-                    x => x.ProducerReportedMaterialProjected
+                    x => x.TransformProducerReportedMaterial
                 );
 
             var producerDetails = producerMaterialDetails
@@ -90,7 +90,7 @@ namespace EPR.Calculator.Service.Function.Services
         }
 
         private IL1 BuildL1(
-            ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
+            ILookup<(int, string?), TransformProducerReportedMaterial> projectedMaterialsLookup,
             IGrouping<int, ProducerDetail> group,
             MaterialDetail material
         )

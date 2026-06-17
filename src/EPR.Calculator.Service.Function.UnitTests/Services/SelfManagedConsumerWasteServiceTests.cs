@@ -44,8 +44,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             };
             context.ProducerDetail.Add(producer);
 
-            context.ProducerReportedMaterialProjected.AddRange(
-                new ProducerReportedMaterialProjected
+            context.TransformProducerReportedMaterial.AddRange(
+                new TransformProducerReportedMaterial
                 {
                     ProducerDetailId             = producer.Id,
                     MaterialId                   = material.Id,
@@ -59,7 +59,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     PackagingTonnageGreenMedical = hhGreenMedical,
                     SubmissionPeriod             = "2025-H1"
                 },
-                new ProducerReportedMaterialProjected
+                new TransformProducerReportedMaterial
                 {
                     ProducerDetailId = producer.Id,
                     MaterialId       = material.Id,
@@ -227,7 +227,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var total = result.OverallTotalPerMaterials[MaterialCodes.Aluminium];
 
             // Level 2 should not contribute
-            // TODO there is no ProducerReportedMaterialProjected created, so there's nothing to filter out
+            // TODO there is no TransformProducerReportedMaterial created, so there's nothing to filter out
             Assert.AreEqual(0, total.SelfManagedConsumerWasteTonnage);
             Assert.AreEqual(0, total.NetReportedTonnage.total);
         }
