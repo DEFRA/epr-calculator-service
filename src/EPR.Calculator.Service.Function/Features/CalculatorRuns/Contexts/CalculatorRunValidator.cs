@@ -1,7 +1,7 @@
 ﻿using EPR.Calculator.API.Data.DataModels;
 using FluentValidation;
 
-namespace EPR.Calculator.Service.Function.Features.CalculatorRun.Contexts;
+namespace EPR.Calculator.Service.Function.Features.CalculatorRuns.Contexts;
 
 public class CalculatorRunValidator : AbstractValidator<API.Data.DataModels.CalculatorRun>
 {

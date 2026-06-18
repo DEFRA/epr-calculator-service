@@ -1,11 +1,11 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.Service.Function.Exceptions;
-using EPR.Calculator.Service.Function.Features.BillingRun.Constants;
+using EPR.Calculator.Service.Function.Features.BillingRuns.Constants;
 using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Utils;
 using Microsoft.EntityFrameworkCore;
 
-namespace EPR.Calculator.Service.Function.Features.BillingRun.Contexts;
+namespace EPR.Calculator.Service.Function.Features.BillingRuns.Contexts;
 
 /// <summary>
 ///     Creates <see cref="BillingRunContext">BillingRunContexts</see> for use with the <see cref="BillingRunProcessor" />.

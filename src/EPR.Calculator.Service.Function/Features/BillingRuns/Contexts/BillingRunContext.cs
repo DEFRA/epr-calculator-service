@@ -1,6 +1,6 @@
 ﻿using EPR.Calculator.Service.Function.Features.Common;
 
-namespace EPR.Calculator.Service.Function.Features.BillingRun.Contexts;
+namespace EPR.Calculator.Service.Function.Features.BillingRuns.Contexts;
 
 /// <summary>
 ///     A context used exclusively for billing runs.

@@ -1,4 +1,4 @@
-﻿namespace EPR.Calculator.Service.Function.Features.BillingRun.Constants;
+﻿namespace EPR.Calculator.Service.Function.Features.BillingRuns.Constants;
 
 public static class BillingConstants
 {

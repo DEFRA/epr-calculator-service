@@ -1,10 +1,10 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.Service.Function.Exceptions;
-using EPR.Calculator.Service.Function.Features.CalculatorRun.Contexts;
+using EPR.Calculator.Service.Function.Features.CalculatorRuns.Contexts;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.Services.DataLoading;
 
-namespace EPR.Calculator.Service.Function.Features.CalculatorRun;
+namespace EPR.Calculator.Service.Function.Features.CalculatorRuns;
 
 public interface ICalculatorRunDataInitializer
 {

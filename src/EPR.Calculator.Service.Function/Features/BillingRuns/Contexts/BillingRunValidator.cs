@@ -2,7 +2,7 @@
 using EPR.Calculator.API.Data.DataTypes;
 using FluentValidation;
 
-namespace EPR.Calculator.Service.Function.Features.BillingRun.Contexts;
+namespace EPR.Calculator.Service.Function.Features.BillingRuns.Contexts;
 
 /// <summary>
 ///     Ensures the state of the CalculatorRun database entity is valid for billing file generation.

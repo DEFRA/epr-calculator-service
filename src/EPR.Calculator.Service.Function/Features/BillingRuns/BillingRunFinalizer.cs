@@ -1,16 +1,15 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using EPR.Calculator.API.Data;
-using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.DataTypes;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Exceptions;
-using EPR.Calculator.Service.Function.Features.BillingRun.Contexts;
-using EPR.Calculator.Service.Function.Features.BillingRun.Outputs;
+using EPR.Calculator.Service.Function.Features.BillingRuns.Contexts;
+using EPR.Calculator.Service.Function.Features.BillingRuns.Outputs;
 using EPR.Calculator.Service.Function.Logging;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace EPR.Calculator.Service.Function.Features.BillingRun;
+namespace EPR.Calculator.Service.Function.Features.BillingRuns;
 
 /// <summary>
 ///     Finalizes the billing run by saving any state changes to the database.

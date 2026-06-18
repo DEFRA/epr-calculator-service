@@ -1,6 +1,6 @@
 ﻿using EPR.Calculator.API.Data.DataTypes;
-using EPR.Calculator.Service.Function.Features.BillingRun.Contexts;
-using EPR.Calculator.Service.Function.Features.CalculatorRun.Contexts;
+using EPR.Calculator.Service.Function.Features.BillingRuns.Contexts;
+using EPR.Calculator.Service.Function.Features.CalculatorRuns.Contexts;
 
 namespace EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 
