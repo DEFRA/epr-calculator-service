@@ -213,4 +213,31 @@ public class CalcResultErrorReportBuilderTests : TestsFor<CalcResultErrorReportB
         Assert.AreEqual(CommonConstants.Hyphen, report.LeaverCode);
         Assert.AreEqual(ErrorCodes.MissingRegistrationData, report.ErrorCodeText);
     }
+
+    [TestMethod]
+    public async Task ConstructAsync_WhenNoOrganisationDetailExists_ReturnsHyphens()
+    {
+        // Arrange
+        dbContext.ErrorReports.Add(new API.Data.DataModels.ErrorReport
+        {
+            Id = 999,
+            CalculatorRunId = runContext.RunId,
+            ProducerId = 999, // no matching OrganisationDataDetail
+            SubsidiaryId = "MISSING-SUB",
+            ErrorCode = ErrorCodes.MissingRegistrationData,
+            CreatedAt = DateTime.UtcNow,
+            CreatedBy = "Test user"
+        });
+
+        await dbContext.SaveChangesAsync();
+
+        // Act
+        var result = testSubject.Construct(runContext).ToList();
+
+        // Assert
+        var report = result.Single(x => x.ProducerId == 999);
+
+        Assert.AreEqual(CommonConstants.Hyphen, report.ProducerName);
+        Assert.AreEqual(CommonConstants.Hyphen, report.TradingName);
+    }
 }
