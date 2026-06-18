@@ -104,9 +104,14 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
 
     private static async Task<CalculatorRunResult> PerformCalculatorRun(int runId, string user)
     {
-        var runContext = await Provider.GetRequiredService<ICalculatorRunContextBuilder>().Build(runId, user, CancellationToken.None);
-        var runResult = await Provider.GetRequiredService<ICalculatorRunProcessor>().Process(runContext, CancellationToken.None);
+        await using var scope = Provider.CreateAsyncScope();
+        var builder   = scope.ServiceProvider.GetRequiredService<ICalculatorRunContextBuilder>();
+        var processor = scope.ServiceProvider.GetRequiredService<ICalculatorRunProcessor>();
+
+        var runContext = await builder.Build(runId, user, CancellationToken.None);
+        var runResult = await processor.Process(runContext, CancellationToken.None);
         runResult.Succeeded.ShouldBeTrue();
+
         return (CalculatorRunResult) runResult;
     }
 
@@ -119,9 +124,14 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
         calcRun.BillingRunStartedAt = DateTime.UtcNow;
         await dbContext.SaveChangesAsync();
 
-        var runContext = await Provider.GetRequiredService<IBillingRunContextBuilder>().Build(runId, user, CancellationToken.None);
-        var runResult = await Provider.GetRequiredService<IBillingRunProcessor>().Process(runContext, CancellationToken.None);
+        await using var scope = Provider.CreateAsyncScope();
+        var builder   = scope.ServiceProvider.GetRequiredService<IBillingRunContextBuilder>();
+        var processor = scope.ServiceProvider.GetRequiredService<IBillingRunProcessor>();
+
+        var runContext = await builder.Build(runId, user, CancellationToken.None);
+        var runResult = await processor.Process(runContext, CancellationToken.None);
         runResult.Succeeded.ShouldBeTrue();
+
         return (BillingRunResult) runResult;
     }
 
