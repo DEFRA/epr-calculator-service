@@ -61,7 +61,7 @@ public class BillingRunFinalizer(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to mark billing run as failed");
+            logger.LogError(ex, $"Failed to mark billing run as {nameof(BillingRunStatus.Errored)}");
         }
     }
 
