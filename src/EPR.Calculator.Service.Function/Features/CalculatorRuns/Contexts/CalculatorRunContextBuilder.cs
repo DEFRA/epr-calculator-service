@@ -45,7 +45,7 @@ public class CalculatorRunContextBuilder(
         };
     }
 
-    private async Task<API.Data.DataModels.CalculatorRun> GetCalculatorRunAsync(int runId, CancellationToken ct)
+    private async Task<CalculatorRun> GetCalculatorRunAsync(int runId, CancellationToken ct)
     {
         var run = await dbContext
             .CalculatorRuns

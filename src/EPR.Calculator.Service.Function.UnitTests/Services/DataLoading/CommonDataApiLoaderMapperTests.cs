@@ -1,6 +1,6 @@
-using Microsoft.Extensions.Logging.Abstractions;
 using EPR.Calculator.Service.Function.Services.CommonDataApi;
 using EPR.Calculator.Service.Function.Services.DataLoading;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services.DataLoading
 {

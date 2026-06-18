@@ -32,10 +32,14 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.RejectedProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter;
 using EPR.Calculator.Service.Function.Features.BillingRuns;
 using EPR.Calculator.Service.Function.Features.BillingRuns.Contexts;
 using EPR.Calculator.Service.Function.Features.BillingRuns.Outputs;
+using EPR.Calculator.Service.Function.Features.CalculatorRuns;
+using EPR.Calculator.Service.Function.Features.CalculatorRuns.Contexts;
+using EPR.Calculator.Service.Function.Features.CalculatorRuns.Outputs;
 using EPR.Calculator.Service.Function.Logging;
 using EPR.Calculator.Service.Function.Options;
 using EPR.Calculator.Service.Function.Services;
@@ -48,10 +52,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Serilog;
 using Serilog.Filters;
-using EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
-using EPR.Calculator.Service.Function.Features.CalculatorRuns;
-using EPR.Calculator.Service.Function.Features.CalculatorRuns.Contexts;
-using EPR.Calculator.Service.Function.Features.CalculatorRuns.Outputs;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 

@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace EPR.Calculator.Service.Function.Features.CalculatorRuns.Contexts;
 
-public class CalculatorRunValidator : AbstractValidator<API.Data.DataModels.CalculatorRun>
+public class CalculatorRunValidator : AbstractValidator<CalculatorRun>
 {
     private static readonly ImmutableHashSet<int> ValidClassifications = [
         RunClassificationStatusIds.INTHEQUEUEID,

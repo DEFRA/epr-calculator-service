@@ -1,8 +1,8 @@
+using System.Text.Json;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 using Json.Schema;
-using System.Text.Json;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
 {

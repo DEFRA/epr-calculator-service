@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using EFCore.BulkExtensions;
+﻿using EFCore.BulkExtensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Services;

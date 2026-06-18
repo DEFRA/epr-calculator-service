@@ -1,5 +1,4 @@
 using System.Data;
-using System.Diagnostics.CodeAnalysis;
 using EFCore.BulkExtensions;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
