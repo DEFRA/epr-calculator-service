@@ -8,11 +8,11 @@ namespace EPR.Calculator.Service.Function.Misc
 {
     public static class CsvSanitiser
     {
-        public static string SanitiseData<T>(T value, bool csvDelimiterRequired = true, bool appendLrmCharacterToPreventRenderedAsFormula = false)
+        public static string SanitiseData<T>(T value, bool delimiterRequired = true, bool appendLrmCharacterToPreventRenderedAsFormula = false)
         {
             if (value is null)
             {
-                return csvDelimiterRequired
+                return delimiterRequired
                     ? CommonConstants.CsvFileDelimiter
                     : string.Empty;
             }
@@ -38,13 +38,13 @@ namespace EPR.Calculator.Service.Function.Misc
             // Apply the speech marks to handle the comma in the text and currency values
             stringToSanitise = $"{CommonConstants.DoubleQuote}{stringToSanitise}{CommonConstants.DoubleQuote}";
 
-            return csvDelimiterRequired
+            return delimiterRequired
                 ? $"{stringToSanitise}{CommonConstants.CsvFileDelimiter}"
                 : stringToSanitise;
         }
 
         public static string SanitiseData(
-            Decimal? value,
+            decimal? value,
             DecimalPlaces? roundTo,
             DecimalFormats? valueFormat,
             bool isCurrency = false,
@@ -52,19 +52,22 @@ namespace EPR.Calculator.Service.Function.Misc
             bool delimiterRequired = true,
             bool canBeEmpty = false)
         {
-
             if (canBeEmpty && value is null)
-                return CsvSanitiser.SanitiseData(CommonConstants.Hyphen, delimiterRequired);
+                return delimiterRequired
+                    ? $"\"-\"{CommonConstants.CsvFileDelimiter}"
+                    : $"\"-\"";
 
             var decimalValue = value.GetValueOrDefault();
 
+            string formattedValue;
+
             if (isCurrency)
             {
-                return SanitiseData(FormatUtils.FormatCurrency(decimalValue, ((int?)roundTo) ?? 2), delimiterRequired);
+                formattedValue = FormatUtils.FormatCurrency(decimalValue, ((int?)roundTo) ?? 2);
             }
             else if (isPercentage)
             {
-                return SanitiseData(FormatUtils.FormatPercentage(decimalValue, ((int?)roundTo) ?? 8), delimiterRequired);
+                formattedValue = FormatUtils.FormatPercentage(decimalValue, ((int?)roundTo) ?? 8);
             }
             else
             {
@@ -72,12 +75,14 @@ namespace EPR.Calculator.Service.Function.Misc
                     ? decimalValue
                     : MathUtils.RoundAwayFromZero(decimalValue, (int)roundTo);
 
-                var formattedValue = valueFormat == null
-                    ? roundedValue.ToString()
-                    : roundedValue.ToString(valueFormat.ToString());
-
-                return SanitiseData(formattedValue, delimiterRequired);
+                formattedValue = valueFormat == null
+                    ? roundedValue.ToString(CultureInfo.InvariantCulture)
+                    : roundedValue.ToString(valueFormat.ToString(), CultureInfo.InvariantCulture);
             }
+
+            return delimiterRequired
+                ? $"\"{formattedValue}\"{CommonConstants.CsvFileDelimiter}"
+                : $"\"{formattedValue}\"";
         }
     }
 }

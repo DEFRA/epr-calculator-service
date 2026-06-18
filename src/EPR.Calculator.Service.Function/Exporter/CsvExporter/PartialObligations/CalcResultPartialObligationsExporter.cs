@@ -142,7 +142,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligation
             var headerRows = new string[maxColumnSize];
             foreach (var item in headers.Where(h => h.ColumnIndex.HasValue))
             {
-                headerRows[item.ColumnIndex!.Value - 1] = CsvSanitiser.SanitiseData(item.Name, false);
+                headerRows[item.ColumnIndex!.Value - 1] = CsvSanitiser.SanitiseData(item.Name, delimiterRequired: false);
             }
 
             var headerRow = string.Join(CommonConstants.CsvFileDelimiter, headerRows);

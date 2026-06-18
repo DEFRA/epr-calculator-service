@@ -65,11 +65,11 @@ namespace EPR.Calculator.Service.Function.Models
         public static CountryAmountJson From(ByCountryCost costDetail) =>
             new ()
             {
-                England         = FormatUtils.FormatCurrency(costDetail.England        , 2, ","),
-                Wales           = FormatUtils.FormatCurrency(costDetail.Wales          , 2, ","),
-                Scotland        = FormatUtils.FormatCurrency(costDetail.Scotland       , 2, ","),
-                NorthernIreland = FormatUtils.FormatCurrency(costDetail.NorthernIreland, 2, ","),
-                Total           = FormatUtils.FormatCurrency(costDetail.Total          , 2, ",")
+                England         = FormatUtils.FormatCurrency(costDetail.England        , 2, useGrouping: true),
+                Wales           = FormatUtils.FormatCurrency(costDetail.Wales          , 2, useGrouping: true),
+                Scotland        = FormatUtils.FormatCurrency(costDetail.Scotland       , 2, useGrouping: true),
+                NorthernIreland = FormatUtils.FormatCurrency(costDetail.NorthernIreland, 2, useGrouping: true),
+                Total           = FormatUtils.FormatCurrency(costDetail.Total          , 2, useGrouping: true)
             };
 
         public static CountryAmountJson From(ByCountryApportionment apportionment) =>
@@ -119,7 +119,7 @@ namespace EPR.Calculator.Service.Function.Models
         {
             return new ChangeDetailJson
             {
-                Amount     = FormatUtils.FormatCurrency(materiality.Amount, 2, ","),
+                Amount     = FormatUtils.FormatCurrency(materiality.Amount      , 2, useGrouping: true),
                 Percentage = FormatUtils.FormatPercentage(materiality.Percentage, 2)
             };
         }

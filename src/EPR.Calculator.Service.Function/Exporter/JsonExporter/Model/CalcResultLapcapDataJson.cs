@@ -61,11 +61,11 @@ public class CalcResultLapcapDataDetailJson
         return new CalcResultLapcapDataDetailJson
         {
             MaterialName                  = materialDetail.Name,
-            EnglandLaDisposalCost         = FormatUtils.FormatCurrency(record.England        , 2, ","),
-            WalesLaDisposalCost           = FormatUtils.FormatCurrency(record.Wales          , 2, ","),
-            ScotlandLaDisposalCost        = FormatUtils.FormatCurrency(record.Scotland       , 2, ","),
-            NorthernIrelandLaDisposalCost = FormatUtils.FormatCurrency(record.NorthernIreland, 2, ","),
-            OneLaDisposalCostTotal        = FormatUtils.FormatCurrency(record.Total          , 2, ",")
+            EnglandLaDisposalCost         = FormatUtils.FormatCurrency(record.England        , 2, useGrouping: true),
+            WalesLaDisposalCost           = FormatUtils.FormatCurrency(record.Wales          , 2, useGrouping: true),
+            ScotlandLaDisposalCost        = FormatUtils.FormatCurrency(record.Scotland       , 2, useGrouping: true),
+            NorthernIrelandLaDisposalCost = FormatUtils.FormatCurrency(record.NorthernIreland, 2, useGrouping: true),
+            OneLaDisposalCostTotal        = FormatUtils.FormatCurrency(record.Total          , 2, useGrouping: true)
         };
     }
 }
@@ -91,11 +91,11 @@ public class CalcResultLapcapDataDetailTotalJson
     {
         return new CalcResultLapcapDataDetailTotalJson
         {
-            TotalEnglandLaDisposalCost         = FormatUtils.FormatCurrency(record.England        , 2, ","),
-            TotalWalesLaDisposalCost           = FormatUtils.FormatCurrency(record.Wales          , 2, ","),
-            TotalScotlandLaDisposalCost        = FormatUtils.FormatCurrency(record.Scotland       , 2, ","),
-            TotalNorthernIrelandLaDisposalCost = FormatUtils.FormatCurrency(record.NorthernIreland, 2, ","),
-            TotalLaDisposalCost                = FormatUtils.FormatCurrency(record.Total          , 2, ",")
+            TotalEnglandLaDisposalCost         = FormatUtils.FormatCurrency(record.England        , 2, useGrouping: true),
+            TotalWalesLaDisposalCost           = FormatUtils.FormatCurrency(record.Wales          , 2, useGrouping: true),
+            TotalScotlandLaDisposalCost        = FormatUtils.FormatCurrency(record.Scotland       , 2, useGrouping: true),
+            TotalNorthernIrelandLaDisposalCost = FormatUtils.FormatCurrency(record.NorthernIreland, 2, useGrouping: true),
+            TotalLaDisposalCost                = FormatUtils.FormatCurrency(record.Total          , 2, useGrouping: true)
         };
     }
 }

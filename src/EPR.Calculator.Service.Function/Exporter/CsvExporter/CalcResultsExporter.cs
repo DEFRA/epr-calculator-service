@@ -14,7 +14,9 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 using EPR.Calculator.Service.Function.Features.CalculatorRuns.Contexts;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Logging;
 using EPR.Calculator.Service.Function.Services;
+
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter;
 
@@ -39,7 +41,8 @@ public class CalcResultsExporter(
     ICalcResultCommsCostExporter commsCostExporter,
     ICalcResultSummaryExporter summaryExporter,
     ICalcResultCancelledProducersExporter cancelledProducersExporter,
-    ICalcResultErrorReportExporter calcResultErrorReportExporter
+    ICalcResultErrorReportExporter calcResultErrorReportExporter,
+    ILogger<CalcResultsExporter> logger
 )  : ICalcResultsExporter
 {
     public async Task<string> Export(CalculatorRunContext runContext, CalcResult calcResult)
@@ -47,28 +50,83 @@ public class CalcResultsExporter(
         var materials = await materialService.GetMaterials();
         var csvContent = new StringBuilder();
 
-        resultDetailExporter.Export(calcResult.CalcResultDetail, csvContent);
-        lapcapDataExporter.Export(calcResult.CalcResultLapcapData, materials, csvContent);
-        lateReportingExporter.Export(calcResult.CalcResultLateReportingTonnageData, materials, csvContent);
-        parameterOtherCostsExporter.Export(calcResult.CalcResultParameterOtherCost, csvContent);
-        onePlusFourApportionmentExporter.Export(calcResult.CalcResultOnePlusFourApportionment, csvContent);
-        commsCostExporter.Export(calcResult.CalcResultCommsCostReportDetail, materials, csvContent);
-        laDisposalCostExporter.Export(runContext, calcResult.CalcResultLaDisposalCostData, materials, csvContent);
+        logger.LogDuration(
+            () => resultDetailExporter.Export(calcResult.CalcResultDetail, csvContent),
+            nameof(resultDetailExporter)
+        );
 
-        if (calcResult.Smcw is not null && calcResult.CalcResultModulation is not null) {
-            modulationExporter.Export(calcResult.CalcResultLaDisposalCostData, calcResult.Smcw, calcResult.CalcResultModulation, csvContent);
+        logger.LogDuration(
+            () => lapcapDataExporter.Export(calcResult.CalcResultLapcapData, materials, csvContent),
+            nameof(lapcapDataExporter)
+        );
+
+        logger.LogDuration(
+            () => lateReportingExporter.Export(calcResult.CalcResultLateReportingTonnageData, materials, csvContent),
+            nameof(lateReportingExporter)
+        );
+
+        logger.LogDuration(
+            () => parameterOtherCostsExporter.Export(calcResult.CalcResultParameterOtherCost, csvContent),
+            nameof(parameterOtherCostsExporter)
+        );
+
+        logger.LogDuration(
+            () => onePlusFourApportionmentExporter.Export(calcResult.CalcResultOnePlusFourApportionment, csvContent),
+            nameof(onePlusFourApportionmentExporter)
+        );
+
+        logger.LogDuration(
+            () => commsCostExporter.Export(calcResult.CalcResultCommsCostReportDetail, materials, csvContent),
+            nameof(commsCostExporter)
+        );
+
+        logger.LogDuration(
+            () => laDisposalCostExporter.Export(runContext, calcResult.CalcResultLaDisposalCostData, materials, csvContent),
+            nameof(laDisposalCostExporter)
+        );
+
+        if (calcResult.Smcw is not null && calcResult.CalcResultModulation is not null)
+        {
+            logger.LogDuration(
+                () => modulationExporter.Export(calcResult.CalcResultLaDisposalCostData, calcResult.Smcw, calcResult.CalcResultModulation, csvContent),
+                nameof(modulationExporter)
+            );
         }
 
-        cancelledProducersExporter.Export(calcResult.CalcResultCancelledProducers, csvContent);
+        logger.LogDuration(
+            () => cancelledProducersExporter.Export(calcResult.CalcResultCancelledProducers, csvContent),
+            nameof(cancelledProducersExporter)
+        );
 
         if (runContext.RequiresModulation)
-            projectedProducersExporter.Export(calcResult.CalcResultProjectedProducers, materials, csvContent);
+        {
+            logger.LogDuration(
+                () => projectedProducersExporter.Export(calcResult.CalcResultProjectedProducers, materials, csvContent),
+                nameof(projectedProducersExporter)
+            );
+        }
         else
-            scaledUpProducersExporter.Export(calcResult.CalcResultScaledupProducers, materials, showTotal : true, csvContent);
+        {
+            logger.LogDuration(
+                () => scaledUpProducersExporter.Export(calcResult.CalcResultScaledupProducers, materials, showTotal : true, csvContent),
+                nameof(scaledUpProducersExporter)
+            );
+        }
 
-        partialObligationsExporter.Export(runContext, calcResult.CalcResultPartialObligations, materials, csvContent);
-        summaryExporter.Export(runContext, calcResult.CalcResultSummary, materials, csvContent);
-        calcResultErrorReportExporter.Export(calcResult.CalcResultErrorReports, csvContent);
+        logger.LogDuration(
+            () => partialObligationsExporter.Export(runContext, calcResult.CalcResultPartialObligations, materials, csvContent),
+            nameof(partialObligationsExporter)
+        );
+
+        logger.LogDuration(
+            () => summaryExporter.Export(runContext, calcResult.CalcResultSummary, materials, csvContent),
+            nameof(summaryExporter)
+        );
+
+        logger.LogDuration(
+            () => calcResultErrorReportExporter.Export(calcResult.CalcResultErrorReports, csvContent),
+            nameof(calcResultErrorReportExporter)
+        );
 
         return csvContent.ToString();
     }

@@ -156,7 +156,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
             // Act
             var result = CsvSanitiser.SanitiseData(
                 data,
-                csvDelimiterRequired: true,
+                delimiterRequired: true,
                 appendLrmCharacterToPreventRenderedAsFormula: true);
 
             // Assert
@@ -172,7 +172,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
             // Act
             var result = CsvSanitiser.SanitiseData(
                 data,
-                csvDelimiterRequired: false,
+                delimiterRequired: false,
                 appendLrmCharacterToPreventRenderedAsFormula: true);
 
             // Assert
@@ -199,7 +199,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
 
             var result = CsvSanitiser.SanitiseData(
                 data,
-                csvDelimiterRequired: true,
+                delimiterRequired: true,
                 appendLrmCharacterToPreventRenderedAsFormula: true);
 
             Assert.AreEqual(",", result);
@@ -214,7 +214,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
             // Act
             var result = CsvSanitiser.SanitiseData(
                 data,
-                csvDelimiterRequired: true,
+                delimiterRequired: true,
                 appendLrmCharacterToPreventRenderedAsFormula: true);
 
             // Assert
@@ -230,7 +230,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
             // Act
             var result = CsvSanitiser.SanitiseData(
                 data,
-                csvDelimiterRequired: false,
+                delimiterRequired: false,
                 appendLrmCharacterToPreventRenderedAsFormula: true);
 
             // Assert
