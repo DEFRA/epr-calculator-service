@@ -3,7 +3,7 @@
     public record ProjectedProducersHeader
     {
         required public string Name { get; init; }
-        public int? ColumnIndex { get; init; }
+        public int ColumnIndex { get; init; }
     }
 
     public record ProjectedProducersHeaders {

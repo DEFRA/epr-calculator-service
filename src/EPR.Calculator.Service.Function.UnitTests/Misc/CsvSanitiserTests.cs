@@ -7,7 +7,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
     public class CsvSanitiserTests
     {
         [TestMethod]
-        public void ShouldSanitiseDataWithDelimiter()
+        public void ShouldSanitiseData()
         {
             // Arrange
             var data = "Some data\n\t";
@@ -20,20 +20,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
         }
 
         [TestMethod]
-        public void ShouldSanitiseDataWithoutDemiliter()
-        {
-            // Arrange
-            var data = "Some,\t data";
-
-            // Act
-            var result = CsvSanitiser.SanitiseData(data, false);
-
-            // Assert
-            Assert.AreEqual("\"Some data\"", result);
-        }
-
-        [TestMethod]
-        public void ShouldReturnCommaIfNoDataWithDelimitedEnabled()
+        public void ShouldReturnCommaIfNoData()
         {
             // Arrange
             var data = string.Empty;
@@ -46,20 +33,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
         }
 
         [TestMethod]
-        public void ShouldReturnEmptyStringIfNoDataWithoutDelimiter()
-        {
-            // Arrange
-            var data = string.Empty;
-
-            // Act
-            var result = CsvSanitiser.SanitiseData(data, false);
-
-            // Assert
-            Assert.AreEqual("\"\"", result);
-        }
-
-        [TestMethod]
-        public void ShouldSanitiseCurrencyDataWithDelimiter()
+        public void ShouldSanitiseCurrencyData()
         {
             // Arrange
             var data = 100.5987m;
@@ -74,23 +48,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
         }
 
         [TestMethod]
-        public void ShouldSanitiseCurrencyDataWithoutDelimiter()
-        {
-            // Arrange
-            var data = 290.5987432m;
-            var decimalPlaces = DecimalPlaces.Three;
-            var isCurrency = true;
-            var isPercentage = false;
-
-            // Act
-            var result = CsvSanitiser.SanitiseData(data, decimalPlaces, null, isCurrency, isPercentage, false);
-
-            // Assert
-            Assert.AreEqual("\"£290.599\"", result);
-        }
-
-        [TestMethod]
-        public void ShouldSanitisePercentageDataWithDelimiter()
+        public void ShouldSanitisePercentageData()
         {
             // Arrange
             var data = 79.798m;
@@ -103,22 +61,6 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
 
             // Assert
             Assert.AreEqual("\"79.80%\",", result);
-        }
-
-        [TestMethod]
-        public void ShouldSanitisePercentageDataWithoutDelimiter()
-        {
-            // Arrange
-            var data = 83.456m;
-            var decimalPlaces = DecimalPlaces.Two;
-            var isCurrency = false;
-            var isPercentage = true;
-
-            // Act
-            var result = CsvSanitiser.SanitiseData(data, decimalPlaces, null, isCurrency, isPercentage, false);
-
-            // Assert
-            Assert.AreEqual("\"83.46%\"", result);
         }
 
         [TestMethod]
@@ -148,7 +90,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
         }
 
         [TestMethod]
-        public void ShouldPrefixLrm_WhenFlagTrue_WithDelimiter()
+        public void ShouldPrefixLrm_WhenFlagTrue()
         {
             // Arrange
             var data = "+ve";
@@ -156,27 +98,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
             // Act
             var result = CsvSanitiser.SanitiseData(
                 data,
-                delimiterRequired: true,
                 appendLrmCharacterToPreventRenderedAsFormula: true);
 
             // Assert
             Assert.AreEqual("\"\u200E+ve\",", result);
-        }
-
-        [TestMethod]
-        public void ShouldPrefixLrm_WhenFlagTrue_WithoutDelimiter()
-        {
-            // Arrange
-            var data = "-ve";
-
-            // Act
-            var result = CsvSanitiser.SanitiseData(
-                data,
-                delimiterRequired: false,
-                appendLrmCharacterToPreventRenderedAsFormula: true);
-
-            // Assert
-            Assert.AreEqual("\"\u200E-ve\"", result);
         }
 
         [TestMethod]
@@ -193,20 +118,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
         }
 
         [TestMethod]
-        public void ShouldNotPrefixLrm_WhenValueIsNull_ReturnsDelimiterCharacterOnly()
+        public void ShouldNotPrefixLrm_WhenValueIsNull()
         {
             string? data = null;
 
             var result = CsvSanitiser.SanitiseData(
                 data,
-                delimiterRequired: true,
                 appendLrmCharacterToPreventRenderedAsFormula: true);
 
             Assert.AreEqual(",", result);
         }
 
         [TestMethod]
-        public void ShouldNotPrefixLrm_WhenValueIsHyphen_WithDelimiter()
+        public void ShouldNotPrefixLrm_WhenValueIsHyphen()
         {
             // Arrange
             var data = "-";
@@ -214,27 +138,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Misc
             // Act
             var result = CsvSanitiser.SanitiseData(
                 data,
-                delimiterRequired: true,
                 appendLrmCharacterToPreventRenderedAsFormula: true);
 
             // Assert
             Assert.AreEqual("\"-\",", result);
-        }
-
-        [TestMethod]
-        public void ShouldNotPrefixLrm_WhenValueIsHyphen_WithoutDelimiter()
-        {
-            // Arrange
-            var data = "-";
-
-            // Act
-            var result = CsvSanitiser.SanitiseData(
-                data,
-                delimiterRequired: false,
-                appendLrmCharacterToPreventRenderedAsFormula: true);
-
-            // Assert
-            Assert.AreEqual("\"-\"", result);
         }
     }
 }

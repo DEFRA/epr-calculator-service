@@ -60,7 +60,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducer
         {
             var headers = new Dictionary<int, string>
             {
-                { CommonConstants.LastTonnageSubHeaderIndex, CommonConstants.LastTonnage },
+                { CommonConstants.LastTonnageSubHeaderIndex  , CommonConstants.LastTonnage },
                 { CommonConstants.LatestInvoiceSubHeaderIndex, CommonConstants.LatestInvoice }
             };
 
@@ -69,10 +69,10 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducer
 
             foreach (var header in headers)
             {
-                headerRows[header.Key] = CsvSanitiser.SanitiseData(header.Value);
+                headerRows[header.Key] = header.Value;
             }
 
-            var headerRow = string.Join(CommonConstants.CsvFileDelimiter, headerRows);
+            var headerRow = string.Join("", headerRows.Select(x => CsvSanitiser.SanitiseData(x)));
             csvContent.AppendLine(headerRow);
         }
 
