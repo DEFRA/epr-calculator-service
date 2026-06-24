@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 using EPR.Calculator.API.Data;
 
 namespace EPR.Calculator.Service.Function.Options;

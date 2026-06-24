@@ -1,15 +1,15 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using EPR.Calculator.API.Data;
-using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.DataTypes;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Exceptions;
-using EPR.Calculator.Service.Function.Features.BillingRun.Contexts;
-using EPR.Calculator.Service.Function.Features.BillingRun.Outputs;
+using EPR.Calculator.Service.Function.Features.BillingRuns.Contexts;
+using EPR.Calculator.Service.Function.Features.BillingRuns.Outputs;
 using EPR.Calculator.Service.Function.Logging;
 using EPR.Calculator.Service.Function.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace EPR.Calculator.Service.Function.Features.BillingRun;
+namespace EPR.Calculator.Service.Function.Features.BillingRuns;
 
 /// <summary>
 ///     Finalizes the billing run by saving any state changes to the database.
@@ -55,14 +55,13 @@ public class BillingRunFinalizer(
                 .CalculatorRuns
                 .SingleAsync(run => run.Id == runContext.RunId, cancellationToken);
 
-            calcRun.IsBillingFileGenerating = null;
-            calcRun.CalculatorRunClassificationId = RunClassificationStatusIds.ERRORID;
+            calcRun.BillingRunStatus = BillingRunStatus.Errored;
 
             await dbContext.SaveChangesAsync(cancellationToken);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to mark billing run as failed");
+            logger.LogError(ex, $"Failed to mark billing run as {nameof(BillingRunStatus.Errored)}");
         }
     }
 
@@ -114,7 +113,7 @@ public class BillingRunFinalizer(
             .CalculatorRuns
             .SingleAsync(run => run.Id == runContext.RunId, cancellationToken);
 
-        calcRun.IsBillingFileGenerating = false;
+        calcRun.BillingRunStatus = BillingRunStatus.Completed;
 
         await dbContext.SaveChangesAsync(cancellationToken);
     }

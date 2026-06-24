@@ -1,7 +1,7 @@
 ﻿using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder;
-using EPR.Calculator.Service.Function.Features.CalculatorRun;
-using EPR.Calculator.Service.Function.Features.CalculatorRun.Contexts;
+using EPR.Calculator.Service.Function.Features.CalculatorRuns;
+using EPR.Calculator.Service.Function.Features.CalculatorRuns.Contexts;
 using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Services;

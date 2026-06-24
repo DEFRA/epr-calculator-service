@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace EPR.Calculator.Service.Function.Models;
+﻿namespace EPR.Calculator.Service.Function.Models;
 
 public class CalcResultSummaryBadDebtProvision
 {

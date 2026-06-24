@@ -2,7 +2,6 @@
 using EPR.Calculator.Service.Function.Builder.Modulation;
 using EPR.Calculator.Service.Function.JsonExporter.Model;
 using EPR.Calculator.Service.Function.Models;
-using static EPR.Calculator.Service.Function.JsonExporter.Model.CalcResultModulationResults;
 
 namespace EPR.Calculator.Service.Function.UnitTests.JsonExporter.Model;
 

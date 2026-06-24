@@ -5,10 +5,10 @@ using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.DataTypes;
 using EPR.Calculator.Service.Function.Enums;
-using EPR.Calculator.Service.Function.Features.BillingRun;
-using EPR.Calculator.Service.Function.Features.BillingRun.Contexts;
-using EPR.Calculator.Service.Function.Features.CalculatorRun;
-using EPR.Calculator.Service.Function.Features.CalculatorRun.Contexts;
+using EPR.Calculator.Service.Function.Features.BillingRuns;
+using EPR.Calculator.Service.Function.Features.BillingRuns.Contexts;
+using EPR.Calculator.Service.Function.Features.CalculatorRuns;
+using EPR.Calculator.Service.Function.Features.CalculatorRuns.Contexts;
 using EPR.Calculator.Service.Function.Services.CommonDataApi;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
 using EPR.Calculator.Service.Function.Utils;
@@ -104,9 +104,14 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
 
     private static async Task<CalculatorRunResult> PerformCalculatorRun(int runId, string user)
     {
-        var runContext = await Provider.GetRequiredService<ICalculatorRunContextBuilder>().Build(runId, user, CancellationToken.None);
-        var runResult = await Provider.GetRequiredService<ICalculatorRunProcessor>().Process(runContext, CancellationToken.None);
+        await using var scope = Provider.CreateAsyncScope();
+        var builder   = scope.ServiceProvider.GetRequiredService<ICalculatorRunContextBuilder>();
+        var processor = scope.ServiceProvider.GetRequiredService<ICalculatorRunProcessor>();
+
+        var runContext = await builder.Build(runId, user, CancellationToken.None);
+        var runResult = await processor.Process(runContext, CancellationToken.None);
         runResult.Succeeded.ShouldBeTrue();
+
         return (CalculatorRunResult) runResult;
     }
 
@@ -115,12 +120,18 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
         // Simulates the billing run being started by a user in the FE
         var calcRun = await dbContext.CalculatorRuns.SingleAsync(r => r.Id == runId);
         calcRun.CalculatorRunClassificationId = RunClassificationStatusIds.INITIALRUNID;
-        calcRun.IsBillingFileGenerating = true;
+        calcRun.BillingRunStatus = BillingRunStatus.Running;
+        calcRun.BillingRunStartedAt = DateTime.UtcNow;
         await dbContext.SaveChangesAsync();
 
-        var runContext = await Provider.GetRequiredService<IBillingRunContextBuilder>().Build(runId, user, CancellationToken.None);
-        var runResult = await Provider.GetRequiredService<IBillingRunProcessor>().Process(runContext, CancellationToken.None);
+        await using var scope = Provider.CreateAsyncScope();
+        var builder   = scope.ServiceProvider.GetRequiredService<IBillingRunContextBuilder>();
+        var processor = scope.ServiceProvider.GetRequiredService<IBillingRunProcessor>();
+
+        var runContext = await builder.Build(runId, user, CancellationToken.None);
+        var runResult = await processor.Process(runContext, CancellationToken.None);
         runResult.Succeeded.ShouldBeTrue();
+
         return (BillingRunResult) runResult;
     }
 
@@ -166,7 +177,7 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
             CalculatorRunClassificationId   = (int)RunClassification.RUNNING,
             DefaultParameterSettingMasterId = parameterMaster.Id,
             LapcapDataMasterId              = lapcap.Id,
-            IsBillingFileGenerating         = null
+            BillingRunStatus                = BillingRunStatus.None
         };
         db.CalculatorRuns.Add(run);
         await db.SaveChangesAsync();

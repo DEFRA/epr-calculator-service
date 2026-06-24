@@ -1,6 +1,6 @@
 ﻿using EPR.Calculator.API.Data.DataModels;
 
-namespace EPR.Calculator.Service.Function.Features.BillingRun.Outputs;
+namespace EPR.Calculator.Service.Function.Features.BillingRuns.Outputs;
 
 /// <summary>
 ///     Encapsulates the metadata for the billing files that were written to blob storage.

@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
-using EPR.Calculator.Service.Function.Utils;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.JsonExporter.Model;
 

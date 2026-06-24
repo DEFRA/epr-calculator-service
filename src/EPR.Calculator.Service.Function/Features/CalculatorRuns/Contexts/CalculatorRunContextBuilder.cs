@@ -4,7 +4,7 @@ using EPR.Calculator.Service.Function.Exceptions;
 using EPR.Calculator.Service.Function.Features.Common;
 using Microsoft.EntityFrameworkCore;
 
-namespace EPR.Calculator.Service.Function.Features.CalculatorRun.Contexts;
+namespace EPR.Calculator.Service.Function.Features.CalculatorRuns.Contexts;
 
 /// <summary>
 ///     Creates <see cref="CalculatorRunContext">CalculatorRunContexts</see> for use with the
@@ -45,7 +45,7 @@ public class CalculatorRunContextBuilder(
         };
     }
 
-    private async Task<API.Data.DataModels.CalculatorRun> GetCalculatorRunAsync(int runId, CancellationToken ct)
+    private async Task<CalculatorRun> GetCalculatorRunAsync(int runId, CancellationToken ct)
     {
         var run = await dbContext
             .CalculatorRuns

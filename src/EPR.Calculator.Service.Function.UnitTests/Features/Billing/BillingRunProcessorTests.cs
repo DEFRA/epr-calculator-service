@@ -1,6 +1,6 @@
 using EPR.Calculator.Service.Function.Builder;
-using EPR.Calculator.Service.Function.Features.BillingRun;
-using EPR.Calculator.Service.Function.Features.BillingRun.Contexts;
+using EPR.Calculator.Service.Function.Features.BillingRuns;
+using EPR.Calculator.Service.Function.Features.BillingRuns.Contexts;
 using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Services;

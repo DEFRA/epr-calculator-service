@@ -1,6 +1,6 @@
 ﻿using EPR.Calculator.API.Data.DataModels;
 
-namespace EPR.Calculator.Service.Function.Features.CalculatorRun.Outputs;
+namespace EPR.Calculator.Service.Function.Features.CalculatorRuns.Outputs;
 
 public record CalculatorFileResult
 {

@@ -5,7 +5,6 @@ using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
 using EPR.Calculator.Service.Function.Utils;
-using Microsoft.Identity.Client.AppConfig;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {

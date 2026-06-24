@@ -1,13 +1,13 @@
 ﻿using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter;
-using EPR.Calculator.Service.Function.Features.BillingRun.Contexts;
+using EPR.Calculator.Service.Function.Features.BillingRuns.Contexts;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Options;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.Extensions.Options;
 
-namespace EPR.Calculator.Service.Function.Features.BillingRun.Outputs;
+namespace EPR.Calculator.Service.Function.Features.BillingRuns.Outputs;
 
 public interface IBillingFileGenerator
 {

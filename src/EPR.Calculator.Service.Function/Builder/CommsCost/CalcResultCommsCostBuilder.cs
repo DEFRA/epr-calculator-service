@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using EPR.Calculator.API.Data;
+﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Features.Common;

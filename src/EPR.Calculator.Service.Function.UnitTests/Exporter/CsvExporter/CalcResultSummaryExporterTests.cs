@@ -1,5 +1,4 @@
 using System.Text;
-using EPR.Calculator.Service.Function.Exporter.CsvExporter;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;

@@ -3,13 +3,13 @@ using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Exceptions;
-using EPR.Calculator.Service.Function.Features.CalculatorRun.Contexts;
-using EPR.Calculator.Service.Function.Features.CalculatorRun.Outputs;
+using EPR.Calculator.Service.Function.Features.CalculatorRuns.Contexts;
+using EPR.Calculator.Service.Function.Features.CalculatorRuns.Outputs;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
 
-namespace EPR.Calculator.Service.Function.Features.CalculatorRun;
+namespace EPR.Calculator.Service.Function.Features.CalculatorRuns;
 
 public interface ICalculatorRunFinalizer
 {

@@ -1,5 +1,5 @@
 ﻿using System.Text.Json.Serialization;
-using EPR.Calculator.Service.Function.Features.BillingRun.Contexts;
+using EPR.Calculator.Service.Function.Features.BillingRuns.Contexts;
 using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.JsonExporter.Model;

@@ -6,7 +6,6 @@ using EPR.Calculator.Service.Function.JsonExporter.Model;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 using EPR.Calculator.Service.Function.UnitTests.Utils;
 using EPR.Calculator.Service.Function.Utils;
-using static EPR.Calculator.Service.Function.JsonExporter.Model.CalculationResultsJson;
 
 namespace EPR.Calculator.Service.Function.UnitTests.JsonExporter.Model;
 

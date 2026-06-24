@@ -1,5 +1,4 @@
 using EPR.Calculator.Service.Function.Models;
-using Shouldly;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Models;
 
