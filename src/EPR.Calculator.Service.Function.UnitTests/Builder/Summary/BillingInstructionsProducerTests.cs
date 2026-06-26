@@ -4,6 +4,7 @@ using EPR.Calculator.Service.Function.Features.BillingRun.Constants;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary;
 
@@ -80,6 +81,7 @@ public class BillingInstructionsProducerTests
             [
                 new CalcResultSummaryProducerDisposalFees
                 {
+                    CalculatorRunId = 0,
                     ProducerId = 101,
                     Level = "1",
                     SubsidiaryId = "1000",
@@ -124,6 +126,7 @@ public class BillingInstructionsProducerTests
             [
                 new CalcResultSummaryProducerDisposalFees
                 {
+                    CalculatorRunId = 0,
                     ProducerId = 301,
                     Level = "2",
                     SubsidiaryId = "3000",
@@ -165,6 +168,7 @@ public class BillingInstructionsProducerTests
             [
                 new CalcResultSummaryProducerDisposalFees
                 {
+                    CalculatorRunId = 0,
                     ProducerId = 11,
                     Level = "1",
                     SubsidiaryId = "S-11",
@@ -200,6 +204,7 @@ public class BillingInstructionsProducerTests
     {
         var a = new CalcResultSummaryProducerDisposalFees
         {
+            CalculatorRunId = 0,
             ProducerId = 1,
             Level = "1",
             SubsidiaryId = "S-1",
@@ -209,6 +214,7 @@ public class BillingInstructionsProducerTests
 
         var b = new CalcResultSummaryProducerDisposalFees
         {
+            CalculatorRunId = 0,
             ProducerId = 2,
             Level = "1",
             SubsidiaryId = "S-2",
@@ -218,6 +224,7 @@ public class BillingInstructionsProducerTests
 
         var total = new CalcResultSummaryProducerDisposalFees
         {
+            CalculatorRunId = 0,
             ProducerId = 0,
             Level = string.Empty,
             ProducerName = "Totals",
@@ -270,6 +277,7 @@ public class BillingInstructionsProducerTests
     {
         var a = new CalcResultSummaryProducerDisposalFees
         {
+            CalculatorRunId = 0,
             ProducerId = 1,
             Level = "1",
             SubsidiaryId = "S-1",
@@ -279,6 +287,7 @@ public class BillingInstructionsProducerTests
 
         var b = new CalcResultSummaryProducerDisposalFees
         {
+            CalculatorRunId = 0,
             ProducerId = 2,
             Level = "1",
             SubsidiaryId = "S-2",
@@ -288,6 +297,7 @@ public class BillingInstructionsProducerTests
 
         var total = new CalcResultSummaryProducerDisposalFees
         {
+            CalculatorRunId = 0,
             ProducerId = 0,
             Level = string.Empty,
             ProducerName = "Totals",
@@ -339,6 +349,7 @@ public class BillingInstructionsProducerTests
     {
         var total = new CalcResultSummaryProducerDisposalFees
         {
+            CalculatorRunId = 0,
             ProducerId = 0,
             Level = string.Empty,
             ProducerName = "Totals",
@@ -360,6 +371,7 @@ public class BillingInstructionsProducerTests
     {
         var fee = new CalcResultSummaryProducerDisposalFees
         {
+            CalculatorRunId = 0,
             ProducerId = 1,
             Level = "2",
             SubsidiaryId = "S-1",
@@ -396,6 +408,7 @@ public class BillingInstructionsProducerTests
     {
         var fee = new CalcResultSummaryProducerDisposalFees
         {
+            CalculatorRunId = 0,
             ProducerId = 1,
             Level = "1",
             SubsidiaryId = "S-1",
@@ -441,6 +454,7 @@ public class BillingInstructionsProducerTests
     {
         var fee = new CalcResultSummaryProducerDisposalFees
         {
+            CalculatorRunId = 0,
             ProducerId = 1,
             Level = "1",
             SubsidiaryId = "S-1",
@@ -482,6 +496,7 @@ public class BillingInstructionsProducerTests
     {
         var fee = new CalcResultSummaryProducerDisposalFees
         {
+            CalculatorRunId = 0,
             ProducerId = 1,
             Level = "1",
             SubsidiaryId = "S-1",
@@ -523,6 +538,7 @@ public class BillingInstructionsProducerTests
     {
         var fee = new CalcResultSummaryProducerDisposalFees
         {
+            CalculatorRunId = 0,
             ProducerId = 1,
             Level = "1",
             SubsidiaryId = "S-1",
@@ -564,6 +580,7 @@ public class BillingInstructionsProducerTests
     {
         var fee = new CalcResultSummaryProducerDisposalFees
         {
+            CalculatorRunId = 0,
             ProducerId = 1,
             Level = "1",
             SubsidiaryId = "S-1",
@@ -605,6 +622,7 @@ public class BillingInstructionsProducerTests
     {
         var fee = new CalcResultSummaryProducerDisposalFees
         {
+            CalculatorRunId = 0,
             ProducerId = 1,
             Level = "1",
             SubsidiaryId = "S-1",
@@ -647,6 +665,7 @@ public class BillingInstructionsProducerTests
     {
         var fee = new CalcResultSummaryProducerDisposalFees
         {
+            CalculatorRunId = 0,
             ProducerId = 1,
             Level = "1",
             SubsidiaryId = "S-1",
@@ -689,6 +708,7 @@ public class BillingInstructionsProducerTests
     {
         var fee = new CalcResultSummaryProducerDisposalFees
         {
+            CalculatorRunId = 0,
             ProducerId = 1,
             Level = "1",
             SubsidiaryId = "S-1",
@@ -731,6 +751,7 @@ public class BillingInstructionsProducerTests
     {
         var fee = new CalcResultSummaryProducerDisposalFees
         {
+            CalculatorRunId = 0,
             ProducerId = 1,
             Level = "1",
             SubsidiaryId = "S-1",
@@ -773,6 +794,7 @@ public class BillingInstructionsProducerTests
     {
         var fee = new CalcResultSummaryProducerDisposalFees
         {
+            CalculatorRunId = 0,
             ProducerId = 1,
             Level = "1",
             SubsidiaryId = "S-1",

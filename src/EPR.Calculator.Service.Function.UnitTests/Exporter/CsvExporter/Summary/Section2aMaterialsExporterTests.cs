@@ -17,12 +17,12 @@ public class Section2aMaterialsExporterTests
         const bool applyModulation = false;
         var resultSummary = TestDataHelper.GetCalcResultSummary();
         var producer = resultSummary.ProducerDisposalFees.First();
-        producer.ProducerCommsFeesByMaterial =
-            producer.ProducerCommsFeesByMaterial!
+        producer.ProducerFeesByMaterial =
+            producer.ProducerFeesByMaterial!
                 .Where(kv => kv.Key == "AL")
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
-        resultSummary.OverallTotal!.ProducerCommsFeesByMaterial =
-            resultSummary.OverallTotal.ProducerCommsFeesByMaterial!
+        resultSummary.OverallTotal!.ProducerFeesByMaterial =
+            resultSummary.OverallTotal.ProducerFeesByMaterial!
                 .Where(kv => kv.Key == "AL")
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
         var csvContent = new StringBuilder();
@@ -86,12 +86,12 @@ public class Section2aMaterialsExporterTests
         const bool applyModulation = false;
         var resultSummary = TestDataHelper.GetCalcResultSummary();
         var producer = resultSummary.ProducerDisposalFees.First();
-        producer.ProducerCommsFeesByMaterial =
-            producer.ProducerCommsFeesByMaterial!
+        producer.ProducerFeesByMaterial =
+            producer.ProducerFeesByMaterial!
                 .Where(kv => kv.Key == "GL")
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
-        resultSummary.OverallTotal!.ProducerCommsFeesByMaterial =
-            resultSummary.OverallTotal.ProducerCommsFeesByMaterial!
+        resultSummary.OverallTotal!.ProducerFeesByMaterial =
+            resultSummary.OverallTotal.ProducerFeesByMaterial!
                 .Where(kv => kv.Key == "GL")
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
         var csvContent = new StringBuilder();

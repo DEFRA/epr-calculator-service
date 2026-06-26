@@ -2,6 +2,7 @@
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Utils;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.JsonExporter.Model;
 

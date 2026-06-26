@@ -1,4 +1,6 @@
-﻿namespace EPR.Calculator.Service.Function.Models
+﻿using EPR.Calculator.API.Data.DataModels;
+
+namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResultPartialObligationTonnage
     {
@@ -54,14 +56,16 @@
             return PartialHouseholdTonnage() + PartialPublicBinTonnage() + (PartialHouseholdDrinksContainersTonnage() ?? 0);
         }
 
-         private RAMTonnage ToPartialRam(RAMTonnage ram, decimal partialAmount) {
-            return new RAMTonnage {
-                RedTonnage          = Math.Round(ram.RedTonnage * partialAmount, 3),
-                AmberTonnage        = Math.Round(ram.AmberTonnage * partialAmount, 3),
-                GreenTonnage        = Math.Round(ram.GreenTonnage * partialAmount, 3),
-                RedMedicalTonnage   = Math.Round(ram.RedMedicalTonnage * partialAmount, 3),
-                AmberMedicalTonnage = Math.Round(ram.AmberMedicalTonnage * partialAmount, 3),
-                GreenMedicalTonnage = Math.Round(ram.GreenMedicalTonnage * partialAmount, 3),
+        private RAMTonnage ToPartialRam(RAMTonnage ram, decimal partialAmount)
+        {
+            return new RAMTonnage
+            {
+                Red        = Math.Round(ram.Red * partialAmount, 3),
+                Amber      = Math.Round(ram.Amber * partialAmount, 3),
+                Green      = Math.Round(ram.Green * partialAmount, 3),
+                RedMedical = Math.Round(ram.RedMedical * partialAmount, 3),
+                AmberMedical = Math.Round(ram.AmberMedical * partialAmount, 3),
+                GreenMedical = Math.Round(ram.GreenMedical * partialAmount, 3)
             };
         }
     }

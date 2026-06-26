@@ -1,4 +1,5 @@
 using System.Text;
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Features.Common;
@@ -68,12 +69,12 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligation
             {
                 if (showModulation && ram != null)
                 {
-                    csvContent.Append(CsvSanitiser.SanitiseData(ram.RedTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                    csvContent.Append(CsvSanitiser.SanitiseData(ram.AmberTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                    csvContent.Append(CsvSanitiser.SanitiseData(ram.GreenTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                    csvContent.Append(CsvSanitiser.SanitiseData(ram.RedMedicalTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                    csvContent.Append(CsvSanitiser.SanitiseData(ram.AmberMedicalTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-                    csvContent.Append(CsvSanitiser.SanitiseData(ram.GreenMedicalTonnage, DecimalPlaces.Three, DecimalFormats.F3));
+                    csvContent.Append(CsvSanitiser.SanitiseData(ram.Red, DecimalPlaces.Three, DecimalFormats.F3));
+                    csvContent.Append(CsvSanitiser.SanitiseData(ram.Amber, DecimalPlaces.Three, DecimalFormats.F3));
+                    csvContent.Append(CsvSanitiser.SanitiseData(ram.Green, DecimalPlaces.Three, DecimalFormats.F3));
+                    csvContent.Append(CsvSanitiser.SanitiseData(ram.RedMedical, DecimalPlaces.Three, DecimalFormats.F3));
+                    csvContent.Append(CsvSanitiser.SanitiseData(ram.AmberMedical, DecimalPlaces.Three, DecimalFormats.F3));
+                    csvContent.Append(CsvSanitiser.SanitiseData(ram.GreenMedical, DecimalPlaces.Three, DecimalFormats.F3));
                 }
             }
 

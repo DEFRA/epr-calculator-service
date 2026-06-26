@@ -46,30 +46,30 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 
             var h2AlmTotalTonnage = h2Alm.TotalTonnage();
             var expAlmH2Proportions = new RAMProportions{
-                Red          = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.RedTonnage + h2Alm.ProjectedPublicBinRAMTonnage.RedTonnage) / h2AlmTotalTonnage),
-                Amber        = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.AmberTonnage + h2Alm.ProjectedPublicBinRAMTonnage.AmberTonnage) / h2AlmTotalTonnage),
-                Green        = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.GreenTonnage + h2Alm.ProjectedPublicBinRAMTonnage.GreenTonnage) / h2AlmTotalTonnage),
-                RedMedical   = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.RedMedicalTonnage + h2Alm.ProjectedPublicBinRAMTonnage.RedMedicalTonnage) / h2AlmTotalTonnage),
-                AmberMedical = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.AmberMedicalTonnage + h2Alm.ProjectedPublicBinRAMTonnage.AmberMedicalTonnage) / h2AlmTotalTonnage),
-                GreenMedical = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.GreenMedicalTonnage + h2Alm.ProjectedPublicBinRAMTonnage.GreenMedicalTonnage) / h2AlmTotalTonnage)
+                Red          = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.Red + h2Alm.ProjectedPublicBinRAMTonnage.Red) / h2AlmTotalTonnage),
+                Amber        = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.Amber + h2Alm.ProjectedPublicBinRAMTonnage.Amber) / h2AlmTotalTonnage),
+                Green        = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.Green + h2Alm.ProjectedPublicBinRAMTonnage.Green) / h2AlmTotalTonnage),
+                RedMedical   = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.RedMedical + h2Alm.ProjectedPublicBinRAMTonnage.RedMedical) / h2AlmTotalTonnage),
+                AmberMedical = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.AmberMedical + h2Alm.ProjectedPublicBinRAMTonnage.AmberMedical) / h2AlmTotalTonnage),
+                GreenMedical = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.GreenMedical + h2Alm.ProjectedPublicBinRAMTonnage.GreenMedical) / h2AlmTotalTonnage)
             };
             var h2GlassTotalTonnage = h2Glass.TotalTonnage();
             var expGlassH2Proportions = new RAMProportions{
-                Red          = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.RedTonnage + h2Glass.ProjectedPublicBinRAMTonnage.RedTonnage + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.RedTonnage ?? 0)) / h2GlassTotalTonnage),
-                Amber        = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.AmberTonnage + h2Glass.ProjectedPublicBinRAMTonnage.AmberTonnage + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.AmberTonnage ?? 0)) / h2GlassTotalTonnage),
-                Green        = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.GreenTonnage + h2Glass.ProjectedPublicBinRAMTonnage.GreenTonnage + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.GreenTonnage ?? 0)) / h2GlassTotalTonnage),
-                RedMedical   = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.RedMedicalTonnage + h2Glass.ProjectedPublicBinRAMTonnage.RedMedicalTonnage + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.RedMedicalTonnage ?? 0)) / h2GlassTotalTonnage),
-                AmberMedical = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.AmberMedicalTonnage + h2Glass.ProjectedPublicBinRAMTonnage.AmberMedicalTonnage + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.AmberMedicalTonnage ?? 0)) / h2GlassTotalTonnage),
-                GreenMedical = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.GreenMedicalTonnage + h2Glass.ProjectedPublicBinRAMTonnage.GreenMedicalTonnage + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.GreenMedicalTonnage ?? 0)) / h2GlassTotalTonnage)
+                Red          = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.Red + h2Glass.ProjectedPublicBinRAMTonnage.Red + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.Red ?? 0)) / h2GlassTotalTonnage),
+                Amber        = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.Amber + h2Glass.ProjectedPublicBinRAMTonnage.Amber + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.Amber ?? 0)) / h2GlassTotalTonnage),
+                Green        = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.Green + h2Glass.ProjectedPublicBinRAMTonnage.Green + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.Green ?? 0)) / h2GlassTotalTonnage),
+                RedMedical   = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.RedMedical + h2Glass.ProjectedPublicBinRAMTonnage.RedMedical + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.RedMedical ?? 0)) / h2GlassTotalTonnage),
+                AmberMedical = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.AmberMedical + h2Glass.ProjectedPublicBinRAMTonnage.AmberMedical + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.AmberMedical ?? 0)) / h2GlassTotalTonnage),
+                GreenMedical = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.GreenMedical + h2Glass.ProjectedPublicBinRAMTonnage.GreenMedical + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.GreenMedical ?? 0)) / h2GlassTotalTonnage)
             };
 
             Assert.AreEqual(h1HHAlm.PackagingTonnage, projectedAluminium.ProjectedHouseholdTonnage);
-            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2Proportions.Red), projectedAluminium.ProjectedHouseholdRAMTonnage.RedTonnage);
-            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2Proportions.Amber), projectedAluminium.ProjectedHouseholdRAMTonnage.AmberTonnage);
-            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2Proportions.Green), projectedAluminium.ProjectedHouseholdRAMTonnage.GreenTonnage);
-            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2Proportions.RedMedical), projectedAluminium.ProjectedHouseholdRAMTonnage.RedMedicalTonnage);
-            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2Proportions.AmberMedical), projectedAluminium.ProjectedHouseholdRAMTonnage.AmberMedicalTonnage);
-            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2Proportions.GreenMedical), projectedAluminium.ProjectedHouseholdRAMTonnage.GreenMedicalTonnage);
+            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2Proportions.Red), projectedAluminium.ProjectedHouseholdRAMTonnage.Red);
+            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2Proportions.Amber), projectedAluminium.ProjectedHouseholdRAMTonnage.Amber);
+            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2Proportions.Green), projectedAluminium.ProjectedHouseholdRAMTonnage.Green);
+            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2Proportions.RedMedical), projectedAluminium.ProjectedHouseholdRAMTonnage.RedMedical);
+            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2Proportions.AmberMedical), projectedAluminium.ProjectedHouseholdRAMTonnage.AmberMedical);
+            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2Proportions.GreenMedical), projectedAluminium.ProjectedHouseholdRAMTonnage.GreenMedical);
 
             Assert.AreEqual(RAMTonnage.Empty, projectedAluminium.ProjectedPublicBinRAMTonnage);
             Assert.IsNull(projectedAluminium.ProjectedHouseholdDrinksContainerRAMTonnage);
@@ -77,12 +77,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             Assert.AreEqual(RAMTonnage.Empty, projectedGlass.ProjectedPublicBinRAMTonnage);
 
             Assert.AreEqual(h1HdcGlass.PackagingTonnage, projectedGlass.ProjectedHouseholdDrinksContainerTonnage!);
-            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2Proportions.Red), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.RedTonnage);
-            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2Proportions.Amber), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.AmberTonnage);
-            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2Proportions.Green), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.GreenTonnage);
-            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2Proportions.RedMedical), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.RedMedicalTonnage);
-            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2Proportions.AmberMedical), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.AmberMedicalTonnage);
-            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2Proportions.GreenMedical), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.GreenMedicalTonnage);
+            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2Proportions.Red), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.Red);
+            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2Proportions.Amber), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.Amber);
+            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2Proportions.Green), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.Green);
+            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2Proportions.RedMedical), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.RedMedical);
+            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2Proportions.AmberMedical), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.AmberMedical);
+            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2Proportions.GreenMedical), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.GreenMedical);
         }
 
         [TestMethod]
@@ -101,31 +101,31 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 
             var h2AlmTotalTonnage = h2Alm.TotalTonnage();
             var expAlmH2Proportions = new RAMProportions {
-                Red          = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.RedTonnage + h2Alm.ProjectedPublicBinRAMTonnage.RedTonnage) / h2AlmTotalTonnage),
-                Amber        = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.AmberTonnage + h2Alm.ProjectedPublicBinRAMTonnage.AmberTonnage) / h2AlmTotalTonnage),
-                Green        = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.GreenTonnage + h2Alm.ProjectedPublicBinRAMTonnage.GreenTonnage) / h2AlmTotalTonnage),
-                RedMedical   = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.RedMedicalTonnage + h2Alm.ProjectedPublicBinRAMTonnage.RedMedicalTonnage) / h2AlmTotalTonnage),
-                AmberMedical = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.AmberMedicalTonnage + h2Alm.ProjectedPublicBinRAMTonnage.AmberMedicalTonnage) / h2AlmTotalTonnage),
-                GreenMedical = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.GreenMedicalTonnage + h2Alm.ProjectedPublicBinRAMTonnage.GreenMedicalTonnage) / h2AlmTotalTonnage)
+                Red          = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.Red + h2Alm.ProjectedPublicBinRAMTonnage.Red) / h2AlmTotalTonnage),
+                Amber        = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.Amber + h2Alm.ProjectedPublicBinRAMTonnage.Amber) / h2AlmTotalTonnage),
+                Green        = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.Green + h2Alm.ProjectedPublicBinRAMTonnage.Green) / h2AlmTotalTonnage),
+                RedMedical   = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.RedMedical + h2Alm.ProjectedPublicBinRAMTonnage.RedMedical) / h2AlmTotalTonnage),
+                AmberMedical = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.AmberMedical + h2Alm.ProjectedPublicBinRAMTonnage.AmberMedical) / h2AlmTotalTonnage),
+                GreenMedical = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.GreenMedical + h2Alm.ProjectedPublicBinRAMTonnage.GreenMedical) / h2AlmTotalTonnage)
             };
 
             var h2GlassTotalTonnage = h2Glass.TotalTonnage();
             var expGlassH2Proportions = new RAMProportions {
-                Red          = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.RedTonnage + h2Glass.ProjectedPublicBinRAMTonnage.RedTonnage + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.RedTonnage ?? 0)) / h2GlassTotalTonnage),
-                Amber        = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.AmberTonnage + h2Glass.ProjectedPublicBinRAMTonnage.AmberTonnage + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.AmberTonnage ?? 0)) / h2GlassTotalTonnage),
-                Green        = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.GreenTonnage + h2Glass.ProjectedPublicBinRAMTonnage.GreenTonnage + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.GreenTonnage ?? 0)) / h2GlassTotalTonnage),
-                RedMedical   = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.RedMedicalTonnage + h2Glass.ProjectedPublicBinRAMTonnage.RedMedicalTonnage + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.RedMedicalTonnage ?? 0)) / h2GlassTotalTonnage),
-                AmberMedical = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.AmberMedicalTonnage + h2Glass.ProjectedPublicBinRAMTonnage.AmberMedicalTonnage + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.AmberMedicalTonnage ?? 0)) / h2GlassTotalTonnage),
-                GreenMedical = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.GreenMedicalTonnage + h2Glass.ProjectedPublicBinRAMTonnage.GreenMedicalTonnage + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.GreenMedicalTonnage ?? 0)) / h2GlassTotalTonnage)
+                Red          = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.Red + h2Glass.ProjectedPublicBinRAMTonnage.Red + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.Red ?? 0)) / h2GlassTotalTonnage),
+                Amber        = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.Amber + h2Glass.ProjectedPublicBinRAMTonnage.Amber + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.Amber ?? 0)) / h2GlassTotalTonnage),
+                Green        = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.Green + h2Glass.ProjectedPublicBinRAMTonnage.Green + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.Green ?? 0)) / h2GlassTotalTonnage),
+                RedMedical   = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.RedMedical + h2Glass.ProjectedPublicBinRAMTonnage.RedMedical + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.RedMedical ?? 0)) / h2GlassTotalTonnage),
+                AmberMedical = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.AmberMedical + h2Glass.ProjectedPublicBinRAMTonnage.AmberMedical + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.AmberMedical ?? 0)) / h2GlassTotalTonnage),
+                GreenMedical = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.GreenMedical + h2Glass.ProjectedPublicBinRAMTonnage.GreenMedical + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.GreenMedical ?? 0)) / h2GlassTotalTonnage)
             };
 
             Assert.AreEqual(h1HHAlm.PackagingTonnage, projectedAluminium.ProjectedHouseholdTonnage);
-            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2Proportions.Red), projectedAluminium.ProjectedHouseholdRAMTonnage.RedTonnage);
-            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2Proportions.Amber), projectedAluminium.ProjectedHouseholdRAMTonnage.AmberTonnage);
-            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2Proportions.Green), projectedAluminium.ProjectedHouseholdRAMTonnage.GreenTonnage);
-            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2Proportions.RedMedical), projectedAluminium.ProjectedHouseholdRAMTonnage.RedMedicalTonnage);
-            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2Proportions.AmberMedical), projectedAluminium.ProjectedHouseholdRAMTonnage.AmberMedicalTonnage);
-            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2Proportions.GreenMedical), projectedAluminium.ProjectedHouseholdRAMTonnage.GreenMedicalTonnage);
+            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2Proportions.Red), projectedAluminium.ProjectedHouseholdRAMTonnage.Red);
+            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2Proportions.Amber), projectedAluminium.ProjectedHouseholdRAMTonnage.Amber);
+            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2Proportions.Green), projectedAluminium.ProjectedHouseholdRAMTonnage.Green);
+            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2Proportions.RedMedical), projectedAluminium.ProjectedHouseholdRAMTonnage.RedMedical);
+            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2Proportions.AmberMedical), projectedAluminium.ProjectedHouseholdRAMTonnage.AmberMedical);
+            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2Proportions.GreenMedical), projectedAluminium.ProjectedHouseholdRAMTonnage.GreenMedical);
 
             Assert.AreEqual(RAMTonnage.Empty, projectedAluminium.ProjectedPublicBinRAMTonnage);
             Assert.IsNull(projectedAluminium.ProjectedHouseholdDrinksContainerRAMTonnage);
@@ -133,12 +133,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             Assert.AreEqual(RAMTonnage.Empty, projectedGlass.ProjectedPublicBinRAMTonnage);
 
             Assert.AreEqual(h1HdcGlass.PackagingTonnage, projectedGlass.ProjectedHouseholdDrinksContainerTonnage!);
-            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2Proportions.Red), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.RedTonnage);
-            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2Proportions.Amber), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.AmberTonnage);
-            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2Proportions.Green), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.GreenTonnage);
-            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2Proportions.RedMedical), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.RedMedicalTonnage);
-            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2Proportions.AmberMedical), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.AmberMedicalTonnage);
-            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2Proportions.GreenMedical), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.GreenMedicalTonnage);
+            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2Proportions.Red), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.Red);
+            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2Proportions.Amber), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.Amber);
+            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2Proportions.Green), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.Green);
+            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2Proportions.RedMedical), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.RedMedical);
+            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2Proportions.AmberMedical), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.AmberMedical);
+            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2Proportions.GreenMedical), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.GreenMedical);
         }
 
         [TestMethod]
@@ -172,30 +172,30 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 
             var h2AlmTotalTonnage = h2Alm.TotalTonnage();
             var expAlmH2Proportions = new RAMProportions {
-                Red          = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.RedTonnage + h2Alm.ProjectedPublicBinRAMTonnage.RedTonnage) / h2AlmTotalTonnage),
-                Amber        = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.AmberTonnage + h2Alm.ProjectedPublicBinRAMTonnage.AmberTonnage) / h2AlmTotalTonnage),
-                Green        = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.GreenTonnage + h2Alm.ProjectedPublicBinRAMTonnage.GreenTonnage) / h2AlmTotalTonnage),
-                RedMedical   = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.RedMedicalTonnage + h2Alm.ProjectedPublicBinRAMTonnage.RedMedicalTonnage) / h2AlmTotalTonnage),
-                AmberMedical = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.AmberMedicalTonnage + h2Alm.ProjectedPublicBinRAMTonnage.AmberMedicalTonnage) / h2AlmTotalTonnage),
-                GreenMedical = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.GreenMedicalTonnage + h2Alm.ProjectedPublicBinRAMTonnage.GreenMedicalTonnage) / h2AlmTotalTonnage)
+                Red          = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.Red + h2Alm.ProjectedPublicBinRAMTonnage.Red) / h2AlmTotalTonnage),
+                Amber        = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.Amber + h2Alm.ProjectedPublicBinRAMTonnage.Amber) / h2AlmTotalTonnage),
+                Green        = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.Green + h2Alm.ProjectedPublicBinRAMTonnage.Green) / h2AlmTotalTonnage),
+                RedMedical   = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.RedMedical + h2Alm.ProjectedPublicBinRAMTonnage.RedMedical) / h2AlmTotalTonnage),
+                AmberMedical = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.AmberMedical + h2Alm.ProjectedPublicBinRAMTonnage.AmberMedical) / h2AlmTotalTonnage),
+                GreenMedical = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.GreenMedical + h2Alm.ProjectedPublicBinRAMTonnage.GreenMedical) / h2AlmTotalTonnage)
             };
             var h2GlassTotalTonnage = h2Glass.TotalTonnage();
             var expGlassH2Proportions = new RAMProportions {
-                Red          = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.RedTonnage + h2Glass.ProjectedPublicBinRAMTonnage.RedTonnage + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.RedTonnage ?? 0)) / h2GlassTotalTonnage),
-                Amber        = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.AmberTonnage + h2Glass.ProjectedPublicBinRAMTonnage.AmberTonnage + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.AmberTonnage ?? 0)) / h2GlassTotalTonnage),
-                Green        = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.GreenTonnage + h2Glass.ProjectedPublicBinRAMTonnage.GreenTonnage + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.GreenTonnage ?? 0)) / h2GlassTotalTonnage),
-                RedMedical   = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.RedMedicalTonnage + h2Glass.ProjectedPublicBinRAMTonnage.RedMedicalTonnage + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.RedMedicalTonnage ?? 0)) / h2GlassTotalTonnage),
-                AmberMedical = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.AmberMedicalTonnage + h2Glass.ProjectedPublicBinRAMTonnage.AmberMedicalTonnage + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.AmberMedicalTonnage ?? 0)) / h2GlassTotalTonnage),
-                GreenMedical = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.GreenMedicalTonnage + h2Glass.ProjectedPublicBinRAMTonnage.GreenMedicalTonnage + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.GreenMedicalTonnage ?? 0)) / h2GlassTotalTonnage)
+                Red          = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.Red + h2Glass.ProjectedPublicBinRAMTonnage.Red + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.Red ?? 0)) / h2GlassTotalTonnage),
+                Amber        = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.Amber + h2Glass.ProjectedPublicBinRAMTonnage.Amber + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.Amber ?? 0)) / h2GlassTotalTonnage),
+                Green        = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.Green + h2Glass.ProjectedPublicBinRAMTonnage.Green + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.Green ?? 0)) / h2GlassTotalTonnage),
+                RedMedical   = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.RedMedical + h2Glass.ProjectedPublicBinRAMTonnage.RedMedical + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.RedMedical ?? 0)) / h2GlassTotalTonnage),
+                AmberMedical = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.AmberMedical + h2Glass.ProjectedPublicBinRAMTonnage.AmberMedical + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.AmberMedical ?? 0)) / h2GlassTotalTonnage),
+                GreenMedical = To6DP((h2Glass.ProjectedHouseholdRAMTonnage.GreenMedical + h2Glass.ProjectedPublicBinRAMTonnage.GreenMedical + (h2Glass.ProjectedHouseholdDrinksContainerRAMTonnage?.GreenMedical ?? 0)) / h2GlassTotalTonnage)
             };
 
             Assert.AreEqual(h1HHAlm.PackagingTonnage, projectedAluminium.ProjectedHouseholdTonnage);
-            AssertWithin(To3DP(expH1AlmWithoutRam * expAlmH2Proportions.Red), projectedAluminium.ProjectedHouseholdRAMTonnage.RedTonnage);
-            AssertWithin(To3DP((h1HHAlm.PackagingTonnageAmber ?? 0) + (expH1AlmWithoutRam * expAlmH2Proportions.Amber)), projectedAluminium.ProjectedHouseholdRAMTonnage.AmberTonnage);
-            AssertWithin(To3DP(expH1AlmWithoutRam * expAlmH2Proportions.Green), projectedAluminium.ProjectedHouseholdRAMTonnage.GreenTonnage);
-            AssertWithin(To3DP(expH1AlmWithoutRam * expAlmH2Proportions.RedMedical), projectedAluminium.ProjectedHouseholdRAMTonnage.RedMedicalTonnage);
-            AssertWithin(To3DP((h1HHAlm.PackagingTonnageAmberMedical ?? 0) + (expH1AlmWithoutRam * expAlmH2Proportions.AmberMedical)), projectedAluminium.ProjectedHouseholdRAMTonnage.AmberMedicalTonnage);
-            AssertWithin(To3DP(expH1AlmWithoutRam * expAlmH2Proportions.GreenMedical), projectedAluminium.ProjectedHouseholdRAMTonnage.GreenMedicalTonnage);
+            AssertWithin(To3DP(expH1AlmWithoutRam * expAlmH2Proportions.Red), projectedAluminium.ProjectedHouseholdRAMTonnage.Red);
+            AssertWithin(To3DP((h1HHAlm.PackagingTonnageAmber ?? 0) + (expH1AlmWithoutRam * expAlmH2Proportions.Amber)), projectedAluminium.ProjectedHouseholdRAMTonnage.Amber);
+            AssertWithin(To3DP(expH1AlmWithoutRam * expAlmH2Proportions.Green), projectedAluminium.ProjectedHouseholdRAMTonnage.Green);
+            AssertWithin(To3DP(expH1AlmWithoutRam * expAlmH2Proportions.RedMedical), projectedAluminium.ProjectedHouseholdRAMTonnage.RedMedical);
+            AssertWithin(To3DP((h1HHAlm.PackagingTonnageAmberMedical ?? 0) + (expH1AlmWithoutRam * expAlmH2Proportions.AmberMedical)), projectedAluminium.ProjectedHouseholdRAMTonnage.AmberMedical);
+            AssertWithin(To3DP(expH1AlmWithoutRam * expAlmH2Proportions.GreenMedical), projectedAluminium.ProjectedHouseholdRAMTonnage.GreenMedical);
 
             Assert.AreEqual(RAMTonnage.Empty, projectedAluminium.ProjectedPublicBinRAMTonnage);
             Assert.IsNull(projectedAluminium.ProjectedHouseholdDrinksContainerRAMTonnage);
@@ -203,12 +203,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             Assert.AreEqual(RAMTonnage.Empty, projectedGlass.ProjectedPublicBinRAMTonnage);
 
             Assert.AreEqual(h1HdcGlass.PackagingTonnage, projectedGlass.ProjectedHouseholdDrinksContainerTonnage!);
-            AssertWithin(To3DP((h1HdcGlass.PackagingTonnageRed ?? 0) + (expH1HdcGlassWithoutRam * expGlassH2Proportions.Red)), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.RedTonnage);
-            AssertWithin(To3DP(expH1HdcGlassWithoutRam * expGlassH2Proportions.Amber), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.AmberTonnage);
-            AssertWithin(To3DP((h1HdcGlass.PackagingTonnageGreen ?? 0) + (expH1HdcGlassWithoutRam * expGlassH2Proportions.Green)), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.GreenTonnage);
-            AssertWithin(To3DP((h1HdcGlass.PackagingTonnageRedMedical ?? 0) + (expH1HdcGlassWithoutRam * expGlassH2Proportions.RedMedical)), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.RedMedicalTonnage);
-            AssertWithin(To3DP(expH1HdcGlassWithoutRam * expGlassH2Proportions.AmberMedical), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.AmberMedicalTonnage);
-            AssertWithin(To3DP(expH1HdcGlassWithoutRam * expGlassH2Proportions.GreenMedical), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.GreenMedicalTonnage);
+            AssertWithin(To3DP((h1HdcGlass.PackagingTonnageRed ?? 0) + (expH1HdcGlassWithoutRam * expGlassH2Proportions.Red)), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.Red);
+            AssertWithin(To3DP(expH1HdcGlassWithoutRam * expGlassH2Proportions.Amber), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.Amber);
+            AssertWithin(To3DP((h1HdcGlass.PackagingTonnageGreen ?? 0) + (expH1HdcGlassWithoutRam * expGlassH2Proportions.Green)), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.Green);
+            AssertWithin(To3DP((h1HdcGlass.PackagingTonnageRedMedical ?? 0) + (expH1HdcGlassWithoutRam * expGlassH2Proportions.RedMedical)), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.RedMedical);
+            AssertWithin(To3DP(expH1HdcGlassWithoutRam * expGlassH2Proportions.AmberMedical), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.AmberMedical);
+            AssertWithin(To3DP(expH1HdcGlassWithoutRam * expGlassH2Proportions.GreenMedical), projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.GreenMedical);
         }
 
         [TestMethod]
@@ -273,12 +273,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 
             Assert.AreEqual(
                 new RAMTonnage {
-                    RedTonnage          = (h1HHAlm.PackagingTonnageRed ?? 0) + expH1AlmWithoutRam,
-                    AmberTonnage        = h1HHAlm.PackagingTonnageAmber ?? 0,
-                    GreenTonnage        = h1HHAlm.PackagingTonnageGreen ?? 0,
-                    RedMedicalTonnage   = h1HHAlm.PackagingTonnageRedMedical ?? 0,
-                    AmberMedicalTonnage = h1HHAlm.PackagingTonnageAmberMedical ?? 0,
-                    GreenMedicalTonnage = h1HHAlm.PackagingTonnageGreenMedical ?? 0
+                    Red          = (h1HHAlm.PackagingTonnageRed ?? 0) + expH1AlmWithoutRam,
+                    Amber        = h1HHAlm.PackagingTonnageAmber ?? 0,
+                    Green        = h1HHAlm.PackagingTonnageGreen ?? 0,
+                    RedMedical   = h1HHAlm.PackagingTonnageRedMedical ?? 0,
+                    AmberMedical = h1HHAlm.PackagingTonnageAmberMedical ?? 0,
+                    GreenMedical = h1HHAlm.PackagingTonnageGreenMedical ?? 0
                 },
                 projectedAluminium.ProjectedHouseholdRAMTonnage
             );
@@ -290,12 +290,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 
             Assert.AreEqual(
                 new RAMTonnage {
-                    RedTonnage          = (h1HdcGlass.PackagingTonnageRed ?? 0) + expH1HdcGlassWithoutRam,
-                    AmberTonnage        = h1HdcGlass.PackagingTonnageAmber ?? 0,
-                    GreenTonnage        = h1HdcGlass.PackagingTonnageGreen ?? 0,
-                    RedMedicalTonnage   = h1HdcGlass.PackagingTonnageRedMedical ?? 0,
-                    AmberMedicalTonnage = h1HdcGlass.PackagingTonnageAmberMedical ?? 0,
-                    GreenMedicalTonnage = h1HdcGlass.PackagingTonnageGreenMedical ?? 0
+                    Red          = (h1HdcGlass.PackagingTonnageRed ?? 0) + expH1HdcGlassWithoutRam,
+                    Amber        = h1HdcGlass.PackagingTonnageAmber ?? 0,
+                    Green        = h1HdcGlass.PackagingTonnageGreen ?? 0,
+                    RedMedical   = h1HdcGlass.PackagingTonnageRedMedical ?? 0,
+                    AmberMedical = h1HdcGlass.PackagingTonnageAmberMedical ?? 0,
+                    GreenMedical = h1HdcGlass.PackagingTonnageGreenMedical ?? 0
                 },
                 projectedGlass.ProjectedHouseholdDrinksContainerRAMTonnage
             );
@@ -382,62 +382,62 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 
             var h2SubtotalAlmTotal = h2SubtotalAlm.TotalTonnage();
             var expAlmH2SubtotalProportions = new RAMProportions{
-                Red          = To6DP((h2SubtotalAlm.ProjectedHouseholdRAMTonnage.RedTonnage + h2SubtotalAlm.ProjectedPublicBinRAMTonnage.RedTonnage) / h2SubtotalAlmTotal),
-                Amber        = To6DP((h2SubtotalAlm.ProjectedHouseholdRAMTonnage.AmberTonnage + h2SubtotalAlm.ProjectedPublicBinRAMTonnage.AmberTonnage) / h2SubtotalAlmTotal),
-                Green        = To6DP((h2SubtotalAlm.ProjectedHouseholdRAMTonnage.GreenTonnage + h2SubtotalAlm.ProjectedPublicBinRAMTonnage.GreenTonnage) / h2SubtotalAlmTotal),
-                RedMedical   = To6DP((h2SubtotalAlm.ProjectedHouseholdRAMTonnage.RedMedicalTonnage + h2SubtotalAlm.ProjectedPublicBinRAMTonnage.RedMedicalTonnage) / h2SubtotalAlmTotal),
-                AmberMedical = To6DP((h2SubtotalAlm.ProjectedHouseholdRAMTonnage.AmberMedicalTonnage + h2SubtotalAlm.ProjectedPublicBinRAMTonnage.AmberMedicalTonnage) / h2SubtotalAlmTotal),
-                GreenMedical = To6DP((h2SubtotalAlm.ProjectedHouseholdRAMTonnage.GreenMedicalTonnage + h2SubtotalAlm.ProjectedPublicBinRAMTonnage.GreenMedicalTonnage) / h2SubtotalAlmTotal)
+                Red          = To6DP((h2SubtotalAlm.ProjectedHouseholdRAMTonnage.Red + h2SubtotalAlm.ProjectedPublicBinRAMTonnage.Red) / h2SubtotalAlmTotal),
+                Amber        = To6DP((h2SubtotalAlm.ProjectedHouseholdRAMTonnage.Amber + h2SubtotalAlm.ProjectedPublicBinRAMTonnage.Amber) / h2SubtotalAlmTotal),
+                Green        = To6DP((h2SubtotalAlm.ProjectedHouseholdRAMTonnage.Green + h2SubtotalAlm.ProjectedPublicBinRAMTonnage.Green) / h2SubtotalAlmTotal),
+                RedMedical   = To6DP((h2SubtotalAlm.ProjectedHouseholdRAMTonnage.RedMedical + h2SubtotalAlm.ProjectedPublicBinRAMTonnage.RedMedical) / h2SubtotalAlmTotal),
+                AmberMedical = To6DP((h2SubtotalAlm.ProjectedHouseholdRAMTonnage.AmberMedical + h2SubtotalAlm.ProjectedPublicBinRAMTonnage.AmberMedical) / h2SubtotalAlmTotal),
+                GreenMedical = To6DP((h2SubtotalAlm.ProjectedHouseholdRAMTonnage.GreenMedical + h2SubtotalAlm.ProjectedPublicBinRAMTonnage.GreenMedical) / h2SubtotalAlmTotal)
             };
 
             var h2SubtotalGlassTotal = h2SubtotalGlass.TotalTonnage();
             var expGlassH2SubtotalProportions = new RAMProportions{
-                Red          = To6DP((h2SubtotalGlass.ProjectedHouseholdRAMTonnage.RedTonnage + h2SubtotalGlass.ProjectedPublicBinRAMTonnage.RedTonnage + (h2SubtotalGlass.ProjectedHouseholdDrinksContainerRAMTonnage?.RedTonnage ?? 0)) / h2SubtotalGlassTotal),
-                Amber        = To6DP((h2SubtotalGlass.ProjectedHouseholdRAMTonnage.AmberTonnage + h2SubtotalGlass.ProjectedPublicBinRAMTonnage.AmberTonnage + (h2SubtotalGlass.ProjectedHouseholdDrinksContainerRAMTonnage?.AmberTonnage ?? 0)) / h2SubtotalGlassTotal),
-                Green        = To6DP((h2SubtotalGlass.ProjectedHouseholdRAMTonnage.GreenTonnage + h2SubtotalGlass.ProjectedPublicBinRAMTonnage.GreenTonnage + (h2SubtotalGlass.ProjectedHouseholdDrinksContainerRAMTonnage?.GreenTonnage ?? 0)) / h2SubtotalGlassTotal),
-                RedMedical   = To6DP((h2SubtotalGlass.ProjectedHouseholdRAMTonnage.RedMedicalTonnage + h2SubtotalGlass.ProjectedPublicBinRAMTonnage.RedMedicalTonnage + (h2SubtotalGlass.ProjectedHouseholdDrinksContainerRAMTonnage?.RedMedicalTonnage ?? 0)) / h2SubtotalGlassTotal),
-                AmberMedical = To6DP((h2SubtotalGlass.ProjectedHouseholdRAMTonnage.AmberMedicalTonnage + h2SubtotalGlass.ProjectedPublicBinRAMTonnage.AmberMedicalTonnage + (h2SubtotalGlass.ProjectedHouseholdDrinksContainerRAMTonnage?.AmberMedicalTonnage ?? 0)) / h2SubtotalGlassTotal),
-                GreenMedical = To6DP((h2SubtotalGlass.ProjectedHouseholdRAMTonnage.GreenMedicalTonnage + h2SubtotalGlass.ProjectedPublicBinRAMTonnage.GreenMedicalTonnage + (h2SubtotalGlass.ProjectedHouseholdDrinksContainerRAMTonnage?.GreenMedicalTonnage ?? 0)) / h2SubtotalGlassTotal)
+                Red          = To6DP((h2SubtotalGlass.ProjectedHouseholdRAMTonnage.Red + h2SubtotalGlass.ProjectedPublicBinRAMTonnage.Red + (h2SubtotalGlass.ProjectedHouseholdDrinksContainerRAMTonnage?.Red ?? 0)) / h2SubtotalGlassTotal),
+                Amber        = To6DP((h2SubtotalGlass.ProjectedHouseholdRAMTonnage.Amber + h2SubtotalGlass.ProjectedPublicBinRAMTonnage.Amber + (h2SubtotalGlass.ProjectedHouseholdDrinksContainerRAMTonnage?.Amber ?? 0)) / h2SubtotalGlassTotal),
+                Green        = To6DP((h2SubtotalGlass.ProjectedHouseholdRAMTonnage.Green + h2SubtotalGlass.ProjectedPublicBinRAMTonnage.Green + (h2SubtotalGlass.ProjectedHouseholdDrinksContainerRAMTonnage?.Green ?? 0)) / h2SubtotalGlassTotal),
+                RedMedical   = To6DP((h2SubtotalGlass.ProjectedHouseholdRAMTonnage.RedMedical + h2SubtotalGlass.ProjectedPublicBinRAMTonnage.RedMedical + (h2SubtotalGlass.ProjectedHouseholdDrinksContainerRAMTonnage?.RedMedical ?? 0)) / h2SubtotalGlassTotal),
+                AmberMedical = To6DP((h2SubtotalGlass.ProjectedHouseholdRAMTonnage.AmberMedical + h2SubtotalGlass.ProjectedPublicBinRAMTonnage.AmberMedical + (h2SubtotalGlass.ProjectedHouseholdDrinksContainerRAMTonnage?.AmberMedical ?? 0)) / h2SubtotalGlassTotal),
+                GreenMedical = To6DP((h2SubtotalGlass.ProjectedHouseholdRAMTonnage.GreenMedical + h2SubtotalGlass.ProjectedPublicBinRAMTonnage.GreenMedical + (h2SubtotalGlass.ProjectedHouseholdDrinksContainerRAMTonnage?.GreenMedical ?? 0)) / h2SubtotalGlassTotal)
             };
 
             Assert.AreEqual(h1HHAlm.PackagingTonnage, projectedHCAluminium.ProjectedHouseholdTonnage);
-            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2SubtotalProportions.Red), projectedHCAluminium.ProjectedHouseholdRAMTonnage.RedTonnage);
-            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2SubtotalProportions.Amber), projectedHCAluminium.ProjectedHouseholdRAMTonnage.AmberTonnage);
-            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2SubtotalProportions.Green), projectedHCAluminium.ProjectedHouseholdRAMTonnage.GreenTonnage);
-            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2SubtotalProportions.RedMedical), projectedHCAluminium.ProjectedHouseholdRAMTonnage.RedMedicalTonnage);
-            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2SubtotalProportions.AmberMedical), projectedHCAluminium.ProjectedHouseholdRAMTonnage.AmberMedicalTonnage);
-            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2SubtotalProportions.GreenMedical), projectedHCAluminium.ProjectedHouseholdRAMTonnage.GreenMedicalTonnage);
+            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2SubtotalProportions.Red), projectedHCAluminium.ProjectedHouseholdRAMTonnage.Red);
+            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2SubtotalProportions.Amber), projectedHCAluminium.ProjectedHouseholdRAMTonnage.Amber);
+            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2SubtotalProportions.Green), projectedHCAluminium.ProjectedHouseholdRAMTonnage.Green);
+            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2SubtotalProportions.RedMedical), projectedHCAluminium.ProjectedHouseholdRAMTonnage.RedMedical);
+            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2SubtotalProportions.AmberMedical), projectedHCAluminium.ProjectedHouseholdRAMTonnage.AmberMedical);
+            AssertWithin(To3DP(h1HHAlm.PackagingTonnage * expAlmH2SubtotalProportions.GreenMedical), projectedHCAluminium.ProjectedHouseholdRAMTonnage.GreenMedical);
 
             Assert.AreEqual(h1HdcGlass.PackagingTonnage, projectedHCGlass.ProjectedHouseholdDrinksContainerTonnage!);
-            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2SubtotalProportions.Red), projectedHCGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.RedTonnage);
-            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2SubtotalProportions.Amber), projectedHCGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.AmberTonnage);
-            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2SubtotalProportions.Green), projectedHCGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.GreenTonnage);
-            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2SubtotalProportions.RedMedical), projectedHCGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.RedMedicalTonnage);
-            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2SubtotalProportions.AmberMedical), projectedHCGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.AmberMedicalTonnage);
-            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2SubtotalProportions.GreenMedical), projectedHCGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.GreenMedicalTonnage);
+            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2SubtotalProportions.Red), projectedHCGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.Red);
+            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2SubtotalProportions.Amber), projectedHCGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.Amber);
+            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2SubtotalProportions.Green), projectedHCGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.Green);
+            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2SubtotalProportions.RedMedical), projectedHCGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.RedMedical);
+            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2SubtotalProportions.AmberMedical), projectedHCGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.AmberMedical);
+            AssertWithin(To3DP(h1HdcGlass.PackagingTonnage * expGlassH2SubtotalProportions.GreenMedical), projectedHCGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.GreenMedical);
 
             Assert.AreEqual(subH1HHAlm.PackagingTonnage, projectedSubAluminium.ProjectedHouseholdTonnage);
-            AssertWithin(To3DP(subH1HHAlm.PackagingTonnage * expAlmH2SubtotalProportions.Red), projectedSubAluminium.ProjectedHouseholdRAMTonnage.RedTonnage);
-            AssertWithin(To3DP(subH1HHAlm.PackagingTonnage * expAlmH2SubtotalProportions.Amber), projectedSubAluminium.ProjectedHouseholdRAMTonnage.AmberTonnage);
-            AssertWithin(To3DP(subH1HHAlm.PackagingTonnage * expAlmH2SubtotalProportions.Green), projectedSubAluminium.ProjectedHouseholdRAMTonnage.GreenTonnage);
-            AssertWithin(To3DP(subH1HHAlm.PackagingTonnage * expAlmH2SubtotalProportions.RedMedical), projectedSubAluminium.ProjectedHouseholdRAMTonnage.RedMedicalTonnage);
-            AssertWithin(To3DP(subH1HHAlm.PackagingTonnage * expAlmH2SubtotalProportions.AmberMedical), projectedSubAluminium.ProjectedHouseholdRAMTonnage.AmberMedicalTonnage);
-            AssertWithin(To3DP(subH1HHAlm.PackagingTonnage * expAlmH2SubtotalProportions.GreenMedical), projectedSubAluminium.ProjectedHouseholdRAMTonnage.GreenMedicalTonnage);
+            AssertWithin(To3DP(subH1HHAlm.PackagingTonnage * expAlmH2SubtotalProportions.Red), projectedSubAluminium.ProjectedHouseholdRAMTonnage.Red);
+            AssertWithin(To3DP(subH1HHAlm.PackagingTonnage * expAlmH2SubtotalProportions.Amber), projectedSubAluminium.ProjectedHouseholdRAMTonnage.Amber);
+            AssertWithin(To3DP(subH1HHAlm.PackagingTonnage * expAlmH2SubtotalProportions.Green), projectedSubAluminium.ProjectedHouseholdRAMTonnage.Green);
+            AssertWithin(To3DP(subH1HHAlm.PackagingTonnage * expAlmH2SubtotalProportions.RedMedical), projectedSubAluminium.ProjectedHouseholdRAMTonnage.RedMedical);
+            AssertWithin(To3DP(subH1HHAlm.PackagingTonnage * expAlmH2SubtotalProportions.AmberMedical), projectedSubAluminium.ProjectedHouseholdRAMTonnage.AmberMedical);
+            AssertWithin(To3DP(subH1HHAlm.PackagingTonnage * expAlmH2SubtotalProportions.GreenMedical), projectedSubAluminium.ProjectedHouseholdRAMTonnage.GreenMedical);
 
             Assert.AreEqual(subH1HdcGlass.PackagingTonnage, projectedSubGlass.ProjectedHouseholdDrinksContainerTonnage!);
-            AssertWithin(To3DP(subH1HdcGlass.PackagingTonnage * expGlassH2SubtotalProportions.Red), projectedSubGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.RedTonnage);
-            AssertWithin(To3DP(subH1HdcGlass.PackagingTonnage * expGlassH2SubtotalProportions.Amber), projectedSubGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.AmberTonnage);
-            AssertWithin(To3DP(subH1HdcGlass.PackagingTonnage * expGlassH2SubtotalProportions.Green), projectedSubGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.GreenTonnage);
-            AssertWithin(To3DP(subH1HdcGlass.PackagingTonnage * expGlassH2SubtotalProportions.RedMedical), projectedSubGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.RedMedicalTonnage);
-            AssertWithin(To3DP(subH1HdcGlass.PackagingTonnage * expGlassH2SubtotalProportions.AmberMedical), projectedSubGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.AmberMedicalTonnage);
-            AssertWithin(To3DP(subH1HdcGlass.PackagingTonnage * expGlassH2SubtotalProportions.GreenMedical), projectedSubGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.GreenMedicalTonnage);
+            AssertWithin(To3DP(subH1HdcGlass.PackagingTonnage * expGlassH2SubtotalProportions.Red), projectedSubGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.Red);
+            AssertWithin(To3DP(subH1HdcGlass.PackagingTonnage * expGlassH2SubtotalProportions.Amber), projectedSubGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.Amber);
+            AssertWithin(To3DP(subH1HdcGlass.PackagingTonnage * expGlassH2SubtotalProportions.Green), projectedSubGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.Green);
+            AssertWithin(To3DP(subH1HdcGlass.PackagingTonnage * expGlassH2SubtotalProportions.RedMedical), projectedSubGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.RedMedical);
+            AssertWithin(To3DP(subH1HdcGlass.PackagingTonnage * expGlassH2SubtotalProportions.AmberMedical), projectedSubGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.AmberMedical);
+            AssertWithin(To3DP(subH1HdcGlass.PackagingTonnage * expGlassH2SubtotalProportions.GreenMedical), projectedSubGlass.ProjectedHouseholdDrinksContainerRAMTonnage!.GreenMedical);
         }
 
         [TestMethod]
         public void ReconcileRoundingDifference_NoMissingRam()
         {
             var tonnage = 200;
-            var ramTonnage = new RAMTonnage { RedTonnage = 0, AmberTonnage = 20, GreenTonnage = 30, RedMedicalTonnage = 0, AmberMedicalTonnage = 50, GreenMedicalTonnage = 0 };
+            var ramTonnage = new RAMTonnage { Red = 0, Amber = 20, Green = 30, RedMedical = 0, AmberMedical = 50, GreenMedical = 0 };
             var h2Proportions = new RAMProportions { Red = 0.5m, Amber = 0, Green = 0.5m, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 };
             var withProportions = H1ProjectedProducersBuilderUtils.GetProportionateRam(ramTonnage, 100, h2Proportions);
             var roundingDiff = tonnage - withProportions.TotalRamTonnage();
@@ -450,28 +450,28 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         public void ReconcileRoundingDifference_MissingRam()
         {
             var tonnage = 200;
-            var ramTonnage = new RAMTonnage { RedTonnage = 0, AmberTonnage = 20, GreenTonnage = 30, RedMedicalTonnage = 0, AmberMedicalTonnage = 50, GreenMedicalTonnage = 0 };
+            var ramTonnage = new RAMTonnage { Red = 0, Amber = 20, Green = 30, RedMedical = 0, AmberMedical = 50, GreenMedical = 0 };
             var h2Proportions = new RAMProportions { Red = 0.333333m, Amber = 0.333333m, Green = 0.333334m, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 };
             var withProportions = H1ProjectedProducersBuilderUtils.GetProportionateRam(ramTonnage, 100, h2Proportions);
             var roundingDiff = tonnage - withProportions.TotalRamTonnage();
             Assert.IsTrue(roundingDiff > 0);
             var reconciled = H1ProjectedProducersBuilderUtils.ReconcileRoundingDifference(tonnage, withProportions);
             Assert.AreEqual(0, tonnage - reconciled.TotalRamTonnage());
-            Assert.AreEqual(withProportions with { GreenTonnage = withProportions.GreenTonnage + roundingDiff }, reconciled);
+            Assert.AreEqual(withProportions with { Green = withProportions.Green + roundingDiff }, reconciled);
         }
 
         [TestMethod]
         public void ReconcileRoundingDifference_SurplusRam()
         {
             var tonnage = 200;
-            var ramTonnage = new RAMTonnage { RedTonnage = 0, AmberTonnage = 20, GreenTonnage = 30, RedMedicalTonnage = 0, AmberMedicalTonnage = 50, GreenMedicalTonnage = 0 };
+            var ramTonnage = new RAMTonnage { Red = 0, Amber = 20, Green = 30, RedMedical = 0, AmberMedical = 50, GreenMedical = 0 };
             var h2Proportions = new RAMProportions { Red = 0.333335m, Amber = 0.333335m, Green = 0.333330m, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 };
             var withProportions = H1ProjectedProducersBuilderUtils.GetProportionateRam(ramTonnage, 100, h2Proportions);
             var roundingDiff = tonnage - withProportions.TotalRamTonnage();
             Assert.IsTrue(roundingDiff < 0);
             var reconciled = H1ProjectedProducersBuilderUtils.ReconcileRoundingDifference(tonnage, withProportions);
             Assert.AreEqual(0, tonnage - reconciled.TotalRamTonnage());
-            Assert.AreEqual(withProportions with { GreenTonnage = withProportions.GreenTonnage + roundingDiff }, reconciled);
+            Assert.AreEqual(withProportions with { Green = withProportions.Green + roundingDiff }, reconciled);
         }
 
         [TestMethod]
@@ -479,15 +479,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         {
             // Red and amber medical result in the same tonnages - assign missing ram to amber medical due to priority order
             var tonnage = 200;
-            var ramTonnage = new RAMTonnage { RedTonnage = 30, AmberTonnage = 40, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 30, GreenMedicalTonnage = 0 };
+            var ramTonnage = new RAMTonnage { Red = 30, Amber = 40, Green = 0, RedMedical = 0, AmberMedical = 30, GreenMedical = 0 };
             var h2Proportions = new RAMProportions { Red = 0.333333m, Amber = 0, Green = 0.333334m, RedMedical = 0, AmberMedical = 0.333333m, GreenMedical = 0 };
             var withProportions = H1ProjectedProducersBuilderUtils.GetProportionateRam(ramTonnage, 100, h2Proportions);
             var roundingDiff = tonnage - withProportions.TotalRamTonnage();
             Assert.IsTrue(roundingDiff > 0);
-            Assert.AreEqual(withProportions.RedTonnage, withProportions.AmberMedicalTonnage);
+            Assert.AreEqual(withProportions.Red, withProportions.AmberMedical);
             var reconciled = H1ProjectedProducersBuilderUtils.ReconcileRoundingDifference(tonnage, withProportions);
             Assert.AreEqual(0, tonnage - reconciled.TotalRamTonnage());
-            Assert.AreEqual(withProportions with { AmberMedicalTonnage = withProportions.AmberMedicalTonnage + roundingDiff }, reconciled);
+            Assert.AreEqual(withProportions with { AmberMedical = withProportions.AmberMedical + roundingDiff }, reconciled);
         }
 
         [TestMethod]
@@ -507,15 +507,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                         ["AL"] = new()
                         {
                             HouseholdTonnage = 200,
-                            HouseholdRAMTonnage = new RAMTonnage { RedTonnage = 100, AmberTonnage = 100, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                            HouseholdRAMTonnage = new RAMTonnage { Red = 100, Amber = 100, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 },
                             PublicBinTonnage = 0,
-                            PublicBinRAMTonnage = new RAMTonnage { RedTonnage = 0, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                            PublicBinRAMTonnage = new RAMTonnage { Red = 0, Amber = 0, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 },
                             HouseholdTonnageWithoutRAM = 0,
                             PublicBinTonnageWithoutRAM = 0,
                             ProjectedHouseholdTonnage = 200,
-                            ProjectedHouseholdRAMTonnage = new RAMTonnage { RedTonnage = 100, AmberTonnage = 100, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                            ProjectedHouseholdRAMTonnage = new RAMTonnage { Red = 100, Amber = 100, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 },
                             ProjectedPublicBinTonnage = 0,
-                            ProjectedPublicBinRAMTonnage = new RAMTonnage { RedTonnage = 0, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 }
+                            ProjectedPublicBinRAMTonnage = new RAMTonnage { Red = 0, Amber = 0, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 }
                         }
                     }
                 }
@@ -530,16 +530,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     H1ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>() {
                         ["AL"] = new() {
                             HouseholdTonnage = 100,
-                            HouseholdRAMTonnage = new RAMTonnage { RedTonnage = 100, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                            HouseholdRAMTonnage = new RAMTonnage { Red = 100, Amber = 0, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 },
                             PublicBinTonnage = 200,
-                            PublicBinRAMTonnage = new RAMTonnage { RedTonnage = 0, AmberTonnage = 100, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                            PublicBinRAMTonnage = new RAMTonnage { Red = 0, Amber = 100, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 },
                             HouseholdTonnageWithoutRAM = 0,
                             PublicBinTonnageWithoutRAM = 100,
                             H2RamProportions = expRamH2Proportions,
                             ProjectedHouseholdTonnage = 100,
-                            ProjectedHouseholdRAMTonnage = new RAMTonnage { RedTonnage = 100, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                            ProjectedHouseholdRAMTonnage = new RAMTonnage { Red = 100, Amber = 0, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 },
                             ProjectedPublicBinTonnage = 200,
-                            ProjectedPublicBinRAMTonnage = new RAMTonnage { RedTonnage = 50, AmberTonnage = 150, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 }
+                            ProjectedPublicBinRAMTonnage = new RAMTonnage { Red = 50, Amber = 150, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 }
                         }
                     }
                 },
@@ -551,16 +551,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     H1ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>() {
                         ["AL"] = new() {
                             HouseholdTonnage = 100,
-                            HouseholdRAMTonnage = new RAMTonnage { RedTonnage = 100, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                            HouseholdRAMTonnage = new RAMTonnage { Red = 100, Amber = 0, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 },
                             PublicBinTonnage = 200,
-                            PublicBinRAMTonnage = new RAMTonnage { RedTonnage = 0, AmberTonnage = 100, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                            PublicBinRAMTonnage = new RAMTonnage { Red = 0, Amber = 100, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 },
                             HouseholdTonnageWithoutRAM = 0,
                             PublicBinTonnageWithoutRAM = 100,
                             H2RamProportions = expRamH2Proportions,
                             ProjectedHouseholdTonnage = 100,
-                            ProjectedHouseholdRAMTonnage = new RAMTonnage { RedTonnage = 100, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                            ProjectedHouseholdRAMTonnage = new RAMTonnage { Red = 100, Amber = 0, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 },
                             ProjectedPublicBinTonnage = 200,
-                            ProjectedPublicBinRAMTonnage = new RAMTonnage { RedTonnage = 50, AmberTonnage = 150, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 }
+                            ProjectedPublicBinRAMTonnage = new RAMTonnage { Red = 50, Amber = 150, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 }
                         }
                     }
                 },
@@ -568,16 +568,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 
             var expSummedAlm = new CalcResultH1ProjectedProducerMaterialTonnage() {
                 HouseholdTonnage = 200,
-                HouseholdRAMTonnage = new RAMTonnage { RedTonnage = 200, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                HouseholdRAMTonnage = new RAMTonnage { Red = 200, Amber = 0, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 },
                 PublicBinTonnage = 400,
-                PublicBinRAMTonnage = new RAMTonnage { RedTonnage = 0, AmberTonnage = 200, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                PublicBinRAMTonnage = new RAMTonnage { Red = 0, Amber = 200, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 },
                 HouseholdTonnageWithoutRAM = 0,
                 PublicBinTonnageWithoutRAM = 200,
                 H2RamProportions = expRamH2Proportions,
                 ProjectedHouseholdTonnage = 200,
-                ProjectedHouseholdRAMTonnage = new RAMTonnage { RedTonnage = 200, AmberTonnage = 0, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 },
+                ProjectedHouseholdRAMTonnage = new RAMTonnage { Red = 200, Amber = 0, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 },
                 ProjectedPublicBinTonnage = 400,
-                ProjectedPublicBinRAMTonnage = new RAMTonnage { RedTonnage = 100, AmberTonnage = 300, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 0 }
+                ProjectedPublicBinRAMTonnage = new RAMTonnage { Red = 100, Amber = 300, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 }
             };
 
             var result = H1ProjectedProducersBuilderUtils.SumProducerGroupTonnages(prodGroup, h2Producers);
@@ -624,12 +624,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             var almTotal = h2Alm.TotalTonnage();
             var expProportions = new RAMProportions
             {
-                Red          = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.RedTonnage          + h2Alm.ProjectedPublicBinRAMTonnage.RedTonnage)          / almTotal),
-                Amber        = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.AmberTonnage        + h2Alm.ProjectedPublicBinRAMTonnage.AmberTonnage)        / almTotal),
-                Green        = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.GreenTonnage        + h2Alm.ProjectedPublicBinRAMTonnage.GreenTonnage)        / almTotal),
-                RedMedical   = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.RedMedicalTonnage   + h2Alm.ProjectedPublicBinRAMTonnage.RedMedicalTonnage)   / almTotal),
-                AmberMedical = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.AmberMedicalTonnage + h2Alm.ProjectedPublicBinRAMTonnage.AmberMedicalTonnage) / almTotal),
-                GreenMedical = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.GreenMedicalTonnage + h2Alm.ProjectedPublicBinRAMTonnage.GreenMedicalTonnage) / almTotal)
+                Red          = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.Red          + h2Alm.ProjectedPublicBinRAMTonnage.Red)          / almTotal),
+                Amber        = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.Amber        + h2Alm.ProjectedPublicBinRAMTonnage.Amber)        / almTotal),
+                Green        = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.Green        + h2Alm.ProjectedPublicBinRAMTonnage.Green)        / almTotal),
+                RedMedical   = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.RedMedical   + h2Alm.ProjectedPublicBinRAMTonnage.RedMedical)   / almTotal),
+                AmberMedical = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.AmberMedical + h2Alm.ProjectedPublicBinRAMTonnage.AmberMedical) / almTotal),
+                GreenMedical = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.GreenMedical + h2Alm.ProjectedPublicBinRAMTonnage.GreenMedical) / almTotal)
             };
 
             Assert.AreEqual(expProportions, result.H1ProjectedTonnageByMaterial[MaterialCodes.Aluminium].H2RamProportions);
@@ -671,12 +671,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             var almTotal = h2Alm.TotalTonnage();
             var expProportions = new RAMProportions
             {
-                Red          = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.RedTonnage          + h2Alm.ProjectedPublicBinRAMTonnage.RedTonnage)          / almTotal),
-                Amber        = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.AmberTonnage        + h2Alm.ProjectedPublicBinRAMTonnage.AmberTonnage)        / almTotal),
-                Green        = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.GreenTonnage        + h2Alm.ProjectedPublicBinRAMTonnage.GreenTonnage)        / almTotal),
-                RedMedical   = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.RedMedicalTonnage   + h2Alm.ProjectedPublicBinRAMTonnage.RedMedicalTonnage)   / almTotal),
-                AmberMedical = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.AmberMedicalTonnage + h2Alm.ProjectedPublicBinRAMTonnage.AmberMedicalTonnage) / almTotal),
-                GreenMedical = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.GreenMedicalTonnage + h2Alm.ProjectedPublicBinRAMTonnage.GreenMedicalTonnage) / almTotal)
+                Red          = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.Red          + h2Alm.ProjectedPublicBinRAMTonnage.Red)          / almTotal),
+                Amber        = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.Amber        + h2Alm.ProjectedPublicBinRAMTonnage.Amber)        / almTotal),
+                Green        = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.Green        + h2Alm.ProjectedPublicBinRAMTonnage.Green)        / almTotal),
+                RedMedical   = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.RedMedical   + h2Alm.ProjectedPublicBinRAMTonnage.RedMedical)   / almTotal),
+                AmberMedical = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.AmberMedical + h2Alm.ProjectedPublicBinRAMTonnage.AmberMedical) / almTotal),
+                GreenMedical = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.GreenMedical + h2Alm.ProjectedPublicBinRAMTonnage.GreenMedical) / almTotal)
             };
 
             Assert.AreEqual(expProportions, result.H1ProjectedTonnageByMaterial[MaterialCodes.Aluminium].H2RamProportions);
@@ -694,12 +694,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
         private static RAMTonnage ProducerReportedMaterialToRAMTonnage(ProducerReportedMaterial material) =>
             new RAMTonnage
             {
-                RedTonnage          = material.PackagingTonnageRed ?? 0,
-                AmberTonnage        = material.PackagingTonnageAmber ?? 0,
-                GreenTonnage        = material.PackagingTonnageGreen ?? 0,
-                RedMedicalTonnage   = material.PackagingTonnageRedMedical ?? 0,
-                AmberMedicalTonnage = material.PackagingTonnageAmberMedical ?? 0,
-                GreenMedicalTonnage = material.PackagingTonnageGreenMedical ?? 0
+                Red          = material.PackagingTonnageRed ?? 0,
+                Amber        = material.PackagingTonnageAmber ?? 0,
+                Green        = material.PackagingTonnageGreen ?? 0,
+                RedMedical   = material.PackagingTonnageRedMedical ?? 0,
+                AmberMedical = material.PackagingTonnageAmberMedical ?? 0,
+                GreenMedical = material.PackagingTonnageGreenMedical ?? 0
             };
 
         private static decimal CalcWithoutRam(ProducerReportedMaterial material) =>
@@ -775,33 +775,33 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             var alm = new CalcResultH2ProjectedProducerMaterialTonnage
             {
                 HouseholdTonnage = 75,
-                HouseholdRAMTonnage = new RAMTonnage { RedTonnage = 0, AmberTonnage = 11, GreenTonnage = 12, RedMedicalTonnage = 13, AmberMedicalTonnage = 14, GreenMedicalTonnage = 15 },
+                HouseholdRAMTonnage = new RAMTonnage { Red = 0, Amber = 11, Green = 12, RedMedical = 13, AmberMedical = 14, GreenMedical = 15 },
                 PublicBinTonnage = 135,
-                PublicBinRAMTonnage = new RAMTonnage { RedTonnage = 0, AmberTonnage = 21, GreenTonnage = 22, RedMedicalTonnage = 23, AmberMedicalTonnage = 24, GreenMedicalTonnage = 25 },
+                PublicBinRAMTonnage = new RAMTonnage { Red = 0, Amber = 21, Green = 22, RedMedical = 23, AmberMedical = 24, GreenMedical = 25 },
                 HouseholdTonnageWithoutRAM = 10,
                 PublicBinTonnageWithoutRAM = 20,
                 ProjectedHouseholdTonnage = 75,
-                ProjectedHouseholdRAMTonnage = new RAMTonnage { RedTonnage = 10, AmberTonnage = 11, GreenTonnage = 12, RedMedicalTonnage = 13, AmberMedicalTonnage = 14, GreenMedicalTonnage = 15 },
+                ProjectedHouseholdRAMTonnage = new RAMTonnage { Red = 10, Amber = 11, Green = 12, RedMedical = 13, AmberMedical = 14, GreenMedical = 15 },
                 ProjectedPublicBinTonnage = 135,
-                ProjectedPublicBinRAMTonnage = new RAMTonnage { RedTonnage = 20, AmberTonnage = 21, GreenTonnage = 22, RedMedicalTonnage = 23, AmberMedicalTonnage = 24, GreenMedicalTonnage = 25 }
+                ProjectedPublicBinRAMTonnage = new RAMTonnage { Red = 20, Amber = 21, Green = 22, RedMedical = 23, AmberMedical = 24, GreenMedical = 25 }
             };
             var glass = new CalcResultH2ProjectedProducerMaterialTonnage
             {
                 HouseholdTonnage = 75,
-                HouseholdRAMTonnage = new RAMTonnage { RedTonnage = 10, AmberTonnage = 11, GreenTonnage = 5, RedMedicalTonnage = 0, AmberMedicalTonnage = 14, GreenMedicalTonnage = 0 },
+                HouseholdRAMTonnage = new RAMTonnage { Red = 10, Amber = 11, Green = 5, RedMedical = 0, AmberMedical = 14, GreenMedical = 0 },
                 PublicBinTonnage = 135,
-                PublicBinRAMTonnage = new RAMTonnage { RedTonnage = 10, AmberTonnage = 21, GreenTonnage = 22, RedMedicalTonnage = 23, AmberMedicalTonnage = 24, GreenMedicalTonnage = 25 },
+                PublicBinRAMTonnage = new RAMTonnage { Red = 10, Amber = 21, Green = 22, RedMedical = 23, AmberMedical = 24, GreenMedical = 25 },
                 HouseholdDrinksContainerTonnage = 195,
-                HouseholdDrinksContainerRAMTonnage = new RAMTonnage { RedTonnage = 30, AmberTonnage = 11, GreenTonnage = 32, RedMedicalTonnage = 33, AmberMedicalTonnage = 34, GreenMedicalTonnage = 35 },
+                HouseholdDrinksContainerRAMTonnage = new RAMTonnage { Red = 30, Amber = 11, Green = 32, RedMedical = 33, AmberMedical = 34, GreenMedical = 35 },
                 HouseholdTonnageWithoutRAM = 35,
                 PublicBinTonnageWithoutRAM = 10,
                 HouseholdDrinksContainerTonnageWithoutRAM = 20,
                 ProjectedHouseholdTonnage = 75,
-                ProjectedHouseholdRAMTonnage = new RAMTonnage { RedTonnage = 45, AmberTonnage = 11, GreenTonnage = 5, RedMedicalTonnage = 0, AmberMedicalTonnage = 14, GreenMedicalTonnage = 0 },
+                ProjectedHouseholdRAMTonnage = new RAMTonnage { Red = 45, Amber = 11, Green = 5, RedMedical = 0, AmberMedical = 14, GreenMedical = 0 },
                 ProjectedPublicBinTonnage = 135,
-                ProjectedPublicBinRAMTonnage = new RAMTonnage { RedTonnage = 20, AmberTonnage = 21, GreenTonnage = 22, RedMedicalTonnage = 23, AmberMedicalTonnage = 24, GreenMedicalTonnage = 25 },
+                ProjectedPublicBinRAMTonnage = new RAMTonnage { Red = 20, Amber = 21, Green = 22, RedMedical = 23, AmberMedical = 24, GreenMedical = 25 },
                 ProjectedHouseholdDrinksContainerTonnage = 195,
-                ProjectedHouseholdDrinksContainerRAMTonnage = new RAMTonnage { RedTonnage = 50, AmberTonnage = 11, GreenTonnage = 32, RedMedicalTonnage = 33, AmberMedicalTonnage = 34, GreenMedicalTonnage = 35 },
+                ProjectedHouseholdDrinksContainerRAMTonnage = new RAMTonnage { Red = 50, Amber = 11, Green = 32, RedMedical = 33, AmberMedical = 34, GreenMedical = 35 },
             };
             return (alm, glass, new List<CalcResultH2ProjectedProducer>()
             {
@@ -850,33 +850,33 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             var alm = new CalcResultH2ProjectedProducerMaterialTonnage
             {
                 HouseholdTonnage = 75,
-                HouseholdRAMTonnage = new RAMTonnage { RedTonnage = 10, AmberTonnage = 11, GreenTonnage = 12, RedMedicalTonnage = 13, AmberMedicalTonnage = 14, GreenMedicalTonnage = 15 },
+                HouseholdRAMTonnage = new RAMTonnage { Red = 10, Amber = 11, Green = 12, RedMedical = 13, AmberMedical = 14, GreenMedical = 15 },
                 PublicBinTonnage = 135,
-                PublicBinRAMTonnage = new RAMTonnage { RedTonnage = 20, AmberTonnage = 21, GreenTonnage = 22, RedMedicalTonnage = 23, AmberMedicalTonnage = 24, GreenMedicalTonnage = 25 },
+                PublicBinRAMTonnage = new RAMTonnage { Red = 20, Amber = 21, Green = 22, RedMedical = 23, AmberMedical = 24, GreenMedical = 25 },
                 HouseholdTonnageWithoutRAM = 10,
                 PublicBinTonnageWithoutRAM = 20,
                 ProjectedHouseholdTonnage = 75,
-                ProjectedHouseholdRAMTonnage = new RAMTonnage { RedTonnage = 10, AmberTonnage = 11, GreenTonnage = 12, RedMedicalTonnage = 13, AmberMedicalTonnage = 14, GreenMedicalTonnage = 15 },
+                ProjectedHouseholdRAMTonnage = new RAMTonnage { Red = 10, Amber = 11, Green = 12, RedMedical = 13, AmberMedical = 14, GreenMedical = 15 },
                 ProjectedPublicBinTonnage = 135,
-                ProjectedPublicBinRAMTonnage = new RAMTonnage { RedTonnage = 20, AmberTonnage = 21, GreenTonnage = 22, RedMedicalTonnage = 23, AmberMedicalTonnage = 24, GreenMedicalTonnage = 25 },
+                ProjectedPublicBinRAMTonnage = new RAMTonnage { Red = 20, Amber = 21, Green = 22, RedMedical = 23, AmberMedical = 24, GreenMedical = 25 },
             };
             var glass = new CalcResultH2ProjectedProducerMaterialTonnage
             {
                 HouseholdTonnage = 75,
-                HouseholdRAMTonnage = new RAMTonnage { RedTonnage = 10, AmberTonnage = 11, GreenTonnage = 12, RedMedicalTonnage = 13, AmberMedicalTonnage = 14, GreenMedicalTonnage = 15 },
+                HouseholdRAMTonnage = new RAMTonnage { Red = 10, Amber = 11, Green = 12, RedMedical = 13, AmberMedical = 14, GreenMedical = 15 },
                 PublicBinTonnage = 135,
-                PublicBinRAMTonnage = new RAMTonnage { RedTonnage = 20, AmberTonnage = 21, GreenTonnage = 22, RedMedicalTonnage = 23, AmberMedicalTonnage = 24, GreenMedicalTonnage = 25 },
+                PublicBinRAMTonnage = new RAMTonnage { Red = 20, Amber = 21, Green = 22, RedMedical = 23, AmberMedical = 24, GreenMedical = 25 },
                 HouseholdDrinksContainerTonnage = 195,
-                HouseholdDrinksContainerRAMTonnage = new RAMTonnage { RedTonnage = 30, AmberTonnage = 31, GreenTonnage = 32, RedMedicalTonnage = 33, AmberMedicalTonnage = 34, GreenMedicalTonnage = 35 },
+                HouseholdDrinksContainerRAMTonnage = new RAMTonnage { Red = 30, Amber = 31, Green = 32, RedMedical = 33, AmberMedical = 34, GreenMedical = 35 },
                 HouseholdTonnageWithoutRAM = 35,
                 PublicBinTonnageWithoutRAM = 10,
                 HouseholdDrinksContainerTonnageWithoutRAM = 20,
                 ProjectedHouseholdTonnage = 75,
-                ProjectedHouseholdRAMTonnage = new RAMTonnage { RedTonnage = 10, AmberTonnage = 11, GreenTonnage = 12, RedMedicalTonnage = 13, AmberMedicalTonnage = 14, GreenMedicalTonnage = 15 },
+                ProjectedHouseholdRAMTonnage = new RAMTonnage { Red = 10, Amber = 11, Green = 12, RedMedical = 13, AmberMedical = 14, GreenMedical = 15 },
                 ProjectedPublicBinTonnage = 135,
-                ProjectedPublicBinRAMTonnage = new RAMTonnage { RedTonnage = 20, AmberTonnage = 21, GreenTonnage = 22, RedMedicalTonnage = 23, AmberMedicalTonnage = 24, GreenMedicalTonnage = 25 },
+                ProjectedPublicBinRAMTonnage = new RAMTonnage { Red = 20, Amber = 21, Green = 22, RedMedical = 23, AmberMedical = 24, GreenMedical = 25 },
                 ProjectedHouseholdDrinksContainerTonnage = 195,
-                ProjectedHouseholdDrinksContainerRAMTonnage = new RAMTonnage { RedTonnage = 30, AmberTonnage = 31, GreenTonnage = 32, RedMedicalTonnage = 33, AmberMedicalTonnage = 34, GreenMedicalTonnage = 35 },
+                ProjectedHouseholdDrinksContainerRAMTonnage = new RAMTonnage { Red = 30, Amber = 31, Green = 32, RedMedical = 33, AmberMedical = 34, GreenMedical = 35 },
             };
             return (alm, glass, new List<CalcResultH2ProjectedProducer>()
             {
@@ -900,33 +900,33 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             var alm = new CalcResultH2ProjectedProducerMaterialTonnage
             {
                 HouseholdTonnage = 75,
-                HouseholdRAMTonnage = new RAMTonnage { RedTonnage = 0, AmberTonnage = 11, GreenTonnage = 12, RedMedicalTonnage = 13, AmberMedicalTonnage = 14, GreenMedicalTonnage = 15 },
+                HouseholdRAMTonnage = new RAMTonnage { Red = 0, Amber = 11, Green = 12, RedMedical = 13, AmberMedical = 14, GreenMedical = 15 },
                 PublicBinTonnage = 135,
-                PublicBinRAMTonnage = new RAMTonnage { RedTonnage = 0, AmberTonnage = 21, GreenTonnage = 22, RedMedicalTonnage = 23, AmberMedicalTonnage = 24, GreenMedicalTonnage = 25 },
+                PublicBinRAMTonnage = new RAMTonnage { Red = 0, Amber = 21, Green = 22, RedMedical = 23, AmberMedical = 24, GreenMedical = 25 },
                 HouseholdTonnageWithoutRAM = 10,
                 PublicBinTonnageWithoutRAM = 20,
                 ProjectedHouseholdTonnage = 75,
-                ProjectedHouseholdRAMTonnage = new RAMTonnage { RedTonnage = 10, AmberTonnage = 11, GreenTonnage = 12, RedMedicalTonnage = 13, AmberMedicalTonnage = 14, GreenMedicalTonnage = 15 },
+                ProjectedHouseholdRAMTonnage = new RAMTonnage { Red = 10, Amber = 11, Green = 12, RedMedical = 13, AmberMedical = 14, GreenMedical = 15 },
                 ProjectedPublicBinTonnage = 135,
-                ProjectedPublicBinRAMTonnage = new RAMTonnage { RedTonnage = 20, AmberTonnage = 21, GreenTonnage = 22, RedMedicalTonnage = 23, AmberMedicalTonnage = 24, GreenMedicalTonnage = 25 }
+                ProjectedPublicBinRAMTonnage = new RAMTonnage { Red = 20, Amber = 21, Green = 22, RedMedical = 23, AmberMedical = 24, GreenMedical = 25 }
             };
             var glass = new CalcResultH2ProjectedProducerMaterialTonnage
             {
                 HouseholdTonnage = 75,
-                HouseholdRAMTonnage = new RAMTonnage { RedTonnage = 10, AmberTonnage = 11, GreenTonnage = 5, RedMedicalTonnage = 0, AmberMedicalTonnage = 14, GreenMedicalTonnage = 0 },
+                HouseholdRAMTonnage = new RAMTonnage { Red = 10, Amber = 11, Green = 5, RedMedical = 0, AmberMedical = 14, GreenMedical = 0 },
                 PublicBinTonnage = 135,
-                PublicBinRAMTonnage = new RAMTonnage { RedTonnage = 10, AmberTonnage = 21, GreenTonnage = 22, RedMedicalTonnage = 23, AmberMedicalTonnage = 24, GreenMedicalTonnage = 25 },
+                PublicBinRAMTonnage = new RAMTonnage { Red = 10, Amber = 21, Green = 22, RedMedical = 23, AmberMedical = 24, GreenMedical = 25 },
                 HouseholdDrinksContainerTonnage = 195,
-                HouseholdDrinksContainerRAMTonnage = new RAMTonnage { RedTonnage = 30, AmberTonnage = 11, GreenTonnage = 32, RedMedicalTonnage = 33, AmberMedicalTonnage = 34, GreenMedicalTonnage = 35 },
+                HouseholdDrinksContainerRAMTonnage = new RAMTonnage { Red = 30, Amber = 11, Green = 32, RedMedical = 33, AmberMedical = 34, GreenMedical = 35 },
                 HouseholdTonnageWithoutRAM = 35,
                 PublicBinTonnageWithoutRAM = 10,
                 HouseholdDrinksContainerTonnageWithoutRAM = 20,
                 ProjectedHouseholdTonnage = 75,
-                ProjectedHouseholdRAMTonnage = new RAMTonnage { RedTonnage = 45, AmberTonnage = 11, GreenTonnage = 5, RedMedicalTonnage = 0, AmberMedicalTonnage = 14, GreenMedicalTonnage = 0 },
+                ProjectedHouseholdRAMTonnage = new RAMTonnage { Red = 45, Amber = 11, Green = 5, RedMedical = 0, AmberMedical = 14, GreenMedical = 0 },
                 ProjectedPublicBinTonnage = 135,
-                ProjectedPublicBinRAMTonnage = new RAMTonnage { RedTonnage = 20, AmberTonnage = 21, GreenTonnage = 22, RedMedicalTonnage = 23, AmberMedicalTonnage = 24, GreenMedicalTonnage = 25 },
+                ProjectedPublicBinRAMTonnage = new RAMTonnage { Red = 20, Amber = 21, Green = 22, RedMedical = 23, AmberMedical = 24, GreenMedical = 25 },
                 ProjectedHouseholdDrinksContainerTonnage = 195,
-                ProjectedHouseholdDrinksContainerRAMTonnage = new RAMTonnage { RedTonnage = 50, AmberTonnage = 11, GreenTonnage = 32, RedMedicalTonnage = 33, AmberMedicalTonnage = 34, GreenMedicalTonnage = 35 },
+                ProjectedHouseholdDrinksContainerRAMTonnage = new RAMTonnage { Red = 50, Amber = 11, Green = 32, RedMedical = 33, AmberMedical = 34, GreenMedical = 35 },
             };
             return (alm, glass, new List<CalcResultH2ProjectedProducer>()
             {
@@ -998,15 +998,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                         { MaterialCodes.OtherMaterials,
                             new CalcResultH2ProjectedProducerMaterialTonnage {
                                 HouseholdTonnage = 75,
-                                HouseholdRAMTonnage = new RAMTonnage { RedTonnage = 10, AmberTonnage = 11, GreenTonnage = 12, RedMedicalTonnage = 13, AmberMedicalTonnage = 14, GreenMedicalTonnage = 15 },
+                                HouseholdRAMTonnage = new RAMTonnage { Red = 10, Amber = 11, Green = 12, RedMedical = 13, AmberMedical = 14, GreenMedical = 15 },
                                 PublicBinTonnage = 135,
-                                PublicBinRAMTonnage = new RAMTonnage { RedTonnage = 20, AmberTonnage = 21, GreenTonnage = 22, RedMedicalTonnage = 23, AmberMedicalTonnage = 24, GreenMedicalTonnage = 25 },
+                                PublicBinRAMTonnage = new RAMTonnage { Red = 20, Amber = 21, Green = 22, RedMedical = 23, AmberMedical = 24, GreenMedical = 25 },
                                 HouseholdTonnageWithoutRAM = 10,
                                 PublicBinTonnageWithoutRAM = 20,
                                 ProjectedHouseholdTonnage = 75,
-                                ProjectedHouseholdRAMTonnage = new RAMTonnage { RedTonnage = 20, AmberTonnage = 11, GreenTonnage = 12, RedMedicalTonnage = 13, AmberMedicalTonnage = 14, GreenMedicalTonnage = 15 },
+                                ProjectedHouseholdRAMTonnage = new RAMTonnage { Red = 20, Amber = 11, Green = 12, RedMedical = 13, AmberMedical = 14, GreenMedical = 15 },
                                 ProjectedPublicBinTonnage = 135,
-                                ProjectedPublicBinRAMTonnage = new RAMTonnage { RedTonnage = 40, AmberTonnage = 21, GreenTonnage = 22, RedMedicalTonnage = 23, AmberMedicalTonnage = 24, GreenMedicalTonnage = 25 },
+                                ProjectedPublicBinRAMTonnage = new RAMTonnage { Red = 40, Amber = 21, Green = 22, RedMedical = 23, AmberMedical = 24, GreenMedical = 25 },
 
                             }
                         }

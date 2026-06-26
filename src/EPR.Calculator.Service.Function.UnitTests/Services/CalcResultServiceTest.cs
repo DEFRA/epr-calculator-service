@@ -483,32 +483,32 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 HouseholdTonnage = 100,
                 HouseholdRAMTonnage = new RAMTonnage
                 {
-                    RedTonnage = 50,
-                    AmberTonnage = 0,
-                    GreenTonnage = 0,
-                    RedMedicalTonnage = 0,
-                    AmberMedicalTonnage = 0,
-                    GreenMedicalTonnage = 0
+                    Red = 50,
+                    Amber = 0,
+                    Green = 0,
+                    RedMedical = 0,
+                    AmberMedical = 0,
+                    GreenMedical = 0
                 },
                 PublicBinTonnage = 200,
                 PublicBinRAMTonnage = new RAMTonnage
                 {
-                    RedTonnage = 100,
-                    AmberTonnage = 0,
-                    GreenTonnage = 0,
-                    RedMedicalTonnage = 0,
-                    AmberMedicalTonnage = 0,
-                    GreenMedicalTonnage = 0
+                    Red = 100,
+                    Amber = 0,
+                    Green = 0,
+                    RedMedical = 0,
+                    AmberMedical = 0,
+                    GreenMedical = 0
                 },
                 HouseholdDrinksContainerTonnage = isGlass ? 300 : 0,
                 HouseholdDrinksContainerRAMTonnage = isGlass ? new RAMTonnage
                 {
-                    RedTonnage = 150,
-                    AmberTonnage = 0,
-                    GreenTonnage = 0,
-                    RedMedicalTonnage = 0,
-                    AmberMedicalTonnage = 0,
-                    GreenMedicalTonnage = 0
+                    Red = 150,
+                    Amber = 0,
+                    Green = 0,
+                    RedMedical = 0,
+                    AmberMedical = 0,
+                    GreenMedical = 0
                 } : null,
                 HouseholdTonnageWithoutRAM = 50,
                 PublicBinTonnageWithoutRAM = 100,
@@ -516,32 +516,32 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 ProjectedHouseholdTonnage = 50,
                 ProjectedHouseholdRAMTonnage = new RAMTonnage
                 {
-                    RedTonnage = 100,
-                    AmberTonnage = 0,
-                    GreenTonnage = 0,
-                    RedMedicalTonnage = 0,
-                    AmberMedicalTonnage = 0,
-                    GreenMedicalTonnage = 0
+                    Red = 100,
+                    Amber = 0,
+                    Green = 0,
+                    RedMedical = 0,
+                    AmberMedical = 0,
+                    GreenMedical = 0
                 },
                 ProjectedPublicBinTonnage = 200,
                 ProjectedPublicBinRAMTonnage = new RAMTonnage
                 {
-                    RedTonnage = 200,
-                    AmberTonnage = 0,
-                    GreenTonnage = 0,
-                    RedMedicalTonnage = 0,
-                    AmberMedicalTonnage = 0,
-                    GreenMedicalTonnage = 0
+                    Red = 200,
+                    Amber = 0,
+                    Green = 0,
+                    RedMedical = 0,
+                    AmberMedical = 0,
+                    GreenMedical = 0
                 },
                 ProjectedHouseholdDrinksContainerTonnage = isGlass ? 300 : null,
                 ProjectedHouseholdDrinksContainerRAMTonnage = isGlass ? new RAMTonnage
                 {
-                    RedTonnage = 300,
-                    AmberTonnage = 0,
-                    GreenTonnage = 0,
-                    RedMedicalTonnage = 0,
-                    AmberMedicalTonnage = 0,
-                    GreenMedicalTonnage = 0
+                    Red = 300,
+                    Amber = 0,
+                    Green = 0,
+                    RedMedical = 0,
+                    AmberMedical = 0,
+                    GreenMedical = 0
                 } : null
             };
         }
@@ -553,32 +553,32 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 HouseholdTonnage = 100,
                 HouseholdRAMTonnage = new RAMTonnage
                 {
-                    RedTonnage = 50,
-                    AmberTonnage = 0,
-                    GreenTonnage = 0,
-                    RedMedicalTonnage = 0,
-                    AmberMedicalTonnage = 0,
-                    GreenMedicalTonnage = 0
+                    Red = 50,
+                    Amber = 0,
+                    Green = 0,
+                    RedMedical = 0,
+                    AmberMedical = 0,
+                    GreenMedical = 0
                 },
                 PublicBinTonnage = 200,
                 PublicBinRAMTonnage = new RAMTonnage
                 {
-                    RedTonnage = 100,
-                    AmberTonnage = 0,
-                    GreenTonnage = 0,
-                    RedMedicalTonnage = 0,
-                    AmberMedicalTonnage = 0,
-                    GreenMedicalTonnage = 0
+                    Red = 100,
+                    Amber = 0,
+                    Green = 0,
+                    RedMedical = 0,
+                    AmberMedical = 0,
+                    GreenMedical = 0
                 },
                 HouseholdDrinksContainerTonnage = isGlass ? 300 : 0,
                 HouseholdDrinksContainerRAMTonnage = isGlass ? new RAMTonnage
                 {
-                    RedTonnage = 150,
-                    AmberTonnage = 0,
-                    GreenTonnage = 0,
-                    RedMedicalTonnage = 0,
-                    AmberMedicalTonnage = 0,
-                    GreenMedicalTonnage = 0
+                    Red = 150,
+                    Amber = 0,
+                    Green = 0,
+                    RedMedical = 0,
+                    AmberMedical = 0,
+                    GreenMedical = 0
                 } : null,
                 HouseholdTonnageWithoutRAM = 50,
                 PublicBinTonnageWithoutRAM = 100,
@@ -586,32 +586,32 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 ProjectedHouseholdTonnage = 50,
                 ProjectedHouseholdRAMTonnage = new RAMTonnage
                 {
-                    RedTonnage = 100,
-                    AmberTonnage = 0,
-                    GreenTonnage = 0,
-                    RedMedicalTonnage = 0,
-                    AmberMedicalTonnage = 0,
-                    GreenMedicalTonnage = 0
+                    Red = 100,
+                    Amber = 0,
+                    Green = 0,
+                    RedMedical = 0,
+                    AmberMedical = 0,
+                    GreenMedical = 0
                 },
                 ProjectedPublicBinTonnage = 200,
                 ProjectedPublicBinRAMTonnage = new RAMTonnage
                 {
-                    RedTonnage = 200,
-                    AmberTonnage = 0,
-                    GreenTonnage = 0,
-                    RedMedicalTonnage = 0,
-                    AmberMedicalTonnage = 0,
-                    GreenMedicalTonnage = 0
+                    Red = 200,
+                    Amber = 0,
+                    Green = 0,
+                    RedMedical = 0,
+                    AmberMedical = 0,
+                    GreenMedical = 0
                 },
                 ProjectedHouseholdDrinksContainerTonnage = isGlass ? 300 : null,
                 ProjectedHouseholdDrinksContainerRAMTonnage = isGlass ? new RAMTonnage
                 {
-                    RedTonnage = 300,
-                    AmberTonnage = 0,
-                    GreenTonnage = 0,
-                    RedMedicalTonnage = 0,
-                    AmberMedicalTonnage = 0,
-                    GreenMedicalTonnage = 0
+                    Red = 300,
+                    Amber = 0,
+                    Green = 0,
+                    RedMedical = 0,
+                    AmberMedical = 0,
+                    GreenMedical = 0
                 } : null,
                 H2RamProportions = new RAMProportions
                 {
@@ -655,32 +655,32 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 HouseholdTonnage = 100,
                 HouseholdRAMTonnage = isModulated ? new RAMTonnage
                 {
-                    RedTonnage = 50,
-                    AmberTonnage = 0,
-                    GreenTonnage = 0,
-                    RedMedicalTonnage = 0,
-                    AmberMedicalTonnage = 0,
-                    GreenMedicalTonnage = 0
+                    Red = 50,
+                    Amber = 0,
+                    Green = 0,
+                    RedMedical = 0,
+                    AmberMedical = 0,
+                    GreenMedical = 0
                 } : null,
                 PublicBinTonnage = 200,
                 PublicBinRAMTonnage = isModulated ? new RAMTonnage
                 {
-                    RedTonnage = 100,
-                    AmberTonnage = 0,
-                    GreenTonnage = 0,
-                    RedMedicalTonnage = 0,
-                    AmberMedicalTonnage = 0,
-                    GreenMedicalTonnage = 0
+                    Red = 100,
+                    Amber = 0,
+                    Green = 0,
+                    RedMedical = 0,
+                    AmberMedical = 0,
+                    GreenMedical = 0
                 } : null,
                 HouseholdDrinksContainersTonnage = isGlass ? 300 : 0,
                 HouseholdDrinksContainersRAMTonnage = isModulated && isGlass ? new RAMTonnage
                 {
-                    RedTonnage = 150,
-                    AmberTonnage = 0,
-                    GreenTonnage = 0,
-                    RedMedicalTonnage = 0,
-                    AmberMedicalTonnage = 0,
-                    GreenMedicalTonnage = 0
+                    Red = 150,
+                    Amber = 0,
+                    Green = 0,
+                    RedMedical = 0,
+                    AmberMedical = 0,
+                    GreenMedical = 0
                 } : null,
                 SelfManagedConsumerWasteTonnage = 50
             };

@@ -101,12 +101,12 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
         public static RAMTonnage GetProportionateRam(RAMTonnage h1RAMTonnage, decimal tonnageWithoutRAM, RAMProportions h2RamProportions) =>
             new RAMTonnage
             {
-                RedTonnage          = Math.Round(h1RAMTonnage.RedTonnage          + (tonnageWithoutRAM * h2RamProportions.Red         ), 3),
-                AmberTonnage        = Math.Round(h1RAMTonnage.AmberTonnage        + (tonnageWithoutRAM * h2RamProportions.Amber       ), 3),
-                GreenTonnage        = Math.Round(h1RAMTonnage.GreenTonnage        + (tonnageWithoutRAM * h2RamProportions.Green       ), 3),
-                RedMedicalTonnage   = Math.Round(h1RAMTonnage.RedMedicalTonnage   + (tonnageWithoutRAM * h2RamProportions.RedMedical  ), 3),
-                AmberMedicalTonnage = Math.Round(h1RAMTonnage.AmberMedicalTonnage + (tonnageWithoutRAM * h2RamProportions.AmberMedical), 3),
-                GreenMedicalTonnage = Math.Round(h1RAMTonnage.GreenMedicalTonnage + (tonnageWithoutRAM * h2RamProportions.GreenMedical), 3)
+                Red          = Math.Round(h1RAMTonnage.Red          + (tonnageWithoutRAM * h2RamProportions.Red         ), 3),
+                Amber        = Math.Round(h1RAMTonnage.Amber        + (tonnageWithoutRAM * h2RamProportions.Amber       ), 3),
+                Green        = Math.Round(h1RAMTonnage.Green        + (tonnageWithoutRAM * h2RamProportions.Green       ), 3),
+                RedMedical   = Math.Round(h1RAMTonnage.RedMedical   + (tonnageWithoutRAM * h2RamProportions.RedMedical  ), 3),
+                AmberMedical = Math.Round(h1RAMTonnage.AmberMedical + (tonnageWithoutRAM * h2RamProportions.AmberMedical), 3),
+                GreenMedical = Math.Round(h1RAMTonnage.GreenMedical + (tonnageWithoutRAM * h2RamProportions.GreenMedical), 3)
             };
 
         private static RAMTonnage GetProjectedTonnage(decimal tonnage, RAMTonnage h1RAMTonnage, decimal tonnageWithoutRAM, RAMProportions h2RamProportions, decimal h2TotalTonnage)
@@ -117,7 +117,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             }
             else
             {
-                return h1RAMTonnage with { RedTonnage = h1RAMTonnage.RedTonnage + tonnageWithoutRAM };
+                return h1RAMTonnage with { Red = h1RAMTonnage.Red + tonnageWithoutRAM };
             }
         }
 
@@ -128,12 +128,12 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             {
                 var dominantRamTonnage = new[]
                 {
-                    (Priority: 1, Tonnage: projectedTonnage.AmberTonnage       , Apply: (Func<RAMTonnage, RAMTonnage>)(t => t with { AmberTonnage = t.AmberTonnage + diffTonnage })),
-                    (Priority: 2, Tonnage: projectedTonnage.AmberMedicalTonnage, Apply: t => t with { AmberMedicalTonnage = t.AmberMedicalTonnage + diffTonnage }),
-                    (Priority: 3, Tonnage: projectedTonnage.RedTonnage         , Apply: t => t with { RedTonnage          = t.RedTonnage + diffTonnage }),
-                    (Priority: 4, Tonnage: projectedTonnage.RedMedicalTonnage  , Apply: t => t with { RedMedicalTonnage   = t.RedMedicalTonnage + diffTonnage }),
-                    (Priority: 5, Tonnage: projectedTonnage.GreenTonnage       , Apply: t => t with { GreenTonnage        = t.GreenTonnage + diffTonnage }),
-                    (Priority: 6, Tonnage: projectedTonnage.GreenMedicalTonnage, Apply: t => t with { GreenMedicalTonnage = t.GreenMedicalTonnage + diffTonnage }),
+                    (Priority: 1, Tonnage: projectedTonnage.Amber       , Apply: (Func<RAMTonnage, RAMTonnage>)(t => t with { Amber = t.Amber + diffTonnage })),
+                    (Priority: 2, Tonnage: projectedTonnage.AmberMedical, Apply: t => t with { AmberMedical = t.AmberMedical + diffTonnage }),
+                    (Priority: 3, Tonnage: projectedTonnage.Red         , Apply: t => t with { Red          = t.Red + diffTonnage }),
+                    (Priority: 4, Tonnage: projectedTonnage.RedMedical  , Apply: t => t with { RedMedical   = t.RedMedical + diffTonnage }),
+                    (Priority: 5, Tonnage: projectedTonnage.Green       , Apply: t => t with { Green        = t.Green + diffTonnage }),
+                    (Priority: 6, Tonnage: projectedTonnage.GreenMedical, Apply: t => t with { GreenMedical = t.GreenMedical + diffTonnage }),
                 }
                 .OrderByDescending(kv => kv.Tonnage)
                 .ThenBy(kv => kv.Priority)

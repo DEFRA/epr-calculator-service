@@ -53,8 +53,8 @@ public class ProducerIdentityExporterTests
              "Allied Packaging",
              null,
              "1",
-             "No",
-             "No",
+             "",
+             "",
              null,
              null,
              null

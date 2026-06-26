@@ -55,7 +55,7 @@ public class ProducerInvoiceNetTonnageService(
             foreach (var material in materials)
             {
                 var invoiced = new ProducerInvoicedMaterialNetTonnage();
-                var disposalFees = producer.ProducerDisposalFeesByMaterial;
+                var disposalFees = producer.ProducerDisposalFeesByMaterial.ToDictionary(k => k.Key, v => v.Value);
 
                 if (disposalFees is not null && disposalFees.TryGetValue(material.Code, out var feeSummary))
                 {
@@ -63,7 +63,7 @@ public class ProducerInvoiceNetTonnageService(
                     {
                         CalculatorRunId = runId,
                         ProducerId = producer.ProducerId,
-                        InvoicedNetTonnage = feeSummary.NetReportedTonnage.total,
+                        InvoicedNetTonnage = feeSummary.NetReportedTonnage.Total,
                         MaterialId = material.Id
                     };
                 }

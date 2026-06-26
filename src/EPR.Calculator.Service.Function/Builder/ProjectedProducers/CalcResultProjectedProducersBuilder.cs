@@ -100,12 +100,12 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                     ProducerDetailId             = rm.ProducerDetailId,
                     PackagingType                = rm.PackagingType,
                     PackagingTonnage             = rm.PackagingTonnage,
-                    PackagingTonnageRed          = projectedRam.RedTonnage,
-                    PackagingTonnageAmber        = projectedRam.AmberTonnage,
-                    PackagingTonnageGreen        = projectedRam.GreenTonnage,
-                    PackagingTonnageRedMedical   = projectedRam.RedMedicalTonnage,
-                    PackagingTonnageAmberMedical = projectedRam.AmberMedicalTonnage,
-                    PackagingTonnageGreenMedical = projectedRam.GreenMedicalTonnage,
+                    PackagingTonnageRed          = projectedRam.Red,
+                    PackagingTonnageAmber        = projectedRam.Amber,
+                    PackagingTonnageGreen        = projectedRam.Green,
+                    PackagingTonnageRedMedical   = projectedRam.RedMedical,
+                    PackagingTonnageAmberMedical = projectedRam.AmberMedical,
+                    PackagingTonnageGreenMedical = projectedRam.GreenMedical,
                     SubmissionPeriod            = rm.SubmissionPeriod,
                     ProducerDetail              = rm.ProducerDetail,
                     Material                    = rm.Material
@@ -139,22 +139,22 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                 var ram = getRAMTonnage(material);
                 if (ram == null) continue;
 
-                red      += ram.RedTonnage;
-                redMed   += ram.RedMedicalTonnage;
-                amber    += ram.AmberTonnage;
-                amberMed += ram.AmberMedicalTonnage;
-                green    += ram.GreenTonnage;
-                greenMed += ram.GreenMedicalTonnage;
+                red      += ram.Red;
+                redMed   += ram.RedMedical;
+                amber    += ram.Amber;
+                amberMed += ram.AmberMedical;
+                green    += ram.Green;
+                greenMed += ram.GreenMedical;
             }
 
             return new RAMTonnage
             {
-                RedTonnage          = red,
-                RedMedicalTonnage   = redMed,
-                AmberTonnage        = amber,
-                AmberMedicalTonnage = amberMed,
-                GreenTonnage        = green,
-                GreenMedicalTonnage = greenMed
+                Red          = red,
+                RedMedical   = redMed,
+                Amber        = amber,
+                AmberMedical = amberMed,
+                Green        = green,
+                GreenMedical = greenMed
             };
         }
 

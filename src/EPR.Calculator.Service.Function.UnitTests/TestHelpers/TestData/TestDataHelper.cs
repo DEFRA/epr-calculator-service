@@ -287,11 +287,11 @@ public static partial class TestDataHelper
         {
             new()
             {
+                CalculatorRunId = 0,
                 ProducerId = 1,
                 SubsidiaryId = string.Empty,
                 ProducerName = "Allied Packaging",
                 Level = "1",
-                IsTotalRow = false,
                 LADisposalCostsSection1 = new CalcResultSummaryBadDebtProvision
                 {
                     FeeWithoutBadDebtProvision = 4423.39438m,
@@ -356,8 +356,7 @@ public static partial class TestDataHelper
                     BadDebtProvision           = 170.64333783033092m,
                     FeeWithBadDebtProvision    = new ByCountryCost { England = 1582.5125400804336m, Wales = 399.4020123649648m, Scotland = 733.3901516568284m, NorthernIreland = 299.39426423361965m }
                 },
-                ProducerDisposalFeesByMaterial = GetProducerDisposalFeesByMaterial(applyModulation),
-                ProducerCommsFeesByMaterial = GetProducerCommsFeesByMaterial(),
+                ProducerFeesByMaterial = GetProducerFeesByMaterial(applyModulation),
                 TonnageChangeCount = "0",
                 TonnageChangeAdvice = ""
             }
@@ -368,11 +367,11 @@ public static partial class TestDataHelper
     {
         return new CalcResultSummaryProducerDisposalFees
         {
+                CalculatorRunId = 0,
                 ProducerId = 1,
                 SubsidiaryId = string.Empty,
                 ProducerName = "Allied Packaging",
                 Level = "1",
-                IsTotalRow = false,
                 LADisposalCostsSection1 = new CalcResultSummaryBadDebtProvision
                 {
                     FeeWithoutBadDebtProvision = 4423.39438m,
@@ -437,11 +436,10 @@ public static partial class TestDataHelper
                     BadDebtProvision           = 170.64333783033092m,
                     FeeWithBadDebtProvision    = new ByCountryCost { England = 1582.5125400804336m, Wales = 399.4020123649648m, Scotland = 733.3901516568284m, NorthernIreland = 299.39426423361965m }
                 },
-                ProducerDisposalFeesByMaterial = GetProducerDisposalFeesByMaterial(applyModulation),
-                ProducerCommsFeesByMaterial = GetProducerCommsFeesByMaterial(),
+                ProducerFeesByMaterial = GetProducerFeesByMaterial(applyModulation),
                 TonnageChangeCount = "0",
                 TonnageChangeAdvice = "",
-                IsOverallTotalRow = true
+                IsOverallRow = true
         };
     }
 
@@ -451,11 +449,11 @@ public static partial class TestDataHelper
         {
             new()
             {
+                CalculatorRunId = 0,
                 ProducerId = 1,
                 SubsidiaryId = string.Empty,
                 ProducerName = "Allied Packaging",
                 Level = "2",
-                IsTotalRow = false,
                 LADisposalCostsSection1 = new CalcResultSummaryBadDebtProvision
                 {
                     FeeWithoutBadDebtProvision = 4423.39438m,
@@ -520,12 +518,25 @@ public static partial class TestDataHelper
                     BadDebtProvision           = 170.64333783033092m,
                     FeeWithBadDebtProvision    = new ByCountryCost { England = 1582.5125400804336m, Wales = 399.4020123649648m, Scotland = 733.3901516568284m, NorthernIreland = 299.39426423361965m }
                 },
-                ProducerDisposalFeesByMaterial = GetProducerDisposalFeesByMaterial(applyModulation),
-                ProducerCommsFeesByMaterial = GetProducerCommsFeesByMaterial(),
+                ProducerFeesByMaterial = GetProducerFeesByMaterial(applyModulation),
                 TonnageChangeCount = null,
                 TonnageChangeAdvice = null
             }
         };
+    }
+
+    public static Dictionary<string, CalcResultSummaryProducerFeesByMaterial> GetProducerFeesByMaterial(bool applyModulation = false)
+    {
+        return GetProducerDisposalFeesByMaterial(applyModulation)
+                    .Join(GetProducerCommsFeesByMaterial(),
+                    d1 => d1.Key,
+                    d2 => d2.Key,
+                    (d1, d2) => new CalcResultSummaryProducerFeesByMaterial{
+                        ProducerDisposalFeesId = 0,
+                        MaterialCode = d1.Key,
+                        DisposalFees = d1.Value,
+                        CommFees = d2.Value,
+                    }).ToDictionary(k => k.MaterialCode);
     }
 
     public static Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> GetProducerDisposalFeesByMaterial(bool applyModulation = false)
@@ -536,287 +547,287 @@ public static partial class TestDataHelper
                 "AL",
                 new CalcResultSummaryProducerDisposalFeesByMaterial
                 {
-                    HouseholdPackagingWasteTonnage = 1000,
-                    HouseholdPackagingWasteTonnageRagRating = applyModulation
-                        ? new Dictionary<RagRating, decimal>
+                    HouseholdTonnage = 1000,
+                    HouseholdRAMTonnage = applyModulation
+                        ? new RAMTonnage
                             {
-                                [RagRating.Red]          = 11,
-                                [RagRating.Amber]        = 12,
-                                [RagRating.Green]        = 13,
-                                [RagRating.RedMedical]   = 14,
-                                [RagRating.AmberMedical] = 15,
-                                [RagRating.GreenMedical] = 16
+                                Red          = 11,
+                                Amber        = 12,
+                                Green        = 13,
+                                RedMedical   = 14,
+                                AmberMedical = 15,
+                                GreenMedical = 16
                             }
-                        : new(),
-                    PublicBinTonnageRagRating = applyModulation
-                        ? new Dictionary<RagRating, decimal>
+                        : null,
+                    PublicBinRAMTonnage = applyModulation
+                        ? new RAMTonnage
                             {
-                                [RagRating.Red]          = 21,
-                                [RagRating.Amber]        = 22,
-                                [RagRating.Green]        = 23,
-                                [RagRating.RedMedical]   = 24,
-                                [RagRating.AmberMedical] = 25,
-                                [RagRating.GreenMedical] = 26
+                                Red          = 21,
+                                Amber        = 22,
+                                Green        = 23,
+                                RedMedical   = 24,
+                                AmberMedical = 25,
+                                GreenMedical = 26
                             }
-                        : new(),
+                        : null,
                     SelfManagedConsumerWasteTonnage = 90,
-                    TotalReportedTonnageRagRating = applyModulation
-                        ? new Dictionary<RagRating, decimal>
+                    TotalRAMTonnage = applyModulation
+                        ? new RAMTonnage
                         {
-                            [RagRating.Red] = 1,
-                            [RagRating.Amber] = 2,
-                            [RagRating.Green] = 3,
-                            [RagRating.RedMedical] = 4,
-                            [RagRating.AmberMedical] = 5,
-                            [RagRating.GreenMedical] = 6
+                            Red = 1,
+                            Amber = 2,
+                            Green = 3,
+                            RedMedical = 4,
+                            AmberMedical = 5,
+                            GreenMedical = 6
                         }
-                        : new Dictionary<RagRating, decimal>(),
+                        : null,
                     NetReportedTonnage = applyModulation
-                        ? (total: 910, red:  300, amber:  200, green: 410)
-                        : (total: 910, red: null, amber: null, green: null),
+                        ? new RAMTonnageGroup { Total = 910, Red = 300, Amber = 200, Green = 410 }
+                        : new RAMTonnageGroup { Total = 910, Red = null, Amber = null, Green = null },
                     PricePerTonne = applyModulation
-                        ? (total: 0.6676m, red:    1, amber:    2, green: 3)
-                        : (total: 0.6676m, red: null, amber: null, green: null),
+                        ? new RAMTonnageGroup { Total = 0.6676m, Red = 1, Amber = 2, Green = 3 }
+                        : new RAMTonnageGroup { Total = 0.6676m, Red = null, Amber = null, Green = null },
                     ProducerDisposalFee = applyModulation
-                        ? (total: 607.525000m, red: 4.525001m, amber:    5, green: 6)
-                        : (total: 607.525000m, red:      null, amber: null, green: null),
+                        ? new RAMTonnageGroup { Total = 607.525000m, Red = 4.525001m, Amber = 5, Green = 6 }
+                        : new RAMTonnageGroup { Total = 607.525000m, Red = null, Amber = null, Green = null },
                     BadDebtProvision = 36.45m,
                     ProducerDisposalFeeWithBadDebtProvision = new ByCountryCost { England = 348.06m, Wales = 78.46m, Scotland = 156.28m, NorthernIreland = 61.18m },
                     PreviousInvoicedTonnage = null,
                     TonnageChange = 0,
-                    ActionedSelfManagedConsumerWasteTonnage = (total: 90, red: 0, amber: 90, green: 0)
+                    ActionedSelfManagedConsumerWasteTonnage = new RAMTonnageGroup { Total = 90, Red = 0, Amber = 90, Green = 0 }
                 }
             },
             {
                 "FC",
                 new CalcResultSummaryProducerDisposalFeesByMaterial
                 {
-                    HouseholdPackagingWasteTonnage = 2000,
+                    HouseholdTonnage = 2000,
                     SelfManagedConsumerWasteTonnage = 140,
-                    TotalReportedTonnageRagRating = applyModulation
-                        ? new Dictionary<RagRating, decimal>
+                    TotalRAMTonnage = applyModulation
+                        ? new RAMTonnage
                         {
-                            [RagRating.Red]          = 1,
-                            [RagRating.Amber]        = 2,
-                            [RagRating.Green]        = 3,
-                            [RagRating.RedMedical]   = 4,
-                            [RagRating.AmberMedical] = 5,
-                            [RagRating.GreenMedical] = 6
+                            Red          = 1,
+                            Amber        = 2,
+                            Green        = 3,
+                            RedMedical   = 4,
+                            AmberMedical = 5,
+                            GreenMedical = 6
                         }
-                        : new Dictionary<RagRating, decimal>(),
+                        : null,
                     NetReportedTonnage = applyModulation
-                        ? (total: 1860, red:  860, amber:    0, green: 1000)
-                        : (total: 1860, red: null, amber: null, green: null),
+                        ? new RAMTonnageGroup { Total = 1860, Red = 860, Amber = 0, Green = 1000 }
+                        : new RAMTonnageGroup { Total = 1860, Red = null, Amber = null, Green = null },
                     PricePerTonne = applyModulation
-                        ? (total: 0.7825m, red:    1, amber:    2, green: 3)
-                        : (total: 0.7825m, red: null, amber: null, green: null),
+                        ? new RAMTonnageGroup { Total = 0.7825m, Red = 1, Amber = 2, Green = 3 }
+                        : new RAMTonnageGroup { Total = 0.7825m, Red = null, Amber = null, Green = null },
                     ProducerDisposalFee = applyModulation
-                        ? (total: 1455.45m, red:    4, amber:    5, green: 6)
-                        : (total: 1455.45m, red: null, amber: null, green: null),
+                        ? new RAMTonnageGroup { Total = 1455.45m, Red = 4, Amber = 5, Green = 6 }
+                        : new RAMTonnageGroup { Total = 1455.45m, Red = null, Amber = null, Green = null },
                     BadDebtProvision = 87.33m,
                     ProducerDisposalFeeWithBadDebtProvision = new ByCountryCost { England = 833.85m, Wales = 187.96m, Scotland = 374.40m, NorthernIreland = 146.57m },
                     PreviousInvoicedTonnage = 0,
                     TonnageChange = 0,
-                    ActionedSelfManagedConsumerWasteTonnage = (total: 140, red: 0, amber: 90, green: 140)
+                    ActionedSelfManagedConsumerWasteTonnage = new RAMTonnageGroup { Total = 140, Red = 0, Amber = 90, Green = 140 }
                 }
             },
             {
                 "GL",
                 new CalcResultSummaryProducerDisposalFeesByMaterial
                 {
-                    HouseholdPackagingWasteTonnage = 500,
+                    HouseholdTonnage = 500,
                     SelfManagedConsumerWasteTonnage = 150,
-                    TotalReportedTonnageRagRating = applyModulation
-                        ? new Dictionary<RagRating, decimal>
+                    TotalRAMTonnage = applyModulation
+                        ? new RAMTonnage
                         {
-                            [RagRating.Red]          = 1,
-                            [RagRating.Amber]        = 2,
-                            [RagRating.Green]        = 3,
-                            [RagRating.RedMedical]   = 4,
-                            [RagRating.AmberMedical] = 5,
-                            [RagRating.GreenMedical] = 6
+                            Red          = 1,
+                            Amber        = 2,
+                            Green        = 3,
+                            RedMedical   = 4,
+                            AmberMedical = 5,
+                            GreenMedical = 6
                         }
-                        : new Dictionary<RagRating, decimal>(),
+                        : null,
                     NetReportedTonnage = applyModulation
-                        ? (total: 350, red:  300, amber:   50, green: 0)
-                        : (total: 350, red: null, amber: null, green: null),
+                        ? new RAMTonnageGroup { Total = 350, Red = 300, Amber = 50, Green = 0 }
+                        : new RAMTonnageGroup { Total = 350, Red = null, Amber = null, Green = null },
                     PricePerTonne = applyModulation
-                        ? (total: 6.4404m, red:    1, amber:    2, green: 3)
-                        : (total: 6.4404m, red: null, amber: null, green: null),
+                        ? new RAMTonnageGroup { Total = 6.4404m, Red = 1, Amber = 2, Green = 3 }
+                        : new RAMTonnageGroup { Total = 6.4404m, Red = null, Amber = null, Green = null },
                     ProducerDisposalFee = applyModulation
-                        ? (total: 2254.14m, red:    4, amber:    5, green: 6)
-                        : (total: 2254.14m, red: null, amber: null, green: null),
+                        ? new RAMTonnageGroup { Total = 2254.14m, Red = 4, Amber = 5, Green = 6 }
+                        : new RAMTonnageGroup { Total = 2254.14m, Red = null, Amber = null, Green = null },
                     BadDebtProvision = 135.25m,
                     ProducerDisposalFeeWithBadDebtProvision = new ByCountryCost { England = 1291.43m, Wales = 291.10m, Scotland = 579.85m, NorthernIreland = 227 },
-                    HouseholdDrinksContainersTonnage = 220,
+                    HDCTonnage = 220,
                     PreviousInvoicedTonnage = 0,
                     TonnageChange = 0,
-                    ActionedSelfManagedConsumerWasteTonnage = (total: 150, red: 50, amber: 100, green: 0)
+                    ActionedSelfManagedConsumerWasteTonnage = new RAMTonnageGroup { Total = 150, Red = 50, Amber = 100, Green = 0 }
                 }
             },
             {
                 "PC",
                 new CalcResultSummaryProducerDisposalFeesByMaterial
                 {
-                    HouseholdPackagingWasteTonnage = 20,
+                    HouseholdTonnage = 20,
                     SelfManagedConsumerWasteTonnage = 2.200m,
-                    TotalReportedTonnageRagRating = applyModulation
-                        ? new Dictionary<RagRating, decimal>
+                    TotalRAMTonnage = applyModulation
+                        ? new RAMTonnage
                         {
-                            [RagRating.Red]          = 1,
-                            [RagRating.Amber]        = 2,
-                            [RagRating.Green]        = 3,
-                            [RagRating.RedMedical]   = 4,
-                            [RagRating.AmberMedical] = 5,
-                            [RagRating.GreenMedical] = 6
+                            Red          = 1,
+                            Amber        = 2,
+                            Green        = 3,
+                            RedMedical   = 4,
+                            AmberMedical = 5,
+                            GreenMedical = 6
                         }
-                        : new Dictionary<RagRating, decimal>(),
+                        : null,
                     NetReportedTonnage = applyModulation
-                        ? (total: 17.800m, red:    0, amber:    0, green: 0)
-                        : (total: 17.800m, red: null, amber: null, green: null),
+                        ? new RAMTonnageGroup { Total = 17.800m, Red = 0, Amber = 0, Green = 0 }
+                        : new RAMTonnageGroup { Total = 17.800m, Red = null, Amber = null, Green = null },
                     PricePerTonne = applyModulation
-                        ? (total: 2.4488m, red:    1, amber:    2, green: 3)
-                        : (total: 2.4488m, red: null, amber: null, green: null),
+                        ? new RAMTonnageGroup { Total = 2.4488m, Red = 1, Amber = 2, Green = 3 }
+                        : new RAMTonnageGroup { Total = 2.4488m, Red = null, Amber = null, Green = null },
                     ProducerDisposalFee = applyModulation
-                        ? (total: 43.59m, red:    4, amber:    5, green: 6)
-                        : (total: 43.59m, red: null, amber: null, green: null),
+                        ? new RAMTonnageGroup { Total = 43.59m, Red = 4, Amber = 5, Green = 6 }
+                        : new RAMTonnageGroup { Total = 43.59m, Red = null, Amber = null, Green = null },
                     BadDebtProvision = 2.62m,
                     ProducerDisposalFeeWithBadDebtProvision = new ByCountryCost { England = 24.97m, Wales = 5.63m, Scotland = 11.21m, NorthernIreland = 4.39m },
                     PreviousInvoicedTonnage = 0,
                     TonnageChange = 0,
-                    ActionedSelfManagedConsumerWasteTonnage = (total: 2.200m, red: 0, amber: 2.200m, green: 0)
+                    ActionedSelfManagedConsumerWasteTonnage = new RAMTonnageGroup { Total = 2.200m, Red = 0, Amber = 2.200m, Green = 0 }
                 }
             },
             {
                 "PL",
                 new CalcResultSummaryProducerDisposalFeesByMaterial
                 {
-                    HouseholdPackagingWasteTonnage = 5.000m,
+                    HouseholdTonnage = 5.000m,
                     SelfManagedConsumerWasteTonnage = 0.600m,
-                    TotalReportedTonnageRagRating = applyModulation
-                        ? new Dictionary<RagRating, decimal>
+                    TotalRAMTonnage = applyModulation
+                        ? new RAMTonnage
                         {
-                            [RagRating.Red]          = 1,
-                            [RagRating.Amber]        = 2,
-                            [RagRating.Green]        = 3,
-                            [RagRating.RedMedical]   = 4,
-                            [RagRating.AmberMedical] = 5,
-                            [RagRating.GreenMedical] = 6
+                            Red          = 1,
+                            Amber        = 2,
+                            Green        = 3,
+                            RedMedical   = 4,
+                            AmberMedical = 5,
+                            GreenMedical = 6
                         }
-                        : new Dictionary<RagRating, decimal>(),
+                        : null,
                     NetReportedTonnage = applyModulation
-                        ? (total: 4.400m, red: 4.400m, amber:    0, green: 0)
-                        : (total: 4.400m, red:   null, amber: null, green: null),
+                        ? new RAMTonnageGroup { Total = 4.400m, Red = 4.400m, Amber = 0, Green = 0 }
+                        : new RAMTonnageGroup { Total = 4.400m, Red = null, Amber = null, Green = null },
                     PricePerTonne = applyModulation
-                        ? (total: 2.1601m, red:    1, amber:    2, green: 3)
-                        : (total: 2.1601m, red: null, amber: null, green: null),
+                        ? new RAMTonnageGroup { Total = 2.1601m, Red = 1, Amber = 2, Green = 3 }
+                        : new RAMTonnageGroup { Total = 2.1601m, Red = null, Amber = null, Green = null },
                     ProducerDisposalFee = applyModulation
-                        ? (total: 9.50m, red:    4, amber:    5, green: 6)
-                        : (total: 9.50m, red: null, amber: null, green: null),
+                        ? new RAMTonnageGroup { Total = 9.50m, Red = 4, Amber = 5, Green = 6 }
+                        : new RAMTonnageGroup { Total = 9.50m, Red = null, Amber = null, Green = null },
                     BadDebtProvision = 0.57m,
                     ProducerDisposalFeeWithBadDebtProvision = new ByCountryCost { England = 5.45m, Wales = 1.23m, Scotland = 2.44m, NorthernIreland = 0.96m },
                     PreviousInvoicedTonnage = 0,
                     TonnageChange = 0,
-                    ActionedSelfManagedConsumerWasteTonnage = (total: 0.600m, red: 0, amber: 0.600m, green: 0)
+                    ActionedSelfManagedConsumerWasteTonnage = new RAMTonnageGroup { Total = 0.600m, Red = 0, Amber = 0.600m, Green = 0 }
                 }
             },
             {
                 "ST",
                 new CalcResultSummaryProducerDisposalFeesByMaterial
                 {
-                    HouseholdPackagingWasteTonnage = 0.000m,
+                    HouseholdTonnage = 0.000m,
                     SelfManagedConsumerWasteTonnage = 0.000m,
-                    TotalReportedTonnageRagRating = applyModulation
-                        ? new Dictionary<RagRating, decimal>
+                    TotalRAMTonnage = applyModulation
+                        ? new RAMTonnage
                         {
-                            [RagRating.Red]          = 1,
-                            [RagRating.Amber]        = 2,
-                            [RagRating.Green]        = 3,
-                            [RagRating.RedMedical]   = 4,
-                            [RagRating.AmberMedical] = 5,
-                            [RagRating.GreenMedical] = 6
+                            Red          = 1,
+                            Amber        = 2,
+                            Green        = 3,
+                            RedMedical   = 4,
+                            AmberMedical = 5,
+                            GreenMedical = 6
                         }
-                        : new Dictionary<RagRating, decimal>(),
+                        : null,
                     NetReportedTonnage = applyModulation
-                        ? (total: 0, red:    0, amber:    0, green: 0)
-                        : (total: 0, red: null, amber: null, green: null),
+                        ? new RAMTonnageGroup { Total = 0, Red = 0, Amber = 0, Green = 0 }
+                        : new RAMTonnageGroup { Total = 0, Red = null, Amber = null, Green = null },
                     PricePerTonne = applyModulation
-                        ? (total: 1.9813m, red:    1, amber:    2, green: 3)
-                        : (total: 1.9813m, red: null, amber: null, green: null),
+                        ? new RAMTonnageGroup { Total = 1.9813m, Red = 1, Amber = 2, Green = 3 }
+                        : new RAMTonnageGroup { Total = 1.9813m, Red = null, Amber = null, Green = null },
                     ProducerDisposalFee = applyModulation
-                        ? (total: 0.00m, red:    4, amber:    5, green: 6)
-                        : (total: 0.00m, red: null, amber: null, green: null),
+                        ? new RAMTonnageGroup { Total = 0.00m, Red = 4, Amber = 5, Green = 6 }
+                        : new RAMTonnageGroup { Total = 0.00m, Red = null, Amber = null, Green = null },
                     BadDebtProvision = 0.00m,
                     ProducerDisposalFeeWithBadDebtProvision = new ByCountryCost { England = 0.00m, Wales = 0.00m, Scotland = 0.00m, NorthernIreland = 0.00m },
                     PreviousInvoicedTonnage = 0,
                     TonnageChange = 0,
-                    ActionedSelfManagedConsumerWasteTonnage = (total: 0, red: 0, amber: 0, green: 0)
+                    ActionedSelfManagedConsumerWasteTonnage = new RAMTonnageGroup { Total = 0, Red = 0, Amber = 0, Green = 0 }
                 }
             },
             {
                 "WD",
                 new CalcResultSummaryProducerDisposalFeesByMaterial
                 {
-                    HouseholdPackagingWasteTonnage = 500.000m,
+                    HouseholdTonnage = 500.000m,
                     SelfManagedConsumerWasteTonnage = 95.000m,
-                    TotalReportedTonnageRagRating = applyModulation
-                        ? new Dictionary<RagRating, decimal>
+                    TotalRAMTonnage = applyModulation
+                        ? new RAMTonnage
                         {
-                            [RagRating.Red]          = 1,
-                            [RagRating.Amber]        = 2,
-                            [RagRating.Green]        = 3,
-                            [RagRating.RedMedical]   = 4,
-                            [RagRating.AmberMedical] = 5,
-                            [RagRating.GreenMedical] = 6
+                            Red          = 1,
+                            Amber        = 2,
+                            Green        = 3,
+                            RedMedical   = 4,
+                            AmberMedical = 5,
+                            GreenMedical = 6
                         }
-                        : new Dictionary<RagRating, decimal>(),
+                        : null,
                     NetReportedTonnage = applyModulation
-                        ? (total: 405.000m, red:  300, amber:  100, green: 5)
-                        : (total: 405.000m, red: null, amber: null, green: null),
+                        ? new RAMTonnageGroup { Total = 405.000m, Red = 300, Amber = 100, Green = 5 }
+                        : new RAMTonnageGroup { Total = 405.000m, Red = null, Amber = null, Green = null },
                     PricePerTonne = applyModulation
-                        ? (total: 2.0000m, red:    1, amber:    2, green: 3)
-                        : (total: 2.0000m, red: null, amber: null, green: null),
+                        ? new RAMTonnageGroup { Total = 2.0000m, Red = 1, Amber = 2, Green = 3 }
+                        : new RAMTonnageGroup { Total = 2.0000m, Red = null, Amber = null, Green = null },
                     ProducerDisposalFee = applyModulation
-                        ? (total: 810.00m, red:    4, amber:    5, green: 6)
-                        : (total: 810.00m, red: null, amber: null, green: null),
+                        ? new RAMTonnageGroup { Total = 810.00m, Red = 4, Amber = 5, Green = 6 }
+                        : new RAMTonnageGroup { Total = 810.00m, Red = null, Amber = null, Green = null },
                     BadDebtProvision = 48.60m,
                     ProducerDisposalFeeWithBadDebtProvision = new ByCountryCost { England = 464.06m, Wales = 104.60m, Scotland = 208.36m, NorthernIreland = 81.57m },
                     PreviousInvoicedTonnage = 0,
                     TonnageChange = 0,
-                    ActionedSelfManagedConsumerWasteTonnage = (total: 95, red: 0, amber: 95, green: 0)
+                    ActionedSelfManagedConsumerWasteTonnage = new RAMTonnageGroup { Total = 95, Red = 0, Amber = 95, Green = 0 }
                 }
             },
             {
                 "OT",
                 new CalcResultSummaryProducerDisposalFeesByMaterial
                 {
-                    HouseholdPackagingWasteTonnage = 50.000m,
+                    HouseholdTonnage = 50.000m,
                     SelfManagedConsumerWasteTonnage = 5.500m,
-                    TotalReportedTonnageRagRating = applyModulation
-                        ? new Dictionary<RagRating, decimal>
+                    TotalRAMTonnage = applyModulation
+                        ? new RAMTonnage
                         {
-                            [RagRating.Red]          = 1,
-                            [RagRating.Amber]        = 2,
-                            [RagRating.Green]        = 3,
-                            [RagRating.RedMedical]   = 4,
-                            [RagRating.AmberMedical] = 5,
-                            [RagRating.GreenMedical] = 6
+                            Red          = 1,
+                            Amber        = 2,
+                            Green        = 3,
+                            RedMedical   = 4,
+                            AmberMedical = 5,
+                            GreenMedical = 6
                         }
-                        : new Dictionary<RagRating, decimal>(),
+                        : null,
                     NetReportedTonnage = applyModulation
-                        ? (total: 44.500m, red:    0, amber: 44.500m, green: 0)
-                        : (total: 44.500m, red: null, amber:    null, green: null),
+                        ? new RAMTonnageGroup { Total = 44.500m, Red = 0, Amber = 44.500m, Green = 0 }
+                        : new RAMTonnageGroup { Total = 44.500m, Red = null, Amber = null, Green = null },
                     PricePerTonne = applyModulation
-                        ? (total: 1.1954m, red:    1, amber:    2, green: 3)
-                        : (total: 1.1954m, red: null, amber: null, green: null),
+                        ? new RAMTonnageGroup { Total = 1.1954m, Red = 1, Amber = 2, Green = 3 }
+                        : new RAMTonnageGroup { Total = 1.1954m, Red = null, Amber = null, Green = null },
                     ProducerDisposalFee = applyModulation
-                        ? (total: 53.20m, red:    4, amber:    5, green: 6)
-                        : (total: 53.20m, red: null, amber: null, green: null),
+                        ? new RAMTonnageGroup { Total = 53.20m, Red = 4, Amber = 5, Green = 6 }
+                        : new RAMTonnageGroup { Total = 53.20m, Red = null, Amber = null, Green = null },
                     BadDebtProvision = 3.19m,
                     ProducerDisposalFeeWithBadDebtProvision = new ByCountryCost { England = 30.48m, Wales = 6.87m, Scotland = 13.68m, NorthernIreland = 5.36m },
                     PreviousInvoicedTonnage = 0,
                     TonnageChange = 0,
-                    ActionedSelfManagedConsumerWasteTonnage = (total: 5.500m, red: 0, amber: 5.500m, green: 0)
+                    ActionedSelfManagedConsumerWasteTonnage = new RAMTonnageGroup { Total = 5.500m, Red = 0, Amber = 5.500m, Green = 0 }
                 }
             }
         };
@@ -831,8 +842,8 @@ public static partial class TestDataHelper
                 "AL",
                 new CalcResultSummaryProducerCommsFeesCostByMaterial
                 {
-                    HouseholdPackagingWasteTonnage = 1000,
-                    PriceperTonne = 0.1916m,
+                    HouseholdTonnage = 1000,
+                    PricePerTonne = 0.1916m,
                     Costs = new CalcResultSummaryBadDebtProvision
                     {
                         FeeWithoutBadDebtProvision = 191.60m,
@@ -845,8 +856,8 @@ public static partial class TestDataHelper
                 "FC",
                 new CalcResultSummaryProducerCommsFeesCostByMaterial
                 {
-                    HouseholdPackagingWasteTonnage = 2000.000m,
-                    PriceperTonne = 0.4032m,
+                    HouseholdTonnage = 2000.000m,
+                    PricePerTonne = 0.4032m,
                     Costs = new CalcResultSummaryBadDebtProvision
                     {
                         FeeWithoutBadDebtProvision = 806.40m,
@@ -859,8 +870,8 @@ public static partial class TestDataHelper
                 "GL",
                 new CalcResultSummaryProducerCommsFeesCostByMaterial
                 {
-                    HouseholdPackagingWasteTonnage = 500.000m,
-                    PriceperTonne = 0.4404m,
+                    HouseholdTonnage = 500.000m,
+                    PricePerTonne = 0.4404m,
                     Costs = new CalcResultSummaryBadDebtProvision
                     {
                         FeeWithoutBadDebtProvision = 220.20m,
@@ -873,8 +884,8 @@ public static partial class TestDataHelper
                 "PC",
                 new CalcResultSummaryProducerCommsFeesCostByMaterial
                 {
-                    HouseholdPackagingWasteTonnage = 20.000m,
-                    PriceperTonne = 1.1100m,
+                    HouseholdTonnage = 20.000m,
+                    PricePerTonne = 1.1100m,
                     Costs = new CalcResultSummaryBadDebtProvision
                     {
                         FeeWithoutBadDebtProvision = 22.20m,
@@ -887,8 +898,8 @@ public static partial class TestDataHelper
                 "PL",
                 new CalcResultSummaryProducerCommsFeesCostByMaterial
                 {
-                    HouseholdPackagingWasteTonnage = 5.000m,
-                    PriceperTonne = 0.5356m,
+                    HouseholdTonnage = 5.000m,
+                    PricePerTonne = 0.5356m,
                     Costs = new CalcResultSummaryBadDebtProvision
                     {
                         FeeWithoutBadDebtProvision = 2.68m,
@@ -901,8 +912,8 @@ public static partial class TestDataHelper
                 "ST",
                 new CalcResultSummaryProducerCommsFeesCostByMaterial
                 {
-                    HouseholdPackagingWasteTonnage = 0.000m,
-                    PriceperTonne = 0.8879m,
+                    HouseholdTonnage = 0.000m,
+                    PricePerTonne = 0.8879m,
                     Costs = new CalcResultSummaryBadDebtProvision
                     {
                         FeeWithoutBadDebtProvision = 0.00m,
@@ -915,8 +926,8 @@ public static partial class TestDataHelper
                 "WD",
                 new CalcResultSummaryProducerCommsFeesCostByMaterial
                 {
-                    HouseholdPackagingWasteTonnage = 500.000m,
-                    PriceperTonne = 0.1364m,
+                    HouseholdTonnage = 500.000m,
+                    PricePerTonne = 0.1364m,
                     Costs = new CalcResultSummaryBadDebtProvision
                     {
                         FeeWithoutBadDebtProvision = 68.20m,
@@ -929,8 +940,8 @@ public static partial class TestDataHelper
                 "OT",
                 new CalcResultSummaryProducerCommsFeesCostByMaterial
                 {
-                    HouseholdPackagingWasteTonnage = 50.000m,
-                    PriceperTonne = 0.9540m,
+                    HouseholdTonnage = 50.000m,
+                    PricePerTonne = 0.9540m,
                     Costs = new CalcResultSummaryBadDebtProvision
                     {
                         FeeWithoutBadDebtProvision = 47.70m,

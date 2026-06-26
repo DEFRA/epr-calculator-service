@@ -147,7 +147,7 @@ public class CalcResultSummaryUtilTests
         var result = CalcResultSummaryUtil.GetPricePerTonne(material, calcResult);
 
         // Assert
-        Assert.AreEqual((total: null, red: null, amber: null, green: null), result);
+        Assert.AreEqual(new RAMTonnageGroup{ Total = null, Red = null, Amber = null, Green = null }, result);
     }
 
     [TestMethod]
@@ -160,7 +160,7 @@ public class CalcResultSummaryUtilTests
         var result = CalcResultSummaryUtil.GetPricePerTonne(material, calcResult);
 
         // Assert
-        Assert.AreEqual((total: 0.5889m, red: null, amber: null, green: null), result);
+        Assert.AreEqual(new RAMTonnageGroup{ Total = 0.5889m, Red = null, Amber = null, Green= null }, result);
     }
 
     [TestMethod]
@@ -173,7 +173,7 @@ public class CalcResultSummaryUtilTests
         var result = CalcResultSummaryUtil.GetProducerDisposalFee(material, calcResult, SelfManagedConsumerWasteData.Zero);
 
         // Assert
-        Assert.AreEqual((total: 0m, red: null, amber: null, green: null), result);
+        Assert.AreEqual(new RAMTonnageGroup{ Total = 0m, Red = null, Amber = null, Green = null }, result);
     }
 
     [TestMethod]
@@ -201,7 +201,7 @@ public class CalcResultSummaryUtilTests
 
         var result = CalcResultSummaryUtil.GetProducerDisposalFee(material, calcResult, smcw);
 
-        Assert.AreEqual((total: 551.4269m, red: 120, amber: 200, green: 231.4269m), result);
+        Assert.AreEqual(new RAMTonnageGroup{ Total = 551.4269m, Red = 120, Amber = 200, Green = 231.4269m }, result);
     }
 
 

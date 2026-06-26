@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
+using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.JsonExporter.Model;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 using EPR.Calculator.Service.Function.UnitTests.Utils;
@@ -121,11 +122,11 @@ public class CalculationResultsJsonFromTests
         }
 
         Assert.AreEqual(expected.Value.PreviousInvoicedTonnage, actualValue);
-        Assert.AreEqual(expected.Value.HouseholdPackagingWasteTonnage, actual["householdPackagingWasteTonnage"]!.GetValue<decimal>());
+        Assert.AreEqual(expected.Value.HouseholdTonnage, actual["householdPackagingWasteTonnage"]!.GetValue<decimal>());
         Assert.AreEqual(expected.Value.PublicBinTonnage, actual["publicBinTonnage"]!.GetValue<decimal>());
-        Assert.AreEqual(expected.Value.TotalReportedTonnage, actual["totalTonnage"]!.GetValue<decimal>());
+        Assert.AreEqual(expected.Value.TotalTonnage, actual["totalTonnage"]!.GetValue<decimal>());
         Assert.AreEqual(expected.Value.SelfManagedConsumerWasteTonnage, actual["selfManagedConsumerWasteTonnage"]!.GetValue<decimal>());
-        Assert.AreEqual(expected.Value.NetReportedTonnage.total, actual["netTonnage"]!.GetValue<decimal>());
+        Assert.AreEqual(expected.Value.NetReportedTonnage.Total, actual["netTonnage"]!.GetValue<decimal>());
 
         var actualPrev = ReadNullableDecimal(actual, "previousInvoicedTonnage");
         Assert.AreEqual(expected.Value.PreviousInvoicedTonnage, actualPrev);
@@ -471,7 +472,7 @@ public class CalculationResultsJsonFromTests
         Assert.AreEqual(producer.ProducerName, roundTrippedData[0]!["producerName"]?.ToString());
         Assert.AreEqual(producer.TradingName, roundTrippedData[0]!["tradingName"]?.ToString());
         Assert.AreEqual(producer.Level ?? "1" , roundTrippedData[0]!["level"]?.ToString());
-        Assert.AreEqual(producer.IsProducerScaledup, roundTrippedData[0]!["scaledUpTonnages"]?.ToString());
+        Assert.AreEqual(producer.IsProducerScaledup ? CommonConstants.Yes : CommonConstants.No, roundTrippedData[0]!["scaledUpTonnages"]?.ToString());
     }
 
     [TestMethod]
@@ -547,7 +548,7 @@ public class CalculationResultsJsonFromTests
         Assert.AreEqual(producer.ProducerName, calculationResult["producerName"]?.GetValue<string>());
         Assert.AreEqual(producer.TradingName!, calculationResult["tradingName"]?.GetValue<string>());
         Assert.AreEqual(int.Parse(producer.Level!), calculationResult["level"]?.GetValue<int>());
-        Assert.AreEqual(producer.IsProducerScaledup, calculationResult["scaledUpTonnages"]?.GetValue<string>());
+        Assert.AreEqual(producer.IsProducerScaledup ? CommonConstants.Yes : CommonConstants.No, calculationResult["scaledUpTonnages"]?.GetValue<string>());
 
         // Sub-Sections
         var producerDisposalFeesWithBadDebtProvision1 = roundTrippedData[0]!["producerDisposalFeesWithBadDebtProvision1"];
@@ -588,7 +589,6 @@ public class CalculationResultsJsonFromTests
         var data = calcResult.CalcResultSummary;
         var materials = TestDataHelper.GetMaterialDetails();
 
-        data.ProducerDisposalFees.First().IsTotalRow = true;
         data.ProducerDisposalFees.First().Level = "1";
 
         // Act

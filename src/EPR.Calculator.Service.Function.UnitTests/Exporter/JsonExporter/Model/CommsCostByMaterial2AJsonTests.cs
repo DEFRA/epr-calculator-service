@@ -2,6 +2,7 @@ using System.Text.Json;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.JsonExporter.Model;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.UnitTests.JsonExporter.Model;
 
@@ -18,11 +19,11 @@ public class CommsCostByMaterial2AJsonTests
         {
             ["AL"] = new CalcResultSummaryProducerCommsFeesCostByMaterial
             {
-                HouseholdPackagingWasteTonnage   = 100.25m,
-                PublicBinTonnage                 = 50.50m,
-                TotalReportedTonnage             = 150.75m,
-                HouseholdDrinksContainersTonnage = 0m,
-                PriceperTonne                    = 0.42m,
+                HouseholdTonnage         = 100.25m,
+                PublicBinTonnage         = 50.50m,
+                TotalTonnage     = 150.75m,
+                HDCTonnage               = 0m,
+                PricePerTonne            = 0.42m,
                 Costs = new CalcResultSummaryBadDebtProvision
                 {
                     FeeWithoutBadDebtProvision = 10m,
@@ -32,11 +33,11 @@ public class CommsCostByMaterial2AJsonTests
             },
             ["GL"] = new CalcResultSummaryProducerCommsFeesCostByMaterial
             {
-                HouseholdPackagingWasteTonnage   = 200m,
-                PublicBinTonnage                 = 80m,
-                TotalReportedTonnage             = 280m,
-                HouseholdDrinksContainersTonnage = 12.34m,
-                PriceperTonne                    = 0.3m,
+                HouseholdTonnage         = 200m,
+                PublicBinTonnage         = 80m,
+                TotalTonnage             = 280m,
+                HDCTonnage               = 12.34m,
+                PricePerTonne            = 0.3m,
                 Costs = new CalcResultSummaryBadDebtProvision
                 {
                     FeeWithoutBadDebtProvision = 20m,

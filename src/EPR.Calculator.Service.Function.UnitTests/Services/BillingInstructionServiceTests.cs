@@ -5,6 +5,7 @@ using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services;
 
@@ -130,8 +131,8 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
                 {
                     new()
                     {
-                        ProducerCommsFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>(),
-                        ProducerDisposalFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>(),
+                        CalculatorRunId = 0,
+                        ProducerFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerFeesByMaterial>(),
                         ProducerId = 1,
                         ProducerName = "Test",
                         SubsidiaryId = "1",

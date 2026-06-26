@@ -2,6 +2,7 @@ using System.Text;
 using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 

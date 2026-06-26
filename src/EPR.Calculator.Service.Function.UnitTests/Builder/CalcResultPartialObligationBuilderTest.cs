@@ -391,7 +391,7 @@ public class CalcResultPartialObligationBuilderTest : TestsFor<CalcResultPartial
             var aluResult = parOrgMats.First(mat => mat.Key == MaterialCodes.Aluminium).Value;
             Assert.AreEqual(100, aluResult.HouseholdTonnage);
             Assert.AreEqual(new RAMTonnage {
-                 RedTonnage = 20, AmberTonnage = 20, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 60
+                 Red = 20, Amber = 20, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 60
             }, aluResult.HouseholdRAMTonnage);
             Assert.AreEqual(0, aluResult.PublicBinTonnage);
             Assert.AreEqual(new RAMTonnage(), aluResult.PublicBinRAMTonnage);
@@ -399,7 +399,7 @@ public class CalcResultPartialObligationBuilderTest : TestsFor<CalcResultPartial
             Assert.AreEqual(100, aluResult.TotalTonnage());
             Assert.AreEqual(50.136m, aluResult.PartialHouseholdTonnage());
             Assert.AreEqual(new RAMTonnage {
-                 RedTonnage = 10.027m, AmberTonnage = 10.027m, GreenTonnage = 0, RedMedicalTonnage = 0, AmberMedicalTonnage = 0, GreenMedicalTonnage = 30.082m
+                 Red = 10.027m, Amber = 10.027m, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 30.082m
             }, aluResult.PartialHouseholdRAMTonnage());
             Assert.AreEqual(0, aluResult.PartialPublicBinTonnage());
             Assert.AreEqual(new RAMTonnage(), aluResult.PartialPublicBinRAMTonnage());

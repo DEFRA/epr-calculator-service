@@ -3,6 +3,7 @@ using EPR.Calculator.Service.Function.Builder.Summary;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary;
 
@@ -40,10 +41,9 @@ public class LaDataPrepCostsProducerTests
             {
                 new()
                 {
-                    ProducerCommsFeesByMaterial =
-                        new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>(),
-                    ProducerDisposalFeesByMaterial =
-                        new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>(),
+                    CalculatorRunId = 0,
+                    ProducerFeesByMaterial =
+                        new Dictionary<string, CalcResultSummaryProducerFeesByMaterial>(),
                     ProducerId = 1,
                     SubsidiaryId = "1",
                     ProducerName = "Test",

@@ -1,4 +1,5 @@
-﻿using EPR.Calculator.Service.Function.Builder.Modulation;
+﻿using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Builder.Modulation;
 using EPR.Calculator.Service.Function.Services;
 
 namespace EPR.Calculator.Service.Function.Models

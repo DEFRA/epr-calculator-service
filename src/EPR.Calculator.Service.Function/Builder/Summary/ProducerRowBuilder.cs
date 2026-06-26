@@ -30,21 +30,15 @@ internal sealed class ProducerRowBuilder(
         IReadOnlyList<MaterialDetail> materials
     )
     {
-        var materialCosts = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>();
-        var commsCosts    = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>();
+        var materialCosts = new Dictionary<string, CalcResultSummaryProducerFeesByMaterial>();
 
         var l1SmcwRecord = smcw.ProducerTotals.Single(x => x.Level == 1 && x.ProducerId == producerId);
 
         foreach (var material in materials)
         {
             var l2MatRows = l2Rows
-                .Where(r => r.ProducerDisposalFeesByMaterial.ContainsKey(material.Code))
-                .Select(r => r.ProducerDisposalFeesByMaterial[material.Code])
-                .ToList();
-
-            var l2CommsRows = l2Rows
-                .Where(r => r.ProducerCommsFeesByMaterial.ContainsKey(material.Code))
-                .Select(r => r.ProducerCommsFeesByMaterial[material.Code])
+                .Where(r => r.ProducerFeesByMaterial.ContainsKey(material.Code))
+                .Select(r => r.ProducerFeesByMaterial[material.Code])
                 .ToList();
 
             var l1Smcw = l1SmcwRecord.SelfManagedConsumerWasteDataPerMaterials.GetValueOrDefault(material.Code)
@@ -52,86 +46,98 @@ internal sealed class ProducerRowBuilder(
 
             invoicedNetTonnageByProducerMaterial.TryGetValue((producerId, material.Id), out var prevInvoiced);
 
-            var l1TotalReportedTonnage = l2MatRows.Sum(r => r.TotalReportedTonnage);
+            var l1TotalReportedTonnage = l2MatRows.Sum(r => r.DisposalFees.TotalTonnage);
 
             var disposalFee = l1Smcw.SelfManagedConsumerWasteTonnage > l1TotalReportedTonnage
-                ? (total: (decimal?)0m, red: (decimal?)0m, amber: (decimal?)0m, green: (decimal?)0m)
+                ? new RAMTonnageGroup { Total = 0m, Red = 0m, Amber = 0m, Green = 0m }
                 : CalcResultSummaryUtil.GetProducerDisposalFee(material, calcResult, l1Smcw);
 
-            materialCosts[material.Code] = new CalcResultSummaryProducerDisposalFeesByMaterial
-            {
+            materialCosts[material.Code] = new CalcResultSummaryProducerFeesByMaterial {
                 // Additive from L2 rows
-                HouseholdPackagingWasteTonnage            = l2MatRows.Sum(r => r.HouseholdPackagingWasteTonnage),
-                HouseholdPackagingWasteTonnageRagRating   = AggregateRagDict(l2MatRows, r => r.HouseholdPackagingWasteTonnageRagRating),
-                PublicBinTonnage                          = l2MatRows.Sum(r => r.PublicBinTonnage),
-                PublicBinTonnageRagRating                 = AggregateRagDict(l2MatRows, r => r.PublicBinTonnageRagRating),
-                HouseholdDrinksContainersTonnage          = l2MatRows.Sum(r => r.HouseholdDrinksContainersTonnage),
-                HouseholdDrinksContainersTonnageRagRating = AggregateRagDict(l2MatRows, r => r.HouseholdDrinksContainersTonnageRagRating),
-                TotalReportedTonnage                      = l1TotalReportedTonnage,
-                TotalReportedTonnageRagRating             = AggregateRagDict(l2MatRows, r => r.TotalReportedTonnageRagRating),
+                ProducerDisposalFeesId  = 0, //TODO
+                MaterialCode = material.Code,
+                DisposalFees = new CalcResultSummaryProducerDisposalFeesByMaterial
+                {
+                    HouseholdTonnage        = l2MatRows.Sum(r => r.DisposalFees.HouseholdTonnage),
+                    HouseholdRAMTonnage     = AggregateRAM(l2MatRows, r => r.DisposalFees.HouseholdRAMTonnage),
+                    PublicBinTonnage        = l2MatRows.Sum(r => r.DisposalFees.PublicBinTonnage),
+                    PublicBinRAMTonnage     = AggregateRAM(l2MatRows, r => r.DisposalFees.PublicBinRAMTonnage),
+                    HDCTonnage              = l2MatRows.Sum(r => r.DisposalFees.HDCTonnage),
+                    HDCRAMTonnage           = AggregateRAM(l2MatRows, r => r.DisposalFees.HDCRAMTonnage),
+                    TotalTonnage            = l1TotalReportedTonnage,
+                    TotalRAMTonnage         = AggregateRAM(l2MatRows, r => r.DisposalFees.TotalRAMTonnage),
 
-                // From L1 SMCW record — not derivable by summing L2 values
-                SelfManagedConsumerWasteTonnage           = l1Smcw.SelfManagedConsumerWasteTonnage,
-                ActionedSelfManagedConsumerWasteTonnage   = l1Smcw.ActionedSelfManagedConsumerWasteTonnage,
-                ResidualSelfManagedConsumerWasteTonnage   = l1Smcw.ResidualSelfManagedConsumerWasteTonnage,
-                NetReportedTonnage                        = l1Smcw.NetReportedTonnage,
+                    // From L1 SMCW record — not derivable by summing L2 values
+                    //TODO: change smcw to RAMTonnageGroup
+                    SelfManagedConsumerWasteTonnage           = l1Smcw.SelfManagedConsumerWasteTonnage,
+                    ActionedSelfManagedConsumerWasteTonnage   = new RAMTonnageGroup { 
+                        Total = l1Smcw.ActionedSelfManagedConsumerWasteTonnage.total, 
+                        Red = l1Smcw.ActionedSelfManagedConsumerWasteTonnage.red, 
+                        Amber = l1Smcw.ActionedSelfManagedConsumerWasteTonnage.amber, 
+                        Green = l1Smcw.ActionedSelfManagedConsumerWasteTonnage.green 
+                    },
+                    ResidualSelfManagedConsumerWasteTonnage   = l1Smcw.ResidualSelfManagedConsumerWasteTonnage,
+                    NetReportedTonnage                        = new RAMTonnageGroup { 
+                        Total = l1Smcw.NetReportedTonnage.total, 
+                        Red = l1Smcw.NetReportedTonnage.red, 
+                        Amber = l1Smcw.NetReportedTonnage.amber, 
+                        Green = l1Smcw.NetReportedTonnage.green 
+                    },
 
-                // Derived from L1 SMCW
-                TonnageChange                             = TonnageChangeUtil.ComputePerMaterialChange(
-                                                               CommonConstants.LevelOne.ToString(),
-                                                               l1Smcw.NetReportedTonnage.total,
-                                                               prevInvoiced),
-                PricePerTonne                             = CalcResultSummaryUtil.GetPricePerTonne(material, calcResult),
-                ProducerDisposalFee                       = disposalFee,
-                BadDebtProvision                          = CalcResultSummaryUtil.GetBadDebtProvision(calcResult, disposalFee.total),
-                ProducerDisposalFeeWithBadDebtProvision   = CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvision(calcResult, disposalFee.total),
-                PreviousInvoicedTonnage                   = prevInvoiced
-            };
-
-            commsCosts[material.Code] = new CalcResultSummaryProducerCommsFeesCostByMaterial
-            {
-                HouseholdPackagingWasteTonnage   = l2CommsRows.Sum(r => r.HouseholdPackagingWasteTonnage),
-                PublicBinTonnage                 = l2CommsRows.Sum(r => r.PublicBinTonnage),
-                HouseholdDrinksContainersTonnage = l2CommsRows.Sum(r => r.HouseholdDrinksContainersTonnage),
-                TotalReportedTonnage             = l2CommsRows.Sum(r => r.TotalReportedTonnage),
-                PriceperTonne                    = l2CommsRows.Count > 0 ? l2CommsRows[0].PriceperTonne : 0,
-                Costs                            = l2CommsRows.Select(r => r.Costs).Sum(),
+                    // Derived from L1 SMCW
+                    TonnageChange                             = TonnageChangeUtil.ComputePerMaterialChange(
+                                                                CommonConstants.LevelOne.ToString(),
+                                                                l1Smcw.NetReportedTonnage.total,
+                                                                prevInvoiced),
+                    PricePerTonne                             = CalcResultSummaryUtil.GetPricePerTonne(material, calcResult),
+                    ProducerDisposalFee                       = disposalFee,
+                    BadDebtProvision                          = CalcResultSummaryUtil.GetBadDebtProvision(calcResult, disposalFee.Total),
+                    ProducerDisposalFeeWithBadDebtProvision   = CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvision(calcResult, disposalFee.Total),
+                    PreviousInvoicedTonnage                   = prevInvoiced
+                },
+                CommFees                                  = new CalcResultSummaryProducerCommsFeesCostByMaterial
+                {
+                    HouseholdTonnage   = l2MatRows.Sum(r => r.CommFees.HouseholdTonnage),
+                    PublicBinTonnage   = l2MatRows.Sum(r => r.CommFees.PublicBinTonnage),
+                    HDCTonnage         = l2MatRows.Sum(r => r.CommFees.HDCTonnage),
+                    TotalTonnage       = l2MatRows.Sum(r => r.CommFees.TotalTonnage),
+                    PricePerTonne      = l2MatRows.Count > 0 ? l2MatRows.First().CommFees.PricePerTonne : 0,
+                    Costs              = l2MatRows.Select(r => r.CommFees.Costs).Sum(),
+                }
             };
         }
 
         var producerForTotalRow = GetProducerDetailsForTotalRow(producerId, isOverAllTotalRow: false);
         var (tonnageChangeCount, tonnageChangeAdvice) = TonnageChangeUtil.ComputeCountAndAdvice(
-            CommonConstants.LevelOne.ToString(), materialCosts);
+            CommonConstants.LevelOne.ToString(), materialCosts.ToDictionary(k => k.Key, v => v.Value.DisposalFees));
 
         return new CalcResultSummaryProducerDisposalFees
         {
+            CalculatorRunId     = 0, //TODO
             ProducerId          = producerId,
             ProducerName        = producerForTotalRow?.OrganisationName ?? string.Empty,
             SubsidiaryId        = string.Empty,
             TradingName         = producerForTotalRow?.TradingName ?? string.Empty,
             Level               = CommonConstants.LevelOne.ToString(),
-            IsProducerScaledup  = scaledupProducers.Exists(p => p.ProducerId == producerId) ? CommonConstants.Yes : CommonConstants.No,
-            IsPartialObligation = partialObligations.Exists(p => p.ProducerId == producerId) ? CommonConstants.Yes : CommonConstants.No,
+            //Move these to exporter
+            IsProducerScaledup  = scaledupProducers.Exists(p => p.ProducerId == producerId),
+            IsPartialObligation = partialObligations.Exists(p => p.ProducerId == producerId),
             StatusCode          = producerForTotalRow?.StatusCode,
             JoinerDate          = producerForTotalRow?.JoinerDate,
             LeaverDate          = producerForTotalRow?.LeaverDate,
 
-            ProducerDisposalFeesByMaterial = materialCosts,
-            ProducerCommsFeesByMaterial    = commsCosts,
-            CommsCostsSection2a            = GetCommunicationCostsSectionTwoA(commsCosts),
+            ProducerFeesByMaterial = materialCosts,
+            CommsCostsSection2a            = GetCommunicationCostsSectionTwoA(materialCosts.ToDictionary(k => k.Key, v => v.Value.CommFees)),
 
             TonnageChangeCount  = tonnageChangeCount,
             TonnageChangeAdvice = tonnageChangeAdvice,
 
-            LADisposalCostsSection1 = GetLocalAuthorityDisposalCostsSectionOne(materialCosts),
+            LADisposalCostsSection1 = GetLocalAuthorityDisposalCostsSectionOne(materialCosts.ToDictionary(k => k.Key, v => v.Value.DisposalFees)),
             CommsCostsSection2b     = l2Rows.Select(r => r.CommsCostsSection2b).Sum(),
 
             PercentageofProducerReportedTonnagevsAllProducers = l2Rows.Sum(r => r.PercentageofProducerReportedTonnagevsAllProducers),
 
-            CommsCostsSection2c = l2Rows.Select(r => r.CommsCostsSection2c).Sum(),
-
-            IsTotalRow        = true,
-            IsOverallTotalRow = false,
+            CommsCostsSection2c = l2Rows.Select(r => r.CommsCostsSection2c).Sum()
         };
     }
 
@@ -145,8 +151,7 @@ internal sealed class ProducerRowBuilder(
         IReadOnlyList<MaterialDetail> materials
     )
     {
-        var materialCosts = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>();
-        var commsCosts    = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>();
+        var materialCosts = new Dictionary<string, CalcResultSummaryProducerFeesByMaterial>();
 
         // Accumulators for the post-loop row-level sums, folded into a single pass.
         var commsCostsSection2b = CalcResultSummaryBadDebtProvision.Empty;
@@ -154,8 +159,7 @@ internal sealed class ProducerRowBuilder(
         var commsCostsSection2c = CalcResultSummaryBadDebtProvision.Empty;
 
         // Per-material sub-lists built in a single pass over l1Rows per material.
-        var matRowsByCode   = materials.ToDictionary(m => m.Code, _ => new List<CalcResultSummaryProducerDisposalFeesByMaterial>());
-        var commsRowsByCode = materials.ToDictionary(m => m.Code, _ => new List<CalcResultSummaryProducerCommsFeesCostByMaterial>());
+        var matRowsByCode   = materials.ToDictionary(m => m.Code, _ => new List<CalcResultSummaryProducerFeesByMaterial>());
 
         foreach (var row in l1Rows)
         {
@@ -165,81 +169,77 @@ internal sealed class ProducerRowBuilder(
 
             foreach (var materialCode in materials.Select(material => material.Code))
             {
-                if (row.ProducerDisposalFeesByMaterial.TryGetValue(materialCode, out var mat))
+                if (row.ProducerFeesByMaterial.TryGetValue(materialCode, out var mat))
                     matRowsByCode[materialCode].Add(mat);
-                if (row.ProducerCommsFeesByMaterial.TryGetValue(materialCode, out var comms))
-                    commsRowsByCode[materialCode].Add(comms);
             }
         }
 
         foreach (var materialCode in materials.Select(material => material.Code))
         {
             var l1MatRows   = matRowsByCode[materialCode];
-            var l1CommsRows = commsRowsByCode[materialCode];
 
-            materialCosts[materialCode] = new CalcResultSummaryProducerDisposalFeesByMaterial
-            {
-                HouseholdPackagingWasteTonnage            = l1MatRows.Sum(r => r.HouseholdPackagingWasteTonnage),
-                HouseholdPackagingWasteTonnageRagRating   = AggregateRagDict(l1MatRows, r => r.HouseholdPackagingWasteTonnageRagRating),
-                PublicBinTonnage                          = l1MatRows.Sum(r => r.PublicBinTonnage),
-                PublicBinTonnageRagRating                 = AggregateRagDict(l1MatRows, r => r.PublicBinTonnageRagRating),
-                HouseholdDrinksContainersTonnage          = l1MatRows.Sum(r => r.HouseholdDrinksContainersTonnage),
-                HouseholdDrinksContainersTonnageRagRating = AggregateRagDict(l1MatRows, r => r.HouseholdDrinksContainersTonnageRagRating),
-                TotalReportedTonnage                      = l1MatRows.Sum(r => r.TotalReportedTonnage),
-                TotalReportedTonnageRagRating             = AggregateRagDict(l1MatRows, r => r.TotalReportedTonnageRagRating),
+            materialCosts[materialCode] = new CalcResultSummaryProducerFeesByMaterial {
+                ProducerDisposalFeesId = 0, //TODO
+                MaterialCode           = materialCode,
+                DisposalFees = new CalcResultSummaryProducerDisposalFeesByMaterial
+                {
+                    HouseholdTonnage       = l1MatRows.Sum(r => r.DisposalFees.HouseholdTonnage),
+                    HouseholdRAMTonnage    = AggregateRAM(l1MatRows, r => r.DisposalFees.HouseholdRAMTonnage),
+                    PublicBinTonnage       = l1MatRows.Sum(r => r.DisposalFees.PublicBinTonnage),
+                    PublicBinRAMTonnage    = AggregateRAM(l1MatRows, r => r.DisposalFees.PublicBinRAMTonnage),
+                    HDCTonnage             = l1MatRows.Sum(r => r.DisposalFees.HDCTonnage),
+                    HDCRAMTonnage          = AggregateRAM(l1MatRows, r => r.DisposalFees.HDCRAMTonnage),
+                    TotalTonnage           = l1MatRows.Sum(r => r.DisposalFees.TotalTonnage),
+                    TotalRAMTonnage        = AggregateRAM(l1MatRows, r => r.DisposalFees.TotalRAMTonnage),
 
-                // SMCW is additive: overall SMCW = sum of Level-1 SMCW records
-                SelfManagedConsumerWasteTonnage           = l1MatRows.Sum(r => r.SelfManagedConsumerWasteTonnage),
-                ActionedSelfManagedConsumerWasteTonnage   = SumTupleField(l1MatRows, r => r.ActionedSelfManagedConsumerWasteTonnage),
-                ResidualSelfManagedConsumerWasteTonnage   = l1MatRows.Sum(r => r.ResidualSelfManagedConsumerWasteTonnage),
-                NetReportedTonnage                        = SumTupleField(l1MatRows, r => r.NetReportedTonnage),
+                    // SMCW is additive: overall SMCW = sum of Level-1 SMCW records
+                    SelfManagedConsumerWasteTonnage           = l1MatRows.Sum(r => r.DisposalFees.SelfManagedConsumerWasteTonnage),
+                    ActionedSelfManagedConsumerWasteTonnage   = AggregateRAMTonnageGroup(l1MatRows, r => r.DisposalFees.ActionedSelfManagedConsumerWasteTonnage),
+                    ResidualSelfManagedConsumerWasteTonnage   = l1MatRows.Sum(r => r.DisposalFees.ResidualSelfManagedConsumerWasteTonnage),
+                    NetReportedTonnage                        = AggregateRAMTonnageGroup(l1MatRows, r => r.DisposalFees.NetReportedTonnage),
 
-                TonnageChange                             = l1MatRows.Sum(r => r.TonnageChange),
-                PricePerTonne                             = l1MatRows.Count > 0 ? l1MatRows[0].PricePerTonne : (null, null, null, null),
-                ProducerDisposalFee                       = SumTupleField(l1MatRows, r => r.ProducerDisposalFee),
-                BadDebtProvision                          = l1MatRows.Sum(r => r.BadDebtProvision),
-                ProducerDisposalFeeWithBadDebtProvision   = ByCountryCost.Sum([.. l1MatRows.Select(r => r.ProducerDisposalFeeWithBadDebtProvision)]),
-                PreviousInvoicedTonnage                   = l1MatRows.Sum(r => r.PreviousInvoicedTonnage),
-            };
-
-            commsCosts[materialCode] = new CalcResultSummaryProducerCommsFeesCostByMaterial
-            {
-                HouseholdPackagingWasteTonnage   = l1CommsRows.Sum(r => r.HouseholdPackagingWasteTonnage),
-                PublicBinTonnage                 = l1CommsRows.Sum(r => r.PublicBinTonnage),
-                HouseholdDrinksContainersTonnage = l1CommsRows.Sum(r => r.HouseholdDrinksContainersTonnage),
-                TotalReportedTonnage             = l1CommsRows.Sum(r => r.TotalReportedTonnage),
-                PriceperTonne                    = l1CommsRows.Count > 0 ? l1CommsRows[0].PriceperTonne : 0,
-                Costs                            = l1CommsRows.Select(r => r.Costs).Sum(),
+                    TonnageChange                             = l1MatRows.Sum(r => r.DisposalFees.TonnageChange),
+                    PricePerTonne                             = l1MatRows.Count > 0 ? l1MatRows[0].DisposalFees.PricePerTonne : RAMTonnageGroup.Empty,
+                    ProducerDisposalFee                       = AggregateRAMTonnageGroup(l1MatRows, r => r.DisposalFees.ProducerDisposalFee),
+                    BadDebtProvision                          = l1MatRows.Sum(r => r.DisposalFees.BadDebtProvision),
+                    ProducerDisposalFeeWithBadDebtProvision   = ByCountryCost.Sum([.. l1MatRows.Select(r => r.DisposalFees.ProducerDisposalFeeWithBadDebtProvision)]),
+                    PreviousInvoicedTonnage                   = l1MatRows.Sum(r => r.DisposalFees.PreviousInvoicedTonnage)
+                },
+                CommFees               = new CalcResultSummaryProducerCommsFeesCostByMaterial
+                {
+                    HouseholdTonnage   = l1MatRows.Sum(r => r.CommFees.HouseholdTonnage),
+                    PublicBinTonnage   = l1MatRows.Sum(r => r.CommFees.PublicBinTonnage),
+                    HDCTonnage         = l1MatRows.Sum(r => r.CommFees.HDCTonnage),
+                    TotalTonnage       = l1MatRows.Sum(r => r.CommFees.TotalTonnage),
+                    PricePerTonne      = l1MatRows.Count > 0 ? l1MatRows[0].CommFees.PricePerTonne : 0,
+                    Costs              = l1MatRows.Select(r => r.CommFees.Costs).Sum(),
+                }
             };
         }
 
         return new CalcResultSummaryProducerDisposalFees
         {
+            CalculatorRunId     = 0, // TODO
             ProducerId          = 0,
             ProducerName        = string.Empty,
             SubsidiaryId        = string.Empty,
             TradingName         = string.Empty,
             Level               = string.Empty,
-            IsProducerScaledup  = string.Empty,
-            IsPartialObligation = string.Empty,
+            IsProducerScaledup  = false,
+            IsPartialObligation = false,
             StatusCode          = null,
             JoinerDate          = null,
             LeaverDate          = CommonConstants.Totals,
 
-            ProducerDisposalFeesByMaterial = materialCosts,
+            ProducerFeesByMaterial         = materialCosts,
+            CommsCostsSection2a            = GetCommunicationCostsSectionTwoA(materialCosts.ToDictionary(k => k.Key, v => v.Value.CommFees)),
 
-            ProducerCommsFeesByMaterial    = commsCosts,
-            CommsCostsSection2a            = GetCommunicationCostsSectionTwoA(commsCosts),
-
-            LADisposalCostsSection1       = GetLocalAuthorityDisposalCostsSectionOne(materialCosts),
+            LADisposalCostsSection1       = GetLocalAuthorityDisposalCostsSectionOne(materialCosts.ToDictionary(k => k.Key, v => v.Value.DisposalFees)),
             CommsCostsSection2b           = commsCostsSection2b,
 
             PercentageofProducerReportedTonnagevsAllProducers = percentageOfProducerTonnage,
-
-            CommsCostsSection2c = commsCostsSection2c,
-
-            IsTotalRow        = true,
-            IsOverallTotalRow = true,
+            IsOverallRow = true,
+            CommsCostsSection2c = commsCostsSection2c
         };
     }
 
@@ -256,8 +256,7 @@ internal sealed class ProducerRowBuilder(
         SelfManagedConsumerWaste smcw
     )
     {
-        var materialCostSummary = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>();
-        var commsCostSummary = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>();
+        var materialFeeSummary = new Dictionary<string, CalcResultSummaryProducerFeesByMaterial>();
         var level = hasGroupTotalRow ? (int)CalcResultSummaryLevelIndex.Two : (int)CalcResultSummaryLevelIndex.One;
 
         // PERF: Use O(1) lookup instead of an O(orgs) FirstOrDefault per producer row.
@@ -265,17 +264,14 @@ internal sealed class ProducerRowBuilder(
 
         var result = new CalcResultSummaryProducerDisposalFees
         {
+            CalculatorRunId     = 0, //TODO
             ProducerId          = producer.ProducerId,
             ProducerName        = producer.ProducerName ?? string.Empty,
             SubsidiaryId        = producer.SubsidiaryId ?? string.Empty,
             TradingName         = producer.TradingName ?? string.Empty,
             Level               = level.ToString(),
-            IsProducerScaledup  = scaledupProducers.Exists(p => p.ProducerId == producer.ProducerId)
-                ? CommonConstants.Yes
-                : CommonConstants.No,
-            IsPartialObligation = partialObligations.Exists(p => p.ProducerId == producer.ProducerId && p.SubsidiaryId == producer.SubsidiaryId)
-                ? CommonConstants.Yes
-                : CommonConstants.No,
+            IsProducerScaledup  = scaledupProducers.Exists(p => p.ProducerId == producer.ProducerId),
+            IsPartialObligation = partialObligations.Exists(p => p.ProducerId == producer.ProducerId && p.SubsidiaryId == producer.SubsidiaryId),
             StatusCode          = orgData?.StatusCode,
             JoinerDate          = orgData?.JoinerDate,
             LeaverDate          = orgData?.LeaverDate
@@ -301,11 +297,10 @@ internal sealed class ProducerRowBuilder(
                 l1TotalReportedTonnage,
                 l1SelfManagedConsumerWasteData);
 
-            materialCostSummary.Add(material.Code, producerDisposalFeesByMaterial);
             result.LADisposalCostsSection1 +=
                 new CalcResultSummaryBadDebtProvision
                 {
-                    FeeWithoutBadDebtProvision = producerDisposalFeesByMaterial.ProducerDisposalFee.total ?? 0,
+                    FeeWithoutBadDebtProvision = producerDisposalFeesByMaterial.ProducerDisposalFee.Total ?? 0,
                     BadDebtProvision           = producerDisposalFeesByMaterial.BadDebtProvision,
                     FeeWithBadDebtProvision    = producerDisposalFeesByMaterial.ProducerDisposalFeeWithBadDebtProvision
                 };
@@ -317,18 +312,21 @@ internal sealed class ProducerRowBuilder(
                 calcResult
             );
 
-            commsCostSummary.Add(material.Code, producerCommsFeesCostByMaterial);
+            materialFeeSummary.Add(material.Code, new CalcResultSummaryProducerFeesByMaterial {
+                ProducerDisposalFeesId = 0, //TODO
+                MaterialCode = material.Code,
+                DisposalFees = producerDisposalFeesByMaterial,
+                CommFees = producerCommsFeesCostByMaterial
+            });
             commsSection2a += producerCommsFeesCostByMaterial.Costs;
         }
 
-        result.ProducerDisposalFeesByMaterial = materialCostSummary;
-        result.ProducerCommsFeesByMaterial = commsCostSummary;
-
+        result.ProducerFeesByMaterial = materialFeeSummary;
         result.CommsCostsSection2a = commsSection2a;
 
         result.CommsCostsSection2b = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsCosts(calcResult, producer, totalPackagingTonnage);
 
-        var (countStr, advice) = TonnageChangeUtil.ComputeCountAndAdvice(result.Level, materialCostSummary);
+        var (countStr, advice) = TonnageChangeUtil.ComputeCountAndAdvice(result.Level, materialFeeSummary.ToDictionary(k => k.Key, v => v.Value.DisposalFees));
         result.TonnageChangeCount  = countStr;
         result.TonnageChangeAdvice = advice;
 
@@ -363,22 +361,54 @@ internal sealed class ProducerRowBuilder(
             ? CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.HouseholdDrinksContainers)
             : 0m;
 
-        Dictionary<RagRating, decimal> hhRagTonnage   = [];
-        Dictionary<RagRating, decimal> pbRagTonnage   = [];
-        Dictionary<RagRating, decimal> hdcRagTonnage  = [];
-        Dictionary<RagRating, decimal> totalRagTonnage = [];
+        RAMTonnage? hhRamTonnage    = null;
+        RAMTonnage? pbRamTonnage    = null;
+        RAMTonnage? hdcRamTonnage   = null;
+        RAMTonnage? totalRamTonnage = null;
 
+        //TODO: Move GetTonnage to just a single call rather than per ram?
+        //Move total into model?
         if (runContext.RequiresModulation)
         {
-            foreach (var rag in Enum.GetValues<RagRating>())
+            hhRamTonnage = new RAMTonnage
             {
-                hhRagTonnage[rag]  = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.Household, rag);
-                pbRagTonnage[rag]  = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.PublicBin, rag);
-                hdcRagTonnage[rag] = material.Code == MaterialCodes.Glass
-                    ? CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.HouseholdDrinksContainers, rag)
-                    : 0m;
-                totalRagTonnage[rag] = hhRagTonnage[rag] + pbRagTonnage[rag] + hdcRagTonnage[rag];
-            }
+                Red = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.Household, RagRating.Red),
+                Amber = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.Household, RagRating.Amber),
+                Green = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.Household, RagRating.Green),
+                RedMedical = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.Household, RagRating.RedMedical),
+                AmberMedical = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.Household, RagRating.AmberMedical),
+                GreenMedical = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.Household, RagRating.GreenMedical),
+            };
+
+            pbRamTonnage = new RAMTonnage
+            {
+                Red = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.PublicBin, RagRating.Red),
+                Amber = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.PublicBin, RagRating.Amber),
+                Green = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.PublicBin, RagRating.Green),
+                RedMedical = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.PublicBin, RagRating.RedMedical),
+                AmberMedical = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.PublicBin, RagRating.AmberMedical),
+                GreenMedical = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.PublicBin, RagRating.GreenMedical),
+            };
+
+            hdcRamTonnage = material.Code == MaterialCodes.Glass ? new RAMTonnage
+            {
+                Red = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.HouseholdDrinksContainers, RagRating.Red),
+                Amber = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.HouseholdDrinksContainers, RagRating.Amber),
+                Green = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.HouseholdDrinksContainers, RagRating.Green),
+                RedMedical = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.HouseholdDrinksContainers, RagRating.RedMedical),
+                AmberMedical = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.HouseholdDrinksContainers, RagRating.AmberMedical),
+                GreenMedical = CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.HouseholdDrinksContainers, RagRating.GreenMedical),
+            } : RAMTonnage.Empty;
+
+            totalRamTonnage = new RAMTonnage
+            {
+                Red = hhRamTonnage.Red + pbRamTonnage.Red + hdcRamTonnage.Red,
+                Amber = hhRamTonnage.Amber + pbRamTonnage.Amber + hdcRamTonnage.Amber,
+                Green = hhRamTonnage.Green + pbRamTonnage.Green + hdcRamTonnage.Green,
+                RedMedical = hhRamTonnage.RedMedical + pbRamTonnage.RedMedical + hdcRamTonnage.RedMedical,
+                AmberMedical = hhRamTonnage.AmberMedical + pbRamTonnage.AmberMedical + hdcRamTonnage.AmberMedical,
+                GreenMedical = hhRamTonnage.GreenMedical + pbRamTonnage.GreenMedical + hdcRamTonnage.GreenMedical,
+            };
         }
 
         var selfManagedConsumerWasteData = smcw
@@ -388,33 +418,43 @@ internal sealed class ProducerRowBuilder(
 
         var producerDisposalFee =
             l1SelfManagedConsumerWasteData.SelfManagedConsumerWasteTonnage > l1TotalReportedTonnage
-                ? (total: 0, red: 0, amber: 0, green: 0)
+                ? new RAMTonnageGroup { Total = 0m, Red = 0m, Amber = 0m, Green = 0m }
                 : CalcResultSummaryUtil.GetProducerDisposalFee(material, calcResult, selfManagedConsumerWasteData);
 
         return new CalcResultSummaryProducerDisposalFeesByMaterial
         {
-            HouseholdPackagingWasteTonnage          = hhTonnage,
-            HouseholdPackagingWasteTonnageRagRating = hhRagTonnage,
+            HouseholdTonnage    = hhTonnage,
+            HouseholdRAMTonnage = hhRamTonnage,
 
-            PublicBinTonnage          = pbTonnage,
-            PublicBinTonnageRagRating = pbRagTonnage,
+            PublicBinTonnage    = pbTonnage,
+            PublicBinRAMTonnage = pbRamTonnage,
 
-            HouseholdDrinksContainersTonnage          = hdcTonnage,
-            HouseholdDrinksContainersTonnageRagRating = hdcRagTonnage,
+            HDCTonnage          = hdcTonnage,
+            HDCRAMTonnage       = hdcRamTonnage,
 
-            TotalReportedTonnage          = hhTonnage + pbTonnage + hdcTonnage,
-            TotalReportedTonnageRagRating = totalRagTonnage,
+            TotalTonnage        = hhTonnage + pbTonnage + hdcTonnage,
+            TotalRAMTonnage     = totalRamTonnage,
 
             SelfManagedConsumerWasteTonnage         = selfManagedConsumerWasteData.SelfManagedConsumerWasteTonnage,
-            ActionedSelfManagedConsumerWasteTonnage = selfManagedConsumerWasteData.ActionedSelfManagedConsumerWasteTonnage,
+            ActionedSelfManagedConsumerWasteTonnage = new RAMTonnageGroup { 
+                    Total = selfManagedConsumerWasteData.ActionedSelfManagedConsumerWasteTonnage.total, 
+                    Red = selfManagedConsumerWasteData.ActionedSelfManagedConsumerWasteTonnage.red, 
+                    Amber = selfManagedConsumerWasteData.ActionedSelfManagedConsumerWasteTonnage.amber, 
+                    Green = selfManagedConsumerWasteData.ActionedSelfManagedConsumerWasteTonnage.green 
+                },
             ResidualSelfManagedConsumerWasteTonnage = selfManagedConsumerWasteData.ResidualSelfManagedConsumerWasteTonnage,
-            NetReportedTonnage                      = selfManagedConsumerWasteData.NetReportedTonnage,
+            NetReportedTonnage                      =  new RAMTonnageGroup { 
+                    Total = selfManagedConsumerWasteData.NetReportedTonnage.total, 
+                    Red = selfManagedConsumerWasteData.NetReportedTonnage.red, 
+                    Amber = selfManagedConsumerWasteData.NetReportedTonnage.amber, 
+                    Green = selfManagedConsumerWasteData.NetReportedTonnage.green 
+                },
             TonnageChange                           = TonnageChangeUtil.ComputePerMaterialChange(level.ToString(), selfManagedConsumerWasteData.NetReportedTonnage.total, previousInvoicedNetTonnage),
             PricePerTonne                           = CalcResultSummaryUtil.GetPricePerTonne(material, calcResult),
             ProducerDisposalFee                     = producerDisposalFee,
-            BadDebtProvision                        = CalcResultSummaryUtil.GetBadDebtProvision(calcResult, producerDisposalFee.total),
-            ProducerDisposalFeeWithBadDebtProvision = CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvision(calcResult, producerDisposalFee.total),
-            PreviousInvoicedTonnage                 = previousInvoicedNetTonnage.HasValue ? previousInvoicedNetTonnage.Value : null,
+            BadDebtProvision                        = CalcResultSummaryUtil.GetBadDebtProvision(calcResult, producerDisposalFee.Total),
+            ProducerDisposalFeeWithBadDebtProvision = CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvision(calcResult, producerDisposalFee.Total),
+            PreviousInvoicedTonnage                 = previousInvoicedNetTonnage.HasValue ? previousInvoicedNetTonnage.Value : null
         };
     }
 
@@ -434,12 +474,12 @@ internal sealed class ProducerRowBuilder(
 
         return new CalcResultSummaryProducerCommsFeesCostByMaterial
         {
-            HouseholdPackagingWasteTonnage   = hhTonnage,
-            PublicBinTonnage                 = pbTonnage,
-            HouseholdDrinksContainersTonnage = hdcTonnage,
-            TotalReportedTonnage             = totalTonnage,
-            PriceperTonne                    = CalcResultSummaryCommsCostTwoA.GetPriceperTonneForComms(material, calcResult),
-            Costs                            = CalcResultSummaryCommsCostTwoA.GetCommsFeesCosts(totalTonnage, material, calcResult)
+            HouseholdTonnage   = hhTonnage,
+            PublicBinTonnage   = pbTonnage,
+            HDCTonnage         = hdcTonnage,
+            TotalTonnage       = totalTonnage,
+            PricePerTonne      = CalcResultSummaryCommsCostTwoA.GetPriceperTonneForComms(material, calcResult),
+            Costs              = CalcResultSummaryCommsCostTwoA.GetCommsFeesCosts(totalTonnage, material, calcResult)
         };
     }
 
@@ -448,7 +488,7 @@ internal sealed class ProducerRowBuilder(
     ) =>
         materialCostSummary.Values.Select(m => new CalcResultSummaryBadDebtProvision
         {
-            FeeWithoutBadDebtProvision = m.ProducerDisposalFee.total ?? 0,
+            FeeWithoutBadDebtProvision = m.ProducerDisposalFee.Total ?? 0,
             BadDebtProvision           = m.BadDebtProvision,
             FeeWithBadDebtProvision    = m.ProducerDisposalFeeWithBadDebtProvision,
         }).Sum();
@@ -458,28 +498,47 @@ internal sealed class ProducerRowBuilder(
     ) =>
         commsCostSummary.Values.Select(m => m.Costs).Sum();
 
-    private static Dictionary<RagRating, decimal> AggregateRagDict(
-        IReadOnlyList<CalcResultSummaryProducerDisposalFeesByMaterial> rows,
-        Func<CalcResultSummaryProducerDisposalFeesByMaterial, Dictionary<RagRating, decimal>> selector
+    private static RAMTonnage? AggregateRAM(
+        IReadOnlyList<CalcResultSummaryProducerFeesByMaterial> rows,
+        Func<CalcResultSummaryProducerFeesByMaterial, RAMTonnage?> selector
     )
     {
-        if (rows.All(r => selector(r).Count == 0))
-            return new();
-        return Enum.GetValues<RagRating>().ToDictionary(
-            rag => rag,
-            rag => rows.Sum(r => selector(r).GetValueOrDefault(rag)));
+        return rows.Aggregate((RAMTonnage?)null, (acc, src) => {
+            var tonnage = selector(src);
+
+            if(tonnage == null)
+                return acc;
+
+            var currAcc = acc ?? RAMTonnage.Empty;
+
+            return currAcc with
+            {
+                Red = currAcc.Red + tonnage.Red,
+                Amber = currAcc.Amber + tonnage.Amber,
+                Green = currAcc.Green + tonnage.Green,
+                RedMedical = currAcc.RedMedical + tonnage.RedMedical,
+                AmberMedical = currAcc.AmberMedical + tonnage.AmberMedical,
+                GreenMedical = currAcc.GreenMedical + tonnage.GreenMedical,
+            };
+        });
     }
 
-    private static (decimal? total, decimal? red, decimal? amber, decimal? green) SumTupleField(
-        IReadOnlyList<CalcResultSummaryProducerDisposalFeesByMaterial> rows,
-        Func<CalcResultSummaryProducerDisposalFeesByMaterial, (decimal? total, decimal? red, decimal? amber, decimal? green)> selector
+    private static RAMTonnageGroup AggregateRAMTonnageGroup(
+        IReadOnlyList<CalcResultSummaryProducerFeesByMaterial> rows,
+        Func<CalcResultSummaryProducerFeesByMaterial, RAMTonnageGroup> selector
     ) =>
-        (
-            total: rows.Sum(r => selector(r).total ?? 0),
-            red:   rows.Sum(r => selector(r).red   ?? 0),
-            amber: rows.Sum(r => selector(r).amber ?? 0),
-            green: rows.Sum(r => selector(r).green ?? 0)
-        );
+        rows.Aggregate(new RAMTonnageGroup { Total = 0, Red = 0, Amber = 0, Green = 0 }, (acc, src) =>
+        {
+            var selected = selector(src);
+
+            return acc with 
+            {
+                Total = acc.Total + (selected.Total ?? 0),
+                Red =   acc.Red   + (selected.Red ?? 0),
+                Amber = acc.Amber + (selected.Amber ?? 0),
+                Green = acc.Green + (selected.Green ?? 0)
+            };
+        });
 
     private Organisation? GetProducerDetailsForTotalRow(int producerId, bool isOverAllTotalRow)
     {
@@ -493,3 +552,4 @@ internal sealed class ProducerRowBuilder(
         return parentProducer;
     }
 }
+

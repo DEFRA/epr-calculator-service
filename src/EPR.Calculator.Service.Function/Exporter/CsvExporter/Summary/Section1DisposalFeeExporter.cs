@@ -3,6 +3,7 @@ using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 
@@ -39,8 +40,8 @@ public class Section1DisposalFeeExporter : ICalcResultSummaryPartExporter
         csvContent.Append(CsvSanitiser.SanitiseData(producer.LADisposalCostsSection1.FeeWithBadDebtProvision.Wales          , DecimalPlaces.Two, null, isCurrency: true));
         csvContent.Append(CsvSanitiser.SanitiseData(producer.LADisposalCostsSection1.FeeWithBadDebtProvision.Scotland       , DecimalPlaces.Two, null, isCurrency: true));
         csvContent.Append(CsvSanitiser.SanitiseData(producer.LADisposalCostsSection1.FeeWithBadDebtProvision.NorthernIreland, DecimalPlaces.Two, null, isCurrency: true));
-        AppendCsvValue(csvContent, producer.TonnageChangeCount, producer.IsOverallTotalRow);
-        AppendCsvValue(csvContent, producer.TonnageChangeAdvice, producer.IsOverallTotalRow);
+        AppendCsvValue(csvContent, producer.TonnageChangeCount, producer.IsOverallRow);
+        AppendCsvValue(csvContent, producer.TonnageChangeAdvice, producer.IsOverallRow);
     }
 
     private static void AppendCsvValue(

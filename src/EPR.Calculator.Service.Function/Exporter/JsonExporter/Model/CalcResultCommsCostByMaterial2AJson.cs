@@ -3,6 +3,7 @@ using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Utils;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.JsonExporter.Model;
 
@@ -27,7 +28,7 @@ public record CalcResultCommsCostByMaterial2AJson
 
                 if (item.Key == MaterialCodes.Glass)
                 {
-                    breakdown.HouseholdDrinksContainersTonnageGlass = item.Value.HouseholdDrinksContainersTonnage;
+                    breakdown.HouseholdDrinksContainersTonnageGlass = item.Value.HDCTonnage;
                 }
 
                 materialBreakdown.Add(breakdown);
@@ -90,10 +91,10 @@ public record CalcResultCommsCostByMaterial2AMaterialBreakdown
         return new CalcResultCommsCostByMaterial2AMaterialBreakdown
         {
             MaterialName                             = materialName,
-            HouseholdPackagingWasteTonnage           = item.HouseholdPackagingWasteTonnage,
+            HouseholdPackagingWasteTonnage           = item.HouseholdTonnage,
             PublicBinTonnage                         = item.PublicBinTonnage,
-            TotalTonnage                             = item.TotalReportedTonnage,
-            PricePerTonne                            = CurrencyConverterUtils.ConvertToCurrency(item.PriceperTonne, (int)DecimalPlaces.Four),
+            TotalTonnage                             = item.TotalTonnage,
+            PricePerTonne                            = CurrencyConverterUtils.ConvertToCurrency(item.PricePerTonne, (int)DecimalPlaces.Four),
             ProducerTotalCostWithoutBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(item.Costs.FeeWithoutBadDebtProvision),
             BadDebtProvision                         = CurrencyConverterUtils.ConvertToCurrency(item.Costs.BadDebtProvision),
             ProducerTotalCostwithBadDebtProvision    = CurrencyConverterUtils.ConvertToCurrency(item.Costs.FeeWithBadDebtProvision.Total),

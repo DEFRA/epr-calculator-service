@@ -654,12 +654,12 @@ public class CalcResultProjectedProducersBuilderTest : TestsFor<CalcResultProjec
             row[MaterialCodeI]  = materialCode;
             row[PackagingTypeI] = packagingType;
             row[TotalTonnageI]  = (tonnage ?? 0m).ToString();
-            row[RTonnageI]      = (projectedRamTonnage?.RedTonnage ?? 0m).ToString();
-            row[RMTonnageI]     = (projectedRamTonnage?.RedMedicalTonnage ?? 0m).ToString();
-            row[ATonnageI]      = (projectedRamTonnage?.AmberTonnage ?? 0m).ToString();
-            row[AMTonnageI]     = (projectedRamTonnage?.AmberMedicalTonnage ?? 0m).ToString();
-            row[GTonnageI]      = (projectedRamTonnage?.GreenTonnage ?? 0m).ToString();
-            row[GMTonnageI]     = (projectedRamTonnage?.GreenMedicalTonnage ?? 0m).ToString();
+            row[RTonnageI]      = (projectedRamTonnage?.Red ?? 0m).ToString();
+            row[RMTonnageI]     = (projectedRamTonnage?.RedMedical ?? 0m).ToString();
+            row[ATonnageI]      = (projectedRamTonnage?.Amber ?? 0m).ToString();
+            row[AMTonnageI]     = (projectedRamTonnage?.AmberMedical ?? 0m).ToString();
+            row[GTonnageI]      = (projectedRamTonnage?.Green ?? 0m).ToString();
+            row[GMTonnageI]     = (projectedRamTonnage?.GreenMedical ?? 0m).ToString();
             return row;
         }
 

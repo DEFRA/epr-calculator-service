@@ -1,4 +1,6 @@
-﻿namespace EPR.Calculator.Service.Function.Models
+﻿using EPR.Calculator.API.Data.DataModels;
+
+namespace EPR.Calculator.Service.Function.Models
 {
     public record RAMProportions
     {
@@ -43,12 +45,12 @@
             var hdcTonnage = ProjectedHouseholdDrinksContainerRAMTonnage != null ? getTonnage(ProjectedHouseholdDrinksContainerRAMTonnage) : 0;
             return getTonnage(ProjectedHouseholdRAMTonnage) + getTonnage(ProjectedPublicBinRAMTonnage) + hdcTonnage;
         }
-        public decimal GetTotalProjectedRedTonnage(){ return GetTotalProjectedRamTonnage(t => t.RedTonnage);}
-        public decimal GetTotalProjectedAmberTonnage() { return GetTotalProjectedRamTonnage(t => t.AmberTonnage); }
-        public decimal GetTotalProjectedGreenTonnage() { return GetTotalProjectedRamTonnage(t => t.GreenTonnage); }
-        public decimal GetTotalProjectedRedMedicalTonnage() { return GetTotalProjectedRamTonnage(t => t.RedMedicalTonnage); }
-        public decimal GetTotalProjectedAmberMedicalTonnage() { return GetTotalProjectedRamTonnage(t => t.AmberMedicalTonnage); }
-        public decimal GetTotalProjectedGreenMedicalTonnage() { return GetTotalProjectedRamTonnage(t => t.GreenMedicalTonnage); }
+        public decimal GetTotalProjectedRedTonnage(){ return GetTotalProjectedRamTonnage(t => t.Red);}
+        public decimal GetTotalProjectedAmberTonnage() { return GetTotalProjectedRamTonnage(t => t.Amber); }
+        public decimal GetTotalProjectedGreenTonnage() { return GetTotalProjectedRamTonnage(t => t.Green); }
+        public decimal GetTotalProjectedRedMedicalTonnage() { return GetTotalProjectedRamTonnage(t => t.RedMedical); }
+        public decimal GetTotalProjectedAmberMedicalTonnage() { return GetTotalProjectedRamTonnage(t => t.AmberMedical); }
+        public decimal GetTotalProjectedGreenMedicalTonnage() { return GetTotalProjectedRamTonnage(t => t.GreenMedical); }
 
         public bool IsWithoutRamTonnage()
         {

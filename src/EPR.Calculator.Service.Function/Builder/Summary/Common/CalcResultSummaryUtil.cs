@@ -80,7 +80,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
                 .Select(x => x.SelfManagedConsumerWasteDataPerMaterials[material.Code])
                 .Single();
 
-        public static (decimal? total, decimal? red,  decimal? amber, decimal? green) GetPricePerTonne(
+        public static RAMTonnageGroup GetPricePerTonne(
             MaterialDetail material,
             CalcResult calcResult
         )
@@ -89,24 +89,24 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
             if (laDisposalCostDataDetail == null)
             {
-                return (total: null, red: null, amber: null, green: null);
+                return RAMTonnageGroup.Empty;
             }
 
             var total = laDisposalCostDataDetail.DisposalCostPricePerTonne ?? 0m;
 
             if (calcResult.CalcResultModulation is not null) {
-                return (
-                    total: total,
-                    red:   calcResult.CalcResultModulation.MaterialModulation[material].RedMaterialDisposalCost,
-                    amber: calcResult.CalcResultModulation.MaterialModulation[material].AmberMaterialDisposalCost,
-                    green: calcResult.CalcResultModulation.MaterialModulation[material].GreenMaterialDisposalCost
-                );
+                return new RAMTonnageGroup { 
+                    Total = total,
+                    Red = calcResult.CalcResultModulation.MaterialModulation[material].RedMaterialDisposalCost, 
+                    Amber = calcResult.CalcResultModulation.MaterialModulation[material].AmberMaterialDisposalCost, 
+                    Green = calcResult.CalcResultModulation.MaterialModulation[material].GreenMaterialDisposalCost
+                };
             } else {
-                return (total: total, red: null, amber: null, green: null);
+                return new RAMTonnageGroup { Total = total, Red = null, Amber = null, Green = null };
             }
         }
 
-        public static (decimal? total, decimal? red,  decimal? amber, decimal? green) GetProducerDisposalFee(
+        public static RAMTonnageGroup GetProducerDisposalFee(
             MaterialDetail material,
             CalcResult calcResult,
             SelfManagedConsumerWasteData smcw
@@ -115,18 +115,19 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             var pricePerTonne = GetPricePerTonne(material, calcResult);
 
             if (calcResult.CalcResultModulation is not null) {
-                var red   = smcw.NetReportedTonnage.red   * pricePerTonne.red;
-                var amber = smcw.NetReportedTonnage.amber * pricePerTonne.amber;
-                var green = smcw.NetReportedTonnage.green * pricePerTonne.green;
-                return (
-                    total: red + amber + green,
-                    red:   red,
-                    amber: amber,
-                    green: green
-                );
+                var red   = smcw.NetReportedTonnage.red   * pricePerTonne.Red;
+                var amber = smcw.NetReportedTonnage.amber * pricePerTonne.Amber;
+                var green = smcw.NetReportedTonnage.green * pricePerTonne.Green;
+
+                return new RAMTonnageGroup { 
+                    Total = red + amber + green,
+                    Red = red, 
+                    Amber = amber, 
+                    Green = green 
+                };
             } else {
-                var total = (smcw.NetReportedTonnage.total ?? 0) * (pricePerTonne.total ?? 0);
-                return (total: total, red: null, amber: null, green: null);
+                var total = (smcw.NetReportedTonnage.total ?? 0) * (pricePerTonne.Total ?? 0);
+                return new RAMTonnageGroup { Total = total, Red = null, Amber = null, Green = null };
             }
         }
 

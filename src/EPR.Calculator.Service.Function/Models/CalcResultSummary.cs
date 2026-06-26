@@ -1,7 +1,10 @@
-﻿namespace EPR.Calculator.Service.Function.Models
+﻿using EPR.Calculator.API.Data.DataModels;
+
+namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResultSummary
     {
+        //Possible remove - see if this is the same as the overall total sections?
         public CalcResultSummaryBadDebtProvision LADisposalCostsSection1 { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
 
         public CalcResultSummaryBadDebtProvision CommsCostsSection2a { get; set; } = CalcResultSummaryBadDebtProvision.Empty;

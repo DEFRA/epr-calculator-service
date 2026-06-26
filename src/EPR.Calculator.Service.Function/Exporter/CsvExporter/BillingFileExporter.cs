@@ -16,6 +16,7 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 using EPR.Calculator.Service.Function.Features.BillingRun.Contexts;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter;
 
@@ -119,20 +120,21 @@ public class BillingFileExporter(
     // TODO can we remove this row? // NOSONAR
     private static readonly CalcResultSummaryProducerDisposalFees ZeroedTotalRow = new()
     {
+        //TODO
+        CalculatorRunId            = 0,
         ProducerId                 = 0,
         SubsidiaryId               = string.Empty,
         ProducerName               = string.Empty,
         TradingName                = string.Empty,
         Level                      = string.Empty,
         StatusCode                 = string.Empty,
-        IsProducerScaledup         = string.Empty,
-        IsPartialObligation        = string.Empty,
+        IsProducerScaledup         = false,
+        IsPartialObligation        = false,
         JoinerDate                 = string.Empty,
         LeaverDate                 = CommonConstants.Totals,
         TonnageChangeCount         = string.Empty,
         TonnageChangeAdvice        = string.Empty,
-        IsTotalRow                 = true,
-        IsOverallTotalRow          = true,
+        IsOverallRow               = true,
         BillingInstructionSection  = new CalcResultSummaryBillingInstruction { SuggestedBillingInstruction = string.Empty }
     };
 

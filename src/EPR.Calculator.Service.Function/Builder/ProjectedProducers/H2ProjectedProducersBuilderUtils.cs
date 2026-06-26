@@ -46,11 +46,11 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                 PublicBinTonnageWithoutRAM                  = pbWithoutRam,
                 HouseholdDrinksContainerTonnageWithoutRAM   = hdcWithoutRam,
                 ProjectedHouseholdTonnage                   = hhTonnage,
-                ProjectedHouseholdRAMTonnage                = hhRAMTonnage with { RedTonnage = hhRAMTonnage.RedTonnage + hhWithoutRam },
+                ProjectedHouseholdRAMTonnage                = hhRAMTonnage with { Red = hhRAMTonnage.Red + hhWithoutRam },
                 ProjectedPublicBinTonnage                   = pbTonnage,
-                ProjectedPublicBinRAMTonnage                = pbRAMTonnage with { RedTonnage = pbRAMTonnage.RedTonnage + pbWithoutRam },
+                ProjectedPublicBinRAMTonnage                = pbRAMTonnage with { Red = pbRAMTonnage.Red + pbWithoutRam },
                 ProjectedHouseholdDrinksContainerTonnage    = hdcTonnage,
-                ProjectedHouseholdDrinksContainerRAMTonnage = hdcRAMTonnage != null ? hdcRAMTonnage with { RedTonnage = hdcRAMTonnage.RedTonnage + hdcWithoutRam!.Value } : null
+                ProjectedHouseholdDrinksContainerRAMTonnage = hdcRAMTonnage != null ? hdcRAMTonnage with { Red = hdcRAMTonnage.Red + hdcWithoutRam!.Value } : null
             };
         }
 
