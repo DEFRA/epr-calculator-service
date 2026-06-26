@@ -93,18 +93,18 @@ public class BillingFileExporter(
 
     private static CalcResultSummary GetAcceptedProducersCalcResults(CalcResultSummary calcResultSummary, ImmutableHashSet<int> acceptedProducerIds)
     {
+        var billingOverallTotal = ZeroedTotalRow();
+        billingOverallTotal.LADisposalCostsSection1  = calcResultSummary.OverallTotal.LADisposalCostsSection1;
+        billingOverallTotal.CommsCostsSection2a      = calcResultSummary.OverallTotal.CommsCostsSection2a;
+        billingOverallTotal.CommsCostsSection2b      = calcResultSummary.OverallTotal.CommsCostsSection2b;
+        billingOverallTotal.CommsCostsSection2c      = calcResultSummary.OverallTotal.CommsCostsSection2c;
+        billingOverallTotal.SaOperatingCostsSection3 = calcResultSummary.OverallTotal.SaOperatingCostsSection3;
+        billingOverallTotal.LaDataPrepSection4       = calcResultSummary.OverallTotal.LaDataPrepSection4;
+        billingOverallTotal.SaSetupCostsSection5     = calcResultSummary.OverallTotal.SaSetupCostsSection5;
         return new CalcResultSummary
         {
-            LADisposalCostsSection1                   = calcResultSummary.LADisposalCostsSection1,
-            CommsCostsSection2a                       = calcResultSummary.CommsCostsSection2a,
-            CommsCostsSection2b                       = calcResultSummary.CommsCostsSection2b,
-            CommsCostsSection2c                       = calcResultSummary.CommsCostsSection2c,
-            SaOperatingCostsSection3                  = calcResultSummary.SaOperatingCostsSection3,
-            LaDataPrepSection4                        = calcResultSummary.LaDataPrepSection4,
-            SaSetupCostsSection5                      = calcResultSummary.SaSetupCostsSection5,
-            TotalOnePlus2A2B2CFeeWithBadDebtProvision = calcResultSummary.TotalOnePlus2A2B2CFeeWithBadDebtProvision,
-            ProducerDisposalFees                      = GetAcceptedProducerDisposalFees(calcResultSummary.ProducerDisposalFees.ToList(), acceptedProducerIds),
-            OverallTotal                              = ZeroedTotalRow
+            ProducerDisposalFees = GetAcceptedProducerDisposalFees(calcResultSummary.ProducerDisposalFees.ToList(), acceptedProducerIds),
+            OverallTotal         = billingOverallTotal
         };
     }
 
@@ -118,7 +118,7 @@ public class BillingFileExporter(
     }
 
     // TODO can we remove this row? // NOSONAR
-    private static readonly CalcResultSummaryProducerDisposalFees ZeroedTotalRow = new()
+    private static CalcResultSummaryProducerDisposalFees ZeroedTotalRow() => new()
     {
         //TODO
         CalculatorRunId            = 0,

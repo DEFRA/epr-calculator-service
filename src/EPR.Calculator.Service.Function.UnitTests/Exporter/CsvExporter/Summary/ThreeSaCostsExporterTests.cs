@@ -32,7 +32,7 @@ public class ThreeSaCostsExporterTests
               null,
               null
             ],
-            ["£3077.22", "£3900.00", "£3261.86", null, null, null, null],
+            ["£3077.22", "£184.63", "£3261.86", null, null, null, null],
             ["3 Total Producer Fee for SA Operating Costs In proportion to Percentage of Overall Producer Cost of (1+2a+2b+2c) w/o Bad Debt provision",
              "Bad Debt provision for 3",
              "3 Total Producer Fee for SA Operating Costs In proportion to Percentage of Overall Producer Cost of (1+2a+2b+2c) with Bad Debt provision",

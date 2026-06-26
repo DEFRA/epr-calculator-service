@@ -77,6 +77,7 @@ public class BillingInstructionsProducerTests
     {
         var summary = new CalcResultSummary
         {
+            OverallTotal = TestDataHelper.GetOverallTotalRow(),
             ProducerDisposalFees =
             [
                 new CalcResultSummaryProducerDisposalFees
@@ -122,6 +123,7 @@ public class BillingInstructionsProducerTests
     {
         var summary = new CalcResultSummary
         {
+            OverallTotal = TestDataHelper.GetOverallTotalRow(),
             ProducerDisposalFees = (List<CalcResultSummaryProducerDisposalFees>)
             [
                 new CalcResultSummaryProducerDisposalFees
@@ -164,6 +166,7 @@ public class BillingInstructionsProducerTests
     {
         var summary = new CalcResultSummary
         {
+            OverallTotal = TestDataHelper.GetOverallTotalRow(),
             ProducerDisposalFees = (List<CalcResultSummaryProducerDisposalFees>)
             [
                 new CalcResultSummaryProducerDisposalFees
@@ -379,7 +382,8 @@ public class BillingInstructionsProducerTests
             TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = new ByCountryCost { England = 100m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
         };
         var summary = new CalcResultSummary {
-            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee }
+            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee },
+            OverallTotal = TestDataHelper.GetOverallTotalRow()
         };
 
         List<InvoicedProducer> invoiced =
@@ -419,7 +423,8 @@ public class BillingInstructionsProducerTests
             }
         };
         var summary = new CalcResultSummary {
-            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee }
+            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee },
+            OverallTotal = TestDataHelper.GetOverallTotalRow()
         };
 
         var otherCost = new CalcResultParameterOtherCost
@@ -462,7 +467,8 @@ public class BillingInstructionsProducerTests
             TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = new ByCountryCost { England = 200m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
         };
         var summary = new CalcResultSummary {
-            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee }
+            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee },
+            OverallTotal = TestDataHelper.GetOverallTotalRow()
         };
 
         List<InvoicedProducer> invoiced =
@@ -504,7 +510,8 @@ public class BillingInstructionsProducerTests
             TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = new ByCountryCost { England = 150m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
         };
         var summary = new CalcResultSummary {
-            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee }
+            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee },
+            OverallTotal = TestDataHelper.GetOverallTotalRow()
         };
 
         List<InvoicedProducer> invoiced =
@@ -546,7 +553,8 @@ public class BillingInstructionsProducerTests
             TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = new ByCountryCost { England = 40m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
         };
         var summary = new CalcResultSummary {
-            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee }
+            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee },
+            OverallTotal = TestDataHelper.GetOverallTotalRow()
         };
 
         List<InvoicedProducer> invoiced =
@@ -588,7 +596,8 @@ public class BillingInstructionsProducerTests
             TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = new ByCountryCost { England = 115m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
         };
         var summary = new CalcResultSummary {
-            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee }
+            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee },
+            OverallTotal = TestDataHelper.GetOverallTotalRow()
         };
 
         List<InvoicedProducer> invoiced =
@@ -631,7 +640,8 @@ public class BillingInstructionsProducerTests
             TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = new ByCountryCost { England = 200m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
         };
         var summary = new CalcResultSummary {
-            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee }
+            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee },
+            OverallTotal = TestDataHelper.GetOverallTotalRow()
         };
 
         List<InvoicedProducer> invoiced =
@@ -674,7 +684,8 @@ public class BillingInstructionsProducerTests
             TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = new ByCountryCost { England = 200m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
         };
         var summary = new CalcResultSummary {
-            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee }
+            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee },
+            OverallTotal = TestDataHelper.GetOverallTotalRow()
         };
 
         List<InvoicedProducer> invoiced =
@@ -717,7 +728,8 @@ public class BillingInstructionsProducerTests
             TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = new ByCountryCost { England = 160m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
         };
         var summary = new CalcResultSummary {
-            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee }
+            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee },
+            OverallTotal = TestDataHelper.GetOverallTotalRow()
         };
 
         List<InvoicedProducer> invoiced =
@@ -760,7 +772,8 @@ public class BillingInstructionsProducerTests
             TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = new ByCountryCost { England = 40m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
         };
         var summary = new CalcResultSummary {
-            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee }
+            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee },
+            OverallTotal = TestDataHelper.GetOverallTotalRow()
         };
 
         List<InvoicedProducer> invoiced =
@@ -803,7 +816,8 @@ public class BillingInstructionsProducerTests
             TotalProducerBillBreakdownCosts = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = new ByCountryCost { England = 110m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
         };
         var summary = new CalcResultSummary {
-            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee }
+            ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees> { fee },
+            OverallTotal = TestDataHelper.GetOverallTotalRow()
         };
 
         List<InvoicedProducer> invoiced =

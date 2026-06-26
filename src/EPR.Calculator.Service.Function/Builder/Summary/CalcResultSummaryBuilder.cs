@@ -164,59 +164,55 @@ public class CalcResultSummaryBuilder(
     {
         var result = new CalcResultSummary { };
 
-        if (orderedProducerDetails.Count > 0)
+        if (orderedProducerDetails.Count == 0)
         {
-            var producerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>();
-
-            foreach (var producerAndSubsidiaries in orderedProducerDetails.GroupBy(x => x.ProducerId))
-            {
-                var subsidiariesList = producerAndSubsidiaries.ToList();
-                bool hasGroupTotalRow = !(subsidiariesList.Count == 1 && subsidiariesList[0].SubsidiaryId == null);
-
-                // Build L2 rows first so the L1 total can be derived by aggregation.
-                var l2Rows = subsidiariesList
-                    .Select(producer => rowBuilder.GetProducerRow(runContext, projectedMaterialsLookup, hasGroupTotalRow, subsidiariesList, producer, materials, calcResult, totalPackagingTonnage, smcw))
-                    .ToList();
-
-                if (hasGroupTotalRow)
-                    producerDisposalFees.Add(rowBuilder.GetL1TotalRow(subsidiariesList[0].ProducerId, l2Rows, calcResult, smcw, materials));
-
-                producerDisposalFees.AddRange(l2Rows);
-            };
-
-            // Overall total: aggregate all Level-1 rows (one per producer group).
-            var l1Rows = producerDisposalFees.Where(r => r.Level == CommonConstants.LevelOne.ToString()).ToList();
-            var allTotalRow = ProducerRowBuilder.GetOverallTotalRow(l1Rows, materials);
-            result.OverallTotal = allTotalRow;
-
-            result.ProducerDisposalFees = producerDisposalFees;
-
-            result.LADisposalCostsSection1 = allTotalRow.LADisposalCostsSection1;
-            result.CommsCostsSection2a     = allTotalRow.CommsCostsSection2a;
-
-            // Section 2b comms cost
-            TwoBCommsCostProducer.SetValues(calcResult, result);
-
-            TwoCCommsCostProducer.SetValues(calcResult, result);
-
-            // Section Total bill (1 + 2a + 2b + 2c)
-            OnePlus2A2B2CProducer.SetValues(result);
-
-            // Section-3 SA Operating costs section
-            ThreeSaCostsProducer.SetValues(calcResult, result);
-
-            // Section-4 LA data prep costs
-            LaDataPrepCostsProducer.SetValues(calcResult, result);
-
-            // Section-5 SA setup costs
-            SaSetupCostsProducer.SetValues(calcResult, result);
-
-            // Total bill section
-            TotalBillBreakdownProducer.SetValues(result);
-
-            // Billing instructions section
-            BillingInstructionsProducer.SetValues(result, producerInvoicedMaterialNetTonnage, calcResult.CalcResultParameterOtherCost);
+            result.OverallTotal = ProducerRowBuilder.GetOverallTotalRow([], materials);
+            return result;
         }
+
+        var producerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>();
+
+        foreach (var producerAndSubsidiaries in orderedProducerDetails.GroupBy(x => x.ProducerId))
+        {
+            var subsidiariesList = producerAndSubsidiaries.ToList();
+            bool hasGroupTotalRow = !(subsidiariesList.Count == 1 && subsidiariesList[0].SubsidiaryId == null);
+
+            // Build L2 rows first so the L1 total can be derived by aggregation.
+            var l2Rows = subsidiariesList
+                .Select(producer => rowBuilder.GetProducerRow(runContext, projectedMaterialsLookup, hasGroupTotalRow, subsidiariesList, producer, materials, calcResult, totalPackagingTonnage, smcw))
+                .ToList();
+
+            if (hasGroupTotalRow)
+                producerDisposalFees.Add(rowBuilder.GetL1TotalRow(subsidiariesList[0].ProducerId, l2Rows, calcResult, smcw, materials));
+
+            producerDisposalFees.AddRange(l2Rows);
+        }
+
+        var l1Rows = producerDisposalFees.Where(r => r.Level == CommonConstants.LevelOne.ToString()).ToList();
+        result.OverallTotal = ProducerRowBuilder.GetOverallTotalRow(l1Rows, materials);
+        result.ProducerDisposalFees = producerDisposalFees;
+
+        // Section 2b comms cost
+        TwoBCommsCostProducer.SetValues(calcResult, result);
+        TwoCCommsCostProducer.SetValues(calcResult, result);
+
+        // Section Total bill (1 + 2a + 2b + 2c)
+        OnePlus2A2B2CProducer.SetValues(result);
+
+        // Section-3 SA Operating costs section
+        ThreeSaCostsProducer.SetValues(calcResult, result);
+
+        // Section-4 LA data prep costs
+        LaDataPrepCostsProducer.SetValues(calcResult, result);
+
+        // Section-5 SA setup costs
+        SaSetupCostsProducer.SetValues(calcResult, result);
+
+        // Total bill section
+        TotalBillBreakdownProducer.SetValues(result);
+
+        // Billing instructions section
+        BillingInstructionsProducer.SetValues(result, producerInvoicedMaterialNetTonnage, calcResult.CalcResultParameterOtherCost);
 
         return result;
     }

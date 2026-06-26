@@ -32,7 +32,7 @@ public class Section1DisposalExporterTests
              null,
              null
             ],
-            ["£4423.39", "£6021.37", "£4688.80", null, null, null, null],
+            ["£4423.39", "£265.40", "£4688.80", null, null, null, null],
             ["1 Total Producer Fee for LA Disposal Costs w/o Bad Debt provision",
              "Bad Debt Provision for 1",
              "1 Total Producer Fee for LA Disposal Costs with Bad Debt provision",

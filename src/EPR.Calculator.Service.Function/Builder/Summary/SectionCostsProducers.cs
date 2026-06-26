@@ -16,7 +16,6 @@ public static class ThreeSaCostsProducer
             badDebt:       calcResult.CalcResultParameterOtherCost.BadDebtValue,
             total:         calcResult.CalcResultParameterOtherCost.SaOperatingCost.Total,
             apportionment: calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment,
-            setHeader: (s, p) => s.SaOperatingCostsSection3 = p, // gitleaks:allow
             setFee:    (f, p) => f.SaOperatingCostsSection3 = p
         );
 }
@@ -29,7 +28,6 @@ public static class LaDataPrepCostsProducer
             badDebt:       calcResult.CalcResultParameterOtherCost.BadDebtValue,
             total:         calcResult.CalcResultParameterOtherCost.LaDataPrepCharge.Total,
             apportionment: calcResult.CalcResultParameterOtherCost.CountryApportionment,
-            setHeader: (s, p) => s.LaDataPrepSection4 = p,
             setFee:    (f, p) => f.LaDataPrepSection4 = p
         );
 }
@@ -42,7 +40,6 @@ public static class SaSetupCostsProducer
             badDebt:       calcResult.CalcResultParameterOtherCost.BadDebtValue,
             total:         calcResult.CalcResultParameterOtherCost.SchemeSetupCost.Total,
             apportionment: calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment,
-            setHeader: (s, p) => s.SaSetupCostsSection5 = p,
             setFee:    (f, p) => f.SaSetupCostsSection5 = p
         );
 }
@@ -54,15 +51,12 @@ internal static class SectionCosts
         decimal badDebt,
         decimal total,
         ByCountryApportionment apportionment,
-        Action<CalcResultSummary, CalcResultSummaryBadDebtProvision> setHeader,
         Action<CalcResultSummaryProducerDisposalFees, CalcResultSummaryBadDebtProvision> setFee
     )
     {
-        setHeader(summary, BadDebtProvision(badDebt, total, apportionment, 100m));
         foreach (var fee in summary.ProducerDisposalFees)
             setFee(fee, BadDebtProvision(badDebt, total, apportionment, fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C));
-        if (summary.OverallTotal is not null)
-            setFee(summary.OverallTotal, BadDebtProvision(badDebt, total, apportionment, summary.OverallTotal.ProducerOverallPercentageOfCostsForOnePlus2A2B2C));
+        setFee(summary.OverallTotal, BadDebtProvision(badDebt, total, apportionment, summary.OverallTotal.ProducerOverallPercentageOfCostsForOnePlus2A2B2C));
     }
 
     internal static CalcResultSummaryBadDebtProvision BadDebtProvision(

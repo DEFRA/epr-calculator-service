@@ -69,22 +69,19 @@ public static class BillingInstructionsProducer
             };
         }
 
-        if (result.OverallTotal is not null)
+        result.OverallTotal.BillingInstructionSection = new CalcResultSummaryBillingInstruction
         {
-            result.OverallTotal.BillingInstructionSection = new CalcResultSummaryBillingInstruction
-            {
-                CurrentYearInvoiceTotalToDate       = totalTonnage,
-                TonnageChangeSinceLastInvoice       = string.Empty,
-                LiabilityDifference                 = liabilityDifferenceRunningTotal == 0m ? null : liabilityDifferenceRunningTotal,
-                MaterialThresholdBreached           = string.Empty,
-                TonnageThresholdBreached            = string.Empty,
-                PercentageLiabilityDifference       = null,
-                MaterialPercentageThresholdBreached = string.Empty,
-                TonnagePercentageThresholdBreached  = string.Empty,
-                SuggestedBillingInstruction         = string.Empty,
-                SuggestedInvoiceAmount              = SuggestedInvoiceAmountTotal
-            };
-        }
+            CurrentYearInvoiceTotalToDate       = totalTonnage,
+            TonnageChangeSinceLastInvoice       = string.Empty,
+            LiabilityDifference                 = liabilityDifferenceRunningTotal == 0m ? null : liabilityDifferenceRunningTotal,
+            MaterialThresholdBreached           = string.Empty,
+            TonnageThresholdBreached            = string.Empty,
+            PercentageLiabilityDifference       = null,
+            MaterialPercentageThresholdBreached = string.Empty,
+            TonnagePercentageThresholdBreached  = string.Empty,
+            SuggestedBillingInstruction         = string.Empty,
+            SuggestedInvoiceAmount              = SuggestedInvoiceAmountTotal
+        };
     }
 
     private static decimal? GetCurrentYearInvoicedTotalToDate(CalcResultSummaryProducerDisposalFees fee, decimal? currentYearInvoicedTotalTonnage)

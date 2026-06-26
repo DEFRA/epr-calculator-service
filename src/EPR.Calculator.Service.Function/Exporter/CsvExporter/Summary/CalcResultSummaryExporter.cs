@@ -55,10 +55,7 @@ public class CalcResultSummaryExporter : ICalcResultSummaryExporter
             AddNewRow(csvContent, producer, runContext.RequiresModulation);
         }
 
-        if (resultSummary.OverallTotal is not null)
-        {
-            AddNewRow(csvContent, resultSummary.OverallTotal, runContext.RequiresModulation);
-        }
+        AddNewRow(csvContent, resultSummary.OverallTotal, runContext.RequiresModulation);
     }
 
     public void AddNewRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)

@@ -23,7 +23,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var runContext = TestDataHelper.CalculatorRun2025;
             var resultSummary = new CalcResultSummary
             {
-                ProducerDisposalFees = TestDataHelper.GetProducerDisposalFees()
+                ProducerDisposalFees = TestDataHelper.GetProducerDisposalFees(),
+                OverallTotal = TestDataHelper.GetOverallTotalRow()
             };
 
             var materials = TestDataHelper.GetMaterialDetails();

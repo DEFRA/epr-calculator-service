@@ -34,35 +34,35 @@ public class CalculationResultsJsonFromTests
         Assert.IsNotNull(roundTrippedData);
 
         // 1
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.LADisposalCostsSection1.FeeWithoutBadDebtProvision),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.OverallTotal.LADisposalCostsSection1.FeeWithoutBadDebtProvision),
             roundTrippedData["feeForLaDisposalCostsWithoutBadDebtprovision1"]);
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.LADisposalCostsSection1.BadDebtProvision),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.OverallTotal.LADisposalCostsSection1.BadDebtProvision),
             roundTrippedData["badDebtProvision1"]);
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.LADisposalCostsSection1.FeeWithBadDebtProvision.Total),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.OverallTotal.LADisposalCostsSection1.FeeWithBadDebtProvision.Total),
             roundTrippedData["feeForLaDisposalCostsWithBadDebtprovision1"]);
 
         // 2a
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.CommsCostsSection2a.FeeWithoutBadDebtProvision),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.OverallTotal.CommsCostsSection2a.FeeWithoutBadDebtProvision),
             roundTrippedData["feeForCommsCostsByMaterialWithoutBadDebtprovision2a"]);
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.CommsCostsSection2a.BadDebtProvision),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.OverallTotal.CommsCostsSection2a.BadDebtProvision),
             roundTrippedData["badDebtProvision2a"]);
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.CommsCostsSection2a.FeeWithBadDebtProvision.Total),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.OverallTotal.CommsCostsSection2a.FeeWithBadDebtProvision.Total),
             roundTrippedData["feeForCommsCostsByMaterialWitBadDebtprovision2a"]);
 
         // 2b
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.CommsCostsSection2b.FeeWithoutBadDebtProvision),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.OverallTotal.CommsCostsSection2b.FeeWithoutBadDebtProvision),
             roundTrippedData["feeForCommsCostsUkWideWithoutBadDebtprovision2b"]);
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.CommsCostsSection2b.BadDebtProvision),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.OverallTotal.CommsCostsSection2b.BadDebtProvision),
             roundTrippedData["badDebtProvision2b"]);
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.CommsCostsSection2b.FeeWithBadDebtProvision.Total),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.OverallTotal.CommsCostsSection2b.FeeWithBadDebtProvision.Total),
             roundTrippedData["feeForCommsCostsUkWideWithBadDebtprovision2b"]);
 
         // 2c
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.CommsCostsSection2c.FeeWithoutBadDebtProvision),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.OverallTotal.CommsCostsSection2c.FeeWithoutBadDebtProvision),
             roundTrippedData["feeForCommsCostsByCountryWithoutBadDebtprovision2c"]);
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.CommsCostsSection2c.BadDebtProvision),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.OverallTotal.CommsCostsSection2c.BadDebtProvision),
             roundTrippedData["badDebtProvision2c"]);
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.CommsCostsSection2c.FeeWithBadDebtProvision.Total),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.OverallTotal.CommsCostsSection2c.FeeWithBadDebtProvision.Total),
             roundTrippedData["feeForCommsCostsByCountryWideWithBadDebtprovision2c"]);
 
         // 1+2a+2b+2c
@@ -70,27 +70,27 @@ public class CalculationResultsJsonFromTests
             roundTrippedData["total12a2b2cWithBadDebt"]);
 
         // 3
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.SaOperatingCostsSection3.FeeWithoutBadDebtProvision),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.OverallTotal.SaOperatingCostsSection3.FeeWithoutBadDebtProvision),
             roundTrippedData["saOperatingCostsWithoutBadDebtProvision3"]);
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.SaOperatingCostsSection3.BadDebtProvision),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.OverallTotal.SaOperatingCostsSection3.BadDebtProvision),
             roundTrippedData["badDebtProvision3"]);
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.SaOperatingCostsSection3.FeeWithBadDebtProvision.Total),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.OverallTotal.SaOperatingCostsSection3.FeeWithBadDebtProvision.Total),
             roundTrippedData["saOperatingCostsWithBadDebtProvision3"]);
 
         // 4
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.LaDataPrepSection4.FeeWithoutBadDebtProvision),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.OverallTotal.LaDataPrepSection4.FeeWithoutBadDebtProvision),
             roundTrippedData["laDataPrepCostsWithoutBadDebtProvision4"]);
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.LaDataPrepSection4.BadDebtProvision),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.OverallTotal.LaDataPrepSection4.BadDebtProvision),
             roundTrippedData["badDebtProvision4"]);
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.LaDataPrepSection4.FeeWithBadDebtProvision.Total),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.OverallTotal.LaDataPrepSection4.FeeWithBadDebtProvision.Total),
             roundTrippedData["laDataPrepCostsWithbadDebtProvision4"]);
 
         // 5
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.SaSetupCostsSection5.FeeWithoutBadDebtProvision),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.OverallTotal.SaSetupCostsSection5.FeeWithoutBadDebtProvision),
             roundTrippedData["oneOffFeeSaSetupCostsWithoutBadDebtProvision5"]);
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.SaSetupCostsSection5.BadDebtProvision),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.OverallTotal.SaSetupCostsSection5.BadDebtProvision),
             roundTrippedData["badDebtProvision5"]);
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.SaSetupCostsSection5.FeeWithBadDebtProvision.Total),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.OverallTotal.SaSetupCostsSection5.FeeWithBadDebtProvision.Total),
             roundTrippedData["oneOffFeeSaSetupCostsWithBadDebtProvision5"]);
     }
 

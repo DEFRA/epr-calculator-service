@@ -25,7 +25,7 @@ public class OnePlus2a2b2cExporterTests
 
         var expected = new string?[][] {
             ["Total (1+2a+2b+2c) with Bad Debt provision", null],
-            ["£10230.26", null],
+            ["£10491.17", null],
             ["Producer Total (1+2a+2b+2c) with Bad Debt provision",
              "Producer Percentage of Overall Producer Cost for (1+2a+2b+2c)"],
             ["£10491.17", "4.73419134%"],

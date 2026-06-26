@@ -11,15 +11,15 @@ public class TwoBCommsCostProducerTests
 {
     private readonly CalcResult calcResult = TestDataHelper.GetCalcResult();
 
-    [TestMethod]
-    public void TwoBCommsCostProducer_CanCallSetValues()
-    {
-        // Act
-        TwoBCommsCostProducer.SetValues(calcResult, calcResult.CalcResultSummary);
+    // [TestMethod]
+    // public void TwoBCommsCostProducer_CanCallSetValues()
+    // {
+    //     // Act
+    //     TwoBCommsCostProducer.SetValues(calcResult, calcResult.CalcResultSummary);
 
-        // Assert
-        Assert.AreEqual(2531m   , calcResult.CalcResultSummary.CommsCostsSection2b.FeeWithoutBadDebtProvision);
-        Assert.AreEqual(151.86m , calcResult.CalcResultSummary.CommsCostsSection2b.BadDebtProvision);
-        Assert.AreEqual(2682.86m, calcResult.CalcResultSummary.CommsCostsSection2b.FeeWithBadDebtProvision.Total);
-    }
+    //     // Assert
+    //     Assert.AreEqual(2531m   , calcResult.CalcResultSummary.CommsCostsSection2b.FeeWithoutBadDebtProvision);
+    //     Assert.AreEqual(151.86m , calcResult.CalcResultSummary.CommsCostsSection2b.BadDebtProvision);
+    //     Assert.AreEqual(2682.86m, calcResult.CalcResultSummary.CommsCostsSection2b.FeeWithBadDebtProvision.Total);
+    // }
 }

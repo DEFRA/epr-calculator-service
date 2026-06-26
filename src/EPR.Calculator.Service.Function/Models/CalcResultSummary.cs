@@ -4,28 +4,14 @@ namespace EPR.Calculator.Service.Function.Models
 {
     public class CalcResultSummary
     {
-        //Possible remove - see if this is the same as the overall total sections?
-        public CalcResultSummaryBadDebtProvision LADisposalCostsSection1 { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
+        public IEnumerable<CalcResultSummaryProducerDisposalFees> ProducerDisposalFees { get; set; } = new List<CalcResultSummaryProducerDisposalFees>();
 
-        public CalcResultSummaryBadDebtProvision CommsCostsSection2a { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
+        public CalcResultSummaryProducerDisposalFees OverallTotal { get; set; }
 
-        public CalcResultSummaryBadDebtProvision CommsCostsSection2b { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
-
-        public CalcResultSummaryBadDebtProvision CommsCostsSection2c { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
-
-        // Section Total bill (1 + 2a + 2b + 2c)
-        public decimal TotalOnePlus2A2B2CFeeWithBadDebtProvision { get; set; } // TODO is this just for exporters?
-        // End Section Total bill (1 + 2a + 2b + 2c)
-
-        public CalcResultSummaryBadDebtProvision LaDataPrepSection4 { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
-
-        public CalcResultSummaryBadDebtProvision SaOperatingCostsSection3 { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
-
-        public CalcResultSummaryBadDebtProvision SaSetupCostsSection5 { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
-
-        public IEnumerable<CalcResultSummaryProducerDisposalFees> ProducerDisposalFees { get; set; }
-            = new List<CalcResultSummaryProducerDisposalFees>();
-
-        public CalcResultSummaryProducerDisposalFees? OverallTotal { get; set; }
+        public decimal TotalOnePlus2A2B2CFeeWithBadDebtProvision =>
+            OverallTotal.LADisposalCostsSection1.FeeWithBadDebtProvision.Total
+            + OverallTotal.CommsCostsSection2a.FeeWithBadDebtProvision.Total
+            + OverallTotal.CommsCostsSection2b.FeeWithBadDebtProvision.Total
+            + OverallTotal.CommsCostsSection2c.FeeWithBadDebtProvision.Total;
     }
 }

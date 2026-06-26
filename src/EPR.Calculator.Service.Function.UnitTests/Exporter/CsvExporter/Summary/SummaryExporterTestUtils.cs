@@ -23,9 +23,6 @@ public class SummaryExporterTestUtils
             csvContent.AppendLine();
         }
 
-        if (resultSummary.OverallTotal is not null)
-        {
-            exporter.AppendRow(csvContent, resultSummary.OverallTotal, applyModulation);
-        }
+        exporter.AppendRow(csvContent, resultSummary.OverallTotal, applyModulation);
     }
 }

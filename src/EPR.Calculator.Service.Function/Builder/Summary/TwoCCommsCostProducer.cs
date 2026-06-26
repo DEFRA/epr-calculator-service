@@ -9,7 +9,7 @@ public static class TwoCCommsCostProducer
     {
         var commsCostByCountry = calcResult.CalcResultCommsCostReportDetail.CommsCostByCountry;
         var badDebtProvision = calcResult.CalcResultParameterOtherCost.BadDebtValue / 100 * commsCostByCountry;
-        summary.CommsCostsSection2c = new CalcResultSummaryBadDebtProvision
+        summary.OverallTotal.CommsCostsSection2c = new CalcResultSummaryBadDebtProvision
         {
             FeeWithoutBadDebtProvision = commsCostByCountry.Total,
             BadDebtProvision           = badDebtProvision.Total,

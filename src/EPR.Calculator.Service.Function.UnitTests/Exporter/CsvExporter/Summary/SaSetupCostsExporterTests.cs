@@ -32,7 +32,7 @@ public class SaSetupCostsExporterTests
              null,
              null
             ],
-            ["£17500.00", "£1050.00", "£18550.00", null, null, null, null],
+            ["£2970.71", "£178.24", "£3148.95", null, null, null, null],
             ["5 Total Producer One-off fee for SA Set Up Costs In proportion to Percentage of Overall Producer Cost of (1+2a+2b+2c) w/o Bad Debt provision",
              "Bad Debt Provision for 5",
              "5 Total Producer One-off fee for SA Set Up Costs In proportion to Percentage of Overall Producer Cost of (1+2a+2b+2c) with Bad Debt provision",

@@ -32,7 +32,7 @@ public class CommsCost2bExporterTests
              null,
              null
             ],
-            ["£1339.10", "£80.35", "£1419.45", null, null, null, null],
+            ["£2844.06", "£170.64", "£3014.70", null, null, null, null],
             ["2b Total Producer Fee for Comms Costs - UK wide In proportion to Producer Tonnage w/o Bad Debt provision",
              "Bad Debt Provision for 2b",
              "2b Total Producer Fee for Comms Costs - UK wide In proportion to Producer Tonnage with Bad Debt provision",
