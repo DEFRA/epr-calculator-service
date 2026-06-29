@@ -54,7 +54,7 @@ namespace EPR.Calculator.Service.Function.Models
 
         public IEnumerable<CalcResultRejectedProducer> CalcResultRejectedProducers { get; set; } = [];
 
-        public CalcResultSummary CalcResultSummary { get; set; } = new() {};
+        public CalcResultSummary CalcResultSummary { get; set; } = new() { OverallTotal = new() { CalculatorRunId = 0, ProducerId = 0, SubsidiaryId = string.Empty, ProducerName = string.Empty } };
 
         public IEnumerable<CalcResultErrorReport> CalcResultErrorReports { get; set; } = [];
 

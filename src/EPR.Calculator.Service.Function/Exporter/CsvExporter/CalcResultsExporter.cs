@@ -67,7 +67,9 @@ public class CalcResultsExporter(
             scaledUpProducersExporter.Export(calcResult.CalcResultScaledupProducers, materials, showTotal : true, csvContent);
 
         partialObligationsExporter.Export(runContext, calcResult.CalcResultPartialObligations, materials, csvContent);
-        summaryExporter.Export(runContext, calcResult.CalcResultSummary, materials, csvContent);
+        var scaledupIds = calcResult.CalcResultScaledupProducers.ScaledupProducers.Select(p => p.ProducerId).ToList();
+        var partialIds = calcResult.CalcResultPartialObligations.PartialObligations.Select(p => (p.ProducerId, p.SubsidiaryId)).ToList();
+        summaryExporter.Export(runContext, calcResult.CalcResultSummary, materials, scaledupIds, partialIds, csvContent);
         calcResultErrorReportExporter.Export(calcResult.CalcResultErrorReports, csvContent);
 
         return csvContent.ToString();

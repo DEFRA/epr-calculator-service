@@ -310,7 +310,6 @@ public static partial class TestDataHelper
                     FeeWithBadDebtProvision    = new ByCountryCost { England = 607.4748035870169m, Wales = 300.7301007856519m, Scotland = 360.87612094278234m, NorthernIreland = 150.36505039282596m }
                 },
                 PercentageofProducerReportedTonnagevsAllProducers = 5.6741528450123m,
-                ProducerTotalOnePlus2A2B2CWithBadDeptProvision = 10491.167766844124m,
                 ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 4.7341913352015945m,
                 SaOperatingCostsSection3 = new CalcResultSummaryBadDebtProvision
                 {
@@ -390,7 +389,6 @@ public static partial class TestDataHelper
                     FeeWithBadDebtProvision    = new ByCountryCost { England = 607.4748035870169m, Wales = 300.7301007856519m, Scotland = 360.87612094278234m, NorthernIreland = 150.36505039282596m }
                 },
                 PercentageofProducerReportedTonnagevsAllProducers = 5.6741528450123m,
-                ProducerTotalOnePlus2A2B2CWithBadDeptProvision = 10491.167766844124m,
                 ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 4.7341913352015945m,
                 SaOperatingCostsSection3 = new CalcResultSummaryBadDebtProvision
                 {
@@ -438,7 +436,7 @@ public static partial class TestDataHelper
                 ProducerFeesByMaterial = GetProducerFeesByMaterial(applyModulation),
                 TonnageChangeCount = "0",
                 TonnageChangeAdvice = "",
-                IsOverallRow = true
+                IsOverallTotal = true
         };
     }
 
@@ -472,7 +470,6 @@ public static partial class TestDataHelper
                     FeeWithBadDebtProvision    = new ByCountryCost { England = 607.4748035870169m, Wales = 300.7301007856519m, Scotland = 360.87612094278234m, NorthernIreland = 150.36505039282596m }
                 },
                 PercentageofProducerReportedTonnagevsAllProducers = 5.6741528450123m,
-                ProducerTotalOnePlus2A2B2CWithBadDeptProvision = 10491.167766844124m,
                 ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 4.7341913352015945m,
                 SaOperatingCostsSection3 = new CalcResultSummaryBadDebtProvision
                 {

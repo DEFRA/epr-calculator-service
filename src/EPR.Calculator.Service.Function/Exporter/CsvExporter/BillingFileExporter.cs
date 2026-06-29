@@ -82,7 +82,9 @@ public class BillingFileExporter(
 
         var acceptedCalcResultSummary = GetAcceptedProducersCalcResults(calcResult.CalcResultSummary, runContext.AcceptedProducerIds);
 
-        summaryExporter.Export(runContext, acceptedCalcResultSummary, materials, csvContent);
+        var scaledupIds = calcResult.CalcResultScaledupProducers.ScaledupProducers.Select(p => p.ProducerId).ToList();
+        var partialIds = calcResult.CalcResultPartialObligations.PartialObligations.Select(p => (p.ProducerId, p.SubsidiaryId)).ToList();
+        summaryExporter.Export(runContext, acceptedCalcResultSummary, materials, scaledupIds, partialIds, csvContent);
 
         csvContent = ResetTotals(csvContent.ToString());
 
@@ -94,13 +96,14 @@ public class BillingFileExporter(
     private static CalcResultSummary GetAcceptedProducersCalcResults(CalcResultSummary calcResultSummary, ImmutableHashSet<int> acceptedProducerIds)
     {
         var billingOverallTotal = ZeroedTotalRow();
-        billingOverallTotal.LADisposalCostsSection1  = calcResultSummary.OverallTotal.LADisposalCostsSection1;
-        billingOverallTotal.CommsCostsSection2a      = calcResultSummary.OverallTotal.CommsCostsSection2a;
-        billingOverallTotal.CommsCostsSection2b      = calcResultSummary.OverallTotal.CommsCostsSection2b;
-        billingOverallTotal.CommsCostsSection2c      = calcResultSummary.OverallTotal.CommsCostsSection2c;
-        billingOverallTotal.SaOperatingCostsSection3 = calcResultSummary.OverallTotal.SaOperatingCostsSection3;
-        billingOverallTotal.LaDataPrepSection4       = calcResultSummary.OverallTotal.LaDataPrepSection4;
-        billingOverallTotal.SaSetupCostsSection5     = calcResultSummary.OverallTotal.SaSetupCostsSection5;
+        billingOverallTotal.LADisposalCostsSection1                          = calcResultSummary.OverallTotal.LADisposalCostsSection1;
+        billingOverallTotal.CommsCostsSection2a                              = calcResultSummary.OverallTotal.CommsCostsSection2a;
+        billingOverallTotal.CommsCostsSection2b                              = calcResultSummary.OverallTotal.CommsCostsSection2b;
+        billingOverallTotal.CommsCostsSection2c                              = calcResultSummary.OverallTotal.CommsCostsSection2c;
+        billingOverallTotal.SaOperatingCostsSection3                         = calcResultSummary.OverallTotal.SaOperatingCostsSection3;
+        billingOverallTotal.LaDataPrepSection4                               = calcResultSummary.OverallTotal.LaDataPrepSection4;
+        billingOverallTotal.SaSetupCostsSection5                             = calcResultSummary.OverallTotal.SaSetupCostsSection5;
+        billingOverallTotal.ProducerOverallPercentageOfCostsForOnePlus2A2B2C = calcResultSummary.OverallTotal.ProducerOverallPercentageOfCostsForOnePlus2A2B2C;
         return new CalcResultSummary
         {
             ProducerDisposalFees = GetAcceptedProducerDisposalFees(calcResultSummary.ProducerDisposalFees.ToList(), acceptedProducerIds),
@@ -128,13 +131,11 @@ public class BillingFileExporter(
         TradingName                = string.Empty,
         Level                      = string.Empty,
         StatusCode                 = string.Empty,
-        IsProducerScaledup         = false,
-        IsPartialObligation        = false,
         JoinerDate                 = string.Empty,
         LeaverDate                 = CommonConstants.Totals,
         TonnageChangeCount         = string.Empty,
         TonnageChangeAdvice        = string.Empty,
-        IsOverallRow               = true,
+        IsOverallTotal               = true,
         BillingInstructionSection  = new CalcResultSummaryBillingInstruction { SuggestedBillingInstruction = string.Empty }
     };
 

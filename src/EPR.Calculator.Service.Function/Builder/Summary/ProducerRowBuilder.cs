@@ -11,8 +11,6 @@ namespace EPR.Calculator.Service.Function.Builder.Summary;
 
 internal sealed class ProducerRowBuilder(
     ImmutableDictionary<(int ProducerId, int MaterialId), decimal?> invoicedNetTonnageByProducerMaterial,
-    ImmutableList<CalcResultScaledupProducer> scaledupProducers,
-    ImmutableList<CalcResultPartialObligation> partialObligations,
     ImmutableDictionary<(int OrganisationId, string? SubsidiaryId), Organisation> organisationsByKey,
     ImmutableDictionary<int, Organisation> parentOrganisationsById)
 {
@@ -119,9 +117,6 @@ internal sealed class ProducerRowBuilder(
             SubsidiaryId        = string.Empty,
             TradingName         = producerForTotalRow?.TradingName ?? string.Empty,
             Level               = CommonConstants.LevelOne.ToString(),
-            //Move these to exporter
-            IsProducerScaledup  = scaledupProducers.Exists(p => p.ProducerId == producerId),
-            IsPartialObligation = partialObligations.Exists(p => p.ProducerId == producerId),
             StatusCode          = producerForTotalRow?.StatusCode,
             JoinerDate          = producerForTotalRow?.JoinerDate,
             LeaverDate          = producerForTotalRow?.LeaverDate,
@@ -225,8 +220,6 @@ internal sealed class ProducerRowBuilder(
             SubsidiaryId        = string.Empty,
             TradingName         = string.Empty,
             Level               = string.Empty,
-            IsProducerScaledup  = false,
-            IsPartialObligation = false,
             StatusCode          = null,
             JoinerDate          = null,
             LeaverDate          = CommonConstants.Totals,
@@ -238,7 +231,7 @@ internal sealed class ProducerRowBuilder(
             CommsCostsSection2b           = commsCostsSection2b,
 
             PercentageofProducerReportedTonnagevsAllProducers = percentageOfProducerTonnage,
-            IsOverallRow = true,
+            IsOverallTotal = true,
             CommsCostsSection2c = commsCostsSection2c
         };
     }
@@ -270,8 +263,6 @@ internal sealed class ProducerRowBuilder(
             SubsidiaryId        = producer.SubsidiaryId ?? string.Empty,
             TradingName         = producer.TradingName ?? string.Empty,
             Level               = level.ToString(),
-            IsProducerScaledup  = scaledupProducers.Exists(p => p.ProducerId == producer.ProducerId),
-            IsPartialObligation = partialObligations.Exists(p => p.ProducerId == producer.ProducerId && p.SubsidiaryId == producer.SubsidiaryId),
             StatusCode          = orgData?.StatusCode,
             JoinerDate          = orgData?.JoinerDate,
             LeaverDate          = orgData?.LeaverDate

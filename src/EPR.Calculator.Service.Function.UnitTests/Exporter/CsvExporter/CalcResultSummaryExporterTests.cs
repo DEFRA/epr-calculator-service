@@ -32,7 +32,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var csvContent = new StringBuilder();
 
             // Act
-            _testClass.Export(runContext, resultSummary, materials, csvContent);
+            var calcResult = TestDataHelper.GetCalcResult();
+            var scaledupIds = calcResult.CalcResultScaledupProducers.ScaledupProducers.Select(p => p.ProducerId).ToList();
+            var partialIds = calcResult.CalcResultPartialObligations.PartialObligations.Select(p => (p.ProducerId, p.SubsidiaryId)).ToList();
+            _testClass.Export(runContext, resultSummary, materials, scaledupIds, partialIds, csvContent);
 
             // Assert
             Assert.IsNotNull(csvContent.ToString());

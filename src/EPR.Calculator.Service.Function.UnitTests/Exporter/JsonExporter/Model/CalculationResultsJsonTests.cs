@@ -66,7 +66,7 @@ public class CalculationResultsJsonFromTests
             roundTrippedData["feeForCommsCostsByCountryWideWithBadDebtprovision2c"]);
 
         // 1+2a+2b+2c
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.TotalOnePlus2A2B2CFeeWithBadDebtProvision),
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(data.OverallTotal.ProducerTotalOnePlus2A2B2CWithBadDebtProvision()),
             roundTrippedData["total12a2b2cWithBadDebt"]);
 
         // 3
@@ -164,7 +164,7 @@ public class CalculationResultsJsonFromTests
         var actual = roundTrippedData[0]!["totalProducerFeeWithBadDebtProvisibadDebProvisionFor2con_1_2a_2b_2c"]!;
         var producer = data.ProducerDisposalFees.SingleOrDefault(t => !string.IsNullOrEmpty(t.Level))!;
 
-        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.ProducerTotalOnePlus2A2B2CWithBadDeptProvision), actual["totalFeeWithBadDebtProvision"]);
+        AssertAreEqual(CurrencyConverterUtils.ConvertToCurrency(producer.ProducerTotalOnePlus2A2B2CWithBadDebtProvision()), actual["totalFeeWithBadDebtProvision"]);
         AssertAreEqual($"{producer.ProducerOverallPercentageOfCostsForOnePlus2A2B2C.ToString("F8")}%", actual["producerPercentageOfOverallProducerCost"]);
     }
 
@@ -472,7 +472,8 @@ public class CalculationResultsJsonFromTests
         Assert.AreEqual(producer.ProducerName, roundTrippedData[0]!["producerName"]?.ToString());
         Assert.AreEqual(producer.TradingName, roundTrippedData[0]!["tradingName"]?.ToString());
         Assert.AreEqual(producer.Level ?? "1" , roundTrippedData[0]!["level"]?.ToString());
-        Assert.AreEqual(producer.IsProducerScaledup ? CommonConstants.Yes : CommonConstants.No, roundTrippedData[0]!["scaledUpTonnages"]?.ToString());
+        var expectedScaledup = calcResult.CalcResultScaledupProducers.ScaledupProducers.Exists(p => p.ProducerId == producer.ProducerId) ? CommonConstants.Yes : CommonConstants.No;
+        Assert.AreEqual(expectedScaledup, roundTrippedData[0]!["scaledUpTonnages"]?.ToString());
     }
 
     [TestMethod]
@@ -548,7 +549,8 @@ public class CalculationResultsJsonFromTests
         Assert.AreEqual(producer.ProducerName, calculationResult["producerName"]?.GetValue<string>());
         Assert.AreEqual(producer.TradingName!, calculationResult["tradingName"]?.GetValue<string>());
         Assert.AreEqual(int.Parse(producer.Level!), calculationResult["level"]?.GetValue<int>());
-        Assert.AreEqual(producer.IsProducerScaledup ? CommonConstants.Yes : CommonConstants.No, calculationResult["scaledUpTonnages"]?.GetValue<string>());
+        var expectedScaledup2 = calcResult.CalcResultScaledupProducers.ScaledupProducers.Exists(p => p.ProducerId == producer.ProducerId) ? CommonConstants.Yes : CommonConstants.No;
+        Assert.AreEqual(expectedScaledup2, calculationResult["scaledUpTonnages"]?.GetValue<string>());
 
         // Sub-Sections
         var producerDisposalFeesWithBadDebtProvision1 = roundTrippedData[0]!["producerDisposalFeesWithBadDebtProvision1"];

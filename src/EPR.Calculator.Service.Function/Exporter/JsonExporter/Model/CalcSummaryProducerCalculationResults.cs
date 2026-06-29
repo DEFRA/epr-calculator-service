@@ -68,7 +68,7 @@ public class CalcSummaryProducerCalculationResults
     [JsonPropertyName("calculationOfSuggestedBillingInstructionsAndInvoiceAmounts")]
     public required CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts { get; set; }
 
-    public static CalcSummaryProducerCalculationResults From(CalcResultSummaryProducerDisposalFees producer, IImmutableList<MaterialDetail> materials, bool applyModulation)
+    public static CalcSummaryProducerCalculationResults From(CalcResultSummaryProducerDisposalFees producer, IImmutableList<MaterialDetail> materials, bool applyModulation, IReadOnlyList<int> scaledupProducerIds)
     {
         return new CalcSummaryProducerCalculationResults
             {
@@ -77,7 +77,7 @@ public class CalcSummaryProducerCalculationResults
                 ProducerName                                 = producer.ProducerName,
                 TradingName                                  = producer.TradingName,
                 Level                                        = string.IsNullOrWhiteSpace(producer.Level) ? null : int.Parse(producer.Level),
-                ScaledUpTonnages                             = producer.IsProducerScaledup ? CommonConstants.Yes : CommonConstants.No,
+                ScaledUpTonnages                             = scaledupProducerIds.Contains(producer.ProducerId) ? CommonConstants.Yes : CommonConstants.No,
                 ProducerDisposalFeesWithBadDebtProvision1    = ProducerDisposalFeesWithBadDebtProvision1.From(producer.ProducerDisposalFeesByMaterial, materials, producer.Level!, applyModulation),
                 FeesForCommsCostsWithBadDebtProvision2a      = CalcResultCommsCostByMaterial2AJson.From(producer.ProducerCommFeesByMaterial, materials),
                 FeeForSAOperatingCostsWithBadDebtProvision_3 = CalcResultSAOperatingCostsWithBadDebtProvision.From(producer),

@@ -1,4 +1,4 @@
-﻿using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.Models
 {
@@ -6,12 +6,6 @@ namespace EPR.Calculator.Service.Function.Models
     {
         public IEnumerable<CalcResultSummaryProducerDisposalFees> ProducerDisposalFees { get; set; } = new List<CalcResultSummaryProducerDisposalFees>();
 
-        public CalcResultSummaryProducerDisposalFees OverallTotal { get; set; }
-
-        public decimal TotalOnePlus2A2B2CFeeWithBadDebtProvision =>
-            OverallTotal.LADisposalCostsSection1.FeeWithBadDebtProvision.Total
-            + OverallTotal.CommsCostsSection2a.FeeWithBadDebtProvision.Total
-            + OverallTotal.CommsCostsSection2b.FeeWithBadDebtProvision.Total
-            + OverallTotal.CommsCostsSection2c.FeeWithBadDebtProvision.Total;
+        public required CalcResultSummaryProducerDisposalFees OverallTotal { get; set; } = new CalcResultSummaryProducerDisposalFees { CalculatorRunId = 0, ProducerId = 0, SubsidiaryId = string.Empty, ProducerName = string.Empty };
     }
 }

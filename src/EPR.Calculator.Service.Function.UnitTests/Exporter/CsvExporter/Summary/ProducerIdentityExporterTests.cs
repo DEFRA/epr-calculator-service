@@ -7,7 +7,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Summary
 [TestClass]
 public class ProducerIdentityExporterTests
 {
-    private readonly ICalcResultSummaryPartExporter exporter = new ProducerIdentityExporter();
+    private readonly ICalcResultSummaryPartExporter exporter = new ProducerIdentityExporter([], []);
 
     [TestMethod]
     public void ProducerIdentityExporter_Export_CSV()

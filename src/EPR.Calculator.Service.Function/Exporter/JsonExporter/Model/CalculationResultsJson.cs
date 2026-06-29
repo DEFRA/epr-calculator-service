@@ -53,7 +53,7 @@ public class CalculationResultsJson
             BadDebtProvision2c                                  = CurrencyConverterUtils.ConvertToCurrency(data.OverallTotal.CommsCostsSection2c.BadDebtProvision),
             FeeForCommsCostsByCountryWideWithBadDebtprovision2c = CurrencyConverterUtils.ConvertToCurrency(data.OverallTotal.CommsCostsSection2c.FeeWithBadDebtProvision.Total),
 
-            Total12a2b2cWithBadDebt = CurrencyConverterUtils.ConvertToCurrency(data.TotalOnePlus2A2B2CFeeWithBadDebtProvision),
+            Total12a2b2cWithBadDebt = CurrencyConverterUtils.ConvertToCurrency(data.OverallTotal.ProducerTotalOnePlus2A2B2CWithBadDebtProvision()),
 
             SaOperatingCostsWithoutBadDebtProvision3 = CurrencyConverterUtils.ConvertToCurrency(data.OverallTotal.SaOperatingCostsSection3.FeeWithoutBadDebtProvision),
             BadDebtProvision3                        = CurrencyConverterUtils.ConvertToCurrency(data.OverallTotal.SaOperatingCostsSection3.BadDebtProvision),
@@ -79,9 +79,10 @@ public class CalculationResultsJson
         var filteredProducers = calcResult.CalcResultSummary.ProducerDisposalFees
             .Where(producer => runContext.AcceptedProducerIds.Contains(producer.ProducerId));
 
+        var scaledupProducers = calcResult.CalcResultScaledupProducers.ScaledupProducers.Select(p => p.ProducerId).ToImmutableList();
         foreach (var producer in filteredProducers)
         {
-            results.Add(CalcSummaryProducerCalculationResults.From(producer, materials, runContext.RequiresModulation));
+            results.Add(CalcSummaryProducerCalculationResults.From(producer, materials, runContext.RequiresModulation, scaledupProducers));
         }
 
         return results;

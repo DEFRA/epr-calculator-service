@@ -33,9 +33,6 @@ public class CalcResultSummaryBuilder(
         SelfManagedConsumerWaste smcw
     )
     {
-        var scaledupProducers = calcResult.CalcResultScaledupProducers.ScaledupProducers;
-        var partialObligations = calcResult.CalcResultPartialObligations.PartialObligations;
-
         var runProducerMaterialDetails = await (
             from pd in context.ProducerDetail
             join prm in context.TransformProducerReportedMaterial on pd.Id equals prm.ProducerDetailId
@@ -96,8 +93,6 @@ public class CalcResultSummaryBuilder(
 
         var rowBuilder = new ProducerRowBuilder(
             invoicedNetTonnageByProducerMaterial,
-            scaledupProducers,
-            partialObligations,
             organisationsByKey,
             parentOrganisationsById
         );
@@ -162,7 +157,7 @@ public class CalcResultSummaryBuilder(
         ProducerRowBuilder rowBuilder
     )
     {
-        var result = new CalcResultSummary { };
+        var result = new CalcResultSummary { OverallTotal = new() { CalculatorRunId = 0, ProducerId = 0, SubsidiaryId = string.Empty, ProducerName = string.Empty } };
 
         if (orderedProducerDetails.Count == 0)
         {
