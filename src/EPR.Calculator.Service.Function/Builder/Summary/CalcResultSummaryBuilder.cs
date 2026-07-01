@@ -161,7 +161,7 @@ public class CalcResultSummaryBuilder(
 
         if (orderedProducerDetails.Count == 0)
         {
-            result.OverallTotal = ProducerRowBuilder.GetOverallTotalRow([], materials);
+            result.OverallTotal = ProducerRowBuilder.GetOverallTotalRow(runContext.RunId, [], materials);
             return result;
         }
 
@@ -184,7 +184,7 @@ public class CalcResultSummaryBuilder(
         }
 
         var l1Rows = producerDisposalFees.Where(r => r.Level == CommonConstants.LevelOne.ToString()).ToList();
-        result.OverallTotal = ProducerRowBuilder.GetOverallTotalRow(l1Rows, materials);
+        result.OverallTotal = ProducerRowBuilder.GetOverallTotalRow(runContext.RunId, l1Rows, materials);
         result.ProducerDisposalFees = producerDisposalFees;
 
         // Section 2b comms cost

@@ -52,7 +52,6 @@ internal sealed class ProducerRowBuilder(
 
             materialCosts[material.Code] = new CalcResultSummaryProducerFeesByMaterial {
                 // Additive from L2 rows
-                ProducerDisposalFeesId  = 0, //TODO
                 MaterialCode = material.Code,
                 DisposalFees = new CalcResultSummaryProducerDisposalFeesByMaterial
                 {
@@ -111,7 +110,7 @@ internal sealed class ProducerRowBuilder(
 
         return new CalcResultSummaryProducerDisposalFees
         {
-            CalculatorRunId     = 0, //TODO
+            CalculatorRunId     = calcResult.CalcResultDetail.RunId,
             ProducerId          = producerId,
             ProducerName        = producerForTotalRow?.OrganisationName ?? string.Empty,
             SubsidiaryId        = string.Empty,
@@ -142,6 +141,7 @@ internal sealed class ProducerRowBuilder(
     /// Level-1 SMCW records by construction in <see cref="SelfManagedConsumerWasteService"/>.
     /// </summary>
     public static CalcResultSummaryProducerDisposalFees GetOverallTotalRow(
+        int runId,
         IReadOnlyList<CalcResultSummaryProducerDisposalFees> l1Rows,
         IReadOnlyList<MaterialDetail> materials
     )
@@ -174,7 +174,6 @@ internal sealed class ProducerRowBuilder(
             var l1MatRows   = matRowsByCode[materialCode];
 
             materialCosts[materialCode] = new CalcResultSummaryProducerFeesByMaterial {
-                ProducerDisposalFeesId = 0, //TODO
                 MaterialCode           = materialCode,
                 DisposalFees = new CalcResultSummaryProducerDisposalFeesByMaterial
                 {
@@ -214,7 +213,7 @@ internal sealed class ProducerRowBuilder(
 
         return new CalcResultSummaryProducerDisposalFees
         {
-            CalculatorRunId     = 0, // TODO
+            CalculatorRunId     = runId,
             ProducerId          = 0,
             ProducerName        = string.Empty,
             SubsidiaryId        = string.Empty,
@@ -257,7 +256,7 @@ internal sealed class ProducerRowBuilder(
 
         var result = new CalcResultSummaryProducerDisposalFees
         {
-            CalculatorRunId     = 0, //TODO
+            CalculatorRunId     = runContext.RunId,
             ProducerId          = producer.ProducerId,
             ProducerName        = producer.ProducerName ?? string.Empty,
             SubsidiaryId        = producer.SubsidiaryId ?? string.Empty,
@@ -304,7 +303,6 @@ internal sealed class ProducerRowBuilder(
             );
 
             materialFeeSummary.Add(material.Code, new CalcResultSummaryProducerFeesByMaterial {
-                ProducerDisposalFeesId = 0, //TODO
                 MaterialCode = material.Code,
                 DisposalFees = producerDisposalFeesByMaterial,
                 CommFees = producerCommsFeesCostByMaterial
@@ -357,8 +355,6 @@ internal sealed class ProducerRowBuilder(
         RAMTonnage? hdcRamTonnage   = null;
         RAMTonnage? totalRamTonnage = null;
 
-        //TODO: Move GetTonnage to just a single call rather than per ram?
-        //Move total into model?
         if (runContext.RequiresModulation)
         {
             hhRamTonnage = new RAMTonnage

@@ -2,6 +2,7 @@ using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.JsonExporter.Model;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Utils;
 using Microsoft.EntityFrameworkCore;
@@ -16,12 +17,12 @@ namespace EPR.Calculator.Service.Function.Services
         Task StoreScaledData(int runId, IReadOnlyList<CalcResultScaledupProducer> scaled, CancellationToken cancellationToken);
         Task StorePartialData(int runId, IReadOnlyList<CalcResultPartialObligation> partial, CancellationToken cancellationToken);
         Task StoreTransformedProducers(List<L1Producer> producerDetails, CancellationToken cancellationToken);
-        Task StoreProducerDisposalFees(int runId, List<CalcResultSummaryProducerDisposalFees> producerDisposalFees, CancellationToken cancellationToken);
+        Task StoreProducerDisposalFees(int runId, CalcResultSummary summary, CancellationToken cancellationToken);
         Task<IReadOnlyList<CalcResultH1ProjectedProducer>> ReadH1ProjectedData(int runId, CancellationToken cancellationToken);
         Task<IReadOnlyList<CalcResultH2ProjectedProducer>> ReadH2ProjectedData(int runId, CancellationToken cancellationToken);
         Task<IReadOnlyList<CalcResultScaledupProducer>> ReadScaledData(int runId, CancellationToken cancellationToken);
         Task<IReadOnlyList<CalcResultPartialObligation>> ReadPartialData(int runId, CancellationToken cancellationToken);
-        Task<IReadOnlyList<CalcResultSummaryProducerDisposalFees>> ReadProducerDisposalFees(int runId, CancellationToken cancellationToken);
+        Task<CalcResultSummary> ReadProducerDisposalFees(int runId, CancellationToken cancellationToken);
     }
 
     public class CalcResultService(IBulkOperations bulkOps, ApplicationDBContext dbContext) : ICalcResultService
@@ -193,22 +194,28 @@ namespace EPR.Calculator.Service.Function.Services
                 ).ToList(), cancellationToken);
         }
 
-        public async Task StoreProducerDisposalFees(int runId, List<CalcResultSummaryProducerDisposalFees> producerDisposalFees, CancellationToken cancellationToken)
+        public async Task StoreProducerDisposalFees(int runId, CalcResultSummary summary, CancellationToken cancellationToken)
         {
             await bulkOps.BulkInsertAsync(
                     dbContext, 
-                    producerDisposalFees, 
+                    summary.ProducerDisposalFees.Append(summary.OverallTotal), 
                     cfg => { cfg.IncludeGraph = true; }, 
                     cancellationToken
                 );
         }
 
-        public async Task<IReadOnlyList<CalcResultSummaryProducerDisposalFees>> ReadProducerDisposalFees(int runId, CancellationToken cancellationToken)
+        public async Task<CalcResultSummary> ReadProducerDisposalFees(int runId, CancellationToken cancellationToken)
         {
-            return await dbContext.ProducerDisposalFee
-                        .Include(p => p.ProducerDisposalFeesByMaterial)
+            var disposalFees = await dbContext.ProducerDisposalFee
+                        .Include(p => p.ProducerFeesByMaterials)
                         .Where(p => p.CalculatorRunId == runId)
                         .ToImmutableListAsync(cancellationToken);
+
+            return new CalcResultSummary
+            {
+                ProducerDisposalFees = disposalFees.Where(f => !f.IsOverallTotal).ToImmutableList(),
+                OverallTotal = disposalFees.Single(f => f.IsOverallTotal)
+            };
         }
     
         private static Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage> MapToH1MaterialTonnages(List<TransformProjectedH1> transformProjectedH1s)

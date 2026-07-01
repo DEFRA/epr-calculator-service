@@ -58,7 +58,7 @@ public record CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts
         }
 
         var costs = fees.BillingInstructionSection;
-        //TODO
+
         return new CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts
         {
             CurrentYearInvoicedTotalToDate          = GetFormattedCurrencyValue(costs!.CurrentYearInvoiceTotalToDate),

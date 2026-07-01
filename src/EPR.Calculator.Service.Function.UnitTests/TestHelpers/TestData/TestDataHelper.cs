@@ -262,19 +262,7 @@ public static partial class TestDataHelper
     public static CalcResultSummary GetCalcResultSummary(bool applyModulation = false)
     {
         return new CalcResultSummary
-        {
-            // LADisposalCostsSection1 = new CalcResultSummaryBadDebtProvision
-            // {
-            //     FeeWithoutBadDebtProvision = 4423.39438M,
-            //     BadDebtProvision           = 6021.3677166M,
-            //     FeeWithBadDebtProvision    = new ByCountryCost { England = 2534.2359097426884m, Wales = 571.2417008090152m, Scotland = 1137.8673076088023m, NorthernIreland = 445.4531246394942m }
-            // },
-            // SaOperatingCostsSection3 = new CalcResultSummaryBadDebtProvision { FeeWithoutBadDebtProvision = 3077.2243678810364M, BadDebtProvision = 3900.000000M, FeeWithBadDebtProvision = ByCountryCost.Empty with { England = 3261.8578299538985m } },
-            // SaSetupCostsSection5 = new CalcResultSummaryBadDebtProvision { FeeWithoutBadDebtProvision = 17500.00M, BadDebtProvision = 1050.00M, FeeWithBadDebtProvision = ByCountryCost.Empty with { England = 18550.00m } },
-            // LaDataPrepSection4 = new CalcResultSummaryBadDebtProvision { FeeWithoutBadDebtProvision = 1727.9798373485821M, BadDebtProvision = 103.67879024091492M, FeeWithBadDebtProvision = ByCountryCost.Empty with { England = 1831.658627589497m } },
-            // CommsCostsSection2a = new CalcResultSummaryBadDebtProvision { FeeWithoutBadDebtProvision = 1290.778M, BadDebtProvision = 2098.887360M, FeeWithBadDebtProvision = ByCountryCost.Empty with { England = 1368.22468m } },
-            // CommsCostsSection2c = new CalcResultSummaryBadDebtProvision { FeeWithoutBadDebtProvision = 1339.100071422903M, BadDebtProvision = 80.34600428537418M, FeeWithBadDebtProvision = ByCountryCost.Empty with { England = 1419.446075708277m } },
-            // CommsCostsSection2b = new CalcResultSummaryBadDebtProvision { FeeWithoutBadDebtProvision = 1339.100071422903M, BadDebtProvision = 80.34600428537418M, FeeWithBadDebtProvision = ByCountryCost.Empty with { England = 1419.446075708277m } },
+        {   
             ProducerDisposalFees = GetProducerDisposalFees(applyModulation),
             OverallTotal = GetOverallTotalRow(applyModulation)
         };
@@ -366,10 +354,10 @@ public static partial class TestDataHelper
         return new CalcResultSummaryProducerDisposalFees
         {
                 CalculatorRunId = 0,
-                ProducerId = 1,
+                ProducerId = 0,
                 SubsidiaryId = string.Empty,
-                ProducerName = "Allied Packaging",
-                Level = "1",
+                ProducerName = string.Empty,
+                Level = string.Empty,
                 LADisposalCostsSection1 = new CalcResultSummaryBadDebtProvision
                 {
                     FeeWithoutBadDebtProvision = 4423.39438m,
@@ -1798,6 +1786,10 @@ public static partial class TestDataHelper
     public static void SeedDatabaseForInitialRun(ApplicationDBContext dbContext, RunContext? runContext = null)
     {
         runContext ??= CalculatorRun2025;
+
+        dbContext.CalculatorRunRelativeYears.AddRange(
+                new CalculatorRunRelativeYear { Value = new RelativeYear(2024) },
+                new CalculatorRunRelativeYear { Value = new RelativeYear(2025) });
 
         var dataMasters = GetCalculatorRunOrganisationDataMaster();
         dbContext.CalculatorRunOrganisationDataMaster.AddRange(dataMasters);

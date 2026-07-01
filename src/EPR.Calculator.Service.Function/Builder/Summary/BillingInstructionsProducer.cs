@@ -53,7 +53,6 @@ public static class BillingInstructionsProducer
             if (suggestedInvoiceAmount.HasValue)
                 SuggestedInvoiceAmountTotal += suggestedInvoiceAmount.Value;
 
-            //TODO
             fee.BillingInstructionSection = new CalcResultSummaryBillingInstruction
             {
                 CurrentYearInvoiceTotalToDate       = currentYearInvoiceTotalToDate,

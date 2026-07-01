@@ -196,13 +196,25 @@ public class CalcResultBuilder(
                 nameof(modulationBuilder));
         }
 
-        result.CalcResultSummary = await logger.LogDuration(
-            () => summaryBuilder.ConstructAsync(runContext, materials, result, result.Smcw),
-            nameof(summaryBuilder));
+        if (runContext.RunType == RunType.Billing)
+        {
+            result.CalcResultSummary = await logger.LogDuration(
+                    () => calcResultService.ReadProducerDisposalFees(runContext.RunId, cancellationToken),
+                    nameof(calcResultService.ReadProducerDisposalFees));
+        }
+        else {
+            result.CalcResultSummary = await logger.LogDuration(
+                () => summaryBuilder.ConstructAsync(runContext, materials, result, result.Smcw),
+                nameof(summaryBuilder));
 
-        result.CalcResultErrorReports = logger.LogDuration(
-            () => errorReportBuilder.Construct(runContext),
-            nameof(errorReportBuilder));
+            await logger.LogDuration(
+                () => calcResultService.StoreProducerDisposalFees(runContext.RunId, result.CalcResultSummary, cancellationToken),
+                nameof(calcResultService.StoreProducerDisposalFees));    
+
+            result.CalcResultErrorReports = logger.LogDuration(
+                () => errorReportBuilder.Construct(runContext),
+                nameof(errorReportBuilder));
+        }
 
         return result;
     }

@@ -80,7 +80,7 @@ public class BillingFileExporter(
 
         partialObligationsExporter.Export(runContext, GetPartialObligationsForExport(calcResult.CalcResultPartialObligations, runContext.AcceptedProducerIds), materials, csvContent);
 
-        var acceptedCalcResultSummary = GetAcceptedProducersCalcResults(calcResult.CalcResultSummary, runContext.AcceptedProducerIds);
+        var acceptedCalcResultSummary = GetAcceptedProducersCalcResults(runContext.RunId, calcResult.CalcResultSummary, runContext.AcceptedProducerIds);
 
         var scaledupIds = calcResult.CalcResultScaledupProducers.ScaledupProducers.Select(p => p.ProducerId).ToList();
         var partialIds = calcResult.CalcResultPartialObligations.PartialObligations.Select(p => (p.ProducerId, p.SubsidiaryId)).ToList();
@@ -93,9 +93,9 @@ public class BillingFileExporter(
         return csvContent.ToString();
     }
 
-    private static CalcResultSummary GetAcceptedProducersCalcResults(CalcResultSummary calcResultSummary, ImmutableHashSet<int> acceptedProducerIds)
+    private static CalcResultSummary GetAcceptedProducersCalcResults(int runId, CalcResultSummary calcResultSummary, ImmutableHashSet<int> acceptedProducerIds)
     {
-        var billingOverallTotal = ZeroedTotalRow();
+        var billingOverallTotal = ZeroedTotalRow(runId);
         billingOverallTotal.LADisposalCostsSection1                          = calcResultSummary.OverallTotal.LADisposalCostsSection1;
         billingOverallTotal.CommsCostsSection2a                              = calcResultSummary.OverallTotal.CommsCostsSection2a;
         billingOverallTotal.CommsCostsSection2b                              = calcResultSummary.OverallTotal.CommsCostsSection2b;
@@ -121,10 +121,9 @@ public class BillingFileExporter(
     }
 
     // TODO can we remove this row? // NOSONAR
-    private static CalcResultSummaryProducerDisposalFees ZeroedTotalRow() => new()
+    private static CalcResultSummaryProducerDisposalFees ZeroedTotalRow(int runId) => new()
     {
-        //TODO
-        CalculatorRunId            = 0,
+        CalculatorRunId            = runId,
         ProducerId                 = 0,
         SubsidiaryId               = string.Empty,
         ProducerName               = string.Empty,
