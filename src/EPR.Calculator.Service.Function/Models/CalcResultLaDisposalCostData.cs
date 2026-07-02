@@ -1,4 +1,6 @@
-﻿namespace EPR.Calculator.Service.Function.Models;
+﻿using EPR.Calculator.Service.Function.Utils;
+
+namespace EPR.Calculator.Service.Function.Models;
 
 public class CalcResultLaDisposalCostData
 {
@@ -46,5 +48,5 @@ public class CalcResultLaDisposalCostDataDetail
     private decimal? disposalCostPricePerTonne;
     public decimal? DisposalCostPricePerTonne =>
         disposalCostPricePerTonne ??=
-            TotalTonnage == 0 ? (decimal?)null : Math.Round(Cost.Total / TotalTonnage, 4);
+            TotalTonnage == 0 ? (decimal?)null : MathUtils.RoundAwayFromZero(Cost.Total / TotalTonnage, 4);
 }

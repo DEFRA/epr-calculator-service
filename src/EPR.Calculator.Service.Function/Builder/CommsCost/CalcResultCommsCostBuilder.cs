@@ -3,6 +3,7 @@ using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.CommsCost;
@@ -66,7 +67,7 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
             var hdcTonnage = producerReportedMaterials.Where(p => p.MaterialId == material.Id && p.PackagingType == PackagingTypes.HouseholdDrinksContainers).Sum(p => p.PackagingTonnage);
 
             var materialDefault = materialDefaults.Single(m => m.ParameterCategory == material.Name);
-            var total = Math.Round(materialDefault.ParameterValue, 2);
+            var total = MathUtils.RoundAwayFromZero(materialDefault.ParameterValue, 2);
             var commsCost = new CalcResultCommsCostCommsCostByMaterial{
                 Cost = new ByCountryCost
                 {

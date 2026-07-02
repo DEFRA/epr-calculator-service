@@ -274,9 +274,6 @@ public record ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown
     [JsonPropertyName("northernIrelandWithBadDebtProvision")]
     public required string NorthernIrelandWithBadDebtProvision { get; init; }
 
-    private static decimal RoundMoney(decimal value, int precision = 2)
-        => Math.Round(value, precision, MidpointRounding.ToEven);
-
     public static ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown From(
         CalcResultSummaryProducerDisposalFeesByMaterial producerTonnage,
         MaterialDetail material,
@@ -290,20 +287,20 @@ public record ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown
                 MaterialName                               = material.Name,
                 PreviousInvoicedTonnage                    = level == "1" ? producerTonnage.PreviousInvoicedTonnage?.ToString() ?? CommonConstants.Hyphen : CommonConstants.Hyphen,
                 TonnageChange                              = level == "1" ? producerTonnage.TonnageChange?.ToString()           ?? CommonConstants.Hyphen : CommonConstants.Hyphen,
-                BadDebtProvision                           = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.BadDebtProvision),
-                ProducerDisposalFeeWithBadDebtProvision    = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.ProducerDisposalFeeWithBadDebtProvision.Total),
-                EnglandWithBadDebtProvision                = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.ProducerDisposalFeeWithBadDebtProvision.England),
-                WalesWithBadDebtProvision                  = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.ProducerDisposalFeeWithBadDebtProvision.Wales),
-                ScotlandWithBadDebtProvision               = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.ProducerDisposalFeeWithBadDebtProvision.Scotland),
-                NorthernIrelandWithBadDebtProvision        = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.ProducerDisposalFeeWithBadDebtProvision.NorthernIreland),
+                BadDebtProvision                           = FormatUtils.FormatCurrency(producerTonnage.BadDebtProvision),
+                ProducerDisposalFeeWithBadDebtProvision    = FormatUtils.FormatCurrency(producerTonnage.ProducerDisposalFeeWithBadDebtProvision.Total),
+                EnglandWithBadDebtProvision                = FormatUtils.FormatCurrency(producerTonnage.ProducerDisposalFeeWithBadDebtProvision.England),
+                WalesWithBadDebtProvision                  = FormatUtils.FormatCurrency(producerTonnage.ProducerDisposalFeeWithBadDebtProvision.Wales),
+                ScotlandWithBadDebtProvision               = FormatUtils.FormatCurrency(producerTonnage.ProducerDisposalFeeWithBadDebtProvision.Scotland),
+                NorthernIrelandWithBadDebtProvision        = FormatUtils.FormatCurrency(producerTonnage.ProducerDisposalFeeWithBadDebtProvision.NorthernIreland),
                 HouseholdPackagingWasteTonnage             = producerTonnage.HouseholdPackagingWasteTonnage,
                 PublicBinTonnage                           = producerTonnage.PublicBinTonnage,
                 HouseholdDrinksContainersTonnageGlass      = material.Code == MaterialCodes.Glass ? producerTonnage.HouseholdDrinksContainersTonnage: null,
                 TotalTonnage                               = producerTonnage.TotalReportedTonnage,
                 SelfManagedConsumerWasteTonnage            = producerTonnage.SelfManagedConsumerWasteTonnage,
                 NetTonnage                                 = producerTonnage.NetReportedTonnage.total ?? 0,
-                PricePerTonne                              = CurrencyConverterUtils.ConvertToCurrency(           producerTonnage.PricePerTonne.total       ?? 0 , 4),
-                ProducerDisposalFeeWithoutBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(RoundMoney(producerTonnage.ProducerDisposalFee.total ?? 0), 2)
+                PricePerTonne                              = FormatUtils.FormatCurrency(producerTonnage.PricePerTonne.total       ?? 0, 4),
+                ProducerDisposalFeeWithoutBadDebtProvision = FormatUtils.FormatCurrency(producerTonnage.ProducerDisposalFee.total ?? 0, 2)
             };
         }
 
@@ -312,12 +309,12 @@ public record ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown
             MaterialName                               = material.Name,
             PreviousInvoicedTonnage                    = level == "1" ? producerTonnage.PreviousInvoicedTonnage?.ToString() ?? CommonConstants.Hyphen : CommonConstants.Hyphen,
             TonnageChange                              = level == "1" ? producerTonnage.TonnageChange?.ToString()           ?? CommonConstants.Hyphen : CommonConstants.Hyphen,
-            BadDebtProvision                           = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.BadDebtProvision),
-            ProducerDisposalFeeWithBadDebtProvision    = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.ProducerDisposalFeeWithBadDebtProvision.Total),
-            EnglandWithBadDebtProvision                = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.ProducerDisposalFeeWithBadDebtProvision.England),
-            WalesWithBadDebtProvision                  = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.ProducerDisposalFeeWithBadDebtProvision.Wales),
-            ScotlandWithBadDebtProvision               = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.ProducerDisposalFeeWithBadDebtProvision.Scotland),
-            NorthernIrelandWithBadDebtProvision        = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.ProducerDisposalFeeWithBadDebtProvision.NorthernIreland),
+            BadDebtProvision                           = FormatUtils.FormatCurrency(producerTonnage.BadDebtProvision),
+            ProducerDisposalFeeWithBadDebtProvision    = FormatUtils.FormatCurrency(producerTonnage.ProducerDisposalFeeWithBadDebtProvision.Total),
+            EnglandWithBadDebtProvision                = FormatUtils.FormatCurrency(producerTonnage.ProducerDisposalFeeWithBadDebtProvision.England),
+            WalesWithBadDebtProvision                  = FormatUtils.FormatCurrency(producerTonnage.ProducerDisposalFeeWithBadDebtProvision.Wales),
+            ScotlandWithBadDebtProvision               = FormatUtils.FormatCurrency(producerTonnage.ProducerDisposalFeeWithBadDebtProvision.Scotland),
+            NorthernIrelandWithBadDebtProvision        = FormatUtils.FormatCurrency(producerTonnage.ProducerDisposalFeeWithBadDebtProvision.NorthernIreland),
             HouseholdPackagingWasteTonnage             = ModulatedTonnageBreakdown.From(producerTonnage.HouseholdPackagingWasteTonnage, producerTonnage.HouseholdPackagingWasteTonnageRagRating),
             PublicBinTonnage                           = ModulatedTonnageBreakdown.From(producerTonnage.PublicBinTonnage, producerTonnage.PublicBinTonnageRagRating),
             HouseholdDrinksContainersTonnageGlass      = material.Code == MaterialCodes.Glass
@@ -342,16 +339,16 @@ public record ProducerDisposalFeesWithBadDebtProvision1MaterialBreakdown
             ResidualSelfManagedConsumerWasteTonnage    = producerTonnage.ResidualSelfManagedConsumerWasteTonnage,
             PricePerTonne                              = new CombinedModulatedPriceBreakdown
             {
-                RedAndRedMedical     = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.PricePerTonne.red   ?? 0, 4),
-                AmberAndAmberMedical = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.PricePerTonne.amber ?? 0, 4),
-                GreenAndGreenMedical = CurrencyConverterUtils.ConvertToCurrency(producerTonnage.PricePerTonne.green ?? 0, 4)
+                RedAndRedMedical     = FormatUtils.FormatCurrency(producerTonnage.PricePerTonne.red   ?? 0, 4),
+                AmberAndAmberMedical = FormatUtils.FormatCurrency(producerTonnage.PricePerTonne.amber ?? 0, 4),
+                GreenAndGreenMedical = FormatUtils.FormatCurrency(producerTonnage.PricePerTonne.green ?? 0, 4)
             },
             ProducerDisposalFeeWithoutBadDebtProvision = new CombinedModulatedCostBreakdown
             {
-                Total                = CurrencyConverterUtils.ConvertToCurrency(RoundMoney(producerTonnage.ProducerDisposalFee.total ?? 0), 2),
-                RedAndRedMedical     = CurrencyConverterUtils.ConvertToCurrency(RoundMoney(producerTonnage.ProducerDisposalFee.red   ?? 0), 2),
-                AmberAndAmberMedical = CurrencyConverterUtils.ConvertToCurrency(RoundMoney(producerTonnage.ProducerDisposalFee.amber ?? 0), 2),
-                GreenAndGreenMedical = CurrencyConverterUtils.ConvertToCurrency(RoundMoney(producerTonnage.ProducerDisposalFee.green ?? 0), 2)
+                Total                = FormatUtils.FormatCurrency(producerTonnage.ProducerDisposalFee.total ?? 0, 2),
+                RedAndRedMedical     = FormatUtils.FormatCurrency(producerTonnage.ProducerDisposalFee.red   ?? 0, 2),
+                AmberAndAmberMedical = FormatUtils.FormatCurrency(producerTonnage.ProducerDisposalFee.amber ?? 0, 2),
+                GreenAndGreenMedical = FormatUtils.FormatCurrency(producerTonnage.ProducerDisposalFee.green ?? 0, 2)
             }
         };
     }

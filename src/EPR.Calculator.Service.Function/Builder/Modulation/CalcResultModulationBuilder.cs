@@ -1,6 +1,7 @@
 ﻿using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Builder.Modulation
 {
@@ -67,8 +68,8 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
                         redMaterialTonnages   = redMaterialTonnages,
                         amberMaterialTonnages = amberMaterialTonnages,
                         greenMaterialTonnages = greenMaterialTonnages,
-                        redAtAmberDisposalCost   = Math.Round(redMaterialTonnages   * materialDisposalCost, 2),
-                        greenAtAmberDisposalCost = Math.Round(greenMaterialTonnages * materialDisposalCost, 2)
+                        redAtAmberDisposalCost   = MathUtils.RoundAwayFromZero(redMaterialTonnages   * materialDisposalCost, 2),
+                        greenAtAmberDisposalCost = MathUtils.RoundAwayFromZero(greenMaterialTonnages * materialDisposalCost, 2)
                     };
                 }).ToImmutableList();
 
@@ -78,7 +79,7 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
                 totalGreenAtAmberDispoalCost == 0
                     ? 0m // this is unlikely, but if happens then the green discount is moot
                     : (redFactor - 1) * totalRedAtAmberDisposalCost / totalGreenAtAmberDispoalCost;
-            var greenFactor = Math.Round(1 - greenDiscount, 6);
+            var greenFactor = MathUtils.RoundAwayFromZero(1 - greenDiscount, 6);
             var materialModulations =
                 materials.ToDictionary(
                     material => material,
@@ -87,9 +88,9 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
                     var cost = materialCosts.First(c => c.material == material);
                     return new MaterialModulation
                     {
-                        RedMaterialDisposalCost   = Math.Round(cost.amberMaterialDisposalCost * redFactor  , 4),
-                        AmberMaterialDisposalCost = Math.Round(cost.amberMaterialDisposalCost              , 4),
-                        GreenMaterialDisposalCost = Math.Round(cost.amberMaterialDisposalCost * greenFactor, 4),
+                        RedMaterialDisposalCost   = MathUtils.RoundAwayFromZero(cost.amberMaterialDisposalCost * redFactor  , 4),
+                        AmberMaterialDisposalCost = MathUtils.RoundAwayFromZero(cost.amberMaterialDisposalCost              , 4),
+                        GreenMaterialDisposalCost = MathUtils.RoundAwayFromZero(cost.amberMaterialDisposalCost * greenFactor, 4),
                         RedMaterialTonnages       = cost.redMaterialTonnages,
                         AmberMaterialTonnages     = cost.amberMaterialTonnages,
                         GreenMaterialTonnages     = cost.greenMaterialTonnages,

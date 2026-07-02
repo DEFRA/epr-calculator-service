@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using System.Text.Json;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Utils;
@@ -8,89 +7,65 @@ namespace EPR.Calculator.Service.Function.Misc
 {
     public static class CsvSanitiser
     {
-        public static string SanitiseData<T>(T value, bool csvDelimiterRequired = true, bool appendLrmCharacterToPreventRenderedAsFormula = false)
+        public static string SanitiseData<T>(T value, bool appendLrmCharacterToPreventRenderedAsFormula = false)
         {
             if (value is null)
-            {
-                return csvDelimiterRequired
-                    ? CommonConstants.CsvFileDelimiter
-                    : string.Empty;
-            }
+                return CommonConstants.CsvFileDelimiter;
 
-            // If the value is a string, use it directly; otherwise, serialize the object to JSON.
-            var stringToSanitise = value is string
-                ? value.ToString()
-                : JsonSerializer.Serialize(value);
-
-            // Remove newline, carriage returns, and commas, then trim
-            stringToSanitise = stringToSanitise?.Replace(Environment.NewLine, string.Empty)
-                                   .Replace(CommonConstants.TabSpace, string.Empty)
-                                   .Replace(CommonConstants.CsvFileDelimiter, string.Empty)
-                                   .Trim() ?? string.Empty;
+            var stringToSanitise = value
+                .ToString()?
+                .Replace(Environment.NewLine             , string.Empty)
+                .Replace(CommonConstants.TabSpace        , string.Empty)
+                .Replace(CommonConstants.CsvFileDelimiter, string.Empty)
+                .Trim() ?? string.Empty;
 
             if (appendLrmCharacterToPreventRenderedAsFormula &&
                 stringToSanitise.Length > 0 &&
                 stringToSanitise != CommonConstants.Hyphen)
             {
-                stringToSanitise = "\u200E" + stringToSanitise;
+                stringToSanitise = "\u200E" + stringToSanitise; // LEFT-TO-RIGHT MARK
             }
 
-            // Apply the speech marks to handle the comma in the text and currency values
-            stringToSanitise = $"{CommonConstants.DoubleQuote}{stringToSanitise}{CommonConstants.DoubleQuote}";
-
-            return csvDelimiterRequired
-                ? $"{stringToSanitise}{CommonConstants.CsvFileDelimiter}"
-                : stringToSanitise;
+            // Apply the speech marks to handle the comma in the text
+            return $"{CommonConstants.DoubleQuote}{stringToSanitise}{CommonConstants.DoubleQuote}{CommonConstants.CsvFileDelimiter}";
         }
 
-        public static string SanitiseData<T>(
-            T value,
+        public static string SanitiseData(
+            decimal? value,
             DecimalPlaces? roundTo,
             DecimalFormats? valueFormat,
             bool isCurrency = false,
             bool isPercentage = false,
-            bool delimiterRequired = true,
             bool canBeEmpty = false)
         {
-
             if (canBeEmpty && value is null)
-                return CsvSanitiser.SanitiseData(CommonConstants.Hyphen, delimiterRequired);
+                return $"{CommonConstants.DoubleQuote}{CommonConstants.Hyphen}{CommonConstants.DoubleQuote}{CommonConstants.CsvFileDelimiter}";
 
-            decimal decimalValue;
-            if (value is string)
-            {
-                var isParseSuccessful = decimal.TryParse(value.ToString(), CultureInfo.InvariantCulture, out decimal result);
-                if (!isParseSuccessful)
-                {
-                    return SanitiseData(value, delimiterRequired);
-                }
+            var decimalValue = value.GetValueOrDefault();
 
-                decimalValue = result;
-            }
-            else
-            {
-                decimalValue = Convert.ToDecimal(value);
-            }
-
-            var roundedValue = roundTo == null
-                ? decimalValue
-                : Math.Round(decimalValue, (int)roundTo);
-
-            var formattedValue = valueFormat == null
-                ? roundedValue.ToString()
-                : roundedValue.ToString(valueFormat.ToString());
+            string formattedValue;
 
             if (isCurrency)
             {
-                formattedValue = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(roundedValue, ((int?)roundTo) ?? 2);
+                formattedValue = FormatUtils.FormatCurrency(decimalValue, ((int?)roundTo) ?? 2);
             }
-
-            if (isPercentage)
+            else if (isPercentage)
             {
-                formattedValue = $"{formattedValue}%";
+                formattedValue = FormatUtils.FormatPercentage(decimalValue, ((int?)roundTo) ?? 8);
+            }
+            else
+            {
+                var roundedValue = roundTo == null
+                    ? decimalValue
+                    : MathUtils.RoundAwayFromZero(decimalValue, (int)roundTo);
+
+                formattedValue = valueFormat == null
+                    ? roundedValue.ToString(CultureInfo.InvariantCulture)
+                    : roundedValue.ToString(valueFormat.ToString(), CultureInfo.InvariantCulture);
             }
 
-            return SanitiseData(formattedValue, delimiterRequired);
+            // Apply the speech marks to handle the comma in the currency
+            return $"{CommonConstants.DoubleQuote}{formattedValue}{CommonConstants.DoubleQuote}{CommonConstants.CsvFileDelimiter}";
         }
     }
 }

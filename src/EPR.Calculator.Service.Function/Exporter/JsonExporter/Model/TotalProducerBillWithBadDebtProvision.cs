@@ -32,13 +32,13 @@ public record TotalProducerBillWithBadDebtProvision
         var costs = calcResultSummaryProducerDisposalFees.TotalProducerBillBreakdownCosts;
         return new TotalProducerBillWithBadDebtProvision
         {
-            TotalProducerBillWithoutBadDebtProvision                = CurrencyConverterUtils.ConvertToCurrency(costs.FeeWithoutBadDebtProvision),
-            BadDebtProvisionForTotalProducerBill                    = CurrencyConverterUtils.ConvertToCurrency(costs.BadDebtProvision),
-            TotalProducerBillWithBadDebtProvisionAmount             = CurrencyConverterUtils.ConvertToCurrency(costs.FeeWithBadDebtProvision.Total),
-            EnglandTotalForProducerBillWithBadDebtProvision         = CurrencyConverterUtils.ConvertToCurrency(costs.FeeWithBadDebtProvision.England),
-            WalesTotalForProducerBillWithBadDebtProvision           = CurrencyConverterUtils.ConvertToCurrency(costs.FeeWithBadDebtProvision.Wales),
-            ScotlandTotalForProducerBillWithBadDebtProvision        = CurrencyConverterUtils.ConvertToCurrency(costs.FeeWithBadDebtProvision.Scotland),
-            NorthernIrelandTotalForProducerBillWithBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(costs.FeeWithBadDebtProvision.NorthernIreland)
+            TotalProducerBillWithoutBadDebtProvision                = FormatUtils.FormatCurrency(costs.FeeWithoutBadDebtProvision),
+            BadDebtProvisionForTotalProducerBill                    = FormatUtils.FormatCurrency(costs.BadDebtProvision),
+            TotalProducerBillWithBadDebtProvisionAmount             = FormatUtils.FormatCurrency(costs.FeeWithBadDebtProvision.Total),
+            EnglandTotalForProducerBillWithBadDebtProvision         = FormatUtils.FormatCurrency(costs.FeeWithBadDebtProvision.England),
+            WalesTotalForProducerBillWithBadDebtProvision           = FormatUtils.FormatCurrency(costs.FeeWithBadDebtProvision.Wales),
+            ScotlandTotalForProducerBillWithBadDebtProvision        = FormatUtils.FormatCurrency(costs.FeeWithBadDebtProvision.Scotland),
+            NorthernIrelandTotalForProducerBillWithBadDebtProvision = FormatUtils.FormatCurrency(costs.FeeWithBadDebtProvision.NorthernIreland)
         };
     }
 }

@@ -61,11 +61,11 @@ public class CalcResultLapcapDataDetailJson
         return new CalcResultLapcapDataDetailJson
         {
             MaterialName                  = materialDetail.Name,
-            EnglandLaDisposalCost         = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.England        , 2, ","),
-            WalesLaDisposalCost           = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Wales          , 2, ","),
-            ScotlandLaDisposalCost        = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Scotland       , 2, ","),
-            NorthernIrelandLaDisposalCost = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.NorthernIreland, 2, ","),
-            OneLaDisposalCostTotal        = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Total          , 2, ",")
+            EnglandLaDisposalCost         = FormatUtils.FormatCurrency(record.England        , 2, useGrouping: true),
+            WalesLaDisposalCost           = FormatUtils.FormatCurrency(record.Wales          , 2, useGrouping: true),
+            ScotlandLaDisposalCost        = FormatUtils.FormatCurrency(record.Scotland       , 2, useGrouping: true),
+            NorthernIrelandLaDisposalCost = FormatUtils.FormatCurrency(record.NorthernIreland, 2, useGrouping: true),
+            OneLaDisposalCostTotal        = FormatUtils.FormatCurrency(record.Total          , 2, useGrouping: true)
         };
     }
 }
@@ -91,11 +91,11 @@ public class CalcResultLapcapDataDetailTotalJson
     {
         return new CalcResultLapcapDataDetailTotalJson
         {
-            TotalEnglandLaDisposalCost         = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.England        , 2, ","),
-            TotalWalesLaDisposalCost           = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Wales          , 2, ","),
-            TotalScotlandLaDisposalCost        = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Scotland       , 2, ","),
-            TotalNorthernIrelandLaDisposalCost = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.NorthernIreland, 2, ","),
-            TotalLaDisposalCost                = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Total          , 2, ",")
+            TotalEnglandLaDisposalCost         = FormatUtils.FormatCurrency(record.England        , 2, useGrouping: true),
+            TotalWalesLaDisposalCost           = FormatUtils.FormatCurrency(record.Wales          , 2, useGrouping: true),
+            TotalScotlandLaDisposalCost        = FormatUtils.FormatCurrency(record.Scotland       , 2, useGrouping: true),
+            TotalNorthernIrelandLaDisposalCost = FormatUtils.FormatCurrency(record.NorthernIreland, 2, useGrouping: true),
+            TotalLaDisposalCost                = FormatUtils.FormatCurrency(record.Total          , 2, useGrouping: true)
         };
     }
 }
@@ -121,11 +121,11 @@ public class CalcResultLapcapDataDetailApportionmentJson
     {
         return new CalcResultLapcapDataDetailApportionmentJson
         {
-            EnglandApportionment         = $"{record.England        :0.00000000}%",
-            WalesApportionment           = $"{record.Wales          :0.00000000}%",
-            ScotlandApportionment        = $"{record.Scotland       :0.00000000}%",
-            NorthernIrelandApportionment = $"{record.NorthernIreland:0.00000000}%",
-            TotalApportionment           = $"{100                   :0.00000000}%"
+            EnglandApportionment         = FormatUtils.FormatPercentage(record.England        ),
+            WalesApportionment           = FormatUtils.FormatPercentage(record.Wales          ),
+            ScotlandApportionment        = FormatUtils.FormatPercentage(record.Scotland       ),
+            NorthernIrelandApportionment = FormatUtils.FormatPercentage(record.NorthernIreland),
+            TotalApportionment           = FormatUtils.FormatPercentage(100                   )
         };
     }
 }

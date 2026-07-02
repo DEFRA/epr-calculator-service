@@ -53,7 +53,7 @@
         public const string OtherMaterials = "Other materials";
 
         public const string LatestInvoice = "Latest Invoice";
-        public const int LatestInvoiceSubHeaderIndex = 10;
+        public const int LatestInvoiceSubHeaderIndex = 11;
 
         public const string RunNumber = "Run Number";
         public const string RunName = "Run Name";

@@ -15,6 +15,7 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 using EPR.Calculator.Service.Function.Features.BillingRuns.Contexts;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Logging;
 using EPR.Calculator.Service.Function.Services;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter;
@@ -40,52 +41,95 @@ public class BillingFileExporter(
     ICalcResultCommsCostExporter commsCostExporter,
     ICalcResultSummaryExporter summaryExporter,
     ICalcResultCancelledProducersExporter cancelledProducersExporter,
-    ICalcResultRejectedProducersExporter rejectedProducersExporter
+    ICalcResultRejectedProducersExporter rejectedProducersExporter,
+    ILogger<BillingFileExporter> logger
 )  : IBillingFileExporter
 {
     public async Task<string> Export(BillingRunContext runContext, CalcResult calcResult)
     {
         var materials = await materialService.GetMaterials();
         var csvContent = new StringBuilder();
-        resultDetailExporter.Export(calcResult.CalcResultDetail, csvContent);
 
-        lapcapDataExporter.Export(calcResult.CalcResultLapcapData, materials, csvContent);
+        logger.LogDuration(
+            () => resultDetailExporter.Export(calcResult.CalcResultDetail, csvContent),
+            nameof(resultDetailExporter)
+        );
 
-        lateReportingExporter.Export(calcResult.CalcResultLateReportingTonnageData, materials, csvContent);
+        logger.LogDuration(
+            () => lapcapDataExporter.Export(calcResult.CalcResultLapcapData, materials, csvContent),
+            nameof(lapcapDataExporter)
+        );
 
-        parameterOtherCostExporter.Export(calcResult.CalcResultParameterOtherCost, csvContent);
+        logger.LogDuration(
+            () => lateReportingExporter.Export(calcResult.CalcResultLateReportingTonnageData, materials, csvContent),
+            nameof(lateReportingExporter)
+        );
 
-        onePlusFourApportionmentExporter.Export(calcResult.CalcResultOnePlusFourApportionment, csvContent);
+        logger.LogDuration(
+            () => parameterOtherCostExporter.Export(calcResult.CalcResultParameterOtherCost, csvContent),
+            nameof(parameterOtherCostExporter)
+        );
 
-        commsCostExporter.Export(calcResult.CalcResultCommsCostReportDetail, materials, csvContent);
+        logger.LogDuration(
+            () => onePlusFourApportionmentExporter.Export(calcResult.CalcResultOnePlusFourApportionment, csvContent),
+            nameof(onePlusFourApportionmentExporter)
+        );
 
-        laDisposalCostExporter.Export(runContext, calcResult.CalcResultLaDisposalCostData, materials, csvContent);
+        logger.LogDuration(
+            () => commsCostExporter.Export(calcResult.CalcResultCommsCostReportDetail, materials, csvContent),
+            nameof(commsCostExporter)
+        );
+
+        logger.LogDuration(
+            () => laDisposalCostExporter.Export(runContext, calcResult.CalcResultLaDisposalCostData, materials, csvContent),
+            nameof(laDisposalCostExporter)
+        );
 
         if (calcResult.Smcw is not null && calcResult.CalcResultModulation is not null)
-            modulationExporter.Export(calcResult.CalcResultLaDisposalCostData, calcResult.Smcw, calcResult.CalcResultModulation, csvContent);
+            logger.LogDuration(
+                () => modulationExporter.Export(calcResult.CalcResultLaDisposalCostData, calcResult.Smcw, calcResult.CalcResultModulation, csvContent),
+                nameof(modulationExporter)
+            );
 
-        cancelledProducersExporter.Export(calcResult.CalcResultCancelledProducers, csvContent);
+        logger.LogDuration(
+            () => cancelledProducersExporter.Export(calcResult.CalcResultCancelledProducers, csvContent),
+            nameof(cancelledProducersExporter)
+        );
 
         if (runContext.RequiresModulation)
         {
             var accepted = GetProjectedProducerForExport(calcResult.CalcResultProjectedProducers, runContext.AcceptedProducerIds);
-            projectedProducersExporter.Export(accepted, materials, csvContent);
+            logger.LogDuration(
+                () => projectedProducersExporter.Export(accepted, materials, csvContent),
+                nameof(projectedProducersExporter)
+            );
         }
         else
         {
             var acceptedProducers = GetScaledUpProducersForExport(calcResult.CalcResultScaledupProducers, runContext.AcceptedProducerIds);
-            scaledUpProducersExporter.Export(acceptedProducers, materials, false, csvContent);
+            logger.LogDuration(
+                () => scaledUpProducersExporter.Export(acceptedProducers, materials, false, csvContent),
+                nameof(scaledUpProducersExporter)
+            );
         }
 
-        partialObligationsExporter.Export(runContext, GetPartialObligationsForExport(calcResult.CalcResultPartialObligations, runContext.AcceptedProducerIds), materials, csvContent);
+        logger.LogDuration(
+            () => partialObligationsExporter.Export(runContext, GetPartialObligationsForExport(calcResult.CalcResultPartialObligations, runContext.AcceptedProducerIds), materials, csvContent),
+            nameof(partialObligationsExporter)
+        );
 
         var acceptedCalcResultSummary = GetAcceptedProducersCalcResults(calcResult.CalcResultSummary, runContext.AcceptedProducerIds);
-
-        summaryExporter.Export(runContext, acceptedCalcResultSummary, materials, csvContent);
+        logger.LogDuration(
+            () => summaryExporter.Export(runContext, acceptedCalcResultSummary, materials, csvContent),
+            nameof(summaryExporter)
+        );
 
         csvContent = ResetTotals(csvContent.ToString());
 
-        rejectedProducersExporter.Export(calcResult.CalcResultRejectedProducers, csvContent);
+        logger.LogDuration(
+            () => rejectedProducersExporter.Export(calcResult.CalcResultRejectedProducers, csvContent),
+            nameof(rejectedProducersExporter)
+        );
 
         return csvContent.ToString();
     }

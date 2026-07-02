@@ -1,4 +1,6 @@
-﻿namespace EPR.Calculator.Service.Function.Models;
+﻿using EPR.Calculator.Service.Function.Utils;
+
+namespace EPR.Calculator.Service.Function.Models;
 
 /// <summary>
 /// The CommsCost report.
@@ -55,5 +57,5 @@ public class CalcResultCommsCostCommsCostByMaterial
     private decimal? pricePerTonne;
     public decimal PricePerTonne =>
         pricePerTonne ??=
-            TotalTonnage != 0 ? Math.Round(TotalCost / TotalTonnage, 4, MidpointRounding.AwayFromZero) : 0;
+            TotalTonnage != 0 ? MathUtils.RoundAwayFromZero(TotalCost / TotalTonnage, 4) : 0;
 }

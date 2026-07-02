@@ -74,13 +74,13 @@ namespace EPR.Calculator.Service.Function.Builder.ErrorReport
             return results;
         }
 
-        private static string GetProducerName(CalculatorRunOrganisationDataDetail prodLeft) =>
-            string.IsNullOrWhiteSpace(prodLeft.OrganisationName) || prodLeft.SubsidiaryId == null
+        private static string GetProducerName(CalculatorRunOrganisationDataDetail? prodLeft) =>
+            prodLeft is null || string.IsNullOrWhiteSpace(prodLeft.OrganisationName) || prodLeft.SubsidiaryId == null
                 ? CommonConstants.Hyphen
                 : prodLeft.OrganisationName;
 
-        private static string GetTradingName(CalculatorRunOrganisationDataDetail prodLeft) =>
-            string.IsNullOrWhiteSpace(prodLeft.OrganisationName) || prodLeft.SubsidiaryId == null
+        private static string GetTradingName(CalculatorRunOrganisationDataDetail? prodLeft) =>
+            prodLeft is null || string.IsNullOrWhiteSpace(prodLeft.OrganisationName) || prodLeft.SubsidiaryId == null
                 ? CommonConstants.Hyphen
                 : GetFormatedTradingName(prodLeft.TradingName);
 

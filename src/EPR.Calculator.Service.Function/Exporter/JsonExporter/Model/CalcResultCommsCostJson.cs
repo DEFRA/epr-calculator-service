@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.JsonExporter.Model;
 
@@ -38,11 +39,11 @@ public class OnePlusFourCommsCostApportionmentPercentages
     {
         return new OnePlusFourCommsCostApportionmentPercentages
         {
-            England         = $"{dataRow.England        :0.00000000}%",
-            Wales           = $"{dataRow.Wales          :0.00000000}%",
-            Scotland        = $"{dataRow.Scotland       :0.00000000}%",
-            NorthernIreland = $"{dataRow.NorthernIreland:0.00000000}%",
-            Total           = $"{dataRow.Total          :0.00000000}%"
+            England         = FormatUtils.FormatPercentage(dataRow.England        ),
+            Wales           = FormatUtils.FormatPercentage(dataRow.Wales          ),
+            Scotland        = FormatUtils.FormatPercentage(dataRow.Scotland       ),
+            NorthernIreland = FormatUtils.FormatPercentage(dataRow.NorthernIreland),
+            Total           = FormatUtils.FormatPercentage(dataRow.Total          )
         };
     }
 }

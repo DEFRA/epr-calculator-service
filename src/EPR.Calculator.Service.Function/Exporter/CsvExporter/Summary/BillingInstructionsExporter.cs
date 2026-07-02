@@ -37,15 +37,15 @@ public class BillingInstructionsExporter : ICalcResultSummaryPartExporter
     public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
     {
         var s = producer.BillingInstructionSection!;
-        csvContent.Append(CsvSanitiser.SanitiseData(CurrencyConverterUtils.FormattedCurrencyValue(s.CurrentYearInvoiceTotalToDate), DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(s.CurrentYearInvoiceTotalToDate, DecimalPlaces.Two, null, isCurrency: true, canBeEmpty: true));
         csvContent.Append(CsvSanitiser.SanitiseData(s.TonnageChangeSinceLastInvoice ?? CommonConstants.Hyphen));
-        csvContent.Append(CsvSanitiser.SanitiseData(CurrencyConverterUtils.FormattedCurrencyValue(s.LiabilityDifference), DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(s.LiabilityDifference, DecimalPlaces.Two, null, isCurrency: true, canBeEmpty: true));
         csvContent.Append(CsvSanitiser.SanitiseData(s.MaterialThresholdBreached, appendLrmCharacterToPreventRenderedAsFormula: true));
         csvContent.Append(CsvSanitiser.SanitiseData(s.TonnageThresholdBreached , appendLrmCharacterToPreventRenderedAsFormula: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(s.PercentageLiabilityDifference != null ? s.PercentageLiabilityDifference.ToString() : CommonConstants.Hyphen, DecimalPlaces.Two, null, false, true));
+        csvContent.Append(CsvSanitiser.SanitiseData(s.PercentageLiabilityDifference, DecimalPlaces.Two, null, isPercentage: true, canBeEmpty: true));
         csvContent.Append(CsvSanitiser.SanitiseData(s.MaterialPercentageThresholdBreached, appendLrmCharacterToPreventRenderedAsFormula: true));
         csvContent.Append(CsvSanitiser.SanitiseData(s.TonnagePercentageThresholdBreached , appendLrmCharacterToPreventRenderedAsFormula: true));
         csvContent.Append(CsvSanitiser.SanitiseData(s.SuggestedBillingInstruction));
-        csvContent.Append(CsvSanitiser.SanitiseData(CurrencyConverterUtils.FormattedCurrencyValue(s.SuggestedInvoiceAmount), DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(s.SuggestedInvoiceAmount, DecimalPlaces.Two, null, isCurrency: true, canBeEmpty: true));
     }
 }

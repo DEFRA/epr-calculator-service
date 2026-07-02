@@ -32,13 +32,13 @@ public class FeeForSaSetUpCostsWithBadDebtProvision5
         var costs = calcResultSummaryProducerDisposalFees.SaSetupCostsSection5;
         return new FeeForSaSetUpCostsWithBadDebtProvision5
         {
-            TotalProducerOneOffFeeForSASetUpCostsWithoutBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(costs.FeeWithoutBadDebtProvision),
-            BadDebtProvisionFor5                                         = CurrencyConverterUtils.ConvertToCurrency(costs.BadDebtProvision),
-            TotalProducerOneOffFeeForSASetUpCostsWithBadDebtProvision    = CurrencyConverterUtils.ConvertToCurrency(costs.FeeWithBadDebtProvision.Total),
-            EnglandTotalForSASetUpCostsWithBadDebtProvision              = CurrencyConverterUtils.ConvertToCurrency(costs.FeeWithBadDebtProvision.England),
-            WalesTotalForSASetUpCostsWithBadDebtProvision                = CurrencyConverterUtils.ConvertToCurrency(costs.FeeWithBadDebtProvision.Wales),
-            ScotlandTotalForSASetUpCostsWithBadDebtProvision             = CurrencyConverterUtils.ConvertToCurrency(costs.FeeWithBadDebtProvision.Scotland),
-            NorthernIrelandTotalForSASetUpCostsWithBadDebtProvision      = CurrencyConverterUtils.ConvertToCurrency(costs.FeeWithBadDebtProvision.NorthernIreland)
+            TotalProducerOneOffFeeForSASetUpCostsWithoutBadDebtProvision = FormatUtils.FormatCurrency(costs.FeeWithoutBadDebtProvision),
+            BadDebtProvisionFor5                                         = FormatUtils.FormatCurrency(costs.BadDebtProvision),
+            TotalProducerOneOffFeeForSASetUpCostsWithBadDebtProvision    = FormatUtils.FormatCurrency(costs.FeeWithBadDebtProvision.Total),
+            EnglandTotalForSASetUpCostsWithBadDebtProvision              = FormatUtils.FormatCurrency(costs.FeeWithBadDebtProvision.England),
+            WalesTotalForSASetUpCostsWithBadDebtProvision                = FormatUtils.FormatCurrency(costs.FeeWithBadDebtProvision.Wales),
+            ScotlandTotalForSASetUpCostsWithBadDebtProvision             = FormatUtils.FormatCurrency(costs.FeeWithBadDebtProvision.Scotland),
+            NorthernIrelandTotalForSASetUpCostsWithBadDebtProvision      = FormatUtils.FormatCurrency(costs.FeeWithBadDebtProvision.NorthernIreland)
         };
     }
 }

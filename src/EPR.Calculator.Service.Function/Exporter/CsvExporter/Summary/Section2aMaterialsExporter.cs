@@ -6,7 +6,7 @@ using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 
-public class Section2aMaterialsExporter : ICalcResultSummaryPartExporter
+public class   Section2aMaterialsExporter : ICalcResultSummaryPartExporter
 {
     public IEnumerable<string> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
     {
@@ -69,7 +69,7 @@ public class Section2aMaterialsExporter : ICalcResultSummaryPartExporter
 
         bool isNotTotal = !producer.IsOverallTotalRow;
 
-        foreach (var disposalFee in producer.ProducerCommsFeesByMaterial!)
+        foreach (var disposalFee in producer.ProducerCommsFeesByMaterial)
         {
             csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.HouseholdPackagingWasteTonnage, DecimalPlaces.Three, DecimalFormats.F3));
             csvContent.Append(CsvSanitiser.SanitiseData(disposalFee.Value.PublicBinTonnage              , DecimalPlaces.Three, DecimalFormats.F3));

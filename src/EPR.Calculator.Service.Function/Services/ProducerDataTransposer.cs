@@ -169,13 +169,13 @@ public class ProducerDataTransposer(
                     MaterialId = material.Id,
                     PackagingType = poms.Key.PackagingType!,
                     SubmissionPeriod = poms.Key.SubmissionPeriod!,
-                    PackagingTonnage = Math.Round((decimal)total / 1000m, 3),
-                    PackagingTonnageRed = Math.Round((decimal)red / 1000m, 3),
-                    PackagingTonnageAmber = Math.Round((decimal)amber / 1000m, 3),
-                    PackagingTonnageGreen = Math.Round((decimal)green / 1000m, 3),
-                    PackagingTonnageRedMedical = Math.Round((decimal)redMedical / 1000m, 3),
-                    PackagingTonnageAmberMedical = Math.Round((decimal)amberMedical / 1000m, 3),
-                    PackagingTonnageGreenMedical = Math.Round((decimal)greenMedical / 1000m, 3)
+                    PackagingTonnage = MathUtils.RoundAwayFromZero((decimal)total / 1000m, 3),
+                    PackagingTonnageRed = MathUtils.RoundAwayFromZero((decimal)red / 1000m, 3),
+                    PackagingTonnageAmber = MathUtils.RoundAwayFromZero((decimal)amber / 1000m, 3),
+                    PackagingTonnageGreen = MathUtils.RoundAwayFromZero((decimal)green / 1000m, 3),
+                    PackagingTonnageRedMedical = MathUtils.RoundAwayFromZero((decimal)redMedical / 1000m, 3),
+                    PackagingTonnageAmberMedical = MathUtils.RoundAwayFromZero((decimal)amberMedical / 1000m, 3),
+                    PackagingTonnageGreenMedical = MathUtils.RoundAwayFromZero((decimal)greenMedical / 1000m, 3)
                 };
             }
         }

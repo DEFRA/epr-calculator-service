@@ -37,7 +37,7 @@ namespace EPR.Calculator.Service.Function.Models
                 FiveSchemeSetupCost = CountryAmountJson.From(otherCost.SchemeSetupCost),
                 SixBadDebtProvision = new PercentageJson
                 {
-                    Percentage = $"{otherCost.BadDebtValue:0.00}%"
+                    Percentage = FormatUtils.FormatPercentage(otherCost.BadDebtValue, 2)
                 },
                 SevenMateriality = ChangeJson.From(otherCost.MaterialityIncrease, otherCost.MaterialityDecrease),
                 EightTonnageChange = ChangeJson.From(otherCost.TonnageChangeIncrease, otherCost.TonnageChangeDecrease),
@@ -65,21 +65,21 @@ namespace EPR.Calculator.Service.Function.Models
         public static CountryAmountJson From(ByCountryCost costDetail) =>
             new ()
             {
-                England         = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(costDetail.England        , 2, ","),
-                Wales           = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(costDetail.Wales          , 2, ","),
-                Scotland        = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(costDetail.Scotland       , 2, ","),
-                NorthernIreland = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(costDetail.NorthernIreland, 2, ","),
-                Total           = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(costDetail.Total          , 2, ",")
+                England         = FormatUtils.FormatCurrency(costDetail.England        , 2, useGrouping: true),
+                Wales           = FormatUtils.FormatCurrency(costDetail.Wales          , 2, useGrouping: true),
+                Scotland        = FormatUtils.FormatCurrency(costDetail.Scotland       , 2, useGrouping: true),
+                NorthernIreland = FormatUtils.FormatCurrency(costDetail.NorthernIreland, 2, useGrouping: true),
+                Total           = FormatUtils.FormatCurrency(costDetail.Total          , 2, useGrouping: true)
             };
 
         public static CountryAmountJson From(ByCountryApportionment apportionment) =>
             new()
             {
-                England         = $"{Math.Round(apportionment.England        , (int)DecimalPlaces.Eight):0.00000000}%",
-                Wales           = $"{Math.Round(apportionment.Wales          , (int)DecimalPlaces.Eight):0.00000000}%",
-                Scotland        = $"{Math.Round(apportionment.Scotland       , (int)DecimalPlaces.Eight):0.00000000}%",
-                NorthernIreland = $"{Math.Round(apportionment.NorthernIreland, (int)DecimalPlaces.Eight):0.00000000}%",
-                Total           = $"{100                                                                :0.00000000}%"
+                England         = FormatUtils.FormatPercentage(apportionment.England        ),
+                Wales           = FormatUtils.FormatPercentage(apportionment.Wales          ),
+                Scotland        = FormatUtils.FormatPercentage(apportionment.Scotland       ),
+                NorthernIreland = FormatUtils.FormatPercentage(apportionment.NorthernIreland),
+                Total           = FormatUtils.FormatPercentage(100                          )
             };
     }
 
@@ -119,8 +119,8 @@ namespace EPR.Calculator.Service.Function.Models
         {
             return new ChangeDetailJson
             {
-                Amount     = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(materiality.Amount, 2, ","),
-                Percentage = $"{materiality.Percentage:0.00}%"
+                Amount     = FormatUtils.FormatCurrency(materiality.Amount      , 2, useGrouping: true),
+                Percentage = FormatUtils.FormatPercentage(materiality.Percentage, 2)
             };
         }
     }

@@ -4,6 +4,7 @@ using EPR.Calculator.Service.Function.Features.BillingRuns.Constants;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
+using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary;
 
@@ -56,7 +57,7 @@ public class BillingInstructionsProducerTests
         var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection;
 
         var calcTotal = calcResult.CalcResultSummary.ProducerDisposalFees.First().TotalProducerBillBreakdownCosts!.FeeWithBadDebtProvision.Total;
-        var expectedLiabilityDiff = Math.Round(calcTotal, 2) - Math.Round(20.00m, 2);
+        var expectedLiabilityDiff = MathUtils.RoundAwayFromZero(calcTotal, 2) - MathUtils.RoundAwayFromZero(20.00m, 2);
 
         // Assert
         Assert.AreEqual(20.00m, fee!.CurrentYearInvoiceTotalToDate);
@@ -111,7 +112,7 @@ public class BillingInstructionsProducerTests
         BillingInstructionsProducer.SetValues(summary, invoiced, new CalcResultParameterOtherCost());
 
         var fee = summary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
-        var expected = Math.Round(120.004m, 2) - Math.Round(20.003m, 2);
+        var expected = MathUtils.RoundAwayFromZero(120.004m, 2) - MathUtils.RoundAwayFromZero(20.003m, 2);
         Assert.AreEqual(expected, fee.LiabilityDifference);
     }
 
@@ -260,8 +261,8 @@ public class BillingInstructionsProducerTests
 
         BillingInstructionsProducer.SetValues(summary, invoiced, new CalcResultParameterOtherCost());
 
-        var d1 = Math.Round(50m, 2) - Math.Round(20m, 2);
-        var d2 = Math.Round(70m, 2) - Math.Round(80m, 2);
+        var d1 = MathUtils.RoundAwayFromZero(50m, 2) - MathUtils.RoundAwayFromZero(20m, 2);
+        var d2 = MathUtils.RoundAwayFromZero(70m, 2) - MathUtils.RoundAwayFromZero(80m, 2);
         Assert.AreEqual(d1 + d2, summary.OverallTotal!.BillingInstructionSection!.LiabilityDifference);
     }
 
@@ -1060,7 +1061,7 @@ public class BillingInstructionsProducerTests
         BillingInstructionsProducer.SetValues(calcResult.CalcResultSummary, [invoicedProducer], otherCost);
 
         var fee = calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].BillingInstructionSection!;
-        Assert.AreEqual(10491.17m, Math.Round(fee.SuggestedInvoiceAmount ?? 0m, 2));
+        Assert.AreEqual(10491.17m, MathUtils.RoundAwayFromZero(fee.SuggestedInvoiceAmount ?? 0m, 2));
     }
 
     [TestMethod]

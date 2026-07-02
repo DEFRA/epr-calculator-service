@@ -1,6 +1,7 @@
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 {
@@ -95,18 +96,18 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
         {
             if(totalH2Tonnage <= 0) return 0;
 
-            return Math.Round(totalH2MatTonnage / totalH2Tonnage, 6);
+            return MathUtils.RoundAwayFromZero(totalH2MatTonnage / totalH2Tonnage, 6);
         }
 
         public static RAMTonnage GetProportionateRam(RAMTonnage h1RAMTonnage, decimal tonnageWithoutRAM, RAMProportions h2RamProportions) =>
             new RAMTonnage
             {
-                RedTonnage          = Math.Round(h1RAMTonnage.RedTonnage          + (tonnageWithoutRAM * h2RamProportions.Red         ), 3),
-                AmberTonnage        = Math.Round(h1RAMTonnage.AmberTonnage        + (tonnageWithoutRAM * h2RamProportions.Amber       ), 3),
-                GreenTonnage        = Math.Round(h1RAMTonnage.GreenTonnage        + (tonnageWithoutRAM * h2RamProportions.Green       ), 3),
-                RedMedicalTonnage   = Math.Round(h1RAMTonnage.RedMedicalTonnage   + (tonnageWithoutRAM * h2RamProportions.RedMedical  ), 3),
-                AmberMedicalTonnage = Math.Round(h1RAMTonnage.AmberMedicalTonnage + (tonnageWithoutRAM * h2RamProportions.AmberMedical), 3),
-                GreenMedicalTonnage = Math.Round(h1RAMTonnage.GreenMedicalTonnage + (tonnageWithoutRAM * h2RamProportions.GreenMedical), 3)
+                RedTonnage          = MathUtils.RoundAwayFromZero(h1RAMTonnage.RedTonnage          + (tonnageWithoutRAM * h2RamProportions.Red         ), 3),
+                AmberTonnage        = MathUtils.RoundAwayFromZero(h1RAMTonnage.AmberTonnage        + (tonnageWithoutRAM * h2RamProportions.Amber       ), 3),
+                GreenTonnage        = MathUtils.RoundAwayFromZero(h1RAMTonnage.GreenTonnage        + (tonnageWithoutRAM * h2RamProportions.Green       ), 3),
+                RedMedicalTonnage   = MathUtils.RoundAwayFromZero(h1RAMTonnage.RedMedicalTonnage   + (tonnageWithoutRAM * h2RamProportions.RedMedical  ), 3),
+                AmberMedicalTonnage = MathUtils.RoundAwayFromZero(h1RAMTonnage.AmberMedicalTonnage + (tonnageWithoutRAM * h2RamProportions.AmberMedical), 3),
+                GreenMedicalTonnage = MathUtils.RoundAwayFromZero(h1RAMTonnage.GreenMedicalTonnage + (tonnageWithoutRAM * h2RamProportions.GreenMedical), 3)
             };
 
         private static RAMTonnage GetProjectedTonnage(decimal tonnage, RAMTonnage h1RAMTonnage, decimal tonnageWithoutRAM, RAMProportions h2RamProportions, decimal h2TotalTonnage)

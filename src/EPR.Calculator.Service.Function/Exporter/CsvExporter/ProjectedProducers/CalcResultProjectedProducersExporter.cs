@@ -78,15 +78,15 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
 
         private static void WriteProjectedProducersSecondaryHeaders(IReadOnlyCollection<ProjectedProducersHeader> headers, StringBuilder csvContent)
         {
-            var maxColumnSize = headers.MaxBy(h => h.ColumnIndex ?? 0)?.ColumnIndex ?? throw new ArgumentException("No headers specified");
+            var maxColumnSize = headers.MaxBy(h => h.ColumnIndex)?.ColumnIndex ?? throw new ArgumentException("No headers specified");
 
             var headerRows = new string[maxColumnSize];
-            foreach (var item in headers.Where(h => h.ColumnIndex.HasValue))
+            foreach (var item in headers)
             {
-                headerRows[item.ColumnIndex!.Value - 1] = CsvSanitiser.SanitiseData(item.Name, false);
+                headerRows[item.ColumnIndex - 1] = item.Name;
             }
 
-            var headerRow = string.Join(CommonConstants.CsvFileDelimiter, headerRows);
+            var headerRow = string.Join("", headerRows.Select(x => CsvSanitiser.SanitiseData(x)));
             csvContent.AppendLine(headerRow);
         }
 

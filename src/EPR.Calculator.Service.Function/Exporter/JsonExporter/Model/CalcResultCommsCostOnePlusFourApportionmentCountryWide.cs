@@ -35,11 +35,11 @@ public class CalcResultCommsCostOnePlusFourApportionmentCountryWide
         return new CalcResultCommsCostOnePlusFourApportionmentCountryWide
         {
             Name                              = CalcResultCommsCostBuilder.TwoCCommsCostByCountry,
-            EnglandCommsCostByCountry         = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.England        , 2, ","),
-            WalesCommsCostByCountry           = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Wales          , 2, ","),
-            ScotlandCommsCostByCountry        = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Scotland       , 2, ","),
-            NorthernIrelandCommsCostByCountry = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.NorthernIreland, 2, ","),
-            TotalCommsCostByCountry           = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(record.Total          , 2, ",")
+            EnglandCommsCostByCountry         = FormatUtils.FormatCurrency(record.England        , 2, useGrouping: true),
+            WalesCommsCostByCountry           = FormatUtils.FormatCurrency(record.Wales          , 2, useGrouping: true),
+            ScotlandCommsCostByCountry        = FormatUtils.FormatCurrency(record.Scotland       , 2, useGrouping: true),
+            NorthernIrelandCommsCostByCountry = FormatUtils.FormatCurrency(record.NorthernIreland, 2, useGrouping: true),
+            TotalCommsCostByCountry           = FormatUtils.FormatCurrency(record.Total          , 2, useGrouping: true)
         };
     }
 }

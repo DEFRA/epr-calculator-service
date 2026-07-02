@@ -93,14 +93,14 @@ public record CalcResultCommsCostByMaterial2AMaterialBreakdown
             HouseholdPackagingWasteTonnage           = item.HouseholdPackagingWasteTonnage,
             PublicBinTonnage                         = item.PublicBinTonnage,
             TotalTonnage                             = item.TotalReportedTonnage,
-            PricePerTonne                            = CurrencyConverterUtils.ConvertToCurrency(item.PriceperTonne, (int)DecimalPlaces.Four),
-            ProducerTotalCostWithoutBadDebtProvision = CurrencyConverterUtils.ConvertToCurrency(item.Costs.FeeWithoutBadDebtProvision),
-            BadDebtProvision                         = CurrencyConverterUtils.ConvertToCurrency(item.Costs.BadDebtProvision),
-            ProducerTotalCostwithBadDebtProvision    = CurrencyConverterUtils.ConvertToCurrency(item.Costs.FeeWithBadDebtProvision.Total),
-            EnglandWithBadDebtProvision              = CurrencyConverterUtils.ConvertToCurrency(item.Costs.FeeWithBadDebtProvision.England),
-            WalesWithBadDebtProvision                = CurrencyConverterUtils.ConvertToCurrency(item.Costs.FeeWithBadDebtProvision.Wales),
-            ScotlandWithBadDebtProvision             = CurrencyConverterUtils.ConvertToCurrency(item.Costs.FeeWithBadDebtProvision.Scotland),
-            NorthernIrelandWithBadDebtProvision      = CurrencyConverterUtils.ConvertToCurrency(item.Costs.FeeWithBadDebtProvision.NorthernIreland)
+            PricePerTonne                            = FormatUtils.FormatCurrency(item.PriceperTonne, (int)DecimalPlaces.Four),
+            ProducerTotalCostWithoutBadDebtProvision = FormatUtils.FormatCurrency(item.Costs.FeeWithoutBadDebtProvision),
+            BadDebtProvision                         = FormatUtils.FormatCurrency(item.Costs.BadDebtProvision),
+            ProducerTotalCostwithBadDebtProvision    = FormatUtils.FormatCurrency(item.Costs.FeeWithBadDebtProvision.Total),
+            EnglandWithBadDebtProvision              = FormatUtils.FormatCurrency(item.Costs.FeeWithBadDebtProvision.England),
+            WalesWithBadDebtProvision                = FormatUtils.FormatCurrency(item.Costs.FeeWithBadDebtProvision.Wales),
+            ScotlandWithBadDebtProvision             = FormatUtils.FormatCurrency(item.Costs.FeeWithBadDebtProvision.Scotland),
+            NorthernIrelandWithBadDebtProvision      = FormatUtils.FormatCurrency(item.Costs.FeeWithBadDebtProvision.NorthernIreland)
         };
     }
 }

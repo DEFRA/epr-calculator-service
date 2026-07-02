@@ -64,17 +64,17 @@ public class CalcResultLaDisposalCostDetailsJson : BaseLaDisposalcostAnd2ACommsD
         new ()
         {
             MaterialName                           = material.Name,
-            EnglandLaDisposalCost                  = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(item.Cost.England        , 2, ","),
-            WalesLaDisposalCost                    = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(item.Cost.Wales          , 2, ","),
-            ScotlandLaDisposalCost                 = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(item.Cost.Scotland       , 2, ","),
-            NorthernIrelandLaDisposalCost          = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(item.Cost.NorthernIreland, 2, ","),
-            TotalLaDisposalCost                    = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(item.Cost.Total          , 2, ","),
+            EnglandLaDisposalCost                  = FormatUtils.FormatCurrency(item.Cost.England        , 2, useGrouping: true),
+            WalesLaDisposalCost                    = FormatUtils.FormatCurrency(item.Cost.Wales          , 2, useGrouping: true),
+            ScotlandLaDisposalCost                 = FormatUtils.FormatCurrency(item.Cost.Scotland       , 2, useGrouping: true),
+            NorthernIrelandLaDisposalCost          = FormatUtils.FormatCurrency(item.Cost.NorthernIreland, 2, useGrouping: true),
+            TotalLaDisposalCost                    = FormatUtils.FormatCurrency(item.Cost.Total          , 2, useGrouping: true),
             ProducerHouseholdPackagingWasteTonnage = item.HouseholdPackagingWasteTonnage,
             PublicBinTonnage                       = item.PublicBinTonnage,
             HouseholdDrinksContainersTonnage       = item.HouseholdDrinkContainersTonnage,
             LateReportingTonnage                   = item.LateReportingTonnage,
             TotalTonnage                           = item.TotalTonnage,
-            DisposalCostPricePerTonne              = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(item.DisposalCostPricePerTonne == null ? 0 : item.DisposalCostPricePerTonne.Value, 4, ",")
+            DisposalCostPricePerTonne              = FormatUtils.FormatCurrency(item.DisposalCostPricePerTonne == null ? 0 : item.DisposalCostPricePerTonne.Value, 4, useGrouping: true)
         };
 }
 
@@ -122,11 +122,11 @@ public class CalcResultLaDisposalCostDataDetailsTotal
         new ()
         {
             Total                                       = "Total",
-            EnglandLaDisposalCostTotal                  = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(total.Cost.England        , 2, ","),
-            WalesLaDisposalCostTotal                    = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(total.Cost.Wales          , 2, ","),
-            ScotlandLaDisposalCostTotal                 = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(total.Cost.Scotland       , 2, ","),
-            NorthernIrelandLaDisposalCostTotal          = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(total.Cost.NorthernIreland, 2, ","),
-            TotalLaDisposalCostTotal                    = CurrencyConverterUtils.FormatCurrencyWithGbpSymbol(total.Cost.Total          , 2, ","),
+            EnglandLaDisposalCostTotal                  = FormatUtils.FormatCurrency(total.Cost.England        , 2, useGrouping: true),
+            WalesLaDisposalCostTotal                    = FormatUtils.FormatCurrency(total.Cost.Wales          , 2, useGrouping: true),
+            ScotlandLaDisposalCostTotal                 = FormatUtils.FormatCurrency(total.Cost.Scotland       , 2, useGrouping: true),
+            NorthernIrelandLaDisposalCostTotal          = FormatUtils.FormatCurrency(total.Cost.NorthernIreland, 2, useGrouping: true),
+            TotalLaDisposalCostTotal                    = FormatUtils.FormatCurrency(total.Cost.Total          , 2, useGrouping: true),
             ProducerHouseholdPackagingWasteTonnageTotal = total.HouseholdPackagingWasteTonnage,
             PublicBinTonnage                            = total.PublicBinTonnage,
             HouseholdDrinksContainersTonnageTotal       = total.HouseholdDrinkContainersTonnage,
