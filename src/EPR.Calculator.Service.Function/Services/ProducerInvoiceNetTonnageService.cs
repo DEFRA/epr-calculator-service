@@ -28,9 +28,6 @@ public class ProducerInvoiceNetTonnageService(
                 var materials = await materialService.GetMaterials();
                 var producerInvoicedNetTonnage = GetInvoicedMaterialNetTonnage(calcResult, materials);
 
-                if (producerInvoicedNetTonnage.Count == 0)
-                    throw new RunProcessingException(runContext, "No invoiced net tonnages generated");
-
                 await bulkOps.BulkInsertAsync(dbContext, producerInvoicedNetTonnage);
 
                 logger.LogInformation("Inserted {ProducerInvoicedNetTonnageCount} invoiced net tonnages", producerInvoicedNetTonnage.Count);
