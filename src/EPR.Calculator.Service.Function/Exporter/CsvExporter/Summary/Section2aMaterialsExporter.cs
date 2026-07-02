@@ -64,11 +64,9 @@ public class Section2aMaterialsExporter : ICalcResultSummaryPartExporter
         }
     }
 
-    public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
+    public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation, bool isOverallTotal)
     {
         if (producer.ProducerFeesByMaterial == null) { return; }
-
-        bool isNotTotal = !producer.IsOverallTotal;
 
         foreach (var disposalFee in producer.ProducerCommFeesByMaterial!)
         {
@@ -80,7 +78,7 @@ public class Section2aMaterialsExporter : ICalcResultSummaryPartExporter
                 csvContent.Append(CsvSanitiser.SanitiseData(commCost.HDCTonnage, DecimalPlaces.Three, DecimalFormats.F3));
             }
             csvContent.Append(CsvSanitiser.SanitiseData(commCost.TotalTonnage, DecimalPlaces.Three, DecimalFormats.F3));
-            csvContent.Append(isNotTotal ? CsvSanitiser.SanitiseData(commCost.PricePerTonne, DecimalPlaces.Four, DecimalFormats.F4, isCurrency: true) : CommonConstants.CsvFileDelimiter);
+            csvContent.Append(!isOverallTotal ? CsvSanitiser.SanitiseData(commCost.PricePerTonne, DecimalPlaces.Four, DecimalFormats.F4, isCurrency: true) : CommonConstants.CsvFileDelimiter);
             csvContent.Append(CsvSanitiser.SanitiseData(commCost.Costs.FeeWithoutBadDebtProvision             , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
             csvContent.Append(CsvSanitiser.SanitiseData(commCost.Costs.BadDebtProvision                       , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));
             csvContent.Append(CsvSanitiser.SanitiseData(commCost.Costs.FeeWithBadDebtProvision.Total          , DecimalPlaces.Two, DecimalFormats.F2, isCurrency: true));

@@ -262,7 +262,8 @@ public static partial class TestDataHelper
     public static CalcResultSummary GetCalcResultSummary(bool applyModulation = false)
     {
         return new CalcResultSummary
-        {   
+        {
+            CalculatorRunId = 0,
             ProducerDisposalFees = GetProducerDisposalFees(applyModulation),
             OverallTotal = GetOverallTotalRow(applyModulation)
         };
@@ -274,7 +275,6 @@ public static partial class TestDataHelper
         {
             new()
             {
-                CalculatorRunId = 0,
                 ProducerId = 1,
                 SubsidiaryId = string.Empty,
                 ProducerName = "Allied Packaging",
@@ -353,7 +353,6 @@ public static partial class TestDataHelper
     {
         return new CalcResultSummaryProducerDisposalFees
         {
-                CalculatorRunId = 0,
                 ProducerId = 0,
                 SubsidiaryId = string.Empty,
                 ProducerName = string.Empty,
@@ -423,8 +422,7 @@ public static partial class TestDataHelper
                 },
                 ProducerFeesByMaterial = GetProducerFeesByMaterial(applyModulation),
                 TonnageChangeCount = "0",
-                TonnageChangeAdvice = "",
-                IsOverallTotal = true
+                TonnageChangeAdvice = ""
         };
     }
 
@@ -434,7 +432,6 @@ public static partial class TestDataHelper
         {
             new()
             {
-                CalculatorRunId = 0,
                 ProducerId = 1,
                 SubsidiaryId = string.Empty,
                 ProducerName = "Allied Packaging",
@@ -516,7 +513,6 @@ public static partial class TestDataHelper
                     d1 => d1.Key,
                     d2 => d2.Key,
                     (d1, d2) => new CalcResultSummaryProducerFeesByMaterial{
-                        ProducerDisposalFeesId = 0,
                         MaterialCode = d1.Key,
                         DisposalFees = d1.Value,
                         CommFees = d2.Value,

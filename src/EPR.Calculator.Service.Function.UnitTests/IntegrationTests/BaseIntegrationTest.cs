@@ -15,7 +15,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.IntegrationTests;
 public abstract class BaseIntegrationTest
 {
     private static readonly MsSqlContainer SqlContainer =
-        new MsSqlBuilder("mcr.microsoft.com/mssql/server:2022-latest")
+        new MsSqlBuilder("mcr.microsoft.com/mssql/server:2025-latest")
             .WithReuse(true)
             .Build();
 

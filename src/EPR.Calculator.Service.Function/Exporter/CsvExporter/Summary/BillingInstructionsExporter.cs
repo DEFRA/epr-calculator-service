@@ -35,7 +35,7 @@ public class BillingInstructionsExporter : ICalcResultSummaryPartExporter
         csvContent.Append(',', count - 1);
     }
 
-    public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
+    public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation, bool isOverallTotal)
     {
         var s = producer.BillingInstructionSection!;
         csvContent.Append(CsvSanitiser.SanitiseData(CurrencyConverterUtils.FormattedCurrencyValue(s.CurrentYearInvoiceTotalToDate), DecimalPlaces.Two, null, isCurrency: true));

@@ -28,10 +28,10 @@ public class ProducerIdentityExporter(
         ];
     }
 
-    public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
+    public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation, bool isOverallTotal)
     {
         string YesOrNo(bool isValueSet) =>
-            producer.IsOverallTotal ? string.Empty : (isValueSet ? CommonConstants.Yes : CommonConstants.No);
+            isOverallTotal ? string.Empty : (isValueSet ? CommonConstants.Yes : CommonConstants.No);
 
         var isScaledup = scaledupProducerIds.Contains(producer.ProducerId);
         var isPartialObligation = producer.Level == "1"

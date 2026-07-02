@@ -28,7 +28,7 @@ public class TotalBillBreakdownExporter : ICalcResultSummaryPartExporter
         csvContent.Append(',', count - 1);
     }
 
-    public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
+    public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation, bool isOverallTotal)
     {
         var costs = producer.TotalProducerBillBreakdownCosts;
         csvContent.Append(CsvSanitiser.SanitiseData(costs.FeeWithoutBadDebtProvision             , DecimalPlaces.Two, null, isCurrency: true));

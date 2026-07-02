@@ -59,8 +59,9 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
             },
             CalcResultSummary = new CalcResultSummary
             {
+                CalculatorRunId = 0, 
                 ProducerDisposalFees = fixture.Create<List<CalcResultSummaryProducerDisposalFees>>(),
-                OverallTotal = new() { CalculatorRunId = 0, ProducerId = 0, SubsidiaryId = string.Empty, ProducerName = string.Empty }
+                OverallTotal = new() { ProducerId = 0, SubsidiaryId = string.Empty, ProducerName = string.Empty }
             },
             CalcResultCancelledProducers = new CalcResultCancelledProducersResponse
             {
@@ -128,11 +129,11 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
             },
             CalcResultSummary = new CalcResultSummary
             {
+                CalculatorRunId = 0, 
                 ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
                 {
                     new()
                     {
-                        CalculatorRunId = 0,
                         ProducerFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerFeesByMaterial>(),
                         ProducerId = 1,
                         ProducerName = "Test",
@@ -153,7 +154,7 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
                         }
                     }
                 },
-                OverallTotal = new() { CalculatorRunId = 0, ProducerId = 0, SubsidiaryId = string.Empty, ProducerName = string.Empty }
+                OverallTotal = new() { ProducerId = 0, SubsidiaryId = string.Empty, ProducerName = string.Empty }
             },
             CalcResultProjectedProducers = new CalcResultProjectedProducers
             {
@@ -201,8 +202,9 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
                 ByMaterial = []
             },
             CalcResultSummary = new CalcResultSummary {
+                CalculatorRunId = 0, 
                 ProducerDisposalFees = null!,
-                OverallTotal = new() { CalculatorRunId = 0, ProducerId = 0, SubsidiaryId = string.Empty, ProducerName = string.Empty }
+                OverallTotal = new() { ProducerId = 0, SubsidiaryId = string.Empty, ProducerName = string.Empty }
             },
             CalcResultProjectedProducers = new CalcResultProjectedProducers(){
                 H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,

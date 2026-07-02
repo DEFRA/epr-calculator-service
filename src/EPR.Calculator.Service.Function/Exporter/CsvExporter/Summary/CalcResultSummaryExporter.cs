@@ -37,15 +37,15 @@ public class CalcResultSummaryExporter : ICalcResultSummaryExporter
         AddSummaryDataHeader(resultSummary, materials, runContext.RequiresModulation, csvContent, partExporters);
 
         foreach (var producer in resultSummary.ProducerDisposalFees)
-            AddNewRow(csvContent, producer, runContext.RequiresModulation, partExporters);
+            AddNewRow(csvContent, producer, runContext.RequiresModulation, partExporters, isOverallTotal: false);
 
-        AddNewRow(csvContent, resultSummary.OverallTotal, runContext.RequiresModulation, partExporters);
+        AddNewRow(csvContent, resultSummary.OverallTotal, runContext.RequiresModulation, partExporters, isOverallTotal: true);
     }
 
-    private static void AddNewRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation, IReadOnlyList<ICalcResultSummaryPartExporter> partExporters)
+    private static void AddNewRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation, IReadOnlyList<ICalcResultSummaryPartExporter> partExporters, bool isOverallTotal)
     {
         foreach (var exporter in partExporters)
-            exporter.AppendRow(csvContent, producer, applyModulation);
+            exporter.AppendRow(csvContent, producer, applyModulation, isOverallTotal);
         csvContent.AppendLine();
     }
 

@@ -37,11 +37,11 @@ public class LaDataPrepCostsProducerTests
         },
         CalcResultSummary = new CalcResultSummary
         {
+            CalculatorRunId = 0,
             ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
             {
                 new()
                 {
-                    CalculatorRunId = 0,
                     ProducerFeesByMaterial =
                         new Dictionary<string, CalcResultSummaryProducerFeesByMaterial>(),
                     ProducerId = 1,
@@ -65,7 +65,7 @@ public class LaDataPrepCostsProducerTests
             // CommsCostsSection2a = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = ByCountryCost.Empty with { England = 100 } },
             // CommsCostsSection2b = new CalcResultSummaryBadDebtProvision { FeeWithBadDebtProvision = ByCountryCost.Empty with { England = 100 }},
             // CommsCostsSection2c = new CalcResultSummaryBadDebtProvision { FeeWithoutBadDebtProvision = 0, BadDebtProvision = 0, FeeWithBadDebtProvision = ByCountryCost.Empty with { England = 100 } }
-            OverallTotal = new() { CalculatorRunId = 0, ProducerId = 0, SubsidiaryId = string.Empty, ProducerName = string.Empty }
+            OverallTotal = new() { ProducerId = 0, SubsidiaryId = string.Empty, ProducerName = string.Empty }
         },
         CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
         CalcResultLateReportingTonnageData = TestDataHelper.GetCalcResultLateReportingTonnage(),

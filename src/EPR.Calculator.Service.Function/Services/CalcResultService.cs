@@ -196,26 +196,15 @@ namespace EPR.Calculator.Service.Function.Services
 
         public async Task StoreProducerDisposalFees(int runId, CalcResultSummary summary, CancellationToken cancellationToken)
         {
-            await bulkOps.BulkInsertAsync(
-                    dbContext, 
-                    summary.ProducerDisposalFees.Append(summary.OverallTotal), 
-                    cfg => { cfg.IncludeGraph = true; }, 
-                    cancellationToken
-                );
+            dbContext.ProducerDisposalFee.Add(summary);
+            await dbContext.SaveChangesAsync(cancellationToken);
         }
 
         public async Task<CalcResultSummary> ReadProducerDisposalFees(int runId, CancellationToken cancellationToken)
         {
-            var disposalFees = await dbContext.ProducerDisposalFee
-                        .Include(p => p.ProducerFeesByMaterials)
+            return await dbContext.ProducerDisposalFee
                         .Where(p => p.CalculatorRunId == runId)
-                        .ToImmutableListAsync(cancellationToken);
-
-            return new CalcResultSummary
-            {
-                ProducerDisposalFees = disposalFees.Where(f => !f.IsOverallTotal).ToImmutableList(),
-                OverallTotal = disposalFees.Single(f => f.IsOverallTotal)
-            };
+                        .SingleAsync(cancellationToken);
         }
     
         private static Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage> MapToH1MaterialTonnages(List<TransformProjectedH1> transformProjectedH1s)

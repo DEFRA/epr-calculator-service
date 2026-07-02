@@ -56,11 +56,11 @@ public class SaSetupCostsProducerTests
         CalcResultOnePlusFourApportionment = TestDataHelper.GetCalcResultOnePlusFourApportionment(),
         CalcResultSummary = new CalcResultSummary
         {
+            CalculatorRunId = 0,
             ProducerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>
             {
                 new()
                 {
-                    CalculatorRunId = 0,
                     ProducerFeesByMaterial = new Dictionary<string, CalcResultSummaryProducerFeesByMaterial>(),
                     ProducerId = 1,
                     ProducerName = "Test",
@@ -68,7 +68,7 @@ public class SaSetupCostsProducerTests
                     ProducerOverallPercentageOfCostsForOnePlus2A2B2C = 1
                 }
             },
-            OverallTotal = new() { CalculatorRunId = 0, ProducerId = 0, SubsidiaryId = string.Empty, ProducerName = string.Empty }
+            OverallTotal = new() { ProducerId = 0, SubsidiaryId = string.Empty, ProducerName = string.Empty }
         },
         CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
         CalcResultLateReportingTonnageData = TestDataHelper.GetCalcResultLateReportingTonnage(),

@@ -157,7 +157,7 @@ public class CalcResultSummaryBuilder(
         ProducerRowBuilder rowBuilder
     )
     {
-        var result = new CalcResultSummary { OverallTotal = new() { CalculatorRunId = 0, ProducerId = 0, SubsidiaryId = string.Empty, ProducerName = string.Empty } };
+        var result = new CalcResultSummary { CalculatorRunId = runContext.RunId, OverallTotal = new() { ProducerId = 0, SubsidiaryId = string.Empty, ProducerName = string.Empty } };
 
         if (orderedProducerDetails.Count == 0)
         {

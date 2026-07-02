@@ -388,27 +388,22 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             await _sut.StoreProducerDisposalFees(1, summary, CancellationToken.None);
 
             var stored = await _dbContext.ProducerDisposalFee.ToImmutableListAsync();
-            stored.Count.ShouldBe(2);
-            stored.Count(p => p.IsOverallTotal).ShouldBe(1);
-            stored.Single(p => !p.IsOverallTotal).ProducerName.ShouldBe("Allied Packaging");
-            stored.Single(p => !p.IsOverallTotal).ProducerFeesByMaterial.Count.ShouldBe(8);
-            stored.Single(p => !p.IsOverallTotal).ProducerCommFeesByMaterial.Count.ShouldBe(8);
+            stored.Count.ShouldBe(1);
+            stored.First().ShouldBeEquivalentTo(summary);
         }
 
         [TestMethod]
         public async Task ReadProducerDisposalFees_WorksAsExpected()
         {
-            _dbContext.AddRange(TestDataHelper.GetProducerDisposalFees().Append(TestDataHelper.GetOverallTotalRow()));
+            var summary = TestDataHelper.GetCalcResultSummary();
+            _dbContext.Add(summary);
             await _dbContext.SaveChangesAsync();
 
             var result = await _sut.ReadProducerDisposalFees(0, CancellationToken.None);
 
-            result.ProducerDisposalFees.Count().ShouldBe(1);
-            result.ProducerDisposalFees.Single().ProducerId.ShouldBe(1);
-            result.ProducerDisposalFees.Single().ProducerFeesByMaterial.Count.ShouldBe(8);
-            result.ProducerDisposalFees.Single().ProducerCommFeesByMaterial.Count.ShouldBe(8);
-            result.OverallTotal.IsOverallTotal.ShouldBe(true);
-            result.OverallTotal.ProducerFeesByMaterial.Count.ShouldBe(8);
+            result.CalculatorRunId.ShouldBeEquivalentTo(summary.CalculatorRunId);
+            result.ProducerDisposalFees.ShouldBeEquivalentTo(summary.ProducerDisposalFees);
+            result.OverallTotal.ShouldBeEquivalentTo(summary.OverallTotal);
         }
 
         private TransformProjectedH1 MkTransformProjectedH1(int runId, int producerId, string? subsidiaryId, string materialCode, string level, bool isGlass = false) {
@@ -777,222 +772,3 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     }
 }
 
-/*
-[NotMapped]
-public class CalcResultSummaryBadDebtProvision
-{
-    public decimal FeeWithoutBadDebtProvision { get; set; }
-
-    public decimal BadDebtProvision { get; set; }
-
-    public required ByCountryCost FeeWithBadDebtProvision { get; set; }
-
-    public static readonly CalcResultSummaryBadDebtProvision Empty = new()
-    {
-        FeeWithoutBadDebtProvision = 0,
-        BadDebtProvision           = 0,
-        FeeWithBadDebtProvision    = ByCountryCost.Empty
-    };
-
-    public static CalcResultSummaryBadDebtProvision operator +(CalcResultSummaryBadDebtProvision a, CalcResultSummaryBadDebtProvision b) =>
-        new()
-        {
-            FeeWithoutBadDebtProvision = a.FeeWithoutBadDebtProvision + b.FeeWithoutBadDebtProvision,
-            BadDebtProvision           = a.BadDebtProvision           + b.BadDebtProvision,
-            FeeWithBadDebtProvision    = a.FeeWithBadDebtProvision    + b.FeeWithBadDebtProvision,
-        };
-}
-
-public static class CalcResultSummaryBadDebtProvisionExtensions
-{
-    public static CalcResultSummaryBadDebtProvision Sum(this IEnumerable<CalcResultSummaryBadDebtProvision> source) =>
-        source.Aggregate(CalcResultSummaryBadDebtProvision.Empty, (acc, r) => acc + r);
-}
-
-[NotMapped]
-    public class CalcResultSummaryBillingInstruction
-    {
-        public decimal? CurrentYearInvoiceTotalToDate { get; set; }
-
-        public string? TonnageChangeSinceLastInvoice { get; set; }
-
-        public decimal? LiabilityDifference { get; set; }
-
-        public string? MaterialThresholdBreached { get; set; }
-
-        public string? TonnageThresholdBreached { get; set; }
-
-        public decimal? PercentageLiabilityDifference { get; set; }
-        
-        public string? MaterialPercentageThresholdBreached { get; set; }
-
-        public string? TonnagePercentageThresholdBreached { get; set; }
-
-        public required string SuggestedBillingInstruction { get; set; } = string.Empty;
-
-        public decimal? SuggestedInvoiceAmount { get; set; }
-    }
-
-    [NotMapped]
-    public class CalcResultSummaryProducerCommsFeesCostByMaterial
-    {
-        public decimal HouseholdTonnage { get; set; }
-        public decimal PublicBinTonnage { get; set; }
-        public decimal HDCTonnage { get; set; }
-        public decimal TotalTonnage { get; set; }
-        public decimal PricePerTonne { get; set; }
-        public required CalcResultSummaryBadDebtProvision Costs { get; set; }
-    }
-
-        [NotMapped]
-    public class CalcResultSummaryProducerDisposalFees
-    {
-        public int Id { get; set; }
-
-        public required int CalculatorRunId { get; set; }
-
-        public required int ProducerId { get; set; }
-
-        public required string SubsidiaryId { get; set; }
-
-        public required string ProducerName { get; set; }
-
-        public string? TradingName { get; set; }
-
-        public string? Level { get; set; }
-
-        public string? StatusCode { get; set; }
-
-        public bool IsOverallTotal { get; set; }
-
-        public string? JoinerDate { get; set; }
-
-        public string? LeaverDate { get; set; }
-
-        public CalcResultSummaryBadDebtProvision LADisposalCostsSection1 { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
-
-        public CalcResultSummaryBadDebtProvision CommsCostsSection2a { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
-
-        public CalcResultSummaryBadDebtProvision CommsCostsSection2b { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
-
-        public CalcResultSummaryBadDebtProvision CommsCostsSection2c { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
-
-        public CalcResultSummaryBadDebtProvision SaOperatingCostsSection3 { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
-
-        public CalcResultSummaryBadDebtProvision LaDataPrepSection4 { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
-
-        public CalcResultSummaryBadDebtProvision SaSetupCostsSection5 { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
-
-        public CalcResultSummaryBadDebtProvision TotalProducerBillBreakdownCosts { get; set; } = CalcResultSummaryBadDebtProvision.Empty;
-
-        public decimal PercentageofProducerReportedTonnagevsAllProducers { get; set; }
-
-        public decimal ProducerTotalOnePlus2A2B2CWithBadDebtProvision()
-        {
-            return LADisposalCostsSection1.FeeWithBadDebtProvision.Total
-            + CommsCostsSection2a.FeeWithBadDebtProvision.Total
-            + CommsCostsSection2b.FeeWithBadDebtProvision.Total
-            + CommsCostsSection2c.FeeWithBadDebtProvision.Total;
-        }
-
-        public decimal ProducerOverallPercentageOfCostsForOnePlus2A2B2C { get; set; }
-
-        [NotMapped]
-        public Dictionary<string, CalcResultSummaryProducerFeesByMaterial> ProducerFeesByMaterial 
-        {
-            get => ProducerFeesByMaterials.ToDictionary(s => s.MaterialCode, s => s);
-            set => ProducerFeesByMaterials = value.Select(kvp => kvp.Value).ToList();
-        }
-
-        [NotMapped]
-        public Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> ProducerDisposalFeesByMaterial 
-        {
-            get => ProducerFeesByMaterials.ToDictionary(s => s.MaterialCode, s => s.DisposalFees);
-        }
-
-        [NotMapped]
-        public Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial> ProducerCommFeesByMaterial 
-        {
-            get => ProducerFeesByMaterials.ToDictionary(s => s.MaterialCode, s => s.CommFees);
-        }
-
-        public string? TonnageChangeCount { get; set; }
-
-        public string? TonnageChangeAdvice { get; set; }
-
-        public CalcResultSummaryBillingInstruction? BillingInstructionSection { get; set; }
-
-        #region EF navigational properties
-
-            public virtual ICollection<CalcResultSummaryProducerFeesByMaterial> ProducerFeesByMaterials { get; set; } = [];
-
-        #endregion
-        
-    }
-
-    public class CalcResultSummaryProducerFeesByMaterial
-    {
-        public int Id { get; set; }
-
-        public required int ProducerDisposalFeesId { get; set; }
-
-        public required string MaterialCode { get; set; }
-
-        public required CalcResultSummaryProducerDisposalFeesByMaterial DisposalFees { get; set; }
-
-        public required CalcResultSummaryProducerCommsFeesCostByMaterial CommFees { get; set; }
-
-        #region EF navigational properties
-
-            public virtual CalcResultSummaryProducerDisposalFees ProducerDisposalFees { get; set; } = null!;
-
-        #endregion
-    }
-
-    public class CalcResultSummaryProducerDisposalFeesByMaterial
-    {
-        //Modeled as amber for non modulated years?
-        public decimal HouseholdTonnage { get; set; }
-
-        public RAMTonnage? HouseholdRAMTonnage { get; set; }
-
-        public decimal PublicBinTonnage { get; set; }
-
-        public RAMTonnage? PublicBinRAMTonnage { get; set; }
-
-        public decimal HDCTonnage { get; set; }
-
-        public RAMTonnage? HDCRAMTonnage { get; set; }
-
-        //Derived?
-        public decimal TotalTonnage { get; set; }
-
-        public RAMTonnage? TotalRAMTonnage { get; set; }
-
-        public decimal BadDebtProvision { get; set; }
-
-        public required ByCountryCost ProducerDisposalFeeWithBadDebtProvision { get; set; }
-
-        public decimal SelfManagedConsumerWasteTonnage { get; set; }
-
-        public required RAMTonnageGroup ActionedSelfManagedConsumerWasteTonnage { get; set; }
-
-        public decimal? ResidualSelfManagedConsumerWasteTonnage { get; set; }
-
-        public required RAMTonnageGroup NetReportedTonnage { get; set; }
-
-        public required RAMTonnageGroup PricePerTonne { get; set; }
-
-        public required RAMTonnageGroup ProducerDisposalFee { get; set; }
-
-        public decimal? PreviousInvoicedTonnage { get; set; } //Is this per material or repeated?
-
-        public decimal? TonnageChange { get; set; }
-
-        #region EF navigational properties
-
-            public virtual CalcResultSummaryProducerDisposalFees ProducerDisposalFees { get; set; } = null!;
-
-        #endregion
-    }
-*/

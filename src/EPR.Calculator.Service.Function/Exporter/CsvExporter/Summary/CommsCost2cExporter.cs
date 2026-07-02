@@ -39,7 +39,7 @@ public class CommsCost2cExporter : ICalcResultSummaryPartExporter
         csvContent.Append(',', count - 3);
     }
 
-    public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
+    public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation, bool isOverallTotal)
     {
         csvContent.Append(CsvSanitiser.SanitiseData(producer.CommsCostsSection2c.FeeWithoutBadDebtProvision             , DecimalPlaces.Two, null, isCurrency: true));
         csvContent.Append(CsvSanitiser.SanitiseData(producer.CommsCostsSection2c.BadDebtProvision                       , DecimalPlaces.Two, null, isCurrency: true));

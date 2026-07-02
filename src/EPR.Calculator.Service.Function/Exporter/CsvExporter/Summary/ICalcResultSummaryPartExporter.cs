@@ -20,5 +20,5 @@ public interface ICalcResultSummaryPartExporter
             csvContent.Append(',');
     }
 
-    void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation);
+    void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation, bool isOverallTotal);
 }

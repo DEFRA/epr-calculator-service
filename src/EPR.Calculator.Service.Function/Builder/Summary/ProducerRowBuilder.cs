@@ -110,7 +110,6 @@ internal sealed class ProducerRowBuilder(
 
         return new CalcResultSummaryProducerDisposalFees
         {
-            CalculatorRunId     = calcResult.CalcResultDetail.RunId,
             ProducerId          = producerId,
             ProducerName        = producerForTotalRow?.OrganisationName ?? string.Empty,
             SubsidiaryId        = string.Empty,
@@ -213,7 +212,6 @@ internal sealed class ProducerRowBuilder(
 
         return new CalcResultSummaryProducerDisposalFees
         {
-            CalculatorRunId     = runId,
             ProducerId          = 0,
             ProducerName        = string.Empty,
             SubsidiaryId        = string.Empty,
@@ -230,7 +228,6 @@ internal sealed class ProducerRowBuilder(
             CommsCostsSection2b           = commsCostsSection2b,
 
             PercentageofProducerReportedTonnagevsAllProducers = percentageOfProducerTonnage,
-            IsOverallTotal = true,
             CommsCostsSection2c = commsCostsSection2c
         };
     }
@@ -256,7 +253,6 @@ internal sealed class ProducerRowBuilder(
 
         var result = new CalcResultSummaryProducerDisposalFees
         {
-            CalculatorRunId     = runContext.RunId,
             ProducerId          = producer.ProducerId,
             ProducerName        = producer.ProducerName ?? string.Empty,
             SubsidiaryId        = producer.SubsidiaryId ?? string.Empty,

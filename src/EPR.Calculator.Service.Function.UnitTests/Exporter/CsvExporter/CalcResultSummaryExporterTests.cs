@@ -1,4 +1,5 @@
 using System.Text;
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 using EPR.Calculator.Service.Function.Models;
@@ -23,6 +24,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             var runContext = TestDataHelper.CalculatorRun2025;
             var resultSummary = new CalcResultSummary
             {
+                CalculatorRunId = 0,
                 ProducerDisposalFees = TestDataHelper.GetProducerDisposalFees(),
                 OverallTotal = TestDataHelper.GetOverallTotalRow()
             };

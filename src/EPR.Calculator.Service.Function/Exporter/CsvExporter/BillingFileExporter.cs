@@ -95,7 +95,7 @@ public class BillingFileExporter(
 
     private static CalcResultSummary GetAcceptedProducersCalcResults(int runId, CalcResultSummary calcResultSummary, ImmutableHashSet<int> acceptedProducerIds)
     {
-        var billingOverallTotal = ZeroedTotalRow(runId);
+        var billingOverallTotal = ZeroedTotalRow();
         billingOverallTotal.LADisposalCostsSection1                          = calcResultSummary.OverallTotal.LADisposalCostsSection1;
         billingOverallTotal.CommsCostsSection2a                              = calcResultSummary.OverallTotal.CommsCostsSection2a;
         billingOverallTotal.CommsCostsSection2b                              = calcResultSummary.OverallTotal.CommsCostsSection2b;
@@ -106,6 +106,7 @@ public class BillingFileExporter(
         billingOverallTotal.ProducerOverallPercentageOfCostsForOnePlus2A2B2C = calcResultSummary.OverallTotal.ProducerOverallPercentageOfCostsForOnePlus2A2B2C;
         return new CalcResultSummary
         {
+            CalculatorRunId      = runId,
             ProducerDisposalFees = GetAcceptedProducerDisposalFees(calcResultSummary.ProducerDisposalFees.ToList(), acceptedProducerIds),
             OverallTotal         = billingOverallTotal
         };
@@ -121,9 +122,8 @@ public class BillingFileExporter(
     }
 
     // TODO can we remove this row? // NOSONAR
-    private static CalcResultSummaryProducerDisposalFees ZeroedTotalRow(int runId) => new()
+    private static CalcResultSummaryProducerDisposalFees ZeroedTotalRow() => new()
     {
-        CalculatorRunId            = runId,
         ProducerId                 = 0,
         SubsidiaryId               = string.Empty,
         ProducerName               = string.Empty,
@@ -134,7 +134,6 @@ public class BillingFileExporter(
         LeaverDate                 = CommonConstants.Totals,
         TonnageChangeCount         = string.Empty,
         TonnageChangeAdvice        = string.Empty,
-        IsOverallTotal               = true,
         BillingInstructionSection  = new CalcResultSummaryBillingInstruction { SuggestedBillingInstruction = string.Empty }
     };
 

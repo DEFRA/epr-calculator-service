@@ -1,4 +1,5 @@
 using System.Text;
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
@@ -19,10 +20,10 @@ public class SummaryExporterTestUtils
 
         foreach (var producer in resultSummary.ProducerDisposalFees)
         {
-            exporter.AppendRow(csvContent, producer, applyModulation);
+            exporter.AppendRow(csvContent, producer, applyModulation, isOverallTotal: false);
             csvContent.AppendLine();
         }
 
-        exporter.AppendRow(csvContent, resultSummary.OverallTotal, applyModulation);
+        exporter.AppendRow(csvContent, resultSummary.OverallTotal, applyModulation,  isOverallTotal: true);
     }
 }
