@@ -28,9 +28,6 @@ public class BillingInstructionService(
             {
                 var billingInstructions = GetBillingInstructions(calcResult);
 
-                if (billingInstructions.Count == 0)
-                    throw new RunProcessingException(runContext, "No billing instructions generated");
-
                 await bulkOps.BulkInsertAsync(dbContext, billingInstructions);
 
                 logger.LogInformation("Inserted {BillingInstructionsCount} billing instructions", billingInstructions.Count);
