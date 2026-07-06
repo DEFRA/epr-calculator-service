@@ -197,3 +197,70 @@ JSON number precision loss - JSON numbers are parsed as IEEE 754 doubles by most
 Rounding semantics - financial amounts need to be rounded to exactly 2 decimal places before serialisation, not after. If you emit a raw decimal as a JSON number, the consumer sees 1234.5600000001 or similar depending on their parser. By converting to "F2" format in C# first, you're asserting "this is the canonical rounded value" - the string is the number, not a float approximation of it.
 
 The tradeoff is that consumers can't do arithmetic directly on the values without parsing them back, but for billing data the expectation is display/audit/summation, not in-place computation, so that's acceptable.
+
+## Producers restructured into groups with `members` (2026-07-06)
+
+### Old structure
+
+Every row in `producers[]` had the same shape, distinguished only by a `level` field and an empty-string sentinel:
+
+```json
+"producers": [
+  { "producerID": "100001", "subsidiaryID": "",       "level": 1, "producerName": "",              "totalBill": "39294451.29", "invoice": { "instruction": "INITIAL", ... }, "disposalFeesByMaterial": [...], ... },
+  { "producerID": "100001", "subsidiaryID": "100001",  "level": 2, "producerName": "Good L1 Ltd",   "totalBill": "35722228.44", "invoice": { "instruction": "-", "suggestedAmount": null, ... }, "disposalFeesByMaterial": [...], ... },
+  { "producerID": "100001", "subsidiaryID": "100002",  "level": 2, "producerName": "Good L2 Ltd",   "totalBill": "3572222.84",  "invoice": { "instruction": "-", "suggestedAmount": null, ... }, "disposalFeesByMaterial": [...], ... },
+  { "producerID": "200003", "subsidiaryID": "",       "level": 1, "producerName": "Partial H1 L1 Ltd", "totalBill": "832826.65", "invoice": { "instruction": "INITIAL", ... }, "disposalFeesByMaterial": [...], ... }
+]
+```
+
+**Problems this caused:**
+
+- A composite producer (an organisation with subsidiaries) was represented as a synthetic `level: 1` row with `producerName: ""` and `subsidiaryID: ""`, standing in as a "group total" row, followed by one `level: 2` row per constituent (including the parent organisation itself). A single-organisation producer (no subsidiaries) had no `level: 2` rows at all, and its real data sat directly on the `level: 1` row.
+- Consumers had to scan the whole array and group by `producerID` to reconstruct which rows belonged together, since nothing in the schema enforced the grouping - it was implicit in row ordering and field values.
+- Whether a producer was composite or single-organisation could only be inferred by checking for the presence of matching `level: 2` rows elsewhere in the array, not from the shape of a single row.
+- `invoice` is only meaningful at the group level (billing instructions and suggested amounts are decided once per `producerID`), but every `level: 2` row was still required to carry a full `invoice` object, populated with placeholder `"-"`/`null` values.
+
+### New structure
+
+`producers[]` now has one entry per `producerID` (the group). Each entry carries the group's aggregate financials (summed across all members) directly, and a `members[]` array with one entry per constituent organisation:
+
+```json
+"producers": [
+  {
+    "producerID": "100001",
+    "invoice": { "instruction": "INITIAL", "suggestedAmount": "39294451.29", "invoicedToDate": null },
+    "totalBill": "39294451.29",
+    "disposalFeesByMaterial": [ ... ],
+    "disposalCosts": { ... }, "commsCostsByMaterial": { ... }, ...,
+    "members": [
+      { "subsidiaryID": null,      "producerName": "Good L1 Ltd", "totalBill": "35722228.44", "disposalFeesByMaterial": [ ... ], ... },
+      { "subsidiaryID": "100002", "producerName": "Good L2 Ltd",  "totalBill": "3572222.84",  "disposalFeesByMaterial": [ ... ], ... }
+    ]
+  },
+  {
+    "producerID": "200003",
+    "invoice": { "instruction": "INITIAL", "suggestedAmount": "832826.65", "invoicedToDate": null },
+    "totalBill": "832826.65",
+    "disposalFeesByMaterial": [ ... ],
+    "disposalCosts": { ... }, "commsCostsByMaterial": { ... }, ...,
+    "members": [
+      { "subsidiaryID": null, "producerName": "Partial H1 L1 Ltd", "totalBill": "832826.65", "disposalFeesByMaterial": [ ... ], ... }
+    ]
+  }
+]
+```
+
+Note `subsidiaryID` is `null` for the member that is the parent organisation reporting for itself, and a real ID for an actual subsidiary. This matches the domain model elsewhere in the codebase (e.g. `CalcResultSummaryProducerDisposalFees.SubsidiaryId`, `SelfManagedConsumerWasteService`'s `SubsidiaryId`), where a null subsidiary ID is the standard way of saying "this is the organisation itself, not one of its subsidiaries". The old flat structure obscured this: rather than passing the real `null` through, the `level: 2` row for the parent's own data was given a synthetic `subsidiaryID` equal to its own `producerID` (see `100001`/`100001` above), just so every row had a non-empty value to key on. That workaround is no longer needed once membership is structural (an array position) rather than something reconstructed from field values - `subsidiaryID: null` can mean exactly what it means in the domain model.
+
+**Why this shape:**
+
+- `level` and the empty-string sentinels for `producerName`/`subsidiaryID` are gone. A producer is composite if `members.length > 1`, single-organisation if `members.length === 1` - a structural fact rather than something inferred from row contents.
+- `members` always has at least one entry, including for a single-organisation producer. There is deliberately no special-cased "flatten to the top level when there's only one member" shape - that would just reintroduce a second row shape for consumers to branch on. A consumer that only cares about the group total never needs to look inside `members` regardless of whether the producer is composite or single-organisation.
+- The group keeps its own full aggregate breakdown (`totalBill`, `disposalFeesByMaterial`, `disposalCosts`, etc.), not just `totalBill`. This is the same set of fields as a member carries, now pulled out into a shared `producerFinancials` definition ($defs) referenced by both the group and each member, so a consumer who isn't interested in the per-subsidiary breakdown can read the group's fields directly without summing `members` themselves, regardless of composite vs single-organisation.
+- `invoice` moved to the group only, since it was never meaningful per member - it no longer needs a placeholder value on every member.
+- `producerID` moved to the group only; members no longer repeat their parent's `producerID` (it's implied by nesting under that group).
+
+
+### Schema files affected
+
+Only `2026-billing.schema.json` was updated. It had not yet been consumed by any client, so this was made as a direct breaking change rather than an additive/versioned one. `2025-billing.schema.json` is unaffected and keeps the flat `level`/`subsidiaryID` shape - that schema has already shipped.

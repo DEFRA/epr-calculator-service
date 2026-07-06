@@ -89,6 +89,75 @@
         "amberAndAmberMedical": { "$ref": "#/$defs/pricePerTonne" },
         "greenAndGreenMedical": { "$ref": "#/$defs/pricePerTonne" }
       }
+    },
+    "disposalFeesByMaterialItem": {
+      "type": "object",
+      "description": "Per-material tonnage and fee breakdown for LA disposal costs (section 1)",
+      "required": [
+        "material",
+        "householdPackagingWasteTonnage",
+        "publicBinTonnage",
+        "totalTonnage",
+        "selfManagedConsumerWasteTonnage",
+        "actionedSelfManagedConsumerWasteTonnage",
+        "netTonnage",
+        "feeWithoutBadDebt",
+        "badDebtProvision",
+        "fee",
+        "england", "wales", "scotland", "northernIreland",
+        "previousInvoicedTonnage",
+        "tonnageChange"
+      ],
+      "properties": {
+        "material":                                { "type": "string" },
+        "householdPackagingWasteTonnage":          { "$ref": "#/$defs/tonnageBreakdown" },
+        "publicBinTonnage":                       { "$ref": "#/$defs/tonnageBreakdown" },
+        "householdDrinksContainersTonnageGlass":  { "$ref": "#/$defs/tonnageBreakdown" },
+        "totalTonnage":                           { "$ref": "#/$defs/tonnageBreakdown" },
+        "selfManagedConsumerWasteTonnage":         { "type": "number" },
+        "actionedSelfManagedConsumerWasteTonnage": { "$ref": "#/$defs/ragTonnage" },
+        "residualSelfManagedConsumerWasteTonnage": { "type": "number" },
+        "netTonnage":                             { "$ref": "#/$defs/ragTonnage" },
+        "feeWithoutBadDebt":                      { "$ref": "#/$defs/ragCost" },
+        "badDebtProvision":                       { "$ref": "#/$defs/cost" },
+        "fee":                                    { "$ref": "#/$defs/cost" },
+        "england":                                { "$ref": "#/$defs/cost" },
+        "wales":                                  { "$ref": "#/$defs/cost" },
+        "scotland":                               { "$ref": "#/$defs/cost" },
+        "northernIreland":                        { "$ref": "#/$defs/cost" },
+        "previousInvoicedTonnage":                { "type": "string" },
+        "tonnageChange":                          { "type": "string" }
+      }
+    },
+    "producerFinancials": {
+      "type": "object",
+      "description": "The financial breakdown for one organisation's worth of billing data. Shared by a producer group's own aggregate totals and by each member of that group.",
+      "required": [
+        "totalBill",
+        "disposalFeesByMaterial",
+        "disposalCosts",
+        "commsCostsByMaterial",
+        "commsCostsUKWide",
+        "commsCostsByCountry",
+        "saOperatingCosts",
+        "laDataPrepCosts",
+        "saSetUpCosts"
+      ],
+      "properties": {
+        "totalBill": { "$ref": "#/$defs/cost" },
+        "disposalFeesByMaterial": {
+          "type": "array",
+          "description": "Per-material tonnage and fee breakdown for LA disposal costs (section 1)",
+          "items": { "$ref": "#/$defs/disposalFeesByMaterialItem" }
+        },
+        "disposalCosts":        { "$ref": "#/$defs/feeWithCountries" },
+        "commsCostsByMaterial": { "$ref": "#/$defs/fee" },
+        "commsCostsUKWide":     { "$ref": "#/$defs/fee" },
+        "commsCostsByCountry":  { "$ref": "#/$defs/fee" },
+        "saOperatingCosts":     { "$ref": "#/$defs/fee" },
+        "laDataPrepCosts":      { "$ref": "#/$defs/fee" },
+        "saSetUpCosts":         { "$ref": "#/$defs/fee" }
+      }
     }
   },
   "type": "object",
@@ -126,30 +195,17 @@
     },
     "producers": {
       "type": "array",
+      "description": "One entry per producer group (identified by producerID). Group-level fields are the aggregate across all members - for a single-organisation producer, members contains exactly one entry and the aggregate equals that entry.",
       "items": {
         "type": "object",
-        "required": [
-          "producerName", "producerID", "subsidiaryID", "level",
-          "totalBill", "invoice",
-          "disposalFeesByMaterial",
-          "disposalCosts",
-          "commsCostsByMaterial",
-          "commsCostsUKWide",
-          "commsCostsByCountry",
-          "saOperatingCosts",
-          "laDataPrepCosts",
-          "saSetUpCosts"
-        ],
+        "allOf": [{ "$ref": "#/$defs/producerFinancials" }],
+        "required": ["producerID", "invoice", "members"],
         "properties": {
-          "producerName": { "type": "string" },
-          "producerID":   { "type": "string" },
-          "subsidiaryID": { "type": "string" },
-          "level":        { "type": "integer" },
-
-          "totalBill": { "$ref": "#/$defs/cost" },
+          "producerID": { "type": "string" },
 
           "invoice": {
             "type": "object",
+            "description": "Billing instruction and invoice amounts, decided at group level - not meaningful per member",
             "required": ["instruction", "suggestedAmount", "invoicedToDate"],
             "properties": {
               "instruction":     { "type": "string", "enum": ["", "-", "INITIAL", "DELTA", "REBILL"] },
@@ -158,56 +214,23 @@
             }
           },
 
-          "disposalFeesByMaterial": {
+          "members": {
             "type": "array",
-            "description": "Per-material tonnage and fee breakdown for LA disposal costs (section 1)",
+            "description": "One entry per constituent organisation: the producer itself plus any subsidiaries billed as part of this group",
+            "minItems": 1,
             "items": {
               "type": "object",
-              "required": [
-                "material",
-                "householdPackagingWasteTonnage",
-                "publicBinTonnage",
-                "totalTonnage",
-                "selfManagedConsumerWasteTonnage",
-                "actionedSelfManagedConsumerWasteTonnage",
-                "netTonnage",
-                "feeWithoutBadDebt",
-                "badDebtProvision",
-                "fee",
-                "england", "wales", "scotland", "northernIreland",
-                "previousInvoicedTonnage",
-                "tonnageChange"
-              ],
+              "allOf": [{ "$ref": "#/$defs/producerFinancials" }],
+              "required": ["subsidiaryID", "producerName"],
               "properties": {
-                "material":                           { "type": "string" },
-                "householdPackagingWasteTonnage":          { "$ref": "#/$defs/tonnageBreakdown" },
-                "publicBinTonnage":                       { "$ref": "#/$defs/tonnageBreakdown" },
-                "householdDrinksContainersTonnageGlass":  { "$ref": "#/$defs/tonnageBreakdown" },
-                "totalTonnage":                           { "$ref": "#/$defs/tonnageBreakdown" },
-                "selfManagedConsumerWasteTonnage":         { "type": "number" },
-                "actionedSelfManagedConsumerWasteTonnage": { "$ref": "#/$defs/ragTonnage" },
-                "residualSelfManagedConsumerWasteTonnage": { "type": "number" },
-                "netTonnage":                             { "$ref": "#/$defs/ragTonnage" },
-                "feeWithoutBadDebt":                      { "$ref": "#/$defs/ragCost" },
-                "badDebtProvision":                       { "$ref": "#/$defs/cost" },
-                "fee":                                    { "$ref": "#/$defs/cost" },
-                "england":                                { "$ref": "#/$defs/cost" },
-                "wales":                                  { "$ref": "#/$defs/cost" },
-                "scotland":                               { "$ref": "#/$defs/cost" },
-                "northernIreland":                        { "$ref": "#/$defs/cost" },
-                "previousInvoicedTonnage":                { "type": "string" },
-                "tonnageChange":                          { "type": "string" }
+                "subsidiaryID": {
+                  "type": ["string", "null"],
+                  "description": "The reporting subsidiary's own ID, or null when this member is the parent organisation reporting for itself rather than a subsidiary"
+                },
+                "producerName": { "type": "string" }
               }
             }
-          },
-
-          "disposalCosts":        { "$ref": "#/$defs/feeWithCountries" },
-          "commsCostsByMaterial": { "$ref": "#/$defs/fee" },
-          "commsCostsUKWide":     { "$ref": "#/$defs/fee" },
-          "commsCostsByCountry":  { "$ref": "#/$defs/fee" },
-          "saOperatingCosts":     { "$ref": "#/$defs/fee" },
-          "laDataPrepCosts":      { "$ref": "#/$defs/fee" },
-          "saSetUpCosts":         { "$ref": "#/$defs/fee" }
+          }
         }
       }
     }

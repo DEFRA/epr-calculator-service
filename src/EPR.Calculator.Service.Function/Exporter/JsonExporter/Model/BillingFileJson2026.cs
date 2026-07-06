@@ -24,5 +24,5 @@ public class BillingFileJson2026
     public required IEnumerable<MaterialPrices> Materials { get; init; }
 
     [JsonPropertyName("producers")]
-    public required IEnumerable<ProducerResult> Producers { get; init; }
+    public required IEnumerable<ProducerGroupResult> Producers { get; init; }
 }

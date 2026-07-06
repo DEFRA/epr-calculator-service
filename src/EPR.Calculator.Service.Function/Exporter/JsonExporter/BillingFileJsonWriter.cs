@@ -40,10 +40,7 @@ public class BillingFileJsonWriter(IMaterialService materialService)
                 BadDebtProvisionPercentage = $"{calcResult.CalcResultParameterOtherCost.BadDebtValue:0.00}",
                 ModulationResults          = CalcResultModulationResults.From(calcResult.CalcResultModulation!),
                 Materials                  = MaterialPrices.FromAll(materials, calcResult).ToList(),
-                Producers                  = calcResult.CalcResultSummary.ProducerDisposalFees
-                                                 .Where(p => runContext.AcceptedProducerIds.Contains(p.ProducerId))
-                                                 .Select(p => ProducerResult.From(p, materials, applyModulation: true))
-                                                 .ToList(),
+                Producers                  = BuildProducerGroups(calcResult.CalcResultSummary.ProducerDisposalFees, runContext.AcceptedProducerIds, materials, applyModulation: true),
             };
             return JsonSerializer.Serialize(content, JsonSerializerOptions);
         }
@@ -62,4 +59,28 @@ public class BillingFileJsonWriter(IMaterialService materialService)
         };
         return JsonSerializer.Serialize(content2025, JsonSerializerOptions);
     }
+
+    /// <summary>
+    /// Groups the flat per-row producer summary (one Level-1 row per group, plus one Level-2 row
+    /// per member when the group is composite) into one <see cref="ProducerGroupResult"/> per
+    /// producerID. A single-organisation group has no Level-2 rows, so its Level-1 row also serves
+    /// as its sole member.
+    /// </summary>
+    private static List<ProducerGroupResult> BuildProducerGroups(
+        IEnumerable<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
+        ImmutableHashSet<int> acceptedProducerIds,
+        IImmutableList<MaterialDetail> materials,
+        bool applyModulation) =>
+        producerDisposalFees
+            .Where(p => acceptedProducerIds.Contains(p.ProducerId))
+            .GroupBy(p => p.ProducerId)
+            .Select(group =>
+            {
+                var rows          = group.ToList();
+                var aggregateRow  = rows.Single(r => r.Level == "1");
+                var memberRows    = rows.Where(r => r.Level == "2").ToList();
+
+                return ProducerGroupResult.From(aggregateRow, memberRows.Count > 0 ? memberRows : [aggregateRow], materials, applyModulation);
+            })
+            .ToList();
 }
