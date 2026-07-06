@@ -264,3 +264,29 @@ Note `subsidiaryID` is `null` for the member that is the parent organisation rep
 ### Schema files affected
 
 Only `2026-billing.schema.json` was updated. It had not yet been consumed by any client, so this was made as a direct breaking change rather than an additive/versioned one. `2025-billing.schema.json` is unaffected and keeps the flat `level`/`subsidiaryID` shape - that schema has already shipped.
+
+## Proposed: split monolithic JSON into a run-metadata endpoint plus a paginated producers endpoint (2026-07-06)
+
+Today the billing JSON is generated as a single file and downloaded whole from blob storage via a `/billingRun?runId=123` endpoint. As part of redesigning this as an API, this section proposes splitting delivery into two resources instead of one monolithic document.
+
+### Why split
+
+In a real export sample, `producers` (and its nested `members`) accounts for ~99% of document size; the root-level fields (`runId`, `financialYear`, `badDebtProvisionPercentage`, `modulationResults`, `materials`) are genuinely run-level - one value, or a handful of material rows, shared identically across every producer, not per-producer facts. This mirrors the reasoning in "Price-per-tonne moved to run level" above: for a run with hundreds of producers, repeating `materials` (or the other root fields) once per producer would reintroduce the same duplication that motivated moving price-per-tonne to the root in the first place - just moved from "per material row" to "per producer".
+
+### Proposed shape
+
+- `GET /billing-runs/{runId}` - run metadata only: `financialYear`, `badDebtProvisionPercentage`, `modulationResults`, `materials`. Small and immutable once a run is calculated, so cheap to fetch once and cache.
+- `GET /billing-runs/{runId}/producers` - the bulk data, paginated. Each entry is fully self-contained (aggregate totals and `members` are already computed), so no cross-producer merging is needed at read time.
+- `GET /billing-runs/{runId}/producers/{producerId}` - single-producer lookup, for callers (e.g. a producer-facing view) that only need one producer's bill.
+
+Consumers join `materials` by `material` name once, then page through `producers` referencing it, instead of receiving it repeated on every row.
+
+### Pagination over streaming
+
+A run is immutable once written, so the usual argument for cursor-based pagination (items shifting between pages as data mutates) doesn't apply - plain offset/page-number pagination against `producerID` order is safe, deterministic, and simpler for consumers building a paginated UI (jump to page, show total count). It also gives retryability, caching, and rate-limiting for free.
+
+A streaming/NDJSON bulk-export variant (e.g. `GET /billing-runs/{runId}/producers/export`) may still be worth adding later as a secondary mode for downstream ETL consumers that want the whole run in one connection, but paginated collection access should be the default.
+
+### Status
+
+Proposal only - not yet implemented or agreed. No endpoints described here exist yet.
