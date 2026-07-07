@@ -1,13 +1,14 @@
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Features.BillingRuns.Constants;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Builder.Summary;
 
 public static class BillingInstructionsProducer
 {
-    public static void SetValues(CalcResultSummary result, IReadOnlyList<InvoicedProducer> ProducerInvoicedMaterialNetTonnage, CalcResultParameterOtherCost otherCost)
+    public static void SetValues(ProducerFees result, IReadOnlyList<InvoicedProducer> ProducerInvoicedMaterialNetTonnage, CalcResultParameterOtherCost otherCost)
     {
         decimal totalTonnage = 0;
         decimal liabilityDifferenceRunningTotal = 0m;
@@ -31,62 +32,59 @@ public static class BillingInstructionsProducer
             currentYearInvoicedByProducerId.TryAdd(record.ProducerId, record.CurrentYearInvoicedTotalAfterThisRun);
         }
 
-        foreach (var fee in result.ProducerDisposalFees)
+        foreach (var fee in result.Details)
         {
             currentYearInvoicedByProducerId.TryGetValue(fee.ProducerId, out var currentYearInvoicedTotalTonnage);
 
             totalTonnage += currentYearInvoicedTotalTonnage.GetValueOrDefault();
 
-            var liabilityDifferenceCalculated      = CalculateLiabilityDifference(fee, currentYearInvoicedTotalTonnage);
+            var liabilityDifferenceCalculated        = CalculateLiabilityDifference(fee, currentYearInvoicedTotalTonnage);
             if (liabilityDifferenceCalculated.HasValue)
-                liabilityDifferenceRunningTotal += liabilityDifferenceCalculated.Value;
-            var currentYearInvoiceTotalToDate      = GetCurrentYearInvoicedTotalToDate(fee, currentYearInvoicedTotalTonnage);
-            var tonnageChangeSinceLastInvoice       = GetTonnageChangeSinceLastInvoice(fee);
-            var liabilityDifference                = liabilityDifferenceCalculated;
-            var percentageLiabilityDifference      = GetPercentageLiabilityDifference(fee, currentYearInvoiceTotalToDate, liabilityDifference);
-            var materialThresholdBreached           = GetMaterialThresholdBreached(fee, currentYearInvoicedTotalTonnage, liabilityDifferenceCalculated, param_MATT_AI, param_MATT_AD);
-            var tonnageThresholdBreached            = GetTonnageThresholdBreached(fee, currentYearInvoicedTotalTonnage, liabilityDifferenceCalculated, param_TONT_AI, param_TONT_AD);
-            var materialPercentageThresholdBreached = GetMaterialPercentageThresholdBreached(fee, currentYearInvoiceTotalToDate, percentageLiabilityDifference, param_MATT_PI, param_MATT_PD);
-            var tonnagePercentageThresholdBreached  = GetTonnagePercentageThresholdBreached(fee, currentYearInvoiceTotalToDate, tonnageChangeSinceLastInvoice, percentageLiabilityDifference, param_TONT_PI, param_TONT_PD);
-            var suggestedBillingInstruction         = GetSuggestedBillingInstruction(fee, currentYearInvoiceTotalToDate, liabilityDifference, materialThresholdBreached, tonnageThresholdBreached, materialPercentageThresholdBreached, tonnagePercentageThresholdBreached);
-            var suggestedInvoiceAmount             = GetSuggestedInvoiceAmount(fee, suggestedBillingInstruction, liabilityDifference);
+                liabilityDifferenceRunningTotal     += liabilityDifferenceCalculated.Value;
+            var currentYearInvoiceTotalToDate        = GetCurrentYearInvoicedTotalToDate(fee, currentYearInvoicedTotalTonnage);
+            var tonnageChangeSinceLastInvoice        = GetTonnageChangeSinceLastInvoice(fee);
+            var liabilityDifference                  = liabilityDifferenceCalculated;
+            var percentageLiabilityDifference        = GetPercentageLiabilityDifference(fee, currentYearInvoiceTotalToDate, liabilityDifference);
+            var materialLiabilityDirection           = GetMaterialLiabilityDirection(fee, currentYearInvoicedTotalTonnage, liabilityDifferenceCalculated, param_MATT_AI, param_MATT_AD);
+            var tonnageLiabilityDirection            = GetTonnageLiabilityDirection(fee, currentYearInvoicedTotalTonnage, liabilityDifferenceCalculated, param_TONT_AI, param_TONT_AD);
+            var materialPercentageLiabilityDirection = GetMaterialPercentageLiabilityDirection(fee, currentYearInvoiceTotalToDate, percentageLiabilityDifference, param_MATT_PI, param_MATT_PD);
+            var tonnagePercentageLiabilityDirection  = GetTonnagePercentageLiabilityDirection(fee, currentYearInvoiceTotalToDate, tonnageChangeSinceLastInvoice, percentageLiabilityDifference, param_TONT_PI, param_TONT_PD);
+            var suggestedBillingInstruction          = GetSuggestedBillingInstruction(fee, currentYearInvoiceTotalToDate, liabilityDifference, materialLiabilityDirection, tonnageLiabilityDirection, materialPercentageLiabilityDirection, tonnagePercentageLiabilityDirection);
+            var suggestedInvoiceAmount               = GetSuggestedInvoiceAmount(fee, suggestedBillingInstruction, liabilityDifference);
             if (suggestedInvoiceAmount.HasValue)
-                SuggestedInvoiceAmountTotal += suggestedInvoiceAmount.Value;
+                SuggestedInvoiceAmountTotal         += suggestedInvoiceAmount.Value;
 
-            fee.BillingInstructionSection = new CalcResultSummaryBillingInstruction
+            fee.BillingInstruction = new BillingInstruction
             {
-                CurrentYearInvoiceTotalToDate       = currentYearInvoiceTotalToDate,
-                TonnageChangeSinceLastInvoice       = tonnageChangeSinceLastInvoice,
-                LiabilityDifference                 = liabilityDifference,
-                MaterialThresholdBreached           = materialThresholdBreached,
-                TonnageThresholdBreached            = tonnageThresholdBreached,
-                PercentageLiabilityDifference       = percentageLiabilityDifference,
-                MaterialPercentageThresholdBreached = materialPercentageThresholdBreached,
-                TonnagePercentageThresholdBreached  = tonnagePercentageThresholdBreached,
-                SuggestedBillingInstruction         = suggestedBillingInstruction,
-                SuggestedInvoiceAmount              = suggestedInvoiceAmount
+                CurrentYearInvoiceTotalToDate              = currentYearInvoiceTotalToDate,
+                TonnageChangeSinceLastInvoice              = tonnageChangeSinceLastInvoice,
+                LiabilityDifference                        = liabilityDifference,
+                MaterialityLiabilityDirection              = materialLiabilityDirection,
+                TonnageAmountLiabilityDirection            = tonnageLiabilityDirection,
+                PercentageLiabilityDifference              = percentageLiabilityDifference,
+                MaterialityPercentageLiabilityDirection    = materialPercentageLiabilityDirection,
+                TonnageAmountPercentageLiabilityDirection  = tonnagePercentageLiabilityDirection,
+                SuggestedBillingInstruction                = suggestedBillingInstruction,
+                SuggestedInvoiceAmount                     = suggestedInvoiceAmount
             };
         }
 
-        if (result.OverallTotal is not null)
+        result.Total.BillingInstruction = new BillingInstruction
         {
-            result.OverallTotal.BillingInstructionSection = new CalcResultSummaryBillingInstruction
-            {
-                CurrentYearInvoiceTotalToDate       = totalTonnage,
-                TonnageChangeSinceLastInvoice       = string.Empty,
-                LiabilityDifference                 = liabilityDifferenceRunningTotal == 0m ? null : liabilityDifferenceRunningTotal,
-                MaterialThresholdBreached           = string.Empty,
-                TonnageThresholdBreached            = string.Empty,
-                PercentageLiabilityDifference       = null,
-                MaterialPercentageThresholdBreached = string.Empty,
-                TonnagePercentageThresholdBreached  = string.Empty,
-                SuggestedBillingInstruction         = string.Empty,
-                SuggestedInvoiceAmount              = SuggestedInvoiceAmountTotal
-            };
-        }
+            CurrentYearInvoiceTotalToDate               = totalTonnage,
+            TonnageChangeSinceLastInvoice               = string.Empty,
+            LiabilityDifference                         = liabilityDifferenceRunningTotal == 0m ? null : liabilityDifferenceRunningTotal,
+            MaterialityLiabilityDirection               = null,
+            TonnageAmountLiabilityDirection             = null,
+            PercentageLiabilityDifference               = null,
+            MaterialityPercentageLiabilityDirection     = null,
+            TonnageAmountPercentageLiabilityDirection   = null,
+            SuggestedBillingInstruction                 = string.Empty,
+            SuggestedInvoiceAmount                      = SuggestedInvoiceAmountTotal
+        };
     }
 
-    private static decimal? GetCurrentYearInvoicedTotalToDate(CalcResultSummaryProducerDisposalFees fee, decimal? currentYearInvoicedTotalTonnage)
+    private static decimal? GetCurrentYearInvoicedTotalToDate(ProducerFeeDetail fee, decimal? currentYearInvoicedTotalTonnage)
     {
         if (fee.Level == "1")
             return currentYearInvoicedTotalTonnage;
@@ -95,44 +93,44 @@ public static class BillingInstructionsProducer
     }
 
     private static string? GetTonnageChangeSinceLastInvoice(
-        CalcResultSummaryProducerDisposalFees fee
+        ProducerFeeDetail fee
     ) => fee.TonnageChangeAdvice == "CHANGE" ? "Tonnage Changed" : null;
 
     private static decimal? CalculateLiabilityDifference(
-        CalcResultSummaryProducerDisposalFees fee,
+        ProducerFeeDetail fee,
         decimal? currentInvoicedTotalToDate
     ) =>
         (fee.Level != CommonConstants.LevelOne.ToString()) || (!currentInvoicedTotalToDate.HasValue)
         ? null
-        : MathUtils.RoundAwayFromZero(fee.TotalProducerBillBreakdownCosts.FeeWithBadDebtProvision.Total, 2) - MathUtils.RoundAwayFromZero(currentInvoicedTotalToDate.Value, 2);
+        : MathUtils.RoundAwayFromZero(fee.TotalBillBreakdown.ByCountry.Total, 2) - MathUtils.RoundAwayFromZero(currentInvoicedTotalToDate.Value, 2);
 
-    private static string GetMaterialThresholdBreached(CalcResultSummaryProducerDisposalFees fee, decimal? currentInvoicedTotalToDate, decimal? liabilityDifferenceCalculated, decimal param_MATT_AI, decimal param_MATT_AD)
+    private static LiabilityDirection? GetMaterialLiabilityDirection(ProducerFeeDetail fee, decimal? currentInvoicedTotalToDate, decimal? liabilityDifferenceCalculated, decimal param_MATT_AI, decimal param_MATT_AD)
     {
-        if (fee.Level != CommonConstants.LevelOne.ToString()) return CommonConstants.Hyphen;
-        if (!currentInvoicedTotalToDate.HasValue) return CommonConstants.Hyphen;
-        if (!liabilityDifferenceCalculated.HasValue) return CommonConstants.Hyphen;
+        if (fee.Level != CommonConstants.LevelOne.ToString()) return null;
+        if (!currentInvoicedTotalToDate.HasValue) return null;
+        if (!liabilityDifferenceCalculated.HasValue) return null;
 
-        if (liabilityDifferenceCalculated >= param_MATT_AI) return "+ve";
-        if (liabilityDifferenceCalculated <= param_MATT_AD) return "-ve";
+        if (liabilityDifferenceCalculated >= param_MATT_AI) return LiabilityDirection.Positive;
+        if (liabilityDifferenceCalculated <= param_MATT_AD) return LiabilityDirection.Negative;
 
-        return CommonConstants.Hyphen;
+        return null;
     }
 
-    private static string GetTonnageThresholdBreached(CalcResultSummaryProducerDisposalFees fee, decimal? currentInvoicedTotalToDate, decimal? liabilityDifferenceCalculated, decimal param_TONT_AI, decimal param_TONT_AD)
+    private static LiabilityDirection? GetTonnageLiabilityDirection(ProducerFeeDetail fee, decimal? currentInvoicedTotalToDate, decimal? liabilityDifferenceCalculated, decimal param_TONT_AI, decimal param_TONT_AD)
     {
-        if (fee.Level != CommonConstants.LevelOne.ToString()) return CommonConstants.Hyphen;
-        if (!currentInvoicedTotalToDate.HasValue) return CommonConstants.Hyphen;
-        if (fee.TonnageChangeAdvice != "CHANGE") return CommonConstants.Hyphen;
-        if (!liabilityDifferenceCalculated.HasValue) return CommonConstants.Hyphen;
+        if (fee.Level != CommonConstants.LevelOne.ToString()) return null;
+        if (!currentInvoicedTotalToDate.HasValue) return null;
+        if (fee.TonnageChangeAdvice != "CHANGE") return null;
+        if (!liabilityDifferenceCalculated.HasValue) return null;
 
-        if (liabilityDifferenceCalculated >= param_TONT_AI) return "+ve";
-        if (liabilityDifferenceCalculated <= param_TONT_AD) return "-ve";
+        if (liabilityDifferenceCalculated >= param_TONT_AI) return LiabilityDirection.Positive;
+        if (liabilityDifferenceCalculated <= param_TONT_AD) return LiabilityDirection.Negative;
 
-        return CommonConstants.Hyphen;
+        return null;
     }
 
     private static decimal? GetPercentageLiabilityDifference(
-        CalcResultSummaryProducerDisposalFees fee,
+        ProducerFeeDetail fee,
         decimal? currentYearInvoiceTotalToDate,
         decimal? liabilityDifference
     ) =>
@@ -144,53 +142,53 @@ public static class BillingInstructionsProducer
         ? null
         : MathUtils.RoundAwayFromZero(liabilityDifference.Value / currentYearInvoiceTotalToDate.Value * 100, 2);
 
-    private static string GetMaterialPercentageThresholdBreached(CalcResultSummaryProducerDisposalFees fee, decimal? currentYearInvoiceTotalToDate, decimal? percentageLiabilityDifference, decimal param_MATT_PI, decimal param_MATT_PD)
+    private static LiabilityDirection? GetMaterialPercentageLiabilityDirection(ProducerFeeDetail fee, decimal? currentYearInvoiceTotalToDate, decimal? percentageLiabilityDifference, decimal param_MATT_PI, decimal param_MATT_PD)
     {
-        if (fee.Level != CommonConstants.LevelOne.ToString()) return CommonConstants.Hyphen;
-        if (!currentYearInvoiceTotalToDate.HasValue) return CommonConstants.Hyphen;
+        if (fee.Level != CommonConstants.LevelOne.ToString()) return null;
+        if (!currentYearInvoiceTotalToDate.HasValue) return null;
 
-        if (percentageLiabilityDifference >= param_MATT_PI) return CommonConstants.Positive;
-        if (percentageLiabilityDifference <= param_MATT_PD) return CommonConstants.Negative;
+        if (percentageLiabilityDifference >= param_MATT_PI) return LiabilityDirection.Positive;
+        if (percentageLiabilityDifference <= param_MATT_PD) return LiabilityDirection.Negative;
 
-        return CommonConstants.Hyphen;
+        return null;
     }
 
-    private static string GetTonnagePercentageThresholdBreached(CalcResultSummaryProducerDisposalFees fee, decimal? currentYearInvoiceTotalToDate, string? tonnageChangeSinceLastInvoice, decimal? percentageLiabilityDifference, decimal param_TONT_PI, decimal param_TONT_PD)
+    private static LiabilityDirection? GetTonnagePercentageLiabilityDirection(ProducerFeeDetail fee, decimal? currentYearInvoiceTotalToDate, string? tonnageChangeSinceLastInvoice, decimal? percentageLiabilityDifference, decimal param_TONT_PI, decimal param_TONT_PD)
     {
-        if (fee.Level != CommonConstants.LevelOne.ToString()) return CommonConstants.Hyphen;
+        if (fee.Level != CommonConstants.LevelOne.ToString()) return null;
 
-        if (!currentYearInvoiceTotalToDate.HasValue) return CommonConstants.Hyphen;
-        if (tonnageChangeSinceLastInvoice != CommonConstants.TonnageChanged) return CommonConstants.Hyphen;
+        if (!currentYearInvoiceTotalToDate.HasValue) return null;
+        if (tonnageChangeSinceLastInvoice != CommonConstants.TonnageChanged) return null;
 
-        if (percentageLiabilityDifference >= param_TONT_PI) return CommonConstants.Positive;
-        if (percentageLiabilityDifference <= param_TONT_PD) return CommonConstants.Negative;
+        if (percentageLiabilityDifference >= param_TONT_PI) return LiabilityDirection.Positive;
+        if (percentageLiabilityDifference <= param_TONT_PD) return LiabilityDirection.Negative;
 
-        return CommonConstants.Hyphen;
+        return null;
     }
 
-    private static string GetSuggestedBillingInstruction(CalcResultSummaryProducerDisposalFees fee, decimal? currentYearInvoiceTotalToDate, decimal? liabilityDifference, string materialThresholdBreached, string tonnageThresholdBreached, string materialPercentageThresholdBreached, string tonnagePercentageThresholdBreached)
+    private static string GetSuggestedBillingInstruction(ProducerFeeDetail fee, decimal? currentYearInvoiceTotalToDate, decimal? liabilityDifference, LiabilityDirection? materialThresholdBreached, LiabilityDirection? tonnageThresholdBreached, LiabilityDirection? materialPercentageThresholdBreached, LiabilityDirection? tonnagePercentageThresholdBreached)
     {
         if (fee.Level != CommonConstants.LevelOne.ToString()) return CommonConstants.Hyphen;
 
         if (!currentYearInvoiceTotalToDate.HasValue) return CommonConstants.Initial;
 
         if (liabilityDifference > 0 &&
-            (materialThresholdBreached != CommonConstants.Hyphen || tonnageThresholdBreached != CommonConstants.Hyphen || materialPercentageThresholdBreached != CommonConstants.Hyphen || tonnagePercentageThresholdBreached != CommonConstants.Hyphen))
+            (materialThresholdBreached != null || tonnageThresholdBreached != null || materialPercentageThresholdBreached != null || tonnagePercentageThresholdBreached != null))
             return BillingConstants.Suggestion.Delta;
 
         if (liabilityDifference < 0 &&
-            (materialThresholdBreached != CommonConstants.Hyphen || tonnageThresholdBreached != CommonConstants.Hyphen || materialPercentageThresholdBreached != CommonConstants.Hyphen || tonnagePercentageThresholdBreached != CommonConstants.Hyphen))
+            (materialThresholdBreached != null || tonnageThresholdBreached != null || materialPercentageThresholdBreached != null || tonnagePercentageThresholdBreached != null))
             return BillingConstants.Suggestion.Rebill;
 
         return CommonConstants.Hyphen;
     }
 
-    private static decimal? GetSuggestedInvoiceAmount(CalcResultSummaryProducerDisposalFees fee, string suggestedBillingInstruction, decimal? liabilityDifference)
+    private static decimal? GetSuggestedInvoiceAmount(ProducerFeeDetail fee, string suggestedBillingInstruction, decimal? liabilityDifference)
     {
         if (fee.Level != CommonConstants.LevelOne.ToString()) return null;
 
         if (suggestedBillingInstruction is BillingConstants.Suggestion.Initial or BillingConstants.Suggestion.Rebill)
-            return fee.TotalProducerBillBreakdownCosts?.FeeWithBadDebtProvision.Total;
+            return fee.TotalBillBreakdown?.ByCountry.Total;
 
         if (suggestedBillingInstruction == BillingConstants.Suggestion.Delta) return liabilityDifference;
 

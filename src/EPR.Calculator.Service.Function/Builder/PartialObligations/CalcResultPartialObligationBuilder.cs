@@ -160,29 +160,29 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
                 var matList = mats.ToList();
                 decimal hh, pb;
                 decimal? hdc = null;
-                RAMTonnage? hhRam = null, pbRam = null, hdcRam = null;
+                RamTonnage? hhRam = null, pbRam = null, hdcRam = null;
 
                 if (applyModulation)
                 {
-                    hhRam = RAMTonnage.ToRAMTonnage(matList, PackagingTypes.Household);
+                    hhRam = RamTonnage.ToRamTonnage(matList, PackagingTypes.Household);
                     hh    = hhRam.TotalRamTonnage();
-                    pbRam = RAMTonnage.ToRAMTonnage(matList, PackagingTypes.PublicBin);
+                    pbRam = RamTonnage.ToRamTonnage(matList, PackagingTypes.PublicBin);
                     pb    = pbRam.TotalRamTonnage();
 
                     if (isGlass)
                     {
-                        hdcRam = RAMTonnage.ToRAMTonnage(matList, PackagingTypes.HouseholdDrinksContainers);
+                        hdcRam = RamTonnage.ToRamTonnage(matList, PackagingTypes.HouseholdDrinksContainers);
                         hdc = hdcRam.TotalRamTonnage();
                     }
                 }
                 else
                 {
-                    hh = RAMTonnage.GetReportedTonnage(matList, PackagingTypes.Household, rm => rm.PackagingTonnage);
-                    pb = RAMTonnage.GetReportedTonnage(matList, PackagingTypes.PublicBin, rm => rm.PackagingTonnage);
-                    hdc = isGlass ? RAMTonnage.GetReportedTonnage(matList, PackagingTypes.HouseholdDrinksContainers, rm => rm.PackagingTonnage) : null;
+                    hh = RamTonnage.GetReportedTonnage(matList, PackagingTypes.Household, rm => rm.PackagingTonnage);
+                    pb = RamTonnage.GetReportedTonnage(matList, PackagingTypes.PublicBin, rm => rm.PackagingTonnage);
+                    hdc = isGlass ? RamTonnage.GetReportedTonnage(matList, PackagingTypes.HouseholdDrinksContainers, rm => rm.PackagingTonnage) : null;
                 }
 
-                var smcw = RAMTonnage.GetReportedTonnage(matList, PackagingTypes.ConsumerWaste, rm => rm.PackagingTonnage);
+                var smcw = RamTonnage.GetReportedTonnage(matList, PackagingTypes.ConsumerWaste, rm => rm.PackagingTonnage);
 
                 return new CalcResultPartialObligationTonnage
                 {
@@ -219,11 +219,11 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
                 {
                     ObligatedFactor                     = partialAmount,
                     HouseholdTonnage                    = 0m,
-                    HouseholdRAMTonnage                 = RAMTonnage.Empty,
+                    HouseholdRAMTonnage                 = RamTonnage.Empty,
                     PublicBinTonnage                    = 0m,
-                    PublicBinRAMTonnage                 = RAMTonnage.Empty,
+                    PublicBinRAMTonnage                 = RamTonnage.Empty,
                     HouseholdDrinksContainersTonnage    = isGlass ? 0m : null,
-                    HouseholdDrinksContainersRAMTonnage = isGlass ? RAMTonnage.Empty : null,
+                    HouseholdDrinksContainersRAMTonnage = isGlass ? RamTonnage.Empty : null,
                     SelfManagedConsumerWasteTonnage     = 0m
 
                 };

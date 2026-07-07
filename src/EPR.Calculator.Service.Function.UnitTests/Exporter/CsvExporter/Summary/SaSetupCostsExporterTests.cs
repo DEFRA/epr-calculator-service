@@ -7,7 +7,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Summary
 [TestClass]
 public class SaSetupCostsExporterTests
 {
-    private readonly ICalcResultSummaryPartExporter exporter = new SaSetupCostsExporter();
+    private readonly IProducerFeesPartExporter exporter = new SaSetupCostsExporter();
 
     [TestMethod]
     public void SaSetupCostsExporter_Export_CSV()
@@ -15,11 +15,11 @@ public class SaSetupCostsExporterTests
         // Arrange
         var materials = TestDataHelper.GetMaterialDetails();
         const bool applyModulation = false;
-        var resultSummary = TestDataHelper.GetCalcResultSummary();
+        var producerFees = TestDataHelper.GetProducerFees();
         var csvContent = new StringBuilder();
 
         // Act
-        SummaryExporterTestUtils.Render(exporter, materials, applyModulation, resultSummary, csvContent);
+        ProducerFeesExporterTestUtils.Render(exporter, materials, applyModulation, producerFees, csvContent);
         var result = csvContent.ToString().ReplaceLineEndings("\n").Split("\n").ToArray();
         Console.WriteLine(string.Join("\n", result));
 
@@ -32,7 +32,7 @@ public class SaSetupCostsExporterTests
              null,
              null
             ],
-            ["£17500.00", "£1050.00", "£18550.00", null, null, null, null],
+            ["£2970.71", "£178.24", "£3148.95", null, null, null, null],
             ["5 Total Producer One-off fee for SA Set Up Costs In proportion to Percentage of Overall Producer Cost of (1+2a+2b+2c) w/o Bad Debt provision",
              "Bad Debt Provision for 5",
              "5 Total Producer One-off fee for SA Set Up Costs In proportion to Percentage of Overall Producer Cost of (1+2a+2b+2c) with Bad Debt provision",

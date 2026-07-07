@@ -1,3 +1,4 @@
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Models;
@@ -8,13 +9,13 @@ public class CalcResultSummaryBadDebtProvisionTests
     private static ByCountryCost MakeCountryCost(decimal england, decimal wales, decimal scotland, decimal ni) =>
         new() { England = england, Wales = wales, Scotland = scotland, NorthernIreland = ni };
 
-    private static CalcResultSummaryBadDebtProvision Make(
+    private static FeeWithBadDebt Make(
         decimal feeWithout, decimal badDebt, decimal england, decimal wales, decimal scotland, decimal ni) =>
         new()
         {
-            FeeWithoutBadDebtProvision = feeWithout,
-            BadDebtProvision           = badDebt,
-            FeeWithBadDebtProvision    = MakeCountryCost(england, wales, scotland, ni),
+            FeeWithoutBadDebt = feeWithout,
+            BadDebt           = badDebt,
+            ByCountry    = MakeCountryCost(england, wales, scotland, ni),
         };
 
     [TestMethod]
@@ -25,12 +26,12 @@ public class CalcResultSummaryBadDebtProvisionTests
 
         var result = a + b;
 
-        result.FeeWithoutBadDebtProvision.ShouldBe(30);
-        result.BadDebtProvision.ShouldBe(5);
-        result.FeeWithBadDebtProvision.England.ShouldBe(11);
-        result.FeeWithBadDebtProvision.Wales.ShouldBe(22);
-        result.FeeWithBadDebtProvision.Scotland.ShouldBe(33);
-        result.FeeWithBadDebtProvision.NorthernIreland.ShouldBe(44);
+        result.FeeWithoutBadDebt.ShouldBe(30);
+        result.BadDebt.ShouldBe(5);
+        result.ByCountry.England.ShouldBe(11);
+        result.ByCountry.Wales.ShouldBe(22);
+        result.ByCountry.Scotland.ShouldBe(33);
+        result.ByCountry.NorthernIreland.ShouldBe(44);
     }
 
     [TestMethod]
@@ -38,14 +39,14 @@ public class CalcResultSummaryBadDebtProvisionTests
     {
         var a = Make(feeWithout: 10, badDebt: 2, england: 1, wales: 2, scotland: 3, ni: 4);
 
-        var result = a + CalcResultSummaryBadDebtProvision.Empty;
+        var result = a + FeeWithBadDebt.Empty;
 
-        result.FeeWithoutBadDebtProvision.ShouldBe(a.FeeWithoutBadDebtProvision);
-        result.BadDebtProvision.ShouldBe(a.BadDebtProvision);
-        result.FeeWithBadDebtProvision.England.ShouldBe(a.FeeWithBadDebtProvision.England);
-        result.FeeWithBadDebtProvision.Wales.ShouldBe(a.FeeWithBadDebtProvision.Wales);
-        result.FeeWithBadDebtProvision.Scotland.ShouldBe(a.FeeWithBadDebtProvision.Scotland);
-        result.FeeWithBadDebtProvision.NorthernIreland.ShouldBe(a.FeeWithBadDebtProvision.NorthernIreland);
+        result.FeeWithoutBadDebt.ShouldBe(a.FeeWithoutBadDebt);
+        result.BadDebt.ShouldBe(a.BadDebt);
+        result.ByCountry.England.ShouldBe(a.ByCountry.England);
+        result.ByCountry.Wales.ShouldBe(a.ByCountry.Wales);
+        result.ByCountry.Scotland.ShouldBe(a.ByCountry.Scotland);
+        result.ByCountry.NorthernIreland.ShouldBe(a.ByCountry.NorthernIreland);
     }
 
     [TestMethod]
@@ -60,24 +61,24 @@ public class CalcResultSummaryBadDebtProvisionTests
 
         var result = items.Sum();
 
-        result.FeeWithoutBadDebtProvision.ShouldBe(111);
-        result.BadDebtProvision.ShouldBe(6);
-        result.FeeWithBadDebtProvision.England.ShouldBe(111);
-        result.FeeWithBadDebtProvision.Wales.ShouldBe(111);
-        result.FeeWithBadDebtProvision.Scotland.ShouldBe(111);
-        result.FeeWithBadDebtProvision.NorthernIreland.ShouldBe(111);
+        result.FeeWithoutBadDebt.ShouldBe(111);
+        result.BadDebt.ShouldBe(6);
+        result.ByCountry.England.ShouldBe(111);
+        result.ByCountry.Wales.ShouldBe(111);
+        result.ByCountry.Scotland.ShouldBe(111);
+        result.ByCountry.NorthernIreland.ShouldBe(111);
     }
 
     [TestMethod]
     public void Sum_EmptyCollection_ReturnsEmpty()
     {
-        var result = Array.Empty<CalcResultSummaryBadDebtProvision>().Sum();
+        var result = Array.Empty<FeeWithBadDebt>().Sum();
 
-        result.FeeWithoutBadDebtProvision.ShouldBe(0);
-        result.BadDebtProvision.ShouldBe(0);
-        result.FeeWithBadDebtProvision.England.ShouldBe(0);
-        result.FeeWithBadDebtProvision.Wales.ShouldBe(0);
-        result.FeeWithBadDebtProvision.Scotland.ShouldBe(0);
-        result.FeeWithBadDebtProvision.NorthernIreland.ShouldBe(0);
+        result.FeeWithoutBadDebt.ShouldBe(0);
+        result.BadDebt.ShouldBe(0);
+        result.ByCountry.England.ShouldBe(0);
+        result.ByCountry.Wales.ShouldBe(0);
+        result.ByCountry.Scotland.ShouldBe(0);
+        result.ByCountry.NorthernIreland.ShouldBe(0);
     }
 }

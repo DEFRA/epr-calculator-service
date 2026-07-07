@@ -33,7 +33,7 @@ public class CalcResultSummaryCommsCostTwoATests
                 CalcResultLaDisposalCostData = TestDataHelper.GetCalcResultLaDisposalCostData(),
                 CalcResultLapcapData = TestDataHelper.GetCalcResultLapcapData(),
                 CalcResultOnePlusFourApportionment = TestDataHelper.GetCalcResultOnePlusFourApportionment(),
-                CalcResultSummary = TestDataHelper.GetCalcResultSummary(),
+                ProducerFees = TestDataHelper.GetProducerFees(),
                 CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
                 CalcResultLateReportingTonnageData = this.GetCalcResultLateReportingTonnage(),
                 CalcResultProjectedProducers = new CalcResultProjectedProducers(){
@@ -72,12 +72,12 @@ public class CalcResultSummaryCommsCostTwoATests
     public void GetCommsFeesCosts_ShouldReturnCorrectValues()
     {
         // Act
-        var result = CalcResultSummaryCommsCostTwoA.GetCommsFeesCosts(CalcResultSummaryUtilTests.ProjectedMaterialsLookup(producers), producers[0], material, calcResult);
+        var result = CalcResultSummaryCommsCostTwoA.GetCommsFeesCosts(ProducerFeesUtilTests.ProjectedMaterialsLookup(producers), producers[0], material, calcResult);
 
         // Assert
-        Assert.AreEqual(504.00m, result.FeeWithoutBadDebtProvision);
-        Assert.AreEqual(30.24m, result.BadDebtProvision);
-        Assert.AreEqual(534.2400m, result.FeeWithBadDebtProvision.Total);
+        Assert.AreEqual(504.00m, result.FeeWithoutBadDebt);
+        Assert.AreEqual(30.24m, result.BadDebt);
+        Assert.AreEqual(534.2400m, result.ByCountry.Total);
     }
 
     private static List<ProducerDetail> GetProducers()

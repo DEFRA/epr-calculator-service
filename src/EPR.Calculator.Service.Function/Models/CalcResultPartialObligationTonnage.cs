@@ -1,4 +1,6 @@
-﻿using EPR.Calculator.Service.Function.Utils;
+﻿using EPR.Calculator.API.Data.DataModels;
+
+using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Models
 {
@@ -6,18 +8,18 @@ namespace EPR.Calculator.Service.Function.Models
     {
         public required decimal ObligatedFactor { get; set; }
         public required decimal HouseholdTonnage { get; set; }
-        public RAMTonnage? HouseholdRAMTonnage { get; set; }
+        public RamTonnage? HouseholdRAMTonnage { get; set; }
         public required decimal PublicBinTonnage { get; set; }
-        public RAMTonnage? PublicBinRAMTonnage { get; set; }
+        public RamTonnage? PublicBinRAMTonnage { get; set; }
         public decimal? HouseholdDrinksContainersTonnage { get; set; }
-        public RAMTonnage? HouseholdDrinksContainersRAMTonnage { get; set; }
+        public RamTonnage? HouseholdDrinksContainersRAMTonnage { get; set; }
         public required decimal SelfManagedConsumerWasteTonnage { get; set; }
         public decimal PartialHouseholdTonnage()
         {
             var partialRam = PartialHouseholdRAMTonnage();
             return partialRam != null ? partialRam.TotalRamTonnage() : MathUtils.RoundAwayFromZero(HouseholdTonnage * ObligatedFactor, 3);
         }
-        public RAMTonnage? PartialHouseholdRAMTonnage()
+        public RamTonnage? PartialHouseholdRAMTonnage()
         {
             return HouseholdRAMTonnage != null ? ToPartialRam(HouseholdRAMTonnage, ObligatedFactor) : null;
         }
@@ -26,7 +28,7 @@ namespace EPR.Calculator.Service.Function.Models
             var partialRam = PartialPublicBinRAMTonnage();
             return partialRam != null ? partialRam.TotalRamTonnage() : MathUtils.RoundAwayFromZero(PublicBinTonnage * ObligatedFactor, 3);
         }
-        public RAMTonnage? PartialPublicBinRAMTonnage()
+        public RamTonnage? PartialPublicBinRAMTonnage()
         {
             return PublicBinRAMTonnage != null ? ToPartialRam(PublicBinRAMTonnage, ObligatedFactor) : null;
         }
@@ -39,7 +41,7 @@ namespace EPR.Calculator.Service.Function.Models
             }
             return HouseholdDrinksContainersTonnage != null ? MathUtils.RoundAwayFromZero(HouseholdDrinksContainersTonnage.Value * ObligatedFactor, 3) : null;
         }
-        public RAMTonnage? PartialHouseholdDrinksContainersRAMTonnage()
+        public RamTonnage? PartialHouseholdDrinksContainersRAMTonnage()
         {
             return HouseholdDrinksContainersRAMTonnage != null ? ToPartialRam(HouseholdDrinksContainersRAMTonnage, ObligatedFactor) : null;
         }
@@ -56,14 +58,16 @@ namespace EPR.Calculator.Service.Function.Models
             return PartialHouseholdTonnage() + PartialPublicBinTonnage() + (PartialHouseholdDrinksContainersTonnage() ?? 0);
         }
 
-         private RAMTonnage ToPartialRam(RAMTonnage ram, decimal partialAmount) {
-            return new RAMTonnage {
-                RedTonnage          = MathUtils.RoundAwayFromZero(ram.RedTonnage * partialAmount, 3),
-                AmberTonnage        = MathUtils.RoundAwayFromZero(ram.AmberTonnage * partialAmount, 3),
-                GreenTonnage        = MathUtils.RoundAwayFromZero(ram.GreenTonnage * partialAmount, 3),
-                RedMedicalTonnage   = MathUtils.RoundAwayFromZero(ram.RedMedicalTonnage * partialAmount, 3),
-                AmberMedicalTonnage = MathUtils.RoundAwayFromZero(ram.AmberMedicalTonnage * partialAmount, 3),
-                GreenMedicalTonnage = MathUtils.RoundAwayFromZero(ram.GreenMedicalTonnage * partialAmount, 3),
+        private RamTonnage ToPartialRam(RamTonnage ram, decimal partialAmount)
+        {
+            return new RamTonnage
+            {
+                Red        = MathUtils.RoundAwayFromZero(ram.Red * partialAmount, 3),
+                Amber      = MathUtils.RoundAwayFromZero(ram.Amber * partialAmount, 3),
+                Green      = MathUtils.RoundAwayFromZero(ram.Green * partialAmount, 3),
+                RedMedical = MathUtils.RoundAwayFromZero(ram.RedMedical * partialAmount, 3),
+                AmberMedical = MathUtils.RoundAwayFromZero(ram.AmberMedical * partialAmount, 3),
+                GreenMedical = MathUtils.RoundAwayFromZero(ram.GreenMedical * partialAmount, 3)
             };
         }
     }

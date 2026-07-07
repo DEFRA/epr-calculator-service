@@ -17,6 +17,7 @@ using EPR.Calculator.Service.Function.Features.BillingRuns.Contexts;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Logging;
 using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter;
 
@@ -39,7 +40,7 @@ public class BillingFileExporter(
     ICalcResultLapcapDataExporter lapcapDataExporter,
     ICalcResultParameterOtherCostExporter parameterOtherCostExporter,
     ICalcResultCommsCostExporter commsCostExporter,
-    ICalcResultSummaryExporter summaryExporter,
+    IProducerFeesExporter producerFeesExporter,
     ICalcResultCancelledProducersExporter cancelledProducersExporter,
     ICalcResultRejectedProducersExporter rejectedProducersExporter,
     ILogger<BillingFileExporter> logger
@@ -118,10 +119,12 @@ public class BillingFileExporter(
             nameof(partialObligationsExporter)
         );
 
-        var acceptedCalcResultSummary = GetAcceptedProducersCalcResults(calcResult.CalcResultSummary, runContext.AcceptedProducerIds);
+        var acceptedProducerFees = GetAcceptedProducerFees(runContext.RunId, calcResult.ProducerFees, runContext.AcceptedProducerIds);
+        var scaledupIds = calcResult.CalcResultScaledupProducers.ScaledupProducers.Select(p => p.ProducerId).ToList();
+        var partialIds = calcResult.CalcResultPartialObligations.PartialObligations.Select(p => (p.ProducerId, p.SubsidiaryId)).ToList();
         logger.LogDuration(
-            () => summaryExporter.Export(runContext, acceptedCalcResultSummary, materials, csvContent),
-            nameof(summaryExporter)
+            () => producerFeesExporter.Export(runContext, acceptedProducerFees, materials, scaledupIds, partialIds, csvContent),
+            nameof(producerFeesExporter)
         );
 
         csvContent = ResetTotals(csvContent.ToString());
@@ -134,25 +137,27 @@ public class BillingFileExporter(
         return csvContent.ToString();
     }
 
-    private static CalcResultSummary GetAcceptedProducersCalcResults(CalcResultSummary calcResultSummary, ImmutableHashSet<int> acceptedProducerIds)
+    private static ProducerFees GetAcceptedProducerFees(int runId, ProducerFees producerFees, ImmutableHashSet<int> acceptedProducerIds)
     {
-        return new CalcResultSummary
+        var billingOverallTotal = ZeroedTotalRow();
+        billingOverallTotal.LADisposalCostsSection1                          = producerFees.Total.LADisposalCostsSection1;
+        billingOverallTotal.CommsCostsSection2a                              = producerFees.Total.CommsCostsSection2a;
+        billingOverallTotal.CommsCostsSection2b                              = producerFees.Total.CommsCostsSection2b;
+        billingOverallTotal.CommsCostsSection2c                              = producerFees.Total.CommsCostsSection2c;
+        billingOverallTotal.SaOperatingCostsSection3                         = producerFees.Total.SaOperatingCostsSection3;
+        billingOverallTotal.LaDataPrepSection4                               = producerFees.Total.LaDataPrepSection4;
+        billingOverallTotal.SaSetupCostsSection5                             = producerFees.Total.SaSetupCostsSection5;
+        billingOverallTotal.TotalOnePlus2A2B2CWithBadDebtPercentage = producerFees.Total.TotalOnePlus2A2B2CWithBadDebtPercentage;
+        return new ProducerFees
         {
-            LADisposalCostsSection1                   = calcResultSummary.LADisposalCostsSection1,
-            CommsCostsSection2a                       = calcResultSummary.CommsCostsSection2a,
-            CommsCostsSection2b                       = calcResultSummary.CommsCostsSection2b,
-            CommsCostsSection2c                       = calcResultSummary.CommsCostsSection2c,
-            SaOperatingCostsSection3                  = calcResultSummary.SaOperatingCostsSection3,
-            LaDataPrepSection4                        = calcResultSummary.LaDataPrepSection4,
-            SaSetupCostsSection5                      = calcResultSummary.SaSetupCostsSection5,
-            TotalOnePlus2A2B2CFeeWithBadDebtProvision = calcResultSummary.TotalOnePlus2A2B2CFeeWithBadDebtProvision,
-            ProducerDisposalFees                      = GetAcceptedProducerDisposalFees(calcResultSummary.ProducerDisposalFees.ToList(), acceptedProducerIds),
-            OverallTotal                              = ZeroedTotalRow
+            CalculatorRunId      = runId,
+            Details = GetAcceptedProducerDisposalFees(producerFees.Details.ToList(), acceptedProducerIds),
+            Total         = billingOverallTotal
         };
     }
 
-    private static ImmutableList<CalcResultSummaryProducerDisposalFees> GetAcceptedProducerDisposalFees(
-        IReadOnlyCollection<CalcResultSummaryProducerDisposalFees> producerDisposalFees,
+    private static ImmutableList<ProducerFeeDetail> GetAcceptedProducerDisposalFees(
+        IReadOnlyCollection<ProducerFeeDetail> producerDisposalFees,
         ImmutableHashSet<int> acceptedProducerIds)
     {
         return producerDisposalFees
@@ -161,7 +166,7 @@ public class BillingFileExporter(
     }
 
     // TODO can we remove this row? // NOSONAR
-    private static readonly CalcResultSummaryProducerDisposalFees ZeroedTotalRow = new()
+    private static ProducerFeeDetail ZeroedTotalRow() => new()
     {
         ProducerId                 = 0,
         SubsidiaryId               = string.Empty,
@@ -169,15 +174,11 @@ public class BillingFileExporter(
         TradingName                = string.Empty,
         Level                      = string.Empty,
         StatusCode                 = string.Empty,
-        IsProducerScaledup         = string.Empty,
-        IsPartialObligation        = string.Empty,
         JoinerDate                 = string.Empty,
         LeaverDate                 = CommonConstants.Totals,
         TonnageChangeCount         = string.Empty,
         TonnageChangeAdvice        = string.Empty,
-        IsTotalRow                 = true,
-        IsOverallTotalRow          = true,
-        BillingInstructionSection  = new CalcResultSummaryBillingInstruction { SuggestedBillingInstruction = string.Empty }
+        BillingInstruction  = new BillingInstruction { SuggestedBillingInstruction = string.Empty }
     };
 
     private static CalcResultScaledupProducers GetScaledUpProducersForExport(

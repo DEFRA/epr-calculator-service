@@ -27,7 +27,7 @@ public class CalcResultSummaryCommsCostTwoBTotalBillTests
             CalcResultLaDisposalCostData = TestDataHelper.GetCalcResultLaDisposalCostData(),
             CalcResultLapcapData = TestDataHelper.GetCalcResultLapcapData(),
             CalcResultOnePlusFourApportionment = GetCalcResultOnePlusFourApportionment(),
-            CalcResultSummary = TestDataHelper.GetCalcResultSummary(),
+            ProducerFees = TestDataHelper.GetProducerFees(),
             CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
             CalcResultLateReportingTonnageData = GetCalcResultLateReportingTonnage(),
             CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers(),
@@ -64,8 +64,8 @@ public class CalcResultSummaryCommsCostTwoBTotalBillTests
             new()
             {
                 ProducerDetail = producer1,
-                ProducerReportedMaterialProjected =
-                    new ProducerReportedMaterialProjected
+                ProducerMaterialPackaging =
+                    new ProducerMaterialPackaging
                     {
                         MaterialId = 1,
                         ProducerDetailId = 1,
@@ -84,8 +84,8 @@ public class CalcResultSummaryCommsCostTwoBTotalBillTests
             new()
             {
                 ProducerDetail = producer1,
-                ProducerReportedMaterialProjected =
-                    new ProducerReportedMaterialProjected
+                ProducerMaterialPackaging =
+                    new ProducerMaterialPackaging
                     {
                         MaterialId = 1,
                         ProducerDetailId = 1,
@@ -104,8 +104,8 @@ public class CalcResultSummaryCommsCostTwoBTotalBillTests
             new()
             {
                 ProducerDetail = producer2,
-                ProducerReportedMaterialProjected =
-                    new ProducerReportedMaterialProjected
+                ProducerMaterialPackaging =
+                    new ProducerMaterialPackaging
                     {
                         MaterialId = 1,
                         ProducerDetailId = 2,
@@ -124,8 +124,8 @@ public class CalcResultSummaryCommsCostTwoBTotalBillTests
             new()
             {
                 ProducerDetail = producer2,
-                ProducerReportedMaterialProjected =
-                    new ProducerReportedMaterialProjected
+                ProducerMaterialPackaging =
+                    new ProducerMaterialPackaging
                     {
                         MaterialId = 1,
                         ProducerDetailId = 2,
@@ -144,7 +144,7 @@ public class CalcResultSummaryCommsCostTwoBTotalBillTests
         };
 
         var materials = TestDataHelper.GetMaterialDetails();
-        TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materials, 1);
+        TotalPackagingTonnage = ProducerFeesBuilder.GetTotalPackagingTonnagePerRun(allResults, materials, 1);
     }
 
     private IFixture Fixture { get; } = TestFixtures.New();
@@ -164,12 +164,12 @@ public class CalcResultSummaryCommsCostTwoBTotalBillTests
         var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsCosts(calcResult, producers[0], TotalPackagingTonnage);
 
         // Assert
-        Assert.AreEqual(253.1m,   result.FeeWithoutBadDebtProvision);
-        Assert.AreEqual(25.31m,   result.BadDebtProvision);
-        Assert.AreEqual(111.364m, result.FeeWithBadDebtProvision.England);
-        Assert.AreEqual(83.523m,  result.FeeWithBadDebtProvision.Wales);
-        Assert.AreEqual(41.7615m, result.FeeWithBadDebtProvision.Scotland);
-        Assert.AreEqual(41.7615m, result.FeeWithBadDebtProvision.NorthernIreland);
+        Assert.AreEqual(253.1m,   result.FeeWithoutBadDebt);
+        Assert.AreEqual(25.31m,   result.BadDebt);
+        Assert.AreEqual(111.364m, result.ByCountry.England);
+        Assert.AreEqual(83.523m,  result.ByCountry.Wales);
+        Assert.AreEqual(41.7615m, result.ByCountry.Scotland);
+        Assert.AreEqual(41.7615m, result.ByCountry.NorthernIreland);
     }
 
     private List<ProducerDetail> GetProducers()

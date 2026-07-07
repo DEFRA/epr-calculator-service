@@ -1,45 +1,51 @@
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.Service.Function.Constants;
+using EPR.Calculator.Service.Function.JsonExporter.Model;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Utils;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.ObjectPool;
 
 namespace EPR.Calculator.Service.Function.Services
 {
     public interface ICalcResultService
     {
-        Task StoreProjectedH1Data(int runId, IReadOnlyList<CalcResultH1ProjectedProducer> projectedProducers);
-        Task StoreProjectedH2Data(int runId, IReadOnlyList<CalcResultH2ProjectedProducer> projectedProducers);
-        Task StoreScaledData(int runId, IReadOnlyList<CalcResultScaledupProducer> scaled);
-        Task StorePartialData(int runId, IReadOnlyList<CalcResultPartialObligation> partial);
-        Task<IReadOnlyList<CalcResultH1ProjectedProducer>> ReadH1ProjectedData(int runId);
-        Task<IReadOnlyList<CalcResultH2ProjectedProducer>> ReadH2ProjectedData(int runId);
-        Task<IReadOnlyList<CalcResultScaledupProducer>> ReadScaledData(int runId);
-        Task<IReadOnlyList<CalcResultPartialObligation>> ReadPartialData(int runId);
+        Task StoreProjectedH1Data(int runId, IReadOnlyList<CalcResultH1ProjectedProducer> projectedProducers, CancellationToken cancellationToken);
+        Task StoreProjectedH2Data(int runId, IReadOnlyList<CalcResultH2ProjectedProducer> projectedProducers, CancellationToken cancellationToken);
+        Task StoreScaledData(int runId, IReadOnlyList<CalcResultScaledupProducer> scaled, CancellationToken cancellationToken);
+        Task StorePartialData(int runId, IReadOnlyList<CalcResultPartialObligation> partial, CancellationToken cancellationToken);
+        Task StoreProducerMaterialPackaging(List<L1Producer> producerDetails, CancellationToken cancellationToken);
+        Task StoreProducerFees(int runId, ProducerFees producerFees, CancellationToken cancellationToken);
+        Task<IReadOnlyList<CalcResultH1ProjectedProducer>> ReadH1ProjectedData(int runId, CancellationToken cancellationToken);
+        Task<IReadOnlyList<CalcResultH2ProjectedProducer>> ReadH2ProjectedData(int runId, CancellationToken cancellationToken);
+        Task<IReadOnlyList<CalcResultScaledupProducer>> ReadScaledData(int runId, CancellationToken cancellationToken);
+        Task<IReadOnlyList<CalcResultPartialObligation>> ReadPartialData(int runId, CancellationToken cancellationToken);
+        Task<ProducerFees> ReadProducerFees(int runId, CancellationToken cancellationToken);
     }
 
-    public class CalcResultService(ApplicationDBContext dbContext) : ICalcResultService
+    public class CalcResultService(IBulkOperations bulkOps, ApplicationDBContext dbContext) : ICalcResultService
     {
-        public async Task StoreProjectedH1Data(int runId, IReadOnlyList<CalcResultH1ProjectedProducer> projectedProducers)
+        public async Task StoreProjectedH1Data(int runId, IReadOnlyList<CalcResultH1ProjectedProducer> projectedProducers, CancellationToken cancellationToken)
         {
-            await StoreData(dbContext.TransformProjectedH1, projectedProducers, p => 
+            await bulkOps.BulkInsertAsync(dbContext, projectedProducers.SelectMany(p => 
                 p.H1ProjectedTonnageByMaterial.Select(m => 
                     MapToTransformProjectedH1(runId, p.ProducerId, p.SubsidiaryId, m.Key, p.SubmissionPeriodCode, p.Level, m.Value)
                 )
-            );
+            ), cancellationToken);
         }
 
-        public async Task StoreProjectedH2Data(int runId, IReadOnlyList<CalcResultH2ProjectedProducer> projectedProducers)
+        public async Task StoreProjectedH2Data(int runId, IReadOnlyList<CalcResultH2ProjectedProducer> projectedProducers, CancellationToken cancellationToken)
         {
-            await StoreData(dbContext.TransformProjectedH2, projectedProducers, p => 
+            await bulkOps.BulkInsertAsync(dbContext, projectedProducers.SelectMany(p => 
                 p.H2ProjectedTonnageByMaterial.Select(m => 
                     MapToTransformProjectedH2(runId, p.ProducerId, p.SubsidiaryId, m.Key, p.SubmissionPeriodCode, p.Level, m.Value)
                 )
-            );
+            ), cancellationToken);
         }
 
-        public async Task<IReadOnlyList<CalcResultH1ProjectedProducer>> ReadH1ProjectedData(int runId)
+        public async Task<IReadOnlyList<CalcResultH1ProjectedProducer>> ReadH1ProjectedData(int runId, CancellationToken cancellationToken)
         {
             return await dbContext.TransformProjectedH1
                         .Where(p => p.CalculatorRunId == runId)
@@ -55,10 +61,10 @@ namespace EPR.Calculator.Service.Function.Services
                         .OrderBy(p => p.ProducerId)
                         .ThenBy(p => p.Level)
                         .ThenBy(p => p.SubsidiaryId)
-                        .ToImmutableListAsync();
+                        .ToImmutableListAsync(cancellationToken);
         }
 
-        public async Task<IReadOnlyList<CalcResultH2ProjectedProducer>> ReadH2ProjectedData(int runId)
+        public async Task<IReadOnlyList<CalcResultH2ProjectedProducer>> ReadH2ProjectedData(int runId, CancellationToken cancellationToken)
         {
             return await dbContext.TransformProjectedH2
                         .Where(p => p.CalculatorRunId == runId)
@@ -74,12 +80,12 @@ namespace EPR.Calculator.Service.Function.Services
                         .OrderBy(p => p.ProducerId)
                         .ThenBy(p => p.Level)
                         .ThenBy(p => p.SubsidiaryId)
-                        .ToImmutableListAsync();
+                        .ToImmutableListAsync(cancellationToken);
         }
 
-        public async Task StoreScaledData(int runId, IReadOnlyList<CalcResultScaledupProducer> scaled)
+        public async Task StoreScaledData(int runId, IReadOnlyList<CalcResultScaledupProducer> scaled, CancellationToken cancellationToken)
         {
-             await StoreData(dbContext.TransformScaled, scaled, p => 
+             await bulkOps.BulkInsertAsync(dbContext, scaled.SelectMany(p => 
                 p.PomData.Select(m => 
                     new TransformScaled
                     {
@@ -100,10 +106,10 @@ namespace EPR.Calculator.Service.Function.Services
                         ScaledTonnage = m.ScaledTonnage
                     }
                 )
-            );
+            ), cancellationToken);
         }
         
-        public async Task<IReadOnlyList<CalcResultScaledupProducer>> ReadScaledData(int runId)
+        public async Task<IReadOnlyList<CalcResultScaledupProducer>> ReadScaledData(int runId, CancellationToken cancellationToken)
         {
             return await dbContext.TransformScaled
                         .Where(p => p.CalculatorRunId == runId)
@@ -128,18 +134,18 @@ namespace EPR.Calculator.Service.Function.Services
                         .ThenBy(p => p.Level)
                         .ThenBy(p => p.SubsidiaryId)
                         .ThenBy(p => p.SubmissionPeriodCode)
-                        .ToImmutableListAsync();
+                        .ToImmutableListAsync(cancellationToken);
         }
 
-        public async Task StorePartialData(int runId, IReadOnlyList<CalcResultPartialObligation> partial){
-            await StoreData(dbContext.TransformPartial, partial, p => 
+        public async Task StorePartialData(int runId, IReadOnlyList<CalcResultPartialObligation> partial, CancellationToken cancellationToken){
+            await bulkOps.BulkInsertAsync(dbContext, partial.SelectMany(p => 
                 p.PartialObligationTonnageByMaterial.Select(m => 
                     MapToTransformPartial(runId, m.Key, p, m.Value)
                 )
-            );
+            ), cancellationToken);
         }
 
-        public async Task<IReadOnlyList<CalcResultPartialObligation>> ReadPartialData(int runId){
+        public async Task<IReadOnlyList<CalcResultPartialObligation>> ReadPartialData(int runId, CancellationToken cancellationToken){
             return await dbContext.TransformPartial
                         .Where(p => p.CalculatorRunId == runId)
                         .GroupBy(p => new { p.ProducerId, p.SubsidiaryId, p.ProducerName, p.TradingName, p.SubmissionYear, p.Level, p.DaysInSubmissionYear, p.JoiningDate, p.DaysObligated, p.ObligatedFactor })
@@ -162,15 +168,45 @@ namespace EPR.Calculator.Service.Function.Services
                         .OrderBy(p => p.ProducerId)
                         .ThenBy(p => p.Level)
                         .ThenBy(p => p.SubsidiaryId)
-                        .ToImmutableListAsync();
+                        .ToImmutableListAsync(cancellationToken);
         }
 
-        private async Task StoreData<TSource, TEntity>(DbSet<TEntity> dbSet, IReadOnlyList<TSource> data, Func<TSource, IEnumerable<TEntity>> mapper) where TEntity : class
+        public async Task StoreProducerMaterialPackaging(List<L1Producer> producerDetails, CancellationToken cancellationToken)
         {
-            await dbSet.AddRangeAsync(data.SelectMany(mapper));
-            await dbContext.SaveChangesAsync();
+            await bulkOps.BulkInsertAsync(dbContext, producerDetails
+                    .SelectMany(p => p.Producers)
+                    .SelectMany(p => p.ProducerReportedMaterials.Select(rm =>
+                        new ProducerMaterialPackaging
+                        {
+                            ProducerDetailId             = rm.ProducerDetailId,
+                            MaterialId                   = rm.MaterialId,
+                            SubmissionPeriod             = rm.SubmissionPeriod,
+                            PackagingType                = rm.PackagingType,
+                            PackagingTonnage             = rm.PackagingTonnage,
+                            PackagingTonnageRed          = rm.PackagingTonnageRed,
+                            PackagingTonnageAmber        = rm.PackagingTonnageAmber,
+                            PackagingTonnageGreen        = rm.PackagingTonnageGreen,
+                            PackagingTonnageRedMedical   = rm.PackagingTonnageRedMedical,
+                            PackagingTonnageAmberMedical = rm.PackagingTonnageAmberMedical,
+                            PackagingTonnageGreenMedical = rm.PackagingTonnageGreenMedical
+                        }
+                    )
+                ).ToList(), cancellationToken);
         }
 
+        public async Task StoreProducerFees(int runId, ProducerFees producerFees, CancellationToken cancellationToken)
+        {
+            dbContext.ProducerDisposalFee.Add(producerFees);
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task<ProducerFees> ReadProducerFees(int runId, CancellationToken cancellationToken)
+        {
+            return await dbContext.ProducerDisposalFee
+                        .Where(p => p.CalculatorRunId == runId)
+                        .SingleAsync(cancellationToken);
+        }
+    
         private static Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage> MapToH1MaterialTonnages(List<TransformProjectedH1> transformProjectedH1s)
         {
             return transformProjectedH1s.ToDictionary(
@@ -178,67 +214,67 @@ namespace EPR.Calculator.Service.Function.Services
                 t => new CalcResultH1ProjectedProducerMaterialTonnage
                 {
                     HouseholdTonnage = t.HouseholdTonnage,
-                    HouseholdRAMTonnage = new RAMTonnage
+                    HouseholdRAMTonnage = new RamTonnage
                     {
-                        RedTonnage = t.HouseholdTonnageRed,
-                        AmberTonnage = t.HouseholdTonnageAmber,
-                        GreenTonnage = t.HouseholdTonnageGreen,
-                        RedMedicalTonnage = t.HouseholdTonnageRedMedical,
-                        AmberMedicalTonnage = t.HouseholdTonnageAmberMedical,
-                        GreenMedicalTonnage = t.HouseholdTonnageGreenMedical
+                        Red = t.HouseholdTonnageRed,
+                        Amber = t.HouseholdTonnageAmber,
+                        Green = t.HouseholdTonnageGreen,
+                        RedMedical = t.HouseholdTonnageRedMedical,
+                        AmberMedical = t.HouseholdTonnageAmberMedical,
+                        GreenMedical = t.HouseholdTonnageGreenMedical
                     },
                     PublicBinTonnage = t.PublicBinTonnage,
-                    PublicBinRAMTonnage = new RAMTonnage
+                    PublicBinRAMTonnage = new RamTonnage
                     {
-                        RedTonnage = t.PublicBinTonnageRed,
-                        AmberTonnage = t.PublicBinTonnageAmber,
-                        GreenTonnage = t.PublicBinTonnageGreen,
-                        RedMedicalTonnage = t.PublicBinTonnageRedMedical,
-                        AmberMedicalTonnage = t.PublicBinTonnageAmberMedical,
-                        GreenMedicalTonnage = t.PublicBinTonnageGreenMedical
+                        Red = t.PublicBinTonnageRed,
+                        Amber = t.PublicBinTonnageAmber,
+                        Green = t.PublicBinTonnageGreen,
+                        RedMedical = t.PublicBinTonnageRedMedical,
+                        AmberMedical = t.PublicBinTonnageAmberMedical,
+                        GreenMedical = t.PublicBinTonnageGreenMedical
                     },
                     HouseholdDrinksContainerTonnage = t.HDCTonnage,
-                    HouseholdDrinksContainerRAMTonnage = t.MaterialCode == MaterialCodes.Glass ? new RAMTonnage
+                    HouseholdDrinksContainerRAMTonnage = t.MaterialCode == MaterialCodes.Glass ? new RamTonnage
                     {
-                        RedTonnage = t.HDCTonnageRed!.Value,
-                        AmberTonnage = t.HDCTonnageAmber!.Value,
-                        GreenTonnage = t.HDCTonnageGreen!.Value,
-                        RedMedicalTonnage = t.HDCTonnageRedMedical!.Value,
-                        AmberMedicalTonnage = t.HDCTonnageAmberMedical!.Value,
-                        GreenMedicalTonnage = t.HDCTonnageGreenMedical!.Value
+                        Red = t.HDCTonnageRed!.Value,
+                        Amber = t.HDCTonnageAmber!.Value,
+                        Green = t.HDCTonnageGreen!.Value,
+                        RedMedical = t.HDCTonnageRedMedical!.Value,
+                        AmberMedical = t.HDCTonnageAmberMedical!.Value,
+                        GreenMedical = t.HDCTonnageGreenMedical!.Value
                     } : null,
                     HouseholdTonnageWithoutRAM = t.HouseholdTonnageWithoutRAM,
                     PublicBinTonnageWithoutRAM = t.PublicBinTonnageWithoutRAM,
                     HouseholdDrinksContainerTonnageWithoutRAM = t.HDCTonnageWithoutRAM,
                     ProjectedHouseholdTonnage = t.ProjectedHouseholdTonnage,
-                    ProjectedHouseholdRAMTonnage = new RAMTonnage
+                    ProjectedHouseholdRAMTonnage = new RamTonnage
                     {
-                        RedTonnage = t.ProjectedHouseholdTonnageRed,
-                        AmberTonnage = t.ProjectedHouseholdTonnageAmber,
-                        GreenTonnage = t.ProjectedHouseholdTonnageGreen,
-                        RedMedicalTonnage = t.ProjectedHouseholdTonnageRedMedical,
-                        AmberMedicalTonnage = t.ProjectedHouseholdTonnageAmberMedical,
-                        GreenMedicalTonnage = t.ProjectedHouseholdTonnageGreenMedical
+                        Red = t.ProjectedHouseholdTonnageRed,
+                        Amber = t.ProjectedHouseholdTonnageAmber,
+                        Green = t.ProjectedHouseholdTonnageGreen,
+                        RedMedical = t.ProjectedHouseholdTonnageRedMedical,
+                        AmberMedical = t.ProjectedHouseholdTonnageAmberMedical,
+                        GreenMedical = t.ProjectedHouseholdTonnageGreenMedical
                     },
                     ProjectedPublicBinTonnage = t.ProjectedPublicBinTonnage,
-                    ProjectedPublicBinRAMTonnage = new RAMTonnage
+                    ProjectedPublicBinRAMTonnage = new RamTonnage
                     {
-                        RedTonnage = t.ProjectedPublicBinTonnageRed,
-                        AmberTonnage = t.ProjectedPublicBinTonnageAmber,
-                        GreenTonnage = t.ProjectedPublicBinTonnageGreen,
-                        RedMedicalTonnage = t.ProjectedPublicBinTonnageRedMedical,
-                        AmberMedicalTonnage = t.ProjectedPublicBinTonnageAmberMedical,
-                        GreenMedicalTonnage = t.ProjectedPublicBinTonnageGreenMedical
+                        Red = t.ProjectedPublicBinTonnageRed,
+                        Amber = t.ProjectedPublicBinTonnageAmber,
+                        Green = t.ProjectedPublicBinTonnageGreen,
+                        RedMedical = t.ProjectedPublicBinTonnageRedMedical,
+                        AmberMedical = t.ProjectedPublicBinTonnageAmberMedical,
+                        GreenMedical = t.ProjectedPublicBinTonnageGreenMedical
                     },
                     ProjectedHouseholdDrinksContainerTonnage = t.ProjectedHDCTonnage,
-                    ProjectedHouseholdDrinksContainerRAMTonnage = t.MaterialCode == MaterialCodes.Glass ? new RAMTonnage
+                    ProjectedHouseholdDrinksContainerRAMTonnage = t.MaterialCode == MaterialCodes.Glass ? new RamTonnage
                     {
-                        RedTonnage = t.ProjectedHDCTonnageRed!.Value,
-                        AmberTonnage = t.ProjectedHDCTonnageAmber!.Value,
-                        GreenTonnage = t.ProjectedHDCTonnageGreen!.Value,
-                        RedMedicalTonnage = t.ProjectedHDCTonnageRedMedical!.Value,
-                        AmberMedicalTonnage = t.ProjectedHDCTonnageAmberMedical!.Value,
-                        GreenMedicalTonnage = t.ProjectedHDCTonnageGreenMedical!.Value
+                        Red = t.ProjectedHDCTonnageRed!.Value,
+                        Amber = t.ProjectedHDCTonnageAmber!.Value,
+                        Green = t.ProjectedHDCTonnageGreen!.Value,
+                        RedMedical = t.ProjectedHDCTonnageRedMedical!.Value,
+                        AmberMedical = t.ProjectedHDCTonnageAmberMedical!.Value,
+                        GreenMedical = t.ProjectedHDCTonnageGreenMedical!.Value
                     } : null,
                     H2RamProportions = new RAMProportions
                     {
@@ -260,67 +296,67 @@ namespace EPR.Calculator.Service.Function.Services
                 t => new CalcResultH2ProjectedProducerMaterialTonnage
                 {
                     HouseholdTonnage = t.HouseholdTonnage,
-                    HouseholdRAMTonnage = new RAMTonnage
+                    HouseholdRAMTonnage = new RamTonnage
                     {
-                        RedTonnage = t.HouseholdTonnageRed,
-                        AmberTonnage = t.HouseholdTonnageAmber,
-                        GreenTonnage = t.HouseholdTonnageGreen,
-                        RedMedicalTonnage = t.HouseholdTonnageRedMedical,
-                        AmberMedicalTonnage = t.HouseholdTonnageAmberMedical,
-                        GreenMedicalTonnage = t.HouseholdTonnageGreenMedical
+                        Red = t.HouseholdTonnageRed,
+                        Amber = t.HouseholdTonnageAmber,
+                        Green = t.HouseholdTonnageGreen,
+                        RedMedical = t.HouseholdTonnageRedMedical,
+                        AmberMedical = t.HouseholdTonnageAmberMedical,
+                        GreenMedical = t.HouseholdTonnageGreenMedical
                     },
                     PublicBinTonnage = t.PublicBinTonnage,
-                    PublicBinRAMTonnage = new RAMTonnage
+                    PublicBinRAMTonnage = new RamTonnage
                     {
-                        RedTonnage = t.PublicBinTonnageRed,
-                        AmberTonnage = t.PublicBinTonnageAmber,
-                        GreenTonnage = t.PublicBinTonnageGreen,
-                        RedMedicalTonnage = t.PublicBinTonnageRedMedical,
-                        AmberMedicalTonnage = t.PublicBinTonnageAmberMedical,
-                        GreenMedicalTonnage = t.PublicBinTonnageGreenMedical
+                        Red = t.PublicBinTonnageRed,
+                        Amber = t.PublicBinTonnageAmber,
+                        Green = t.PublicBinTonnageGreen,
+                        RedMedical = t.PublicBinTonnageRedMedical,
+                        AmberMedical = t.PublicBinTonnageAmberMedical,
+                        GreenMedical = t.PublicBinTonnageGreenMedical
                     },
                     HouseholdDrinksContainerTonnage = t.HDCTonnage,
-                    HouseholdDrinksContainerRAMTonnage = t.MaterialCode == MaterialCodes.Glass ? new RAMTonnage
+                    HouseholdDrinksContainerRAMTonnage = t.MaterialCode == MaterialCodes.Glass ? new RamTonnage
                     {
-                        RedTonnage = t.HDCTonnageRed!.Value,
-                        AmberTonnage = t.HDCTonnageAmber!.Value,
-                        GreenTonnage = t.HDCTonnageGreen!.Value,
-                        RedMedicalTonnage = t.HDCTonnageRedMedical!.Value,
-                        AmberMedicalTonnage = t.HDCTonnageAmberMedical!.Value,
-                        GreenMedicalTonnage = t.HDCTonnageGreenMedical!.Value
+                        Red = t.HDCTonnageRed!.Value,
+                        Amber = t.HDCTonnageAmber!.Value,
+                        Green = t.HDCTonnageGreen!.Value,
+                        RedMedical = t.HDCTonnageRedMedical!.Value,
+                        AmberMedical = t.HDCTonnageAmberMedical!.Value,
+                        GreenMedical = t.HDCTonnageGreenMedical!.Value
                     } : null,
                     HouseholdTonnageWithoutRAM = t.HouseholdTonnageWithoutRAM,
                     PublicBinTonnageWithoutRAM = t.PublicBinTonnageWithoutRAM,
                     HouseholdDrinksContainerTonnageWithoutRAM = t.HDCTonnageWithoutRAM,
                     ProjectedHouseholdTonnage = t.ProjectedHouseholdTonnage,
-                    ProjectedHouseholdRAMTonnage = new RAMTonnage
+                    ProjectedHouseholdRAMTonnage = new RamTonnage
                     {
-                        RedTonnage = t.ProjectedHouseholdTonnageRed,
-                        AmberTonnage = t.ProjectedHouseholdTonnageAmber,
-                        GreenTonnage = t.ProjectedHouseholdTonnageGreen,
-                        RedMedicalTonnage = t.ProjectedHouseholdTonnageRedMedical,
-                        AmberMedicalTonnage = t.ProjectedHouseholdTonnageAmberMedical,
-                        GreenMedicalTonnage = t.ProjectedHouseholdTonnageGreenMedical
+                        Red = t.ProjectedHouseholdTonnageRed,
+                        Amber = t.ProjectedHouseholdTonnageAmber,
+                        Green = t.ProjectedHouseholdTonnageGreen,
+                        RedMedical = t.ProjectedHouseholdTonnageRedMedical,
+                        AmberMedical = t.ProjectedHouseholdTonnageAmberMedical,
+                        GreenMedical = t.ProjectedHouseholdTonnageGreenMedical
                     },
                     ProjectedPublicBinTonnage = t.ProjectedPublicBinTonnage,
-                    ProjectedPublicBinRAMTonnage = new RAMTonnage
+                    ProjectedPublicBinRAMTonnage = new RamTonnage
                     {
-                        RedTonnage = t.ProjectedPublicBinTonnageRed,
-                        AmberTonnage = t.ProjectedPublicBinTonnageAmber,
-                        GreenTonnage = t.ProjectedPublicBinTonnageGreen,
-                        RedMedicalTonnage = t.ProjectedPublicBinTonnageRedMedical,
-                        AmberMedicalTonnage = t.ProjectedPublicBinTonnageAmberMedical,
-                        GreenMedicalTonnage = t.ProjectedPublicBinTonnageGreenMedical
+                        Red = t.ProjectedPublicBinTonnageRed,
+                        Amber = t.ProjectedPublicBinTonnageAmber,
+                        Green = t.ProjectedPublicBinTonnageGreen,
+                        RedMedical = t.ProjectedPublicBinTonnageRedMedical,
+                        AmberMedical = t.ProjectedPublicBinTonnageAmberMedical,
+                        GreenMedical = t.ProjectedPublicBinTonnageGreenMedical
                     },
                     ProjectedHouseholdDrinksContainerTonnage = t.ProjectedHDCTonnage,
-                    ProjectedHouseholdDrinksContainerRAMTonnage = t.MaterialCode == MaterialCodes.Glass ? new RAMTonnage
+                    ProjectedHouseholdDrinksContainerRAMTonnage = t.MaterialCode == MaterialCodes.Glass ? new RamTonnage
                     {
-                        RedTonnage = t.ProjectedHDCTonnageRed!.Value,
-                        AmberTonnage = t.ProjectedHDCTonnageAmber!.Value,
-                        GreenTonnage = t.ProjectedHDCTonnageGreen!.Value,
-                        RedMedicalTonnage = t.ProjectedHDCTonnageRedMedical!.Value,
-                        AmberMedicalTonnage = t.ProjectedHDCTonnageAmberMedical!.Value,
-                        GreenMedicalTonnage = t.ProjectedHDCTonnageGreenMedical!.Value
+                        Red = t.ProjectedHDCTonnageRed!.Value,
+                        Amber = t.ProjectedHDCTonnageAmber!.Value,
+                        Green = t.ProjectedHDCTonnageGreen!.Value,
+                        RedMedical = t.ProjectedHDCTonnageRedMedical!.Value,
+                        AmberMedical = t.ProjectedHDCTonnageAmberMedical!.Value,
+                        GreenMedical = t.ProjectedHDCTonnageGreenMedical!.Value
                     } : null
                 }
             );
@@ -337,50 +373,50 @@ namespace EPR.Calculator.Service.Function.Services
                 SubmissionPeriodCode = submissionPeriod,
                 Level = level,
                 HouseholdTonnage = tonnage.HouseholdTonnage,
-                HouseholdTonnageRed = tonnage.HouseholdRAMTonnage.RedTonnage,
-                HouseholdTonnageAmber = tonnage.HouseholdRAMTonnage.AmberTonnage,
-                HouseholdTonnageGreen = tonnage.HouseholdRAMTonnage.GreenTonnage,
-                HouseholdTonnageRedMedical = tonnage.HouseholdRAMTonnage.RedMedicalTonnage,
-                HouseholdTonnageAmberMedical = tonnage.HouseholdRAMTonnage.AmberMedicalTonnage,
-                HouseholdTonnageGreenMedical = tonnage.HouseholdRAMTonnage.GreenMedicalTonnage,
+                HouseholdTonnageRed = tonnage.HouseholdRAMTonnage.Red,
+                HouseholdTonnageAmber = tonnage.HouseholdRAMTonnage.Amber,
+                HouseholdTonnageGreen = tonnage.HouseholdRAMTonnage.Green,
+                HouseholdTonnageRedMedical = tonnage.HouseholdRAMTonnage.RedMedical,
+                HouseholdTonnageAmberMedical = tonnage.HouseholdRAMTonnage.AmberMedical,
+                HouseholdTonnageGreenMedical = tonnage.HouseholdRAMTonnage.GreenMedical,
                 PublicBinTonnage = tonnage.PublicBinTonnage,
-                PublicBinTonnageRed = tonnage.PublicBinRAMTonnage.RedTonnage,
-                PublicBinTonnageAmber = tonnage.PublicBinRAMTonnage.AmberTonnage,
-                PublicBinTonnageGreen = tonnage.PublicBinRAMTonnage.GreenTonnage,
-                PublicBinTonnageRedMedical = tonnage.PublicBinRAMTonnage.RedMedicalTonnage,
-                PublicBinTonnageAmberMedical = tonnage.PublicBinRAMTonnage.AmberMedicalTonnage,
-                PublicBinTonnageGreenMedical = tonnage.PublicBinRAMTonnage.GreenMedicalTonnage,
+                PublicBinTonnageRed = tonnage.PublicBinRAMTonnage.Red,
+                PublicBinTonnageAmber = tonnage.PublicBinRAMTonnage.Amber,
+                PublicBinTonnageGreen = tonnage.PublicBinRAMTonnage.Green,
+                PublicBinTonnageRedMedical = tonnage.PublicBinRAMTonnage.RedMedical,
+                PublicBinTonnageAmberMedical = tonnage.PublicBinRAMTonnage.AmberMedical,
+                PublicBinTonnageGreenMedical = tonnage.PublicBinRAMTonnage.GreenMedical,
                 HDCTonnage = tonnage.HouseholdDrinksContainerTonnage,
-                HDCTonnageRed = tonnage.HouseholdDrinksContainerRAMTonnage?.RedTonnage,
-                HDCTonnageAmber = tonnage.HouseholdDrinksContainerRAMTonnage?.AmberTonnage,
-                HDCTonnageGreen = tonnage.HouseholdDrinksContainerRAMTonnage?.GreenTonnage,
-                HDCTonnageRedMedical = tonnage.HouseholdDrinksContainerRAMTonnage?.RedMedicalTonnage,
-                HDCTonnageAmberMedical = tonnage.HouseholdDrinksContainerRAMTonnage?.AmberMedicalTonnage,
-                HDCTonnageGreenMedical = tonnage.HouseholdDrinksContainerRAMTonnage?.GreenMedicalTonnage,
+                HDCTonnageRed = tonnage.HouseholdDrinksContainerRAMTonnage?.Red,
+                HDCTonnageAmber = tonnage.HouseholdDrinksContainerRAMTonnage?.Amber,
+                HDCTonnageGreen = tonnage.HouseholdDrinksContainerRAMTonnage?.Green,
+                HDCTonnageRedMedical = tonnage.HouseholdDrinksContainerRAMTonnage?.RedMedical,
+                HDCTonnageAmberMedical = tonnage.HouseholdDrinksContainerRAMTonnage?.AmberMedical,
+                HDCTonnageGreenMedical = tonnage.HouseholdDrinksContainerRAMTonnage?.GreenMedical,
                 HouseholdTonnageWithoutRAM = tonnage.HouseholdTonnageWithoutRAM,
                 PublicBinTonnageWithoutRAM = tonnage.PublicBinTonnageWithoutRAM,
                 HDCTonnageWithoutRAM = tonnage.HouseholdDrinksContainerTonnageWithoutRAM,
                 ProjectedHouseholdTonnage = tonnage.ProjectedHouseholdTonnage,
-                ProjectedHouseholdTonnageRed = tonnage.ProjectedHouseholdRAMTonnage.RedTonnage,
-                ProjectedHouseholdTonnageAmber = tonnage.ProjectedHouseholdRAMTonnage.AmberTonnage,
-                ProjectedHouseholdTonnageGreen = tonnage.ProjectedHouseholdRAMTonnage.GreenTonnage,
-                ProjectedHouseholdTonnageRedMedical = tonnage.ProjectedHouseholdRAMTonnage.RedMedicalTonnage,
-                ProjectedHouseholdTonnageAmberMedical = tonnage.ProjectedHouseholdRAMTonnage.AmberMedicalTonnage,
-                ProjectedHouseholdTonnageGreenMedical = tonnage.ProjectedHouseholdRAMTonnage.GreenMedicalTonnage,
+                ProjectedHouseholdTonnageRed = tonnage.ProjectedHouseholdRAMTonnage.Red,
+                ProjectedHouseholdTonnageAmber = tonnage.ProjectedHouseholdRAMTonnage.Amber,
+                ProjectedHouseholdTonnageGreen = tonnage.ProjectedHouseholdRAMTonnage.Green,
+                ProjectedHouseholdTonnageRedMedical = tonnage.ProjectedHouseholdRAMTonnage.RedMedical,
+                ProjectedHouseholdTonnageAmberMedical = tonnage.ProjectedHouseholdRAMTonnage.AmberMedical,
+                ProjectedHouseholdTonnageGreenMedical = tonnage.ProjectedHouseholdRAMTonnage.GreenMedical,
                 ProjectedPublicBinTonnage = tonnage.ProjectedPublicBinTonnage,
-                ProjectedPublicBinTonnageRed = tonnage.ProjectedPublicBinRAMTonnage.RedTonnage,
-                ProjectedPublicBinTonnageAmber = tonnage.ProjectedPublicBinRAMTonnage.AmberTonnage,
-                ProjectedPublicBinTonnageGreen = tonnage.ProjectedPublicBinRAMTonnage.GreenTonnage,
-                ProjectedPublicBinTonnageRedMedical = tonnage.ProjectedPublicBinRAMTonnage.RedMedicalTonnage,
-                ProjectedPublicBinTonnageAmberMedical = tonnage.ProjectedPublicBinRAMTonnage.AmberMedicalTonnage,
-                ProjectedPublicBinTonnageGreenMedical = tonnage.ProjectedPublicBinRAMTonnage.GreenMedicalTonnage,
+                ProjectedPublicBinTonnageRed = tonnage.ProjectedPublicBinRAMTonnage.Red,
+                ProjectedPublicBinTonnageAmber = tonnage.ProjectedPublicBinRAMTonnage.Amber,
+                ProjectedPublicBinTonnageGreen = tonnage.ProjectedPublicBinRAMTonnage.Green,
+                ProjectedPublicBinTonnageRedMedical = tonnage.ProjectedPublicBinRAMTonnage.RedMedical,
+                ProjectedPublicBinTonnageAmberMedical = tonnage.ProjectedPublicBinRAMTonnage.AmberMedical,
+                ProjectedPublicBinTonnageGreenMedical = tonnage.ProjectedPublicBinRAMTonnage.GreenMedical,
                 ProjectedHDCTonnage = tonnage.ProjectedHouseholdDrinksContainerTonnage,
-                ProjectedHDCTonnageRed = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.RedTonnage,
-                ProjectedHDCTonnageAmber = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.AmberTonnage,
-                ProjectedHDCTonnageGreen = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.GreenTonnage,
-                ProjectedHDCTonnageRedMedical = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.RedMedicalTonnage,
-                ProjectedHDCTonnageAmberMedical = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.AmberMedicalTonnage,
-                ProjectedHDCTonnageGreenMedical = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.GreenMedicalTonnage,
+                ProjectedHDCTonnageRed = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.Red,
+                ProjectedHDCTonnageAmber = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.Amber,
+                ProjectedHDCTonnageGreen = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.Green,
+                ProjectedHDCTonnageRedMedical = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.RedMedical,
+                ProjectedHDCTonnageAmberMedical = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.AmberMedical,
+                ProjectedHDCTonnageGreenMedical = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.GreenMedical,
                 H2RamProportionsRed = tonnage.H2RamProportions.Red,
                 H2RamProportionsAmber = tonnage.H2RamProportions.Amber,
                 H2RamProportionsGreen = tonnage.H2RamProportions.Green,
@@ -401,50 +437,50 @@ namespace EPR.Calculator.Service.Function.Services
                 Level = level,
                 SubmissionPeriodCode = submissionPeriod,
                 HouseholdTonnage = tonnage.HouseholdTonnage,
-                HouseholdTonnageRed = tonnage.HouseholdRAMTonnage.RedTonnage,
-                HouseholdTonnageAmber = tonnage.HouseholdRAMTonnage.AmberTonnage,
-                HouseholdTonnageGreen = tonnage.HouseholdRAMTonnage.GreenTonnage,
-                HouseholdTonnageRedMedical = tonnage.HouseholdRAMTonnage.RedMedicalTonnage,
-                HouseholdTonnageAmberMedical = tonnage.HouseholdRAMTonnage.AmberMedicalTonnage,
-                HouseholdTonnageGreenMedical = tonnage.HouseholdRAMTonnage.GreenMedicalTonnage,
+                HouseholdTonnageRed = tonnage.HouseholdRAMTonnage.Red,
+                HouseholdTonnageAmber = tonnage.HouseholdRAMTonnage.Amber,
+                HouseholdTonnageGreen = tonnage.HouseholdRAMTonnage.Green,
+                HouseholdTonnageRedMedical = tonnage.HouseholdRAMTonnage.RedMedical,
+                HouseholdTonnageAmberMedical = tonnage.HouseholdRAMTonnage.AmberMedical,
+                HouseholdTonnageGreenMedical = tonnage.HouseholdRAMTonnage.GreenMedical,
                 PublicBinTonnage = tonnage.PublicBinTonnage,
-                PublicBinTonnageRed = tonnage.PublicBinRAMTonnage.RedTonnage,
-                PublicBinTonnageAmber = tonnage.PublicBinRAMTonnage.AmberTonnage,
-                PublicBinTonnageGreen = tonnage.PublicBinRAMTonnage.GreenTonnage,
-                PublicBinTonnageRedMedical = tonnage.PublicBinRAMTonnage.RedMedicalTonnage,
-                PublicBinTonnageAmberMedical = tonnage.PublicBinRAMTonnage.AmberMedicalTonnage,
-                PublicBinTonnageGreenMedical = tonnage.PublicBinRAMTonnage.GreenMedicalTonnage,
+                PublicBinTonnageRed = tonnage.PublicBinRAMTonnage.Red,
+                PublicBinTonnageAmber = tonnage.PublicBinRAMTonnage.Amber,
+                PublicBinTonnageGreen = tonnage.PublicBinRAMTonnage.Green,
+                PublicBinTonnageRedMedical = tonnage.PublicBinRAMTonnage.RedMedical,
+                PublicBinTonnageAmberMedical = tonnage.PublicBinRAMTonnage.AmberMedical,
+                PublicBinTonnageGreenMedical = tonnage.PublicBinRAMTonnage.GreenMedical,
                 HDCTonnage = tonnage.HouseholdDrinksContainerTonnage,
-                HDCTonnageRed = tonnage.HouseholdDrinksContainerRAMTonnage?.RedTonnage,
-                HDCTonnageAmber = tonnage.HouseholdDrinksContainerRAMTonnage?.AmberTonnage,
-                HDCTonnageGreen = tonnage.HouseholdDrinksContainerRAMTonnage?.GreenTonnage,
-                HDCTonnageRedMedical = tonnage.HouseholdDrinksContainerRAMTonnage?.RedMedicalTonnage,
-                HDCTonnageAmberMedical = tonnage.HouseholdDrinksContainerRAMTonnage?.AmberMedicalTonnage,
-                HDCTonnageGreenMedical = tonnage.HouseholdDrinksContainerRAMTonnage?.GreenMedicalTonnage,
+                HDCTonnageRed = tonnage.HouseholdDrinksContainerRAMTonnage?.Red,
+                HDCTonnageAmber = tonnage.HouseholdDrinksContainerRAMTonnage?.Amber,
+                HDCTonnageGreen = tonnage.HouseholdDrinksContainerRAMTonnage?.Green,
+                HDCTonnageRedMedical = tonnage.HouseholdDrinksContainerRAMTonnage?.RedMedical,
+                HDCTonnageAmberMedical = tonnage.HouseholdDrinksContainerRAMTonnage?.AmberMedical,
+                HDCTonnageGreenMedical = tonnage.HouseholdDrinksContainerRAMTonnage?.GreenMedical,
                 HouseholdTonnageWithoutRAM = tonnage.HouseholdTonnageWithoutRAM,
                 PublicBinTonnageWithoutRAM = tonnage.PublicBinTonnageWithoutRAM,
                 HDCTonnageWithoutRAM = tonnage.HouseholdDrinksContainerTonnageWithoutRAM,
                 ProjectedHouseholdTonnage = tonnage.ProjectedHouseholdTonnage,
-                ProjectedHouseholdTonnageRed = tonnage.ProjectedHouseholdRAMTonnage.RedTonnage,
-                ProjectedHouseholdTonnageAmber = tonnage.ProjectedHouseholdRAMTonnage.AmberTonnage,
-                ProjectedHouseholdTonnageGreen = tonnage.ProjectedHouseholdRAMTonnage.GreenTonnage,
-                ProjectedHouseholdTonnageRedMedical = tonnage.ProjectedHouseholdRAMTonnage.RedMedicalTonnage,
-                ProjectedHouseholdTonnageAmberMedical = tonnage.ProjectedHouseholdRAMTonnage.AmberMedicalTonnage,
-                ProjectedHouseholdTonnageGreenMedical = tonnage.ProjectedHouseholdRAMTonnage.GreenMedicalTonnage,
+                ProjectedHouseholdTonnageRed = tonnage.ProjectedHouseholdRAMTonnage.Red,
+                ProjectedHouseholdTonnageAmber = tonnage.ProjectedHouseholdRAMTonnage.Amber,
+                ProjectedHouseholdTonnageGreen = tonnage.ProjectedHouseholdRAMTonnage.Green,
+                ProjectedHouseholdTonnageRedMedical = tonnage.ProjectedHouseholdRAMTonnage.RedMedical,
+                ProjectedHouseholdTonnageAmberMedical = tonnage.ProjectedHouseholdRAMTonnage.AmberMedical,
+                ProjectedHouseholdTonnageGreenMedical = tonnage.ProjectedHouseholdRAMTonnage.GreenMedical,
                 ProjectedPublicBinTonnage = tonnage.ProjectedPublicBinTonnage,
-                ProjectedPublicBinTonnageRed = tonnage.ProjectedPublicBinRAMTonnage.RedTonnage,
-                ProjectedPublicBinTonnageAmber = tonnage.ProjectedPublicBinRAMTonnage.AmberTonnage,
-                ProjectedPublicBinTonnageGreen = tonnage.ProjectedPublicBinRAMTonnage.GreenTonnage,
-                ProjectedPublicBinTonnageRedMedical = tonnage.ProjectedPublicBinRAMTonnage.RedMedicalTonnage,
-                ProjectedPublicBinTonnageAmberMedical = tonnage.ProjectedPublicBinRAMTonnage.AmberMedicalTonnage,
-                ProjectedPublicBinTonnageGreenMedical = tonnage.ProjectedPublicBinRAMTonnage.GreenMedicalTonnage,
+                ProjectedPublicBinTonnageRed = tonnage.ProjectedPublicBinRAMTonnage.Red,
+                ProjectedPublicBinTonnageAmber = tonnage.ProjectedPublicBinRAMTonnage.Amber,
+                ProjectedPublicBinTonnageGreen = tonnage.ProjectedPublicBinRAMTonnage.Green,
+                ProjectedPublicBinTonnageRedMedical = tonnage.ProjectedPublicBinRAMTonnage.RedMedical,
+                ProjectedPublicBinTonnageAmberMedical = tonnage.ProjectedPublicBinRAMTonnage.AmberMedical,
+                ProjectedPublicBinTonnageGreenMedical = tonnage.ProjectedPublicBinRAMTonnage.GreenMedical,
                 ProjectedHDCTonnage = tonnage.ProjectedHouseholdDrinksContainerTonnage,
-                ProjectedHDCTonnageRed = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.RedTonnage,
-                ProjectedHDCTonnageAmber = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.AmberTonnage,
-                ProjectedHDCTonnageGreen = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.GreenTonnage,
-                ProjectedHDCTonnageRedMedical = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.RedMedicalTonnage,
-                ProjectedHDCTonnageAmberMedical = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.AmberMedicalTonnage,
-                ProjectedHDCTonnageGreenMedical = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.GreenMedicalTonnage
+                ProjectedHDCTonnageRed = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.Red,
+                ProjectedHDCTonnageAmber = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.Amber,
+                ProjectedHDCTonnageGreen = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.Green,
+                ProjectedHDCTonnageRedMedical = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.RedMedical,
+                ProjectedHDCTonnageAmberMedical = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.AmberMedical,
+                ProjectedHDCTonnageGreenMedical = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.GreenMedical
             };
         }
 
@@ -477,33 +513,33 @@ namespace EPR.Calculator.Service.Function.Services
                 ObligatedFactor = producer.ObligatedFactor,
                 MaterialCode = materialCode,
                 HouseholdTonnage = tonnage.HouseholdTonnage,
-                HouseholdTonnageRed = tonnage.HouseholdRAMTonnage?.RedTonnage,
-                HouseholdTonnageAmber = tonnage.HouseholdRAMTonnage?.AmberTonnage,
-                HouseholdTonnageGreen = tonnage.HouseholdRAMTonnage?.GreenTonnage,
-                HouseholdTonnageRedMedical = tonnage.HouseholdRAMTonnage?.RedMedicalTonnage,
-                HouseholdTonnageAmberMedical = tonnage.HouseholdRAMTonnage?.AmberMedicalTonnage,
-                HouseholdTonnageGreenMedical = tonnage.HouseholdRAMTonnage?.GreenMedicalTonnage,
+                HouseholdTonnageRed = tonnage.HouseholdRAMTonnage?.Red,
+                HouseholdTonnageAmber = tonnage.HouseholdRAMTonnage?.Amber,
+                HouseholdTonnageGreen = tonnage.HouseholdRAMTonnage?.Green,
+                HouseholdTonnageRedMedical = tonnage.HouseholdRAMTonnage?.RedMedical,
+                HouseholdTonnageAmberMedical = tonnage.HouseholdRAMTonnage?.AmberMedical,
+                HouseholdTonnageGreenMedical = tonnage.HouseholdRAMTonnage?.GreenMedical,
                 PublicBinTonnage = tonnage.PublicBinTonnage,
-                PublicBinTonnageRed = tonnage.PublicBinRAMTonnage?.RedTonnage,
-                PublicBinTonnageAmber = tonnage.PublicBinRAMTonnage?.AmberTonnage,
-                PublicBinTonnageGreen = tonnage.PublicBinRAMTonnage?.GreenTonnage,
-                PublicBinTonnageRedMedical = tonnage.PublicBinRAMTonnage?.RedMedicalTonnage,
-                PublicBinTonnageAmberMedical = tonnage.PublicBinRAMTonnage?.AmberMedicalTonnage,
-                PublicBinTonnageGreenMedical = tonnage.PublicBinRAMTonnage?.GreenMedicalTonnage,
+                PublicBinTonnageRed = tonnage.PublicBinRAMTonnage?.Red,
+                PublicBinTonnageAmber = tonnage.PublicBinRAMTonnage?.Amber,
+                PublicBinTonnageGreen = tonnage.PublicBinRAMTonnage?.Green,
+                PublicBinTonnageRedMedical = tonnage.PublicBinRAMTonnage?.RedMedical,
+                PublicBinTonnageAmberMedical = tonnage.PublicBinRAMTonnage?.AmberMedical,
+                PublicBinTonnageGreenMedical = tonnage.PublicBinRAMTonnage?.GreenMedical,
                 HDCTonnage = tonnage.HouseholdDrinksContainersTonnage,
-                HDCTonnageRed = tonnage.HouseholdDrinksContainersRAMTonnage?.RedTonnage,
-                HDCTonnageAmber = tonnage.HouseholdDrinksContainersRAMTonnage?.AmberTonnage,
-                HDCTonnageGreen = tonnage.HouseholdDrinksContainersRAMTonnage?.GreenTonnage,
-                HDCTonnageRedMedical = tonnage.HouseholdDrinksContainersRAMTonnage?.RedMedicalTonnage,
-                HDCTonnageAmberMedical = tonnage.HouseholdDrinksContainersRAMTonnage?.AmberMedicalTonnage,
-                HDCTonnageGreenMedical = tonnage.HouseholdDrinksContainersRAMTonnage?.GreenMedicalTonnage,
+                HDCTonnageRed = tonnage.HouseholdDrinksContainersRAMTonnage?.Red,
+                HDCTonnageAmber = tonnage.HouseholdDrinksContainersRAMTonnage?.Amber,
+                HDCTonnageGreen = tonnage.HouseholdDrinksContainersRAMTonnage?.Green,
+                HDCTonnageRedMedical = tonnage.HouseholdDrinksContainersRAMTonnage?.RedMedical,
+                HDCTonnageAmberMedical = tonnage.HouseholdDrinksContainersRAMTonnage?.AmberMedical,
+                HDCTonnageGreenMedical = tonnage.HouseholdDrinksContainersRAMTonnage?.GreenMedical,
                 SMCWTonnage = tonnage.SelfManagedConsumerWasteTonnage
             };
         }
 
         private static Dictionary<string, CalcResultPartialObligationTonnage> MapToPartial(List<TransformPartial> partial)
         {
-            RAMTonnage? ToMaybeRamTonnage(
+            RamTonnage? ToMaybeRamTonnage(
                 decimal? red,
                 decimal? amber,
                 decimal? green,
@@ -513,14 +549,14 @@ namespace EPR.Calculator.Service.Function.Services
             {
                 return red is null && amber is null && green is null && redMedical is null && amberMedical is null && greenMedical is null
                     ? null
-                    : new RAMTonnage
+                    : new RamTonnage
                     {
-                        RedTonnage = red!.Value,
-                        AmberTonnage = amber!.Value,
-                        GreenTonnage = green!.Value,
-                        RedMedicalTonnage = redMedical!.Value,
-                        AmberMedicalTonnage = amberMedical!.Value,
-                        GreenMedicalTonnage = greenMedical!.Value
+                        Red = red!.Value,
+                        Amber = amber!.Value,
+                        Green = green!.Value,
+                        RedMedical = redMedical!.Value,
+                        AmberMedical = amberMedical!.Value,
+                        GreenMedical = greenMedical!.Value
                     };
             }
 
@@ -560,5 +596,6 @@ namespace EPR.Calculator.Service.Function.Services
                 }
             );
         }
+
     }
 }

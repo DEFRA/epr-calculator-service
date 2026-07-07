@@ -144,6 +144,12 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
 
     private async Task<int> SeedCalculatorRun(ApplicationDBContext db, String name, RelativeYear relativeYear, String defaultParamsPath, String lapcapPath)
     {
+        var oldDefaultSettings = await db.DefaultParameterSettings
+            .Where(x => x.EffectiveTo == null && x.RelativeYear == relativeYear)
+            .ToListAsync();
+
+        oldDefaultSettings.ForEach(x => { x.EffectiveTo = DateTime.UtcNow; }); // side effecting db update
+
         var parameterMaster = new DefaultParameterSettingMaster
         {
             RelativeYear = relativeYear,
@@ -156,6 +162,12 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
         db.DefaultParameterSettingDetail.AddRange(DefaultParameterSettingDetails(defaultParamsPath, parameterMaster.Id));
         await db.SaveChangesAsync();
 
+        var oldLapcapSettings = await db.LapcapDataMaster
+            .Where(x => x.EffectiveTo == null && x.RelativeYear == relativeYear)
+            .ToListAsync();
+
+        oldLapcapSettings.ForEach(x => { x.EffectiveTo = DateTime.UtcNow; }); // side effecting db update
+        
         var lapcap = new LapcapDataMaster
         {
             RelativeYear  = relativeYear,

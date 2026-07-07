@@ -40,7 +40,7 @@ public class ProducerInvoiceNetTonnageService(
 
     private ImmutableList<ProducerInvoicedMaterialNetTonnage> GetInvoicedMaterialNetTonnage(CalcResult calcResult, IReadOnlyList<MaterialDetail> materials)
     {
-        var producers = calcResult.CalcResultSummary.ProducerDisposalFees
+        var producers = calcResult.ProducerFees.Details
             .Where(producer => producer.Level == CommonConstants.LevelOne.ToString());
 
         var runId = calcResult.CalcResultDetail.RunId;
@@ -52,7 +52,7 @@ public class ProducerInvoiceNetTonnageService(
             foreach (var material in materials)
             {
                 var invoiced = new ProducerInvoicedMaterialNetTonnage();
-                var disposalFees = producer.ProducerDisposalFeesByMaterial;
+                var disposalFees = producer.DisposalFeesByMaterial.ToDictionary(k => k.Key, v => v.Value);
 
                 if (disposalFees is not null && disposalFees.TryGetValue(material.Code, out var feeSummary))
                 {
@@ -60,7 +60,7 @@ public class ProducerInvoiceNetTonnageService(
                     {
                         CalculatorRunId = runId,
                         ProducerId = producer.ProducerId,
-                        InvoicedNetTonnage = feeSummary.NetReportedTonnage.total,
+                        InvoicedNetTonnage = feeSummary.NetTonnage.Total,
                         MaterialId = material.Id
                     };
                 }

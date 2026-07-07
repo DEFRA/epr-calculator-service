@@ -7,7 +7,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Summary
 [TestClass]
 public class LaDataPrepCostsExporterTests
 {
-    private readonly ICalcResultSummaryPartExporter exporter = new LaDataPrepCostsExporter();
+    private readonly IProducerFeesPartExporter exporter = new LaDataPrepCostsExporter();
 
     [TestMethod]
     public void LaDataPrepCostsExporter_Export_CSV()
@@ -15,11 +15,11 @@ public class LaDataPrepCostsExporterTests
         // Arrange
         var materials = TestDataHelper.GetMaterialDetails();
         const bool applyModulation = false;
-        var resultSummary = TestDataHelper.GetCalcResultSummary();
+        var producerFees = TestDataHelper.GetProducerFees();
         var csvContent = new StringBuilder();
 
         // Act
-        SummaryExporterTestUtils.Render(exporter, materials, applyModulation, resultSummary, csvContent);
+        ProducerFeesExporterTestUtils.Render(exporter, materials, applyModulation, producerFees, csvContent);
         var result = csvContent.ToString().ReplaceLineEndings("\n").Split("\n").ToArray();
         Console.WriteLine(string.Join("\n", result));
 

@@ -1,5 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Constants;
 
 namespace EPR.Calculator.Service.Function.JsonExporter.Model;
 
@@ -66,7 +68,7 @@ public class CalcSummaryProducerCalculationResults
     [JsonPropertyName("calculationOfSuggestedBillingInstructionsAndInvoiceAmounts")]
     public required CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts { get; set; }
 
-    public static CalcSummaryProducerCalculationResults From(CalcResultSummaryProducerDisposalFees producer, IImmutableList<MaterialDetail> materials, bool applyModulation)
+    public static CalcSummaryProducerCalculationResults From(ProducerFeeDetail producer, IImmutableList<MaterialDetail> materials, bool applyModulation, IReadOnlyList<int> scaledupProducerIds)
     {
         return new CalcSummaryProducerCalculationResults
             {
@@ -75,9 +77,9 @@ public class CalcSummaryProducerCalculationResults
                 ProducerName                                 = producer.ProducerName,
                 TradingName                                  = producer.TradingName,
                 Level                                        = string.IsNullOrWhiteSpace(producer.Level) ? null : int.Parse(producer.Level),
-                ScaledUpTonnages                             = producer.IsProducerScaledup,
-                ProducerDisposalFeesWithBadDebtProvision1    = ProducerDisposalFeesWithBadDebtProvision1.From(producer.ProducerDisposalFeesByMaterial, materials, producer.Level!, applyModulation),
-                FeesForCommsCostsWithBadDebtProvision2a      = CalcResultCommsCostByMaterial2AJson.From(producer.ProducerCommsFeesByMaterial, materials),
+                ScaledUpTonnages                             = scaledupProducerIds.Contains(producer.ProducerId) ? CommonConstants.Yes : CommonConstants.No,
+                ProducerDisposalFeesWithBadDebtProvision1    = ProducerDisposalFeesWithBadDebtProvision1.From(producer.DisposalFeesByMaterial, materials, producer.Level!, applyModulation),
+                FeesForCommsCostsWithBadDebtProvision2a      = CalcResultCommsCostByMaterial2AJson.From(producer.CommsFeesByMaterial, materials),
                 FeeForSAOperatingCostsWithBadDebtProvision_3 = CalcResultSAOperatingCostsWithBadDebtProvision.From(producer),
                 FeeForLADataPrepCostsWithBadDebtProvision_4  = FeeForLADataPrepCostsWithBadDebtProvision_4.From(producer),
                 FeeForCommsCostsWithBadDebtProvision_2a      = CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2A.From(producer),

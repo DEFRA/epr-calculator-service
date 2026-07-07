@@ -7,7 +7,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Summary
 [TestClass]
 public class BillingInstructionsExporterTests
 {
-    private readonly ICalcResultSummaryPartExporter exporter = new BillingInstructionsExporter();
+    private readonly IProducerFeesPartExporter exporter = new BillingInstructionsExporter();
 
     [TestMethod]
     public void BillingInstructionsExporter_Export_CSV()
@@ -15,11 +15,11 @@ public class BillingInstructionsExporterTests
         // Arrange
         var materials = TestDataHelper.GetMaterialDetails();
         const bool applyModulation = false;
-        var resultSummary = TestDataHelper.GetCalcResultSummary();
+        var producerFees = TestDataHelper.GetProducerFees();
         var csvContent = new StringBuilder();
 
         // Act
-        SummaryExporterTestUtils.Render(exporter, materials, applyModulation, resultSummary, csvContent);
+        ProducerFeesExporterTestUtils.Render(exporter, materials, applyModulation, producerFees, csvContent);
         var result = csvContent.ToString().ReplaceLineEndings("\n").Split("\n").ToArray();
         Console.WriteLine(string.Join("\n", result));
 
@@ -37,7 +37,7 @@ public class BillingInstructionsExporterTests
              "Tonnage % Threshold Breached (if tonnage changed)",
              "Suggested Billing Instruction",
              "Suggested Invoice Amount"],
-            ["£1250.89", "Tonnage Changed", "£580.73", "", "", "123.45%", "", "", "", "£4039.00"],
+            ["£1250.89", "Tonnage Changed", "£580.73", "-", "-", "123.45%", "-", "-", "", "£4039.00"],
             ["-", "-", "£580.73", "", "", "-", "", "", "", "£4039.00"]
         };
 

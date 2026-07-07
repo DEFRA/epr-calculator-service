@@ -24,12 +24,12 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 
         private static CalcResultH2ProjectedProducerMaterialTonnage GetProjectedTonnage(MaterialDetail material, List<ProducerReportedMaterial> reportedMaterials)
         {
-            var hhTonnage = RAMTonnage.GetReportedTonnage(reportedMaterials, PackagingTypes.Household, rm => rm.PackagingTonnage);
-            var hhRAMTonnage = RAMTonnage.ToRAMTonnage(reportedMaterials, PackagingTypes.Household);
-            var pbTonnage = RAMTonnage.GetReportedTonnage(reportedMaterials, PackagingTypes.PublicBin, rm => rm.PackagingTonnage);
-            var pbRAMTonnage = RAMTonnage.ToRAMTonnage(reportedMaterials, PackagingTypes.PublicBin);
-            var hdcTonnage = (material.Code == MaterialCodes.Glass) ? RAMTonnage.GetReportedTonnage(reportedMaterials, PackagingTypes.HouseholdDrinksContainers, rm => rm.PackagingTonnage) : (decimal?) null;
-            var hdcRAMTonnage = (material.Code == MaterialCodes.Glass) ? RAMTonnage.ToRAMTonnage(reportedMaterials, PackagingTypes.HouseholdDrinksContainers) : null;
+            var hhTonnage = RamTonnage.GetReportedTonnage(reportedMaterials, PackagingTypes.Household, rm => rm.PackagingTonnage);
+            var hhRAMTonnage = RamTonnage.ToRamTonnage(reportedMaterials, PackagingTypes.Household);
+            var pbTonnage = RamTonnage.GetReportedTonnage(reportedMaterials, PackagingTypes.PublicBin, rm => rm.PackagingTonnage);
+            var pbRAMTonnage = RamTonnage.ToRamTonnage(reportedMaterials, PackagingTypes.PublicBin);
+            var hdcTonnage = (material.Code == MaterialCodes.Glass) ? RamTonnage.GetReportedTonnage(reportedMaterials, PackagingTypes.HouseholdDrinksContainers, rm => rm.PackagingTonnage) : (decimal?) null;
+            var hdcRAMTonnage = (material.Code == MaterialCodes.Glass) ? RamTonnage.ToRamTonnage(reportedMaterials, PackagingTypes.HouseholdDrinksContainers) : null;
             var hhWithoutRam = CalcResultProjectedProducersBuilder.TonnageWithoutRAM(hhTonnage, hhRAMTonnage);
             var pbWithoutRam = CalcResultProjectedProducersBuilder.TonnageWithoutRAM(pbTonnage, pbRAMTonnage);
             decimal? hdcWithoutRam = (hdcTonnage != null && hdcRAMTonnage != null) ? CalcResultProjectedProducersBuilder.TonnageWithoutRAM(hdcTonnage.Value, hdcRAMTonnage) : null;
@@ -46,11 +46,11 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                 PublicBinTonnageWithoutRAM                  = pbWithoutRam,
                 HouseholdDrinksContainerTonnageWithoutRAM   = hdcWithoutRam,
                 ProjectedHouseholdTonnage                   = hhTonnage,
-                ProjectedHouseholdRAMTonnage                = hhRAMTonnage with { RedTonnage = hhRAMTonnage.RedTonnage + hhWithoutRam },
+                ProjectedHouseholdRAMTonnage                = hhRAMTonnage with { Red = hhRAMTonnage.Red + hhWithoutRam },
                 ProjectedPublicBinTonnage                   = pbTonnage,
-                ProjectedPublicBinRAMTonnage                = pbRAMTonnage with { RedTonnage = pbRAMTonnage.RedTonnage + pbWithoutRam },
+                ProjectedPublicBinRAMTonnage                = pbRAMTonnage with { Red = pbRAMTonnage.Red + pbWithoutRam },
                 ProjectedHouseholdDrinksContainerTonnage    = hdcTonnage,
-                ProjectedHouseholdDrinksContainerRAMTonnage = hdcRAMTonnage != null ? hdcRAMTonnage with { RedTonnage = hdcRAMTonnage.RedTonnage + hdcWithoutRam!.Value } : null
+                ProjectedHouseholdDrinksContainerRAMTonnage = hdcRAMTonnage != null ? hdcRAMTonnage with { Red = hdcRAMTonnage.Red + hdcWithoutRam!.Value } : null
             };
         }
 
@@ -68,7 +68,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
         public static CalcResultH2ProjectedProducer SumProducerGroupTonnages(List<CalcResultH2ProjectedProducer> prodGroup)
         {
             var producer = prodGroup.First();
-            var sumRam = (string matKey, Func<CalcResultProjectedProducerMaterialTonnage, RAMTonnage?> tonnageFunc) =>
+            var sumRam = (string matKey, Func<CalcResultProjectedProducerMaterialTonnage, RamTonnage?> tonnageFunc) =>
                 CalcResultProjectedProducersBuilder.SumRAMTonnages(prodGroup.Cast<ICalcResultProjectedProducer>().ToList(), matKey, tonnageFunc);
 
             return new CalcResultH2ProjectedProducer

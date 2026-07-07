@@ -1,4 +1,5 @@
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.Builder.Summary;
 
@@ -9,39 +10,36 @@ namespace EPR.Calculator.Service.Function.Builder.Summary;
 
 public static class ThreeSaCostsProducer
 {
-    public static void SetValues(CalcResult calcResult, CalcResultSummary summary) =>
+    public static void SetValues(CalcResult calcResult, ProducerFees producerFees) =>
         SectionCosts.Apply(
-            summary,
+            producerFees,
             badDebt:       calcResult.CalcResultParameterOtherCost.BadDebtValue,
             total:         calcResult.CalcResultParameterOtherCost.SaOperatingCost.Total,
             apportionment: calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment,
-            setHeader: (s, p) => s.SaOperatingCostsSection3 = p, // gitleaks:allow
             setFee:    (f, p) => f.SaOperatingCostsSection3 = p
         );
 }
 
 public static class LaDataPrepCostsProducer
 {
-    public static void SetValues(CalcResult calcResult, CalcResultSummary summary) =>
+    public static void SetValues(CalcResult calcResult, ProducerFees producerFees) =>
         SectionCosts.Apply(
-            summary,
+            producerFees,
             badDebt:       calcResult.CalcResultParameterOtherCost.BadDebtValue,
             total:         calcResult.CalcResultParameterOtherCost.LaDataPrepCharge.Total,
             apportionment: calcResult.CalcResultParameterOtherCost.CountryApportionment,
-            setHeader: (s, p) => s.LaDataPrepSection4 = p,
             setFee:    (f, p) => f.LaDataPrepSection4 = p
         );
 }
 
 public static class SaSetupCostsProducer
 {
-    public static void SetValues(CalcResult calcResult, CalcResultSummary summary) =>
+    public static void SetValues(CalcResult calcResult, ProducerFees producerFees) =>
         SectionCosts.Apply(
-            summary,
+            producerFees,
             badDebt:       calcResult.CalcResultParameterOtherCost.BadDebtValue,
             total:         calcResult.CalcResultParameterOtherCost.SchemeSetupCost.Total,
             apportionment: calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment,
-            setHeader: (s, p) => s.SaSetupCostsSection5 = p,
             setFee:    (f, p) => f.SaSetupCostsSection5 = p
         );
 }
@@ -49,22 +47,19 @@ public static class SaSetupCostsProducer
 internal static class SectionCosts
 {
     internal static void Apply(
-        CalcResultSummary summary,
+        ProducerFees producerFees,
         decimal badDebt,
         decimal total,
         ByCountryApportionment apportionment,
-        Action<CalcResultSummary, CalcResultSummaryBadDebtProvision> setHeader,
-        Action<CalcResultSummaryProducerDisposalFees, CalcResultSummaryBadDebtProvision> setFee
+        Action<ProducerFeeDetail, FeeWithBadDebt> setFee
     )
     {
-        setHeader(summary, BadDebtProvision(badDebt, total, apportionment, 100m));
-        foreach (var fee in summary.ProducerDisposalFees)
-            setFee(fee, BadDebtProvision(badDebt, total, apportionment, fee.ProducerOverallPercentageOfCostsForOnePlus2A2B2C));
-        if (summary.OverallTotal is not null)
-            setFee(summary.OverallTotal, BadDebtProvision(badDebt, total, apportionment, summary.OverallTotal.ProducerOverallPercentageOfCostsForOnePlus2A2B2C));
+        foreach (var fee in producerFees.Details)
+            setFee(fee, BadDebt(badDebt, total, apportionment, fee.TotalOnePlus2A2B2CWithBadDebtPercentage));
+        setFee(producerFees.Total, BadDebt(badDebt, total, apportionment, producerFees.Total.TotalOnePlus2A2B2CWithBadDebtPercentage));
     }
 
-    internal static CalcResultSummaryBadDebtProvision BadDebtProvision(
+    internal static FeeWithBadDebt BadDebt(
         decimal badDebtRate,
         decimal sectionTotal,
         ByCountryApportionment apportionment,
@@ -72,11 +67,11 @@ internal static class SectionCosts
     )
     {
         var without = producerPct * sectionTotal / 100;
-        return new CalcResultSummaryBadDebtProvision
+        return new FeeWithBadDebt
         {
-            FeeWithoutBadDebtProvision = without,
-            BadDebtProvision           = without * badDebtRate / 100,
-            FeeWithBadDebtProvision    = ApplyApportionment(badDebtRate, sectionTotal, producerPct, apportionment)
+            FeeWithoutBadDebt = without,
+            BadDebt           = without * badDebtRate / 100,
+            ByCountry    = ApplyApportionment(badDebtRate, sectionTotal, producerPct, apportionment)
         };
     }
 
