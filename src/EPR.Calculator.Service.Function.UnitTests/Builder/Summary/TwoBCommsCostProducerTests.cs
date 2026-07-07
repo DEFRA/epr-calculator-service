@@ -15,11 +15,11 @@ public class TwoBCommsCostProducerTests
     public void TwoBCommsCostProducer_CanCallSetValues()
     {
         // Act
-        TwoBCommsCostProducer.SetValues(calcResult, calcResult.CalcResultSummary);
+        TwoBCommsCostProducer.SetValues(calcResult, calcResult.ProducerFees);
 
         // Assert
-        Assert.AreEqual(2531m   , calcResult.CalcResultSummary.CommsCostsSection2b.FeeWithoutBadDebtProvision);
-        Assert.AreEqual(151.86m , calcResult.CalcResultSummary.CommsCostsSection2b.BadDebtProvision);
-        Assert.AreEqual(2682.86m, calcResult.CalcResultSummary.CommsCostsSection2b.FeeWithBadDebtProvision.Total);
+        Assert.AreEqual(2531m   , calcResult.ProducerFees.Total.CommsCostsSection2b.FeeWithoutBadDebt);
+        Assert.AreEqual(151.86m , calcResult.ProducerFees.Total.CommsCostsSection2b.BadDebt);
+        Assert.AreEqual(2682.86m, calcResult.ProducerFees.Total.CommsCostsSection2b.ByCountry.Total);
     }
 }

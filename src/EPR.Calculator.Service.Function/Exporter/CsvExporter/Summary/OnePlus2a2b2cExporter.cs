@@ -2,10 +2,11 @@ using System.Text;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 
-public class OnePlus2a2b2cExporter : ICalcResultSummaryPartExporter
+public class OnePlus2a2b2cExporter : IProducerFeesPartExporter
 {
     public IEnumerable<string> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
     {
@@ -15,23 +16,23 @@ public class OnePlus2a2b2cExporter : ICalcResultSummaryPartExporter
         ];
     }
 
-    public void AppendSectionHeader(StringBuilder csvContent, CalcResultSummary resultSummary, IReadOnlyList<MaterialDetail> materials, bool applyModulation)
+    public void AppendSectionHeader(StringBuilder csvContent, ProducerFees producerFees, IReadOnlyList<MaterialDetail> materials, bool applyModulation)
     {
         int count = GetColumnHeaders(materials, applyModulation).Count();
         csvContent.Append(CsvSanitiser.SanitiseData("Total (1+2a+2b+2c) with Bad Debt provision"));
         csvContent.Append(',', count - 1);
     }
 
-    public void AppendGroupHeader(StringBuilder csvContent, CalcResultSummary resultSummary, IReadOnlyList<MaterialDetail> materials, bool applyModulation)
+    public void AppendGroupHeader(StringBuilder csvContent, ProducerFees producerFees, IReadOnlyList<MaterialDetail> materials, bool applyModulation)
     {
         int count = GetColumnHeaders(materials, applyModulation).Count();
-        csvContent.Append(CsvSanitiser.SanitiseData(resultSummary.TotalOnePlus2A2B2CFeeWithBadDebtProvision, DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(producerFees.Total.TotalOnePlus2A2B2CWithBadDebt(), DecimalPlaces.Two, null, isCurrency: true));
         csvContent.Append(',', count - 1);
     }
 
-    public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
+    public void AppendRow(StringBuilder csvContent, ProducerFeeDetail producer, bool applyModulation, bool isOverallTotal)
     {
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerTotalOnePlus2A2B2CWithBadDeptProvision, DecimalPlaces.Two, null, isCurrency: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerOverallPercentageOfCostsForOnePlus2A2B2C, DecimalPlaces.Eight, DecimalFormats.F8, isCurrency: false, isPercentage: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.TotalOnePlus2A2B2CWithBadDebt(), DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.TotalOnePlus2A2B2CWithBadDebtPercentage, DecimalPlaces.Eight, DecimalFormats.F8, isCurrency: false, isPercentage: true));
     }
 }

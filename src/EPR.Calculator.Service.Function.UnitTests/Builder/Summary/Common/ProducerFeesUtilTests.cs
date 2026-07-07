@@ -12,11 +12,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common;
 
 [TestCategory(TestCategories.ResultBuilder)]
 [TestClass]
-public class CalcResultSummaryUtilTests
+public class ProducerFeesUtilTests
 {
     private readonly CalcResult calcResult;
 
-    public CalcResultSummaryUtilTests()
+    public ProducerFeesUtilTests()
     {
         calcResult = new CalcResult
         {
@@ -31,7 +31,7 @@ public class CalcResultSummaryUtilTests
             CalcResultLaDisposalCostData       = TestDataHelper.GetCalcResultLaDisposalCostData(),
             CalcResultLapcapData               = TestDataHelper.GetCalcResultLapcapData(),
             CalcResultOnePlusFourApportionment = TestDataHelper.GetCalcResultOnePlusFourApportionment(),
-            CalcResultSummary                  = TestDataHelper.GetCalcResultSummary(),
+            ProducerFees                       = TestDataHelper.GetProducerFees(),
             CalcResultCommsCostReportDetail    = TestDataHelper.GetCalcResultCommsCostReportDetail(),
             CalcResultLateReportingTonnageData = GetCalcResultLateReportingTonnage(),
             CalcResultProjectedProducers       = new CalcResultProjectedProducers(){
@@ -43,11 +43,11 @@ public class CalcResultSummaryUtilTests
 
     private Fixture Fixture { get; } = new();
 
-    public static ILookup<(int, string?), ProducerReportedMaterialProjected> ProjectedMaterialsLookup(List<ProducerDetail> producers)
+    public static ILookup<(int, string?), ProducerMaterialPackaging> ProjectedMaterialsLookup(List<ProducerDetail> producers)
     {
         // This allows us to retrofit into existing test setup, but ProducerReportedMaterials normally
         // refers to pre-processed data, which is _not_ what we want to display in the ResultsSummary
-        ProducerReportedMaterialProjected ToProjected(ProducerReportedMaterial rm) =>
+        ProducerMaterialPackaging ToProjected(ProducerReportedMaterial rm) =>
             new()
             {
                 MaterialId                   = rm.MaterialId,
@@ -76,7 +76,7 @@ public class CalcResultSummaryUtilTests
         var material = TestDataHelper.GetMaterialDetails().First(m => m.Code == "AL");
 
         // Act
-        var result = CalcResultSummaryUtil.GetTonnage(ProjectedMaterialsLookup(new List<ProducerDetail> { producer }), producer, material, PackagingTypes.Household);
+        var result = ProducerFeesUtil.GetTonnage(ProjectedMaterialsLookup(new List<ProducerDetail> { producer }), producer, material, PackagingTypes.Household);
 
         // Assert
         Assert.AreEqual(1000.00m, result);
@@ -90,7 +90,7 @@ public class CalcResultSummaryUtilTests
         var material = TestDataHelper.GetMaterialDetails().First(m => m.Code == "PL");
 
         // Act
-        var result = CalcResultSummaryUtil.GetTonnage(ProjectedMaterialsLookup(new List<ProducerDetail> { producer }), producer, material, PackagingTypes.PublicBin);
+        var result = ProducerFeesUtil.GetTonnage(ProjectedMaterialsLookup(new List<ProducerDetail> { producer }), producer, material, PackagingTypes.PublicBin);
 
         // Assert
         Assert.AreEqual(20.00m, result);
@@ -104,7 +104,7 @@ public class CalcResultSummaryUtilTests
         var material = TestDataHelper.GetMaterialDetails().First(m => m.Code == "GL");
 
         // Act
-        var result = CalcResultSummaryUtil.GetTonnage(ProjectedMaterialsLookup(new List<ProducerDetail> { producer }), producer, material, PackagingTypes.HouseholdDrinksContainers);
+        var result = ProducerFeesUtil.GetTonnage(ProjectedMaterialsLookup(new List<ProducerDetail> { producer }), producer, material, PackagingTypes.HouseholdDrinksContainers);
 
         // Assert
         Assert.AreEqual(20.00m, result);
@@ -118,7 +118,7 @@ public class CalcResultSummaryUtilTests
         var material = TestDataHelper.GetMaterialDetails().First(m => m.Code == "AL");
 
         // Act
-        var result = CalcResultSummaryUtil.GetReportedTonnage(ProjectedMaterialsLookup(new List<ProducerDetail> { producer }), producer, material);
+        var result = ProducerFeesUtil.GetReportedTonnage(ProjectedMaterialsLookup(new List<ProducerDetail> { producer }), producer, material);
 
         // Assert
         Assert.AreEqual(1000.00m, result);
@@ -132,7 +132,7 @@ public class CalcResultSummaryUtilTests
         var material = TestDataHelper.GetMaterialDetails().First(m => m.Code == "AL");
 
         // Act
-        var result = CalcResultSummaryUtil.GetTonnage(ProjectedMaterialsLookup(new List<ProducerDetail> { producer }), producer, material, PackagingTypes.ConsumerWaste);
+        var result = ProducerFeesUtil.GetTonnage(ProjectedMaterialsLookup(new List<ProducerDetail> { producer }), producer, material, PackagingTypes.ConsumerWaste);
 
         // Assert
         Assert.AreEqual(20.00m, result);
@@ -145,10 +145,10 @@ public class CalcResultSummaryUtilTests
         var material = Fixture.Create<MaterialDetail>();
 
         // Act
-        var result = CalcResultSummaryUtil.GetPricePerTonne(material, calcResult);
+        var result = ProducerFeesUtil.GetPricePerTonne(material, calcResult);
 
         // Assert
-        Assert.AreEqual((total: null, red: null, amber: null, green: null), result);
+        Assert.AreEqual(new RamTonnageGroup{ Total = null, Red = null, Amber = null, Green = null }, result);
     }
 
     [TestMethod]
@@ -158,10 +158,10 @@ public class CalcResultSummaryUtilTests
         var material = TestDataHelper.GetMaterialDetails().First(m => m.Code == "AL");
 
         // Act
-        var result = CalcResultSummaryUtil.GetPricePerTonne(material, calcResult);
+        var result = ProducerFeesUtil.GetPricePerTonne(material, calcResult);
 
         // Assert
-        Assert.AreEqual((total: 0.5889m, red: null, amber: null, green: null), result);
+        Assert.AreEqual(new RamTonnageGroup{ Total = 0.5889m, Red = null, Amber = null, Green= null }, result);
     }
 
     [TestMethod]
@@ -171,10 +171,10 @@ public class CalcResultSummaryUtilTests
         var material = TestDataHelper.GetMaterialDetails().First(m => m.Code == "AL");
 
         // Act
-        var result = CalcResultSummaryUtil.GetProducerDisposalFee(material, calcResult, SelfManagedConsumerWasteData.Zero);
+        var result = ProducerFeesUtil.GetProducerDisposalFee(material, calcResult, SelfManagedConsumerWasteData.Zero);
 
         // Assert
-        Assert.AreEqual((total: 0m, red: null, amber: null, green: null), result);
+        Assert.AreEqual(new RamTonnageGroup{ Total = 0m, Red = null, Amber = null, Green = null }, result);
     }
 
     [TestMethod]
@@ -200,23 +200,23 @@ public class CalcResultSummaryUtilTests
             NetReportedTonnage = (null, 1m, 2m, 3m)
         };
 
-        var result = CalcResultSummaryUtil.GetProducerDisposalFee(material, calcResult, smcw);
+        var result = ProducerFeesUtil.GetProducerDisposalFee(material, calcResult, smcw);
 
-        Assert.AreEqual((total: 551.4269m, red: 120, amber: 200, green: 231.4269m), result);
+        Assert.AreEqual(new RamTonnageGroup{ Total = 551.4269m, Red = 120, Amber = 200, Green = 231.4269m }, result);
     }
 
 
     [TestMethod]
     public void GetBadDebtProvision_ValidPercentage_WithPercent()
     {
-        var result = CalcResultSummaryUtil.GetBadDebtProvision(calcResult, 200m);
+        var result = ProducerFeesUtil.GetBadDebtProvision(calcResult, 200m);
         Assert.AreEqual(12m, result);
     }
 
     [TestMethod]
     public void GetProducerDisposalFeeWithBadDebtProvision_AddsPercentage()
     {
-        var result = CalcResultSummaryUtil.GetProducerDisposalFeeWithBadDebtProvision(calcResult, 100m);
+        var result = ProducerFeesUtil.GetProducerDisposalFeeWithBadDebtProvision(calcResult, 100m);
         Assert.AreEqual(106m, MathUtils.RoundAwayFromZero(result.Total, 10));
     }
 
@@ -224,7 +224,7 @@ public class CalcResultSummaryUtilTests
     public void CanGetCommsCostHeaderWithoutBadDebtFor2bTitle()
     {
         // Act
-        var result = CalcResultSummaryUtil.GetCommsCostHeaderWithoutBadDebtFor2bTitle(calcResult);
+        var result = ProducerFeesUtil.GetCommsCostHeaderWithoutBadDebtFor2bTitle(calcResult);
 
         // Assert
         Assert.AreEqual(2531, result);
@@ -238,7 +238,7 @@ public class CalcResultSummaryUtilTests
         var material = TestDataHelper.GetMaterialDetails().First(m => m.Code == "PL");
 
         // Act
-        var result = CalcResultSummaryUtil.GetTonnage(ProjectedMaterialsLookup(new List<ProducerDetail> { producer }), producer, material, PackagingTypes.PublicBin);
+        var result = ProducerFeesUtil.GetTonnage(ProjectedMaterialsLookup(new List<ProducerDetail> { producer }), producer, material, PackagingTypes.PublicBin);
 
         // Assert
         Assert.AreEqual(20.00m, result);
@@ -252,7 +252,7 @@ public class CalcResultSummaryUtilTests
         var material = TestDataHelper.GetMaterialDetails().First(m => m.Code == "GL");
 
         // Act
-        var result = CalcResultSummaryUtil.GetTonnage(ProjectedMaterialsLookup(new List<ProducerDetail> { producer }), producer, material, PackagingTypes.HouseholdDrinksContainers);
+        var result = ProducerFeesUtil.GetTonnage(ProjectedMaterialsLookup(new List<ProducerDetail> { producer }), producer, material, PackagingTypes.HouseholdDrinksContainers);
 
         // Assert
         Assert.AreEqual(20.00m, result);

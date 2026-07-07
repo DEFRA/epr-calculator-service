@@ -5,6 +5,7 @@ using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services;
 
@@ -56,9 +57,11 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
             {
                 ByMaterial = []
             },
-            CalcResultSummary = new CalcResultSummary
+            ProducerFees = new ProducerFees
             {
-                ProducerDisposalFees = fixture.Create<List<CalcResultSummaryProducerDisposalFees>>()
+                CalculatorRunId = 0, 
+                Details = fixture.Create<List<ProducerFeeDetail>>(),
+                Total = new() { ProducerId = 0, SubsidiaryId = string.Empty, ProducerName = string.Empty }
             },
             CalcResultCancelledProducers = new CalcResultCancelledProducersResponse
             {
@@ -124,8 +127,10 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
             {
                 ByMaterial = []
             },
-            CalcResultSummary = new CalcResultSummary {
-                ProducerDisposalFees = null!
+            ProducerFees = new ProducerFees {
+                CalculatorRunId = 0, 
+                Details = null!,
+                Total = new() { ProducerId = 0, SubsidiaryId = string.Empty, ProducerName = string.Empty }
             },
             CalcResultProjectedProducers = new CalcResultProjectedProducers(){
                 H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,

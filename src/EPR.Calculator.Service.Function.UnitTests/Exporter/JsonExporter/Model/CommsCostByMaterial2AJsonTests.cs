@@ -2,6 +2,7 @@ using System.Text.Json;
 using EPR.Calculator.Service.Function.JsonExporter.Model;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.UnitTests.JsonExporter.Model;
 
@@ -14,34 +15,34 @@ public class CommsCostByMaterial2AJsonTests
         // Arrange
         var materials = TestDataHelper.GetMaterialDetails();
 
-        var comms = new Dictionary<string, CalcResultSummaryProducerCommsFeesCostByMaterial>
+        var comms = new Dictionary<string, CommsFee>
         {
-            ["AL"] = new CalcResultSummaryProducerCommsFeesCostByMaterial
+            ["AL"] = new CommsFee
             {
-                HouseholdPackagingWasteTonnage   = 100.25m,
-                PublicBinTonnage                 = 50.50m,
-                TotalReportedTonnage             = 150.75m,
-                HouseholdDrinksContainersTonnage = 0m,
-                PriceperTonne                    = 0.42m,
-                Costs = new CalcResultSummaryBadDebtProvision
+                HhTonnage         = 100.25m,
+                PbTonnage         = 50.50m,
+                TotalTonnage     = 150.75m,
+                HdcTonnage               = 0m,
+                PricePerTonne            = 0.42m,
+                Costs = new FeeWithBadDebt
                 {
-                    FeeWithoutBadDebtProvision = 10m,
-                    BadDebtProvision           = 1m,
-                    FeeWithBadDebtProvision    = new ByCountryCost { England = 4m, Wales = 3m, Scotland = 2m, NorthernIreland = 1m },
+                    FeeWithoutBadDebt = 10m,
+                    BadDebt           = 1m,
+                    ByCountry    = new ByCountryCost { England = 4m, Wales = 3m, Scotland = 2m, NorthernIreland = 1m },
                 },
             },
-            ["GL"] = new CalcResultSummaryProducerCommsFeesCostByMaterial
+            ["GL"] = new CommsFee
             {
-                HouseholdPackagingWasteTonnage   = 200m,
-                PublicBinTonnage                 = 80m,
-                TotalReportedTonnage             = 280m,
-                HouseholdDrinksContainersTonnage = 12.34m,
-                PriceperTonne                    = 0.3m,
-                Costs = new CalcResultSummaryBadDebtProvision
+                HhTonnage         = 200m,
+                PbTonnage         = 80m,
+                TotalTonnage             = 280m,
+                HdcTonnage               = 12.34m,
+                PricePerTonne            = 0.3m,
+                Costs = new FeeWithBadDebt
                 {
-                    FeeWithoutBadDebtProvision = 20m,
-                    BadDebtProvision           = 2m,
-                    FeeWithBadDebtProvision    = new ByCountryCost { England = 8m, Wales = 7m, Scotland = 6m, NorthernIreland = 5m },
+                    FeeWithoutBadDebt = 20m,
+                    BadDebt           = 2m,
+                    ByCountry    = new ByCountryCost { England = 8m, Wales = 7m, Scotland = 6m, NorthernIreland = 5m },
                 },
             }
         };

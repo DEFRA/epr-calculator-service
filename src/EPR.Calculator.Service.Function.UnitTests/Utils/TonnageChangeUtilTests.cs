@@ -1,6 +1,7 @@
 ﻿using EPR.Calculator.Service.Function.Builder.Summary.Common;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Utils
 {
@@ -58,9 +59,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Utils
         [TestMethod]
         public void ComputeCountAndAdvice_levelNot1_returnsNulls()
         {
-            var byMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>
+            var byMaterial = new Dictionary<string, DisposalFee>
             {
-                ["PAPER"] = new() { TonnageChange = 5m, ProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty }
+                ["PAPER"] = new() { HhTonnage = RamTonnage.Empty, PbTonnage = RamTonnage.Empty, HdcTonnage = RamTonnage.Empty, TotalTonnage = RamTonnage.Empty, TonnageChange = 5m, FeeWithBadDebtByCountry = ByCountryCost.Empty, ActionedSmcwTonnage = RamTonnageGroup.Empty, NetTonnage = RamTonnageGroup.Empty, PricePerTonne = RamTonnageGroup.Empty, Fee = RamTonnageGroup.Empty }
             };
 
             var (count, advice) = TonnageChangeUtil.ComputeCountAndAdvice("2", byMaterial);
@@ -72,12 +73,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Utils
         [TestMethod]
         public void ComputeCountAndAdvice_changesPresent_returnsCountAndCHANGE()
         {
-            var byMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>
+            var byMaterial = new Dictionary<string, DisposalFee>
             {
-                ["PAPER"] = new() { TonnageChange = 0m, ProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty },  // ignored
-                ["GLASS"] = new() { TonnageChange = null, ProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty },  // ignored
-                ["METAL"] = new() { TonnageChange = 3m, ProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty },  // counted
-                ["PLASTIC"] = new() { TonnageChange = -1m, ProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty }   // counted
+                ["PAPER"] = new() { HhTonnage = RamTonnage.Empty, PbTonnage = RamTonnage.Empty, HdcTonnage = RamTonnage.Empty, TotalTonnage = RamTonnage.Empty, TonnageChange = 0m, FeeWithBadDebtByCountry = ByCountryCost.Empty, ActionedSmcwTonnage = RamTonnageGroup.Empty, NetTonnage = RamTonnageGroup.Empty, PricePerTonne = RamTonnageGroup.Empty, Fee = RamTonnageGroup.Empty},  // ignored
+                ["GLASS"] = new() { HhTonnage = RamTonnage.Empty, PbTonnage = RamTonnage.Empty, HdcTonnage = RamTonnage.Empty, TotalTonnage = RamTonnage.Empty, TonnageChange = null, FeeWithBadDebtByCountry = ByCountryCost.Empty, ActionedSmcwTonnage = RamTonnageGroup.Empty, NetTonnage = RamTonnageGroup.Empty, PricePerTonne = RamTonnageGroup.Empty, Fee = RamTonnageGroup.Empty },  // ignored
+                ["METAL"] = new() { HhTonnage = RamTonnage.Empty, PbTonnage = RamTonnage.Empty, HdcTonnage = RamTonnage.Empty, TotalTonnage = RamTonnage.Empty, TonnageChange = 3m, FeeWithBadDebtByCountry = ByCountryCost.Empty, ActionedSmcwTonnage = RamTonnageGroup.Empty, NetTonnage = RamTonnageGroup.Empty, PricePerTonne = RamTonnageGroup.Empty, Fee = RamTonnageGroup.Empty },  // counted
+                ["PLASTIC"] = new() { HhTonnage = RamTonnage.Empty, PbTonnage = RamTonnage.Empty, HdcTonnage = RamTonnage.Empty, TotalTonnage = RamTonnage.Empty, TonnageChange = -1m, FeeWithBadDebtByCountry = ByCountryCost.Empty, ActionedSmcwTonnage = RamTonnageGroup.Empty, NetTonnage = RamTonnageGroup.Empty, PricePerTonne = RamTonnageGroup.Empty, Fee = RamTonnageGroup.Empty }   // counted
             };
 
             var (count, advice) = TonnageChangeUtil.ComputeCountAndAdvice(
@@ -90,10 +91,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Utils
         [TestMethod]
         public void ComputeCountAndAdvice_noChanges_returnsZeroAndEmptyAdvice()
         {
-            var byMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>
+            var byMaterial = new Dictionary<string, DisposalFee>
             {
-                ["PAPER"] = new() { TonnageChange = 0m, ProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty },
-                ["GLASS"] = new() { TonnageChange = null, ProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty }
+                ["PAPER"] = new() { HhTonnage = RamTonnage.Empty, PbTonnage = RamTonnage.Empty, HdcTonnage = RamTonnage.Empty, TotalTonnage = RamTonnage.Empty, TonnageChange = 0m, FeeWithBadDebtByCountry = ByCountryCost.Empty, ActionedSmcwTonnage = RamTonnageGroup.Empty, NetTonnage = RamTonnageGroup.Empty, PricePerTonne = RamTonnageGroup.Empty, Fee = RamTonnageGroup.Empty },
+                ["GLASS"] = new() { HhTonnage = RamTonnage.Empty, PbTonnage = RamTonnage.Empty, HdcTonnage = RamTonnage.Empty, TotalTonnage = RamTonnage.Empty, TonnageChange = null, FeeWithBadDebtByCountry = ByCountryCost.Empty, ActionedSmcwTonnage = RamTonnageGroup.Empty, NetTonnage = RamTonnageGroup.Empty, PricePerTonne = RamTonnageGroup.Empty, Fee = RamTonnageGroup.Empty }
             };
 
             var (count, advice) = TonnageChangeUtil.ComputeCountAndAdvice(

@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.CommsCost;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail;
@@ -21,7 +22,7 @@ public class CalcResultsExporterTests : TestsFor<CalcResultsExporter>
     private Mock<ICalcResultPartialObligationsExporter> partialObligationsExporter = null!;
     private Mock<ICalcResultProjectedProducersExporter> projectedProducersExporter = null!;
     private Mock<ICalcResultScaledupProducersExporter> scaledUpProducersExporter = null!;
-    private Mock<ICalcResultSummaryExporter> summaryExporter = null!;
+    private Mock<IProducerFeesExporter> producerFeesExporter = null!;
     private Mock<ICalcResultCommsCostExporter> commsCostExporter = null!;
     private Mock<ICalcResultLaDisposalCostExporter> laDisposalCostExporter = null!;
     private Mock<ICalcResultLapcapDataExporter> lapcapDataExporter = null!;
@@ -42,7 +43,7 @@ public class CalcResultsExporterTests : TestsFor<CalcResultsExporter>
         lapcapDataExporter = fixture.Freeze<Mock<ICalcResultLapcapDataExporter>>();
         parameterOtherCostsExporter = fixture.Freeze<Mock<ICalcResultParameterOtherCostExporter>>();
         commsCostExporter = fixture.Freeze<Mock<ICalcResultCommsCostExporter>>();
-        summaryExporter = fixture.Freeze<Mock<ICalcResultSummaryExporter>>();
+        producerFeesExporter = fixture.Freeze<Mock<IProducerFeesExporter>>();
     }
 
     [TestMethod]
@@ -59,7 +60,7 @@ public class CalcResultsExporterTests : TestsFor<CalcResultsExporter>
         Assert.IsNotNull(result);
 
         lateReportingExporter.Verify(mock => mock.Export(It.IsAny<CalcResultLateReportingTonnage>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<StringBuilder>()));
-        summaryExporter.Verify(x => x.Export(runContext, It.IsAny<CalcResultSummary>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<StringBuilder>()));
+        producerFeesExporter.Verify(x => x.Export(runContext, It.IsAny<ProducerFees>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<IReadOnlyList<int>>(), It.IsAny<IReadOnlyList<(int, string?)>>(), It.IsAny<StringBuilder>()));
         lapcapDataExporter.Verify(mock => mock.Export(It.IsAny<CalcResultLapcapData>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<StringBuilder>()));
         resultDetailExporter.Verify(x => x.Export(It.IsAny<CalcResultDetail>(), It.IsAny<StringBuilder>()));
         laDisposalCostExporter.Verify(mock => mock.Export(runContext, It.IsAny<CalcResultLaDisposalCostData>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<StringBuilder>()));

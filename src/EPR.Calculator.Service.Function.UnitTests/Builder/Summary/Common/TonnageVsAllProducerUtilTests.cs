@@ -31,9 +31,9 @@ public class TonnageVsAllProducerUtilTests
         producer.ProducerId = testProducerId;
         producer.SubsidiaryId = testSubsidaryId;
         producer.CalculatorRunId = testCalculatorRunId;
-        allResults.First().ProducerReportedMaterialProjected.MaterialId = materialDetails.First().Id;
+        allResults.First().ProducerMaterialPackaging.MaterialId = materialDetails.First().Id;
 
-        var TotalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId);
+        var TotalPackagingTonnage = ProducerFeesBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId);
 
         // Act
         var result = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducers(
@@ -56,8 +56,8 @@ public class TonnageVsAllProducerUtilTests
         var producer = Fixture.Create<ProducerDetail>();
         var allResults = GenerateAllResults(testProducerId, testCalculatorRunId, testSubsidaryId);
 
-        allResults.First().ProducerReportedMaterialProjected.MaterialId = materialDetails.First().Id;
-        allResults.First().ProducerReportedMaterialProjected.PackagingType = "PB";
+        allResults.First().ProducerMaterialPackaging.MaterialId = materialDetails.First().Id;
+        allResults.First().ProducerMaterialPackaging.PackagingType = "PB";
 
         producer.ProducerId = testProducerId;
         producer.SubsidiaryId = testSubsidaryId;
@@ -65,7 +65,7 @@ public class TonnageVsAllProducerUtilTests
 
         //CalcResultSummaryBuilder.ScaledupProducers = Fixture.Create<List<CalcResultScaledupProducer>>();
 
-        var totalPackagingTonnage = CalcResultSummaryBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId);
+        var totalPackagingTonnage = ProducerFeesBuilder.GetTotalPackagingTonnagePerRun(allResults, materialDetails, testCalculatorRunId);
 
         // Act
         var result = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducers(
@@ -82,19 +82,19 @@ public class TonnageVsAllProducerUtilTests
         string testSubsidaryId)
     {
         var allResults = Fixture.Create<List<CalcResultProducerAndReportMaterialDetail>>();
-        allResults.First().ProducerReportedMaterialProjected.ProducerDetailId = testProducerId;
+        allResults.First().ProducerMaterialPackaging.ProducerDetailId = testProducerId;
         allResults.First().ProducerDetail.Id = testProducerId;
         allResults.First().ProducerDetail.ProducerId = testProducerId;
         allResults.First().ProducerDetail.CalculatorRunId = testCalculatorRunId;
         allResults.First().ProducerDetail.SubsidiaryId = testSubsidaryId;
-        allResults.First().ProducerReportedMaterialProjected.PackagingType = "HH";
+        allResults.First().ProducerMaterialPackaging.PackagingType = "HH";
 
-        allResults.Last().ProducerReportedMaterialProjected.ProducerDetailId = testProducerId;
+        allResults.Last().ProducerMaterialPackaging.ProducerDetailId = testProducerId;
         allResults.Last().ProducerDetail.Id = testProducerId;
         allResults.Last().ProducerDetail.ProducerId = testProducerId;
         allResults.Last().ProducerDetail.CalculatorRunId = testCalculatorRunId;
         allResults.Last().ProducerDetail.SubsidiaryId = Fixture.Create<string>();
-        allResults.Last().ProducerReportedMaterialProjected.PackagingType = "HH";
+        allResults.Last().ProducerMaterialPackaging.PackagingType = "HH";
 
         return allResults;
     }

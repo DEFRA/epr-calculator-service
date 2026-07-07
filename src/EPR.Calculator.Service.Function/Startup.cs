@@ -229,7 +229,7 @@ internal static class ServiceRegistration
         services.AddTransient<ICalcResultProjectedProducersBuilder, CalcResultProjectedProducersBuilder>();
         services.AddTransient<ICalcResultRejectedProducersBuilder, CalcResultRejectedProducersBuilder>();
         services.AddTransient<ICalcResultModulationBuilder, CalcResultModulationBuilder>();
-        services.AddTransient<ICalcResultSummaryBuilder, CalcResultSummaryBuilder>();
+        services.AddTransient<IProducerFeesBuilder, ProducerFeesBuilder>();
         services.AddTransient<IBillingInstructionService, BillingInstructionService>();
         services.AddTransient<ICalcResultOnePlusFourApportionmentExporter, CalcResultOnePlusFourApportionmentExporter>();
         services.AddTransient<ICalcResultDetailExporter, CalcResultDetailExporter>();
@@ -243,7 +243,7 @@ internal static class ServiceRegistration
         services.AddTransient<ICalcResultParameterOtherCostExporter, CalcResultParameterOtherCostExporter>();
         services.AddTransient<ICalcResultModulationExporter, CalcResultModulationExporter>();
         services.AddTransient<ICalcResultCommsCostExporter, CalcResultCommsCostExporter>();
-        services.AddTransient<ICalcResultSummaryExporter, CalcResultSummaryExporter>();
+        services.AddTransient<IProducerFeesExporter, ProducerFeesExporter>();
         services.AddTransient<IBillingFileJsonWriter, BillingFileJsonWriter>();
         services.AddTransient<ICalcResultLateReportingExporter, CalcResultLateReportingExporter>();
         services.AddTransient<IMaterialService, MaterialService>();
@@ -256,7 +256,6 @@ internal static class ServiceRegistration
         services.AddTransient<ICalcResultErrorReportBuilder, CalcResultErrorReportBuilder>();
         services.AddTransient<ICalcResultErrorReportExporter, CalcResultErrorReportExporter>();
         services.AddTransient<IErrorReportService, ErrorReportService>();
-        services.AddTransient<IProjectedProducersService, ProjectedProducersService>();
         services.AddTransient<ICalcResultService, CalcResultService>();
         services.AddTransient<ISelfManagedConsumerWasteService, SelfManagedConsumerWasteService>();
         services.AddTransient<IReportedProducerService, ReportedProducerService>();

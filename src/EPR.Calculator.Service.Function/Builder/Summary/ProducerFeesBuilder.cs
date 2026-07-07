@@ -11,9 +11,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.Summary;
 
-public interface ICalcResultSummaryBuilder
+public interface IProducerFeesBuilder
 {
-    Task<CalcResultSummary> ConstructAsync(
+    Task<ProducerFees> ConstructAsync(
         RunContext runContext,
         IImmutableList<MaterialDetail> materialDetails,
         CalcResult calcResult,
@@ -21,36 +21,33 @@ public interface ICalcResultSummaryBuilder
     );
 }
 
-public class CalcResultSummaryBuilder(
+public class ProducerFeesBuilder(
     ApplicationDBContext context,
     IInvoicedProducerService invoicedProducerService)
-    : ICalcResultSummaryBuilder
+    : IProducerFeesBuilder
 {
-    public async Task<CalcResultSummary> ConstructAsync(
+    public async Task<ProducerFees> ConstructAsync(
         RunContext runContext,
         IImmutableList<MaterialDetail> materialDetails,
         CalcResult calcResult,
         SelfManagedConsumerWaste smcw
     )
     {
-        var scaledupProducers = calcResult.CalcResultScaledupProducers.ScaledupProducers;
-        var partialObligations = calcResult.CalcResultPartialObligations.PartialObligations;
-
         var runProducerMaterialDetails = await (
             from pd in context.ProducerDetail
-            join prm in context.ProducerReportedMaterialProjected on pd.Id equals prm.ProducerDetailId
+            join prm in context.ProducerMaterialPackaging on pd.Id equals prm.ProducerDetailId
             where pd.CalculatorRunId == runContext.RunId
             select new CalcResultProducerAndReportMaterialDetail
             {
                 ProducerDetail = pd,
-                ProducerReportedMaterialProjected = prm,
+                ProducerMaterialPackaging = prm,
             }
         ).ToListAsync();
 
         var projectedMaterialsLookup = runProducerMaterialDetails
             .ToLookup(
                 x => (x.ProducerDetail.ProducerId, x.ProducerDetail.SubsidiaryId),
-                x => x.ProducerReportedMaterialProjected
+                x => x.ProducerMaterialPackaging
             );
 
         var producerDetails = runProducerMaterialDetails
@@ -96,13 +93,11 @@ public class CalcResultSummaryBuilder(
 
         var rowBuilder = new ProducerRowBuilder(
             invoicedNetTonnageByProducerMaterial,
-            scaledupProducers,
-            partialObligations,
             organisationsByKey,
             parentOrganisationsById
         );
 
-        return GetCalcResultSummary(
+        return GetProducerFees(
             runContext,
             projectedMaterialsLookup,
             producerDetails,
@@ -150,9 +145,9 @@ public class CalcResultSummaryBuilder(
     }
 
     [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
-    private static CalcResultSummary GetCalcResultSummary(
+    private static ProducerFees GetProducerFees(
         RunContext runContext,
-        ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
+        ILookup<(int, string?), ProducerMaterialPackaging> projectedMaterialsLookup,
         IReadOnlyList<ProducerDetail> orderedProducerDetails,
         IReadOnlyList<MaterialDetail> materials,
         CalcResult calcResult,
@@ -162,61 +157,57 @@ public class CalcResultSummaryBuilder(
         ProducerRowBuilder rowBuilder
     )
     {
-        var result = new CalcResultSummary { };
+        var result = new ProducerFees { CalculatorRunId = runContext.RunId, Total = new() { ProducerId = 0, SubsidiaryId = string.Empty, ProducerName = string.Empty } };
 
-        if (orderedProducerDetails.Count > 0)
+        if (orderedProducerDetails.Count == 0)
         {
-            var producerDisposalFees = new List<CalcResultSummaryProducerDisposalFees>();
-
-            foreach (var producerAndSubsidiaries in orderedProducerDetails.GroupBy(x => x.ProducerId))
-            {
-                var subsidiariesList = producerAndSubsidiaries.ToList();
-                bool hasGroupTotalRow = !(subsidiariesList.Count == 1 && subsidiariesList[0].SubsidiaryId == null);
-
-                // Build L2 rows first so the L1 total can be derived by aggregation.
-                var l2Rows = subsidiariesList
-                    .Select(producer => rowBuilder.GetProducerRow(runContext, projectedMaterialsLookup, hasGroupTotalRow, subsidiariesList, producer, materials, calcResult, totalPackagingTonnage, smcw))
-                    .ToList();
-
-                if (hasGroupTotalRow)
-                    producerDisposalFees.Add(rowBuilder.GetL1TotalRow(subsidiariesList[0].ProducerId, l2Rows, calcResult, smcw, materials));
-
-                producerDisposalFees.AddRange(l2Rows);
-            };
-
-            // Overall total: aggregate all Level-1 rows (one per producer group).
-            var l1Rows = producerDisposalFees.Where(r => r.Level == CommonConstants.LevelOne.ToString()).ToList();
-            var allTotalRow = ProducerRowBuilder.GetOverallTotalRow(l1Rows, materials);
-            result.OverallTotal = allTotalRow;
-
-            result.ProducerDisposalFees = producerDisposalFees;
-
-            result.LADisposalCostsSection1 = allTotalRow.LADisposalCostsSection1;
-            result.CommsCostsSection2a     = allTotalRow.CommsCostsSection2a;
-
-            // Section 2b comms cost
-            TwoBCommsCostProducer.SetValues(calcResult, result);
-
-            TwoCCommsCostProducer.SetValues(calcResult, result);
-
-            // Section Total bill (1 + 2a + 2b + 2c)
-            OnePlus2A2B2CProducer.SetValues(result);
-
-            // Section-3 SA Operating costs section
-            ThreeSaCostsProducer.SetValues(calcResult, result);
-
-            // Section-4 LA data prep costs
-            LaDataPrepCostsProducer.SetValues(calcResult, result);
-
-            // Section-5 SA setup costs
-            SaSetupCostsProducer.SetValues(calcResult, result);
-
-            // Total bill section
-            TotalBillBreakdownProducer.SetValues(result);
-
-            // Billing instructions section
-            BillingInstructionsProducer.SetValues(result, producerInvoicedMaterialNetTonnage, calcResult.CalcResultParameterOtherCost);
+            result.Total = ProducerRowBuilder.GetOverallTotalRow([], materials);
+            return result;
         }
+
+        var producerDisposalFees = new List<ProducerFeeDetail>();
+
+        foreach (var producerAndSubsidiaries in orderedProducerDetails.GroupBy(x => x.ProducerId))
+        {
+            var subsidiariesList = producerAndSubsidiaries.ToList();
+            bool hasGroupTotalRow = !(subsidiariesList.Count == 1 && subsidiariesList[0].SubsidiaryId == null);
+
+            // Build L2 rows first so the L1 total can be derived by aggregation.
+            var l2Rows = subsidiariesList
+                .Select(producer => rowBuilder.GetProducerRow(runContext, projectedMaterialsLookup, hasGroupTotalRow, subsidiariesList, producer, materials, calcResult, totalPackagingTonnage, smcw))
+                .ToList();
+
+            if (hasGroupTotalRow)
+                producerDisposalFees.Add(rowBuilder.GetL1TotalRow(subsidiariesList[0].ProducerId, l2Rows, calcResult, smcw, materials));
+
+            producerDisposalFees.AddRange(l2Rows);
+        }
+
+        var l1Rows = producerDisposalFees.Where(r => r.Level == CommonConstants.LevelOne.ToString()).ToList();
+        result.Total = ProducerRowBuilder.GetOverallTotalRow(l1Rows, materials);
+        result.Details = producerDisposalFees;
+
+        // Section 2b comms cost
+        TwoBCommsCostProducer.SetValues(calcResult, result);
+        TwoCCommsCostProducer.SetValues(calcResult, result);
+
+        // Section Total bill (1 + 2a + 2b + 2c)
+        OnePlus2A2B2CProducer.SetValues(result);
+
+        // Section-3 SA Operating costs section
+        ThreeSaCostsProducer.SetValues(calcResult, result);
+
+        // Section-4 LA data prep costs
+        LaDataPrepCostsProducer.SetValues(calcResult, result);
+
+        // Section-5 SA setup costs
+        SaSetupCostsProducer.SetValues(calcResult, result);
+
+        // Total bill section
+        TotalBillBreakdownProducer.SetValues(result);
+
+        // Billing instructions section
+        BillingInstructionsProducer.SetValues(result, producerInvoicedMaterialNetTonnage, calcResult.CalcResultParameterOtherCost);
 
         return result;
     }
@@ -228,7 +219,7 @@ public class CalcResultSummaryBuilder(
     )
     {
         var allProducerDetails = allResults.Select(x => x.ProducerDetail).DistinctBy(x => (x.ProducerId, x.SubsidiaryId));
-        var allProducerReportedMaterials = allResults.Select(x => x.ProducerReportedMaterialProjected);
+        var allProducerReportedMaterials = allResults.Select(x => x.ProducerMaterialPackaging);
 
         var result =
             (from p in allProducerDetails

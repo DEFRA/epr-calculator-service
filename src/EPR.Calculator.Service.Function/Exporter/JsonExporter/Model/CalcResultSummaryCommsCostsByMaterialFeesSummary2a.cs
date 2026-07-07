@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.JsonExporter.Model;
@@ -27,18 +28,18 @@ public class CalcResultSummaryCommsCostsByMaterialFeesSummary2A
     [JsonPropertyName("northernIrelandTotalWithBadDebtProvision")]
     public required string NorthernIrelandTotalWithBadDebtProvision { get; set; }
 
-    public static CalcResultSummaryCommsCostsByMaterialFeesSummary2A From(CalcResultSummaryProducerDisposalFees calcResultSummaryProducerDisposalFees)
+    public static CalcResultSummaryCommsCostsByMaterialFeesSummary2A From(ProducerFeeDetail procucerFeesProducerDisposalFees)
     {
-        var costs = calcResultSummaryProducerDisposalFees.CommsCostsSection2a;
+        var costs = procucerFeesProducerDisposalFees.CommsCostsSection2a;
         return new CalcResultSummaryCommsCostsByMaterialFeesSummary2A
         {
-            TotalProducerFeeForCommsCostsWithoutBadDebtProvision2a = FormatUtils.FormatCurrency(costs.FeeWithoutBadDebtProvision),
-            TotalBadDebtProvision                                  = FormatUtils.FormatCurrency(costs.BadDebtProvision),
-            TotalProducerFeeForCommsCostsWithBadDebtProvision2a    = FormatUtils.FormatCurrency(costs.FeeWithBadDebtProvision.Total),
-            EnglandTotalWithBadDebtProvision                       = FormatUtils.FormatCurrency(costs.FeeWithBadDebtProvision.England),
-            WalesTotalWithBadDebtProvision                         = FormatUtils.FormatCurrency(costs.FeeWithBadDebtProvision.Wales),
-            ScotlandTotalWithBadDebtProvision                      = FormatUtils.FormatCurrency(costs.FeeWithBadDebtProvision.Scotland),
-            NorthernIrelandTotalWithBadDebtProvision               = FormatUtils.FormatCurrency(costs.FeeWithBadDebtProvision.NorthernIreland)
+            TotalProducerFeeForCommsCostsWithoutBadDebtProvision2a = FormatUtils.FormatCurrency(costs.FeeWithoutBadDebt),
+            TotalBadDebtProvision                                  = FormatUtils.FormatCurrency(costs.BadDebt),
+            TotalProducerFeeForCommsCostsWithBadDebtProvision2a    = FormatUtils.FormatCurrency(costs.ByCountry.Total),
+            EnglandTotalWithBadDebtProvision                       = FormatUtils.FormatCurrency(costs.ByCountry.England),
+            WalesTotalWithBadDebtProvision                         = FormatUtils.FormatCurrency(costs.ByCountry.Wales),
+            ScotlandTotalWithBadDebtProvision                      = FormatUtils.FormatCurrency(costs.ByCountry.Scotland),
+            NorthernIrelandTotalWithBadDebtProvision               = FormatUtils.FormatCurrency(costs.ByCountry.NorthernIreland)
         };
     }
 }
