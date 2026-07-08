@@ -7,7 +7,7 @@
         decimal ScaledTonnage
     );
 
-    public class CalcResultScaledupProducer
+    public record CalcResultScaledupProducer
     {
         public int ProducerId { get; set; }
 

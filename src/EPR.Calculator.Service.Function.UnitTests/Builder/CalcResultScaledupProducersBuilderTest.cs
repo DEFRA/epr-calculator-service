@@ -581,21 +581,7 @@ public class CalcResultScaledupProducersBuilderTest : TestsFor<CalcResultScaledu
             }
         ]);
 
-        var scaledupOrganisations = new List<Organisation>();
-        scaledupOrganisations.AddRange([
-            new Organisation
-            {
-                OrganisationId = 1,
-                OrganisationName = "Allied Packaging"
-            },
-            new Organisation
-            {
-                OrganisationId = 2,
-                OrganisationName = "Beeline Materials"
-            }
-        ]);
-
-        CalcResultScaledupProducersBuilder.AddExtraRows(runProducerMaterialDetails, scaledupOrganisations);
+        runProducerMaterialDetails = CalcResultScaledupProducersBuilder.BuildDisplayRows(runProducerMaterialDetails);
 
         Assert.AreEqual(8, runProducerMaterialDetails.Count);
         var allProducersWithLevel2 = runProducerMaterialDetails.Where(x => x.SubsidiaryId == null);
