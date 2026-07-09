@@ -410,6 +410,96 @@ public class CalcResultScaledupProducersBuilderTest : TestsFor<CalcResultScaledu
         Assert.IsTrue(level1Rows.Single().IsSubtotalRow, "Level 1 row should be marked as a subtotal");
     }
 
+    /// <summary>
+    ///     When only subsidiaries report POM data (the holding company itself has no
+    ///     ProducerDetail/POM row), the Level 1 subtotal row should still take the holding
+    ///     company's registered name from organisation data rather than falling back to a
+    ///     subsidiary's name.
+    /// </summary>
+    [TestMethod]
+    public async Task Construct_SubsidiariesOnly_SubtotalUsesRegisteredHoldingCompanyName()
+    {
+        // Arrange
+        var producers = PrepareProducerWithSubsidiariesOnly();
+
+        // Act
+        var result = (await testSubject.ConstructAsync(runContext, materialDetails, producers)).Item2;
+
+        var subtotalRow = result.ScaledupProducers!.Single(p => p.IsSubtotalRow);
+        Assert.AreEqual("Holdco Ltd", subtotalRow.ProducerName);
+    }
+
+    private List<L1Producer> PrepareProducerWithSubsidiariesOnly()
+    {
+        const int producerId = 21;
+        const string subsidiaryId = "Sub1";
+        const string submissionPeriod = "2025-P1";
+
+        dbContext.SubmissionPeriodLookup.Add(new SubmissionPeriodLookup
+        {
+            SubmissionPeriod = submissionPeriod,
+            SubmissionPeriodDesc = string.Empty,
+            ScaleupFactor = 2.0M,
+            DaysInSubmissionPeriod = 184,
+            DaysInWholePeriod = 365,
+            StartDate = DateTime.UtcNow,
+            EndDate = DateTime.UtcNow
+        });
+
+        dbContext.CalculatorRunPomDataDetails.Add(new CalculatorRunPomDataDetail
+        {
+            LoadTimeStamp = DateTime.UtcNow,
+            SubmissionPeriod = submissionPeriod,
+            SubmissionPeriodDesc = "desc",
+            CalculatorRunPomDataMaster = calcRunPomDataMaster,
+            OrganisationId = producerId
+        });
+
+        dbContext.CalculatorRunOrganisationDataDetails.AddRange(
+            new CalculatorRunOrganisationDataDetail
+            {
+                OrganisationId = producerId,
+                SubsidiaryId = null,
+                OrganisationName = "Holdco Ltd",
+                LoadTimeStamp = DateTime.UtcNow,
+                CalculatorRunOrganisationDataMaster = calcRunOrganisationDataMaster,
+                ObligationStatus = ObligationStates.Obligated
+            },
+            new CalculatorRunOrganisationDataDetail
+            {
+                OrganisationId = producerId,
+                SubsidiaryId = subsidiaryId,
+                OrganisationName = "Sub Corp",
+                LoadTimeStamp = DateTime.UtcNow,
+                CalculatorRunOrganisationDataMaster = calcRunOrganisationDataMaster,
+                ObligationStatus = ObligationStates.Obligated
+            }
+        );
+
+        // Note: no ProducerDetail is created for the parent (SubsidiaryId == null) - only the
+        // subsidiary reports POM data, mirroring producers whose holding company doesn't submit
+        // its own return.
+        var subsidiaryPd = new ProducerDetail
+        {
+            CalculatorRunId = runContext.RunId,
+            ProducerId = producerId,
+            SubsidiaryId = subsidiaryId,
+            ProducerName = "Sub Corp"
+        };
+        subsidiaryPd.ProducerReportedMaterials.Add(new ProducerReportedMaterial
+        {
+            PackagingType = PackagingTypes.Household,
+            SubmissionPeriod = submissionPeriod,
+            MaterialId = pcId,
+            PackagingTonnage = 5M
+        });
+
+        dbContext.ProducerDetail.Add(subsidiaryPd);
+        dbContext.SaveChanges();
+
+        return [new L1Producer(producerId, [subsidiaryPd])];
+    }
+
     private List<L1Producer> PrepareProducerWithSubsidiaries()
     {
         const int producerId = 20;

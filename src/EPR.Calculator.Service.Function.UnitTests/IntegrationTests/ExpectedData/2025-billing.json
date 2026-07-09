@@ -1,19 +1,19 @@
 {
   "calcResultDetail": {
     "runName": "test2025",
-    "runId": 129,
-    "runDate": "2026-07-08T17:25:14Z",
+    "runId": 3561,
+    "runDate": "2026-07-09T15:30:38Z",
     "runBy": "some-user",
     "financialYear": "2025-26",
     "rpdFileORG": "org_file.csv",
-    "rpdFileORGTimeStamp": "2026-07-08T18:25:00Z",
+    "rpdFileORGTimeStamp": "2026-07-09T16:30:00Z",
     "rpdFilePOM": "pom_file.csv",
-    "rpdFilePOMTimeStamp": "2026-07-08T18:25:00Z",
+    "rpdFilePOMTimeStamp": "2026-07-09T16:30:00Z",
     "lapcapFile": "",
-    "lapcapFileTimeStamp": "2026-07-08T17:25:00Z",
+    "lapcapFileTimeStamp": "2026-07-09T15:30:00Z",
     "lapcapFileUploader": "",
     "parametersFile": "",
-    "parametersFileTimeStamp": "2026-07-08T17:25:00Z",
+    "parametersFileTimeStamp": "2026-07-09T15:30:00Z",
     "parametersFileUploader": ""
   },
   "calcResultLapcapData": {
@@ -1229,7 +1229,7 @@
       {
         "producerId": 120000,
         "subsidiaryId": null,
-        "producerName": "P2 and P4 Sub 1",
+        "producerName": "P2 and P4 Parent",
         "tradingName": null,
         "level": 1,
         "submissionPeriodCode": "2024-P1",
@@ -1586,7 +1586,7 @@
       {
         "producerId": 120000,
         "subsidiaryId": null,
-        "producerName": "P2 and P4 Sub 1",
+        "producerName": "P2 and P4 Parent",
         "tradingName": null,
         "level": 1,
         "submissionPeriodCode": "2024-P3",
@@ -4311,7 +4311,7 @@
       {
         "producerID": "120000",
         "subsidiaryID": "",
-        "producerName": "",
+        "producerName": "P2 and P4 Parent",
         "tradingName": "",
         "level": 1,
         "scaledUpTonnages": "Yes",

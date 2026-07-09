@@ -27,7 +27,8 @@ public class CalcResultScaledupProducersBuilder(ApplicationDBContext dbContext) 
     private readonly ApplicationDBContext dbContext = dbContext;
 
     public static List<CalcResultScaledupProducer> BuildDisplayRows(
-        IEnumerable<CalcResultScaledupProducer> producers)
+        IEnumerable<CalcResultScaledupProducer> producers,
+        IReadOnlyDictionary<int, Organisation>? parentOrganisations = null)
     {
         var orderedRows = producers
             .OrderBy(x => x.ProducerId)
@@ -57,11 +58,18 @@ public class CalcResultScaledupProducersBuilder(ApplicationDBContext dbContext) 
                 .GroupBy(x => new { x.ProducerId, x.SubmissionPeriodCode })
                 .Select(group =>
                 {
-                    var producer = parentProducerLookup[group.Key.ProducerId];
+                    // Prefer the registered holding company (SubsidiaryId is null) organisation name,
+                    // even when the parent itself has no POM data of its own. Only fall back to a
+                    // subsidiary's name when the parent isn't separately registered at all.
+                    var (producerName, tradingName) =
+                        parentOrganisations != null && parentOrganisations.TryGetValue(group.Key.ProducerId, out var parentOrg)
+                            ? (parentOrg.OrganisationName, parentOrg.TradingName)
+                            : (parentProducerLookup[group.Key.ProducerId].ProducerName, parentProducerLookup[group.Key.ProducerId].TradingName);
+
                     return group.First() with
                     {
-                        ProducerName  = producer.ProducerName,
-                        TradingName   = producer.TradingName,
+                        ProducerName  = producerName,
+                        TradingName   = tradingName,
                         SubsidiaryId  = string.Empty,
                         Level         = CommonConstants.LevelOne.ToString(),
                         IsSubtotalRow = true,
@@ -81,7 +89,7 @@ public class CalcResultScaledupProducersBuilder(ApplicationDBContext dbContext) 
         List<L1Producer> producers
     )
     {
-        var scaledUpProducers = await GetScaledUpDataAsync(runContext.RunId);
+        var (scaledUpProducers, parentOrganisations) = await GetScaledUpDataAsync(runContext.RunId);
 
         if (!scaledUpProducers.Any())
         {
@@ -89,7 +97,7 @@ public class CalcResultScaledupProducersBuilder(ApplicationDBContext dbContext) 
             return (producers, emptyResult);
         }
 
-        scaledUpProducers = BuildDisplayRows(scaledUpProducers);
+        scaledUpProducers = BuildDisplayRows(scaledUpProducers, parentOrganisations);
 
         // ScaleupFactor is period-based, so it is identical across all subsidiaries of the same
         // ProducerId (SubsidiaryId not needed in lookup).
@@ -203,7 +211,7 @@ public class CalcResultScaledupProducersBuilder(ApplicationDBContext dbContext) 
         };
     }
 
-    private async Task<List<CalcResultScaledupProducer>> GetScaledUpDataAsync(int runId)
+    private async Task<(List<CalcResultScaledupProducer> Producers, Dictionary<int, Organisation> ParentOrganisations)> GetScaledUpDataAsync(int runId)
     {
         var scaledProducerIds = await (
             from run in dbContext.CalculatorRuns.AsNoTracking()
@@ -214,7 +222,7 @@ public class CalcResultScaledupProducersBuilder(ApplicationDBContext dbContext) 
         ).Distinct().ToListAsync();
 
         if (scaledProducerIds.Count == 0)
-            return [];
+            return ([], []);
 
         var rows = await (
             from run in dbContext.CalculatorRuns.AsNoTracking()
@@ -233,7 +241,6 @@ public class CalcResultScaledupProducersBuilder(ApplicationDBContext dbContext) 
                 SubsidiaryId           = pd.SubsidiaryId,
                 ProducerName           = pd.ProducerName,
                 TradingName            = pd.TradingName,
-                OrgName                = org.OrganisationName,
                 ScaleupFactor          = spl.ScaleupFactor,
                 SubmissionPeriodCode   = spl.SubmissionPeriod,
                 DaysInSubmissionPeriod = spl.DaysInSubmissionPeriod,
@@ -241,7 +248,24 @@ public class CalcResultScaledupProducersBuilder(ApplicationDBContext dbContext) 
             }
         ).Distinct().ToImmutableListAsync();
 
-        return rows.Select(r => new CalcResultScaledupProducer
+        // The registered holding company (SubsidiaryId is null) may not submit its own POM data -
+        // its subsidiaries may report on its behalf - so this is looked up independently of `rows`
+        // above, which is driven off ProducerDetail (POM) data.
+        var parentOrganisations = await (
+            from run in dbContext.CalculatorRuns.AsNoTracking()
+            join crodm in dbContext.CalculatorRunOrganisationDataMaster.AsNoTracking() on run.CalculatorRunOrganisationDataMasterId equals crodm.Id
+            join org in dbContext.CalculatorRunOrganisationDataDetails.AsNoTracking() on crodm.Id equals org.CalculatorRunOrganisationDataMasterId
+            where run.Id == runId && scaledProducerIds.Contains(org.OrganisationId)
+              && org.SubsidiaryId == null && org.ObligationStatus == ObligationStates.Obligated
+            select new Organisation
+            {
+                OrganisationId   = org.OrganisationId,
+                OrganisationName = org.OrganisationName,
+                TradingName      = org.TradingName,
+            }
+        ).Distinct().ToDictionaryAsync(o => o.OrganisationId);
+
+        var producers = rows.Select(r => new CalcResultScaledupProducer
         {
             ProducerId             = r.ProducerId,
             SubsidiaryId           = r.SubsidiaryId,
@@ -253,5 +277,7 @@ public class CalcResultScaledupProducersBuilder(ApplicationDBContext dbContext) 
             DaysInWholePeriod      = r.DaysInWholePeriod,
             Level                  = string.IsNullOrEmpty(r.SubsidiaryId) ? CommonConstants.LevelOne.ToString() : CommonConstants.LevelTwo.ToString(),
         }).ToList();
+
+        return (producers, parentOrganisations);
     }
 }
