@@ -1,5 +1,4 @@
 using System.Text;
-using EPR.Calculator.Service.Function.Builder.Modulation;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
@@ -48,54 +47,68 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
                 }
             };
 
-            SelfManagedConsumerWasteData mkSmcwData(decimal netR, decimal netA, decimal netG, decimal? actionedSmcwR, decimal? actionedSmcwA, decimal? actionedSmcwG, decimal? residualSmcw)
+            MaterialSelfManagedConsumerWasteData mkSmcwData(string materialCode, decimal netR, decimal netA, decimal netG, decimal? actionedSmcwR, decimal? actionedSmcwA, decimal? actionedSmcwG, decimal? residualSmcw)
             {
-                return new SelfManagedConsumerWasteData
+                return new MaterialSelfManagedConsumerWasteData
                 {
-                    SelfManagedConsumerWasteTonnage = 0m,
-                    ActionedSelfManagedConsumerWasteTonnage = (total: (actionedSmcwR + actionedSmcwA + actionedSmcwG), red: actionedSmcwR, amber: actionedSmcwA, green: actionedSmcwG),
-                    ResidualSelfManagedConsumerWasteTonnage = residualSmcw,
-                    NetReportedTonnage = (total: (netR + netA + netG), red: netR, amber: netA, green: netG)
+                    MaterialCode = materialCode,
+                    SMCW = new SelfManagedConsumerWasteData
+                    {
+                        SMCWTonnage = 0m,
+                        ActionedSMCWTonnage = new RamTonnageGroup { Total = (actionedSmcwR + actionedSmcwA + actionedSmcwG), Red = actionedSmcwR, Amber = actionedSmcwA, Green = actionedSmcwG },
+                        ResidualSMCWTonnage = residualSmcw,
+                        NetTonnage = new RamTonnageGroup { Total = (netR + netA + netG), Red = netR, Amber = netA, Green = netG }
+                    }
                 };
             };
 
             var smcw = new SelfManagedConsumerWaste
             {
+                CalculatorRunId = 1,
                 ProducerTotals = new List<ProducerSelfManagedConsumerWaste>(),
-                OverallTotalPerMaterials = new Dictionary<string, SelfManagedConsumerWasteData>
+                OverallTotalByMaterial = new Dictionary<string, MaterialSelfManagedConsumerWasteData>
                 {
-                    [al.Code] = mkSmcwData(netR: 21000000.123m, netA: 5000000.234m, netG: 209863.182m, actionedSmcwR: 1000, actionedSmcwA: 2000, actionedSmcwG: 3000, residualSmcw: 654.321m),
-                    [fc.Code] = mkSmcwData(netR:     3001.333m, netA:  400000.222m, netG:    706.332m, actionedSmcwR: null, actionedSmcwA: null, actionedSmcwG: null, residualSmcw: null    )
+                    [al.Code] = mkSmcwData(al.Code, netR: 21000000.123m, netA: 5000000.234m, netG: 209863.182m, actionedSmcwR: 1000, actionedSmcwA: 2000, actionedSmcwG: 3000, residualSmcw: 654.321m),
+                    [fc.Code] = mkSmcwData(fc.Code, netR:     3001.333m, netA:  400000.222m, netG:    706.332m, actionedSmcwR: null, actionedSmcwA: null, actionedSmcwG: null, residualSmcw: null    )
                 }
             };
 
             var modulationResult = new ModulationResult
             {
+                CalculatorRunId = 1,
                 RedFactor = 1.2m,
                 GreenFactor = 0.751106m,
-                MaterialModulation = new Dictionary<MaterialDetail, MaterialModulation>
+                ModulationByMaterial = new Dictionary<MaterialDetail, MaterialModulation>
                 {
                     [al] = new MaterialModulation
                     {
-                        AmberMaterialDisposalCost = 0.631234m,
-                        RedMaterialDisposalCost   = 0.761234m,
-                        GreenMaterialDisposalCost = 0.471234m,
-                        AmberMaterialTonnages = 5000000.23m,
-                        RedMaterialTonnages   = 21000000.12m,
-                        GreenMaterialTonnages = 209863.18m,
-                        TotalRedMaterialAtAmberDisposalCost   = 6280704.41m,
-                        TotalGreenMaterialAtAmberDisposalCost = 4955297.80m
+                        MaterialDetail = al,
+                        ModulationDetail = new ModulationDetail
+                        {
+                            AmberMaterialDisposalCost = 0.631234m,
+                            RedMaterialDisposalCost   = 0.761234m,
+                            GreenMaterialDisposalCost = 0.471234m,
+                            AmberMaterialTonnages = 5000000.23m,
+                            RedMaterialTonnages   = 21000000.12m,
+                            GreenMaterialTonnages = 209863.18m,
+                            TotalRedMaterialAtAmberDisposalCost   = 6280704.41m,
+                            TotalGreenMaterialAtAmberDisposalCost = 4955297.80m
+                        }
                     },
                     [fc] = new MaterialModulation
                     {
-                        AmberMaterialDisposalCost =  96.591234m,
-                        RedMaterialDisposalCost   = 115.901234m,
-                        GreenMaterialDisposalCost =  72.551234m,
-                        AmberMaterialTonnages  = 400000.22m,
-                        RedMaterialTonnages   = 3001.33m,
-                        GreenMaterialTonnages = 706.33m,
-                        TotalRedMaterialAtAmberDisposalCost   = 14817325.23m,
-                        TotalGreenMaterialAtAmberDisposalCost = 11697888.16m
+                        MaterialDetail = fc,
+                        ModulationDetail = new ModulationDetail
+                        {
+                            AmberMaterialDisposalCost =  96.591234m,
+                            RedMaterialDisposalCost   = 115.901234m,
+                            GreenMaterialDisposalCost =  72.551234m,
+                            AmberMaterialTonnages  = 400000.22m,
+                            RedMaterialTonnages   = 3001.33m,
+                            GreenMaterialTonnages = 706.33m,
+                            TotalRedMaterialAtAmberDisposalCost   = 14817325.23m,
+                            TotalGreenMaterialAtAmberDisposalCost = 11697888.16m
+                        }
                     }
                 }
             };

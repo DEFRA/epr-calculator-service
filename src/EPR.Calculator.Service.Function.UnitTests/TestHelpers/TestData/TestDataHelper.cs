@@ -2,7 +2,6 @@ using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.DataTypes;
 using EPR.Calculator.API.Data.Enums;
-using EPR.Calculator.Service.Function.Builder.Modulation;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
@@ -34,9 +33,10 @@ public static partial class TestDataHelper
             CalcResultModulation               = applyModulation
                 ? new ModulationResult
                 {
-                    GreenFactor        = 1,
-                    RedFactor          = 2,
-                    MaterialModulation = new Dictionary<MaterialDetail, MaterialModulation>()
+                    CalculatorRunId      = 1,
+                    GreenFactor          = 1,
+                    RedFactor            = 2,
+                    ModulationByMaterial = new Dictionary<MaterialDetail, MaterialModulation>()
                 }
                 : null
         };

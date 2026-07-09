@@ -110,8 +110,9 @@ public class CalcResultBuilderTests : TestsFor<CalcResultBuilder>
                 It.IsAny<IEnumerable<MaterialDetail>>()))
             .ReturnsAsync(new SelfManagedConsumerWaste
             {
+                CalculatorRunId = 1,
                 ProducerTotals = [],
-                OverallTotalPerMaterials = []
+                OverallTotalByMaterial = new Dictionary<string, MaterialSelfManagedConsumerWasteData>()
             });
 
         var result = await testSubject.BuildAsync(runContext, CancellationToken.None);

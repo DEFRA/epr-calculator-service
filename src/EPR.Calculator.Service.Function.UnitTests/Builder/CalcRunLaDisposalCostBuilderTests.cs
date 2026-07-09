@@ -18,8 +18,9 @@ public class CalcRunLaDisposalCostBuilderTests : TestsFor<CalcRunLaDisposalCostB
     {
         smcw = new SelfManagedConsumerWaste
         {
+            CalculatorRunId = 1,
             ProducerTotals = [],
-            OverallTotalPerMaterials = []
+            OverallTotalByMaterial = new Dictionary<string, MaterialSelfManagedConsumerWasteData>()
         };
     }
 
@@ -128,28 +129,33 @@ public class CalcRunLaDisposalCostBuilderTests : TestsFor<CalcRunLaDisposalCostB
         var calcResult = TestDataHelper.GetCalcResult(true);
         SeedDatabase(runContext);
 
-        static SelfManagedConsumerWasteData MkSelfManagedConsumerWasteData(decimal red, decimal amber, decimal green) =>
+        static MaterialSelfManagedConsumerWasteData MkSelfManagedConsumerWasteData(string materialCode, decimal red, decimal amber, decimal green) =>
             new()
             {
-                SelfManagedConsumerWasteTonnage = amber,
-                ActionedSelfManagedConsumerWasteTonnage = (total: amber, red: 0, amber, green: 0),
-                ResidualSelfManagedConsumerWasteTonnage = 0,
-                NetReportedTonnage = (total: red + green, red, amber: 0, green)
+                MaterialCode = materialCode,
+                SMCW = new SelfManagedConsumerWasteData
+                {
+                    SMCWTonnage = amber,
+                    ActionedSMCWTonnage = new RamTonnageGroup { Total = amber, Red = 0, Amber = amber, Green = 0 },
+                    ResidualSMCWTonnage = 0,
+                    NetTonnage = new RamTonnageGroup { Total = red + green, Red = red, Amber = 0, Green = green }
+                }
             };
 
         var smcw = new SelfManagedConsumerWaste
         {
+            CalculatorRunId = 1,
             ProducerTotals = [],
-            OverallTotalPerMaterials = new Dictionary<string, SelfManagedConsumerWasteData>
+            OverallTotalByMaterial = new Dictionary<string, MaterialSelfManagedConsumerWasteData>
             {
-                [MaterialCodes.Aluminium] = MkSelfManagedConsumerWasteData(220, 330, 550),
-                [MaterialCodes.FibreComposite] = MkSelfManagedConsumerWasteData(275, 55, 55),
-                [MaterialCodes.Glass] = MkSelfManagedConsumerWasteData(110, 220, 220),
-                [MaterialCodes.Plastic] = MkSelfManagedConsumerWasteData(400, 1050, 2400),
-                [MaterialCodes.PaperOrCard] = MkSelfManagedConsumerWasteData(2150, 275, 270),
-                [MaterialCodes.Steel] = MkSelfManagedConsumerWasteData(33, 40, 74),
-                [MaterialCodes.Wood] = MkSelfManagedConsumerWasteData(265, 0, 0),
-                [MaterialCodes.OtherMaterials] = MkSelfManagedConsumerWasteData(30, 0, 0)
+                [MaterialCodes.Aluminium] = MkSelfManagedConsumerWasteData(MaterialCodes.Aluminium, 220, 330, 550),
+                [MaterialCodes.FibreComposite] = MkSelfManagedConsumerWasteData(MaterialCodes.FibreComposite, 275, 55, 55),
+                [MaterialCodes.Glass] = MkSelfManagedConsumerWasteData(MaterialCodes.Glass, 110, 220, 220),
+                [MaterialCodes.Plastic] = MkSelfManagedConsumerWasteData(MaterialCodes.Plastic, 400, 1050, 2400),
+                [MaterialCodes.PaperOrCard] = MkSelfManagedConsumerWasteData(MaterialCodes.PaperOrCard, 2150, 275, 270),
+                [MaterialCodes.Steel] = MkSelfManagedConsumerWasteData(MaterialCodes.Steel, 33, 40, 74),
+                [MaterialCodes.Wood] = MkSelfManagedConsumerWasteData(MaterialCodes.Wood, 265, 0, 0),
+                [MaterialCodes.OtherMaterials] = MkSelfManagedConsumerWasteData(MaterialCodes.OtherMaterials, 30, 0, 0)
             }
         };
         // Act

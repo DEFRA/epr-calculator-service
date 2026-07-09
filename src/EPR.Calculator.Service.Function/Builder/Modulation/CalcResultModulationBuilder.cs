@@ -1,29 +1,11 @@
-﻿using EPR.Calculator.API.Data.Enums;
+﻿using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Builder.Modulation
 {
-    public record MaterialModulation
-    {
-        public required decimal RedMaterialDisposalCost { get; init; }
-        public required decimal AmberMaterialDisposalCost { get; init; }
-        public required decimal GreenMaterialDisposalCost { get; init; }
-        public required decimal RedMaterialTonnages { get; init; }
-        public required decimal AmberMaterialTonnages { get; init; }
-        public required decimal GreenMaterialTonnages { get; init; }
-        public required decimal TotalRedMaterialAtAmberDisposalCost { get; init; }
-        public required decimal TotalGreenMaterialAtAmberDisposalCost { get; init; }
-    }
-
-    public record ModulationResult
-    {
-        public required decimal GreenFactor { get; init; }
-        public required decimal RedFactor { get; init; }
-        public required IReadOnlyDictionary<MaterialDetail, MaterialModulation> MaterialModulation { get; init; }
-    }
-
     public interface ICalcResultModulationBuilder
     {
         Task<ModulationResult> ConstructAsync(
@@ -54,13 +36,13 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
                 materials.Select(material =>
                 {
                     var materialDisposalCost = pricePerTonne(material);
-                    var netReportedTonnage = smcw.OverallTotalPerMaterials[material.Code].NetReportedTonnage;
+                    var netReportedTonnage = smcw.OverallTotalByMaterial[material.Code].SMCW.NetTonnage;
                     var lateReportingTonnageR = GetLateReportingTonnage(defaultParams, material, RagRating.Red);
                     var lateReportingTonnageA = GetLateReportingTonnage(defaultParams, material, RagRating.Amber);
                     var lateReportingTonnageG = GetLateReportingTonnage(defaultParams, material, RagRating.Green);
-                    var redMaterialTonnages   = lateReportingTonnageR + netReportedTonnage.red   ?? 0m;
-                    var amberMaterialTonnages = lateReportingTonnageA + netReportedTonnage.amber ?? 0m;
-                    var greenMaterialTonnages = lateReportingTonnageG + netReportedTonnage.green ?? 0m;
+                    var redMaterialTonnages   = lateReportingTonnageR + netReportedTonnage.Red   ?? 0m;
+                    var amberMaterialTonnages = lateReportingTonnageA + netReportedTonnage.Amber ?? 0m;
+                    var greenMaterialTonnages = lateReportingTonnageG + netReportedTonnage.Green ?? 0m;
                     return new
                     {
                         material = material,
@@ -88,22 +70,27 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
                     var cost = materialCosts.First(c => c.material == material);
                     return new MaterialModulation
                     {
-                        RedMaterialDisposalCost   = MathUtils.RoundAwayFromZero(cost.amberMaterialDisposalCost * redFactor  , 4),
-                        AmberMaterialDisposalCost = MathUtils.RoundAwayFromZero(cost.amberMaterialDisposalCost              , 4),
-                        GreenMaterialDisposalCost = MathUtils.RoundAwayFromZero(cost.amberMaterialDisposalCost * greenFactor, 4),
-                        RedMaterialTonnages       = cost.redMaterialTonnages,
-                        AmberMaterialTonnages     = cost.amberMaterialTonnages,
-                        GreenMaterialTonnages     = cost.greenMaterialTonnages,
-                        TotalRedMaterialAtAmberDisposalCost   = cost.redAtAmberDisposalCost,
-                        TotalGreenMaterialAtAmberDisposalCost = cost.greenAtAmberDisposalCost
+                        MaterialDetail = material,
+                        ModulationDetail = new ModulationDetail
+                        {
+                            RedMaterialDisposalCost   = MathUtils.RoundAwayFromZero(cost.amberMaterialDisposalCost * redFactor  , 4),
+                            AmberMaterialDisposalCost = MathUtils.RoundAwayFromZero(cost.amberMaterialDisposalCost              , 4),
+                            GreenMaterialDisposalCost = MathUtils.RoundAwayFromZero(cost.amberMaterialDisposalCost * greenFactor, 4),
+                            RedMaterialTonnages       = cost.redMaterialTonnages,
+                            AmberMaterialTonnages     = cost.amberMaterialTonnages,
+                            GreenMaterialTonnages     = cost.greenMaterialTonnages,
+                            TotalRedMaterialAtAmberDisposalCost   = cost.redAtAmberDisposalCost,
+                            TotalGreenMaterialAtAmberDisposalCost = cost.greenAtAmberDisposalCost
+                        }
                     };
                 });
 
             return Task.FromResult(new ModulationResult
             {
+                CalculatorRunId = smcw.CalculatorRunId,
                 GreenFactor = greenFactor,
                 RedFactor   = redFactor,
-                MaterialModulation = materialModulations
+                ModulationByMaterial = materialModulations
             });
         }
 
