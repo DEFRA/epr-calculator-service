@@ -231,7 +231,7 @@ public class Section1MaterialsExporterTests
             "Red + Red Medical Net Tonnage",
             "Amber + Amber Medical Net Tonnage",
             "Green + Green Medical Net Tonnage",
-            "Residual SMCW",
+            "Residual Smcw",
             "Tonnage Change",
             "Red + Red Medical Material Price per Tonne",
             "Amber + Amber Medical Material Price per Tonne",
@@ -257,7 +257,7 @@ public class Section1MaterialsExporterTests
             "21.000",                                             // TotalReportedTonnage
             "1.000", "2.000", "3.000", "4.000", "5.000", "6.000", // TotalRag ordered
             "5.000", "7.000", "9.000",                            // grouped: Red+RM, Amber+AM, Green+GM
-            "90.000",                                             // SMCW
+            "90.000",                                             // Smcw
             "90.000" ,   "0.000",  "90.000",   "0.000",           // ActionedSMCW: total,red,amber,green
             "910.000", "300.000", "200.000", "410.000",           // Net: total,red,amber,green
             "-",                                                  // ResidualSMCW (null)
@@ -360,7 +360,7 @@ public class Section1MaterialsExporterTests
             "Red + Red Medical Net Tonnage",
             "Amber + Amber Medical Net Tonnage",
             "Green + Green Medical Net Tonnage",
-            "Residual SMCW",
+            "Residual Smcw",
             "Tonnage Change",
             "Red + Red Medical Material Price per Tonne",
             "Amber + Amber Medical Material Price per Tonne",
@@ -388,7 +388,7 @@ public class Section1MaterialsExporterTests
             "21.000",                                             // TotalReportedTonnage
             "1.000", "2.000", "3.000", "4.000", "5.000", "6.000", // TotalRag ordered
             "5.000", "7.000", "9.000",                            // grouped: Red+RM, Amber+AM, Green+GM
-            "150.000",                                            // SMCW
+            "150.000",                                            // Smcw
             "150.000",  "50.000", "100.000", "0.000",             // ActionedSMCW: total,red,amber,green
             "350.000", "300.000",  "50.000", "0.000",             // Net: total,red,amber,green
             "-",                                                  // ResidualSMCW (null)

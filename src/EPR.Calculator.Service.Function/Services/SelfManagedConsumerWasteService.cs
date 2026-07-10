@@ -69,12 +69,12 @@ namespace EPR.Calculator.Service.Function.Services
                                 ProducerId    = g.Key.OrgId,
                                 SubsidiaryId  = g.Key.SubsidiaryId,
                                 Level         = g.Key.Level,
-                                SMCWByMaterial = g.ToDictionary(
+                                SmcwByMaterial = g.ToDictionary(
                                     x => x.material.Code,
                                     x => new MaterialSelfManagedConsumerWasteData
                                     {
                                         MaterialCode = x.material.Code,
-                                        SMCW         = MapResultToData(x.result)
+                                        Smcw         = MapResultToData(x.result)
                                     })
                             }
                         )
@@ -85,14 +85,14 @@ namespace EPR.Calculator.Service.Function.Services
             {
                 CalculatorRunId = runContext.RunId,
                 ProducerTotals  = producerTotals,
-                OverallTotalByMaterial = materialDetails.ToDictionary(
+                TotalByMaterial = materialDetails.ToDictionary(
                     m => m.Code,
                     m => new MaterialSelfManagedConsumerWasteData
                     {
                         MaterialCode = m.Code,
-                        SMCW = producerTotals
+                        Smcw = producerTotals
                             .Where(x => x.Level == 1)
-                            .Select(x => x.SMCWByMaterial.GetValueOrDefault(m.Code)?.SMCW)
+                            .Select(x => x.SmcwByMaterial.GetValueOrDefault(m.Code)?.Smcw)
                             .Sum()
                     }
                 )
@@ -144,15 +144,15 @@ namespace EPR.Calculator.Service.Function.Services
         {
             return new SelfManagedConsumerWasteData
             {
-                SMCWTonnage         = r.Smcw,
-                ActionedSMCWTonnage = new RamTonnageGroup
+                SmcwTonnage         = r.Smcw,
+                ActionedSmcwTonnage = new RamTonnageGroup
                 {
                     Total = r.ActionedSmcwTotal,
                     Red   = r.ActionedSmcwR,
                     Amber = r.ActionedSmcwA,
                     Green = r.ActionedSmcwG
                 },
-                ResidualSMCWTonnage = r.Residual,
+                ResidualSmcwTonnage = r.Residual,
                 NetTonnage = new RamTonnageGroup
                 {
                     Total = r.NetTotal,

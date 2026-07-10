@@ -76,7 +76,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
         ) =>
             smcw.ProducerTotals
                 .Where(x => x.Level == 1 && producersAndSubsidiaries.Any(y => x.ProducerId == y.ProducerId))
-                .Select(x => x.SMCWByMaterial[material.Code].SMCW)
+                .Select(x => x.SmcwByMaterial[material.Code].Smcw)
                 .Single();
 
         public static RamTonnageGroup GetPricePerTonne(

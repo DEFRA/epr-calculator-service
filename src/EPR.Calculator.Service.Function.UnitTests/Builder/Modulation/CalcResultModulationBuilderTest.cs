@@ -54,9 +54,9 @@ public class CalcResultModulationBuilderTest
     {
         return new SelfManagedConsumerWasteData
         {
-            SMCWTonnage = 0m,
-            ActionedSMCWTonnage = new RamTonnageGroup { Total = null, Red = null, Amber = null, Green = null },
-            ResidualSMCWTonnage = null,
+            SmcwTonnage = 0m,
+            ActionedSmcwTonnage = new RamTonnageGroup { Total = null, Red = null, Amber = null, Green = null },
+            ResidualSmcwTonnage = null,
             NetTonnage = new RamTonnageGroup { Total = null, Red = red, Amber = amber, Green = green }
         };
     }
@@ -66,7 +66,7 @@ public class CalcResultModulationBuilderTest
         return new MaterialSelfManagedConsumerWasteData
         {
             MaterialCode = materialCode,
-            SMCW = mkProducerData(red, amber, green)
+            Smcw = mkProducerData(red, amber, green)
         };
     }
 
@@ -111,7 +111,7 @@ public class CalcResultModulationBuilderTest
         {
             CalculatorRunId = 1,
             ProducerTotals = new List<ProducerSelfManagedConsumerWaste>(),
-            OverallTotalByMaterial = new Dictionary<string, MaterialSelfManagedConsumerWasteData>
+            TotalByMaterial = new Dictionary<string, MaterialSelfManagedConsumerWasteData>
             {
                 [al.Code] = mkMaterialSmcw(al.Code, 220, 330, 550),
                 [fc.Code] = mkMaterialSmcw(fc.Code, 275, 55, 55),
@@ -173,7 +173,7 @@ public class CalcResultModulationBuilderTest
         {
             CalculatorRunId = 1,
             ProducerTotals = new List<ProducerSelfManagedConsumerWaste>(),
-            OverallTotalByMaterial = new Dictionary<string, MaterialSelfManagedConsumerWasteData>
+            TotalByMaterial = new Dictionary<string, MaterialSelfManagedConsumerWasteData>
             {
                 [al.Code] = mkMaterialSmcw(al.Code, 96.000m, 696175.000m, 50.000m),
                 [fc.Code] = mkMaterialSmcw(fc.Code, 101.000m, 3838302.000m, 50.000m),
@@ -234,7 +234,7 @@ public class CalcResultModulationBuilderTest
         {
             CalculatorRunId = 1,
             ProducerTotals = new List<ProducerSelfManagedConsumerWaste>(),
-            OverallTotalByMaterial = new Dictionary<string, MaterialSelfManagedConsumerWasteData>
+            TotalByMaterial = new Dictionary<string, MaterialSelfManagedConsumerWasteData>
             {
                 [al.Code] = mkMaterialSmcw(al.Code, 220, 330, 550),
                 [fc.Code] = mkMaterialSmcw(fc.Code, 275, 55, 55),
@@ -285,7 +285,7 @@ public class CalcResultModulationBuilderTest
         {
             CalculatorRunId = 1,
             ProducerTotals = new List<ProducerSelfManagedConsumerWaste>(),
-            OverallTotalByMaterial = new Dictionary<string, MaterialSelfManagedConsumerWasteData>
+            TotalByMaterial = new Dictionary<string, MaterialSelfManagedConsumerWasteData>
             {
                 [al.Code] = mkMaterialSmcw(al.Code, 220, 330, 0),
                 [fc.Code] = mkMaterialSmcw(fc.Code, 275, 55, 0),

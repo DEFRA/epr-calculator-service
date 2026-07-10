@@ -52,11 +52,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
                 return new MaterialSelfManagedConsumerWasteData
                 {
                     MaterialCode = materialCode,
-                    SMCW = new SelfManagedConsumerWasteData
+                    Smcw = new SelfManagedConsumerWasteData
                     {
-                        SMCWTonnage = 0m,
-                        ActionedSMCWTonnage = new RamTonnageGroup { Total = (actionedSmcwR + actionedSmcwA + actionedSmcwG), Red = actionedSmcwR, Amber = actionedSmcwA, Green = actionedSmcwG },
-                        ResidualSMCWTonnage = residualSmcw,
+                        SmcwTonnage = 0m,
+                        ActionedSmcwTonnage = new RamTonnageGroup { Total = (actionedSmcwR + actionedSmcwA + actionedSmcwG), Red = actionedSmcwR, Amber = actionedSmcwA, Green = actionedSmcwG },
+                        ResidualSmcwTonnage = residualSmcw,
                         NetTonnage = new RamTonnageGroup { Total = (netR + netA + netG), Red = netR, Amber = netA, Green = netG }
                     }
                 };
@@ -66,7 +66,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Modulat
             {
                 CalculatorRunId = 1,
                 ProducerTotals = new List<ProducerSelfManagedConsumerWaste>(),
-                OverallTotalByMaterial = new Dictionary<string, MaterialSelfManagedConsumerWasteData>
+                TotalByMaterial = new Dictionary<string, MaterialSelfManagedConsumerWasteData>
                 {
                     [al.Code] = mkSmcwData(al.Code, netR: 21000000.123m, netA: 5000000.234m, netG: 209863.182m, actionedSmcwR: 1000, actionedSmcwA: 2000, actionedSmcwG: 3000, residualSmcw: 654.321m),
                     [fc.Code] = mkSmcwData(fc.Code, netR:     3001.333m, netA:  400000.222m, netG:    706.332m, actionedSmcwR: null, actionedSmcwA: null, actionedSmcwG: null, residualSmcw: null    )

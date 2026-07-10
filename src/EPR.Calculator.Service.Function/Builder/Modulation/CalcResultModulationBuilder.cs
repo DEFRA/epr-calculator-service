@@ -36,7 +36,7 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
                 materials.Select(material =>
                 {
                     var materialDisposalCost = pricePerTonne(material);
-                    var netReportedTonnage = smcw.OverallTotalByMaterial[material.Code].SMCW.NetTonnage;
+                    var netReportedTonnage = smcw.TotalByMaterial[material.Code].Smcw.NetTonnage;
                     var lateReportingTonnageR = GetLateReportingTonnage(defaultParams, material, RagRating.Red);
                     var lateReportingTonnageA = GetLateReportingTonnage(defaultParams, material, RagRating.Amber);
                     var lateReportingTonnageG = GetLateReportingTonnage(defaultParams, material, RagRating.Green);

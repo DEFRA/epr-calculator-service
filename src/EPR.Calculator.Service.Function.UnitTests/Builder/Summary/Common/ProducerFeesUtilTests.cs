@@ -195,9 +195,9 @@ public class ProducerFeesUtilTests
 
         var smcw = new SelfManagedConsumerWasteData
         {
-            SMCWTonnage = 0,
-            ActionedSMCWTonnage = new RamTonnageGroup { Total = 0m, Red = 0m, Amber = 0m, Green = 0m },
-            ResidualSMCWTonnage = 0,
+            SmcwTonnage = 0,
+            ActionedSmcwTonnage = new RamTonnageGroup { Total = 0m, Red = 0m, Amber = 0m, Green = 0m },
+            ResidualSmcwTonnage = 0,
             NetTonnage = new RamTonnageGroup { Total = null, Red = 1m, Amber = 2m, Green = 3m }
         };
 

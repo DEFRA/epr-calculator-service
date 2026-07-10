@@ -80,29 +80,29 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 null,
                 new()
                 {
-                    SMCWTonnage = 10,
-                    ActionedSMCWTonnage = new RamTonnageGroup { Total = 6, Red = 1, Amber = 2, Green = 3 },
-                    ResidualSMCWTonnage = 5,
+                    SmcwTonnage = 10,
+                    ActionedSmcwTonnage = new RamTonnageGroup { Total = 6, Red = 1, Amber = 2, Green = 3 },
+                    ResidualSmcwTonnage = 5,
                     NetTonnage = new RamTonnageGroup { Total = 3, Red = 1, Amber = 1, Green = 1 }
                 },
                 null,
                 new()
                 {
-                    SMCWTonnage = 20,
-                    ActionedSMCWTonnage = new RamTonnageGroup { Total = null, Red = null, Amber = null, Green = null },
-                    ResidualSMCWTonnage = -5,
+                    SmcwTonnage = 20,
+                    ActionedSmcwTonnage = new RamTonnageGroup { Total = null, Red = null, Amber = null, Green = null },
+                    ResidualSmcwTonnage = -5,
                     NetTonnage = new RamTonnageGroup { Total = 2, Red = 2, Amber = 2, Green = 2 }
                 }
             };
 
             var result = items.Sum();
 
-            Assert.AreEqual(30, result.SMCWTonnage);
-            Assert.AreEqual(6 , result.ActionedSMCWTonnage.Total);
-            Assert.AreEqual(1 , result.ActionedSMCWTonnage.Red);
-            Assert.AreEqual(2 , result.ActionedSMCWTonnage.Amber);
-            Assert.AreEqual(3 , result.ActionedSMCWTonnage.Green);
-            Assert.AreEqual(0 , result.ResidualSMCWTonnage);
+            Assert.AreEqual(30, result.SmcwTonnage);
+            Assert.AreEqual(6 , result.ActionedSmcwTonnage.Total);
+            Assert.AreEqual(1 , result.ActionedSmcwTonnage.Red);
+            Assert.AreEqual(2 , result.ActionedSmcwTonnage.Amber);
+            Assert.AreEqual(3 , result.ActionedSmcwTonnage.Green);
+            Assert.AreEqual(0 , result.ResidualSmcwTonnage);
             Assert.AreEqual(5 , result.NetTonnage.Total);
             Assert.AreEqual(3 , result.NetTonnage.Red);
             Assert.AreEqual(3 , result.NetTonnage.Amber);
@@ -114,8 +114,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         {
             var result = new List<SelfManagedConsumerWasteData?>().Sum();
 
-            Assert.AreEqual(0, result.SMCWTonnage);
-            Assert.AreEqual(0, result.ActionedSMCWTonnage.Total);
+            Assert.AreEqual(0, result.SmcwTonnage);
+            Assert.AreEqual(0, result.ActionedSmcwTonnage.Total);
             Assert.AreEqual(0, result.NetTonnage.Total);
         }
 
@@ -147,13 +147,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var result = await service.Calculate(runContext, materials);
 
-            var total = result.OverallTotalByMaterial[MaterialCodes.Aluminium].SMCW;
+            var total = result.TotalByMaterial[MaterialCodes.Aluminium].Smcw;
 
-            Assert.AreEqual(40, total.SMCWTonnage);
-            Assert.AreEqual( 0, total.ActionedSMCWTonnage.Total);
-            Assert.AreEqual( 0, total.ActionedSMCWTonnage.Red);
-            Assert.AreEqual( 0, total.ActionedSMCWTonnage.Amber);
-            Assert.AreEqual( 0, total.ActionedSMCWTonnage.Green);
+            Assert.AreEqual(40, total.SmcwTonnage);
+            Assert.AreEqual( 0, total.ActionedSmcwTonnage.Total);
+            Assert.AreEqual( 0, total.ActionedSmcwTonnage.Red);
+            Assert.AreEqual( 0, total.ActionedSmcwTonnage.Amber);
+            Assert.AreEqual( 0, total.ActionedSmcwTonnage.Green);
             Assert.AreEqual(60, total.NetTonnage.Total);
         }
 
@@ -182,10 +182,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 runContext,
                 [new MaterialDetail { Id = 99, Code = "NOT_EXIST", Name = "" }]);
 
-            var total = result.OverallTotalByMaterial["NOT_EXIST"].SMCW;
+            var total = result.TotalByMaterial["NOT_EXIST"].Smcw;
 
-            Assert.AreEqual(0, total.SMCWTonnage, "SMCWTonnage mismatch");
-            Assert.AreEqual(0, total.ActionedSMCWTonnage.Total, "ActionedSMCWTonnage mismatch");
+            Assert.AreEqual(0, total.SmcwTonnage, "SmcwTonnage mismatch");
+            Assert.AreEqual(0, total.ActionedSmcwTonnage.Total, "ActionedSmcwTonnage mismatch");
             Assert.AreEqual(0, total.NetTonnage.Total, "NetTonnage total mismatch");
         }
 
@@ -224,11 +224,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 runContext,
                 [new MaterialDetail { Id = 1, Code = MaterialCodes.Aluminium, Name = MaterialNames.Aluminium }]);
 
-            var total = result.OverallTotalByMaterial[MaterialCodes.Aluminium].SMCW;
+            var total = result.TotalByMaterial[MaterialCodes.Aluminium].Smcw;
 
             // Level 2 should not contribute
             // TODO there is no ProducerMaterialPackaging created, so there's nothing to filter out
-            Assert.AreEqual(0, total.SMCWTonnage);
+            Assert.AreEqual(0, total.SmcwTonnage);
             Assert.AreEqual(0, total.NetTonnage.Total);
         }
 
@@ -285,14 +285,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 runContext,
                 [new MaterialDetail { Id = materialId, Code = MaterialCodes.Aluminium, Name = MaterialNames.Aluminium }]);
 
-            var x = result.ProducerTotals.First().SMCWByMaterial[MaterialCodes.Aluminium].SMCW;
+            var x = result.ProducerTotals.First().SmcwByMaterial[MaterialCodes.Aluminium].Smcw;
 
             Assert.AreEqual(expected.total  , x.NetTonnage.Total              , "Net Total mismatch");
             Assert.AreEqual(expected.red    , x.NetTonnage.Red                , "Net Red mismatch");
             Assert.AreEqual(expected.amber  , x.NetTonnage.Amber              , "Net Amber mismatch");
             Assert.AreEqual(expected.green  , x.NetTonnage.Green              , "Net Green mismatch");
-            Assert.AreEqual(cw              , x.SMCWTonnage                   , "SMCWTonnage mismatch");
-            Assert.AreEqual(Math.Min(hh, cw), x.ActionedSMCWTonnage.Total     , "ActionedSMCWTonnage mismatch");
+            Assert.AreEqual(cw              , x.SmcwTonnage                   , "SmcwTonnage mismatch");
+            Assert.AreEqual(Math.Min(hh, cw), x.ActionedSmcwTonnage.Total     , "ActionedSmcwTonnage mismatch");
         }
     }
 }

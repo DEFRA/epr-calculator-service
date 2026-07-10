@@ -16,9 +16,9 @@ internal sealed class ProducerRowBuilder(
 {
     /// <summary>
     /// Builds a Level-1 total row for a producer group by aggregating its already-computed L2 rows.
-    /// Tonnage and cost fields are additive sums from the L2 rows; SMCW-derived fields use the
+    /// Tonnage and cost fields are additive sums from the L2 rows; Smcw-derived fields use the
     /// independently-computed Level-1 record from <paramref name="smcw"/> (cannot be derived by
-    /// summing subsidiaries, because SMCW is computed at the group level).
+    /// summing subsidiaries, because Smcw is computed at the group level).
     /// </summary>
     public ProducerFeeDetail GetL1TotalRow(
         int producerId,
@@ -39,14 +39,14 @@ internal sealed class ProducerRowBuilder(
                 .Select(r => r.FeesByMaterial[material.Code])
                 .ToList();
 
-            var l1Smcw = l1SmcwRecord.SMCWByMaterial.GetValueOrDefault(material.Code)?.SMCW
+            var l1Smcw = l1SmcwRecord.SmcwByMaterial.GetValueOrDefault(material.Code)?.Smcw
                 ?? SelfManagedConsumerWasteData.Zero;
 
             invoicedNetTonnageByProducerMaterial.TryGetValue((producerId, material.Id), out var prevInvoiced);
 
             var l1TotalReportedTonnage = l2MatRows.Sum(r => r.DisposalFee.TotalTonnage.TotalRamTonnage());
 
-            var disposalFee = l1Smcw.SMCWTonnage > l1TotalReportedTonnage
+            var disposalFee = l1Smcw.SmcwTonnage > l1TotalReportedTonnage
                 ? new RamTonnageGroup { Total = 0m, Red = 0m, Amber = 0m, Green = 0m }
                 : ProducerFeesUtil.GetProducerDisposalFee(material, calcResult, l1Smcw);
 
@@ -60,15 +60,15 @@ internal sealed class ProducerRowBuilder(
                     HdcTonnage    = AggregateRAM(l2MatRows, r => r.DisposalFee.HdcTonnage),
                     TotalTonnage  = AggregateRAM(l2MatRows, r => r.DisposalFee.TotalTonnage),
 
-                    // From L1 SMCW record — not derivable by summing L2 values
-                    SmcwTonnage           = l1Smcw.SMCWTonnage,
+                    // From L1 Smcw record — not derivable by summing L2 values
+                    SmcwTonnage           = l1Smcw.SmcwTonnage,
                     ActionedSmcwTonnage   = new RamTonnageGroup {
-                        Total   = l1Smcw.ActionedSMCWTonnage.Total,
-                        Red     = l1Smcw.ActionedSMCWTonnage.Red,
-                        Amber   = l1Smcw.ActionedSMCWTonnage.Amber,
-                        Green   = l1Smcw.ActionedSMCWTonnage.Green
+                        Total   = l1Smcw.ActionedSmcwTonnage.Total,
+                        Red     = l1Smcw.ActionedSmcwTonnage.Red,
+                        Amber   = l1Smcw.ActionedSmcwTonnage.Amber,
+                        Green   = l1Smcw.ActionedSmcwTonnage.Green
                     },
-                    ResidualSmcwTonnage   = l1Smcw.ResidualSMCWTonnage,
+                    ResidualSmcwTonnage   = l1Smcw.ResidualSmcwTonnage,
                     NetTonnage            = new RamTonnageGroup {
                         Total   = l1Smcw.NetTonnage.Total,
                         Red     = l1Smcw.NetTonnage.Red,
@@ -76,7 +76,7 @@ internal sealed class ProducerRowBuilder(
                         Green   = l1Smcw.NetTonnage.Green
                     },
 
-                    // Derived from L1 SMCW
+                    // Derived from L1 Smcw
                     TonnageChange            = TonnageChangeUtil.ComputePerMaterialChange(CommonConstants.LevelOne.ToString(), l1Smcw.NetTonnage.Total, prevInvoiced),
                     PricePerTonne            = ProducerFeesUtil.GetPricePerTonne(material, calcResult),
                     Fee                      = disposalFee,
@@ -128,8 +128,8 @@ internal sealed class ProducerRowBuilder(
 
     /// <summary>
     /// Builds the overall-total row by summing all Level-1 rows (one per producer group).
-    /// All fields — including SMCW — are additive: the overall SMCW equals the sum of the
-    /// Level-1 SMCW records by construction in <see cref="SelfManagedConsumerWasteService"/>.
+    /// All fields — including Smcw — are additive: the overall Smcw equals the sum of the
+    /// Level-1 Smcw records by construction in <see cref="SelfManagedConsumerWasteService"/>.
     /// </summary>
     public static ProducerFeeDetail GetOverallTotalRow(
         IReadOnlyList<ProducerFeeDetail> l1Rows,
@@ -172,7 +172,7 @@ internal sealed class ProducerRowBuilder(
                     HdcTonnage                = AggregateRAM(l1MatRows, r => r.DisposalFee.HdcTonnage),
                     TotalTonnage              = AggregateRAM(l1MatRows, r => r.DisposalFee.TotalTonnage),
 
-                    // SMCW is additive: overall SMCW = sum of Level-1 SMCW records
+                    // Smcw is additive: overall Smcw = sum of Level-1 Smcw records
                     SmcwTonnage               = l1MatRows.Sum(r => r.DisposalFee.SmcwTonnage),
                     ActionedSmcwTonnage       = AggregateRAMTonnageGroup(l1MatRows, r => r.DisposalFee.ActionedSmcwTonnage),
                     ResidualSmcwTonnage       = l1MatRows.Sum(r => r.DisposalFee.ResidualSmcwTonnage),
@@ -385,10 +385,10 @@ internal sealed class ProducerRowBuilder(
         var selfManagedConsumerWasteData = smcw
             .ProducerTotals
             .Find(x => x.ProducerId == producer.ProducerId && x.SubsidiaryId == producer.SubsidiaryId && x.Level == level)?
-            .SMCWByMaterial[material.Code].SMCW ?? SelfManagedConsumerWasteData.Zero;
+            .SmcwByMaterial[material.Code].Smcw ?? SelfManagedConsumerWasteData.Zero;
 
         var producerDisposalFee =
-            l1SelfManagedConsumerWasteData.SMCWTonnage > l1TotalReportedTonnage
+            l1SelfManagedConsumerWasteData.SmcwTonnage > l1TotalReportedTonnage
                 ? new RamTonnageGroup { Total = 0m, Red = 0m, Amber = 0m, Green = 0m }
                 : ProducerFeesUtil.GetProducerDisposalFee(material, calcResult, selfManagedConsumerWasteData);
 
@@ -399,14 +399,14 @@ internal sealed class ProducerRowBuilder(
             HdcTonnage       = hdcRamTonnage,
             TotalTonnage     = totalRamTonnage,
 
-            SmcwTonnage         = selfManagedConsumerWasteData.SMCWTonnage,
+            SmcwTonnage         = selfManagedConsumerWasteData.SmcwTonnage,
             ActionedSmcwTonnage = new RamTonnageGroup {
-                    Total = selfManagedConsumerWasteData.ActionedSMCWTonnage.Total,
-                    Red = selfManagedConsumerWasteData.ActionedSMCWTonnage.Red,
-                    Amber = selfManagedConsumerWasteData.ActionedSMCWTonnage.Amber,
-                    Green = selfManagedConsumerWasteData.ActionedSMCWTonnage.Green
+                    Total = selfManagedConsumerWasteData.ActionedSmcwTonnage.Total,
+                    Red = selfManagedConsumerWasteData.ActionedSmcwTonnage.Red,
+                    Amber = selfManagedConsumerWasteData.ActionedSmcwTonnage.Amber,
+                    Green = selfManagedConsumerWasteData.ActionedSmcwTonnage.Green
                 },
-            ResidualSmcwTonnage = selfManagedConsumerWasteData.ResidualSMCWTonnage,
+            ResidualSmcwTonnage = selfManagedConsumerWasteData.ResidualSmcwTonnage,
             NetTonnage                      =  new RamTonnageGroup {
                     Total = selfManagedConsumerWasteData.NetTonnage.Total,
                     Red = selfManagedConsumerWasteData.NetTonnage.Red,

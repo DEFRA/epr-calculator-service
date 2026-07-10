@@ -20,7 +20,7 @@ public class CalcRunLaDisposalCostBuilderTests : TestsFor<CalcRunLaDisposalCostB
         {
             CalculatorRunId = 1,
             ProducerTotals = [],
-            OverallTotalByMaterial = new Dictionary<string, MaterialSelfManagedConsumerWasteData>()
+            TotalByMaterial = new Dictionary<string, MaterialSelfManagedConsumerWasteData>()
         };
     }
 
@@ -133,11 +133,11 @@ public class CalcRunLaDisposalCostBuilderTests : TestsFor<CalcRunLaDisposalCostB
             new()
             {
                 MaterialCode = materialCode,
-                SMCW = new SelfManagedConsumerWasteData
+                Smcw = new SelfManagedConsumerWasteData
                 {
-                    SMCWTonnage = amber,
-                    ActionedSMCWTonnage = new RamTonnageGroup { Total = amber, Red = 0, Amber = amber, Green = 0 },
-                    ResidualSMCWTonnage = 0,
+                    SmcwTonnage = amber,
+                    ActionedSmcwTonnage = new RamTonnageGroup { Total = amber, Red = 0, Amber = amber, Green = 0 },
+                    ResidualSmcwTonnage = 0,
                     NetTonnage = new RamTonnageGroup { Total = red + green, Red = red, Amber = 0, Green = green }
                 }
             };
@@ -146,7 +146,7 @@ public class CalcRunLaDisposalCostBuilderTests : TestsFor<CalcRunLaDisposalCostB
         {
             CalculatorRunId = 1,
             ProducerTotals = [],
-            OverallTotalByMaterial = new Dictionary<string, MaterialSelfManagedConsumerWasteData>
+            TotalByMaterial = new Dictionary<string, MaterialSelfManagedConsumerWasteData>
             {
                 [MaterialCodes.Aluminium] = MkSelfManagedConsumerWasteData(MaterialCodes.Aluminium, 220, 330, 550),
                 [MaterialCodes.FibreComposite] = MkSelfManagedConsumerWasteData(MaterialCodes.FibreComposite, 275, 55, 55),

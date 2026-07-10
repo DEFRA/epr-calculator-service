@@ -87,7 +87,7 @@ public class Section1MaterialsExporter : IProducerFeesPartExporter
                 "Red + Red Medical Net Tonnage",
                 "Amber + Amber Medical Net Tonnage",
                 "Green + Green Medical Net Tonnage",
-                "Residual SMCW"
+                "Residual Smcw"
             ]);
         } else {
             headers.AddRange([

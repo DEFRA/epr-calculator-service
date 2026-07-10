@@ -91,7 +91,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation
                     appendd(laDisposalCost.HouseholdDrinkContainersTonnage, DecimalPlaces.Three, DecimalFormats.F3); // D
                 appendd(laDisposalCost.LateReportingTonnage, DecimalPlaces.Three, DecimalFormats.F3); // E
 
-                appendd(smcw.OverallTotalByMaterial[material.Code].SMCW.ActionedSMCWTonnage.Total ?? 0, DecimalPlaces.Three, DecimalFormats.F3); // F
+                appendd(smcw.TotalByMaterial[material.Code].Smcw.ActionedSmcwTonnage.Total ?? 0, DecimalPlaces.Three, DecimalFormats.F3); // F
 
                 appendd(modulation.RedMaterialTonnages + modulation.AmberMaterialTonnages + modulation.GreenMaterialTonnages, DecimalPlaces.Three, DecimalFormats.F3); // G
                 appendd(modulation.RedMaterialTonnages  , DecimalPlaces.Three, DecimalFormats.F3); // H
@@ -114,7 +114,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Modulation
                 appendd(laDisposalCost.PublicBinTonnage               , DecimalPlaces.Three, DecimalFormats.F3); // C
                 appendd(laDisposalCost.HouseholdDrinkContainersTonnage, DecimalPlaces.Three, DecimalFormats.F3); // D
                 appendd(laDisposalCost.LateReportingTonnage           , DecimalPlaces.Three, DecimalFormats.F3); // E
-                appendd(smcw.OverallTotalByMaterial.Values.Sum(e => e.SMCW.ActionedSMCWTonnage.Total), DecimalPlaces.Three, DecimalFormats.F3); // F
+                appendd(smcw.TotalByMaterial.Values.Sum(e => e.Smcw.ActionedSmcwTonnage.Total), DecimalPlaces.Three, DecimalFormats.F3); // F
 
                 var r = modulationResult.ModulationByMaterial.Values.Sum(m => m.ModulationDetail.RedMaterialTonnages  );
                 var a = modulationResult.ModulationByMaterial.Values.Sum(m => m.ModulationDetail.AmberMaterialTonnages);
