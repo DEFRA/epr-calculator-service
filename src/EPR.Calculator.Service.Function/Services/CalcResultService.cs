@@ -23,8 +23,8 @@ namespace EPR.Calculator.Service.Function.Services
     {
         public async Task StoreProjectedH1Data(int runId, IReadOnlyList<CalcResultH1ProjectedProducer> projectedProducers)
         {
-            await StoreData(dbContext.TransformProjectedH1, projectedProducers, p => 
-                p.H1ProjectedTonnageByMaterial.Select(m => 
+            await StoreData(dbContext.TransformProjectedH1, projectedProducers, p =>
+                p.H1ProjectedTonnageByMaterial.Select(m =>
                     MapToTransformProjectedH1(runId, p.ProducerId, p.SubsidiaryId, m.Key, p.SubmissionPeriodCode, p.Level, m.Value)
                 )
             );
@@ -32,8 +32,8 @@ namespace EPR.Calculator.Service.Function.Services
 
         public async Task StoreProjectedH2Data(int runId, IReadOnlyList<CalcResultH2ProjectedProducer> projectedProducers)
         {
-            await StoreData(dbContext.TransformProjectedH2, projectedProducers, p => 
-                p.H2ProjectedTonnageByMaterial.Select(m => 
+            await StoreData(dbContext.TransformProjectedH2, projectedProducers, p =>
+                p.H2ProjectedTonnageByMaterial.Select(m =>
                     MapToTransformProjectedH2(runId, p.ProducerId, p.SubsidiaryId, m.Key, p.SubmissionPeriodCode, p.Level, m.Value)
                 )
             );
@@ -79,12 +79,12 @@ namespace EPR.Calculator.Service.Function.Services
 
         public async Task StoreScaledData(int runId, IReadOnlyList<CalcResultScaledupProducer> scaled)
         {
-             await StoreData(dbContext.TransformScaled, scaled, p => 
-                p.PomData.Select(m => 
+             await StoreData(dbContext.TransformScaled, scaled, p =>
+                p.PomData.Select(m =>
                     new TransformScaled
                     {
                         CalculatorRunId = runId,
-                        ProducerId = p.ProducerId, 
+                        ProducerId = p.ProducerId,
                         SubsidiaryId = p.SubsidiaryId,
                         ProducerName = p.ProducerName,
                         TradingName = p.TradingName,
@@ -102,13 +102,13 @@ namespace EPR.Calculator.Service.Function.Services
                 )
             );
         }
-        
+
         public async Task<IReadOnlyList<CalcResultScaledupProducer>> ReadScaledData(int runId)
         {
             return await dbContext.TransformScaled
                         .Where(p => p.CalculatorRunId == runId)
                         .GroupBy(p => new { p.ProducerId, p.SubsidiaryId, p.ProducerName, p.TradingName, p.SubmissionPeriodCode, p.Level, p.IsSubTotal, p.DaysInSubmissionPeriod, p.DaysInWholePeriod, p.ScaleupFactor })
-                        .Select(g => 
+                        .Select(g =>
                             new CalcResultScaledupProducer
                             {
                                 ProducerId = g.Key.ProducerId,
@@ -125,15 +125,15 @@ namespace EPR.Calculator.Service.Function.Services
                             }
                         )
                         .OrderBy(p => p.ProducerId)
+                        .ThenBy(p => p.SubmissionPeriodCode)
                         .ThenBy(p => p.Level)
                         .ThenBy(p => p.SubsidiaryId)
-                        .ThenBy(p => p.SubmissionPeriodCode)
                         .ToImmutableListAsync();
         }
 
         public async Task StorePartialData(int runId, IReadOnlyList<CalcResultPartialObligation> partial){
-            await StoreData(dbContext.TransformPartial, partial, p => 
-                p.PartialObligationTonnageByMaterial.Select(m => 
+            await StoreData(dbContext.TransformPartial, partial, p =>
+                p.PartialObligationTonnageByMaterial.Select(m =>
                     MapToTransformPartial(runId, m.Key, p, m.Value)
                 )
             );
@@ -143,7 +143,7 @@ namespace EPR.Calculator.Service.Function.Services
             return await dbContext.TransformPartial
                         .Where(p => p.CalculatorRunId == runId)
                         .GroupBy(p => new { p.ProducerId, p.SubsidiaryId, p.ProducerName, p.TradingName, p.SubmissionYear, p.Level, p.DaysInSubmissionYear, p.JoiningDate, p.DaysObligated, p.ObligatedFactor })
-                        .Select(g => 
+                        .Select(g =>
                             new CalcResultPartialObligation
                             {
                                 ProducerId = g.Key.ProducerId,
@@ -174,7 +174,7 @@ namespace EPR.Calculator.Service.Function.Services
         private static Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage> MapToH1MaterialTonnages(List<TransformProjectedH1> transformProjectedH1s)
         {
             return transformProjectedH1s.ToDictionary(
-                t => t.MaterialCode, 
+                t => t.MaterialCode,
                 t => new CalcResultH1ProjectedProducerMaterialTonnage
                 {
                     HouseholdTonnage = t.HouseholdTonnage,
@@ -450,7 +450,7 @@ namespace EPR.Calculator.Service.Function.Services
 
         private static ImmutableList<ScaledupPomEntry> MapToScaled(List<TransformScaled> scaled)
         {
-            return scaled.Select(s => 
+            return scaled.Select(s =>
                 new ScaledupPomEntry(
                     MaterialId: s.MaterialId,
                     PackagingType: s.PackagingType,
