@@ -147,7 +147,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var result = await service.Calculate(runContext, materials);
 
-            var total = result.TotalByMaterial[MaterialCodes.Aluminium].Smcw;
+            var total = result.TotalByMaterial[MaterialCodes.Aluminium];
 
             Assert.AreEqual(40, total.SmcwTonnage);
             Assert.AreEqual( 0, total.ActionedSmcwTonnage.Total);
@@ -182,7 +182,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 runContext,
                 [new MaterialDetail { Id = 99, Code = "NOT_EXIST", Name = "" }]);
 
-            var total = result.TotalByMaterial["NOT_EXIST"].Smcw;
+            var total = result.TotalByMaterial["NOT_EXIST"];
 
             Assert.AreEqual(0, total.SmcwTonnage, "SmcwTonnage mismatch");
             Assert.AreEqual(0, total.ActionedSmcwTonnage.Total, "ActionedSmcwTonnage mismatch");
@@ -224,7 +224,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 runContext,
                 [new MaterialDetail { Id = 1, Code = MaterialCodes.Aluminium, Name = MaterialNames.Aluminium }]);
 
-            var total = result.TotalByMaterial[MaterialCodes.Aluminium].Smcw;
+            var total = result.TotalByMaterial[MaterialCodes.Aluminium];
 
             // Level 2 should not contribute
             // TODO there is no ProducerMaterialPackaging created, so there's nothing to filter out
@@ -285,7 +285,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 runContext,
                 [new MaterialDetail { Id = materialId, Code = MaterialCodes.Aluminium, Name = MaterialNames.Aluminium }]);
 
-            var x = result.ProducerTotals.First().SmcwByMaterial[MaterialCodes.Aluminium].Smcw;
+            var x = result.ProducerTotals.First().SmcwByMaterial[MaterialCodes.Aluminium];
 
             Assert.AreEqual(expected.total  , x.NetTonnage.Total              , "Net Total mismatch");
             Assert.AreEqual(expected.red    , x.NetTonnage.Red                , "Net Red mismatch");

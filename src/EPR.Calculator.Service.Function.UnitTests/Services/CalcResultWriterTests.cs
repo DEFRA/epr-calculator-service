@@ -333,23 +333,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                         ProducerId = 1,
                         SubsidiaryId = "A",
                         Level = 1,
-                        SmcwByMaterial = new Dictionary<string, MaterialSelfManagedConsumerWasteData>
+                        SmcwByMaterial = new Dictionary<string, SelfManagedConsumerWasteData>
                         {
-                            [MaterialCodes.Aluminium] = new MaterialSelfManagedConsumerWasteData
-                            {
-                                MaterialCode = MaterialCodes.Aluminium,
-                                Smcw = smcwData
-                            }
+                            [MaterialCodes.Aluminium] = smcwData
                         }
                     }
                 },
-                TotalByMaterial = new Dictionary<string, MaterialSelfManagedConsumerWasteData>
+                TotalByMaterial = new Dictionary<string, SelfManagedConsumerWasteData>
                 {
-                    [MaterialCodes.Aluminium] = new MaterialSelfManagedConsumerWasteData
-                    {
-                        MaterialCode = MaterialCodes.Aluminium,
-                        Smcw = smcwData
-                    }
+                    [MaterialCodes.Aluminium] = smcwData
                 }
             };
         }
@@ -363,22 +355,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CalculatorRunId = runId,
                 GreenFactor = 1.5m,
                 RedFactor = 2.5m,
-                ModulationByMaterial = new Dictionary<MaterialDetail, MaterialModulation>
+                ModulationByMaterial = new Dictionary<MaterialDetail, ModulationDetail>
                 {
-                    [material] = new MaterialModulation
+                    [material] = new ModulationDetail
                     {
-                        MaterialDetail = material,
-                        ModulationDetail = new ModulationDetail
-                        {
-                            RedMaterialDisposalCost = 10,
-                            AmberMaterialDisposalCost = 20,
-                            GreenMaterialDisposalCost = 30,
-                            RedMaterialTonnages = 100,
-                            AmberMaterialTonnages = 200,
-                            GreenMaterialTonnages = 300,
-                            TotalRedMaterialAtAmberDisposalCost = 400,
-                            TotalGreenMaterialAtAmberDisposalCost = 500
-                        }
+                        RedMaterialDisposalCost = 10,
+                        AmberMaterialDisposalCost = 20,
+                        GreenMaterialDisposalCost = 30,
+                        RedMaterialTonnages = 100,
+                        AmberMaterialTonnages = 200,
+                        GreenMaterialTonnages = 300,
+                        TotalRedMaterialAtAmberDisposalCost = 400,
+                        TotalGreenMaterialAtAmberDisposalCost = 500
                     }
                 }
             };

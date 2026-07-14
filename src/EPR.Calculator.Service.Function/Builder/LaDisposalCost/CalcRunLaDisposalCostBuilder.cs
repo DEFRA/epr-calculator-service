@@ -62,7 +62,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
                     var hhTonnage  = producerData.Where(t => t.MaterialName == materialName && t.PackagingType == PackagingTypes.Household).Sum(t => t.Tonnage);
                     var pbTonnage  = producerData.Where(p => p.MaterialName == materialName && p.PackagingType == PackagingTypes.PublicBin).Sum(p => p.Tonnage);
                     var hdcTonnage = producerData.Where(p => p.MaterialName == materialName && p.PackagingType == PackagingTypes.HouseholdDrinksContainers).Sum(p => p.Tonnage);
-                    decimal? actionedSelfManagedConsumerWasteTonnage = runContext.RequiresModulation ? smcw.TotalByMaterial[materialCode].Smcw.ActionedSmcwTonnage.Total ?? 0 : null;
+                    decimal? actionedSelfManagedConsumerWasteTonnage = runContext.RequiresModulation ? smcw.TotalByMaterial[materialCode].ActionedSmcwTonnage.Total ?? 0 : null;
                     var laDisposalDetail = new CalcResultLaDisposalCostDataDetail
                     {
                         Cost                                    = detail.Value,

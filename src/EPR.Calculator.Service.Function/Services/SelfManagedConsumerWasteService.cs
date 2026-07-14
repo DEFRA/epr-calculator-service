@@ -71,11 +71,8 @@ namespace EPR.Calculator.Service.Function.Services
                                 Level         = g.Key.Level,
                                 SmcwByMaterial = g.ToDictionary(
                                     x => x.material.Code,
-                                    x => new MaterialSelfManagedConsumerWasteData
-                                    {
-                                        MaterialCode = x.material.Code,
-                                        Smcw         = MapResultToData(x.result)
-                                    })
+                                    x => MapResultToData(x.result)
+                                )
                             }
                         )
                 )
@@ -87,14 +84,10 @@ namespace EPR.Calculator.Service.Function.Services
                 ProducerTotals  = producerTotals,
                 TotalByMaterial = materialDetails.ToDictionary(
                     m => m.Code,
-                    m => new MaterialSelfManagedConsumerWasteData
-                    {
-                        MaterialCode = m.Code,
-                        Smcw = producerTotals
+                    m => producerTotals
                             .Where(x => x.Level == 1)
-                            .Select(x => x.SmcwByMaterial.GetValueOrDefault(m.Code)?.Smcw)
+                            .Select(x => x.SmcwByMaterial.GetValueOrDefault(m.Code))
                             .Sum()
-                    }
                 )
             };
         }

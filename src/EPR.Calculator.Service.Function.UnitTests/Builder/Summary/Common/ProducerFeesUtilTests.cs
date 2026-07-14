@@ -187,9 +187,9 @@ public class ProducerFeesUtilTests
             CalculatorRunId = 1,
             GreenFactor = 2,
             RedFactor = 4,
-            ModulationByMaterial = new Dictionary<MaterialDetail, MaterialModulation>
+            ModulationByMaterial = new Dictionary<MaterialDetail, ModulationDetail>
             {
-                [material] = mkMaterialModulation(material, 100, 120, 77.1423m, 90, 220, 550, 22000, 55000)
+                [material] = mkModulationDetail(100, 120, 77.1423m, 90, 220, 550, 22000, 55000)
             }
         };
 
@@ -261,22 +261,18 @@ public class ProducerFeesUtilTests
 
     private CalcResultLateReportingTonnage GetCalcResultLateReportingTonnage() => Fixture.Create<CalcResultLateReportingTonnage>();
 
-    private MaterialModulation mkMaterialModulation(MaterialDetail material, decimal adc, decimal rdc, decimal gdc, decimal at, decimal rt, decimal gt, decimal rAtAdc, decimal gAtAdc)
+    private ModulationDetail mkModulationDetail(decimal adc, decimal rdc, decimal gdc, decimal at, decimal rt, decimal gt, decimal rAtAdc, decimal gAtAdc)
     {
-        return new MaterialModulation
+        return new ModulationDetail
         {
-            MaterialDetail = material,
-            ModulationDetail = new ModulationDetail
-            {
-                AmberMaterialDisposalCost             = adc,
-                RedMaterialDisposalCost               = rdc,
-                GreenMaterialDisposalCost             = gdc,
-                AmberMaterialTonnages                 = at,
-                RedMaterialTonnages                   = rt,
-                GreenMaterialTonnages                 = gt,
-                TotalRedMaterialAtAmberDisposalCost   = rAtAdc,
-                TotalGreenMaterialAtAmberDisposalCost = gAtAdc
-            }
+            AmberMaterialDisposalCost             = adc,
+            RedMaterialDisposalCost               = rdc,
+            GreenMaterialDisposalCost             = gdc,
+            AmberMaterialTonnages                 = at,
+            RedMaterialTonnages                   = rt,
+            GreenMaterialTonnages                 = gt,
+            TotalRedMaterialAtAmberDisposalCost   = rAtAdc,
+            TotalGreenMaterialAtAmberDisposalCost = gAtAdc
         };
     }
 }

@@ -170,8 +170,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             result.ProducerTotals[0].ProducerId.ShouldBe(1);
             result.ProducerTotals[0].SubsidiaryId.ShouldBe("A");
             result.ProducerTotals[0].Level.ShouldBe(1);
-            result.ProducerTotals[0].SmcwByMaterial[MaterialCodes.Aluminium].Smcw.SmcwTonnage.ShouldBe(100);
-            result.TotalByMaterial[MaterialCodes.Aluminium].Smcw.SmcwTonnage.ShouldBe(100);
+            result.ProducerTotals[0].SmcwByMaterial[MaterialCodes.Aluminium].SmcwTonnage.ShouldBe(100);
+            result.TotalByMaterial[MaterialCodes.Aluminium].SmcwTonnage.ShouldBe(100);
         }
 
         [TestMethod]
@@ -188,7 +188,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             result.RedFactor.ShouldBe(2.5m);
             result.ModulationByMaterial.Count.ShouldBe(1);
             var material = new MaterialDetail { Id = 1, Code = MaterialCodes.Aluminium, Name = "Aluminium" };
-            result.ModulationByMaterial[material].ModulationDetail.RedMaterialDisposalCost.ShouldBe(10);
+            result.ModulationByMaterial[material].RedMaterialDisposalCost.ShouldBe(10);
         }
 
         private ModulationResult MkModulationResult(int runId)
@@ -200,22 +200,18 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 CalculatorRunId = runId,
                 GreenFactor = 1.5m,
                 RedFactor = 2.5m,
-                ModulationByMaterial = new Dictionary<MaterialDetail, MaterialModulation>
+                ModulationByMaterial = new Dictionary<MaterialDetail, ModulationDetail>
                 {
-                    [material] = new MaterialModulation
+                    [material] = new ModulationDetail
                     {
-                        MaterialDetail = material,
-                        ModulationDetail = new ModulationDetail
-                        {
-                            RedMaterialDisposalCost = 10,
-                            AmberMaterialDisposalCost = 20,
-                            GreenMaterialDisposalCost = 30,
-                            RedMaterialTonnages = 100,
-                            AmberMaterialTonnages = 200,
-                            GreenMaterialTonnages = 300,
-                            TotalRedMaterialAtAmberDisposalCost = 400,
-                            TotalGreenMaterialAtAmberDisposalCost = 500
-                        }
+                        RedMaterialDisposalCost = 10,
+                        AmberMaterialDisposalCost = 20,
+                        GreenMaterialDisposalCost = 30,
+                        RedMaterialTonnages = 100,
+                        AmberMaterialTonnages = 200,
+                        GreenMaterialTonnages = 300,
+                        TotalRedMaterialAtAmberDisposalCost = 400,
+                        TotalGreenMaterialAtAmberDisposalCost = 500
                     }
                 }
             };
@@ -241,23 +237,15 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                         ProducerId = 1,
                         SubsidiaryId = "A",
                         Level = 1,
-                        SmcwByMaterial = new Dictionary<string, MaterialSelfManagedConsumerWasteData>
+                        SmcwByMaterial = new Dictionary<string, SelfManagedConsumerWasteData>
                         {
-                            [MaterialCodes.Aluminium] = new MaterialSelfManagedConsumerWasteData
-                            {
-                                MaterialCode = MaterialCodes.Aluminium,
-                                Smcw = smcwData
-                            }
+                            [MaterialCodes.Aluminium] = smcwData
                         }
                     }
                 },
-                TotalByMaterial = new Dictionary<string, MaterialSelfManagedConsumerWasteData>
+                TotalByMaterial = new Dictionary<string, SelfManagedConsumerWasteData>
                 {
-                    [MaterialCodes.Aluminium] = new MaterialSelfManagedConsumerWasteData
-                    {
-                        MaterialCode = MaterialCodes.Aluminium,
-                        Smcw = smcwData
-                    }
+                    [MaterialCodes.Aluminium] = smcwData
                 }
             };
         }

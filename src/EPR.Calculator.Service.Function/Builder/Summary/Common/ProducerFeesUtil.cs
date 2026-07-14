@@ -76,7 +76,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
         ) =>
             smcw.ProducerTotals
                 .Where(x => x.Level == 1 && producersAndSubsidiaries.Any(y => x.ProducerId == y.ProducerId))
-                .Select(x => x.SmcwByMaterial[material.Code].Smcw)
+                .Select(x => x.SmcwByMaterial[material.Code])
                 .Single();
 
         public static RamTonnageGroup GetPricePerTonne(
@@ -88,7 +88,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
             if (laDisposalCostDataDetail == null)
             {
-                return RamTonnageGroup.Empty;
+                return new RamTonnageGroup();
             }
 
             var total = laDisposalCostDataDetail.DisposalCostPricePerTonne ?? 0m;
@@ -96,9 +96,9 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             if (calcResult.CalcResultModulation is not null) {
                 return new RamTonnageGroup {
                     Total = total,
-                    Red = calcResult.CalcResultModulation.ModulationByMaterial[material].ModulationDetail.RedMaterialDisposalCost,
-                    Amber = calcResult.CalcResultModulation.ModulationByMaterial[material].ModulationDetail.AmberMaterialDisposalCost,
-                    Green = calcResult.CalcResultModulation.ModulationByMaterial[material].ModulationDetail.GreenMaterialDisposalCost
+                    Red = calcResult.CalcResultModulation.ModulationByMaterial[material].RedMaterialDisposalCost,
+                    Amber = calcResult.CalcResultModulation.ModulationByMaterial[material].AmberMaterialDisposalCost,
+                    Green = calcResult.CalcResultModulation.ModulationByMaterial[material].GreenMaterialDisposalCost
                 };
             } else {
                 return new RamTonnageGroup { Total = total, Red = null, Amber = null, Green = null };

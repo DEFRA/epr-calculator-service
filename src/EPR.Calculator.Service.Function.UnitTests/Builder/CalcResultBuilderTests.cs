@@ -117,7 +117,7 @@ public class CalcResultBuilderTests : TestsFor<CalcResultBuilder>
             {
                 CalculatorRunId = 1,
                 ProducerTotals = [],
-                TotalByMaterial = new Dictionary<string, MaterialSelfManagedConsumerWasteData>()
+                TotalByMaterial = new Dictionary<string, SelfManagedConsumerWasteData>()
             });
 
         var result = await testSubject.BuildAsync(runContext, CancellationToken.None);

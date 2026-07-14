@@ -15,7 +15,7 @@ public class CalcResultModulationResultsJsonTests
             CalculatorRunId = 1,
             RedFactor = 1.25m,
             GreenFactor = 0.75m,
-            ModulationByMaterial = new Dictionary<MaterialDetail, MaterialModulation>()
+            ModulationByMaterial = new Dictionary<MaterialDetail, ModulationDetail>()
         });
 
         var actualJson = JsonSerializer.Serialize(result);

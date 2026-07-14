@@ -61,7 +61,7 @@ public class SaSetupCostsProducerTests
             {
                 new()
                 {
-                    FeesByMaterial = new Dictionary<string, MaterialFee>(),
+                    FeesByMaterial = new Dictionary<string, Fees>(),
                     ProducerId = 1,
                     ProducerName = "Test",
                     SubsidiaryId = "1",

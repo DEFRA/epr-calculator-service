@@ -36,7 +36,7 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
                 materials.Select(material =>
                 {
                     var materialDisposalCost = pricePerTonne(material);
-                    var netReportedTonnage = smcw.TotalByMaterial[material.Code].Smcw.NetTonnage;
+                    var netReportedTonnage = smcw.TotalByMaterial[material.Code].NetTonnage;
                     var lateReportingTonnageR = GetLateReportingTonnage(defaultParams, material, RagRating.Red);
                     var lateReportingTonnageA = GetLateReportingTonnage(defaultParams, material, RagRating.Amber);
                     var lateReportingTonnageG = GetLateReportingTonnage(defaultParams, material, RagRating.Green);
@@ -68,20 +68,16 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
                     material =>
                 {
                     var cost = materialCosts.First(c => c.material == material);
-                    return new MaterialModulation
+                    return new ModulationDetail
                     {
-                        MaterialDetail = material,
-                        ModulationDetail = new ModulationDetail
-                        {
-                            RedMaterialDisposalCost   = MathUtils.RoundAwayFromZero(cost.amberMaterialDisposalCost * redFactor  , 4),
-                            AmberMaterialDisposalCost = MathUtils.RoundAwayFromZero(cost.amberMaterialDisposalCost              , 4),
-                            GreenMaterialDisposalCost = MathUtils.RoundAwayFromZero(cost.amberMaterialDisposalCost * greenFactor, 4),
-                            RedMaterialTonnages       = cost.redMaterialTonnages,
-                            AmberMaterialTonnages     = cost.amberMaterialTonnages,
-                            GreenMaterialTonnages     = cost.greenMaterialTonnages,
-                            TotalRedMaterialAtAmberDisposalCost   = cost.redAtAmberDisposalCost,
-                            TotalGreenMaterialAtAmberDisposalCost = cost.greenAtAmberDisposalCost
-                        }
+                        RedMaterialDisposalCost   = MathUtils.RoundAwayFromZero(cost.amberMaterialDisposalCost * redFactor  , 4),
+                        AmberMaterialDisposalCost = MathUtils.RoundAwayFromZero(cost.amberMaterialDisposalCost              , 4),
+                        GreenMaterialDisposalCost = MathUtils.RoundAwayFromZero(cost.amberMaterialDisposalCost * greenFactor, 4),
+                        RedMaterialTonnages       = cost.redMaterialTonnages,
+                        AmberMaterialTonnages     = cost.amberMaterialTonnages,
+                        GreenMaterialTonnages     = cost.greenMaterialTonnages,
+                        TotalRedMaterialAtAmberDisposalCost   = cost.redAtAmberDisposalCost,
+                        TotalGreenMaterialAtAmberDisposalCost = cost.greenAtAmberDisposalCost
                     };
                 });
 

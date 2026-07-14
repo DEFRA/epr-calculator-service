@@ -7,6 +7,7 @@ using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Helpers;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 
@@ -36,7 +37,7 @@ public static partial class TestDataHelper
                     CalculatorRunId      = 1,
                     GreenFactor          = 1,
                     RedFactor            = 2,
-                    ModulationByMaterial = new Dictionary<MaterialDetail, MaterialModulation>()
+                    ModulationByMaterial = new Dictionary<MaterialDetail, ModulationDetail>()
                 }
                 : null
         };
@@ -506,17 +507,17 @@ public static partial class TestDataHelper
         };
     }
 
-    public static Dictionary<string, MaterialFee> GetProducerFeesByMaterial(bool applyModulation = false)
+    public static Dictionary<string, Fees> GetProducerFeesByMaterial(bool applyModulation = false)
     {
         return GetProducerDisposalFeesByMaterial(applyModulation)
                     .Join(GetProducerCommsFeesByMaterial(),
                     d1 => d1.Key,
                     d2 => d2.Key,
-                    (d1, d2) => new MaterialFee{
-                        MaterialCode = d1.Key,
+                    (d1, d2) => (MaterialCode: d1.Key, Fees: new Fees
+                    {
                         DisposalFee = d1.Value,
                         CommFee = d2.Value,
-                    }).ToDictionary(k => k.MaterialCode);
+                    })).ToDictionary(k => k.MaterialCode, k => k.Fees);
     }
 
     public static Dictionary<string, DisposalFee> GetProducerDisposalFeesByMaterial(bool applyModulation = false)
