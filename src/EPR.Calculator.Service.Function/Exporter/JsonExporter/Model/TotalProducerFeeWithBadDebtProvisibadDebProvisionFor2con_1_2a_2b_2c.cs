@@ -13,7 +13,7 @@ public class TotalProducerFeeWithBadDebtProvisionFor2Con12A2B2CMapper
     [JsonPropertyName("producerPercentageOfOverallProducerCost")]
     public required string ProducerPercentageOfOverallProducerCost { get; set; }
 
-    public static TotalProducerFeeWithBadDebtProvisionFor2Con12A2B2CMapper From(ProducerFeeDetail procucerFeesProducerDisposalFees)
+    public static TotalProducerFeeWithBadDebtProvisionFor2Con12A2B2CMapper From(FeeDetail procucerFeesProducerDisposalFees)
     {
         return new TotalProducerFeeWithBadDebtProvisionFor2Con12A2B2CMapper
         {

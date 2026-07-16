@@ -35,7 +35,7 @@ public class DisposalFeeSummary1
     [JsonPropertyName("tonnageChangeAdvice")]
     public required string TonnageChangeAdvice { get; set; }
 
-    public static DisposalFeeSummary1 From(ProducerFeeDetail producerFees)
+    public static DisposalFeeSummary1 From(FeeDetail producerFees)
     {
         return new DisposalFeeSummary1
         {

@@ -10,12 +10,12 @@ public static class OnePlus2A2B2CProducer
         var headerTotal = producerFees.Total.TotalOnePlus2A2B2CWithBadDebt();
         foreach (var fee in producerFees.Details)
         {
-            fee.TotalOnePlus2A2B2CWithBadDebtPercentage = GetOverallProducerPercentage(fee, headerTotal);
+            fee.FeeDetail.TotalOnePlus2A2B2CWithBadDebtPercentage = GetOverallProducerPercentage(fee.FeeDetail, headerTotal);
         }
         producerFees.Total.TotalOnePlus2A2B2CWithBadDebtPercentage = GetOverallProducerPercentage(producerFees.Total, headerTotal);
     }
 
-    private static decimal GetOverallProducerPercentage(ProducerFeeDetail fee, decimal totalOnePlus2A2B2CFeeWithBadDebtProvision)
+    private static decimal GetOverallProducerPercentage(FeeDetail fee, decimal totalOnePlus2A2B2CFeeWithBadDebtProvision)
     {
         return totalOnePlus2A2B2CFeeWithBadDebtProvision == 0
             ? 0

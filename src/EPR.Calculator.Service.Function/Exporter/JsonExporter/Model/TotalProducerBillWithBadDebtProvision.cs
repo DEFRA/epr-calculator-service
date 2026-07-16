@@ -28,7 +28,7 @@ public record TotalProducerBillWithBadDebtProvision
     [JsonPropertyName("northernIrelandTotalForProducerBillWithBadDebtProvision")]
     public required string NorthernIrelandTotalForProducerBillWithBadDebtProvision { get; set; }
 
-    public static TotalProducerBillWithBadDebtProvision From(ProducerFeeDetail procucerFeesProducerDisposalFees)
+    public static TotalProducerBillWithBadDebtProvision From(FeeDetail procucerFeesProducerDisposalFees)
     {
         var costs = procucerFeesProducerDisposalFees.TotalBillBreakdown;
         return new TotalProducerBillWithBadDebtProvision

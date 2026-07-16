@@ -42,7 +42,7 @@ public class BillingInstructionService(
     private static ImmutableList<ProducerResultFileSuggestedBillingInstruction> GetBillingInstructions(CalcResult calcResult)
     {
         var producers = calcResult.ProducerFees.Details
-            .Where(producer => producer.Level == CommonConstants.LevelOne.ToString());
+            .Where(producer => producer.FeeDetail.Level == CommonConstants.LevelOne.ToString());
 
         var cancelledProducers = calcResult.CalcResultCancelledProducers;
 
@@ -50,13 +50,13 @@ public class BillingInstructionService(
 
         foreach (var producer in producers)
         {
-            var billingInstructionSection = producer.BillingInstruction;
+            var billingInstructionSection = producer.FeeDetail.BillingInstruction;
 
             var billingInstruction = new ProducerResultFileSuggestedBillingInstruction
             {
                 CalculatorRunId                         = calcResult.CalcResultDetail.RunId,
-                ProducerId                              = producer.ProducerId,
-                TotalProducerBillWithBadDebt            = producer.TotalBillBreakdown!.ByCountry.Total,
+                ProducerId                              = producer.FeeDetail.ProducerId,
+                TotalProducerBillWithBadDebt            = producer.FeeDetail.TotalBillBreakdown!.ByCountry.Total,
                 CurrentYearInvoiceTotalToDate           = billingInstructionSection?.CurrentYearInvoiceTotalToDate,
                 TonnageChangeSinceLastInvoice           = GetStringValue(billingInstructionSection?.TonnageChangeSinceLastInvoice!),
                 AmountLiabilityDifferenceCalcVsPrev     = billingInstructionSection?.LiabilityDifference!,

@@ -39,7 +39,7 @@ public record CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts
     [JsonPropertyName("suggestedInvoiceAmount")]
     public required string SuggestedInvoiceAmount { get; init; }
 
-    public static CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts From(ProducerFeeDetail fees)
+    public static CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts From(FeeDetail fees)
     {
         string GetPercentageLiabilityDifference(decimal? percentageLiabilityDifference) =>
             percentageLiabilityDifference == null

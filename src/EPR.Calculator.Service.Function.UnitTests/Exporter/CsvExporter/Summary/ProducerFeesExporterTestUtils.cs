@@ -20,10 +20,10 @@ public class ProducerFeesExporterTestUtils
 
         foreach (var producer in producerFees.Details)
         {
-            exporter.AppendRow(csvContent, producer, applyModulation, isOverallTotal: false);
+            exporter.AppendRow(csvContent, new ProducerFeeExportRow(producer.FeeDetail.Level, producer.FeeDetail), applyModulation, isOverallTotal: false);
             csvContent.AppendLine();
         }
 
-        exporter.AppendRow(csvContent, producerFees.Total, applyModulation,  isOverallTotal: true);
+        exporter.AppendRow(csvContent, new ProducerFeeExportRow(string.Empty, producerFees.Total), applyModulation,  isOverallTotal: true);
     }
 }

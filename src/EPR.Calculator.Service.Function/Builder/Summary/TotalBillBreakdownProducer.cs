@@ -7,7 +7,7 @@ public static class TotalBillBreakdownProducer
 {
     public static void SetValues(ProducerFees producerFees)
     {
-        foreach (var fee in producerFees.Details.Append(producerFees.Total).OfType<ProducerFeeDetail>())
+        foreach (var fee in producerFees.Details.Select(d => d.FeeDetail).Append(producerFees.Total))
         {
             fee.TotalBillBreakdown =
                 fee.LADisposalCostsSection1

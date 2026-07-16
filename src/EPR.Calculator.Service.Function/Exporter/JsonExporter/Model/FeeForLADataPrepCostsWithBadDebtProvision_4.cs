@@ -30,7 +30,7 @@ public class FeeForLADataPrepCostsWithBadDebtProvision_4
     [JsonPropertyName("northernIrelandTotalForLADataPrepCostsWithBadDebtProvision")]
     public required string NorthernIrelandTotalForLADataPrepCostsWithBadDebtProvision { get; set;}
 
-    public static FeeForLADataPrepCostsWithBadDebtProvision_4 From(ProducerFeeDetail procucerFeesProducerDisposalFees)
+    public static FeeForLADataPrepCostsWithBadDebtProvision_4 From(FeeDetail procucerFeesProducerDisposalFees)
     {
         var costs = procucerFeesProducerDisposalFees.LaDataPrepSection4;
         return new FeeForLADataPrepCostsWithBadDebtProvision_4

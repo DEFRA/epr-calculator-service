@@ -39,14 +39,14 @@ public class CommsCost2cExporter : IProducerFeesPartExporter
         csvContent.Append(',', count - 3);
     }
 
-    public void AppendRow(StringBuilder csvContent, ProducerFeeDetail producer, bool applyModulation, bool isOverallTotal)
+    public void AppendRow(StringBuilder csvContent, ProducerFeeExportRow producer, bool applyModulation, bool isOverallTotal)
     {
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.CommsCostsSection2c.FeeWithoutBadDebt             , DecimalPlaces.Two, null, isCurrency: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.CommsCostsSection2c.BadDebt                       , DecimalPlaces.Two, null, isCurrency: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.CommsCostsSection2c.ByCountry.Total          , DecimalPlaces.Two, null, isCurrency: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.CommsCostsSection2c.ByCountry.England        , DecimalPlaces.Two, null, isCurrency: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.CommsCostsSection2c.ByCountry.Wales          , DecimalPlaces.Two, null, isCurrency: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.CommsCostsSection2c.ByCountry.Scotland       , DecimalPlaces.Two, null, isCurrency: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.CommsCostsSection2c.ByCountry.NorthernIreland, DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.FeeDetail.CommsCostsSection2c.FeeWithoutBadDebt             , DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.FeeDetail.CommsCostsSection2c.BadDebt                       , DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.FeeDetail.CommsCostsSection2c.ByCountry.Total          , DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.FeeDetail.CommsCostsSection2c.ByCountry.England        , DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.FeeDetail.CommsCostsSection2c.ByCountry.Wales          , DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.FeeDetail.CommsCostsSection2c.ByCountry.Scotland       , DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.FeeDetail.CommsCostsSection2c.ByCountry.NorthernIreland, DecimalPlaces.Two, null, isCurrency: true));
     }
 }

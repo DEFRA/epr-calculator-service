@@ -17,8 +17,8 @@ public class Section2aMaterialsExporterTests
         const bool applyModulation = false;
         var producerFees = TestDataHelper.GetProducerFees();
         var producer = producerFees.Details.First();
-        producer.FeesByMaterial =
-            producer.FeesByMaterial!
+        producer.FeeDetail.FeesByMaterial =
+            producer.FeeDetail.FeesByMaterial!
                 .Where(kv => kv.Key == "AL")
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
         producerFees.Total!.FeesByMaterial =
@@ -86,8 +86,8 @@ public class Section2aMaterialsExporterTests
         const bool applyModulation = false;
         var producerFees = TestDataHelper.GetProducerFees();
         var producer = producerFees.Details.First();
-        producer.FeesByMaterial =
-            producer.FeesByMaterial!
+        producer.FeeDetail.FeesByMaterial =
+            producer.FeeDetail.FeesByMaterial!
                 .Where(kv => kv.Key == "GL")
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
         producerFees.Total!.FeesByMaterial =

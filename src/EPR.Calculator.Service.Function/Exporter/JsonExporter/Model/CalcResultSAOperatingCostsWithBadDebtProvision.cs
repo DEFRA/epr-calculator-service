@@ -29,7 +29,7 @@ public class CalcResultSAOperatingCostsWithBadDebtProvision
     [JsonPropertyName("northernIrelandTotalForSAOperatingCostsWithBadDebtProvision")]
     public required string NorthernIrelandTotalForSAOperatingCostsWithBadDebtProvision { get; set; }
 
-     public static CalcResultSAOperatingCostsWithBadDebtProvision From(ProducerFeeDetail procucerFeesProducerDisposalFees)
+     public static CalcResultSAOperatingCostsWithBadDebtProvision From(FeeDetail procucerFeesProducerDisposalFees)
     {
         var costs = procucerFeesProducerDisposalFees.SaOperatingCostsSection3;
         return new CalcResultSAOperatingCostsWithBadDebtProvision

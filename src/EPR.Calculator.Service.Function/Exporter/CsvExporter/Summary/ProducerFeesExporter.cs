@@ -37,12 +37,12 @@ public class ProducerFeesExporter : IProducerFeesExporter
         AddSummaryDataHeader(producerFees, materials, runContext.RequiresModulation, csvContent, partExporters);
 
         foreach (var producer in producerFees.Details)
-            AddNewRow(csvContent, producer, runContext.RequiresModulation, partExporters, isOverallTotal: false);
+            AddNewRow(csvContent, new ProducerFeeExportRow(producer.FeeDetail.Level, producer.FeeDetail), runContext.RequiresModulation, partExporters, isOverallTotal: false);
 
-        AddNewRow(csvContent, producerFees.Total, runContext.RequiresModulation, partExporters, isOverallTotal: true);
+        AddNewRow(csvContent, new ProducerFeeExportRow(string.Empty, producerFees.Total), runContext.RequiresModulation, partExporters, isOverallTotal: true);
     }
 
-    private static void AddNewRow(StringBuilder csvContent, ProducerFeeDetail producer, bool applyModulation, IReadOnlyList<IProducerFeesPartExporter> partExporters, bool isOverallTotal)
+    private static void AddNewRow(StringBuilder csvContent, ProducerFeeExportRow producer, bool applyModulation, IReadOnlyList<IProducerFeesPartExporter> partExporters, bool isOverallTotal)
     {
         foreach (var exporter in partExporters)
             exporter.AppendRow(csvContent, producer, applyModulation, isOverallTotal);

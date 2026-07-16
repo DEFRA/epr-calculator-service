@@ -51,11 +51,11 @@ internal static class SectionCosts
         decimal badDebt,
         decimal total,
         ByCountryApportionment apportionment,
-        Action<ProducerFeeDetail, FeeWithBadDebt> setFee
+        Action<FeeDetail, FeeWithBadDebt> setFee
     )
     {
         foreach (var fee in producerFees.Details)
-            setFee(fee, BadDebt(badDebt, total, apportionment, fee.TotalOnePlus2A2B2CWithBadDebtPercentage));
+            setFee(fee.FeeDetail, BadDebt(badDebt, total, apportionment, fee.FeeDetail.TotalOnePlus2A2B2CWithBadDebtPercentage));
         setFee(producerFees.Total, BadDebt(badDebt, total, apportionment, producerFees.Total.TotalOnePlus2A2B2CWithBadDebtPercentage));
     }
 

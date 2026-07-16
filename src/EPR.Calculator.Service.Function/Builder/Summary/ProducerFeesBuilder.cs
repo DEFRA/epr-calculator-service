@@ -162,6 +162,7 @@ public class ProducerFeesBuilder(
         if (orderedProducerDetails.Count == 0)
         {
             result.Total = ProducerRowBuilder.GetOverallTotalRow([], materials);
+            BillingInstructionsProducer.SetValues(result, producerInvoicedMaterialNetTonnage, calcResult.CalcResultParameterOtherCost);
             return result;
         }
 
@@ -183,7 +184,7 @@ public class ProducerFeesBuilder(
             producerDisposalFees.AddRange(l2Rows);
         }
 
-        var l1Rows = producerDisposalFees.Where(r => r.Level == CommonConstants.LevelOne.ToString()).ToList();
+        var l1Rows = producerDisposalFees.Where(r => r.FeeDetail.Level == CommonConstants.LevelOne.ToString()).ToList();
         result.Total = ProducerRowBuilder.GetOverallTotalRow(l1Rows, materials);
         result.Details = producerDisposalFees;
 

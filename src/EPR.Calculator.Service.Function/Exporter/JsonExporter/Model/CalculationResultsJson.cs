@@ -78,7 +78,7 @@ public class CalculationResultsJson
         var results = new List<CalcSummaryProducerCalculationResults>();
 
         var filteredProducers = calcResult.ProducerFees.Details
-            .Where(producer => runContext.AcceptedProducerIds.Contains(producer.ProducerId));
+            .Where(producer => runContext.AcceptedProducerIds.Contains(producer.FeeDetail.ProducerId));
 
         var scaledupProducers = calcResult.CalcResultScaledupProducers.ScaledupProducers.Select(p => p.ProducerId).ToImmutableList();
         foreach (var producer in filteredProducers)

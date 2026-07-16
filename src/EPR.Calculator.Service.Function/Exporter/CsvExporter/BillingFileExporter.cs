@@ -161,18 +161,17 @@ public class BillingFileExporter(
         ImmutableHashSet<int> acceptedProducerIds)
     {
         return producerDisposalFees
-            .Where(x => acceptedProducerIds.Contains(x.ProducerId))
+            .Where(x => acceptedProducerIds.Contains(x.FeeDetail.ProducerId))
             .ToImmutableList();
     }
 
     // TODO can we remove this row? // NOSONAR
-    private static ProducerFeeDetail ZeroedTotalRow() => new()
+    private static FeeDetail ZeroedTotalRow() => new()
     {
         ProducerId                 = 0,
         SubsidiaryId               = string.Empty,
         ProducerName               = string.Empty,
         TradingName                = string.Empty,
-        Level                      = string.Empty,
         StatusCode                 = string.Empty,
         JoinerDate                 = string.Empty,
         LeaverDate                 = CommonConstants.Totals,

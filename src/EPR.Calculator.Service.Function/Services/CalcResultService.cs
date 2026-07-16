@@ -204,6 +204,7 @@ namespace EPR.Calculator.Service.Function.Services
         public async Task<ProducerFees> ReadProducerFees(int runId, CancellationToken cancellationToken)
         {
             return await dbContext.ProducerDisposalFee
+                        .Include(p => p.Details)
                         .Where(p => p.CalculatorRunId == runId)
                         .SingleAsync(cancellationToken);
         }

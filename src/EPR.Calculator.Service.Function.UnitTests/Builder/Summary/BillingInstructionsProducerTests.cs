@@ -55,9 +55,9 @@ public class BillingInstructionsProducerTests
         };
 
         BillingInstructionsProducer.SetValues(calcResult.ProducerFees, producerInvoicedMaterialNetTonnage, otherCost);
-        var fee = calcResult.ProducerFees.Details.ToList()[0].BillingInstruction;
+        var fee = calcResult.ProducerFees.Details.ToList()[0].FeeDetail.BillingInstruction;
 
-        var calcTotal = calcResult.ProducerFees.Details.First().TotalBillBreakdown!.ByCountry.Total;
+        var calcTotal = calcResult.ProducerFees.Details.First().FeeDetail.TotalBillBreakdown!.ByCountry.Total;
         var expectedLiabilityDiff = MathUtils.RoundAwayFromZero(calcTotal, 2) - MathUtils.RoundAwayFromZero(20.00m, 2);
 
         // Assert
@@ -84,13 +84,16 @@ public class BillingInstructionsProducerTests
             [
                 new ProducerFeeDetail
                 {
-                    ProducerId = 101,
-                    Level = "1",
-                    SubsidiaryId = "1000",
-                    ProducerName = "P1",
-                    TotalBillBreakdown = new FeeWithBadDebt
+                    FeeDetail = new FeeDetail
                     {
-                        ByCountry = new ByCountryCost { England = 120.004m, Wales = 0, Scotland = 0, NorthernIreland = 0 }
+                        ProducerId = 101,
+                        SubsidiaryId = "1000",
+                        Level = "1",
+                        ProducerName = "P1",
+                        TotalBillBreakdown = new FeeWithBadDebt
+                        {
+                            ByCountry = new ByCountryCost { England = 120.004m, Wales = 0, Scotland = 0, NorthernIreland = 0 }
+                        }
                     }
                 }
             ]
@@ -114,7 +117,7 @@ public class BillingInstructionsProducerTests
 
         BillingInstructionsProducer.SetValues(producerFees, invoiced, new CalcResultParameterOtherCost());
 
-        var fee = producerFees.Details.ToList()[0].BillingInstruction!;
+        var fee = producerFees.Details.ToList()[0].FeeDetail.BillingInstruction!;
         var expected = MathUtils.RoundAwayFromZero(120.004m, 2) - MathUtils.RoundAwayFromZero(20.003m, 2);
         Assert.AreEqual(expected, fee.LiabilityDifference);
     }
@@ -129,16 +132,19 @@ public class BillingInstructionsProducerTests
             Details = (List<ProducerFeeDetail>)
             [
                 new ProducerFeeDetail
+            {
+                FeeDetail = new FeeDetail
                 {
                     ProducerId = 301,
-                    Level = "2",
                     SubsidiaryId = "3000",
+                    Level = "2",
                     ProducerName = "P3",
                     TotalBillBreakdown = new FeeWithBadDebt
                     {
                         ByCountry = new ByCountryCost { England = 50m, Wales = 0, Scotland = 0, NorthernIreland = 0 }
                     }
                 }
+            }
             ]
         };
 
@@ -159,7 +165,7 @@ public class BillingInstructionsProducerTests
         ];
 
         BillingInstructionsProducer.SetValues(producerFees, invoiced, new CalcResultParameterOtherCost());
-        Assert.IsNull(producerFees.Details.ToList()[0].BillingInstruction!.LiabilityDifference);
+        Assert.IsNull(producerFees.Details.ToList()[0].FeeDetail.BillingInstruction!.LiabilityDifference);
     }
 
     [TestMethod]
@@ -173,11 +179,14 @@ public class BillingInstructionsProducerTests
             [
                 new ProducerFeeDetail
                 {
-                    ProducerId = 11,
-                    Level = "1",
-                    SubsidiaryId = "S-11",
-                    ProducerName = "P11",
-                    TotalBillBreakdown = new FeeWithBadDebt { ByCountry = new ByCountryCost { England = 20m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
+                    FeeDetail = new FeeDetail
+                    {
+                        ProducerId = 11,
+                        SubsidiaryId = "S-11",
+                        Level = "1",
+                        ProducerName = "P11",
+                        TotalBillBreakdown = new FeeWithBadDebt { ByCountry = new ByCountryCost { England = 20m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
+                    }
                 }
             ]
         };
@@ -200,37 +209,42 @@ public class BillingInstructionsProducerTests
 
         BillingInstructionsProducer.SetValues(producerFees, invoiced, new CalcResultParameterOtherCost());
 
-        Assert.AreEqual(15m, producerFees.Details.ToList()[0].BillingInstruction!.LiabilityDifference);
+        Assert.AreEqual(15m, producerFees.Details.ToList()[0].FeeDetail.BillingInstruction!.LiabilityDifference);
     }
 
     [TestMethod]
     public void GetLiabilityDifference_TotalsRowWithNonZeroRunningTotal_ReturnsSum()
     {
         var a = new ProducerFeeDetail
-        {
-            ProducerId = 1,
-            Level = "1",
-            SubsidiaryId = "S-1",
-            ProducerName = "P1",
-            TotalBillBreakdown = new FeeWithBadDebt { ByCountry = new ByCountryCost { England = 50m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
-        };
+            {
+                FeeDetail = new FeeDetail
+                {
+                    ProducerId = 1,
+                    SubsidiaryId = "S-1",
+                    Level = "1",
+                    ProducerName = "P1",
+                    TotalBillBreakdown = new FeeWithBadDebt { ByCountry = new ByCountryCost { England = 50m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
+                }
+            };
 
         var b = new ProducerFeeDetail
-        {
-            ProducerId = 2,
-            Level = "1",
-            SubsidiaryId = "S-2",
-            ProducerName = "P2",
-            TotalBillBreakdown = new FeeWithBadDebt { ByCountry = new ByCountryCost { England = 70m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
-        };
+            {
+                FeeDetail = new FeeDetail
+                {
+                    ProducerId = 2,
+                    SubsidiaryId = "S-2",
+                    Level = "1",
+                    ProducerName = "P2",
+                    TotalBillBreakdown = new FeeWithBadDebt { ByCountry = new ByCountryCost { England = 70m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
+                }
+            };
 
-        var total = new ProducerFeeDetail
-        {
-            ProducerId = 0,
-            Level = string.Empty,
-            ProducerName = "Totals",
-            SubsidiaryId = string.Empty
-        };
+        var total = new FeeDetail
+            {
+                ProducerId = 0,
+                ProducerName = "Totals",
+                SubsidiaryId = string.Empty
+            };
 
         var producerFees = new ProducerFees
         {
@@ -278,30 +292,35 @@ public class BillingInstructionsProducerTests
     public void GetLiabilityDifference_TotalsRowWithZeroRunningTotal_ReturnsNull()
     {
         var a = new ProducerFeeDetail
-        {
-            ProducerId = 1,
-            Level = "1",
-            SubsidiaryId = "S-1",
-            ProducerName = "P1",
-            TotalBillBreakdown = new FeeWithBadDebt { ByCountry = new ByCountryCost { England = 50m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
-        };
+            {
+                FeeDetail = new FeeDetail
+                {
+                    ProducerId = 1,
+                    SubsidiaryId = "S-1",
+                    Level = "1",
+                    ProducerName = "P1",
+                    TotalBillBreakdown = new FeeWithBadDebt { ByCountry = new ByCountryCost { England = 50m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
+                }
+            };
 
         var b = new ProducerFeeDetail
-        {
-            ProducerId = 2,
-            Level = "1",
-            SubsidiaryId = "S-2",
-            ProducerName = "P2",
-            TotalBillBreakdown = new FeeWithBadDebt { ByCountry = new ByCountryCost { England = 20m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
-        };
+            {
+                FeeDetail = new FeeDetail
+                {
+                    ProducerId = 2,
+                    SubsidiaryId = "S-2",
+                    Level = "1",
+                    ProducerName = "P2",
+                    TotalBillBreakdown = new FeeWithBadDebt { ByCountry = new ByCountryCost { England = 20m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
+                }
+            };
 
-        var total = new ProducerFeeDetail
-        {
-            ProducerId = 0,
-            Level = string.Empty,
-            ProducerName = "Totals",
-            SubsidiaryId = string.Empty
-        };
+        var total = new FeeDetail
+            {
+                ProducerId = 0,
+                ProducerName = "Totals",
+                SubsidiaryId = string.Empty
+            };
 
         var producerFees = new ProducerFees
         {
@@ -347,13 +366,12 @@ public class BillingInstructionsProducerTests
     [TestMethod]
     public void GetMaterialThresholdBreached_TotalsRow_ReturnsEmpty()
     {
-        var total = new ProducerFeeDetail
-        {
-            ProducerId = 0,
-            Level = string.Empty,
-            ProducerName = "Totals",
-            SubsidiaryId = string.Empty
-        };
+        var total = new FeeDetail
+            {
+                ProducerId = 0,
+                ProducerName = "Totals",
+                SubsidiaryId = string.Empty
+            };
 
         var producerFees = new ProducerFees
         {
@@ -370,13 +388,16 @@ public class BillingInstructionsProducerTests
     public void GetMaterialThresholdBreached_NonLevel1_ReturnsHyphen()
     {
         var fee = new ProducerFeeDetail
-        {
-            ProducerId = 1,
-            Level = "2",
-            SubsidiaryId = "S-1",
-            ProducerName = "P1",
-            TotalBillBreakdown = new FeeWithBadDebt { ByCountry = new ByCountryCost { England = 100m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
-        };
+            {
+                FeeDetail = new FeeDetail
+                {
+                    ProducerId = 1,
+                    SubsidiaryId = "S-1",
+                    Level = "2",
+                    ProducerName = "P1",
+                    TotalBillBreakdown = new FeeWithBadDebt { ByCountry = new ByCountryCost { England = 100m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
+                }
+            };
         var producerFees = new ProducerFees {
             CalculatorRunId = 0,
             Details = new List<ProducerFeeDetail> { fee },
@@ -401,23 +422,26 @@ public class BillingInstructionsProducerTests
 
         BillingInstructionsProducer.SetValues(producerFees, invoiced, new CalcResultParameterOtherCost());
 
-        Assert.AreEqual(null, fee.BillingInstruction!.MaterialityLiabilityDirection);
+        Assert.AreEqual(null, fee.FeeDetail.BillingInstruction!.MaterialityLiabilityDirection);
     }
 
     [TestMethod]
     public void GetMaterialThresholdBreached_NoLiabilityDifference_ReturnsHyphen()
     {
         var fee = new ProducerFeeDetail
-        {
-            ProducerId = 1,
-            Level = "1",
-            SubsidiaryId = "S-1",
-            ProducerName = "P1",
-            TotalBillBreakdown = new FeeWithBadDebt
+            {
+                FeeDetail = new FeeDetail
+                {
+                    ProducerId = 1,
+                    SubsidiaryId = "S-1",
+                    Level = "1",
+                    ProducerName = "P1",
+                    TotalBillBreakdown = new FeeWithBadDebt
             {
                 ByCountry = new ByCountryCost { England = 90m, Wales = 0, Scotland = 0, NorthernIreland = 0 }
             }
-        };
+                }
+            };
         var producerFees = new ProducerFees {
             CalculatorRunId = 0,
             Details = new List<ProducerFeeDetail> { fee },
@@ -448,20 +472,23 @@ public class BillingInstructionsProducerTests
             ],
             otherCost);
 
-        Assert.AreEqual(null, fee.BillingInstruction!.MaterialityLiabilityDirection);
+        Assert.AreEqual(null, fee.FeeDetail.BillingInstruction!.MaterialityLiabilityDirection);
     }
 
     [TestMethod]
     public void GetMaterialThresholdBreached_DiffWithinThresholds_ReturnsHyphen()
     {
         var fee = new ProducerFeeDetail
-        {
-            ProducerId = 1,
-            Level = "1",
-            SubsidiaryId = "S-1",
-            ProducerName = "P1",
-            TotalBillBreakdown = new FeeWithBadDebt { ByCountry = new ByCountryCost { England = 200m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
-        };
+            {
+                FeeDetail = new FeeDetail
+                {
+                    ProducerId = 1,
+                    SubsidiaryId = "S-1",
+                    Level = "1",
+                    ProducerName = "P1",
+                    TotalBillBreakdown = new FeeWithBadDebt { ByCountry = new ByCountryCost { England = 200m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
+                }
+            };
         var producerFees = new ProducerFees {
             CalculatorRunId = 0,
             Details = new List<ProducerFeeDetail> { fee },
@@ -491,20 +518,23 @@ public class BillingInstructionsProducerTests
         };
 
         BillingInstructionsProducer.SetValues(producerFees, invoiced, otherCost);
-        Assert.AreEqual(null, fee.BillingInstruction!.MaterialityLiabilityDirection);
+        Assert.AreEqual(null, fee.FeeDetail.BillingInstruction!.MaterialityLiabilityDirection);
     }
 
     [TestMethod]
     public void GetMaterialThresholdBreached_DiffGreaterOrEqual_AI_ReturnsPosVe()
     {
         var fee = new ProducerFeeDetail
-        {
-            ProducerId = 1,
-            Level = "1",
-            SubsidiaryId = "S-1",
-            ProducerName = "P1",
-            TotalBillBreakdown = new FeeWithBadDebt { ByCountry = new ByCountryCost { England = 150m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
-        };
+            {
+                FeeDetail = new FeeDetail
+                {
+                    ProducerId = 1,
+                    SubsidiaryId = "S-1",
+                    Level = "1",
+                    ProducerName = "P1",
+                    TotalBillBreakdown = new FeeWithBadDebt { ByCountry = new ByCountryCost { England = 150m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
+                }
+            };
         var producerFees = new ProducerFees {
             CalculatorRunId = 0,
             Details = new List<ProducerFeeDetail> { fee },
@@ -534,20 +564,23 @@ public class BillingInstructionsProducerTests
         };
 
         BillingInstructionsProducer.SetValues(producerFees, invoiced, otherCost);
-        Assert.AreEqual(LiabilityDirection.Positive, fee.BillingInstruction!.MaterialityLiabilityDirection);
+        Assert.AreEqual(LiabilityDirection.Positive, fee.FeeDetail.BillingInstruction!.MaterialityLiabilityDirection);
     }
 
     [TestMethod]
     public void GetMaterialThresholdBreached_DiffLessOrEqual_AD_ReturnsNegVe()
     {
         var fee = new ProducerFeeDetail
-        {
-            ProducerId = 1,
-            Level = "1",
-            SubsidiaryId = "S-1",
-            ProducerName = "P1",
-            TotalBillBreakdown = new FeeWithBadDebt { ByCountry = new ByCountryCost { England = 40m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
-        };
+            {
+                FeeDetail = new FeeDetail
+                {
+                    ProducerId = 1,
+                    SubsidiaryId = "S-1",
+                    Level = "1",
+                    ProducerName = "P1",
+                    TotalBillBreakdown = new FeeWithBadDebt { ByCountry = new ByCountryCost { England = 40m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
+                }
+            };
         var producerFees = new ProducerFees {
             CalculatorRunId = 0,
             Details = new List<ProducerFeeDetail> { fee },
@@ -577,20 +610,23 @@ public class BillingInstructionsProducerTests
         };
 
         BillingInstructionsProducer.SetValues(producerFees, invoiced, otherCost);
-        Assert.AreEqual(LiabilityDirection.Negative, fee.BillingInstruction!.MaterialityLiabilityDirection);
+        Assert.AreEqual(LiabilityDirection.Negative, fee.FeeDetail.BillingInstruction!.MaterialityLiabilityDirection);
     }
 
     [TestMethod]
     public void GetMaterialThresholdBreached_DiffBetweenThresholds_ReturnsHyphen()
     {
         var fee = new ProducerFeeDetail
-        {
-            ProducerId = 1,
-            Level = "1",
-            SubsidiaryId = "S-1",
-            ProducerName = "P1",
-            TotalBillBreakdown = new FeeWithBadDebt { ByCountry = new ByCountryCost { England = 115m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
-        };
+            {
+                FeeDetail = new FeeDetail
+                {
+                    ProducerId = 1,
+                    SubsidiaryId = "S-1",
+                    Level = "1",
+                    ProducerName = "P1",
+                    TotalBillBreakdown = new FeeWithBadDebt { ByCountry = new ByCountryCost { England = 115m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
+                }
+            };
         var producerFees = new ProducerFees {
             CalculatorRunId = 0,
             Details = new List<ProducerFeeDetail> { fee },
@@ -620,21 +656,24 @@ public class BillingInstructionsProducerTests
         };
 
         BillingInstructionsProducer.SetValues(producerFees, invoiced, otherCost);
-        Assert.AreEqual(null, fee.BillingInstruction!.MaterialityLiabilityDirection);
+        Assert.AreEqual(null, fee.FeeDetail.BillingInstruction!.MaterialityLiabilityDirection);
     }
 
     [TestMethod]
     public void GetTonnageThresholdBreached_NoChange_ReturnsHyphen()
     {
         var fee = new ProducerFeeDetail
-        {
-            ProducerId = 1,
-            Level = "1",
-            SubsidiaryId = "S-1",
-            ProducerName = "P1",
-            TonnageChangeAdvice = "NOCHANGE",
-            TotalBillBreakdown = new FeeWithBadDebt { ByCountry = new ByCountryCost { England = 200m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
-        };
+            {
+                FeeDetail = new FeeDetail
+                {
+                    ProducerId = 1,
+                    SubsidiaryId = "S-1",
+                    Level = "1",
+                    ProducerName = "P1",
+                    TonnageChangeAdvice = "NOCHANGE",
+                    TotalBillBreakdown = new FeeWithBadDebt { ByCountry = new ByCountryCost { England = 200m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
+                }
+            };
         var producerFees = new ProducerFees {
             CalculatorRunId = 0,
             Details = new List<ProducerFeeDetail> { fee },
@@ -664,21 +703,24 @@ public class BillingInstructionsProducerTests
         };
 
         BillingInstructionsProducer.SetValues(producerFees, invoiced, otherCost);
-        Assert.AreEqual(null, fee.BillingInstruction!.TonnageAmountLiabilityDirection);
+        Assert.AreEqual(null, fee.FeeDetail.BillingInstruction!.TonnageAmountLiabilityDirection);
     }
 
     [TestMethod]
     public void GetTonnageThresholdBreached_Change_DiffWithinThresholds_ReturnsHyphen()
     {
         var fee = new ProducerFeeDetail
-        {
-            ProducerId = 1,
-            Level = "1",
-            SubsidiaryId = "S-1",
-            ProducerName = "P1",
-            TonnageChangeAdvice = "CHANGE",
-            TotalBillBreakdown = new FeeWithBadDebt { ByCountry = new ByCountryCost { England = 200m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
-        };
+            {
+                FeeDetail = new FeeDetail
+                {
+                    ProducerId = 1,
+                    SubsidiaryId = "S-1",
+                    Level = "1",
+                    ProducerName = "P1",
+                    TonnageChangeAdvice = "CHANGE",
+                    TotalBillBreakdown = new FeeWithBadDebt { ByCountry = new ByCountryCost { England = 200m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
+                }
+            };
         var producerFees = new ProducerFees {
             CalculatorRunId = 0,
             Details = new List<ProducerFeeDetail> { fee },
@@ -708,21 +750,24 @@ public class BillingInstructionsProducerTests
         };
 
         BillingInstructionsProducer.SetValues(producerFees, invoiced, otherCost);
-        Assert.AreEqual(null, fee.BillingInstruction!.TonnageAmountLiabilityDirection);
+        Assert.AreEqual(null, fee.FeeDetail.BillingInstruction!.TonnageAmountLiabilityDirection);
     }
 
     [TestMethod]
     public void GetTonnageThresholdBreached_Change_DiffGreaterOrEqual_AI_ReturnsPosVe()
     {
         var fee = new ProducerFeeDetail
-        {
-            ProducerId = 1,
-            Level = "1",
-            SubsidiaryId = "S-1",
-            ProducerName = "P1",
-            TonnageChangeAdvice = "CHANGE",
-            TotalBillBreakdown = new FeeWithBadDebt { ByCountry = new ByCountryCost { England = 160m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
-        };
+            {
+                FeeDetail = new FeeDetail
+                {
+                    ProducerId = 1,
+                    SubsidiaryId = "S-1",
+                    Level = "1",
+                    ProducerName = "P1",
+                    TonnageChangeAdvice = "CHANGE",
+                    TotalBillBreakdown = new FeeWithBadDebt { ByCountry = new ByCountryCost { England = 160m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
+                }
+            };
         var producerFees = new ProducerFees {
             CalculatorRunId = 0,
             Details = new List<ProducerFeeDetail> { fee },
@@ -752,21 +797,24 @@ public class BillingInstructionsProducerTests
         };
 
         BillingInstructionsProducer.SetValues(producerFees, invoiced, otherCost);
-        Assert.AreEqual(LiabilityDirection.Positive, fee.BillingInstruction!.TonnageAmountLiabilityDirection);
+        Assert.AreEqual(LiabilityDirection.Positive, fee.FeeDetail.BillingInstruction!.TonnageAmountLiabilityDirection);
     }
 
     [TestMethod]
     public void GetTonnageThresholdBreached_Change_DiffLessOrEqual_AD_ReturnsNegVe()
     {
         var fee = new ProducerFeeDetail
-        {
-            ProducerId = 1,
-            Level = "1",
-            SubsidiaryId = "S-1",
-            ProducerName = "P1",
-            TonnageChangeAdvice = "CHANGE",
-            TotalBillBreakdown = new FeeWithBadDebt { ByCountry = new ByCountryCost { England = 40m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
-        };
+            {
+                FeeDetail = new FeeDetail
+                {
+                    ProducerId = 1,
+                    SubsidiaryId = "S-1",
+                    Level = "1",
+                    ProducerName = "P1",
+                    TonnageChangeAdvice = "CHANGE",
+                    TotalBillBreakdown = new FeeWithBadDebt { ByCountry = new ByCountryCost { England = 40m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
+                }
+            };
         var producerFees = new ProducerFees {
             CalculatorRunId = 0,
             Details = new List<ProducerFeeDetail> { fee },
@@ -796,21 +844,24 @@ public class BillingInstructionsProducerTests
         };
 
         BillingInstructionsProducer.SetValues(producerFees, invoiced, otherCost);
-        Assert.AreEqual(LiabilityDirection.Negative, fee.BillingInstruction!.TonnageAmountLiabilityDirection);
+        Assert.AreEqual(LiabilityDirection.Negative, fee.FeeDetail.BillingInstruction!.TonnageAmountLiabilityDirection);
     }
 
     [TestMethod]
     public void GetTonnageThresholdBreached_Change_DiffBetweenThresholds_ReturnsHyphen()
     {
         var fee = new ProducerFeeDetail
-        {
-            ProducerId = 1,
-            Level = "1",
-            SubsidiaryId = "S-1",
-            ProducerName = "P1",
-            TonnageChangeAdvice = "CHANGE",
-            TotalBillBreakdown = new FeeWithBadDebt { ByCountry = new ByCountryCost { England = 110m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
-        };
+            {
+                FeeDetail = new FeeDetail
+                {
+                    ProducerId = 1,
+                    SubsidiaryId = "S-1",
+                    Level = "1",
+                    ProducerName = "P1",
+                    TonnageChangeAdvice = "CHANGE",
+                    TotalBillBreakdown = new FeeWithBadDebt { ByCountry = new ByCountryCost { England = 110m, Wales = 0, Scotland = 0, NorthernIreland = 0 } }
+                }
+            };
         var producerFees = new ProducerFees {
             CalculatorRunId = 0,
             Details = new List<ProducerFeeDetail> { fee },
@@ -840,17 +891,17 @@ public class BillingInstructionsProducerTests
         };
 
         BillingInstructionsProducer.SetValues(producerFees, invoiced, otherCost);
-        Assert.AreEqual(null, fee.BillingInstruction!.TonnageAmountLiabilityDirection);
+        Assert.AreEqual(null, fee.FeeDetail.BillingInstruction!.TonnageAmountLiabilityDirection);
     }
 
     [TestMethod]
     public void CalculatePercentageLiabilityDifference_LevelNot1_ReturnsNull()
     {
-        calcResult.ProducerFees.Details.First().Level = "2";
+        calcResult.ProducerFees.Details.First().FeeDetail.Level = "2";
 
         BillingInstructionsProducer.SetValues(calcResult.ProducerFees, [defaultInvoicedProducer], new CalcResultParameterOtherCost());
 
-        var fee = calcResult.ProducerFees.Details.ToList()[0].BillingInstruction!;
+        var fee = calcResult.ProducerFees.Details.ToList()[0].FeeDetail.BillingInstruction!;
         Assert.IsNull(fee.PercentageLiabilityDifference);
     }
 
@@ -859,7 +910,7 @@ public class BillingInstructionsProducerTests
     {
         BillingInstructionsProducer.SetValues(calcResult.ProducerFees, [defaultInvoicedProducer], new CalcResultParameterOtherCost());
 
-        var fee = calcResult.ProducerFees.Details.ToList()[0].BillingInstruction!;
+        var fee = calcResult.ProducerFees.Details.ToList()[0].FeeDetail.BillingInstruction!;
         Assert.AreEqual(52348.00m, fee.PercentageLiabilityDifference);
     }
 
@@ -876,11 +927,11 @@ public class BillingInstructionsProducerTests
     [TestMethod]
     public void CalculateMaterialPercentageThresholdBreached_LevelNot1_ReturnsHypen()
     {
-        calcResult.ProducerFees.Details.First().Level = "2";
+        calcResult.ProducerFees.Details.First().FeeDetail.Level = "2";
 
         BillingInstructionsProducer.SetValues(calcResult.ProducerFees, [defaultInvoicedProducer], new CalcResultParameterOtherCost());
 
-        var fee = calcResult.ProducerFees.Details.ToList()[0].BillingInstruction!;
+        var fee = calcResult.ProducerFees.Details.ToList()[0].FeeDetail.BillingInstruction!;
         Assert.AreEqual(null, fee.MaterialityPercentageLiabilityDirection);
     }
 
@@ -894,7 +945,7 @@ public class BillingInstructionsProducerTests
 
         BillingInstructionsProducer.SetValues(calcResult.ProducerFees, [defaultInvoicedProducer], otherCost);
 
-        var fee = calcResult.ProducerFees.Details.ToList()[0].BillingInstruction!;
+        var fee = calcResult.ProducerFees.Details.ToList()[0].FeeDetail.BillingInstruction!;
         Assert.AreEqual(LiabilityDirection.Positive, fee.MaterialityPercentageLiabilityDirection);
     }
 
@@ -909,7 +960,7 @@ public class BillingInstructionsProducerTests
 
         BillingInstructionsProducer.SetValues(calcResult.ProducerFees, [defaultInvoicedProducer], otherCost);
 
-        var fee = calcResult.ProducerFees.Details.ToList()[0].BillingInstruction!;
+        var fee = calcResult.ProducerFees.Details.ToList()[0].FeeDetail.BillingInstruction!;
         Assert.AreEqual(LiabilityDirection.Negative, fee.MaterialityPercentageLiabilityDirection);
     }
 
@@ -924,18 +975,18 @@ public class BillingInstructionsProducerTests
 
         BillingInstructionsProducer.SetValues(calcResult.ProducerFees, [defaultInvoicedProducer], otherCost);
 
-        var fee = calcResult.ProducerFees.Details.ToList()[0].BillingInstruction!;
+        var fee = calcResult.ProducerFees.Details.ToList()[0].FeeDetail.BillingInstruction!;
         Assert.AreEqual(null, fee.MaterialityPercentageLiabilityDirection);
     }
 
     [TestMethod]
     public void CalculateTonnagePercentageThresholdBreached_LevelNot1_ReturnsHypen()
     {
-        calcResult.ProducerFees.Details.First().Level = "2";
+        calcResult.ProducerFees.Details.First().FeeDetail.Level = "2";
 
         BillingInstructionsProducer.SetValues(calcResult.ProducerFees, [defaultInvoicedProducer], new CalcResultParameterOtherCost());
 
-        var fee = calcResult.ProducerFees.Details.ToList()[0].BillingInstruction!;
+        var fee = calcResult.ProducerFees.Details.ToList()[0].FeeDetail.BillingInstruction!;
         Assert.AreEqual(null, fee.TonnageAmountPercentageLiabilityDirection);
     }
 
@@ -949,14 +1000,14 @@ public class BillingInstructionsProducerTests
 
         BillingInstructionsProducer.SetValues(calcResult.ProducerFees, [defaultInvoicedProducer], otherCost);
 
-        var fee = calcResult.ProducerFees.Details.ToList()[0].BillingInstruction!;
+        var fee = calcResult.ProducerFees.Details.ToList()[0].FeeDetail.BillingInstruction!;
         Assert.AreEqual(null, fee.TonnageAmountPercentageLiabilityDirection);
     }
 
     [TestMethod]
     public void CalculateTonnagePercentageThresholdBreached_Level1_ReturnsPositive()
     {
-        calcResult.ProducerFees.Details.First().TonnageChangeAdvice = "CHANGE";
+        calcResult.ProducerFees.Details.First().FeeDetail.TonnageChangeAdvice = "CHANGE";
 
         var otherCost = new CalcResultParameterOtherCost
         {
@@ -965,14 +1016,14 @@ public class BillingInstructionsProducerTests
 
         BillingInstructionsProducer.SetValues(calcResult.ProducerFees, [defaultInvoicedProducer], otherCost);
 
-        var fee = calcResult.ProducerFees.Details.ToList()[0].BillingInstruction!;
+        var fee = calcResult.ProducerFees.Details.ToList()[0].FeeDetail.BillingInstruction!;
         Assert.AreEqual(LiabilityDirection.Positive, fee.TonnageAmountPercentageLiabilityDirection);
     }
 
     [TestMethod]
     public void CalculateTonnagePercentageThresholdBreached_Level1_ReturnsNegative()
     {
-        calcResult.ProducerFees.Details.First().TonnageChangeAdvice = "CHANGE";
+        calcResult.ProducerFees.Details.First().FeeDetail.TonnageChangeAdvice = "CHANGE";
 
         var otherCost = new CalcResultParameterOtherCost
         {
@@ -982,7 +1033,7 @@ public class BillingInstructionsProducerTests
 
         BillingInstructionsProducer.SetValues(calcResult.ProducerFees, [defaultInvoicedProducer], otherCost);
 
-        var fee = calcResult.ProducerFees.Details.ToList()[0].BillingInstruction!;
+        var fee = calcResult.ProducerFees.Details.ToList()[0].FeeDetail.BillingInstruction!;
         Assert.AreEqual(LiabilityDirection.Negative, fee.TonnageAmountPercentageLiabilityDirection);
     }
 
@@ -991,18 +1042,18 @@ public class BillingInstructionsProducerTests
     {
         BillingInstructionsProducer.SetValues(calcResult.ProducerFees, [defaultInvoicedProducer], new CalcResultParameterOtherCost());
 
-        var fee = calcResult.ProducerFees.Details.ToList()[0].BillingInstruction!;
+        var fee = calcResult.ProducerFees.Details.ToList()[0].FeeDetail.BillingInstruction!;
         Assert.AreEqual(null, fee.TonnageAmountPercentageLiabilityDirection);
     }
 
     [TestMethod]
     public void CalculateSuggestedBillingInstruction_NotLevel1_ReturnsHypen()
     {
-        calcResult.ProducerFees.Details.First().Level = "2";
+        calcResult.ProducerFees.Details.First().FeeDetail.Level = "2";
 
         BillingInstructionsProducer.SetValues(calcResult.ProducerFees, [defaultInvoicedProducer], new CalcResultParameterOtherCost());
 
-        var fee = calcResult.ProducerFees.Details.ToList()[0].BillingInstruction!;
+        var fee = calcResult.ProducerFees.Details.ToList()[0].FeeDetail.BillingInstruction!;
         Assert.AreEqual(CommonConstants.Hyphen, fee.SuggestedBillingInstruction);
     }
 
@@ -1019,7 +1070,7 @@ public class BillingInstructionsProducerTests
 
         BillingInstructionsProducer.SetValues(calcResult.ProducerFees, [invoicedProducer], otherCost);
 
-        var fee = calcResult.ProducerFees.Details.ToList()[0].BillingInstruction!;
+        var fee = calcResult.ProducerFees.Details.ToList()[0].FeeDetail.BillingInstruction!;
         Assert.AreEqual(BillingConstants.Suggestion.Delta, fee.SuggestedBillingInstruction);
     }
 
@@ -1036,7 +1087,7 @@ public class BillingInstructionsProducerTests
 
         BillingInstructionsProducer.SetValues(calcResult.ProducerFees, [invoicedProducer], otherCost);
 
-        var fee = calcResult.ProducerFees.Details.ToList()[0].BillingInstruction!;
+        var fee = calcResult.ProducerFees.Details.ToList()[0].FeeDetail.BillingInstruction!;
         Assert.AreEqual(BillingConstants.Suggestion.Rebill, fee.SuggestedBillingInstruction);
     }
 
@@ -1047,18 +1098,18 @@ public class BillingInstructionsProducerTests
 
         BillingInstructionsProducer.SetValues(calcResult.ProducerFees, [invoicedProducer], new CalcResultParameterOtherCost());
 
-        var fee = calcResult.ProducerFees.Details.ToList()[0].BillingInstruction!;
+        var fee = calcResult.ProducerFees.Details.ToList()[0].FeeDetail.BillingInstruction!;
         Assert.AreEqual(CommonConstants.Hyphen, fee.SuggestedBillingInstruction);
     }
 
     [TestMethod]
     public void CalculateGetSuggestedInvoiceAmount_NotLevel1_ReturnsHypen()
     {
-        calcResult.ProducerFees.Details.First().Level = "2";
+        calcResult.ProducerFees.Details.First().FeeDetail.Level = "2";
 
         BillingInstructionsProducer.SetValues(calcResult.ProducerFees, [defaultInvoicedProducer], new CalcResultParameterOtherCost());
 
-        var fee = calcResult.ProducerFees.Details.ToList()[0].BillingInstruction!;
+        var fee = calcResult.ProducerFees.Details.ToList()[0].FeeDetail.BillingInstruction!;
         Assert.IsNull(fee.SuggestedInvoiceAmount);
     }
 
@@ -1075,7 +1126,7 @@ public class BillingInstructionsProducerTests
 
         BillingInstructionsProducer.SetValues(calcResult.ProducerFees, [invoicedProducer], otherCost);
 
-        var fee = calcResult.ProducerFees.Details.ToList()[0].BillingInstruction!;
+        var fee = calcResult.ProducerFees.Details.ToList()[0].FeeDetail.BillingInstruction!;
         Assert.AreEqual(fee.LiabilityDifference, fee.SuggestedInvoiceAmount);
     }
 
@@ -1092,7 +1143,7 @@ public class BillingInstructionsProducerTests
 
         BillingInstructionsProducer.SetValues(calcResult.ProducerFees, [invoicedProducer], otherCost);
 
-        var fee = calcResult.ProducerFees.Details.ToList()[0].BillingInstruction!;
+        var fee = calcResult.ProducerFees.Details.ToList()[0].FeeDetail.BillingInstruction!;
         Assert.AreEqual(10491.17m, MathUtils.RoundAwayFromZero(fee.SuggestedInvoiceAmount ?? 0m, 2));
     }
 
@@ -1103,7 +1154,7 @@ public class BillingInstructionsProducerTests
 
         BillingInstructionsProducer.SetValues(calcResult.ProducerFees, [invoicedProducer], new CalcResultParameterOtherCost());
 
-        var fee = calcResult.ProducerFees.Details.ToList()[0].BillingInstruction!;
+        var fee = calcResult.ProducerFees.Details.ToList()[0].FeeDetail.BillingInstruction!;
         Assert.IsNull(fee.SuggestedInvoiceAmount);
     }
 }

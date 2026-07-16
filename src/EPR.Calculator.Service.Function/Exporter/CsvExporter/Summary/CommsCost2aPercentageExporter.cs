@@ -15,8 +15,8 @@ public class CommsCost2aPercentageExporter : IProducerFeesPartExporter
         ];
     }
 
-    public void AppendRow(StringBuilder csvContent, ProducerFeeDetail producer, bool applyModulation, bool isOverallTotal)
+    public void AppendRow(StringBuilder csvContent, ProducerFeeExportRow producer, bool applyModulation, bool isOverallTotal)
     {
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.ReportedTonnagePercentage, DecimalPlaces.Eight, null, false, true));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.FeeDetail.ReportedTonnagePercentage, DecimalPlaces.Eight, null, false, true));
     }
 }

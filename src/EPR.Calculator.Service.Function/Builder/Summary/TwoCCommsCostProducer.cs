@@ -17,7 +17,7 @@ public static class TwoCCommsCostProducer
         };
     }
 
-    public static void UpdateTwoCRows(CalcResult calcResult, ProducerFeeDetail result)
+    public static void UpdateTwoCRows(CalcResult calcResult, FeeDetail result)
     {
         var commsCost = calcResult.CalcResultCommsCostReportDetail.CommsCostByCountry;
 

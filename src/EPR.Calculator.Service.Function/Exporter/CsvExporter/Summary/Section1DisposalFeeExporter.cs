@@ -31,17 +31,17 @@ public class Section1DisposalFeeExporter : IProducerFeesPartExporter
         csvContent.Append(',', count - 1);
     }
 
-    public void AppendRow(StringBuilder csvContent, ProducerFeeDetail producer, bool applyModulation, bool isOverallTotal)
+    public void AppendRow(StringBuilder csvContent, ProducerFeeExportRow producer, bool applyModulation, bool isOverallTotal)
     {
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.LADisposalCostsSection1.FeeWithoutBadDebt             , DecimalPlaces.Two, null, isCurrency: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.LADisposalCostsSection1.BadDebt                       , DecimalPlaces.Two, null, isCurrency: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.LADisposalCostsSection1.ByCountry.Total          , DecimalPlaces.Two, null, isCurrency: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.LADisposalCostsSection1.ByCountry.England        , DecimalPlaces.Two, null, isCurrency: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.LADisposalCostsSection1.ByCountry.Wales          , DecimalPlaces.Two, null, isCurrency: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.LADisposalCostsSection1.ByCountry.Scotland       , DecimalPlaces.Two, null, isCurrency: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.LADisposalCostsSection1.ByCountry.NorthernIreland, DecimalPlaces.Two, null, isCurrency: true));
-        AppendCsvValue(csvContent, producer.TonnageChangeCount, isOverallTotal);
-        AppendCsvValue(csvContent, producer.TonnageChangeAdvice, isOverallTotal);
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.FeeDetail.LADisposalCostsSection1.FeeWithoutBadDebt             , DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.FeeDetail.LADisposalCostsSection1.BadDebt                       , DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.FeeDetail.LADisposalCostsSection1.ByCountry.Total          , DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.FeeDetail.LADisposalCostsSection1.ByCountry.England        , DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.FeeDetail.LADisposalCostsSection1.ByCountry.Wales          , DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.FeeDetail.LADisposalCostsSection1.ByCountry.Scotland       , DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.FeeDetail.LADisposalCostsSection1.ByCountry.NorthernIreland, DecimalPlaces.Two, null, isCurrency: true));
+        AppendCsvValue(csvContent, producer.FeeDetail.TonnageChangeCount, isOverallTotal);
+        AppendCsvValue(csvContent, producer.FeeDetail.TonnageChangeAdvice, isOverallTotal);
     }
 
     private static void AppendCsvValue(

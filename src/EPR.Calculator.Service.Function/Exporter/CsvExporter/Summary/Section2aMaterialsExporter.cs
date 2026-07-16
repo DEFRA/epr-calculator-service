@@ -64,11 +64,11 @@ public class   Section2aMaterialsExporter : IProducerFeesPartExporter
         }
     }
 
-    public void AppendRow(StringBuilder csvContent, ProducerFeeDetail producer, bool applyModulation, bool isOverallTotal)
+    public void AppendRow(StringBuilder csvContent, ProducerFeeExportRow producer, bool applyModulation, bool isOverallTotal)
     {
-        if (producer.FeesByMaterial == null) { return; }
+        if (producer.FeeDetail.FeesByMaterial == null) { return; }
 
-        foreach (var disposalFee in producer.CommsFeesByMaterial!)
+        foreach (var disposalFee in producer.FeeDetail.CommsFeesByMaterial!)
         {
             var commCost = disposalFee.Value;
             csvContent.Append(CsvSanitiser.SanitiseData(commCost.HhTonnage, DecimalPlaces.Three, DecimalFormats.F3));

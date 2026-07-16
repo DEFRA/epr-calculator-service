@@ -28,7 +28,7 @@ public class CalculationResultsProducerCalculationResultsFeeForLADisposalCosts1
     [JsonPropertyName("northernIrelandTotalForLADisposalCostsWithBadDebtProvision")]
     public required string NorthernIrelandTotalForLADisposalCostsWithBadDebtProvision { get; set; }
 
-    public static CalculationResultsProducerCalculationResultsFeeForLADisposalCosts1 From(ProducerFeeDetail procucerFeesProducerDisposalFees)
+    public static CalculationResultsProducerCalculationResultsFeeForLADisposalCosts1 From(FeeDetail procucerFeesProducerDisposalFees)
     {
         var costs = procucerFeesProducerDisposalFees.LADisposalCostsSection1;
         return new CalculationResultsProducerCalculationResultsFeeForLADisposalCosts1

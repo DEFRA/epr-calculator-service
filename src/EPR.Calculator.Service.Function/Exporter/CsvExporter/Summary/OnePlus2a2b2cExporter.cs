@@ -30,9 +30,9 @@ public class OnePlus2a2b2cExporter : IProducerFeesPartExporter
         csvContent.Append(',', count - 1);
     }
 
-    public void AppendRow(StringBuilder csvContent, ProducerFeeDetail producer, bool applyModulation, bool isOverallTotal)
+    public void AppendRow(StringBuilder csvContent, ProducerFeeExportRow producer, bool applyModulation, bool isOverallTotal)
     {
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.TotalOnePlus2A2B2CWithBadDebt(), DecimalPlaces.Two, null, isCurrency: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.TotalOnePlus2A2B2CWithBadDebtPercentage, DecimalPlaces.Eight, DecimalFormats.F8, isCurrency: false, isPercentage: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.FeeDetail.TotalOnePlus2A2B2CWithBadDebt(), DecimalPlaces.Two, null, isCurrency: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.FeeDetail.TotalOnePlus2A2B2CWithBadDebtPercentage, DecimalPlaces.Eight, DecimalFormats.F8, isCurrency: false, isPercentage: true));
     }
 }

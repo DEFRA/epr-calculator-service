@@ -141,9 +141,9 @@ public class Section1MaterialsExporter : IProducerFeesPartExporter
         }
     }
 
-    public void AppendRow(StringBuilder csvContent, ProducerFeeDetail producer, bool applyModulation, bool isOverallTotal)
+    public void AppendRow(StringBuilder csvContent, ProducerFeeExportRow producer, bool applyModulation, bool isOverallTotal)
     {
-        foreach (var (key, disposalFee) in producer.DisposalFeesByMaterial)
+        foreach (var (key, disposalFee) in producer.FeeDetail.DisposalFeesByMaterial)
         {
             AppendProducerDisposalFeesByMaterial(csvContent, producer, key, disposalFee, applyModulation, isOverallTotal);
         }
@@ -163,7 +163,7 @@ public class Section1MaterialsExporter : IProducerFeesPartExporter
         Justification = "Temporaraly suppress - will refactor later.")]
     private void AppendProducerDisposalFeesByMaterial(
         StringBuilder csvContent,
-        ProducerFeeDetail producer,
+        ProducerFeeExportRow producer,
         string key,
         DisposalFee disposalFee,
         bool applyModulation,

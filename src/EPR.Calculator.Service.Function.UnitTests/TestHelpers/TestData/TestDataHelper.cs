@@ -275,88 +275,90 @@ public static partial class TestDataHelper
         {
             new()
             {
-                ProducerId = 1,
-                SubsidiaryId = string.Empty,
-                ProducerName = "Allied Packaging",
-                Level = "1",
-                LADisposalCostsSection1 = new FeeWithBadDebt
+                FeeDetail = new FeeDetail
                 {
-                    FeeWithoutBadDebt = 4423.39438m,
-                    BadDebt           = 265.4036628m,
-                    ByCountry    = new ByCountryCost { England = 2534.2359097426884m, Wales = 571.2417008090152m, Scotland = 1137.8673076088023m, NorthernIreland = 445.4531246394942m }
-                },
-                CommsCostsSection2a = new FeeWithBadDebt
-                {
-                    FeeWithoutBadDebt = 1290.778m,
-                    BadDebt           = 77.44668m,
-                    ByCountry    = new ByCountryCost { England = 718.2251815154783m, Wales = 181.2690740598454m, Scotland = 332.8499847265775m, NorthernIreland = 135.88043969809883m }
-                },
-                CommsCostsSection2c = new FeeWithBadDebt
-                {
-                    FeeWithoutBadDebt = 1339.100071422903m,
-                    BadDebt           = 80.34600428537418m,
-                    ByCountry    = new ByCountryCost { England = 607.4748035870169m, Wales = 300.7301007856519m, Scotland = 360.87612094278234m, NorthernIreland = 150.36505039282596m }
-                },
-                ReportedTonnagePercentage = 5.6741528450123m,
-                TotalOnePlus2A2B2CWithBadDebtPercentage = 4.7341913352015945m,
-                SaOperatingCostsSection3 = new FeeWithBadDebt
-                {
-                    FeeWithoutBadDebt = 3077.2243678810364m,
-                    BadDebt           = 184.6334620728622m,
-                    ByCountry    = new ByCountryCost { England = 1712.2541832180282m, Wales = 432.1468228710047m, Scotland = 793.5168432560496m, NorthernIreland = 323.93998060881614m }
-                },
-                LaDataPrepSection4 = new FeeWithBadDebt
-                {
-                    FeeWithoutBadDebt = 1727.9798373485821m,
-                    BadDebt           = 103.67879024091492m,
-                    ByCountry    = new ByCountryCost { England = 802.9188504501905m, Wales = 351.2769970719583m, Scotland = 451.6418533782321m, NorthernIreland = 225.82092668911605m }
-                },
-                SaSetupCostsSection5 = new FeeWithBadDebt
-                {
-                    FeeWithoutBadDebt = 2970.7050628390007m,
-                    BadDebt           = 178.24230377034004m,
-                    ByCountry    = new ByCountryCost { England = 1652.983846106635m, Wales = 417.1878943870084m, Scotland = 766.0489525279556m, NorthernIreland = 312.72667358774174m }
-                },
-                TotalBillBreakdown = new FeeWithBadDebt
-                {
-                    FeeWithoutBadDebt = 9897.32808192842m,
-                    BadDebt           = 593.8396849157051m,
-                    ByCountry    = new ByCountryCost { England = 5442.448434925617m, Wales = 1452.6428880194774m, Scotland = 2564.98356493499m, NorthernIreland = 1031.0928789640386m }
-                },
-                BillingInstruction = new BillingInstruction
-                {
-                    CurrentYearInvoiceTotalToDate = 1250.89m,
-                    TonnageChangeSinceLastInvoice = "Tonnage Changed",
-                    LiabilityDifference = 580.73m,
-                    MaterialityLiabilityDirection = null,
-                    TonnageAmountLiabilityDirection = null,
-                    PercentageLiabilityDifference = 123.45m,
-                    MaterialityPercentageLiabilityDirection = null,
-                    TonnageAmountPercentageLiabilityDirection = null,
-                    SuggestedBillingInstruction = string.Empty,
-                    SuggestedInvoiceAmount = 4039m
-                },
-                CommsCostsSection2b = new FeeWithBadDebt
-                {
-                    FeeWithoutBadDebt = 2844.0556305055156m,
-                    BadDebt           = 170.64333783033092m,
-                    ByCountry    = new ByCountryCost { England = 1582.5125400804336m, Wales = 399.4020123649648m, Scotland = 733.3901516568284m, NorthernIreland = 299.39426423361965m }
-                },
-                FeesByMaterial = GetProducerFeesByMaterial(applyModulation),
-                TonnageChangeCount = "0",
-                TonnageChangeAdvice = ""
+                    ProducerId = 1,
+                    SubsidiaryId = string.Empty,
+                    Level = "1",
+                    ProducerName = "Allied Packaging",
+                    LADisposalCostsSection1 = new FeeWithBadDebt
+                    {
+                        FeeWithoutBadDebt = 4423.39438m,
+                        BadDebt           = 265.4036628m,
+                        ByCountry    = new ByCountryCost { England = 2534.2359097426884m, Wales = 571.2417008090152m, Scotland = 1137.8673076088023m, NorthernIreland = 445.4531246394942m }
+                    },
+                    CommsCostsSection2a = new FeeWithBadDebt
+                    {
+                        FeeWithoutBadDebt = 1290.778m,
+                        BadDebt           = 77.44668m,
+                        ByCountry    = new ByCountryCost { England = 718.2251815154783m, Wales = 181.2690740598454m, Scotland = 332.8499847265775m, NorthernIreland = 135.88043969809883m }
+                    },
+                    CommsCostsSection2c = new FeeWithBadDebt
+                    {
+                        FeeWithoutBadDebt = 1339.100071422903m,
+                        BadDebt           = 80.34600428537418m,
+                        ByCountry    = new ByCountryCost { England = 607.4748035870169m, Wales = 300.7301007856519m, Scotland = 360.87612094278234m, NorthernIreland = 150.36505039282596m }
+                    },
+                    ReportedTonnagePercentage = 5.6741528450123m,
+                    TotalOnePlus2A2B2CWithBadDebtPercentage = 4.7341913352015945m,
+                    SaOperatingCostsSection3 = new FeeWithBadDebt
+                    {
+                        FeeWithoutBadDebt = 3077.2243678810364m,
+                        BadDebt           = 184.6334620728622m,
+                        ByCountry    = new ByCountryCost { England = 1712.2541832180282m, Wales = 432.1468228710047m, Scotland = 793.5168432560496m, NorthernIreland = 323.93998060881614m }
+                    },
+                    LaDataPrepSection4 = new FeeWithBadDebt
+                    {
+                        FeeWithoutBadDebt = 1727.9798373485821m,
+                        BadDebt           = 103.67879024091492m,
+                        ByCountry    = new ByCountryCost { England = 802.9188504501905m, Wales = 351.2769970719583m, Scotland = 451.6418533782321m, NorthernIreland = 225.82092668911605m }
+                    },
+                    SaSetupCostsSection5 = new FeeWithBadDebt
+                    {
+                        FeeWithoutBadDebt = 2970.7050628390007m,
+                        BadDebt           = 178.24230377034004m,
+                        ByCountry    = new ByCountryCost { England = 1652.983846106635m, Wales = 417.1878943870084m, Scotland = 766.0489525279556m, NorthernIreland = 312.72667358774174m }
+                    },
+                    TotalBillBreakdown = new FeeWithBadDebt
+                    {
+                        FeeWithoutBadDebt = 9897.32808192842m,
+                        BadDebt           = 593.8396849157051m,
+                        ByCountry    = new ByCountryCost { England = 5442.448434925617m, Wales = 1452.6428880194774m, Scotland = 2564.98356493499m, NorthernIreland = 1031.0928789640386m }
+                    },
+                    BillingInstruction = new BillingInstruction
+                    {
+                        CurrentYearInvoiceTotalToDate = 1250.89m,
+                        TonnageChangeSinceLastInvoice = "Tonnage Changed",
+                        LiabilityDifference = 580.73m,
+                        MaterialityLiabilityDirection = null,
+                        TonnageAmountLiabilityDirection = null,
+                        PercentageLiabilityDifference = 123.45m,
+                        MaterialityPercentageLiabilityDirection = null,
+                        TonnageAmountPercentageLiabilityDirection = null,
+                        SuggestedBillingInstruction = string.Empty,
+                        SuggestedInvoiceAmount = 4039m
+                    },
+                    CommsCostsSection2b = new FeeWithBadDebt
+                    {
+                        FeeWithoutBadDebt = 2844.0556305055156m,
+                        BadDebt           = 170.64333783033092m,
+                        ByCountry    = new ByCountryCost { England = 1582.5125400804336m, Wales = 399.4020123649648m, Scotland = 733.3901516568284m, NorthernIreland = 299.39426423361965m }
+                    },
+                    FeesByMaterial = GetProducerFeesByMaterial(applyModulation),
+                    TonnageChangeCount = "0",
+                    TonnageChangeAdvice = ""
+                }
             }
         };
     }
 
-    public static ProducerFeeDetail GetOverallTotalRow(bool applyModulation = false)
+    public static FeeDetail GetOverallTotalRow(bool applyModulation = false)
     {
-        return new ProducerFeeDetail
+        return new FeeDetail
         {
                 ProducerId = 0,
                 SubsidiaryId = string.Empty,
                 ProducerName = string.Empty,
-                Level = string.Empty,
                 LADisposalCostsSection1 = new FeeWithBadDebt
                 {
                     FeeWithoutBadDebt = 4423.39438m,
@@ -432,76 +434,79 @@ public static partial class TestDataHelper
         {
             new()
             {
-                ProducerId = 1,
-                SubsidiaryId = string.Empty,
-                ProducerName = "Allied Packaging",
-                Level = "2",
-                LADisposalCostsSection1 = new FeeWithBadDebt
+                FeeDetail = new FeeDetail
                 {
-                    FeeWithoutBadDebt = 4423.39438m,
-                    BadDebt           = 265.4036628m,
-                    ByCountry    = new ByCountryCost { England = 2534.2359097426884m, Wales = 571.2417008090152m, Scotland = 1137.8673076088023m, NorthernIreland = 445.4531246394942m }
-                },
-                CommsCostsSection2a = new FeeWithBadDebt
-                {
-                    FeeWithoutBadDebt = 1290.778m,
-                    BadDebt           = 77.44668m,
-                    ByCountry    = new ByCountryCost { England = 718.2251815154783m, Wales = 181.2690740598454m, Scotland = 332.8499847265775m, NorthernIreland = 135.88043969809883m }
-                },
-                CommsCostsSection2c = new FeeWithBadDebt
-                {
-                    FeeWithoutBadDebt = 1339.100071422903m,
-                    BadDebt           = 80.34600428537418m,
-                    ByCountry    = new ByCountryCost { England = 607.4748035870169m, Wales = 300.7301007856519m, Scotland = 360.87612094278234m, NorthernIreland = 150.36505039282596m }
-                },
-                ReportedTonnagePercentage = 5.6741528450123m,
-                TotalOnePlus2A2B2CWithBadDebtPercentage = 4.7341913352015945m,
-                SaOperatingCostsSection3 = new FeeWithBadDebt
-                {
-                    FeeWithoutBadDebt = 3077.2243678810364m,
-                    BadDebt           = 184.6334620728622m,
-                    ByCountry    = new ByCountryCost { England = 1712.2541832180282m, Wales = 432.1468228710047m, Scotland = 793.5168432560496m, NorthernIreland = 323.93998060881614m }
-                },
-                LaDataPrepSection4 = new FeeWithBadDebt
-                {
-                    FeeWithoutBadDebt = 1727.9798373485821m,
-                    BadDebt           = 103.67879024091492m,
-                    ByCountry    = new ByCountryCost { England = 802.9188504501905m, Wales = 351.2769970719583m, Scotland = 451.6418533782321m, NorthernIreland = 225.82092668911605m }
-                },
-                SaSetupCostsSection5 = new FeeWithBadDebt
-                {
-                    FeeWithoutBadDebt = 2970.7050628390007m,
-                    BadDebt           = 178.24230377034004m,
-                    ByCountry    = new ByCountryCost { England = 1652.983846106635m, Wales = 417.1878943870084m, Scotland = 766.0489525279556m, NorthernIreland = 312.72667358774174m }
-                },
-                TotalBillBreakdown = new FeeWithBadDebt
-                {
-                    FeeWithoutBadDebt = 9897.32808192842m,
-                    BadDebt           = 593.8396849157051m,
-                    ByCountry    = new ByCountryCost { England = 5442.448434925617m, Wales = 1452.6428880194774m, Scotland = 2564.98356493499m, NorthernIreland = 1031.0928789640386m }
-                },
-                BillingInstruction = new BillingInstruction
-                {
-                    CurrentYearInvoiceTotalToDate = 1250.89m,
-                    TonnageChangeSinceLastInvoice = string.Empty,
-                    LiabilityDifference = 580.73m,
-                    MaterialityLiabilityDirection = null,
-                    TonnageAmountLiabilityDirection = null,
-                    PercentageLiabilityDifference = null,
-                    MaterialityPercentageLiabilityDirection = null,
-                    TonnageAmountPercentageLiabilityDirection = null,
-                    SuggestedBillingInstruction = string.Empty,
-                    SuggestedInvoiceAmount = 4039m
-                },
-                CommsCostsSection2b = new FeeWithBadDebt
-                {
-                    FeeWithoutBadDebt = 2844.0556305055156m,
-                    BadDebt           = 170.64333783033092m,
-                    ByCountry    = new ByCountryCost { England = 1582.5125400804336m, Wales = 399.4020123649648m, Scotland = 733.3901516568284m, NorthernIreland = 299.39426423361965m }
-                },
-                FeesByMaterial = GetProducerFeesByMaterial(applyModulation),
-                TonnageChangeCount = null,
-                TonnageChangeAdvice = null
+                    ProducerId = 1,
+                    SubsidiaryId = string.Empty,
+                    Level = "2",
+                    ProducerName = "Allied Packaging",
+                    LADisposalCostsSection1 = new FeeWithBadDebt
+                    {
+                        FeeWithoutBadDebt = 4423.39438m,
+                        BadDebt           = 265.4036628m,
+                        ByCountry    = new ByCountryCost { England = 2534.2359097426884m, Wales = 571.2417008090152m, Scotland = 1137.8673076088023m, NorthernIreland = 445.4531246394942m }
+                    },
+                    CommsCostsSection2a = new FeeWithBadDebt
+                    {
+                        FeeWithoutBadDebt = 1290.778m,
+                        BadDebt           = 77.44668m,
+                        ByCountry    = new ByCountryCost { England = 718.2251815154783m, Wales = 181.2690740598454m, Scotland = 332.8499847265775m, NorthernIreland = 135.88043969809883m }
+                    },
+                    CommsCostsSection2c = new FeeWithBadDebt
+                    {
+                        FeeWithoutBadDebt = 1339.100071422903m,
+                        BadDebt           = 80.34600428537418m,
+                        ByCountry    = new ByCountryCost { England = 607.4748035870169m, Wales = 300.7301007856519m, Scotland = 360.87612094278234m, NorthernIreland = 150.36505039282596m }
+                    },
+                    ReportedTonnagePercentage = 5.6741528450123m,
+                    TotalOnePlus2A2B2CWithBadDebtPercentage = 4.7341913352015945m,
+                    SaOperatingCostsSection3 = new FeeWithBadDebt
+                    {
+                        FeeWithoutBadDebt = 3077.2243678810364m,
+                        BadDebt           = 184.6334620728622m,
+                        ByCountry    = new ByCountryCost { England = 1712.2541832180282m, Wales = 432.1468228710047m, Scotland = 793.5168432560496m, NorthernIreland = 323.93998060881614m }
+                    },
+                    LaDataPrepSection4 = new FeeWithBadDebt
+                    {
+                        FeeWithoutBadDebt = 1727.9798373485821m,
+                        BadDebt           = 103.67879024091492m,
+                        ByCountry    = new ByCountryCost { England = 802.9188504501905m, Wales = 351.2769970719583m, Scotland = 451.6418533782321m, NorthernIreland = 225.82092668911605m }
+                    },
+                    SaSetupCostsSection5 = new FeeWithBadDebt
+                    {
+                        FeeWithoutBadDebt = 2970.7050628390007m,
+                        BadDebt           = 178.24230377034004m,
+                        ByCountry    = new ByCountryCost { England = 1652.983846106635m, Wales = 417.1878943870084m, Scotland = 766.0489525279556m, NorthernIreland = 312.72667358774174m }
+                    },
+                    TotalBillBreakdown = new FeeWithBadDebt
+                    {
+                        FeeWithoutBadDebt = 9897.32808192842m,
+                        BadDebt           = 593.8396849157051m,
+                        ByCountry    = new ByCountryCost { England = 5442.448434925617m, Wales = 1452.6428880194774m, Scotland = 2564.98356493499m, NorthernIreland = 1031.0928789640386m }
+                    },
+                    BillingInstruction = new BillingInstruction
+                    {
+                        CurrentYearInvoiceTotalToDate = 1250.89m,
+                        TonnageChangeSinceLastInvoice = string.Empty,
+                        LiabilityDifference = 580.73m,
+                        MaterialityLiabilityDirection = null,
+                        TonnageAmountLiabilityDirection = null,
+                        PercentageLiabilityDifference = null,
+                        MaterialityPercentageLiabilityDirection = null,
+                        TonnageAmountPercentageLiabilityDirection = null,
+                        SuggestedBillingInstruction = string.Empty,
+                        SuggestedInvoiceAmount = 4039m
+                    },
+                    CommsCostsSection2b = new FeeWithBadDebt
+                    {
+                        FeeWithoutBadDebt = 2844.0556305055156m,
+                        BadDebt           = 170.64333783033092m,
+                        ByCountry    = new ByCountryCost { England = 1582.5125400804336m, Wales = 399.4020123649648m, Scotland = 733.3901516568284m, NorthernIreland = 299.39426423361965m }
+                    },
+                    FeesByMaterial = GetProducerFeesByMaterial(applyModulation),
+                    TonnageChangeCount = null,
+                    TonnageChangeAdvice = null
+                }
             }
         };
     }

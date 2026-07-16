@@ -28,7 +28,7 @@ public class FeeForSaSetUpCostsWithBadDebtProvision5
     [JsonPropertyName("northernIrelandTotalForSASetUpCostsWithBadDebtProvision")]
     public string? NorthernIrelandTotalForSASetUpCostsWithBadDebtProvision { get; set; }
 
-    public static FeeForSaSetUpCostsWithBadDebtProvision5 From(ProducerFeeDetail procucerFeesProducerDisposalFees)
+    public static FeeForSaSetUpCostsWithBadDebtProvision5 From(FeeDetail procucerFeesProducerDisposalFees)
     {
         var costs = procucerFeesProducerDisposalFees.SaSetupCostsSection5;
         return new FeeForSaSetUpCostsWithBadDebtProvision5

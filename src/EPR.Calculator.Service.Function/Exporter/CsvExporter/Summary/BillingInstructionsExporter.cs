@@ -35,9 +35,9 @@ public class BillingInstructionsExporter : IProducerFeesPartExporter
         csvContent.Append(',', count - 1);
     }
 
-    public void AppendRow(StringBuilder csvContent, ProducerFeeDetail producer, bool applyModulation, bool isOverallTotal)
+    public void AppendRow(StringBuilder csvContent, ProducerFeeExportRow producer, bool applyModulation, bool isOverallTotal)
     {
-        var s = producer.BillingInstruction!;
+        var s = producer.FeeDetail.BillingInstruction!;
         csvContent.Append(CsvSanitiser.SanitiseData(s.CurrentYearInvoiceTotalToDate, DecimalPlaces.Two, null, isCurrency: true, canBeEmpty: true));
         csvContent.Append(CsvSanitiser.SanitiseData(s.TonnageChangeSinceLastInvoice ?? CommonConstants.Hyphen));
         csvContent.Append(CsvSanitiser.SanitiseData(s.LiabilityDifference, DecimalPlaces.Two, null, isCurrency: true, canBeEmpty: true));

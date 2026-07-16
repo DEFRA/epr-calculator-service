@@ -34,7 +34,7 @@ public static class BillingInstructionsProducer
 
         foreach (var fee in result.Details)
         {
-            currentYearInvoicedByProducerId.TryGetValue(fee.ProducerId, out var currentYearInvoicedTotalTonnage);
+            currentYearInvoicedByProducerId.TryGetValue(fee.FeeDetail.ProducerId, out var currentYearInvoicedTotalTonnage);
 
             totalTonnage += currentYearInvoicedTotalTonnage.GetValueOrDefault();
 
@@ -54,7 +54,7 @@ public static class BillingInstructionsProducer
             if (suggestedInvoiceAmount.HasValue)
                 SuggestedInvoiceAmountTotal         += suggestedInvoiceAmount.Value;
 
-            fee.BillingInstruction = new BillingInstruction
+            fee.FeeDetail.BillingInstruction = new BillingInstruction
             {
                 CurrentYearInvoiceTotalToDate              = currentYearInvoiceTotalToDate,
                 TonnageChangeSinceLastInvoice              = tonnageChangeSinceLastInvoice,
@@ -86,7 +86,7 @@ public static class BillingInstructionsProducer
 
     private static decimal? GetCurrentYearInvoicedTotalToDate(ProducerFeeDetail fee, decimal? currentYearInvoicedTotalTonnage)
     {
-        if (fee.Level == "1")
+        if (fee.FeeDetail.Level == "1")
             return currentYearInvoicedTotalTonnage;
 
         return null;
@@ -94,19 +94,19 @@ public static class BillingInstructionsProducer
 
     private static string? GetTonnageChangeSinceLastInvoice(
         ProducerFeeDetail fee
-    ) => fee.TonnageChangeAdvice == "CHANGE" ? "Tonnage Changed" : null;
+    ) => fee.FeeDetail.TonnageChangeAdvice == "CHANGE" ? "Tonnage Changed" : null;
 
     private static decimal? CalculateLiabilityDifference(
         ProducerFeeDetail fee,
         decimal? currentInvoicedTotalToDate
     ) =>
-        (fee.Level != CommonConstants.LevelOne.ToString()) || (!currentInvoicedTotalToDate.HasValue)
+        (fee.FeeDetail.Level != CommonConstants.LevelOne.ToString()) || (!currentInvoicedTotalToDate.HasValue)
         ? null
-        : MathUtils.RoundAwayFromZero(fee.TotalBillBreakdown.ByCountry.Total, 2) - MathUtils.RoundAwayFromZero(currentInvoicedTotalToDate.Value, 2);
+        : MathUtils.RoundAwayFromZero(fee.FeeDetail.TotalBillBreakdown.ByCountry.Total, 2) - MathUtils.RoundAwayFromZero(currentInvoicedTotalToDate.Value, 2);
 
     private static LiabilityDirection? GetMaterialLiabilityDirection(ProducerFeeDetail fee, decimal? currentInvoicedTotalToDate, decimal? liabilityDifferenceCalculated, decimal param_MATT_AI, decimal param_MATT_AD)
     {
-        if (fee.Level != CommonConstants.LevelOne.ToString()) return null;
+        if (fee.FeeDetail.Level != CommonConstants.LevelOne.ToString()) return null;
         if (!currentInvoicedTotalToDate.HasValue) return null;
         if (!liabilityDifferenceCalculated.HasValue) return null;
 
@@ -118,9 +118,9 @@ public static class BillingInstructionsProducer
 
     private static LiabilityDirection? GetTonnageLiabilityDirection(ProducerFeeDetail fee, decimal? currentInvoicedTotalToDate, decimal? liabilityDifferenceCalculated, decimal param_TONT_AI, decimal param_TONT_AD)
     {
-        if (fee.Level != CommonConstants.LevelOne.ToString()) return null;
+        if (fee.FeeDetail.Level != CommonConstants.LevelOne.ToString()) return null;
         if (!currentInvoicedTotalToDate.HasValue) return null;
-        if (fee.TonnageChangeAdvice != "CHANGE") return null;
+        if (fee.FeeDetail.TonnageChangeAdvice != "CHANGE") return null;
         if (!liabilityDifferenceCalculated.HasValue) return null;
 
         if (liabilityDifferenceCalculated >= param_TONT_AI) return LiabilityDirection.Positive;
@@ -134,7 +134,7 @@ public static class BillingInstructionsProducer
         decimal? currentYearInvoiceTotalToDate,
         decimal? liabilityDifference
     ) =>
-        (fee.Level != CommonConstants.LevelOne.ToString()
+        (fee.FeeDetail.Level != CommonConstants.LevelOne.ToString()
         || !currentYearInvoiceTotalToDate.HasValue
         || !liabilityDifference.HasValue
         || currentYearInvoiceTotalToDate == 0m
@@ -144,7 +144,7 @@ public static class BillingInstructionsProducer
 
     private static LiabilityDirection? GetMaterialPercentageLiabilityDirection(ProducerFeeDetail fee, decimal? currentYearInvoiceTotalToDate, decimal? percentageLiabilityDifference, decimal param_MATT_PI, decimal param_MATT_PD)
     {
-        if (fee.Level != CommonConstants.LevelOne.ToString()) return null;
+        if (fee.FeeDetail.Level != CommonConstants.LevelOne.ToString()) return null;
         if (!currentYearInvoiceTotalToDate.HasValue) return null;
 
         if (percentageLiabilityDifference >= param_MATT_PI) return LiabilityDirection.Positive;
@@ -155,7 +155,7 @@ public static class BillingInstructionsProducer
 
     private static LiabilityDirection? GetTonnagePercentageLiabilityDirection(ProducerFeeDetail fee, decimal? currentYearInvoiceTotalToDate, string? tonnageChangeSinceLastInvoice, decimal? percentageLiabilityDifference, decimal param_TONT_PI, decimal param_TONT_PD)
     {
-        if (fee.Level != CommonConstants.LevelOne.ToString()) return null;
+        if (fee.FeeDetail.Level != CommonConstants.LevelOne.ToString()) return null;
 
         if (!currentYearInvoiceTotalToDate.HasValue) return null;
         if (tonnageChangeSinceLastInvoice != CommonConstants.TonnageChanged) return null;
@@ -168,7 +168,7 @@ public static class BillingInstructionsProducer
 
     private static string GetSuggestedBillingInstruction(ProducerFeeDetail fee, decimal? currentYearInvoiceTotalToDate, decimal? liabilityDifference, LiabilityDirection? materialThresholdBreached, LiabilityDirection? tonnageThresholdBreached, LiabilityDirection? materialPercentageThresholdBreached, LiabilityDirection? tonnagePercentageThresholdBreached)
     {
-        if (fee.Level != CommonConstants.LevelOne.ToString()) return CommonConstants.Hyphen;
+        if (fee.FeeDetail.Level != CommonConstants.LevelOne.ToString()) return CommonConstants.Hyphen;
 
         if (!currentYearInvoiceTotalToDate.HasValue) return CommonConstants.Initial;
 
@@ -185,10 +185,10 @@ public static class BillingInstructionsProducer
 
     private static decimal? GetSuggestedInvoiceAmount(ProducerFeeDetail fee, string suggestedBillingInstruction, decimal? liabilityDifference)
     {
-        if (fee.Level != CommonConstants.LevelOne.ToString()) return null;
+        if (fee.FeeDetail.Level != CommonConstants.LevelOne.ToString()) return null;
 
         if (suggestedBillingInstruction is BillingConstants.Suggestion.Initial or BillingConstants.Suggestion.Rebill)
-            return fee.TotalBillBreakdown?.ByCountry.Total;
+            return fee.FeeDetail.TotalBillBreakdown?.ByCountry.Total;
 
         if (suggestedBillingInstruction == BillingConstants.Suggestion.Delta) return liabilityDifference;
 

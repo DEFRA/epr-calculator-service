@@ -28,7 +28,7 @@ public class CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2B
     [JsonPropertyName("northernIrelandTotalWithBadDebtProvision")]
     public string? NorthernIrelandTotalWithBadDebtProvision { get; set; }
 
-    public static CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2B From(ProducerFeeDetail procucerFeesProducerDisposalFees)
+    public static CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2B From(FeeDetail procucerFeesProducerDisposalFees)
     {
         var costs = procucerFeesProducerDisposalFees.CommsCostsSection2b;
         return new CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2B

@@ -32,7 +32,7 @@ public class CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2A
     [JsonPropertyName("percentageOfProducerTonnageVsAllProducers")]
     public string? PercentageOfProducerTonnageVsAllProducers { get; set; }
 
-    public static CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2A From(ProducerFeeDetail procucerFeesProducerDisposalFees)
+    public static CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2A From(FeeDetail procucerFeesProducerDisposalFees)
     {
         var costs = procucerFeesProducerDisposalFees.CommsCostsSection2a;
         return new CalcResultSummaryFeeForCommsCostsWithBadDebtProvision2A

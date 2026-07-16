@@ -17,8 +17,8 @@ public class Section1MaterialsExporterTests
         const bool applyModulation = false;
         var producerFees = TestDataHelper.GetProducerFees();
         var producer = producerFees.Details.First();
-        producer.FeesByMaterial =
-            producer.FeesByMaterial
+        producer.FeeDetail.FeesByMaterial =
+            producer.FeeDetail.FeesByMaterial
                 .Where(kv => kv.Key == "AL")
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
         producerFees.Total!.FeesByMaterial =
@@ -95,8 +95,8 @@ public class Section1MaterialsExporterTests
         const bool applyModulation = false;
         var producerFees = TestDataHelper.GetProducerFees();
         var producer = producerFees.Details.First();
-        producer.FeesByMaterial =
-            producer.FeesByMaterial
+        producer.FeeDetail.FeesByMaterial =
+            producer.FeeDetail.FeesByMaterial
                 .Where(kv => kv.Key == "GL")
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
         producerFees.Total!.FeesByMaterial =
@@ -176,8 +176,8 @@ public class Section1MaterialsExporterTests
         const bool applyModulation = true;
         var producerFees = TestDataHelper.GetProducerFees(applyModulation);
         var producer = producerFees.Details.First();
-        producer.FeesByMaterial =
-            producer.FeesByMaterial
+        producer.FeeDetail.FeesByMaterial =
+            producer.FeeDetail.FeesByMaterial
                 .Where(kv => kv.Key == "AL")
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
         producerFees.Total!.FeesByMaterial =
@@ -298,8 +298,8 @@ public class Section1MaterialsExporterTests
         const bool applyModulation = true;
         var producerFees = TestDataHelper.GetProducerFees(applyModulation);
         var producer = producerFees.Details.First();
-        producer.FeesByMaterial =
-            producer.FeesByMaterial
+        producer.FeeDetail.FeesByMaterial =
+            producer.FeeDetail.FeesByMaterial
                 .Where(kv => kv.Key == "GL")
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
         producerFees.Total!.FeesByMaterial =
