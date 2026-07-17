@@ -60,7 +60,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 DefaultParameterSettingMasterId = 100,
                 ParameterUniqueReferenceId = "PARAM1",
-                ParameterValue = 123m
+                ParameterValue = "123"
             };
 
             var template = new DefaultParameterTemplateMaster
@@ -81,8 +81,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var result = await parameterService.GetDefaultParameters(runContext);
 
             // Assert
-            Assert.AreEqual(1, result.Count);
-            Assert.AreEqual(123m, result["PARAM1"]);
+            Assert.AreEqual(1    , result.Count);
+            Assert.AreEqual("123", result["PARAM1"]);
         }
     }
 }

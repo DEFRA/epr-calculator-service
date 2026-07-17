@@ -6,7 +6,7 @@ namespace EPR.Calculator.Service.Function.Services;
 
 public interface IParameterService
 {
-    public Task<IReadOnlyDictionary<string, decimal>> GetDefaultParameters(RunContext runContext);
+    public Task<IReadOnlyDictionary<string, string>> GetDefaultParameters(RunContext runContext);
 }
 
 public class ParameterService : IParameterService
@@ -15,7 +15,7 @@ public class ParameterService : IParameterService
 
     public ParameterService(IDbContextFactory<ApplicationDBContext> context) => dbContext = context.CreateDbContext();
 
-    public async Task<IReadOnlyDictionary<string, decimal>> GetDefaultParameters(RunContext runContext)
+    public async Task<IReadOnlyDictionary<string, string>> GetDefaultParameters(RunContext runContext)
     {
         return await (
             from run in dbContext.CalculatorRuns.AsNoTracking()

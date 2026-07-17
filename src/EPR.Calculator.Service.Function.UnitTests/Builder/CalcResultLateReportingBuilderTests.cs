@@ -54,12 +54,12 @@ public class CalcResultLateReportingBuilderTest : TestsFor<CalcResultLateReporti
 
         var defaultParameterSettingDetails = new List<DefaultParameterSettingDetail>
         {
-            new() { DefaultParameterSettingMasterId = 1, ParameterUniqueReferenceId = "1", ParameterValue = 100, DefaultParameterSettingMaster = defaultParameterSettings[0] },
-            new() { DefaultParameterSettingMasterId = 1, ParameterUniqueReferenceId = "2", ParameterValue = 200, DefaultParameterSettingMaster = defaultParameterSettings[0] },
-            new() { DefaultParameterSettingMasterId = 1, ParameterUniqueReferenceId = "3", ParameterValue = 300, DefaultParameterSettingMaster = defaultParameterSettings[0] },
-            new() { DefaultParameterSettingMasterId = 1, ParameterUniqueReferenceId = "4", ParameterValue = 400, DefaultParameterSettingMaster = defaultParameterSettings[0] },
-            new() { DefaultParameterSettingMasterId = 1, ParameterUniqueReferenceId = "5", ParameterValue = 500, DefaultParameterSettingMaster = defaultParameterSettings[0] },
-            new() { DefaultParameterSettingMasterId = 1, ParameterUniqueReferenceId = "6", ParameterValue = 600, DefaultParameterSettingMaster = defaultParameterSettings[0] }
+            new() { DefaultParameterSettingMasterId = 1, ParameterUniqueReferenceId = "1", ParameterValue = "100", DefaultParameterSettingMaster = defaultParameterSettings[0] },
+            new() { DefaultParameterSettingMasterId = 1, ParameterUniqueReferenceId = "2", ParameterValue = "200", DefaultParameterSettingMaster = defaultParameterSettings[0] },
+            new() { DefaultParameterSettingMasterId = 1, ParameterUniqueReferenceId = "3", ParameterValue = "300", DefaultParameterSettingMaster = defaultParameterSettings[0] },
+            new() { DefaultParameterSettingMasterId = 1, ParameterUniqueReferenceId = "4", ParameterValue = "400", DefaultParameterSettingMaster = defaultParameterSettings[0] },
+            new() { DefaultParameterSettingMasterId = 1, ParameterUniqueReferenceId = "5", ParameterValue = "500", DefaultParameterSettingMaster = defaultParameterSettings[0] },
+            new() { DefaultParameterSettingMasterId = 1, ParameterUniqueReferenceId = "6", ParameterValue = "600", DefaultParameterSettingMaster = defaultParameterSettings[0] }
         };
 
         dbContext.CalculatorRuns.AddRange(calculatorRuns);

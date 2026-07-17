@@ -18,7 +18,7 @@ public class CalcResultModulationBuilderTest
     private readonly MaterialDetail fc = materials.First(m => m.Code == "FC");
     private readonly MaterialDetail gl = materials.First(m => m.Code == "GL");
 
-    private readonly IReadOnlyDictionary<string, decimal> lateReportingTonnageDict;
+    private readonly IReadOnlyDictionary<string, string> lateReportingTonnageDict;
     private readonly MaterialDetail ot = materials.First(m => m.Code == "OT");
     private readonly MaterialDetail pc = materials.First(m => m.Code == "PC");
     private readonly MaterialDetail pl = materials.First(m => m.Code == "PL");
@@ -32,23 +32,21 @@ public class CalcResultModulationBuilderTest
         lateReportingTonnageDict = materials
             .SelectMany(m => new[]
             {
-                ($"LRET-{m.Code}-R", 1m),
-                ($"LRET-{m.Code}", 2m),
-                ($"LRET-{m.Code}-G", 3m)
+                ($"LRET-{m.Code}-R", "1"),
+                ($"LRET-{m.Code}"  , "2"),
+                ($"LRET-{m.Code}-G", "3")
             })
             .ToDictionary(t => t.Item1, t => t.Item2);
     }
 
-    private CalcResultLaDisposalCostDataDetail mkLaDisposalCost(decimal costPerTonnage)
-    {
-        return new CalcResultLaDisposalCostDataDetail
+    private static CalcResultLaDisposalCostDataDetail MkLaDisposalCost(decimal costPerTonnage) =>
+        new()
         {
             Cost = ByCountryCost.Empty with { England = 100 * costPerTonnage },
             HouseholdPackagingWasteTonnage = 100,
             PublicBinTonnage = 0,
             HouseholdDrinkContainersTonnage = 0
         };
-    }
 
     private SelfManagedConsumerWasteData mkSmcw(decimal red, decimal amber, decimal green)
     {
@@ -83,14 +81,14 @@ public class CalcResultModulationBuilderTest
         {
             ByMaterial = new Dictionary<string, CalcResultLaDisposalCostDataDetail>
             {
-                [al.Code] = mkLaDisposalCost(100),
-                [fc.Code] = mkLaDisposalCost(130),
-                [gl.Code] = mkLaDisposalCost(150),
-                [pc.Code] = mkLaDisposalCost(200),
-                [pl.Code] = mkLaDisposalCost(250),
-                [st.Code] = mkLaDisposalCost(175),
-                [wd.Code] = mkLaDisposalCost(150),
-                [ot.Code] = mkLaDisposalCost(400)
+                [al.Code] = MkLaDisposalCost(100),
+                [fc.Code] = MkLaDisposalCost(130),
+                [gl.Code] = MkLaDisposalCost(150),
+                [pc.Code] = MkLaDisposalCost(200),
+                [pl.Code] = MkLaDisposalCost(250),
+                [st.Code] = MkLaDisposalCost(175),
+                [wd.Code] = MkLaDisposalCost(150),
+                [ot.Code] = MkLaDisposalCost(400)
             }
         };
 
@@ -112,7 +110,7 @@ public class CalcResultModulationBuilderTest
         };
 
         var redFactor = 1.2m;
-        var defaultParameters = new Dictionary<string, decimal> { ["REDM-RF"] = redFactor }.Concat(lateReportingTonnageDict).ToDictionary(k => k.Key, v => v.Value);
+        var defaultParameters = new Dictionary<string, string> { ["REDM-RF"] = redFactor.ToString() }.Concat(lateReportingTonnageDict).ToDictionary(k => k.Key, v => v.Value);
         var modulationResults = await builder.ConstructAsync(defaultParameters, TestDataHelper.GetMaterialDetails(), laDisposalCostData, smcw);
         //Console.WriteLine($">> {JsonConvert.SerializeObject(modulationResults, Formatting.Indented)}");
 
@@ -145,14 +143,14 @@ public class CalcResultModulationBuilderTest
         {
             ByMaterial = new Dictionary<string, CalcResultLaDisposalCostDataDetail>
             {
-                [al.Code] = mkLaDisposalCost(0.1508m),
-                [fc.Code] = mkLaDisposalCost(0.0045m),
-                [gl.Code] = mkLaDisposalCost(0.4961m),
-                [pc.Code] = mkLaDisposalCost(0.5788m),
-                [pl.Code] = mkLaDisposalCost(0.0057m),
-                [st.Code] = mkLaDisposalCost(0.2118m),
-                [wd.Code] = mkLaDisposalCost(0.1134m),
-                [ot.Code] = mkLaDisposalCost(0.0039m)
+                [al.Code] = MkLaDisposalCost(0.1508m),
+                [fc.Code] = MkLaDisposalCost(0.0045m),
+                [gl.Code] = MkLaDisposalCost(0.4961m),
+                [pc.Code] = MkLaDisposalCost(0.5788m),
+                [pl.Code] = MkLaDisposalCost(0.0057m),
+                [st.Code] = MkLaDisposalCost(0.2118m),
+                [wd.Code] = MkLaDisposalCost(0.1134m),
+                [ot.Code] = MkLaDisposalCost(0.0039m)
             }
         };
 
@@ -174,7 +172,7 @@ public class CalcResultModulationBuilderTest
         };
 
         var redFactor = 1.2m;
-        var defaultParameters = new Dictionary<string, decimal> { ["REDM-RF"] = redFactor }.Concat(lateReportingTonnageDict).ToDictionary(k => k.Key, v => v.Value);
+        var defaultParameters = new Dictionary<string, string> { ["REDM-RF"] = redFactor.ToString() }.Concat(lateReportingTonnageDict).ToDictionary(k => k.Key, v => v.Value);
         var modulationResults = await builder.ConstructAsync(defaultParameters, TestDataHelper.GetMaterialDetails(), laDisposalCostData, smcw);
         //Console.WriteLine($">> {JsonConvert.SerializeObject(modulationResults, Formatting.Indented)}");
 
@@ -207,14 +205,14 @@ public class CalcResultModulationBuilderTest
         {
             ByMaterial = new Dictionary<string, CalcResultLaDisposalCostDataDetail>
             {
-                [al.Code] = mkLaDisposalCost(100),
-                [fc.Code] = mkLaDisposalCost(130),
-                [gl.Code] = mkLaDisposalCost(150),
-                [pc.Code] = mkLaDisposalCost(200),
-                [pl.Code] = mkLaDisposalCost(250),
-                [st.Code] = mkLaDisposalCost(175),
-                [wd.Code] = mkLaDisposalCost(150),
-                [ot.Code] = mkLaDisposalCost(400)
+                [al.Code] = MkLaDisposalCost(100),
+                [fc.Code] = MkLaDisposalCost(130),
+                [gl.Code] = MkLaDisposalCost(150),
+                [pc.Code] = MkLaDisposalCost(200),
+                [pl.Code] = MkLaDisposalCost(250),
+                [st.Code] = MkLaDisposalCost(175),
+                [wd.Code] = MkLaDisposalCost(150),
+                [ot.Code] = MkLaDisposalCost(400)
             }
         };
         var smcw = new SelfManagedConsumerWaste
@@ -235,7 +233,7 @@ public class CalcResultModulationBuilderTest
         };
 
         var redFactor = 1m;
-        var defaultParameters = new Dictionary<string, decimal> { ["REDM-RF"] = redFactor }.Concat(lateReportingTonnageDict).ToDictionary(k => k.Key, v => v.Value);
+        var defaultParameters = new Dictionary<string, string> { ["REDM-RF"] = redFactor.ToString() }.Concat(lateReportingTonnageDict).ToDictionary(k => k.Key, v => v.Value);
         var modulationResults = await builder.ConstructAsync(defaultParameters, materials, laDisposalCostData, smcw);
 
         Assert.AreEqual(1m, modulationResults.RedFactor);
@@ -258,14 +256,14 @@ public class CalcResultModulationBuilderTest
         {
             ByMaterial = new Dictionary<string, CalcResultLaDisposalCostDataDetail>
             {
-                [al.Code] = mkLaDisposalCost(100),
-                [fc.Code] = mkLaDisposalCost(130),
-                [gl.Code] = mkLaDisposalCost(150),
-                [pc.Code] = mkLaDisposalCost(200),
-                [pl.Code] = mkLaDisposalCost(250),
-                [st.Code] = mkLaDisposalCost(175),
-                [wd.Code] = mkLaDisposalCost(150),
-                [ot.Code] = mkLaDisposalCost(400)
+                [al.Code] = MkLaDisposalCost(100),
+                [fc.Code] = MkLaDisposalCost(130),
+                [gl.Code] = MkLaDisposalCost(150),
+                [pc.Code] = MkLaDisposalCost(200),
+                [pl.Code] = MkLaDisposalCost(250),
+                [st.Code] = MkLaDisposalCost(175),
+                [wd.Code] = MkLaDisposalCost(150),
+                [ot.Code] = MkLaDisposalCost(400)
             }
         };
         var smcw = new SelfManagedConsumerWaste
@@ -289,12 +287,12 @@ public class CalcResultModulationBuilderTest
         var lateReportingTonnageDict = materials
             .SelectMany(m => new[]
             {
-                ($"LRET-{m.Code}-R", 1m),
-                ($"LRET-{m.Code}", 2m),
-                ($"LRET-{m.Code}-G", 0m)
+                ($"LRET-{m.Code}-R", "1"),
+                ($"LRET-{m.Code}"  , "2"),
+                ($"LRET-{m.Code}-G", "0")
             })
             .ToDictionary(t => t.Item1, t => t.Item2);
-        var defaultParameters = new Dictionary<string, decimal> { ["REDM-RF"] = redFactor }.Concat(lateReportingTonnageDict).ToDictionary(k => k.Key, v => v.Value);
+        var defaultParameters = new Dictionary<string, string> { ["REDM-RF"] = redFactor.ToString() }.Concat(lateReportingTonnageDict).ToDictionary(k => k.Key, v => v.Value);
         var modulationResults = await builder.ConstructAsync(defaultParameters, materials, laDisposalCostData, smcw);
 
         Assert.AreEqual(redFactor, modulationResults.RedFactor);

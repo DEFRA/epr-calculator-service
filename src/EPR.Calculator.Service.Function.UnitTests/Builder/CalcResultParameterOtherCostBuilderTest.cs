@@ -111,7 +111,7 @@ public class CalcResultParameterOtherCostBuilderTest : TestsFor<CalcResultParame
         Assert.AreEqual(10, otherCost.TonnageChangeDecrease.Percentage);
     }
 
-    private static decimal GetValue(DefaultParameterTemplateMaster templateMaster)
+    private static string GetValue(DefaultParameterTemplateMaster templateMaster)
     {
         if (templateMaster.ParameterType == "Scheme setup costs" ||
             templateMaster.ParameterType == "Scheme administrator operating costs" ||
@@ -120,16 +120,16 @@ public class CalcResultParameterOtherCostBuilderTest : TestsFor<CalcResultParame
             switch (templateMaster.ParameterCategory)
             {
                 case "England":
-                    return 40M;
+                    return "40";
                 case "Northern Ireland":
-                    return 10M;
+                    return "10";
                 case "Scotland":
-                    return 20M;
+                    return "20";
                 case "Wales":
-                    return 30M;
+                    return "30";
             }
         }
 
-        return 10;
+        return "10";
     }
 }

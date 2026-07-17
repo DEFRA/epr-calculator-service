@@ -48,7 +48,7 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
 
         var calculatorRunResult = await PerformCalculatorRun(calculatorRunId, rundBy);
         {
-            var contents       = fakeBlobStorage.Get(calculatorRunResult.ExportResult.CsvMetadata.FileName);
+            var contents      = fakeBlobStorage.Get(calculatorRunResult.ExportResult.CsvMetadata.FileName);
             var actualLines   = string.Join(Environment.NewLine, contents.Split(Environment.NewLine, StringSplitOptions.None                                   )).Trim().Split(Environment.NewLine);
             var expectedLines = string.Join(Environment.NewLine, await File.ReadAllLinesAsync($"IntegrationTests/ExpectedData/{relativeYear}-results.csv")).Trim().Split(Environment.NewLine);
 
@@ -167,7 +167,7 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
             .ToListAsync();
 
         oldLapcapSettings.ForEach(x => { x.EffectiveTo = DateTime.UtcNow; }); // side effecting db update
-        
+
         var lapcap = new LapcapDataMaster
         {
             RelativeYear  = relativeYear,
@@ -251,7 +251,7 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
                     {
                         DefaultParameterSettingMasterId = masterId,
                         ParameterUniqueReferenceId      = paramRef!,
-                        ParameterValue                  = value
+                        ParameterValue                  = valueClean
                     }
                 ];
             }).ToImmutableList();

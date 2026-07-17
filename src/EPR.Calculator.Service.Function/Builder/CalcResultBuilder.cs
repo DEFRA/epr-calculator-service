@@ -71,17 +71,17 @@ public class CalcResultBuilder(
             },
             CalcResultParameterOtherCost = new CalcResultParameterOtherCost(),
             CalcResultPartialObligations = new CalcResultPartialObligations(){
-                PartialObligations = ImmutableList<CalcResultPartialObligation>.Empty,
+                PartialObligations = [],
             },
             CalcResultProjectedProducers = new CalcResultProjectedProducers(){
-                H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
-                H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty
+                H1ProjectedProducers = [],
+                H2ProjectedProducers = []
             },
             CalcResultScaledupProducers = new CalcResultScaledupProducers(){
-                ScaledupProducers = ImmutableList<CalcResultScaledupProducer>.Empty,
+                ScaledupProducers = [],
             },
             CalcResultCancelledProducers = new CalcResultCancelledProducersResponse(),
-            CalcResultRejectedProducers = new List<CalcResultRejectedProducer>()
+            CalcResultRejectedProducers = []
         };
 
         var materials = await materialService.GetMaterials();

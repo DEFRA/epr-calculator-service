@@ -50,9 +50,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
                         "Red + Red Medical Late Reporting Tonnage",
                         "Amber + Amber Medical Late Reporting Tonnage",
                         "Green + Green Medical Late Reporting Tonnage" },
-                new[] { "Aluminium","1.23","2.34","3.45","4.56" },
-                new[] { "Glass"    ,"1.34","2.45","3.56","4.67" },
-                new[] { "Total"    ,"2.57","4.79","7.01","9.23" },
+                new[] { "Aluminium","1.230","2.340","3.450","4.560" },
+                new[] { "Glass"    ,"1.340","2.450","3.560","4.670" },
+                new[] { "Total"    ,"2.570","4.790","7.010","9.230" },
                 new string[] { }
             };
 

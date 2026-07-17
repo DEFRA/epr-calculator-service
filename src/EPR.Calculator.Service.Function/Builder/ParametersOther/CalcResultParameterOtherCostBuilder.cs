@@ -3,7 +3,9 @@ using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.Utils;
 using Microsoft.EntityFrameworkCore;
+
 
 namespace EPR.Calculator.Service.Function.Builder.ParametersOther
 {
@@ -20,7 +22,6 @@ namespace EPR.Calculator.Service.Function.Builder.ParametersOther
         public const string SchemeAdminOperatingCost = "Scheme administrator operating costs";
         public const string LaPrepCharge = "Local authority data preparation costs";
         public const string SchemeSetupCost = "Scheme setup costs";
-        public const string BadDebtProvision = "Bad debt provision";
 
         public async Task<CalcResultParameterOtherCost> ConstructAsync(RunContext runContext)
         {
@@ -33,9 +34,9 @@ namespace EPR.Calculator.Service.Function.Builder.ParametersOther
                 where run.Id == runContext.RunId
                 select new DefaultParamResultsClass
                 {
-                    ParameterValue = defaultDetail.ParameterValue,
-                    ParameterCategory = defaultTemplate.ParameterCategory,
-                    ParameterType = defaultTemplate.ParameterType,
+                    ParameterValue           = defaultDetail.ParameterValue,
+                    ParameterCategory        = defaultTemplate.ParameterCategory,
+                    ParameterType            = defaultTemplate.ParameterType,
                     ParameterUniqueReference = defaultDetail.ParameterUniqueReferenceId
                 }
             ).ToListAsync();
@@ -59,30 +60,17 @@ namespace EPR.Calculator.Service.Function.Builder.ParametersOther
 
             var schemeSetupCharge = GetPrepCharge(schemeSetUpCharges);
 
-            var badDebtValue = results.Single(x => x.ParameterType == BadDebtProvision).ParameterValue;
-
             var materialityResults = results
                 .Where(x => x.ParameterType == "Materiality threshold")
                 .ToImmutableArray();
-
-            var amountIncrease = materialityResults.Single(x => x.ParameterCategory == "Amount Increase");
-            var amountDecrease = materialityResults.Single(x => x.ParameterCategory == "Amount Decrease");
-            var percentageDecrease = materialityResults.Single(x => x.ParameterCategory == "Percent Decrease");
-            var percentageIncrease = materialityResults.Single(x => x.ParameterCategory == "Percent Increase");
 
             var tonnageResults = results
                 .Where(x => x.ParameterType == "Tonnage change threshold")
                 .ToImmutableArray();
 
-            var tonIncrease = tonnageResults.Single(x => x.ParameterCategory == "Amount Increase");
-            var tonDecrease = tonnageResults.Single(x => x.ParameterCategory == "Amount Decrease");
-            var tonPercentageDecrease = tonnageResults.Single(x => x.ParameterCategory == "Percent Decrease");
-            var tonPercentageIncrease = tonnageResults.Single(x => x.ParameterCategory == "Percent Increase");
-
             var countries = await dbContext.Country.ToListAsync();
 
             var costType = await dbContext.CostType.SingleAsync(x => x.Name == "LA Data Prep Charge");
-            var costTypeId = costType.Id;
 
             if (runContext.RunType == RunType.Calculator)
             {
@@ -90,7 +78,7 @@ namespace EPR.Calculator.Service.Function.Builder.ParametersOther
                 {
                     RunId               = runContext.RunId,
                     Countries           = countries,
-                    CostTypeId          = costTypeId,
+                    CostTypeId          = costType.Id,
                     EnglandCost         = laDataPrep.England,
                     NorthernIrelandCost = laDataPrep.NorthernIreland,
                     ScotlandCost        = laDataPrep.Scotland,
@@ -104,11 +92,11 @@ namespace EPR.Calculator.Service.Function.Builder.ParametersOther
                 CountryApportionment  = countryApportionment,
                 SaOperatingCost       = saOperatingCost,
                 SchemeSetupCost       = schemeSetupCharge,
-                BadDebtValue          = badDebtValue,
-                MaterialityIncrease   = new Materiality { Amount = amountIncrease.ParameterValue, Percentage = percentageIncrease.ParameterValue },
-                MaterialityDecrease   = new Materiality { Amount = amountDecrease.ParameterValue, Percentage = percentageDecrease.ParameterValue },
-                TonnageChangeIncrease = new Materiality { Amount = tonIncrease.ParameterValue   , Percentage = tonPercentageIncrease.ParameterValue },
-                TonnageChangeDecrease = new Materiality { Amount = tonDecrease.ParameterValue   , Percentage = tonPercentageDecrease.ParameterValue }
+                BadDebtValue          = Value(results.Where(x => x.ParameterType == "Bad debt provision").ToList(), "Percentage"),
+                MaterialityIncrease   = new() { Amount = Value(materialityResults, "Amount Increase"), Percentage = Value(materialityResults, "Percent Increase") },
+                MaterialityDecrease   = new() { Amount = Value(materialityResults, "Amount Decrease"), Percentage = Value(materialityResults, "Percent Decrease") },
+                TonnageChangeIncrease = new() { Amount = Value(tonnageResults    , "Amount Increase"), Percentage = Value(tonnageResults    , "Percent Increase") },
+                TonnageChangeDecrease = new() { Amount = Value(tonnageResults    , "Amount Decrease"), Percentage = Value(tonnageResults    , "Percent Decrease") }
             };
         }
 
@@ -124,19 +112,19 @@ namespace EPR.Calculator.Service.Function.Builder.ParametersOther
             };
         }
 
-        private static ByCountryCost GetPrepCharge(IReadOnlyCollection<DefaultParamResultsClass> lapPrepCharges)
-        {
-            var e  = lapPrepCharges.Single(cost => cost.ParameterCategory == "England"         ).ParameterValue;
-            var w  = lapPrepCharges.Single(cost => cost.ParameterCategory == "Wales"           ).ParameterValue;
-            var s  = lapPrepCharges.Single(cost => cost.ParameterCategory == "Scotland"        ).ParameterValue;
-            var ni = lapPrepCharges.Single(cost => cost.ParameterCategory == "Northern Ireland").ParameterValue;
-            return new ByCountryCost
+        private static ByCountryCost GetPrepCharge(IReadOnlyCollection<DefaultParamResultsClass> lapPrepCharges) =>
+            new ()
             {
-                England         = e,
-                Wales           = w,
-                Scotland        = s,
-                NorthernIreland = ni
+                England         = Value(lapPrepCharges, "England"),
+                Wales           = Value(lapPrepCharges, "Wales"),
+                Scotland        = Value(lapPrepCharges, "Scotland"),
+                NorthernIreland = Value(lapPrepCharges, "Northern Ireland")
             };
-        }
+
+        private static decimal Value(IReadOnlyCollection<DefaultParamResultsClass> defaultParams, string category) =>
+            defaultParams
+                .Single(x => x.ParameterCategory == category)
+                .ParameterValue
+                .ToDecimal();
     }
 }
