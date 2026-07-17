@@ -66,10 +66,13 @@ namespace EPR.Calculator.Service.Function.Services
                         .Select(g =>
                             new ProducerSelfManagedConsumerWaste
                             {
-                                ProducerId                               = g.Key.OrgId,
-                                SubsidiaryId                             = g.Key.SubsidiaryId,
-                                Level                                    = g.Key.Level,
-                                SelfManagedConsumerWasteDataPerMaterials = g.ToDictionary(x => x.material.Code, x => MapResultToData(x.result))
+                                ProducerId    = g.Key.OrgId,
+                                SubsidiaryId  = g.Key.SubsidiaryId,
+                                Level         = g.Key.Level,
+                                SmcwByMaterial = g.ToDictionary(
+                                    x => x.material.Code,
+                                    x => MapResultToData(x.result)
+                                )
                             }
                         )
                 )
@@ -77,13 +80,14 @@ namespace EPR.Calculator.Service.Function.Services
 
             return new SelfManagedConsumerWaste
             {
+                CalculatorRunId = runContext.RunId,
                 ProducerTotals  = producerTotals,
-                OverallTotalPerMaterials = materialDetails.ToDictionary(
+                TotalByMaterial = materialDetails.ToDictionary(
                     m => m.Code,
                     m => producerTotals
-                        .Where(x => x.Level == 1)
-                        .Select(x => x.SelfManagedConsumerWasteDataPerMaterials.GetValueOrDefault(m.Code))
-                        .Sum()
+                            .Where(x => x.Level == 1)
+                            .Select(x => x.SmcwByMaterial.GetValueOrDefault(m.Code))
+                            .Sum()
                 )
             };
         }
@@ -133,91 +137,23 @@ namespace EPR.Calculator.Service.Function.Services
         {
             return new SelfManagedConsumerWasteData
             {
-                SelfManagedConsumerWasteTonnage         = r.Smcw,
-                ActionedSelfManagedConsumerWasteTonnage = (
-                    total: r.ActionedSmcwTotal,
-                    red  : r.ActionedSmcwR,
-                    amber: r.ActionedSmcwA,
-                    green: r.ActionedSmcwG
-                ),
-                ResidualSelfManagedConsumerWasteTonnage = r.Residual,
-                NetReportedTonnage = (
-                    total: r.NetTotal,
-                    red  : r.NetR,
-                    amber: r.NetA,
-                    green: r.NetG
-                )
+                SmcwTonnage         = r.Smcw,
+                ActionedSmcwTonnage = new RamTonnageGroup
+                {
+                    Total = r.ActionedSmcwTotal,
+                    Red   = r.ActionedSmcwR,
+                    Amber = r.ActionedSmcwA,
+                    Green = r.ActionedSmcwG
+                },
+                ResidualSmcwTonnage = r.Residual,
+                NetTonnage = new RamTonnageGroup
+                {
+                    Total = r.NetTotal,
+                    Red   = r.NetR,
+                    Amber = r.NetA,
+                    Green = r.NetG
+                }
             };
-        }
-    }
-
-    public record SelfManagedConsumerWaste
-    {
-        public required List<ProducerSelfManagedConsumerWaste> ProducerTotals { get; init; }
-        public required Dictionary<string, SelfManagedConsumerWasteData> OverallTotalPerMaterials { get; init; }
-    }
-
-    public record ProducerSelfManagedConsumerWaste
-    {
-        public int ProducerId { get; set; }
-        public string? SubsidiaryId { get; set; }
-        public required int Level {get; init; }
-        public required Dictionary<string, SelfManagedConsumerWasteData> SelfManagedConsumerWasteDataPerMaterials { get; init; }
-    }
-
-    public record SelfManagedConsumerWasteData
-    {
-        public required decimal SelfManagedConsumerWasteTonnage { get; init; }
-        public required (decimal? total, decimal? red, decimal? amber, decimal? green) ActionedSelfManagedConsumerWasteTonnage { get; init; }
-        public required decimal? ResidualSelfManagedConsumerWasteTonnage { get; init; }
-        public required (decimal? total, decimal? red, decimal? amber, decimal? green) NetReportedTonnage { get; init; }
-
-        public static SelfManagedConsumerWasteData Zero => new()
-        {
-            SelfManagedConsumerWasteTonnage         = 0,
-            ActionedSelfManagedConsumerWasteTonnage = (0, 0, 0, 0),
-            ResidualSelfManagedConsumerWasteTonnage = 0,
-            NetReportedTonnage                      = (0, 0, 0, 0)
-        };
-
-        public static SelfManagedConsumerWasteData operator +(
-            SelfManagedConsumerWasteData a,
-            SelfManagedConsumerWasteData b)
-        {
-            return new SelfManagedConsumerWasteData
-            {
-                SelfManagedConsumerWasteTonnage =
-                    a.SelfManagedConsumerWasteTonnage + b.SelfManagedConsumerWasteTonnage,
-
-                ActionedSelfManagedConsumerWasteTonnage = (
-                    (a.ActionedSelfManagedConsumerWasteTonnage.total ?? 0) + (b.ActionedSelfManagedConsumerWasteTonnage.total ?? 0),
-                    (a.ActionedSelfManagedConsumerWasteTonnage.red   ?? 0) + (b.ActionedSelfManagedConsumerWasteTonnage.red   ?? 0),
-                    (a.ActionedSelfManagedConsumerWasteTonnage.amber ?? 0) + (b.ActionedSelfManagedConsumerWasteTonnage.amber ?? 0),
-                    (a.ActionedSelfManagedConsumerWasteTonnage.green ?? 0) + (b.ActionedSelfManagedConsumerWasteTonnage.green ?? 0)
-                ),
-
-                ResidualSelfManagedConsumerWasteTonnage =
-                    (a.ResidualSelfManagedConsumerWasteTonnage ?? 0) +
-                    (b.ResidualSelfManagedConsumerWasteTonnage ?? 0),
-
-                NetReportedTonnage = (
-                    (a.NetReportedTonnage.total ?? 0) + (b.NetReportedTonnage.total ?? 0),
-                    (a.NetReportedTonnage.red   ?? 0) + (b.NetReportedTonnage.red   ?? 0),
-                    (a.NetReportedTonnage.amber ?? 0) + (b.NetReportedTonnage.amber ?? 0),
-                    (a.NetReportedTonnage.green ?? 0) + (b.NetReportedTonnage.green ?? 0)
-                )
-            };
-        }
-    }
-
-    public static class SelfManagedConsumerWasteDataExtensions
-    {
-        public static SelfManagedConsumerWasteData Sum(this IEnumerable<SelfManagedConsumerWasteData?> source)
-        {
-            return source.Aggregate(
-                SelfManagedConsumerWasteData.Zero,
-                (acc, x) => acc + (x ?? SelfManagedConsumerWasteData.Zero)
-            );
         }
     }
 }

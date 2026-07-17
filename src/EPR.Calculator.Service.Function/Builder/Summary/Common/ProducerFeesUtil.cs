@@ -76,7 +76,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
         ) =>
             smcw.ProducerTotals
                 .Where(x => x.Level == 1 && producersAndSubsidiaries.Any(y => x.ProducerId == y.ProducerId))
-                .Select(x => x.SelfManagedConsumerWasteDataPerMaterials[material.Code])
+                .Select(x => x.SmcwByMaterial[material.Code])
                 .Single();
 
         public static RamTonnageGroup GetPricePerTonne(
@@ -88,17 +88,17 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
             if (laDisposalCostDataDetail == null)
             {
-                return RamTonnageGroup.Empty;
+                return new RamTonnageGroup();
             }
 
             var total = laDisposalCostDataDetail.DisposalCostPricePerTonne ?? 0m;
 
             if (calcResult.CalcResultModulation is not null) {
-                return new RamTonnageGroup { 
+                return new RamTonnageGroup {
                     Total = total,
-                    Red = calcResult.CalcResultModulation.MaterialModulation[material].RedMaterialDisposalCost, 
-                    Amber = calcResult.CalcResultModulation.MaterialModulation[material].AmberMaterialDisposalCost, 
-                    Green = calcResult.CalcResultModulation.MaterialModulation[material].GreenMaterialDisposalCost
+                    Red = calcResult.CalcResultModulation.ModulationByMaterial[material].RedMaterialDisposalCost,
+                    Amber = calcResult.CalcResultModulation.ModulationByMaterial[material].AmberMaterialDisposalCost,
+                    Green = calcResult.CalcResultModulation.ModulationByMaterial[material].GreenMaterialDisposalCost
                 };
             } else {
                 return new RamTonnageGroup { Total = total, Red = null, Amber = null, Green = null };
@@ -114,18 +114,18 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
             var pricePerTonne = GetPricePerTonne(material, calcResult);
 
             if (calcResult.CalcResultModulation is not null) {
-                var red   = smcw.NetReportedTonnage.red   * pricePerTonne.Red;
-                var amber = smcw.NetReportedTonnage.amber * pricePerTonne.Amber;
-                var green = smcw.NetReportedTonnage.green * pricePerTonne.Green;
+                var red   = smcw.NetTonnage.Red   * pricePerTonne.Red;
+                var amber = smcw.NetTonnage.Amber * pricePerTonne.Amber;
+                var green = smcw.NetTonnage.Green * pricePerTonne.Green;
 
-                return new RamTonnageGroup { 
+                return new RamTonnageGroup {
                     Total = red + amber + green,
-                    Red = red, 
-                    Amber = amber, 
-                    Green = green 
+                    Red = red,
+                    Amber = amber,
+                    Green = green
                 };
             } else {
-                var total = (smcw.NetReportedTonnage.total ?? 0) * (pricePerTonne.Total ?? 0);
+                var total = (smcw.NetTonnage.Total ?? 0) * (pricePerTonne.Total ?? 0);
                 return new RamTonnageGroup { Total = total, Red = null, Amber = null, Green = null };
             }
         }
