@@ -123,6 +123,7 @@ namespace EPR.Calculator.Service.Function.Services
 
         public async Task<SelfManagedConsumerWaste> ReadSmcw(int runId, CancellationToken cancellationToken) =>
             await dbContext.SelfManagedConsumerWaste
+                    .Include(s => s.ProducerTotals)
                     .Where(p => p.CalculatorRunId == runId)
                     .SingleAsync(cancellationToken);
         

@@ -167,10 +167,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             result.CalculatorRunId.ShouldBe(1);
             result.ProducerTotals.Count.ShouldBe(1);
-            result.ProducerTotals[0].ProducerId.ShouldBe(1);
-            result.ProducerTotals[0].SubsidiaryId.ShouldBe("A");
-            result.ProducerTotals[0].Level.ShouldBe(1);
-            result.ProducerTotals[0].SmcwByMaterial[MaterialCodes.Aluminium].SmcwTonnage.ShouldBe(100);
+            result.ProducerTotals.First().ProducerId.ShouldBe(1);
+            result.ProducerTotals.First().SubsidiaryId.ShouldBe("A");
+            result.ProducerTotals.First().Level.ShouldBe(1);
+            result.ProducerTotals.First().SmcwByMaterial[MaterialCodes.Aluminium].SmcwTonnage.ShouldBe(100);
             result.TotalByMaterial[MaterialCodes.Aluminium].SmcwTonnage.ShouldBe(100);
         }
 

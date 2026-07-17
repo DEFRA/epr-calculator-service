@@ -386,7 +386,7 @@ internal sealed class ProducerRowBuilder(
 
         var selfManagedConsumerWasteData = smcw
             .ProducerTotals
-            .Find(x => x.ProducerId == producer.ProducerId && x.SubsidiaryId == producer.SubsidiaryId && x.Level == level)?
+            .SingleOrDefault(x => x.ProducerId == producer.ProducerId && x.SubsidiaryId == producer.SubsidiaryId && x.Level == level)?
             .SmcwByMaterial[material.Code] ?? SelfManagedConsumerWasteData.Zero;
 
         var producerDisposalFee =
