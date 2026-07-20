@@ -208,6 +208,7 @@ internal static class ServiceRegistration
         services.AddTransient<IBillingRunContextBuilder, BillingRunContextBuilder>();
         services.AddTransient<IBillingRunProcessor, BillingRunProcessor>();
         services.AddTransient<IBillingRunFinalizer, BillingRunFinalizer>();
+        services.AddTransient<IBillingBuilder, BillingBuilder>();
         services.AddTransient<IBillingFileGenerator, BillingFileGenerator>();
         services.AddTransient<IBillingFileExporter, BillingFileExporter>();
         services.AddTransient<IBillingFileJsonWriter, BillingFileJsonWriter>();
@@ -215,7 +216,7 @@ internal static class ServiceRegistration
 
     private static void RegisterCommonDependencies(IServiceCollection services)
     {
-        services.AddTransient<ICalcResultBuilder, CalcResultBuilder>();
+        services.AddTransient<IResultBuilder, ResultBuilder>();
         services.AddTransient<IParameterService, ParameterService>();
         services.AddTransient<ICalcResultDetailBuilder, CalcResultDetailBuilder>();
         services.AddTransient<ICalcResultLapcapDataBuilder, CalcResultLapcapDataBuilder>();

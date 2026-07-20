@@ -17,7 +17,7 @@ public class CalculatorRunProcessor(
     ApplicationDBContext dbContext,
     ICalculatorRunDataInitializer dataInitializer,
     ICalculatorRunFinalizer finalizer,
-    ICalcResultBuilder resultBuilder,
+    IResultBuilder resultBuilder,
     ICalculatorFileGenerator fileGenerator,
     ILogger<CalculatorRunProcessor> logger)
     : ICalculatorRunProcessor

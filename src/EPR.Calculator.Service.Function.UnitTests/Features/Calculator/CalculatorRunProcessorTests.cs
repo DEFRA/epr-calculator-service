@@ -13,14 +13,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Features.Calculator;
 [TestClass]
 public class CalculatorRunProcessorTests : TestsFor<CalculatorRunProcessor>
 {
-    private Mock<ICalcResultBuilder> builder = null!;
+    private Mock<IResultBuilder> builder = null!;
     private Mock<ILogger<CalculatorRunProcessor>> logger = null!;
     private CalculatorRunContext runContext = null!;
 
     protected override void TestInitialize()
     {
         runContext = fixture.Create<CalculatorRunContext>();
-        builder = fixture.Freeze<Mock<ICalcResultBuilder>>();
+        builder = fixture.Freeze<Mock<IResultBuilder>>();
         logger = fixture.Freeze<Mock<ILogger<CalculatorRunProcessor>>>();
 
         dbContext.CalculatorRuns.Add(new CalculatorRun

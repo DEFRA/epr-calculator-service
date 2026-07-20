@@ -1,4 +1,5 @@
 ﻿using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.DataTypes;
 using EPR.Calculator.Service.Function.Builder.Modulation;
 using EPR.Calculator.Service.Function.Services;
 
@@ -61,5 +62,32 @@ namespace EPR.Calculator.Service.Function.Models
         public SelfManagedConsumerWaste? Smcw { get; set; }
 
         public ModulationResult? CalcResultModulation { get; set; }
+
+        public static CalcResult Empty => 
+            new CalcResult
+            {
+                CalcResultDetail = new CalcResultDetail { RunId = 0, RelativeYear = new RelativeYear() } ,
+                CalcResultLapcapData = new CalcResultLapcapData
+                {
+                    ByMaterial = []
+                },
+                CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
+                {
+                    ByMaterial = []
+                },
+                CalcResultParameterOtherCost = new CalcResultParameterOtherCost(),
+                CalcResultPartialObligations = new CalcResultPartialObligations(){
+                    PartialObligations = ImmutableList<CalcResultPartialObligation>.Empty,
+                },
+                CalcResultProjectedProducers = new CalcResultProjectedProducers(){
+                    H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
+                    H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty
+                },
+                CalcResultScaledupProducers = new CalcResultScaledupProducers(){
+                    ScaledupProducers = ImmutableList<CalcResultScaledupProducer>.Empty,
+                },
+                CalcResultCancelledProducers = new CalcResultCancelledProducersResponse(),
+                CalcResultRejectedProducers = new List<CalcResultRejectedProducer>()
+            };
     }
 }
