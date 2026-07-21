@@ -51,7 +51,7 @@ public class ThreeSaCostsProducerTests
         },
         CalcResultLapcapData = new CalcResultLapcapData
         {
-            ByMaterial = []
+            ByMaterial = new Dictionary<string, ByCountryCost>()
         },
         CalcResultOnePlusFourApportionment = TestDataHelper.GetCalcResultOnePlusFourApportionment(),
         ProducerFees = new ProducerFees
@@ -74,7 +74,7 @@ public class ThreeSaCostsProducerTests
             Total = new() { ProducerId = 0, SubsidiaryId = string.Empty, ProducerName = string.Empty, TotalOnePlus2A2B2CWithBadDebtPercentage = 100 }
         },
         CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
-        CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage { ByMaterial = [] },
+        CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage { ByMaterial = new Dictionary<string, CalcResultLateReportingTonnageDetail>() },
         CalcResultProjectedProducers = new CalcResultProjectedProducers(){
             H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
             H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty,

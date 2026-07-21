@@ -65,6 +65,7 @@ public class BillingBuilder(
             () => onePlusFourApportionmentBuilder.Construct(result),
             nameof(onePlusFourApportionmentBuilder));
 
+        //TODO: Store/Read this?
         result.CalcResultCancelledProducers = await logger.LogDuration(
             () => cancelledProducersBuilder.ConstructAsync(runContext, materials),
             nameof(cancelledProducersBuilder));

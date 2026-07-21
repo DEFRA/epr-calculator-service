@@ -47,7 +47,7 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
             },
             CalcResultLapcapData = new CalcResultLapcapData
             {
-                ByMaterial = []
+                ByMaterial = new Dictionary<string, ByCountryCost>()
             },
             CalcResultParameterOtherCost = new CalcResultParameterOtherCost
             {
@@ -55,7 +55,7 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
             },
             CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
             {
-                ByMaterial = []
+                ByMaterial = new Dictionary<string, CalcResultLateReportingTonnageDetail>()
             },
             ProducerFees = new ProducerFees
             {
@@ -117,7 +117,7 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
             },
             CalcResultLapcapData = new CalcResultLapcapData
             {
-                ByMaterial = []
+                ByMaterial = new Dictionary<string, ByCountryCost>()
             },
             CalcResultParameterOtherCost = new CalcResultParameterOtherCost
             {
@@ -125,7 +125,7 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
             },
             CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
             {
-                ByMaterial = []
+                ByMaterial = new Dictionary<string, CalcResultLateReportingTonnageDetail>()
             },
             ProducerFees = new ProducerFees {
                 CalculatorRunId = 0, 

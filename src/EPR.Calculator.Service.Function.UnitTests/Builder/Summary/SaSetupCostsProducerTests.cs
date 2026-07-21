@@ -51,7 +51,7 @@ public class SaSetupCostsProducerTests
         },
         CalcResultLapcapData = new CalcResultLapcapData
         {
-            ByMaterial = []
+            ByMaterial = new Dictionary<string, ByCountryCost>()
         },
         CalcResultOnePlusFourApportionment = TestDataHelper.GetCalcResultOnePlusFourApportionment(),
         ProducerFees = new ProducerFees
