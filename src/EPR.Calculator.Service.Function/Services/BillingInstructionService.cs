@@ -48,15 +48,15 @@ public class BillingInstructionService(
 
         var billingInstructions = ImmutableList.CreateBuilder<ProducerResultFileSuggestedBillingInstruction>();
 
-        foreach (var producer in producers)
+        foreach (var producer in producers.Select(fee => fee.FeeDetail))
         {
-            var billingInstructionSection = producer.FeeDetail.BillingInstruction;
+            var billingInstructionSection = producer.BillingInstruction;
 
             var billingInstruction = new ProducerResultFileSuggestedBillingInstruction
             {
                 CalculatorRunId                         = calcResult.CalcResultDetail.RunId,
-                ProducerId                              = producer.FeeDetail.ProducerId,
-                TotalProducerBillWithBadDebt            = producer.FeeDetail.TotalBillBreakdown!.ByCountry.Total,
+                ProducerId                              = producer.ProducerId,
+                TotalProducerBillWithBadDebt            = producer.TotalBillBreakdown!.ByCountry.Total,
                 CurrentYearInvoiceTotalToDate           = billingInstructionSection?.CurrentYearInvoiceTotalToDate,
                 TonnageChangeSinceLastInvoice           = GetStringValue(billingInstructionSection?.TonnageChangeSinceLastInvoice!),
                 AmountLiabilityDifferenceCalcVsPrev     = billingInstructionSection?.LiabilityDifference!,

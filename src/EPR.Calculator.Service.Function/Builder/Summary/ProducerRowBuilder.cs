@@ -88,7 +88,7 @@ internal sealed class ProducerRowBuilder(
                     PbTonnage      = l2MatRows.Sum(r => r.CommFee.PbTonnage),
                     HdcTonnage     = l2MatRows.Sum(r => r.CommFee.HdcTonnage),
                     TotalTonnage   = l2MatRows.Sum(r => r.CommFee.TotalTonnage),
-                    PricePerTonne  = l2MatRows.Count > 0 ? l2MatRows.First().CommFee.PricePerTonne : 0,
+                    PricePerTonne  = l2MatRows.Count > 0 ? l2MatRows[0].CommFee.PricePerTonne : 0,
                     Costs          = l2MatRows.Select(r => r.CommFee.Costs).Sum(),
                 }
             };
@@ -147,15 +147,15 @@ internal sealed class ProducerRowBuilder(
         // Per-material sub-lists built in a single pass over l1Rows per material.
         var matRowsByCode   = materials.ToDictionary(m => m.Code, _ => new List<Fees>());
 
-        foreach (var row in l1Rows)
+        foreach (var row in l1Rows.Select(fee => fee.FeeDetail))
         {
-            commsCostsSection2b             += row.FeeDetail.CommsCostsSection2b;
-            percentageOfProducerTonnage     += row.FeeDetail.ReportedTonnagePercentage;
-            commsCostsSection2c             += row.FeeDetail.CommsCostsSection2c;
+            commsCostsSection2b             += row.CommsCostsSection2b;
+            percentageOfProducerTonnage     += row.ReportedTonnagePercentage;
+            commsCostsSection2c             += row.CommsCostsSection2c;
 
             foreach (var materialCode in materials.Select(material => material.Code))
             {
-                if (row.FeeDetail.FeesByMaterial.TryGetValue(materialCode, out var mat))
+                if (row.FeesByMaterial.TryGetValue(materialCode, out var mat))
                     matRowsByCode[materialCode].Add(mat);
             }
         }

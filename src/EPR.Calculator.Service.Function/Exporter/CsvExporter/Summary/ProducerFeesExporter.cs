@@ -36,8 +36,8 @@ public class ProducerFeesExporter : IProducerFeesExporter
 
         AddSummaryDataHeader(producerFees, materials, runContext.RequiresModulation, csvContent, partExporters);
 
-        foreach (var producer in producerFees.Details)
-            AddNewRow(csvContent, new ProducerFeeExportRow(producer.FeeDetail.Level, producer.FeeDetail), runContext.RequiresModulation, partExporters, isOverallTotal: false);
+        foreach (var producer in producerFees.Details.Select(fee => fee.FeeDetail))
+            AddNewRow(csvContent, new ProducerFeeExportRow(producer.Level, producer), runContext.RequiresModulation, partExporters, isOverallTotal: false);
 
         AddNewRow(csvContent, new ProducerFeeExportRow(string.Empty, producerFees.Total), runContext.RequiresModulation, partExporters, isOverallTotal: true);
     }

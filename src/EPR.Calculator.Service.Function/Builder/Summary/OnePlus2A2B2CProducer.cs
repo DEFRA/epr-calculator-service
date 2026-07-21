@@ -8,9 +8,9 @@ public static class OnePlus2A2B2CProducer
     public static void SetValues(ProducerFees producerFees)
     {
         var headerTotal = producerFees.Total.TotalOnePlus2A2B2CWithBadDebt();
-        foreach (var fee in producerFees.Details)
+        foreach (var fee in producerFees.Details.Select(fee => fee.FeeDetail))
         {
-            fee.FeeDetail.TotalOnePlus2A2B2CWithBadDebtPercentage = GetOverallProducerPercentage(fee.FeeDetail, headerTotal);
+            fee.TotalOnePlus2A2B2CWithBadDebtPercentage = GetOverallProducerPercentage(fee, headerTotal);
         }
         producerFees.Total.TotalOnePlus2A2B2CWithBadDebtPercentage = GetOverallProducerPercentage(producerFees.Total, headerTotal);
     }

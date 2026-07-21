@@ -47,19 +47,19 @@ public class ProducerInvoiceNetTonnageService(
 
         var producerInvoiceNetTonnages = ImmutableList.CreateBuilder<ProducerInvoicedMaterialNetTonnage>();
 
-        foreach (var producer in producers)
+        foreach (var producer in producers.Select(fee => fee.FeeDetail))
         {
             foreach (var material in materials)
             {
                 var invoiced = new ProducerInvoicedMaterialNetTonnage();
-                var disposalFees = producer.FeeDetail.DisposalFeesByMaterial.ToDictionary(k => k.Key, v => v.Value);
+                var disposalFees = producer.DisposalFeesByMaterial.ToDictionary(k => k.Key, v => v.Value);
 
-                if (disposalFees is not null && disposalFees.TryGetValue(material.Code, out var feeSummary))
+                if (disposalFees.TryGetValue(material.Code, out var feeSummary))
                 {
                     invoiced = new ProducerInvoicedMaterialNetTonnage
                     {
                         CalculatorRunId = runId,
-                        ProducerId = producer.FeeDetail.ProducerId,
+                        ProducerId = producer.ProducerId,
                         InvoicedNetTonnage = feeSummary.NetTonnage.Total,
                         MaterialId = material.Id
                     };
