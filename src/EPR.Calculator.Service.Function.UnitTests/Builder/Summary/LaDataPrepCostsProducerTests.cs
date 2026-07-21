@@ -45,7 +45,7 @@ public class LaDataPrepCostsProducerTests
                     FeeDetail = new FeeDetail
                     {
                         FeesByMaterial =
-                            new Dictionary<string, MaterialFee>(),
+                            new Dictionary<string, Fees>(),
                         ProducerId = 1,
                         SubsidiaryId = "1",
                         ProducerName = "Test",

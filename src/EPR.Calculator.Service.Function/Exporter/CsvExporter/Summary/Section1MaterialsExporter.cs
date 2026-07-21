@@ -149,14 +149,6 @@ public class Section1MaterialsExporter : IProducerFeesPartExporter
         }
     }
 
-    private static RagRating GroupedRagRating(RagRating rating) => rating switch
-    {
-        RagRating.Red   or RagRating.RedMedical   => RagRating.Red,
-        RagRating.Amber or RagRating.AmberMedical => RagRating.Amber,
-        RagRating.Green or RagRating.GreenMedical => RagRating.Green,
-        _ => throw new ArgumentOutOfRangeException(nameof(rating))
-    };
-
     [SuppressMessage(
         "Critical Code Smell",
         "S3776:Cognitive Complexity of methods should not be too high",

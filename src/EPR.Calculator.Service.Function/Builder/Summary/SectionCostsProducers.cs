@@ -54,8 +54,8 @@ internal static class SectionCosts
         Action<FeeDetail, FeeWithBadDebt> setFee
     )
     {
-        foreach (var fee in producerFees.Details)
-            setFee(fee.FeeDetail, BadDebt(badDebt, total, apportionment, fee.FeeDetail.TotalOnePlus2A2B2CWithBadDebtPercentage));
+        foreach (var fee in producerFees.Details.Select(fee => fee.FeeDetail))
+            setFee(fee, BadDebt(badDebt, total, apportionment, fee.TotalOnePlus2A2B2CWithBadDebtPercentage));
         setFee(producerFees.Total, BadDebt(badDebt, total, apportionment, producerFees.Total.TotalOnePlus2A2B2CWithBadDebtPercentage));
     }
 

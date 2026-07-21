@@ -256,7 +256,8 @@ internal static class ServiceRegistration
         services.AddTransient<ICalcResultErrorReportBuilder, CalcResultErrorReportBuilder>();
         services.AddTransient<ICalcResultErrorReportExporter, CalcResultErrorReportExporter>();
         services.AddTransient<IErrorReportService, ErrorReportService>();
-        services.AddTransient<ICalcResultService, CalcResultService>();
+        services.AddTransient<ICalcResultReader, CalcResultReader>();
+        services.AddTransient<ICalcResultWriter, CalcResultWriter>();
         services.AddTransient<ISelfManagedConsumerWasteService, SelfManagedConsumerWasteService>();
         services.AddTransient<IReportedProducerService, ReportedProducerService>();
     }

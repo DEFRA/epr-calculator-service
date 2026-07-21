@@ -184,20 +184,21 @@ public class ProducerFeesUtilTests
 
         calcResult.CalcResultModulation = new ModulationResult
         {
+            CalculatorRunId = 1,
             GreenFactor = 2,
             RedFactor = 4,
-            MaterialModulation = new Dictionary<MaterialDetail, MaterialModulation>
+            ModulationByMaterial = new Dictionary<MaterialDetail, ModulationDetail>
             {
-                [material] = mkMaterialModulation(100, 120, 77.1423m, 90, 220, 550, 22000, 55000)
+                [material] = mkModulationDetail(100, 120, 77.1423m, 90, 220, 550, 22000, 55000)
             }
         };
 
         var smcw = new SelfManagedConsumerWasteData
         {
-            SelfManagedConsumerWasteTonnage = 0,
-            ActionedSelfManagedConsumerWasteTonnage = (0, 0m, 0m, 0m),
-            ResidualSelfManagedConsumerWasteTonnage = 0,
-            NetReportedTonnage = (null, 1m, 2m, 3m)
+            SmcwTonnage = 0,
+            ActionedSmcwTonnage = new RamTonnageGroup { Total = 0m, Red = 0m, Amber = 0m, Green = 0m },
+            ResidualSmcwTonnage = 0,
+            NetTonnage = new RamTonnageGroup { Total = null, Red = 1m, Amber = 2m, Green = 3m }
         };
 
         var result = ProducerFeesUtil.GetProducerDisposalFee(material, calcResult, smcw);
@@ -260,9 +261,9 @@ public class ProducerFeesUtilTests
 
     private CalcResultLateReportingTonnage GetCalcResultLateReportingTonnage() => Fixture.Create<CalcResultLateReportingTonnage>();
 
-    private MaterialModulation mkMaterialModulation(decimal adc, decimal rdc, decimal gdc, decimal at, decimal rt, decimal gt, decimal rAtAdc, decimal gAtAdc)
+    private ModulationDetail mkModulationDetail(decimal adc, decimal rdc, decimal gdc, decimal at, decimal rt, decimal gt, decimal rAtAdc, decimal gAtAdc)
     {
-        return new MaterialModulation
+        return new ModulationDetail
         {
             AmberMaterialDisposalCost             = adc,
             RedMaterialDisposalCost               = rdc,

@@ -18,8 +18,9 @@ public class CalcRunLaDisposalCostBuilderTests : TestsFor<CalcRunLaDisposalCostB
     {
         smcw = new SelfManagedConsumerWaste
         {
+            CalculatorRunId = 1,
             ProducerTotals = [],
-            OverallTotalPerMaterials = []
+            TotalByMaterial = new Dictionary<string, SelfManagedConsumerWasteData>()
         };
     }
 
@@ -129,18 +130,19 @@ public class CalcRunLaDisposalCostBuilderTests : TestsFor<CalcRunLaDisposalCostB
         SeedDatabase(runContext);
 
         static SelfManagedConsumerWasteData MkSelfManagedConsumerWasteData(decimal red, decimal amber, decimal green) =>
-            new()
+            new SelfManagedConsumerWasteData
             {
-                SelfManagedConsumerWasteTonnage = amber,
-                ActionedSelfManagedConsumerWasteTonnage = (total: amber, red: 0, amber, green: 0),
-                ResidualSelfManagedConsumerWasteTonnage = 0,
-                NetReportedTonnage = (total: red + green, red, amber: 0, green)
+                SmcwTonnage = amber,
+                ActionedSmcwTonnage = new RamTonnageGroup { Total = amber, Red = 0, Amber = amber, Green = 0 },
+                ResidualSmcwTonnage = 0,
+                NetTonnage = new RamTonnageGroup { Total = red + green, Red = red, Amber = 0, Green = green }
             };
 
         var smcw = new SelfManagedConsumerWaste
         {
+            CalculatorRunId = 1,
             ProducerTotals = [],
-            OverallTotalPerMaterials = new Dictionary<string, SelfManagedConsumerWasteData>
+            TotalByMaterial = new Dictionary<string, SelfManagedConsumerWasteData>
             {
                 [MaterialCodes.Aluminium] = MkSelfManagedConsumerWasteData(220, 330, 550),
                 [MaterialCodes.FibreComposite] = MkSelfManagedConsumerWasteData(275, 55, 55),

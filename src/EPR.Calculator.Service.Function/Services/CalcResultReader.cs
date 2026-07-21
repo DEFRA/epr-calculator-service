@@ -1,50 +1,25 @@
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.JsonExporter.Model;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Utils;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.ObjectPool;
 
 namespace EPR.Calculator.Service.Function.Services
 {
-    public interface ICalcResultService
+    public interface ICalcResultReader
     {
-        Task StoreProjectedH1Data(int runId, IReadOnlyList<CalcResultH1ProjectedProducer> projectedProducers, CancellationToken cancellationToken);
-        Task StoreProjectedH2Data(int runId, IReadOnlyList<CalcResultH2ProjectedProducer> projectedProducers, CancellationToken cancellationToken);
-        Task StoreScaledData(int runId, IReadOnlyList<CalcResultScaledupProducer> scaled, CancellationToken cancellationToken);
-        Task StorePartialData(int runId, IReadOnlyList<CalcResultPartialObligation> partial, CancellationToken cancellationToken);
-        Task StoreProducerMaterialPackaging(List<L1Producer> producerDetails, CancellationToken cancellationToken);
-        Task StoreProducerFees(int runId, ProducerFees producerFees, CancellationToken cancellationToken);
         Task<IReadOnlyList<CalcResultH1ProjectedProducer>> ReadH1ProjectedData(int runId, CancellationToken cancellationToken);
         Task<IReadOnlyList<CalcResultH2ProjectedProducer>> ReadH2ProjectedData(int runId, CancellationToken cancellationToken);
         Task<IReadOnlyList<CalcResultScaledupProducer>> ReadScaledData(int runId, CancellationToken cancellationToken);
         Task<IReadOnlyList<CalcResultPartialObligation>> ReadPartialData(int runId, CancellationToken cancellationToken);
         Task<ProducerFees> ReadProducerFees(int runId, CancellationToken cancellationToken);
+        Task<SelfManagedConsumerWaste> ReadSmcw(int runId, CancellationToken cancellationToken);
+        Task<ModulationResult> ReadModulationResult(int runId, CancellationToken cancellationToken);
     }
 
-    public class CalcResultService(IBulkOperations bulkOps, ApplicationDBContext dbContext) : ICalcResultService
+    public class CalcResultReader(ApplicationDBContext dbContext) : ICalcResultReader
     {
-        public async Task StoreProjectedH1Data(int runId, IReadOnlyList<CalcResultH1ProjectedProducer> projectedProducers, CancellationToken cancellationToken)
-        {
-            await bulkOps.BulkInsertAsync(dbContext, projectedProducers.SelectMany(p => 
-                p.H1ProjectedTonnageByMaterial.Select(m => 
-                    MapToTransformProjectedH1(runId, p.ProducerId, p.SubsidiaryId, m.Key, p.SubmissionPeriodCode, p.Level, m.Value)
-                )
-            ), cancellationToken);
-        }
-
-        public async Task StoreProjectedH2Data(int runId, IReadOnlyList<CalcResultH2ProjectedProducer> projectedProducers, CancellationToken cancellationToken)
-        {
-            await bulkOps.BulkInsertAsync(dbContext, projectedProducers.SelectMany(p => 
-                p.H2ProjectedTonnageByMaterial.Select(m => 
-                    MapToTransformProjectedH2(runId, p.ProducerId, p.SubsidiaryId, m.Key, p.SubmissionPeriodCode, p.Level, m.Value)
-                )
-            ), cancellationToken);
-        }
-
         public async Task<IReadOnlyList<CalcResultH1ProjectedProducer>> ReadH1ProjectedData(int runId, CancellationToken cancellationToken)
         {
             return await dbContext.TransformProjectedH1
@@ -83,32 +58,6 @@ namespace EPR.Calculator.Service.Function.Services
                         .ToImmutableListAsync(cancellationToken);
         }
 
-        public async Task StoreScaledData(int runId, IReadOnlyList<CalcResultScaledupProducer> scaled, CancellationToken cancellationToken)
-        {
-             await bulkOps.BulkInsertAsync(dbContext, scaled.SelectMany(p => 
-                p.PomData.Select(m => 
-                    new TransformScaled
-                    {
-                        CalculatorRunId = runId,
-                        ProducerId = p.ProducerId,
-                        SubsidiaryId = p.SubsidiaryId,
-                        ProducerName = p.ProducerName,
-                        TradingName = p.TradingName,
-                        SubmissionPeriodCode = p.SubmissionPeriodCode,
-                        Level = p.Level,
-                        IsSubTotal = p.IsSubtotalRow,
-                        DaysInSubmissionPeriod = p.DaysInSubmissionPeriod,
-                        DaysInWholePeriod = p.DaysInWholePeriod,
-                        ScaleupFactor = p.ScaleupFactor,
-                        MaterialId = m.MaterialId,
-                        PackagingType = m.PackagingType,
-                        Tonnage = m.Tonnage,
-                        ScaledTonnage = m.ScaledTonnage
-                    }
-                )
-            ), cancellationToken);
-        }
-        
         public async Task<IReadOnlyList<CalcResultScaledupProducer>> ReadScaledData(int runId, CancellationToken cancellationToken)
         {
             return await dbContext.TransformScaled
@@ -138,14 +87,6 @@ namespace EPR.Calculator.Service.Function.Services
                         .ToImmutableListAsync(cancellationToken);
         }
 
-        public async Task StorePartialData(int runId, IReadOnlyList<CalcResultPartialObligation> partial, CancellationToken cancellationToken){
-            await bulkOps.BulkInsertAsync(dbContext, partial.SelectMany(p => 
-                p.PartialObligationTonnageByMaterial.Select(m => 
-                    MapToTransformPartial(runId, m.Key, p, m.Value)
-                )
-            ), cancellationToken);
-        }
-
         public async Task<IReadOnlyList<CalcResultPartialObligation>> ReadPartialData(int runId, CancellationToken cancellationToken){
             return await dbContext.TransformPartial
                         .Where(p => p.CalculatorRunId == runId)
@@ -172,35 +113,6 @@ namespace EPR.Calculator.Service.Function.Services
                         .ToImmutableListAsync(cancellationToken);
         }
 
-        public async Task StoreProducerMaterialPackaging(List<L1Producer> producerDetails, CancellationToken cancellationToken)
-        {
-            await bulkOps.BulkInsertAsync(dbContext, producerDetails
-                    .SelectMany(p => p.Producers)
-                    .SelectMany(p => p.ProducerReportedMaterials.Select(rm =>
-                        new ProducerMaterialPackaging
-                        {
-                            ProducerDetailId             = rm.ProducerDetailId,
-                            MaterialId                   = rm.MaterialId,
-                            SubmissionPeriod             = rm.SubmissionPeriod,
-                            PackagingType                = rm.PackagingType,
-                            PackagingTonnage             = rm.PackagingTonnage,
-                            PackagingTonnageRed          = rm.PackagingTonnageRed,
-                            PackagingTonnageAmber        = rm.PackagingTonnageAmber,
-                            PackagingTonnageGreen        = rm.PackagingTonnageGreen,
-                            PackagingTonnageRedMedical   = rm.PackagingTonnageRedMedical,
-                            PackagingTonnageAmberMedical = rm.PackagingTonnageAmberMedical,
-                            PackagingTonnageGreenMedical = rm.PackagingTonnageGreenMedical
-                        }
-                    )
-                ).ToList(), cancellationToken);
-        }
-
-        public async Task StoreProducerFees(int runId, ProducerFees producerFees, CancellationToken cancellationToken)
-        {
-            dbContext.ProducerDisposalFee.Add(producerFees);
-            await dbContext.SaveChangesAsync(cancellationToken);
-        }
-
         public async Task<ProducerFees> ReadProducerFees(int runId, CancellationToken cancellationToken)
         {
             return await dbContext.ProducerDisposalFee
@@ -208,6 +120,18 @@ namespace EPR.Calculator.Service.Function.Services
                         .Where(p => p.CalculatorRunId == runId)
                         .SingleAsync(cancellationToken);
         }
+
+        public async Task<SelfManagedConsumerWaste> ReadSmcw(int runId, CancellationToken cancellationToken) =>
+            await dbContext.SelfManagedConsumerWaste
+                    .Include(s => s.ProducerTotals)
+                    .Where(p => p.CalculatorRunId == runId)
+                    .SingleAsync(cancellationToken);
+        
+
+        public async Task<ModulationResult> ReadModulationResult(int runId, CancellationToken cancellationToken) =>
+            await dbContext.ModulationResult
+                    .Where(p => p.CalculatorRunId == runId)
+                    .SingleAsync(cancellationToken);
     
         private static Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage> MapToH1MaterialTonnages(List<TransformProjectedH1> transformProjectedH1s)
         {
@@ -364,128 +288,6 @@ namespace EPR.Calculator.Service.Function.Services
             );
         }
 
-        private static TransformProjectedH1 MapToTransformProjectedH1(int runId, int producerId, string? subsidiaryId, string materialCode, string submissionPeriod, string level, CalcResultH1ProjectedProducerMaterialTonnage tonnage)
-        {
-            return new TransformProjectedH1
-            {
-                CalculatorRunId = runId,
-                ProducerId = producerId,
-                SubsidiaryId = subsidiaryId,
-                MaterialCode = materialCode,
-                SubmissionPeriodCode = submissionPeriod,
-                Level = level,
-                HouseholdTonnage = tonnage.HouseholdTonnage,
-                HouseholdTonnageRed = tonnage.HouseholdRAMTonnage.Red,
-                HouseholdTonnageAmber = tonnage.HouseholdRAMTonnage.Amber,
-                HouseholdTonnageGreen = tonnage.HouseholdRAMTonnage.Green,
-                HouseholdTonnageRedMedical = tonnage.HouseholdRAMTonnage.RedMedical,
-                HouseholdTonnageAmberMedical = tonnage.HouseholdRAMTonnage.AmberMedical,
-                HouseholdTonnageGreenMedical = tonnage.HouseholdRAMTonnage.GreenMedical,
-                PublicBinTonnage = tonnage.PublicBinTonnage,
-                PublicBinTonnageRed = tonnage.PublicBinRAMTonnage.Red,
-                PublicBinTonnageAmber = tonnage.PublicBinRAMTonnage.Amber,
-                PublicBinTonnageGreen = tonnage.PublicBinRAMTonnage.Green,
-                PublicBinTonnageRedMedical = tonnage.PublicBinRAMTonnage.RedMedical,
-                PublicBinTonnageAmberMedical = tonnage.PublicBinRAMTonnage.AmberMedical,
-                PublicBinTonnageGreenMedical = tonnage.PublicBinRAMTonnage.GreenMedical,
-                HDCTonnage = tonnage.HouseholdDrinksContainerTonnage,
-                HDCTonnageRed = tonnage.HouseholdDrinksContainerRAMTonnage?.Red,
-                HDCTonnageAmber = tonnage.HouseholdDrinksContainerRAMTonnage?.Amber,
-                HDCTonnageGreen = tonnage.HouseholdDrinksContainerRAMTonnage?.Green,
-                HDCTonnageRedMedical = tonnage.HouseholdDrinksContainerRAMTonnage?.RedMedical,
-                HDCTonnageAmberMedical = tonnage.HouseholdDrinksContainerRAMTonnage?.AmberMedical,
-                HDCTonnageGreenMedical = tonnage.HouseholdDrinksContainerRAMTonnage?.GreenMedical,
-                HouseholdTonnageWithoutRAM = tonnage.HouseholdTonnageWithoutRAM,
-                PublicBinTonnageWithoutRAM = tonnage.PublicBinTonnageWithoutRAM,
-                HDCTonnageWithoutRAM = tonnage.HouseholdDrinksContainerTonnageWithoutRAM,
-                ProjectedHouseholdTonnage = tonnage.ProjectedHouseholdTonnage,
-                ProjectedHouseholdTonnageRed = tonnage.ProjectedHouseholdRAMTonnage.Red,
-                ProjectedHouseholdTonnageAmber = tonnage.ProjectedHouseholdRAMTonnage.Amber,
-                ProjectedHouseholdTonnageGreen = tonnage.ProjectedHouseholdRAMTonnage.Green,
-                ProjectedHouseholdTonnageRedMedical = tonnage.ProjectedHouseholdRAMTonnage.RedMedical,
-                ProjectedHouseholdTonnageAmberMedical = tonnage.ProjectedHouseholdRAMTonnage.AmberMedical,
-                ProjectedHouseholdTonnageGreenMedical = tonnage.ProjectedHouseholdRAMTonnage.GreenMedical,
-                ProjectedPublicBinTonnage = tonnage.ProjectedPublicBinTonnage,
-                ProjectedPublicBinTonnageRed = tonnage.ProjectedPublicBinRAMTonnage.Red,
-                ProjectedPublicBinTonnageAmber = tonnage.ProjectedPublicBinRAMTonnage.Amber,
-                ProjectedPublicBinTonnageGreen = tonnage.ProjectedPublicBinRAMTonnage.Green,
-                ProjectedPublicBinTonnageRedMedical = tonnage.ProjectedPublicBinRAMTonnage.RedMedical,
-                ProjectedPublicBinTonnageAmberMedical = tonnage.ProjectedPublicBinRAMTonnage.AmberMedical,
-                ProjectedPublicBinTonnageGreenMedical = tonnage.ProjectedPublicBinRAMTonnage.GreenMedical,
-                ProjectedHDCTonnage = tonnage.ProjectedHouseholdDrinksContainerTonnage,
-                ProjectedHDCTonnageRed = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.Red,
-                ProjectedHDCTonnageAmber = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.Amber,
-                ProjectedHDCTonnageGreen = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.Green,
-                ProjectedHDCTonnageRedMedical = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.RedMedical,
-                ProjectedHDCTonnageAmberMedical = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.AmberMedical,
-                ProjectedHDCTonnageGreenMedical = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.GreenMedical,
-                H2RamProportionsRed = tonnage.H2RamProportions.Red,
-                H2RamProportionsAmber = tonnage.H2RamProportions.Amber,
-                H2RamProportionsGreen = tonnage.H2RamProportions.Green,
-                H2RamProportionsRedMedical = tonnage.H2RamProportions.RedMedical,
-                H2RamProportionsAmberMedical = tonnage.H2RamProportions.AmberMedical,
-                H2RamProportionsGreenMedical = tonnage.H2RamProportions.GreenMedical
-            };
-        }
-
-        private static TransformProjectedH2 MapToTransformProjectedH2(int runId, int producerId, string? subsidiaryId, string materialCode, string submissionPeriod, string level,CalcResultH2ProjectedProducerMaterialTonnage tonnage)
-        {
-            return new TransformProjectedH2
-            {
-                CalculatorRunId = runId,
-                ProducerId = producerId,
-                SubsidiaryId = subsidiaryId,
-                MaterialCode = materialCode,
-                Level = level,
-                SubmissionPeriodCode = submissionPeriod,
-                HouseholdTonnage = tonnage.HouseholdTonnage,
-                HouseholdTonnageRed = tonnage.HouseholdRAMTonnage.Red,
-                HouseholdTonnageAmber = tonnage.HouseholdRAMTonnage.Amber,
-                HouseholdTonnageGreen = tonnage.HouseholdRAMTonnage.Green,
-                HouseholdTonnageRedMedical = tonnage.HouseholdRAMTonnage.RedMedical,
-                HouseholdTonnageAmberMedical = tonnage.HouseholdRAMTonnage.AmberMedical,
-                HouseholdTonnageGreenMedical = tonnage.HouseholdRAMTonnage.GreenMedical,
-                PublicBinTonnage = tonnage.PublicBinTonnage,
-                PublicBinTonnageRed = tonnage.PublicBinRAMTonnage.Red,
-                PublicBinTonnageAmber = tonnage.PublicBinRAMTonnage.Amber,
-                PublicBinTonnageGreen = tonnage.PublicBinRAMTonnage.Green,
-                PublicBinTonnageRedMedical = tonnage.PublicBinRAMTonnage.RedMedical,
-                PublicBinTonnageAmberMedical = tonnage.PublicBinRAMTonnage.AmberMedical,
-                PublicBinTonnageGreenMedical = tonnage.PublicBinRAMTonnage.GreenMedical,
-                HDCTonnage = tonnage.HouseholdDrinksContainerTonnage,
-                HDCTonnageRed = tonnage.HouseholdDrinksContainerRAMTonnage?.Red,
-                HDCTonnageAmber = tonnage.HouseholdDrinksContainerRAMTonnage?.Amber,
-                HDCTonnageGreen = tonnage.HouseholdDrinksContainerRAMTonnage?.Green,
-                HDCTonnageRedMedical = tonnage.HouseholdDrinksContainerRAMTonnage?.RedMedical,
-                HDCTonnageAmberMedical = tonnage.HouseholdDrinksContainerRAMTonnage?.AmberMedical,
-                HDCTonnageGreenMedical = tonnage.HouseholdDrinksContainerRAMTonnage?.GreenMedical,
-                HouseholdTonnageWithoutRAM = tonnage.HouseholdTonnageWithoutRAM,
-                PublicBinTonnageWithoutRAM = tonnage.PublicBinTonnageWithoutRAM,
-                HDCTonnageWithoutRAM = tonnage.HouseholdDrinksContainerTonnageWithoutRAM,
-                ProjectedHouseholdTonnage = tonnage.ProjectedHouseholdTonnage,
-                ProjectedHouseholdTonnageRed = tonnage.ProjectedHouseholdRAMTonnage.Red,
-                ProjectedHouseholdTonnageAmber = tonnage.ProjectedHouseholdRAMTonnage.Amber,
-                ProjectedHouseholdTonnageGreen = tonnage.ProjectedHouseholdRAMTonnage.Green,
-                ProjectedHouseholdTonnageRedMedical = tonnage.ProjectedHouseholdRAMTonnage.RedMedical,
-                ProjectedHouseholdTonnageAmberMedical = tonnage.ProjectedHouseholdRAMTonnage.AmberMedical,
-                ProjectedHouseholdTonnageGreenMedical = tonnage.ProjectedHouseholdRAMTonnage.GreenMedical,
-                ProjectedPublicBinTonnage = tonnage.ProjectedPublicBinTonnage,
-                ProjectedPublicBinTonnageRed = tonnage.ProjectedPublicBinRAMTonnage.Red,
-                ProjectedPublicBinTonnageAmber = tonnage.ProjectedPublicBinRAMTonnage.Amber,
-                ProjectedPublicBinTonnageGreen = tonnage.ProjectedPublicBinRAMTonnage.Green,
-                ProjectedPublicBinTonnageRedMedical = tonnage.ProjectedPublicBinRAMTonnage.RedMedical,
-                ProjectedPublicBinTonnageAmberMedical = tonnage.ProjectedPublicBinRAMTonnage.AmberMedical,
-                ProjectedPublicBinTonnageGreenMedical = tonnage.ProjectedPublicBinRAMTonnage.GreenMedical,
-                ProjectedHDCTonnage = tonnage.ProjectedHouseholdDrinksContainerTonnage,
-                ProjectedHDCTonnageRed = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.Red,
-                ProjectedHDCTonnageAmber = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.Amber,
-                ProjectedHDCTonnageGreen = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.Green,
-                ProjectedHDCTonnageRedMedical = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.RedMedical,
-                ProjectedHDCTonnageAmberMedical = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.AmberMedical,
-                ProjectedHDCTonnageGreenMedical = tonnage.ProjectedHouseholdDrinksContainerRAMTonnage?.GreenMedical
-            };
-        }
-
         private static ImmutableList<ScaledupPomEntry> MapToScaled(List<TransformScaled> scaled)
         {
             return scaled.Select(s =>
@@ -496,47 +298,6 @@ namespace EPR.Calculator.Service.Function.Services
                     ScaledTonnage: s.ScaledTonnage
                 )
             ).ToImmutableList();
-        }
-
-        private static TransformPartial MapToTransformPartial(int runId, string materialCode, CalcResultPartialObligation producer, CalcResultPartialObligationTonnage tonnage)
-        {
-            return new TransformPartial
-            {
-                CalculatorRunId = runId,
-                ProducerId = producer.ProducerId,
-                SubsidiaryId = producer.SubsidiaryId,
-                ProducerName = producer.ProducerName,
-                TradingName = producer.TradingName,
-                Level = producer.Level,
-                SubmissionYear = producer.SubmissionYear,
-                DaysInSubmissionYear = producer.DaysInSubmissionYear,
-                JoiningDate = producer.JoiningDate,
-                DaysObligated = producer.DaysObligated,
-                ObligatedFactor = producer.ObligatedFactor,
-                MaterialCode = materialCode,
-                HouseholdTonnage = tonnage.HouseholdTonnage,
-                HouseholdTonnageRed = tonnage.HouseholdRAMTonnage?.Red,
-                HouseholdTonnageAmber = tonnage.HouseholdRAMTonnage?.Amber,
-                HouseholdTonnageGreen = tonnage.HouseholdRAMTonnage?.Green,
-                HouseholdTonnageRedMedical = tonnage.HouseholdRAMTonnage?.RedMedical,
-                HouseholdTonnageAmberMedical = tonnage.HouseholdRAMTonnage?.AmberMedical,
-                HouseholdTonnageGreenMedical = tonnage.HouseholdRAMTonnage?.GreenMedical,
-                PublicBinTonnage = tonnage.PublicBinTonnage,
-                PublicBinTonnageRed = tonnage.PublicBinRAMTonnage?.Red,
-                PublicBinTonnageAmber = tonnage.PublicBinRAMTonnage?.Amber,
-                PublicBinTonnageGreen = tonnage.PublicBinRAMTonnage?.Green,
-                PublicBinTonnageRedMedical = tonnage.PublicBinRAMTonnage?.RedMedical,
-                PublicBinTonnageAmberMedical = tonnage.PublicBinRAMTonnage?.AmberMedical,
-                PublicBinTonnageGreenMedical = tonnage.PublicBinRAMTonnage?.GreenMedical,
-                HDCTonnage = tonnage.HouseholdDrinksContainersTonnage,
-                HDCTonnageRed = tonnage.HouseholdDrinksContainersRAMTonnage?.Red,
-                HDCTonnageAmber = tonnage.HouseholdDrinksContainersRAMTonnage?.Amber,
-                HDCTonnageGreen = tonnage.HouseholdDrinksContainersRAMTonnage?.Green,
-                HDCTonnageRedMedical = tonnage.HouseholdDrinksContainersRAMTonnage?.RedMedical,
-                HDCTonnageAmberMedical = tonnage.HouseholdDrinksContainersRAMTonnage?.AmberMedical,
-                HDCTonnageGreenMedical = tonnage.HouseholdDrinksContainersRAMTonnage?.GreenMedical,
-                SMCWTonnage = tonnage.SelfManagedConsumerWasteTonnage
-            };
         }
 
         private static Dictionary<string, CalcResultPartialObligationTonnage> MapToPartial(List<TransformPartial> partial)
@@ -598,6 +359,5 @@ namespace EPR.Calculator.Service.Function.Services
                 }
             );
         }
-
     }
 }
