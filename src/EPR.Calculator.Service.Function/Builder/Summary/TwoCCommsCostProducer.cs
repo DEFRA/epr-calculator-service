@@ -1,22 +1,23 @@
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Builder.Summary;
 
 public static class TwoCCommsCostProducer
 {
-    public static void SetValues(CalcResult calcResult, CalcResultSummary summary)
+    public static void SetValues(CalcResult calcResult, ProducerFees producerFees)
     {
         var commsCostByCountry = calcResult.CalcResultCommsCostReportDetail.CommsCostByCountry;
         var badDebtProvision = calcResult.CalcResultParameterOtherCost.BadDebtValue / 100 * commsCostByCountry;
-        summary.CommsCostsSection2c = new CalcResultSummaryBadDebtProvision
+        producerFees.Total.CommsCostsSection2c = new FeeWithBadDebt
         {
-            FeeWithoutBadDebtProvision = commsCostByCountry.Total,
-            BadDebtProvision           = badDebtProvision.Total,
-            FeeWithBadDebtProvision    = commsCostByCountry + badDebtProvision
+            FeeWithoutBadDebt = commsCostByCountry.Total,
+            BadDebt           = badDebtProvision.Total,
+            ByCountry    = commsCostByCountry + badDebtProvision
         };
     }
 
-    public static void UpdateTwoCRows(CalcResult calcResult, CalcResultSummaryProducerDisposalFees result)
+    public static void UpdateTwoCRows(CalcResult calcResult, FeeDetail result)
     {
         var commsCost = calcResult.CalcResultCommsCostReportDetail.CommsCostByCountry;
 
@@ -24,17 +25,17 @@ public static class TwoCCommsCostProducer
             calcResult.CalcResultParameterOtherCost.BadDebtValue / 100
             * calcResult.CalcResultCommsCostReportDetail.CommsCostByCountry;
 
-        result.CommsCostsSection2c = new CalcResultSummaryBadDebtProvision
+        result.CommsCostsSection2c = new FeeWithBadDebt
         {
-            FeeWithoutBadDebtProvision =
+            FeeWithoutBadDebt =
                 commsCost.Total
-                * result.PercentageofProducerReportedTonnagevsAllProducers
+                * result.ReportedTonnagePercentage
                 / 100,
-            BadDebtProvision = badDebtProvisionValue.Total
-                * result.PercentageofProducerReportedTonnagevsAllProducers
+            BadDebt = badDebtProvisionValue.Total
+                * result.ReportedTonnagePercentage
                 / 100,
-            FeeWithBadDebtProvision = (commsCost + badDebtProvisionValue)
-                * (result.PercentageofProducerReportedTonnagevsAllProducers
+            ByCountry = (commsCost + badDebtProvisionValue)
+                * (result.ReportedTonnagePercentage
                 / 100)
         };
     }

@@ -7,7 +7,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Summary
 [TestClass]
 public class Section2aMaterialsExporterTests
 {
-    private readonly ICalcResultSummaryPartExporter exporter = new Section2aMaterialsExporter();
+    private readonly IProducerFeesPartExporter exporter = new Section2aMaterialsExporter();
 
     [TestMethod]
     public void Section2aMaterialsExporter_Export_CSV_Aluminium()
@@ -15,20 +15,20 @@ public class Section2aMaterialsExporterTests
         // Arrange
         var materials = TestDataHelper.GetMaterialDetails().Where(m => m.Code == "AL").ToList();
         const bool applyModulation = false;
-        var resultSummary = TestDataHelper.GetCalcResultSummary();
-        var producer = resultSummary.ProducerDisposalFees.First();
-        producer.ProducerCommsFeesByMaterial =
-            producer.ProducerCommsFeesByMaterial!
+        var producerFees = TestDataHelper.GetProducerFees();
+        var producer = producerFees.Details.First();
+        producer.FeeDetail.FeesByMaterial =
+            producer.FeeDetail.FeesByMaterial!
                 .Where(kv => kv.Key == "AL")
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
-        resultSummary.OverallTotal!.ProducerCommsFeesByMaterial =
-            resultSummary.OverallTotal.ProducerCommsFeesByMaterial!
+        producerFees.Total!.FeesByMaterial =
+            producerFees.Total.FeesByMaterial!
                 .Where(kv => kv.Key == "AL")
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
         var csvContent = new StringBuilder();
 
         // Act
-        SummaryExporterTestUtils.Render(exporter, materials, applyModulation, resultSummary, csvContent);
+        ProducerFeesExporterTestUtils.Render(exporter, materials, applyModulation, producerFees, csvContent);
         var result = csvContent.ToString().ReplaceLineEndings("\n").Split("\n").ToArray();
         Console.WriteLine(string.Join("\n", result));
 
@@ -84,20 +84,20 @@ public class Section2aMaterialsExporterTests
         // Arrange
         var materials = TestDataHelper.GetMaterialDetails().Where(m => m.Code == "GL").ToList();
         const bool applyModulation = false;
-        var resultSummary = TestDataHelper.GetCalcResultSummary();
-        var producer = resultSummary.ProducerDisposalFees.First();
-        producer.ProducerCommsFeesByMaterial =
-            producer.ProducerCommsFeesByMaterial!
+        var producerFees = TestDataHelper.GetProducerFees();
+        var producer = producerFees.Details.First();
+        producer.FeeDetail.FeesByMaterial =
+            producer.FeeDetail.FeesByMaterial!
                 .Where(kv => kv.Key == "GL")
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
-        resultSummary.OverallTotal!.ProducerCommsFeesByMaterial =
-            resultSummary.OverallTotal.ProducerCommsFeesByMaterial!
+        producerFees.Total!.FeesByMaterial =
+            producerFees.Total.FeesByMaterial!
                 .Where(kv => kv.Key == "GL")
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
         var csvContent = new StringBuilder();
 
         // Act
-        SummaryExporterTestUtils.Render(exporter, materials, applyModulation, resultSummary, csvContent);
+        ProducerFeesExporterTestUtils.Render(exporter, materials, applyModulation, producerFees, csvContent);
         var result = csvContent.ToString().ReplaceLineEndings("\n").Split("\n").ToArray();
         Console.WriteLine(string.Join("\n", result));
 

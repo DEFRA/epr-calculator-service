@@ -7,7 +7,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Summary
 [TestClass]
 public class CommsCost2bExporterTests
 {
-    private readonly ICalcResultSummaryPartExporter exporter = new CommsCost2bExporter();
+    private readonly IProducerFeesPartExporter exporter = new CommsCost2bExporter();
 
     [TestMethod]
     public void CommsCost2bExporterTests_Export_CSV()
@@ -15,11 +15,11 @@ public class CommsCost2bExporterTests
         // Arrange
         var materials = TestDataHelper.GetMaterialDetails();
         const bool applyModulation = false;
-        var resultSummary = TestDataHelper.GetCalcResultSummary();
+        var producerFees = TestDataHelper.GetProducerFees();
         var csvContent = new StringBuilder();
 
         // Act
-        SummaryExporterTestUtils.Render(exporter, materials, applyModulation, resultSummary, csvContent);
+        ProducerFeesExporterTestUtils.Render(exporter, materials, applyModulation, producerFees, csvContent);
         var result = csvContent.ToString().ReplaceLineEndings("\n").Split("\n").ToArray();
         Console.WriteLine(string.Join("\n", result));
 
@@ -32,7 +32,7 @@ public class CommsCost2bExporterTests
              null,
              null
             ],
-            ["£1339.10", "£80.35", "£1419.45", null, null, null, null],
+            ["£2844.06", "£170.64", "£3014.70", null, null, null, null],
             ["2b Total Producer Fee for Comms Costs - UK wide In proportion to Producer Tonnage w/o Bad Debt provision",
              "Bad Debt Provision for 2b",
              "2b Total Producer Fee for Comms Costs - UK wide In proportion to Producer Tonnage with Bad Debt provision",

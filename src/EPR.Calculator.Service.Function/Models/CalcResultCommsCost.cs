@@ -1,4 +1,6 @@
-﻿using EPR.Calculator.Service.Function.Utils;
+﻿using EPR.Calculator.API.Data.DataModels;
+
+using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Models;
 

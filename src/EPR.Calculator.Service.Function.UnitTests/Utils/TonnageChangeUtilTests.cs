@@ -1,6 +1,7 @@
 ﻿using EPR.Calculator.Service.Function.Builder.Summary.Common;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Utils
 {
@@ -58,9 +59,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Utils
         [TestMethod]
         public void ComputeCountAndAdvice_levelNot1_returnsNulls()
         {
-            var byMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>
+            var byMaterial = new Dictionary<string, DisposalFee>
             {
-                ["PAPER"] = new() { TonnageChange = 5m, ProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty }
+                ["PAPER"] = DisposalFee.Empty with { TonnageChange = 5m }
             };
 
             var (count, advice) = TonnageChangeUtil.ComputeCountAndAdvice("2", byMaterial);
@@ -72,12 +73,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Utils
         [TestMethod]
         public void ComputeCountAndAdvice_changesPresent_returnsCountAndCHANGE()
         {
-            var byMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>
+            var byMaterial = new Dictionary<string, DisposalFee>
             {
-                ["PAPER"] = new() { TonnageChange = 0m, ProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty },  // ignored
-                ["GLASS"] = new() { TonnageChange = null, ProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty },  // ignored
-                ["METAL"] = new() { TonnageChange = 3m, ProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty },  // counted
-                ["PLASTIC"] = new() { TonnageChange = -1m, ProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty }   // counted
+                ["PAPER"] = DisposalFee.Empty with { TonnageChange = 0m },  // ignored
+                ["GLASS"] = DisposalFee.Empty with { TonnageChange = null },  // ignored
+                ["METAL"] = DisposalFee.Empty with { TonnageChange = 3m },  // counted
+                ["PLASTIC"] = DisposalFee.Empty with { TonnageChange = -1m }  // counted
             };
 
             var (count, advice) = TonnageChangeUtil.ComputeCountAndAdvice(
@@ -90,10 +91,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Utils
         [TestMethod]
         public void ComputeCountAndAdvice_noChanges_returnsZeroAndEmptyAdvice()
         {
-            var byMaterial = new Dictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial>
+            var byMaterial = new Dictionary<string, DisposalFee>
             {
-                ["PAPER"] = new() { TonnageChange = 0m, ProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty },
-                ["GLASS"] = new() { TonnageChange = null, ProducerDisposalFeeWithBadDebtProvision = ByCountryCost.Empty }
+                ["PAPER"] = DisposalFee.Empty with { TonnageChange = 0m },
+                ["GLASS"] = DisposalFee.Empty with { TonnageChange = null }
             };
 
             var (count, advice) = TonnageChangeUtil.ComputeCountAndAdvice(

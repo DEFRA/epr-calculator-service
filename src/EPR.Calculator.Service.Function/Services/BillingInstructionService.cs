@@ -7,6 +7,7 @@ using EPR.Calculator.Service.Function.Features.CalculatorRuns.Contexts;
 using EPR.Calculator.Service.Function.Logging;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Services;
 
@@ -40,8 +41,8 @@ public class BillingInstructionService(
 
     private static ImmutableList<ProducerResultFileSuggestedBillingInstruction> GetBillingInstructions(CalcResult calcResult)
     {
-        var producers = calcResult.CalcResultSummary.ProducerDisposalFees
-            .Where(producer => producer.Level == CommonConstants.LevelOne.ToString());
+        var producers = calcResult.ProducerFees.Details
+            .Where(producer => producer.FeeDetail.Level == CommonConstants.LevelOne.ToString());
 
         var cancelledProducers = calcResult.CalcResultCancelledProducers;
 
@@ -49,21 +50,21 @@ public class BillingInstructionService(
 
         foreach (var producer in producers)
         {
-            var billingInstructionSection = producer.BillingInstructionSection;
+            var billingInstructionSection = producer.FeeDetail.BillingInstruction;
 
             var billingInstruction = new ProducerResultFileSuggestedBillingInstruction
             {
                 CalculatorRunId                         = calcResult.CalcResultDetail.RunId,
-                ProducerId                              = producer.ProducerId,
-                TotalProducerBillWithBadDebt            = producer.TotalProducerBillBreakdownCosts!.FeeWithBadDebtProvision.Total,
+                ProducerId                              = producer.FeeDetail.ProducerId,
+                TotalProducerBillWithBadDebt            = producer.FeeDetail.TotalBillBreakdown!.ByCountry.Total,
                 CurrentYearInvoiceTotalToDate           = billingInstructionSection?.CurrentYearInvoiceTotalToDate,
                 TonnageChangeSinceLastInvoice           = GetStringValue(billingInstructionSection?.TonnageChangeSinceLastInvoice!),
                 AmountLiabilityDifferenceCalcVsPrev     = billingInstructionSection?.LiabilityDifference!,
-                MaterialPoundThresholdBreached          = GetStringValue(billingInstructionSection?.MaterialThresholdBreached!),
-                TonnagePoundThresholdBreached           = GetStringValue(billingInstructionSection?.TonnageThresholdBreached!),
+                MaterialPoundThresholdBreached          = GetStringValue(billingInstructionSection?.MaterialityLiabilityDirection),
+                TonnagePoundThresholdBreached           = GetStringValue(billingInstructionSection?.TonnageAmountLiabilityDirection),
                 PercentageLiabilityDifferenceCalcVsPrev = billingInstructionSection?.PercentageLiabilityDifference!,
-                MaterialPercentageThresholdBreached     = GetStringValue(billingInstructionSection?.MaterialPercentageThresholdBreached!),
-                TonnagePercentageThresholdBreached      = GetStringValue(billingInstructionSection?.TonnagePercentageThresholdBreached!),
+                MaterialPercentageThresholdBreached     = GetStringValue(billingInstructionSection?.MaterialityPercentageLiabilityDirection),
+                TonnagePercentageThresholdBreached      = GetStringValue(billingInstructionSection?.TonnageAmountPercentageLiabilityDirection),
                 SuggestedBillingInstruction             = billingInstructionSection?.SuggestedBillingInstruction!,
                 SuggestedInvoiceAmount                  = billingInstructionSection?.SuggestedInvoiceAmount ?? 0m
             };
@@ -104,4 +105,7 @@ public class BillingInstructionService(
             ? null
             : TypeConverterUtil.ConvertTo<string>(value);
     }
+
+    private static string? GetStringValue(LiabilityDirection? value) =>
+        GetStringValue(LiabilityDirectionUtils.ToThresholdBreachedString(value));
 }

@@ -136,7 +136,7 @@ public class CalcResultCommsCostBuilderTest : TestsFor<CalcResultCommsCostBuilde
         };
         context.Material.AddRange(materials);
 
-        var producerReportedMaterials = new List<ProducerReportedMaterialProjected>
+        var producerReportedMaterials = new List<ProducerMaterialPackaging>
         {
             new() { ProducerDetailId = 1, MaterialId = 1, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
             new() { ProducerDetailId = 1, MaterialId = 1, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.Household, PackagingTonnage = 50 },
@@ -145,7 +145,7 @@ public class CalcResultCommsCostBuilderTest : TestsFor<CalcResultCommsCostBuilde
             new() { ProducerDetailId = 1, MaterialId = 3, SubmissionPeriod = "2025-H1", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 },
             new() { ProducerDetailId = 1, MaterialId = 3, SubmissionPeriod = "2025-H2", PackagingType = PackagingTypes.HouseholdDrinksContainers, PackagingTonnage = 150 }
         };
-        context.ProducerReportedMaterialProjected.AddRange(producerReportedMaterials);
+        context.ProducerMaterialPackaging.AddRange(producerReportedMaterials);
 
         context.SaveChanges();
     }
@@ -186,7 +186,7 @@ public class CalcResultCommsCostBuilderTest : TestsFor<CalcResultCommsCostBuilde
             {
                 for (var materialId = 1; materialId < 9; materialId++)
                 {
-                    dbContext.ProducerReportedMaterialProjected.Add(new ProducerReportedMaterialProjected
+                    dbContext.ProducerMaterialPackaging.Add(new ProducerMaterialPackaging
                     {
                         MaterialId = materialId,
                         ProducerDetailId = producerDetailId,
@@ -197,7 +197,7 @@ public class CalcResultCommsCostBuilderTest : TestsFor<CalcResultCommsCostBuilde
                 }
             }
 
-            dbContext.ProducerReportedMaterialProjected.AddRange(new List<ProducerReportedMaterialProjected>
+            dbContext.ProducerMaterialPackaging.AddRange(new List<ProducerMaterialPackaging>
             {
                 new()
                 {

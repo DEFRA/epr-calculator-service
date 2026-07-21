@@ -7,7 +7,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Summary
 [TestClass]
 public class CommsCost2cExporterTests
 {
-    private readonly ICalcResultSummaryPartExporter exporter = new CommsCost2cExporter();
+    private readonly IProducerFeesPartExporter exporter = new CommsCost2cExporter();
 
     [TestMethod]
     public void CommsCost2cExporter_Export_CSV()
@@ -15,11 +15,11 @@ public class CommsCost2cExporterTests
         // Arrange
         var materials = TestDataHelper.GetMaterialDetails();
         const bool applyModulation = false;
-        var resultSummary = TestDataHelper.GetCalcResultSummary();
+        var producerFees = TestDataHelper.GetProducerFees();
         var csvContent = new StringBuilder();
 
         // Act
-        SummaryExporterTestUtils.Render(exporter, materials, applyModulation, resultSummary, csvContent);
+        ProducerFeesExporterTestUtils.Render(exporter, materials, applyModulation, producerFees, csvContent);
         var result = csvContent.ToString().ReplaceLineEndings("\n").Split("\n").ToArray();
         Console.WriteLine(string.Join("\n", result));
 

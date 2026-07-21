@@ -1,10 +1,14 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.DataTypes;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Fixtures;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 using EPR.Calculator.Service.Function.Utils;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
@@ -12,21 +16,33 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     public class CalcResultServiceTest
     {
         private IFixture _fixture = null!;
+        private SqliteConnection _connection = null!;
         private ApplicationDBContext _dbContext = null!;
         private CalcResultService _sut = null!;
 
         [TestInitialize]
         public void Init()
         {
+            _connection = new SqliteConnection("Data Source=:memory:");
+            _connection.Open();
+
+            var options = new DbContextOptionsBuilder<ApplicationDBContext>()
+                .UseSqlite(_connection)
+                .Options;
+
+            _dbContext = new ApplicationDBContext(options);
+            _dbContext.Database.EnsureCreated();
+
             _fixture = TestFixtures.New();
-            _dbContext = _fixture.Freeze<ApplicationDBContext>();
+            _fixture.Inject(_dbContext);
             _sut = _fixture.Create<CalcResultService>();
         }
 
         [TestCleanup]
         public void TearDown()
         {
-            _dbContext.Database.EnsureDeleted();
+            _dbContext.Dispose();
+            _connection.Dispose();
         }
 
         [TestMethod]
@@ -76,7 +92,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     }
                 }
             );
-            await _sut.StoreProjectedH1Data(1, projectedProducers);
+            await _sut.StoreProjectedH1Data(1, projectedProducers, CancellationToken.None);
 
             var storedH1 = await _dbContext.TransformProjectedH1.ToImmutableListAsync();
             storedH1.Count.ShouldBe(9);
@@ -132,7 +148,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     }
                 }
             );
-            await _sut.StoreProjectedH2Data(1, projectedProducers);
+            await _sut.StoreProjectedH2Data(1, projectedProducers, CancellationToken.None);
 
             var storedH2 = await _dbContext.TransformProjectedH2.ToImmutableListAsync();
             storedH2.Count.ShouldBe(9);
@@ -161,7 +177,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
              });
             await _dbContext.SaveChangesAsync();
             
-            var result = await _sut.ReadH1ProjectedData(1);
+            var result = await _sut.ReadH1ProjectedData(1, CancellationToken.None);
             result.Count.ShouldBe(3);
             result.First(p => p.ProducerId == 1 && p.SubsidiaryId == null && p.Level == "1").H1ProjectedTonnageByMaterial.Count.ShouldBe(3);
             result.First(p => p.ProducerId == 1 && p.SubsidiaryId == null && p.Level == "2").H1ProjectedTonnageByMaterial.Count.ShouldBe(3);
@@ -188,7 +204,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
              });
             await _dbContext.SaveChangesAsync();
             
-            var result = await _sut.ReadH2ProjectedData(1);
+            var result = await _sut.ReadH2ProjectedData(1, CancellationToken.None);
             result.Count.ShouldBe(3);
             result.First(p => p.ProducerId == 1 && p.SubsidiaryId == null && p.Level == "1").H2ProjectedTonnageByMaterial.Count.ShouldBe(3);
             result.First(p => p.ProducerId == 1 && p.SubsidiaryId == null && p.Level == "2").H2ProjectedTonnageByMaterial.Count.ShouldBe(3);
@@ -221,7 +237,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     },
                 }
             );
-            await _sut.StoreScaledData(1, scaled);
+            await _sut.StoreScaledData(1, scaled, CancellationToken.None);
 
             var storedScaled = await _dbContext.TransformScaled.ToImmutableListAsync();
             storedScaled.Count.ShouldBe(7);
@@ -246,7 +262,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             });
             await _dbContext.SaveChangesAsync();
             
-            var result = await _sut.ReadScaledData(1);
+            var result = await _sut.ReadScaledData(1, CancellationToken.None);
             result.Count.ShouldBe(3);
             result.First(p => p.ProducerId == 1 && p.SubsidiaryId == null).PomData.Count.ShouldBe(2);
             result.First(p => p.ProducerId == 1 && p.SubsidiaryId == "A").PomData.Count.ShouldBe(2);
@@ -276,7 +292,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     }
                 }
             );
-            await _sut.StorePartialData(1, partial);
+            await _sut.StorePartialData(1, partial, CancellationToken.None);
 
             var storedPartial = await _dbContext.TransformPartial.ToImmutableListAsync();
             storedPartial.Count.ShouldBe(3);
@@ -301,11 +317,93 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             });
             await _dbContext.SaveChangesAsync();
             
-            var result = await _sut.ReadPartialData(1);
+            var result = await _sut.ReadPartialData(1, CancellationToken.None);
             result.Count.ShouldBe(3);
             result.First(p => p.ProducerId == 1 && p.SubsidiaryId == null).PartialObligationTonnageByMaterial.Count.ShouldBe(2);
             result.First(p => p.ProducerId == 1 && p.SubsidiaryId == "A").PartialObligationTonnageByMaterial.Count.ShouldBe(2);
             result.First(p => p.ProducerId == 2 && p.SubsidiaryId == "B").PartialObligationTonnageByMaterial.Count.ShouldBe(2);
+        }
+
+        [TestMethod]
+        public async Task StoreProducerMaterialPackaging_WorksAsExpected()
+        {
+            TestDataHelper.SeedDatabaseForInitialRun(_dbContext);
+
+            ProducerReportedMaterial mkProducerReportedMaterial(int producerDetailId, string submissionPeriod, string material, string packagingType, decimal total, decimal? r, decimal? a)
+            {
+                return new ProducerReportedMaterial
+                {
+                    ProducerDetailId = producerDetailId,
+                    PackagingType = packagingType,
+                    MaterialId = material switch
+                    {
+                        "ST" => 1,
+                        "AL" => 2,
+                        "PL" => 3,
+                        _ => throw new ArgumentException($"Unknown material code: {material}")
+                    },
+                    PackagingTonnage = total,
+                    PackagingTonnageRed = r,
+                    PackagingTonnageAmber = a,
+                    PackagingTonnageGreen = 0m,
+                    PackagingTonnageRedMedical = null,
+                    PackagingTonnageAmberMedical = null,
+                    PackagingTonnageGreenMedical = null,
+                    SubmissionPeriod = submissionPeriod
+                };
+            }
+
+            var producer1 = new ProducerDetail{
+                Id = 1,
+                ProducerId = 1,
+                SubsidiaryId = null
+            };
+            producer1.ProducerReportedMaterials.Add(mkProducerReportedMaterial(producer1.Id, submissionPeriod: "2025-H1", material: "ST", packagingType: "PB", total:   7, r:   2, a: 5 ));
+            producer1.ProducerReportedMaterials.Add(mkProducerReportedMaterial(producer1.Id, submissionPeriod: "2025-H2", material: "PL", packagingType: "HH", total:  12, r:   0, a: 11));
+            producer1.ProducerReportedMaterials.Add(mkProducerReportedMaterial(producer1.Id, submissionPeriod: "2025-H1", material: "ST", packagingType: "HH", total: 201, r: 201, a: 0 ));
+            var producer2 = new ProducerDetail{
+                Id = 2,
+                ProducerId = 1,
+                SubsidiaryId = "A"
+            };
+            producer2.ProducerReportedMaterials.Add(mkProducerReportedMaterial(producer2.Id, submissionPeriod: "2025-H2", material: "ST", packagingType: "PB", total:   5, r:   1, a: 4 ));
+            producer2.ProducerReportedMaterials.Add(mkProducerReportedMaterial(producer2.Id, submissionPeriod: "2025-H2", material: "PL", packagingType: "HH", total:  10, r:   0, a: 10));
+            producer2.ProducerReportedMaterials.Add(mkProducerReportedMaterial(producer2.Id, submissionPeriod: "2025-H2", material: "ST", packagingType: "HH", total: 200, r: 200, a: 0 ));
+            var producers = new List<L1Producer>
+            {
+                new L1Producer(1, [producer1, producer2])
+            };
+
+            await _sut.StoreProducerMaterialPackaging(producers, CancellationToken.None);
+
+            var stored = await _dbContext.ProducerMaterialPackaging.ToImmutableListAsync();
+            stored.Count.ShouldBe(6);
+        }
+
+        [TestMethod]
+        public async Task StoreProducerFees_WorksAsExpected()
+        {
+            var producerFees = TestDataHelper.GetProducerFees();
+
+            await _sut.StoreProducerFees(1, producerFees, CancellationToken.None);
+
+            var stored = await _dbContext.ProducerDisposalFee.ToImmutableListAsync();
+            stored.Count.ShouldBe(1);
+            stored.First().ShouldBeEquivalentTo(producerFees);
+        }
+
+        [TestMethod]
+        public async Task ReadProducerFees_WorksAsExpected()
+        {
+            var producerFees = TestDataHelper.GetProducerFees();
+            _dbContext.Add(producerFees);
+            await _dbContext.SaveChangesAsync();
+
+            var result = await _sut.ReadProducerFees(0, CancellationToken.None);
+
+            result.CalculatorRunId.ShouldBeEquivalentTo(producerFees.CalculatorRunId);
+            result.Details.ShouldBeEquivalentTo(producerFees.Details);
+            result.Total.ShouldBeEquivalentTo(producerFees.Total);
         }
 
         private TransformProjectedH1 MkTransformProjectedH1(int runId, int producerId, string? subsidiaryId, string materialCode, string level, bool isGlass = false) {
@@ -427,67 +525,67 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             return new CalcResultH2ProjectedProducerMaterialTonnage
             {
                 HouseholdTonnage = 100,
-                HouseholdRAMTonnage = new RAMTonnage
+                HouseholdRAMTonnage = new RamTonnage
                 {
-                    RedTonnage = 50,
-                    AmberTonnage = 0,
-                    GreenTonnage = 0,
-                    RedMedicalTonnage = 0,
-                    AmberMedicalTonnage = 0,
-                    GreenMedicalTonnage = 0
+                    Red = 50,
+                    Amber = 0,
+                    Green = 0,
+                    RedMedical = 0,
+                    AmberMedical = 0,
+                    GreenMedical = 0
                 },
                 PublicBinTonnage = 200,
-                PublicBinRAMTonnage = new RAMTonnage
+                PublicBinRAMTonnage = new RamTonnage
                 {
-                    RedTonnage = 100,
-                    AmberTonnage = 0,
-                    GreenTonnage = 0,
-                    RedMedicalTonnage = 0,
-                    AmberMedicalTonnage = 0,
-                    GreenMedicalTonnage = 0
+                    Red = 100,
+                    Amber = 0,
+                    Green = 0,
+                    RedMedical = 0,
+                    AmberMedical = 0,
+                    GreenMedical = 0
                 },
                 HouseholdDrinksContainerTonnage = isGlass ? 300 : 0,
-                HouseholdDrinksContainerRAMTonnage = isGlass ? new RAMTonnage
+                HouseholdDrinksContainerRAMTonnage = isGlass ? new RamTonnage
                 {
-                    RedTonnage = 150,
-                    AmberTonnage = 0,
-                    GreenTonnage = 0,
-                    RedMedicalTonnage = 0,
-                    AmberMedicalTonnage = 0,
-                    GreenMedicalTonnage = 0
+                    Red = 150,
+                    Amber = 0,
+                    Green = 0,
+                    RedMedical = 0,
+                    AmberMedical = 0,
+                    GreenMedical = 0
                 } : null,
                 HouseholdTonnageWithoutRAM = 50,
                 PublicBinTonnageWithoutRAM = 100,
                 HouseholdDrinksContainerTonnageWithoutRAM = isGlass ? 150 : null,
                 ProjectedHouseholdTonnage = 50,
-                ProjectedHouseholdRAMTonnage = new RAMTonnage
+                ProjectedHouseholdRAMTonnage = new RamTonnage
                 {
-                    RedTonnage = 100,
-                    AmberTonnage = 0,
-                    GreenTonnage = 0,
-                    RedMedicalTonnage = 0,
-                    AmberMedicalTonnage = 0,
-                    GreenMedicalTonnage = 0
+                    Red = 100,
+                    Amber = 0,
+                    Green = 0,
+                    RedMedical = 0,
+                    AmberMedical = 0,
+                    GreenMedical = 0
                 },
                 ProjectedPublicBinTonnage = 200,
-                ProjectedPublicBinRAMTonnage = new RAMTonnage
+                ProjectedPublicBinRAMTonnage = new RamTonnage
                 {
-                    RedTonnage = 200,
-                    AmberTonnage = 0,
-                    GreenTonnage = 0,
-                    RedMedicalTonnage = 0,
-                    AmberMedicalTonnage = 0,
-                    GreenMedicalTonnage = 0
+                    Red = 200,
+                    Amber = 0,
+                    Green = 0,
+                    RedMedical = 0,
+                    AmberMedical = 0,
+                    GreenMedical = 0
                 },
                 ProjectedHouseholdDrinksContainerTonnage = isGlass ? 300 : null,
-                ProjectedHouseholdDrinksContainerRAMTonnage = isGlass ? new RAMTonnage
+                ProjectedHouseholdDrinksContainerRAMTonnage = isGlass ? new RamTonnage
                 {
-                    RedTonnage = 300,
-                    AmberTonnage = 0,
-                    GreenTonnage = 0,
-                    RedMedicalTonnage = 0,
-                    AmberMedicalTonnage = 0,
-                    GreenMedicalTonnage = 0
+                    Red = 300,
+                    Amber = 0,
+                    Green = 0,
+                    RedMedical = 0,
+                    AmberMedical = 0,
+                    GreenMedical = 0
                 } : null
             };
         }
@@ -497,67 +595,67 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             return new CalcResultH1ProjectedProducerMaterialTonnage
             {
                 HouseholdTonnage = 100,
-                HouseholdRAMTonnage = new RAMTonnage
+                HouseholdRAMTonnage = new RamTonnage
                 {
-                    RedTonnage = 50,
-                    AmberTonnage = 0,
-                    GreenTonnage = 0,
-                    RedMedicalTonnage = 0,
-                    AmberMedicalTonnage = 0,
-                    GreenMedicalTonnage = 0
+                    Red = 50,
+                    Amber = 0,
+                    Green = 0,
+                    RedMedical = 0,
+                    AmberMedical = 0,
+                    GreenMedical = 0
                 },
                 PublicBinTonnage = 200,
-                PublicBinRAMTonnage = new RAMTonnage
+                PublicBinRAMTonnage = new RamTonnage
                 {
-                    RedTonnage = 100,
-                    AmberTonnage = 0,
-                    GreenTonnage = 0,
-                    RedMedicalTonnage = 0,
-                    AmberMedicalTonnage = 0,
-                    GreenMedicalTonnage = 0
+                    Red = 100,
+                    Amber = 0,
+                    Green = 0,
+                    RedMedical = 0,
+                    AmberMedical = 0,
+                    GreenMedical = 0
                 },
                 HouseholdDrinksContainerTonnage = isGlass ? 300 : 0,
-                HouseholdDrinksContainerRAMTonnage = isGlass ? new RAMTonnage
+                HouseholdDrinksContainerRAMTonnage = isGlass ? new RamTonnage
                 {
-                    RedTonnage = 150,
-                    AmberTonnage = 0,
-                    GreenTonnage = 0,
-                    RedMedicalTonnage = 0,
-                    AmberMedicalTonnage = 0,
-                    GreenMedicalTonnage = 0
+                    Red = 150,
+                    Amber = 0,
+                    Green = 0,
+                    RedMedical = 0,
+                    AmberMedical = 0,
+                    GreenMedical = 0
                 } : null,
                 HouseholdTonnageWithoutRAM = 50,
                 PublicBinTonnageWithoutRAM = 100,
                 HouseholdDrinksContainerTonnageWithoutRAM = isGlass ? 150 : null,
                 ProjectedHouseholdTonnage = 50,
-                ProjectedHouseholdRAMTonnage = new RAMTonnage
+                ProjectedHouseholdRAMTonnage = new RamTonnage
                 {
-                    RedTonnage = 100,
-                    AmberTonnage = 0,
-                    GreenTonnage = 0,
-                    RedMedicalTonnage = 0,
-                    AmberMedicalTonnage = 0,
-                    GreenMedicalTonnage = 0
+                    Red = 100,
+                    Amber = 0,
+                    Green = 0,
+                    RedMedical = 0,
+                    AmberMedical = 0,
+                    GreenMedical = 0
                 },
                 ProjectedPublicBinTonnage = 200,
-                ProjectedPublicBinRAMTonnage = new RAMTonnage
+                ProjectedPublicBinRAMTonnage = new RamTonnage
                 {
-                    RedTonnage = 200,
-                    AmberTonnage = 0,
-                    GreenTonnage = 0,
-                    RedMedicalTonnage = 0,
-                    AmberMedicalTonnage = 0,
-                    GreenMedicalTonnage = 0
+                    Red = 200,
+                    Amber = 0,
+                    Green = 0,
+                    RedMedical = 0,
+                    AmberMedical = 0,
+                    GreenMedical = 0
                 },
                 ProjectedHouseholdDrinksContainerTonnage = isGlass ? 300 : null,
-                ProjectedHouseholdDrinksContainerRAMTonnage = isGlass ? new RAMTonnage
+                ProjectedHouseholdDrinksContainerRAMTonnage = isGlass ? new RamTonnage
                 {
-                    RedTonnage = 300,
-                    AmberTonnage = 0,
-                    GreenTonnage = 0,
-                    RedMedicalTonnage = 0,
-                    AmberMedicalTonnage = 0,
-                    GreenMedicalTonnage = 0
+                    Red = 300,
+                    Amber = 0,
+                    Green = 0,
+                    RedMedical = 0,
+                    AmberMedical = 0,
+                    GreenMedical = 0
                 } : null,
                 H2RamProportions = new RAMProportions
                 {
@@ -599,34 +697,34 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             {
                 ObligatedFactor = obligatedFactor,
                 HouseholdTonnage = 100,
-                HouseholdRAMTonnage = isModulated ? new RAMTonnage
+                HouseholdRAMTonnage = isModulated ? new RamTonnage
                 {
-                    RedTonnage = 50,
-                    AmberTonnage = 0,
-                    GreenTonnage = 0,
-                    RedMedicalTonnage = 0,
-                    AmberMedicalTonnage = 0,
-                    GreenMedicalTonnage = 0
+                    Red = 50,
+                    Amber = 0,
+                    Green = 0,
+                    RedMedical = 0,
+                    AmberMedical = 0,
+                    GreenMedical = 0
                 } : null,
                 PublicBinTonnage = 200,
-                PublicBinRAMTonnage = isModulated ? new RAMTonnage
+                PublicBinRAMTonnage = isModulated ? new RamTonnage
                 {
-                    RedTonnage = 100,
-                    AmberTonnage = 0,
-                    GreenTonnage = 0,
-                    RedMedicalTonnage = 0,
-                    AmberMedicalTonnage = 0,
-                    GreenMedicalTonnage = 0
+                    Red = 100,
+                    Amber = 0,
+                    Green = 0,
+                    RedMedical = 0,
+                    AmberMedical = 0,
+                    GreenMedical = 0
                 } : null,
                 HouseholdDrinksContainersTonnage = isGlass ? 300 : 0,
-                HouseholdDrinksContainersRAMTonnage = isModulated && isGlass ? new RAMTonnage
+                HouseholdDrinksContainersRAMTonnage = isModulated && isGlass ? new RamTonnage
                 {
-                    RedTonnage = 150,
-                    AmberTonnage = 0,
-                    GreenTonnage = 0,
-                    RedMedicalTonnage = 0,
-                    AmberMedicalTonnage = 0,
-                    GreenMedicalTonnage = 0
+                    Red = 150,
+                    Amber = 0,
+                    Green = 0,
+                    RedMedical = 0,
+                    AmberMedical = 0,
+                    GreenMedical = 0
                 } : null,
                 SelfManagedConsumerWasteTonnage = 50
             };

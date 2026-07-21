@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.JsonExporter.Model;
@@ -34,19 +35,19 @@ public class DisposalFeeSummary1
     [JsonPropertyName("tonnageChangeAdvice")]
     public required string TonnageChangeAdvice { get; set; }
 
-    public static DisposalFeeSummary1 From(CalcResultSummaryProducerDisposalFees summary)
+    public static DisposalFeeSummary1 From(FeeDetail producerFees)
     {
         return new DisposalFeeSummary1
         {
-            TotalProducerDisposalFeeWithoutBadDebtProvision = FormatUtils.FormatCurrency(summary.LADisposalCostsSection1.FeeWithoutBadDebtProvision),
-            BadDebtProvision                                = FormatUtils.FormatCurrency(summary.LADisposalCostsSection1.BadDebtProvision),
-            TotalProducerDisposalFeeWithBadDebtProvision    = FormatUtils.FormatCurrency(summary.LADisposalCostsSection1.FeeWithBadDebtProvision.Total),
-            EnglandTotal                                    = FormatUtils.FormatCurrency(summary.LADisposalCostsSection1.FeeWithBadDebtProvision.England),
-            WalesTotal                                      = FormatUtils.FormatCurrency(summary.LADisposalCostsSection1.FeeWithBadDebtProvision.Wales),
-            ScotlandTotal                                   = FormatUtils.FormatCurrency(summary.LADisposalCostsSection1.FeeWithBadDebtProvision.Scotland),
-            NorthernIrelandTotal                            = FormatUtils.FormatCurrency(summary.LADisposalCostsSection1.FeeWithBadDebtProvision.NorthernIreland),
-            TonnageChangeCount                              = summary.TonnageChangeCount ?? CommonConstants.Hyphen,
-            TonnageChangeAdvice                             = summary.TonnageChangeAdvice ?? CommonConstants.Hyphen,
+            TotalProducerDisposalFeeWithoutBadDebtProvision = FormatUtils.FormatCurrency(producerFees.LADisposalCostsSection1.FeeWithoutBadDebt),
+            BadDebtProvision                                = FormatUtils.FormatCurrency(producerFees.LADisposalCostsSection1.BadDebt),
+            TotalProducerDisposalFeeWithBadDebtProvision    = FormatUtils.FormatCurrency(producerFees.LADisposalCostsSection1.ByCountry.Total),
+            EnglandTotal                                    = FormatUtils.FormatCurrency(producerFees.LADisposalCostsSection1.ByCountry.England),
+            WalesTotal                                      = FormatUtils.FormatCurrency(producerFees.LADisposalCostsSection1.ByCountry.Wales),
+            ScotlandTotal                                   = FormatUtils.FormatCurrency(producerFees.LADisposalCostsSection1.ByCountry.Scotland),
+            NorthernIrelandTotal                            = FormatUtils.FormatCurrency(producerFees.LADisposalCostsSection1.ByCountry.NorthernIreland),
+            TonnageChangeCount                              = producerFees.TonnageChangeCount ?? CommonConstants.Hyphen,
+            TonnageChangeAdvice                             = producerFees.TonnageChangeAdvice ?? CommonConstants.Hyphen,
         };
     }
 }

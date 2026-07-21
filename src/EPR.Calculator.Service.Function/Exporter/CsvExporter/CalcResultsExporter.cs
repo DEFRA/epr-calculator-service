@@ -39,7 +39,7 @@ public class CalcResultsExporter(
     ICalcResultLapcapDataExporter lapcapDataExporter,
     ICalcResultParameterOtherCostExporter parameterOtherCostsExporter,
     ICalcResultCommsCostExporter commsCostExporter,
-    ICalcResultSummaryExporter summaryExporter,
+    IProducerFeesExporter producerFeesExporter,
     ICalcResultCancelledProducersExporter cancelledProducersExporter,
     ICalcResultErrorReportExporter calcResultErrorReportExporter,
     ILogger<CalcResultsExporter> logger
@@ -118,9 +118,12 @@ public class CalcResultsExporter(
             nameof(partialObligationsExporter)
         );
 
+        var scaledupIds = calcResult.CalcResultScaledupProducers.ScaledupProducers.Select(p => p.ProducerId).ToList();
+        var partialIds = calcResult.CalcResultPartialObligations.PartialObligations.Select(p => (p.ProducerId, p.SubsidiaryId)).ToList();
+
         logger.LogDuration(
-            () => summaryExporter.Export(runContext, calcResult.CalcResultSummary, materials, csvContent),
-            nameof(summaryExporter)
+            () => producerFeesExporter.Export(runContext, calcResult.ProducerFees, materials, scaledupIds, partialIds, csvContent),
+            nameof(producerFeesExporter)
         );
 
         logger.LogDuration(

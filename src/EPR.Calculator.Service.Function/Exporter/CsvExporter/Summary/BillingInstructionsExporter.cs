@@ -4,10 +4,11 @@ using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Utils;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 
-public class BillingInstructionsExporter : ICalcResultSummaryPartExporter
+public class BillingInstructionsExporter : IProducerFeesPartExporter
 {
     public static readonly string Title = "Calculation of Suggested Billing Instructions and Invoice Amounts";
 
@@ -27,24 +28,24 @@ public class BillingInstructionsExporter : ICalcResultSummaryPartExporter
         ];
     }
 
-    public void AppendSectionHeader(StringBuilder csvContent, CalcResultSummary resultSummary, IReadOnlyList<MaterialDetail> materials, bool applyModulation)
+    public void AppendSectionHeader(StringBuilder csvContent, ProducerFees producerFees, IReadOnlyList<MaterialDetail> materials, bool applyModulation)
     {
         int count = GetColumnHeaders(materials, applyModulation).Count();
         csvContent.Append(CsvSanitiser.SanitiseData(Title));
         csvContent.Append(',', count - 1);
     }
 
-    public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
+    public void AppendRow(StringBuilder csvContent, ProducerFeeExportRow producer, bool applyModulation, bool isOverallTotal)
     {
-        var s = producer.BillingInstructionSection!;
+        var s = producer.FeeDetail.BillingInstruction!;
         csvContent.Append(CsvSanitiser.SanitiseData(s.CurrentYearInvoiceTotalToDate, DecimalPlaces.Two, null, isCurrency: true, canBeEmpty: true));
         csvContent.Append(CsvSanitiser.SanitiseData(s.TonnageChangeSinceLastInvoice ?? CommonConstants.Hyphen));
         csvContent.Append(CsvSanitiser.SanitiseData(s.LiabilityDifference, DecimalPlaces.Two, null, isCurrency: true, canBeEmpty: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(s.MaterialThresholdBreached, appendLrmCharacterToPreventRenderedAsFormula: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(s.TonnageThresholdBreached , appendLrmCharacterToPreventRenderedAsFormula: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(isOverallTotal ? string.Empty : LiabilityDirectionUtils.ToThresholdBreachedString(s.MaterialityLiabilityDirection), appendLrmCharacterToPreventRenderedAsFormula: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(isOverallTotal ? string.Empty : LiabilityDirectionUtils.ToThresholdBreachedString(s.TonnageAmountLiabilityDirection), appendLrmCharacterToPreventRenderedAsFormula: true));
         csvContent.Append(CsvSanitiser.SanitiseData(s.PercentageLiabilityDifference, DecimalPlaces.Two, null, isPercentage: true, canBeEmpty: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(s.MaterialPercentageThresholdBreached, appendLrmCharacterToPreventRenderedAsFormula: true));
-        csvContent.Append(CsvSanitiser.SanitiseData(s.TonnagePercentageThresholdBreached , appendLrmCharacterToPreventRenderedAsFormula: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(isOverallTotal ? string.Empty : LiabilityDirectionUtils.ToThresholdBreachedString(s.MaterialityPercentageLiabilityDirection), appendLrmCharacterToPreventRenderedAsFormula: true));
+        csvContent.Append(CsvSanitiser.SanitiseData(isOverallTotal ? string.Empty : LiabilityDirectionUtils.ToThresholdBreachedString(s.TonnageAmountPercentageLiabilityDirection), appendLrmCharacterToPreventRenderedAsFormula: true));
         csvContent.Append(CsvSanitiser.SanitiseData(s.SuggestedBillingInstruction));
         csvContent.Append(CsvSanitiser.SanitiseData(s.SuggestedInvoiceAmount, DecimalPlaces.Two, null, isCurrency: true, canBeEmpty: true));
     }

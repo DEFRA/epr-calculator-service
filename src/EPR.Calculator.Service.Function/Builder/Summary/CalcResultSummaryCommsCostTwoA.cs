@@ -14,25 +14,25 @@ public static class CalcResultSummaryCommsCostTwoA
         calcResult.CalcResultCommsCostReportDetail.ByMaterial.GetValueOrDefault(material.Code)?.PricePerTonne ?? 0m;
 
     public static decimal GetTotalReportedTonnage(
-        ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
+        ILookup<(int, string?), ProducerMaterialPackaging> projectedMaterialsLookup,
         ProducerDetail producer,
         MaterialDetail material
     ) =>
-        CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.Household) +
-        CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.PublicBin) +
+        ProducerFeesUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.Household) +
+        ProducerFeesUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.PublicBin) +
         (material.Code == MaterialCodes.Glass
-            ? CalcResultSummaryUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.HouseholdDrinksContainers)
+            ? ProducerFeesUtil.GetTonnage(projectedMaterialsLookup, producer, material, PackagingTypes.HouseholdDrinksContainers)
             : 0);
 
-    public static CalcResultSummaryBadDebtProvision GetCommsFeesCosts(
-        ILookup<(int, string?), ProducerReportedMaterialProjected> projectedMaterialsLookup,
+    public static FeeWithBadDebt GetCommsFeesCosts(
+        ILookup<(int, string?), ProducerMaterialPackaging> projectedMaterialsLookup,
         ProducerDetail producer,
         MaterialDetail material,
         CalcResult calcResult
     ) =>
         GetCommsFeesCosts(GetTotalReportedTonnage(projectedMaterialsLookup, producer, material), material, calcResult);
 
-    public static CalcResultSummaryBadDebtProvision GetCommsFeesCosts(
+    public static FeeWithBadDebt GetCommsFeesCosts(
         decimal totalReportedTonnage,
         MaterialDetail material,
         CalcResult calcResult
@@ -41,11 +41,11 @@ public static class CalcResultSummaryCommsCostTwoA
         var feeWithoutBadDebt = totalReportedTonnage * GetPriceperTonneForComms(material, calcResult);
         var badDebtRate       = calcResult.CalcResultParameterOtherCost.BadDebtValue;
         var apportionment     = calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment;
-        return new CalcResultSummaryBadDebtProvision
+        return new FeeWithBadDebt
         {
-            FeeWithoutBadDebtProvision = feeWithoutBadDebt,
-            BadDebtProvision           = (feeWithoutBadDebt * badDebtRate / 100 * apportionment).Total,
-            FeeWithBadDebtProvision    = (feeWithoutBadDebt * (1 + badDebtRate / 100)) * apportionment,
+            FeeWithoutBadDebt = feeWithoutBadDebt,
+            BadDebt           = (feeWithoutBadDebt * badDebtRate / 100 * apportionment).Total,
+            ByCountry    = (feeWithoutBadDebt * (1 + badDebtRate / 100)) * apportionment,
         };
     }
 }

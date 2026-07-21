@@ -36,7 +36,7 @@ public class BillingRunProcessorTests : TestsFor<BillingRunProcessor>
     public async Task Should_handle_cancelled()
     {
         var exception = new OperationCanceledException("Test cancelled");
-        builder.Setup(b => b.BuildAsync(It.IsAny<RunContext>())).ThrowsAsync(exception);
+        builder.Setup(b => b.BuildAsync(It.IsAny<RunContext>(), CancellationToken.None)).ThrowsAsync(exception);
 
         var result = await testSubject.Process(runContext, CancellationToken.None);
 
@@ -48,7 +48,7 @@ public class BillingRunProcessorTests : TestsFor<BillingRunProcessor>
     public async Task Should_handle_failure()
     {
         var exception = new Exception("Test failure");
-        builder.Setup(b => b.BuildAsync(It.IsAny<RunContext>())).ThrowsAsync(exception);
+        builder.Setup(b => b.BuildAsync(It.IsAny<RunContext>(), CancellationToken.None)).ThrowsAsync(exception);
 
         var result = await testSubject.Process(runContext, CancellationToken.None);
 

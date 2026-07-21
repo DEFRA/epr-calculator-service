@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Features.BillingRuns.Contexts;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Utils;
@@ -23,49 +24,49 @@ public class CalculationResultsJson
     {
         return new CalculationResultsJson
         {
-            ProducerCalculationResultsSummary = ArrangeSummary(calcResult.CalcResultSummary),
+            ProducerCalculationResultsSummary = ArrangeSummary(calcResult.ProducerFees),
             ProducerCalculationResults        = ArrangeProducerCalculationResult(runContext, calcResult, materials),
-            ProducerCalculationResultsTotal   = ArrangeProducerCalculationResultsTotal(calcResult.CalcResultSummary),
+            ProducerCalculationResultsTotal   = ArrangeProducerCalculationResultsTotal(calcResult.ProducerFees),
         };
     }
 
     /// <summary>
-    /// Arrange the CalcResultSummary data using the property
+    /// Arrange the ProducerFees data using the property
     /// names and ordering required for serialisation.
     /// </summary>
-    private static ProducerCalculationResultsSummary ArrangeSummary(CalcResultSummary data)
+    private static ProducerCalculationResultsSummary ArrangeSummary(ProducerFees data)
     {
         return new ProducerCalculationResultsSummary
         {
-            FeeForLaDisposalCostsWithoutBadDebtprovision1 = FormatUtils.FormatCurrency(data.LADisposalCostsSection1.FeeWithoutBadDebtProvision),
-            BadDebtProvision1                             = FormatUtils.FormatCurrency(data.LADisposalCostsSection1.BadDebtProvision),
-            FeeForLaDisposalCostsWithBadDebtprovision1    = FormatUtils.FormatCurrency(data.LADisposalCostsSection1.FeeWithBadDebtProvision.Total),
+            FeeForLaDisposalCostsWithoutBadDebtprovision1 = FormatUtils.FormatCurrency(data.Total.LADisposalCostsSection1.FeeWithoutBadDebt),
+            BadDebtProvision1                             = FormatUtils.FormatCurrency(data.Total.LADisposalCostsSection1.BadDebt),
+            FeeForLaDisposalCostsWithBadDebtprovision1    = FormatUtils.FormatCurrency(data.Total.LADisposalCostsSection1.ByCountry.Total),
 
-            FeeForCommsCostsByMaterialWithoutBadDebtprovision2a = FormatUtils.FormatCurrency(data.CommsCostsSection2a.FeeWithoutBadDebtProvision),
-            BadDebtProvision2a                                  = FormatUtils.FormatCurrency(data.CommsCostsSection2a.BadDebtProvision),
-            FeeForCommsCostsByMaterialWitBadDebtprovision2a     = FormatUtils.FormatCurrency(data.CommsCostsSection2a.FeeWithBadDebtProvision.Total),
+            FeeForCommsCostsByMaterialWithoutBadDebtprovision2a = FormatUtils.FormatCurrency(data.Total.CommsCostsSection2a.FeeWithoutBadDebt),
+            BadDebtProvision2a                                  = FormatUtils.FormatCurrency(data.Total.CommsCostsSection2a.BadDebt),
+            FeeForCommsCostsByMaterialWitBadDebtprovision2a     = FormatUtils.FormatCurrency(data.Total.CommsCostsSection2a.ByCountry.Total),
 
-            FeeForCommsCostsUkWideWithoutBadDebtprovision2b = FormatUtils.FormatCurrency(data.CommsCostsSection2b.FeeWithoutBadDebtProvision),
-            BadDebtProvision2b                              = FormatUtils.FormatCurrency(data.CommsCostsSection2b.BadDebtProvision),
-            FeeForCommsCostsUkWideWithBadDebtprovision2b    = FormatUtils.FormatCurrency(data.CommsCostsSection2b.FeeWithBadDebtProvision.Total),
+            FeeForCommsCostsUkWideWithoutBadDebtprovision2b = FormatUtils.FormatCurrency(data.Total.CommsCostsSection2b.FeeWithoutBadDebt),
+            BadDebtProvision2b                              = FormatUtils.FormatCurrency(data.Total.CommsCostsSection2b.BadDebt),
+            FeeForCommsCostsUkWideWithBadDebtprovision2b    = FormatUtils.FormatCurrency(data.Total.CommsCostsSection2b.ByCountry.Total),
 
-            FeeForCommsCostsByCountryWithoutBadDebtprovision2c  = FormatUtils.FormatCurrency(data.CommsCostsSection2c.FeeWithoutBadDebtProvision),
-            BadDebtProvision2c                                  = FormatUtils.FormatCurrency(data.CommsCostsSection2c.BadDebtProvision),
-            FeeForCommsCostsByCountryWideWithBadDebtprovision2c = FormatUtils.FormatCurrency(data.CommsCostsSection2c.FeeWithBadDebtProvision.Total),
+            FeeForCommsCostsByCountryWithoutBadDebtprovision2c  = FormatUtils.FormatCurrency(data.Total.CommsCostsSection2c.FeeWithoutBadDebt),
+            BadDebtProvision2c                                  = FormatUtils.FormatCurrency(data.Total.CommsCostsSection2c.BadDebt),
+            FeeForCommsCostsByCountryWideWithBadDebtprovision2c = FormatUtils.FormatCurrency(data.Total.CommsCostsSection2c.ByCountry.Total),
 
-            Total12a2b2cWithBadDebt = FormatUtils.FormatCurrency(data.TotalOnePlus2A2B2CFeeWithBadDebtProvision),
+            Total12a2b2cWithBadDebt = FormatUtils.FormatCurrency(data.Total.TotalOnePlus2A2B2CWithBadDebt()),
 
-            SaOperatingCostsWithoutBadDebtProvision3 = FormatUtils.FormatCurrency(data.SaOperatingCostsSection3.FeeWithoutBadDebtProvision),
-            BadDebtProvision3                        = FormatUtils.FormatCurrency(data.SaOperatingCostsSection3.BadDebtProvision),
-            SaOperatingCostsWithBadDebtProvision3    = FormatUtils.FormatCurrency(data.SaOperatingCostsSection3.FeeWithBadDebtProvision.Total),
+            SaOperatingCostsWithoutBadDebtProvision3 = FormatUtils.FormatCurrency(data.Total.SaOperatingCostsSection3.FeeWithoutBadDebt),
+            BadDebtProvision3                        = FormatUtils.FormatCurrency(data.Total.SaOperatingCostsSection3.BadDebt),
+            SaOperatingCostsWithBadDebtProvision3    = FormatUtils.FormatCurrency(data.Total.SaOperatingCostsSection3.ByCountry.Total),
 
-            LaDataPrepCostsWithoutBadDebtProvision4 = FormatUtils.FormatCurrency(data.LaDataPrepSection4.FeeWithoutBadDebtProvision),
-            BadDebtProvision4                       = FormatUtils.FormatCurrency(data.LaDataPrepSection4.BadDebtProvision),
-            LaDataPrepCostsWithbadDebtProvision4    = FormatUtils.FormatCurrency(data.LaDataPrepSection4.FeeWithBadDebtProvision.Total),
+            LaDataPrepCostsWithoutBadDebtProvision4 = FormatUtils.FormatCurrency(data.Total.LaDataPrepSection4.FeeWithoutBadDebt),
+            BadDebtProvision4                       = FormatUtils.FormatCurrency(data.Total.LaDataPrepSection4.BadDebt),
+            LaDataPrepCostsWithbadDebtProvision4    = FormatUtils.FormatCurrency(data.Total.LaDataPrepSection4.ByCountry.Total),
 
-            OneOffFeeSaSetupCostsWithoutBadDebtProvision5 = FormatUtils.FormatCurrency(data.SaSetupCostsSection5.FeeWithoutBadDebtProvision),
-            BadDebtProvision5                             = FormatUtils.FormatCurrency(data.SaSetupCostsSection5.BadDebtProvision),
-            OneOffFeeSaSetupCostsWithBadDebtProvision5    = FormatUtils.FormatCurrency(data.SaSetupCostsSection5.FeeWithBadDebtProvision.Total)
+            OneOffFeeSaSetupCostsWithoutBadDebtProvision5 = FormatUtils.FormatCurrency(data.Total.SaSetupCostsSection5.FeeWithoutBadDebt),
+            BadDebtProvision5                             = FormatUtils.FormatCurrency(data.Total.SaSetupCostsSection5.BadDebt),
+            OneOffFeeSaSetupCostsWithBadDebtProvision5    = FormatUtils.FormatCurrency(data.Total.SaSetupCostsSection5.ByCountry.Total)
         };
     }
 
@@ -76,19 +77,20 @@ public class CalculationResultsJson
     {
         var results = new List<CalcSummaryProducerCalculationResults>();
 
-        var filteredProducers = calcResult.CalcResultSummary.ProducerDisposalFees
-            .Where(producer => runContext.AcceptedProducerIds.Contains(producer.ProducerId));
+        var filteredProducers = calcResult.ProducerFees.Details
+            .Where(producer => runContext.AcceptedProducerIds.Contains(producer.FeeDetail.ProducerId));
 
+        var scaledupProducers = calcResult.CalcResultScaledupProducers.ScaledupProducers.Select(p => p.ProducerId).ToImmutableList();
         foreach (var producer in filteredProducers)
         {
-            results.Add(CalcSummaryProducerCalculationResults.From(producer, materials, runContext.RequiresModulation));
+            results.Add(CalcSummaryProducerCalculationResults.From(producer, materials, runContext.RequiresModulation, scaledupProducers));
         }
 
         return results;
     }
 
-    private static CalcResultProducerCalculationResultsTotal? ArrangeProducerCalculationResultsTotal(CalcResultSummary calcResultSummary)
+    private static CalcResultProducerCalculationResultsTotal? ArrangeProducerCalculationResultsTotal(ProducerFees producerFees)
     {
-        return CalcResultProducerCalculationResultsTotal.From(calcResultSummary);
+        return CalcResultProducerCalculationResultsTotal.From(producerFees);
     }
 }

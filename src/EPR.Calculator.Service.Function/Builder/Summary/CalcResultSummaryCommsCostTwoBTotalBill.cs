@@ -6,22 +6,22 @@ namespace EPR.Calculator.Service.Function.Builder.Summary;
 
 public static class CalcResultSummaryCommsCostTwoBTotalBill
 {
-    public static CalcResultSummaryBadDebtProvision GetCommsCosts(
+    public static FeeWithBadDebt GetCommsCosts(
         CalcResult calcResult,
         ProducerDetail producer,
         IReadOnlyList<TotalPackagingTonnagePerRun> hhTotalPackagingTonnage
     )
     {
-        var commsCostHeader = CalcResultSummaryUtil.GetCommsCostHeaderWithoutBadDebtFor2bTitle(calcResult);
+        var commsCostHeader = ProducerFeesUtil.GetCommsCostHeaderWithoutBadDebtFor2bTitle(calcResult);
         var percentage = TonnageVsAllProducerUtil.GetPercentageofProducerReportedTonnagevsAllProducers(producer, hhTotalPackagingTonnage) / 100;
         var feeWithoutBadDebt = commsCostHeader * percentage;
         var badDebtRate = calcResult.CalcResultParameterOtherCost.BadDebtValue / 100;
         var apportionment = calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment;
-        return new CalcResultSummaryBadDebtProvision
+        return new FeeWithBadDebt
         {
-            FeeWithoutBadDebtProvision = feeWithoutBadDebt,
-            BadDebtProvision           = feeWithoutBadDebt * badDebtRate,
-            FeeWithBadDebtProvision    = (feeWithoutBadDebt * (1 + badDebtRate)) * apportionment,
+            FeeWithoutBadDebt = feeWithoutBadDebt,
+            BadDebt           = feeWithoutBadDebt * badDebtRate,
+            ByCountry    = (feeWithoutBadDebt * (1 + badDebtRate)) * apportionment,
         };
     }
 }

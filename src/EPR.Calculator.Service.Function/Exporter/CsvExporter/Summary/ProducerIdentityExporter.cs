@@ -1,10 +1,15 @@
 using System.Text;
+using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
 
-public class ProducerIdentityExporter : ICalcResultSummaryPartExporter
+public class ProducerIdentityExporter(
+    IReadOnlyList<int> scaledupProducerIds,
+    IReadOnlyList<(int, string?)> partialProducerSubsidiaryIds
+) : IProducerFeesPartExporter
 {
     public IEnumerable<string> GetColumnHeaders(IReadOnlyList<MaterialDetail> materials, bool applyModulation)
     {
@@ -23,17 +28,29 @@ public class ProducerIdentityExporter : ICalcResultSummaryPartExporter
         ];
     }
 
-    public void AppendRow(StringBuilder csvContent, CalcResultSummaryProducerDisposalFees producer, bool applyModulation)
+    public void AppendRow(StringBuilder csvContent, ProducerFeeExportRow producer, bool applyModulation, bool isOverallTotal)
     {
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerId == 0 ? string.Empty : producer.ProducerId.ToString()));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.SubsidiaryId));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.ProducerName));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.TradingName));
+        string YesOrNo(bool isValueSet) {
+            if(isOverallTotal)
+                return string.Empty;
+
+            return isValueSet ? CommonConstants.Yes : CommonConstants.No;
+        }
+
+        var isScaledup = scaledupProducerIds.Contains(producer.FeeDetail.ProducerId);
+        var isPartialObligation = producer.Level == "1"
+            ? partialProducerSubsidiaryIds.Any(p => p.Item1 == producer.FeeDetail.ProducerId)
+            : partialProducerSubsidiaryIds.Contains((producer.FeeDetail.ProducerId, producer.FeeDetail.SubsidiaryId));
+
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.FeeDetail.ProducerId == 0 ? string.Empty : producer.FeeDetail.ProducerId.ToString()));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.FeeDetail.SubsidiaryId));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.FeeDetail.ProducerName));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.FeeDetail.TradingName));
         csvContent.Append(CsvSanitiser.SanitiseData(producer.Level));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.IsProducerScaledup));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.IsPartialObligation));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.StatusCode));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.JoinerDate));
-        csvContent.Append(CsvSanitiser.SanitiseData(producer.LeaverDate));
+        csvContent.Append(CsvSanitiser.SanitiseData(YesOrNo(isScaledup)));
+        csvContent.Append(CsvSanitiser.SanitiseData(YesOrNo(isPartialObligation)));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.FeeDetail.StatusCode));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.FeeDetail.JoinerDate));
+        csvContent.Append(CsvSanitiser.SanitiseData(producer.FeeDetail.LeaverDate));
     }
 }

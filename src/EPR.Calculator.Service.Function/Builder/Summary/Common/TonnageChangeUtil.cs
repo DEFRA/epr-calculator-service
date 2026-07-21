@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
 
@@ -25,7 +26,7 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         public static (string? Count, string? Advice) ComputeCountAndAdvice(
             string level,
-            IDictionary<string, CalcResultSummaryProducerDisposalFeesByMaterial> byMaterial)
+            IDictionary<string, DisposalFee> byMaterial)
         {
             if (level != CommonConstants.LevelOne.ToString())
             {

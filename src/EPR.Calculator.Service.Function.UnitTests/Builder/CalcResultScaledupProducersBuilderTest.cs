@@ -297,7 +297,7 @@ public class CalcResultScaledupProducersBuilderTest : TestsFor<CalcResultScaledu
 
     /// <summary>
     ///     When any submission period for a producer requires scaling, all submission periods
-    ///     for that producer should appear in the scaled-up producers summary.
+    ///     for that producer should appear in the scaled-up producers producerFees.
     /// </summary>
     [TestMethod]
     public async Task Construct_AllPeriodsIncluded_WhenAnyPeriodRequiresScaling()

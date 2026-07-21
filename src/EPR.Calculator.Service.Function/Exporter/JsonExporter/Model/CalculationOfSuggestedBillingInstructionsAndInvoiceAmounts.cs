@@ -2,6 +2,7 @@
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.JsonExporter.Model;
@@ -38,7 +39,7 @@ public record CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts
     [JsonPropertyName("suggestedInvoiceAmount")]
     public required string SuggestedInvoiceAmount { get; init; }
 
-    public static CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts From(CalcResultSummaryProducerDisposalFees fees)
+    public static CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts From(FeeDetail fees)
     {
         string GetPercentageLiabilityDifference(decimal? percentageLiabilityDifference) =>
             percentageLiabilityDifference == null
@@ -50,17 +51,18 @@ public record CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts
                 ? CommonConstants.Hyphen
                 : FormatUtils.FormatCurrency(value.Value);
 
-        var costs = fees.BillingInstructionSection;
+        var costs = fees.BillingInstruction;
+
         return new CalculationOfSuggestedBillingInstructionsAndInvoiceAmounts
         {
             CurrentYearInvoicedTotalToDate          = GetFormattedCurrencyValue(costs!.CurrentYearInvoiceTotalToDate),
             TonnageChangeSinceLastInvoice           = costs.TonnageChangeSinceLastInvoice ?? CommonConstants.Hyphen,
             LiabilityDifferenceCalcVsPrev           = GetFormattedCurrencyValue(costs.LiabilityDifference),
-            MaterialThresholdBreached               = costs.MaterialThresholdBreached ?? CommonConstants.Hyphen,
-            TonnageThresholdBreached                = costs.TonnageThresholdBreached ?? CommonConstants.Hyphen,
+            MaterialThresholdBreached               = LiabilityDirectionUtils.ToThresholdBreachedString(costs.MaterialityLiabilityDirection),
+            TonnageThresholdBreached                = LiabilityDirectionUtils.ToThresholdBreachedString(costs.TonnageAmountLiabilityDirection),
             PercentageLiabilityDifferenceCalcVsPrev = GetPercentageLiabilityDifference(costs.PercentageLiabilityDifference),
-            MaterialPercentageThresholdBreached     = costs.MaterialPercentageThresholdBreached ?? CommonConstants.Hyphen,
-            TonnagePercentageThresholdBreached      = costs.TonnagePercentageThresholdBreached ?? CommonConstants.Hyphen,
+            MaterialPercentageThresholdBreached     = LiabilityDirectionUtils.ToThresholdBreachedString(costs.MaterialityPercentageLiabilityDirection),
+            TonnagePercentageThresholdBreached      = LiabilityDirectionUtils.ToThresholdBreachedString(costs.TonnageAmountPercentageLiabilityDirection),
             SuggestedBillingInstruction             = costs.SuggestedBillingInstruction ?? CommonConstants.Hyphen,
             SuggestedInvoiceAmount                  = GetFormattedCurrencyValue(costs.SuggestedInvoiceAmount!)
         };

@@ -7,7 +7,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Summary
 [TestClass]
 public class Section1DisposalExporterTests
 {
-    private readonly ICalcResultSummaryPartExporter exporter = new Section1DisposalExporter();
+    private readonly IProducerFeesPartExporter exporter = new Section1DisposalExporter();
 
     [TestMethod]
     public void Section1DisposalExporter_Export_CSV()
@@ -15,11 +15,11 @@ public class Section1DisposalExporterTests
         // Arrange
         var materials = TestDataHelper.GetMaterialDetails();
         const bool applyModulation = false;
-        var resultSummary = TestDataHelper.GetCalcResultSummary();
+        var producerFees = TestDataHelper.GetProducerFees();
         var csvContent = new StringBuilder();
 
         // Act
-        SummaryExporterTestUtils.Render(exporter, materials, applyModulation, resultSummary, csvContent);
+        ProducerFeesExporterTestUtils.Render(exporter, materials, applyModulation, producerFees, csvContent);
         var result = csvContent.ToString().ReplaceLineEndings("\n").Split("\n").ToArray();
         Console.WriteLine(string.Join("\n", result));
 
@@ -32,7 +32,7 @@ public class Section1DisposalExporterTests
              null,
              null
             ],
-            ["£4423.39", "£6021.37", "£4688.80", null, null, null, null],
+            ["£4423.39", "£265.40", "£4688.80", null, null, null, null],
             ["1 Total Producer Fee for LA Disposal Costs w/o Bad Debt provision",
              "Bad Debt Provision for 1",
              "1 Total Producer Fee for LA Disposal Costs with Bad Debt provision",

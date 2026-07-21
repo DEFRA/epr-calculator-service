@@ -3,6 +3,7 @@ using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.PartialObligations
 {
@@ -303,14 +304,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
                             {
                                 ObligatedFactor = 0.5m,
                                 HouseholdTonnage = 100,
-                                HouseholdRAMTonnage = new RAMTonnage()
+                                HouseholdRAMTonnage = new RamTonnage()
                                 {
-                                    RedTonnage = 1, AmberTonnage = 2, GreenTonnage = 3, RedMedicalTonnage = 4, AmberMedicalTonnage = 5, GreenMedicalTonnage = 6
+                                    Red = 1, Amber = 2, Green = 3, RedMedical = 4, AmberMedical = 5, GreenMedical = 6
                                 },
                                 PublicBinTonnage = 20,
-                                PublicBinRAMTonnage = new RAMTonnage()
+                                PublicBinRAMTonnage = new RamTonnage()
                                 {
-                                    RedTonnage = 7, AmberTonnage = 8, GreenTonnage = 9, RedMedicalTonnage = 10, AmberMedicalTonnage = 11, GreenMedicalTonnage = 12
+                                    Red = 7, Amber = 8, Green = 9, RedMedical = 10, AmberMedical = 11, GreenMedical = 12
                                 },
                                 SelfManagedConsumerWasteTonnage = 60
                             }
@@ -321,16 +322,16 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
                             {
                                 ObligatedFactor = 0.5m,
                                 HouseholdTonnage = 100,
-                                HouseholdRAMTonnage = new RAMTonnage(){
-                                    RedTonnage = 1, AmberTonnage = 2, GreenTonnage = 3, RedMedicalTonnage = 4, AmberMedicalTonnage = 5, GreenMedicalTonnage = 6
+                                HouseholdRAMTonnage = new RamTonnage(){
+                                    Red = 1, Amber = 2, Green = 3, RedMedical = 4, AmberMedical = 5, GreenMedical = 6
                                 },
                                 PublicBinTonnage = 20,
-                                PublicBinRAMTonnage = new RAMTonnage(){
-                                    RedTonnage = 7, AmberTonnage = 8, GreenTonnage = 9, RedMedicalTonnage = 10, AmberMedicalTonnage = 11, GreenMedicalTonnage = 12
+                                PublicBinRAMTonnage = new RamTonnage(){
+                                    Red = 7, Amber = 8, Green = 9, RedMedical = 10, AmberMedical = 11, GreenMedical = 12
                                 },
                                 HouseholdDrinksContainersTonnage = 70,
-                                HouseholdDrinksContainersRAMTonnage = new RAMTonnage(){
-                                    RedTonnage = 13, AmberTonnage = 14, GreenTonnage = 15, RedMedicalTonnage = 16, AmberMedicalTonnage = 17, GreenMedicalTonnage = 18
+                                HouseholdDrinksContainersRAMTonnage = new RamTonnage(){
+                                    Red = 13, Amber = 14, Green = 15, RedMedical = 16, AmberMedical = 17, GreenMedical = 18
                                 },
                                 SelfManagedConsumerWasteTonnage = 60
                             }
@@ -341,12 +342,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
                             {
                                 ObligatedFactor = 0.5m,
                                 HouseholdTonnage = 50,
-                                HouseholdRAMTonnage = new RAMTonnage(){
-                                    RedTonnage = 1, AmberTonnage = 2, GreenTonnage = 3, RedMedicalTonnage = 4, AmberMedicalTonnage = 5, GreenMedicalTonnage = 6
+                                HouseholdRAMTonnage = new RamTonnage(){
+                                    Red = 1, Amber = 2, Green = 3, RedMedical = 4, AmberMedical = 5, GreenMedical = 6
                                 },
                                 PublicBinTonnage = 10,
-                                PublicBinRAMTonnage = new RAMTonnage(){
-                                    RedTonnage = 1, AmberTonnage = 2, GreenTonnage = 3, RedMedicalTonnage = 4, AmberMedicalTonnage = 5, GreenMedicalTonnage = 6
+                                PublicBinRAMTonnage = new RamTonnage(){
+                                    Red = 1, Amber = 2, Green = 3, RedMedical = 4, AmberMedical = 5, GreenMedical = 6
                                 },
                                 SelfManagedConsumerWasteTonnage = 20
                             }

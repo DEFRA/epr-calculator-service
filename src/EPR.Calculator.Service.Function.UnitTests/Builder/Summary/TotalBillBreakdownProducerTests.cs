@@ -18,15 +18,15 @@ public class TotalBillBreakdownProducerTests
     public void TotalBillBreakdownProducer_CanCallSetValues()
     {
         // Act
-        TotalBillBreakdownProducer.SetValues(calcResult.CalcResultSummary);
+        TotalBillBreakdownProducer.SetValues(calcResult.ProducerFees);
 
         // Assert
-        Assert.AreEqual(17673.2373499970378m , calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].TotalProducerBillBreakdownCosts!.FeeWithoutBadDebtProvision);
-        Assert.AreEqual(1060.39424099982226m , calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].TotalProducerBillBreakdownCosts!.BadDebtProvision);
-        Assert.AreEqual(18733.63159099686001m, calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].TotalProducerBillBreakdownCosts!.FeeWithBadDebtProvision.Total);
-        Assert.AreEqual(9610.6053147004709m  , calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].TotalProducerBillBreakdownCosts!.FeeWithBadDebtProvision.England);
-        Assert.AreEqual(2653.2546023494487m  , calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].TotalProducerBillBreakdownCosts!.FeeWithBadDebtProvision.Wales);
-        Assert.AreEqual(4576.19121409722784m , calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].TotalProducerBillBreakdownCosts!.FeeWithBadDebtProvision.Scotland);
-        Assert.AreEqual(1893.58045984971257m , calcResult.CalcResultSummary.ProducerDisposalFees.ToList()[0].TotalProducerBillBreakdownCosts!.FeeWithBadDebtProvision.NorthernIreland);
+        Assert.AreEqual(17673.2373499970378m , calcResult.ProducerFees.Details.ToList()[0].FeeDetail.TotalBillBreakdown!.FeeWithoutBadDebt);
+        Assert.AreEqual(1060.39424099982226m , calcResult.ProducerFees.Details.ToList()[0].FeeDetail.TotalBillBreakdown!.BadDebt);
+        Assert.AreEqual(18733.63159099686001m, calcResult.ProducerFees.Details.ToList()[0].FeeDetail.TotalBillBreakdown!.ByCountry.Total);
+        Assert.AreEqual(9610.6053147004709m  , calcResult.ProducerFees.Details.ToList()[0].FeeDetail.TotalBillBreakdown!.ByCountry.England);
+        Assert.AreEqual(2653.2546023494487m  , calcResult.ProducerFees.Details.ToList()[0].FeeDetail.TotalBillBreakdown!.ByCountry.Wales);
+        Assert.AreEqual(4576.19121409722784m , calcResult.ProducerFees.Details.ToList()[0].FeeDetail.TotalBillBreakdown!.ByCountry.Scotland);
+        Assert.AreEqual(1893.58045984971257m , calcResult.ProducerFees.Details.ToList()[0].FeeDetail.TotalBillBreakdown!.ByCountry.NorthernIreland);
     }
 }
