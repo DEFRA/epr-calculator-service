@@ -1,6 +1,6 @@
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.JsonExporter.Model;
-using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.UnitTests.JsonExporter.Model;
 
@@ -10,47 +10,43 @@ public class CancelledProducersJsonTests
     [TestMethod]
     public void From_ConvertsEmptyResponse()
     {
-        var response = new CalcResultCancelledProducersResponse { TitleHeader = "Header", CancelledProducers = new List<CalcResultCancelledProducersDto>() };
+        var response = new List<CalcResultCancelledProducer>();
         var result = CancelledProducers.From(response);
 
         Assert.IsNotNull(result);
-        Assert.AreEqual(CommonConstants.CancelledProducers, result.Name);
+        Assert.AreEqual(CalcResultCancelledProducersHeader.CancelledProducers, result.Name);
         Assert.IsNotNull(result.CancelledProducerTonnageInvoices);
     }
 
     [TestMethod]
     public void From_MapsNonEmptyResponse()
     {
-        var response = new CalcResultCancelledProducersResponse
+        var response = new List<CalcResultCancelledProducer>
         {
-            TitleHeader = "Header",
-            CancelledProducers = new List<CalcResultCancelledProducersDto>
+            new CalcResultCancelledProducer
             {
-                new CalcResultCancelledProducersDto
+                ProducerId = 123,
+                SubsidiaryId = "S1",
+                ProducerOrSubsidiaryName = "Producer Ltd",
+                TradingName = "Producer Trading",
+                LastTonnage = new LastTonnage
                 {
-                    ProducerId = 123,
-                    SubsidiaryIdValue = "S1",
-                    ProducerOrSubsidiaryNameValue = "Producer Ltd",
-                    TradingNameValue = "Producer Trading",
-                    LastTonnage = new LastTonnage
-                    {
-                        AluminiumValue = 12.5m,
-                        PlasticValue = 3.25m
-                    },
-                    LatestInvoice = new LatestInvoice
-                    {
-                        CurrentYearInvoicedTotalToDateValue = 99.99m,
-                        RunNumberValue = "7",
-                        RunNameValue = "RunSeven",
-                        BillingInstructionIdValue = "BI-1"
-                    }
+                    Aluminium = 12.5m,
+                    Plastic = 3.25m
+                },
+                LatestInvoice = new LatestInvoice
+                {
+                    CurrentYearInvoicedTotalToDate = 99.99m,
+                    RunNumber = "7",
+                    RunName = "RunSeven",
+                    BillingInstructionId = "BI-1"
                 }
             }
         };
 
         var result = CancelledProducers.From(response);
 
-        Assert.AreEqual(CommonConstants.CancelledProducers, result.Name);
+        Assert.AreEqual(CalcResultCancelledProducersHeader.CancelledProducers, result.Name);
         var list = result.CancelledProducerTonnageInvoices!.ToList();
         Assert.AreEqual(1, list.Count);
         var invoice = list[0];

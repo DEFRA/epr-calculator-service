@@ -20,6 +20,7 @@ namespace EPR.Calculator.Service.Function.Services
         Task StoreParameterOtherCost(int runId, CalcResultParameterOtherCost parameterOtherCost, CancellationToken cancellationToken);
         Task StoreOnePlusFourApportionment(int runId, CalcResultOnePlusFourApportionment onePlusFourApportionment, CancellationToken cancellationToken);
         Task StoreLaDisposalCostData(int runId, CalcResultLaDisposalCostData laDisposalCostData, CancellationToken cancellationToken);
+        Task StoreCancelledProducers(int runId, IReadOnlyList<CalcResultCancelledProducer> cancelledProducers, CancellationToken cancellationToken);
     }
 
     public class CalcResultWriter(IBulkOperations bulkOps, ApplicationDBContext dbContext) : ICalcResultWriter
@@ -150,6 +151,11 @@ namespace EPR.Calculator.Service.Function.Services
         public async Task StoreLaDisposalCostData(int runId, CalcResultLaDisposalCostData laDisposalCostData, CancellationToken cancellationToken)
         {
             dbContext.LaDisposalCostData.Add(new CalcResultLaDisposalCostDataEntry { CalculatorRunId = runId, LaDisposalCost = laDisposalCostData });
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task StoreCancelledProducers(int runId, IReadOnlyList<CalcResultCancelledProducer> cancelledProducers, CancellationToken cancellationToken) {
+            dbContext.CancelledProducers.AddRange(cancelledProducers.Select(c => new CalcResultCancelledProducerEntry { CalculatorRunId = runId, CancelledProducer = c }));
             await dbContext.SaveChangesAsync(cancellationToken);
         }
 

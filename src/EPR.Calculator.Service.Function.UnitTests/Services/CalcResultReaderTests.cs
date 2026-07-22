@@ -277,6 +277,38 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             result.ByMaterial[MaterialCodes.Aluminium].ActionedSelfManagedConsumerWasteTonnage.ShouldBe(2);
         }
 
+        [TestMethod]
+        public async Task ReadCancelledProducers_WorksAsExpected()
+        {
+            _dbContext.AddRange(new List<CalcResultCancelledProducerEntry>
+            {
+                new() { CalculatorRunId = 1, CancelledProducer = MkCancelledProducer(1) },
+                new() { CalculatorRunId = 1, CancelledProducer = MkCancelledProducer(2) },
+                new() { CalculatorRunId = 2, CancelledProducer = MkCancelledProducer(3) }
+            });
+            await _dbContext.SaveChangesAsync();
+
+            var result = await _sut.ReadCancelledProducers(1, CancellationToken.None);
+
+            result.Count.ShouldBe(2);
+            result.Select(p => p.ProducerId).ShouldBe([1, 2], ignoreOrder: true);
+            var producer = result.First(p => p.ProducerId == 1);
+            producer.TradingName.ShouldBe("Trading 1");
+            producer.LastTonnage!.Aluminium.ShouldBe(10);
+            producer.LatestInvoice!.RunName.ShouldBe("RunName");
+        }
+
+        private static CalcResultCancelledProducer MkCancelledProducer(int producerId) =>
+            new()
+            {
+                ProducerId = producerId,
+                SubsidiaryId = null,
+                ProducerOrSubsidiaryName = $"Producer {producerId}",
+                TradingName = $"Trading {producerId}",
+                LastTonnage = new LastTonnage { Aluminium = 10 },
+                LatestInvoice = new LatestInvoice { RunName = "RunName", RunNumber = "1", BillingInstructionId = "1_1", CurrentYearInvoicedTotalToDate = 100 }
+            };
+
         private static CalcResultLapcapData MkLapcapData() =>
             new()
             {

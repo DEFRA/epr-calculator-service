@@ -44,12 +44,7 @@ namespace EPR.Calculator.Service.Function.Models
 
         public required CalcResultScaledupProducers CalcResultScaledupProducers { get; set; }
 
-        public CalcResultCancelledProducersResponse CalcResultCancelledProducers { get; set; }
-            = new()
-            {
-                TitleHeader = string.Empty,
-                CancelledProducers = []
-            };
+        public IReadOnlyList<CalcResultCancelledProducer> CalcResultCancelledProducers { get; set; } = [];
 
         public IEnumerable<CalcResultRejectedProducer> CalcResultRejectedProducers { get; set; } = [];
 
@@ -84,7 +79,7 @@ namespace EPR.Calculator.Service.Function.Models
                 CalcResultScaledupProducers = new CalcResultScaledupProducers(){
                     ScaledupProducers = ImmutableList<CalcResultScaledupProducer>.Empty,
                 },
-                CalcResultCancelledProducers = new CalcResultCancelledProducersResponse(),
+                CalcResultCancelledProducers = ImmutableList<CalcResultCancelledProducer>.Empty,
                 CalcResultRejectedProducers = new List<CalcResultRejectedProducer>()
             };
     }

@@ -52,7 +52,10 @@ public class BillingBuilderTests : TestsFor<BillingBuilder>
         var mockOnePlusFourApportionment = new Mock<CalcResultOnePlusFourApportionment>();
         var mockLaDisposalCostData = new Mock<CalcResultLaDisposalCostData>();
         var mockCommsCost = new Mock<CalcResultCommsCost>();
+        var mockCancelledProducers = new Mock<List<CalcResultCancelledProducer>>();
 
+        mockCalcResultReader.Setup(m => m.ReadCancelledProducers(runContext.RunId, CancellationToken.None))
+            .ReturnsAsync(mockCancelledProducers.Object);
         mockCalcResultReader.Setup(m => m.ReadH1ProjectedData(runContext.RunId, CancellationToken.None))
             .ReturnsAsync(mockCalcResultProjectedProducersH1Data.Object);
         mockCalcResultReader.Setup(m => m.ReadH2ProjectedData(runContext.RunId, CancellationToken.None))
@@ -90,6 +93,7 @@ public class BillingBuilderTests : TestsFor<BillingBuilder>
         Assert.AreSame(mockOnePlusFourApportionment.Object, result.CalcResultOnePlusFourApportionment);
         Assert.AreSame(mockLaDisposalCostData.Object, result.CalcResultLaDisposalCostData);
         Assert.AreSame(mockCommsCost.Object, result.CalcResultCommsCostReportDetail);
+        Assert.AreSame(mockCancelledProducers.Object, result.CalcResultCancelledProducers);
 
         mockSelfManagedConsumerWasteService.Verify(m => m.Calculate(runContext, It.IsAny<IImmutableList<MaterialDetail>>()), Times.Never);
         mockModulationBuilder.Verify(m => m.ConstructAsync(It.IsAny<RunContext>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<CalcResultLaDisposalCostData>(), It.IsAny<SelfManagedConsumerWaste>()), Times.Never);

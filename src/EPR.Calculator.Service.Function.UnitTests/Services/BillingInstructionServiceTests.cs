@@ -1,5 +1,4 @@
 using EPR.Calculator.API.Data.DataTypes;
-using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Exceptions;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
@@ -63,22 +62,18 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
                 Details = fixture.Create<List<ProducerFeeDetail>>(),
                 Total = new() { ProducerId = 0, SubsidiaryId = string.Empty, ProducerName = string.Empty }
             },
-            CalcResultCancelledProducers = new CalcResultCancelledProducersResponse
+            CalcResultCancelledProducers = new List<CalcResultCancelledProducer>
             {
-                TitleHeader = CommonConstants.CancelledProducers,
-                CancelledProducers = new List<CalcResultCancelledProducersDto>
+                new()
                 {
-                    new()
+                    LastTonnage = null,
+                    ProducerId = 1,
+                    TradingName = "Test",
+                    LatestInvoice = new LatestInvoice
                     {
-                        LastTonnage = null,
-                        ProducerId = 1,
-                        TradingNameValue = "Test",
-                        LatestInvoice = new LatestInvoice
-                        {
-                            BillingInstructionIdValue = "1_1",
-                            RunNameValue = "RunName",
-                            RunNumberValue = "4"
-                        }
+                        BillingInstructionId = "1_1",
+                        RunName = "RunName",
+                        RunNumber = "4"
                     }
                 }
             },

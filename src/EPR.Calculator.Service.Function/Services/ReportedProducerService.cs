@@ -22,8 +22,10 @@ public class ReportedProducerService(ApplicationDBContext dbContext)
     {
         return
             await dbContext.ProducerDetail.AsNoTracking()
-                .Include(pd => pd.ProducerReportedMaterials).ThenInclude(prm => prm.Material)
+                .Include(pd => pd.ProducerReportedMaterials)
+                .ThenInclude(prm => prm.Material)
                 .Where(pd => pd.CalculatorRunId == runContext.RunId)
+                .AsSplitQuery()
                 .GroupBy(pd => pd.ProducerId)
                 .Select(pds => new L1Producer(pds.Key, pds.ToList()))
                 .ToListAsync();

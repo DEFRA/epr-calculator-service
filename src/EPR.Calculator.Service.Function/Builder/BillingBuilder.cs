@@ -1,4 +1,3 @@
-using EPR.Calculator.Service.Function.Builder.CancelledProducers;
 using EPR.Calculator.Service.Function.Builder.Detail;
 using EPR.Calculator.Service.Function.Builder.RejectedProducers;
 using EPR.Calculator.Service.Function.Features.Common;
@@ -14,7 +13,6 @@ public interface IBillingBuilder
 }
 
 public class BillingBuilder(
-    ICalcResultCancelledProducersBuilder cancelledProducersBuilder,
     ICalcResultDetailBuilder calcResultDetailBuilder,
     ICalcResultRejectedProducersBuilder rejectedProducersBuilder,
     ICalcResultReader calcResultReader,
@@ -52,8 +50,8 @@ public class BillingBuilder(
             nameof(calcResultReader.ReadOnePlusFourApportionment));
 
         result.CalcResultCancelledProducers = await logger.LogDuration(
-            () => cancelledProducersBuilder.ConstructAsync(runContext, materials),
-            nameof(cancelledProducersBuilder));
+            () => calcResultReader.ReadCancelledProducers(runContext.RunId, cancellationToken),
+            nameof(calcResultReader.ReadCancelledProducers));
 
         if (runContext.RequiresModulation)
         {

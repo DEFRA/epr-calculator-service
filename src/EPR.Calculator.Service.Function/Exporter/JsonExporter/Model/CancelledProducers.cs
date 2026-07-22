@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Converter;
-using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.JsonExporter.Model;
 
@@ -13,18 +13,18 @@ public record CancelledProducers
     [JsonPropertyName("cancelledProducerTonnageInvoice")]
     public IEnumerable<CancelledProducerTonnageInvoice>? CancelledProducerTonnageInvoices { get; init; }
 
-    public static CancelledProducers From(CalcResultCancelledProducersResponse calcResultCancelledProducersResponse)
+    public static CancelledProducers From(IReadOnlyList<CalcResultCancelledProducer> calcResultCancelledProducers)
     {
         IEnumerable<CancelledProducerTonnageInvoice> GetCancelledProducerTonnageInvoice()
         {
             var cancelledProducerTonnageInvoices = new List<CancelledProducerTonnageInvoice>();
 
-            foreach (var producer in calcResultCancelledProducersResponse.CancelledProducers)
+            foreach (var producer in calcResultCancelledProducers)
             {
                 int runNumber = 0;
-                if (!string.IsNullOrWhiteSpace(producer.LatestInvoice?.RunNumberValue))
+                if (!string.IsNullOrWhiteSpace(producer.LatestInvoice?.RunNumber))
                 {
-                    _ = int.TryParse(producer.LatestInvoice.RunNumberValue, out runNumber);
+                    _ = int.TryParse(producer.LatestInvoice.RunNumber, out runNumber);
                 }
 
                 cancelledProducerTonnageInvoices.Add(CancelledProducerTonnageInvoice.From(runNumber, producer));
@@ -33,18 +33,18 @@ public record CancelledProducers
             return cancelledProducerTonnageInvoices;
         }
 
-        if (!calcResultCancelledProducersResponse.CancelledProducers.Any())
+        if (!calcResultCancelledProducers.Any())
         {
             return new CancelledProducers
             {
-                Name = CommonConstants.CancelledProducers,
+                Name = CalcResultCancelledProducersHeader.CancelledProducers,
                 CancelledProducerTonnageInvoices =Array.Empty<CancelledProducerTonnageInvoice>()
             };
         }
 
         return new CancelledProducers
         {
-            Name = CommonConstants.CancelledProducers,
+            Name = CalcResultCancelledProducersHeader.CancelledProducers,
             CancelledProducerTonnageInvoices = GetCancelledProducerTonnageInvoice()
         };
     }
@@ -80,7 +80,7 @@ public record CancelledProducerTonnageInvoice
     [JsonPropertyName("billingInstructionID")]
     public required string BillingInstructionID { get; init; }
 
-    public static CancelledProducerTonnageInvoice From(int runNumber, CalcResultCancelledProducersDto producer)
+    public static CancelledProducerTonnageInvoice From(int runNumber, CalcResultCancelledProducer producer)
     {
         IEnumerable<LastProducerTonnages> GetLastProducerTonnages(LastTonnage lastTonnage)
         {
@@ -89,43 +89,43 @@ public record CancelledProducerTonnageInvoice
             lastProducerTonnagesList.AddRange([
                 new LastProducerTonnages
                 {
-                    MaterialName = lastTonnage.Aluminium_Header ?? MaterialNames.Aluminium,
-                    LastTonnage  = lastTonnage.AluminiumValue ?? CommonConstants.DefaultMinValue,
+                    MaterialName = MaterialNames.Aluminium,
+                    LastTonnage  = lastTonnage.Aluminium ?? CommonConstants.DefaultMinValue,
                 },
                 new LastProducerTonnages
                 {
-                    MaterialName = lastTonnage.FibreComposite_Header ?? MaterialNames.FibreComposite,
-                    LastTonnage  = lastTonnage.FibreCompositeValue ?? CommonConstants.DefaultMinValue,
+                    MaterialName = MaterialNames.FibreComposite,
+                    LastTonnage  = lastTonnage.FibreComposite ?? CommonConstants.DefaultMinValue,
                 },
                 new LastProducerTonnages
                 {
-                    MaterialName = lastTonnage.Glass_Header ?? MaterialNames.Glass,
-                    LastTonnage  = lastTonnage.GlassValue ?? CommonConstants.DefaultMinValue,
+                    MaterialName = MaterialNames.Glass,
+                    LastTonnage  = lastTonnage.Glass ?? CommonConstants.DefaultMinValue,
                 },
                 new LastProducerTonnages
                 {
-                    MaterialName = lastTonnage.PaperOrCard_Header ?? MaterialNames.PaperOrCard,
-                    LastTonnage  = lastTonnage.PaperOrCardValue ?? CommonConstants.DefaultMinValue,
+                    MaterialName = MaterialNames.PaperOrCard,
+                    LastTonnage  = lastTonnage.PaperOrCard ?? CommonConstants.DefaultMinValue,
                 },
                 new LastProducerTonnages
                 {
-                    MaterialName = lastTonnage.Plastic_Header ?? MaterialNames.Plastic,
-                    LastTonnage  = lastTonnage.PlasticValue ?? CommonConstants.DefaultMinValue,
+                    MaterialName = MaterialNames.Plastic,
+                    LastTonnage  = lastTonnage.Plastic ?? CommonConstants.DefaultMinValue,
                 },
                 new LastProducerTonnages
                 {
-                    MaterialName = lastTonnage.Steel_Header ?? MaterialNames.Steel,
-                    LastTonnage  = lastTonnage.SteelValue ?? CommonConstants.DefaultMinValue,
+                    MaterialName = MaterialNames.Steel,
+                    LastTonnage  = lastTonnage.Steel ?? CommonConstants.DefaultMinValue,
                 },
                 new LastProducerTonnages
                 {
-                    MaterialName = lastTonnage.Wood_Header ?? MaterialNames.Wood,
-                    LastTonnage  = lastTonnage.WoodValue ?? CommonConstants.DefaultMinValue,
+                    MaterialName = MaterialNames.Wood,
+                    LastTonnage  = lastTonnage.Wood ?? CommonConstants.DefaultMinValue,
                 },
                 new LastProducerTonnages
                 {
-                    MaterialName = lastTonnage.OtherMaterials_Header ?? MaterialNames.OtherMaterials,
-                    LastTonnage  = lastTonnage.OtherMaterialsValue ?? CommonConstants.DefaultMinValue,
+                    MaterialName = MaterialNames.OtherMaterials,
+                    LastTonnage  = lastTonnage.OtherMaterials ?? CommonConstants.DefaultMinValue,
                 }
             ]);
 
@@ -135,14 +135,14 @@ public record CancelledProducerTonnageInvoice
         return new CancelledProducerTonnageInvoice
         {
             ProducerId           = producer.ProducerId,
-            SubsidiaryId         = producer.SubsidiaryIdValue ?? string.Empty,
-            ProducerName         = producer.ProducerOrSubsidiaryNameValue ?? string.Empty,
-            TradingName          = producer.TradingNameValue ?? string.Empty,
+            SubsidiaryId         = producer.SubsidiaryId ?? string.Empty,
+            ProducerName         = producer.ProducerOrSubsidiaryName ?? string.Empty,
+            TradingName          = producer.TradingName ?? string.Empty,
             LastProducerTonnages = GetLastProducerTonnages(producer.LastTonnage!),
             RunNumber            = runNumber,
-            RunName              = producer.LatestInvoice?.RunNameValue ?? string.Empty,
-            BillingInstructionID = producer.LatestInvoice?.BillingInstructionIdValue ?? string.Empty,
-            LastInvoicedTotal    = producer.LatestInvoice?.CurrentYearInvoicedTotalToDateValue ?? 0m
+            RunName              = producer.LatestInvoice?.RunName ?? string.Empty,
+            BillingInstructionID = producer.LatestInvoice?.BillingInstructionId ?? string.Empty,
+            LastInvoicedTotal    = producer.LatestInvoice?.CurrentYearInvoicedTotalToDate ?? 0m
         };
     }
 }

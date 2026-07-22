@@ -32,38 +32,13 @@
 
         public const string OnePlusFourCommsCostApportionmentPercentages = "onePlusFourCommsCostApportionmentPercentages";
 
-        public const string CancelledProducers = "Cancelled Producers";
-
         public const string ProducerId = "Producer ID";
         public const string SubsidiaryId = "Subsidiary ID";
-        public const string ProducerOrSubsidiaryName = "Producer Name";
         public const string TradingName = "Trading Name";
-
-
-        public const string LastTonnage = "Last Tonnage";
-        public const int LastTonnageSubHeaderIndex = 3;
-
-        public const string Aluminium = "Aluminium";
-        public const string FibreComposite = "Fibre composite";
-        public const string Glass = "Glass";
-        public const string PaperOrCard = "Paper or Card";
-        public const string Plastic = "Plastic";
-        public const string Steel = "Steel";
-        public const string Wood = "Wood";
-        public const string OtherMaterials = "Other materials";
-
-        public const string LatestInvoice = "Latest Invoice";
-        public const int LatestInvoiceSubHeaderIndex = 11;
-
-        public const string RunNumber = "Run Number";
-        public const string RunName = "Run Name";
-        public const string BillingInstructionId = "Billing Instruction ID";
 
         public const string TonnageChanged = "Tonnage Changed";
         public const string Positive = "+ve";
         public const string Negative = "-ve";
-
-        public const string CurrentYearInvoicedTotalToDate = "Current Year Invoiced Total To Date";
 
         public const string ErrorReportHeader = "Error Table";
         public const string LeaverCode = "Leaver Code";

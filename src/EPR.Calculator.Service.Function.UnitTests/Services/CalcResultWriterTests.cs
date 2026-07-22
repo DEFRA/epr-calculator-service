@@ -389,6 +389,35 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             stored.LaDisposalCost.ByMaterial[MaterialCodes.Aluminium].ActionedSelfManagedConsumerWasteTonnage.ShouldBe(2);
         }
 
+        [TestMethod]
+        public async Task StoreCancelledProducers_WorksAsExpected()
+        {
+            var cancelledProducers = new List<CalcResultCancelledProducer>
+            {
+                MkCancelledProducer(1),
+                MkCancelledProducer(2)
+            };
+
+            await _sut.StoreCancelledProducers(1, cancelledProducers, CancellationToken.None);
+
+            var stored = await _dbContext.CancelledProducers.ToImmutableListAsync();
+            stored.Count.ShouldBe(2);
+            stored.All(p => p.CalculatorRunId == 1).ShouldBeTrue();
+            stored.Select(p => p.CancelledProducer.ProducerId).ShouldBe([1, 2], ignoreOrder: true);
+            stored.First(p => p.CancelledProducer.ProducerId == 1).CancelledProducer.TradingName.ShouldBe("Trading 1");
+        }
+
+        private static CalcResultCancelledProducer MkCancelledProducer(int producerId) =>
+            new()
+            {
+                ProducerId = producerId,
+                SubsidiaryId = null,
+                ProducerOrSubsidiaryName = $"Producer {producerId}",
+                TradingName = $"Trading {producerId}",
+                LastTonnage = new LastTonnage { Aluminium = 10 },
+                LatestInvoice = new LatestInvoice { RunName = "RunName", RunNumber = "1", BillingInstructionId = "1_1", CurrentYearInvoicedTotalToDate = 100 }
+            };
+
         private static CalcResultLapcapData MkLapcapData() =>
             new()
             {

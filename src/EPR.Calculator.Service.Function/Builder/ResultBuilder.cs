@@ -98,6 +98,10 @@ public class ResultBuilder(
             () => cancelledProducersBuilder.ConstructAsync(runContext, materials),
             nameof(cancelledProducersBuilder));
 
+        await logger.LogDuration(
+            () => calcResultWriter.StoreCancelledProducers(runContext.RunId, result.CalcResultCancelledProducers, cancellationToken),
+            nameof(calcResultWriter.StoreCancelledProducers));
+
         var producers = await reportedProducersService.GetProducers(runContext);
 
         if (runContext.RequiresModulation)
