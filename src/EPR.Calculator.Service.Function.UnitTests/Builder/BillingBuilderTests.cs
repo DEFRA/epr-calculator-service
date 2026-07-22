@@ -46,6 +46,12 @@ public class BillingBuilderTests : TestsFor<BillingBuilder>
         var mockSummary = new Mock<ProducerFees>();
         var mockSmcw = new Mock<SelfManagedConsumerWaste>();
         var mockMod = new Mock<ModulationResult>();
+        var mockLapcapData = new Mock<CalcResultLapcapData>();
+        var mockLateReportingTonnage = new Mock<CalcResultLateReportingTonnage>();
+        var mockParameterOtherCost = new Mock<CalcResultParameterOtherCost>();
+        var mockOnePlusFourApportionment = new Mock<CalcResultOnePlusFourApportionment>();
+        var mockLaDisposalCostData = new Mock<CalcResultLaDisposalCostData>();
+        var mockCommsCost = new Mock<CalcResultCommsCost>();
 
         mockCalcResultReader.Setup(m => m.ReadH1ProjectedData(runContext.RunId, CancellationToken.None))
             .ReturnsAsync(mockCalcResultProjectedProducersH1Data.Object);
@@ -59,6 +65,18 @@ public class BillingBuilderTests : TestsFor<BillingBuilder>
             .ReturnsAsync(mockSmcw.Object);
         mockCalcResultReader.Setup(m => m.ReadModulationResult(runContext.RunId, CancellationToken.None))
             .ReturnsAsync(mockMod.Object);
+        mockCalcResultReader.Setup(m => m.ReadLapcapData(runContext.RunId, CancellationToken.None))
+            .ReturnsAsync(mockLapcapData.Object);
+        mockCalcResultReader.Setup(m => m.ReadLateReportingTonnage(runContext.RunId, CancellationToken.None))
+            .ReturnsAsync(mockLateReportingTonnage.Object);
+        mockCalcResultReader.Setup(m => m.ReadParameterOtherCost(runContext.RunId, CancellationToken.None))
+            .ReturnsAsync(mockParameterOtherCost.Object);
+        mockCalcResultReader.Setup(m => m.ReadOnePlusFourApportionment(runContext.RunId, CancellationToken.None))
+            .ReturnsAsync(mockOnePlusFourApportionment.Object);
+        mockCalcResultReader.Setup(m => m.ReadLaDisposalCostData(runContext.RunId, CancellationToken.None))
+            .ReturnsAsync(mockLaDisposalCostData.Object);
+        mockCalcResultReader.Setup(m => m.ReadCommsCost(runContext.RunId, CancellationToken.None))
+            .ReturnsAsync(mockCommsCost.Object);
 
         var result = await testSubject.BuildAsync(runContext, CancellationToken.None);
 
@@ -66,6 +84,12 @@ public class BillingBuilderTests : TestsFor<BillingBuilder>
         Assert.AreSame(mockSmcw.Object, result.Smcw);
         Assert.AreSame(mockMod.Object, result.CalcResultModulation);
         Assert.AreSame(mockSummary.Object, result.ProducerFees);
+        Assert.AreSame(mockLapcapData.Object, result.CalcResultLapcapData);
+        Assert.AreSame(mockLateReportingTonnage.Object, result.CalcResultLateReportingTonnageData);
+        Assert.AreSame(mockParameterOtherCost.Object, result.CalcResultParameterOtherCost);
+        Assert.AreSame(mockOnePlusFourApportionment.Object, result.CalcResultOnePlusFourApportionment);
+        Assert.AreSame(mockLaDisposalCostData.Object, result.CalcResultLaDisposalCostData);
+        Assert.AreSame(mockCommsCost.Object, result.CalcResultCommsCostReportDetail);
 
         mockSelfManagedConsumerWasteService.Verify(m => m.Calculate(runContext, It.IsAny<IImmutableList<MaterialDetail>>()), Times.Never);
         mockModulationBuilder.Verify(m => m.ConstructAsync(It.IsAny<RunContext>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<CalcResultLaDisposalCostData>(), It.IsAny<SelfManagedConsumerWaste>()), Times.Never);

@@ -1,12 +1,5 @@
-using System.Diagnostics.CodeAnalysis;
 using EPR.Calculator.Service.Function.Builder.CancelledProducers;
-using EPR.Calculator.Service.Function.Builder.CommsCost;
 using EPR.Calculator.Service.Function.Builder.Detail;
-using EPR.Calculator.Service.Function.Builder.LaDisposalCost;
-using EPR.Calculator.Service.Function.Builder.Lapcap;
-using EPR.Calculator.Service.Function.Builder.LateReportingTonnages;
-using EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment;
-using EPR.Calculator.Service.Function.Builder.ParametersOther;
 using EPR.Calculator.Service.Function.Builder.RejectedProducers;
 using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Logging;
@@ -20,16 +13,9 @@ public interface IBillingBuilder
     Task<CalcResult> BuildAsync(RunContext runContext, CancellationToken cancellationToken);
 }
 
-[SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
 public class BillingBuilder(
-    ICalcResultLapcapDataBuilder lapcapDataBuilder,
-    ICalcResultLateReportingBuilder lateReportingTonnageBuilder,
-    ICalcResultParameterOtherCostBuilder otherCostsBuilder,
-    ICalcResultOnePlusFourApportionmentBuilder onePlusFourApportionmentBuilder,
     ICalcResultCancelledProducersBuilder cancelledProducersBuilder,
     ICalcResultDetailBuilder calcResultDetailBuilder,
-    ICalcResultCommsCostBuilder commsCostsBuilder,
-    ICalcRunLaDisposalCostBuilder laDisposalCostsBuilder,
     ICalcResultRejectedProducersBuilder rejectedProducersBuilder,
     ICalcResultReader calcResultReader,
     IMaterialService materialService,
@@ -50,22 +36,21 @@ public class BillingBuilder(
             nameof(calcResultDetailBuilder));
 
         result.CalcResultLapcapData = await logger.LogDuration(
-            () => lapcapDataBuilder.ConstructAsync(runContext, materials),
-            nameof(lapcapDataBuilder));
+            () => calcResultReader.ReadLapcapData(runContext.RunId, cancellationToken),
+            nameof(calcResultReader.ReadLapcapData));
 
         result.CalcResultLateReportingTonnageData = await logger.LogDuration(
-            () => lateReportingTonnageBuilder.ConstructAsync(runContext, materials),
-            nameof(lateReportingTonnageBuilder));
+            () => calcResultReader.ReadLateReportingTonnage(runContext.RunId, cancellationToken),
+            nameof(calcResultReader.ReadLateReportingTonnage));
 
         result.CalcResultParameterOtherCost = await logger.LogDuration(
-            () => otherCostsBuilder.ConstructAsync(runContext),
-            nameof(otherCostsBuilder));
+            () => calcResultReader.ReadParameterOtherCost(runContext.RunId, cancellationToken),
+            nameof(calcResultReader.ReadParameterOtherCost));
 
-        result.CalcResultOnePlusFourApportionment = logger.LogDuration(
-            () => onePlusFourApportionmentBuilder.Construct(result),
-            nameof(onePlusFourApportionmentBuilder));
+        result.CalcResultOnePlusFourApportionment = await logger.LogDuration(
+            () => calcResultReader.ReadOnePlusFourApportionment(runContext.RunId, cancellationToken),
+            nameof(calcResultReader.ReadOnePlusFourApportionment));
 
-        //TODO: Store/Read this?
         result.CalcResultCancelledProducers = await logger.LogDuration(
             () => cancelledProducersBuilder.ConstructAsync(runContext, materials),
             nameof(cancelledProducersBuilder));
@@ -101,12 +86,12 @@ public class BillingBuilder(
             nameof(calcResultReader.ReadSmcw));
 
         result.CalcResultLaDisposalCostData = await logger.LogDuration(
-            () => laDisposalCostsBuilder.ConstructAsync(runContext, materials, result.CalcResultLapcapData, result.CalcResultLateReportingTonnageData, result.Smcw),
-            nameof(laDisposalCostsBuilder));
+            () => calcResultReader.ReadLaDisposalCostData(runContext.RunId, cancellationToken),
+            nameof(calcResultReader.ReadLaDisposalCostData));
 
         result.CalcResultCommsCostReportDetail = await logger.LogDuration(
-            () => commsCostsBuilder.ConstructAsync(runContext, materials, result.CalcResultOnePlusFourApportionment, result.CalcResultLateReportingTonnageData),
-            nameof(commsCostsBuilder));
+            () => calcResultReader.ReadCommsCost(runContext.RunId, cancellationToken),
+            nameof(calcResultReader.ReadCommsCost));
 
         if (runContext.RequiresModulation)
         {

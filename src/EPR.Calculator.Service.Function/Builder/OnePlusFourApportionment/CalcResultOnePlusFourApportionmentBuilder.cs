@@ -14,7 +14,7 @@ namespace EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment
         {
             return new CalcResultOnePlusFourApportionment {
                 LaDisposalCost   = calcResult.CalcResultLapcapData.Total,
-                LADataPrepCharge = calcResult.CalcResultParameterOtherCost.LaDataPrepCharge
+                LADataPrepCharge = calcResult.CalcResultParameterOtherCost.LaDataPrepCharge with { }
             };
         }
     }

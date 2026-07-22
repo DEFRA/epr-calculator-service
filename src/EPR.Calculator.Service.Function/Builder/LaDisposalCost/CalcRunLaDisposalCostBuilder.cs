@@ -65,7 +65,7 @@ namespace EPR.Calculator.Service.Function.Builder.LaDisposalCost
                     decimal? actionedSelfManagedConsumerWasteTonnage = runContext.RequiresModulation ? smcw.TotalByMaterial[materialCode].ActionedSmcwTonnage.Total ?? 0 : null;
                     var laDisposalDetail = new CalcResultLaDisposalCostDataDetail
                     {
-                        Cost                                    = detail.Value,
+                        Cost                                    = detail.Value with { },
                         HouseholdPackagingWasteTonnage          = hhTonnage,
                         PublicBinTonnage                        = pbTonnage,
                         HouseholdDrinkContainersTonnage         = hdcTonnage,

@@ -66,17 +66,33 @@ public class ResultBuilder(
             () => lapcapDataBuilder.ConstructAsync(runContext, materials),
             nameof(lapcapDataBuilder));
 
+        await logger.LogDuration(
+            () => calcResultWriter.StoreLapcapData(runContext.RunId, result.CalcResultLapcapData, cancellationToken),
+            nameof(calcResultWriter.StoreLapcapData));
+
         result.CalcResultLateReportingTonnageData = await logger.LogDuration(
             () => lateReportingTonnageBuilder.ConstructAsync(runContext, materials),
             nameof(lateReportingTonnageBuilder));
+
+        await logger.LogDuration(
+            () => calcResultWriter.StoreLateReportingTonnage(runContext.RunId, result.CalcResultLateReportingTonnageData, cancellationToken),
+            nameof(calcResultWriter.StoreLateReportingTonnage));
 
         result.CalcResultParameterOtherCost = await logger.LogDuration(
             () => otherCostsBuilder.ConstructAsync(runContext),
             nameof(otherCostsBuilder));
 
+        await logger.LogDuration(
+            () => calcResultWriter.StoreParameterOtherCost(runContext.RunId, result.CalcResultParameterOtherCost, cancellationToken),
+            nameof(calcResultWriter.StoreParameterOtherCost));
+
         result.CalcResultOnePlusFourApportionment = logger.LogDuration(
             () => onePlusFourApportionmentBuilder.Construct(result),
             nameof(onePlusFourApportionmentBuilder));
+
+        await logger.LogDuration(
+            () => calcResultWriter.StoreOnePlusFourApportionment(runContext.RunId, result.CalcResultOnePlusFourApportionment, cancellationToken),
+            nameof(calcResultWriter.StoreOnePlusFourApportionment));
 
         result.CalcResultCancelledProducers = await logger.LogDuration(
             () => cancelledProducersBuilder.ConstructAsync(runContext, materials),
@@ -134,9 +150,17 @@ public class ResultBuilder(
             () => laDisposalCostsBuilder.ConstructAsync(runContext, materials, result.CalcResultLapcapData, result.CalcResultLateReportingTonnageData, result.Smcw),
             nameof(laDisposalCostsBuilder));
 
+        await logger.LogDuration(
+            () => calcResultWriter.StoreLaDisposalCostData(runContext.RunId, result.CalcResultLaDisposalCostData, cancellationToken),
+            nameof(calcResultWriter.StoreLaDisposalCostData));
+
         result.CalcResultCommsCostReportDetail = await logger.LogDuration(
             () => commsCostsBuilder.ConstructAsync(runContext, materials, result.CalcResultOnePlusFourApportionment, result.CalcResultLateReportingTonnageData),
             nameof(commsCostsBuilder));
+
+        await logger.LogDuration(
+            () => calcResultWriter.StoreCommsCost(runContext.RunId, result.CalcResultCommsCostReportDetail, cancellationToken),
+            nameof(calcResultWriter.StoreCommsCost));
 
         if (runContext.RequiresModulation)
         {

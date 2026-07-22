@@ -134,6 +134,13 @@ public class ResultBuilderTests : TestsFor<ResultBuilder>
         mockCalcResultScaledupProducersBuilder.Verify(m => m.ConstructAsync(runContext, It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<L1Producer>>()), Times.Once);
         mockCalcResultProjectedProducersBuilder.Verify(m => m.Construct(runContext, It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<L1Producer>>()), Times.Never);
         mockCalcResultPartialObligationBuilder.Verify(m => m.ConstructAsync(runContext, It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<L1Producer>>()), Times.Once);
+
+        mockCalcResultWriter.Verify(m => m.StoreLapcapData(runContext.RunId, mockLapcapData.Object, CancellationToken.None), Times.Once);
+        mockCalcResultWriter.Verify(m => m.StoreLateReportingTonnage(runContext.RunId, mockCalcResultLateReportingTonnage, CancellationToken.None), Times.Once);
+        mockCalcResultWriter.Verify(m => m.StoreParameterOtherCost(runContext.RunId, mockOtherParams.Object, CancellationToken.None), Times.Once);
+        mockCalcResultWriter.Verify(m => m.StoreOnePlusFourApportionment(runContext.RunId, mockOnePlusFourApp.Object, CancellationToken.None), Times.Once);
+        mockCalcResultWriter.Verify(m => m.StoreLaDisposalCostData(runContext.RunId, mockCalcResultLaDisposalCostData.Object, CancellationToken.None), Times.Once);
+        mockCalcResultWriter.Verify(m => m.StoreCommsCost(runContext.RunId, mockCalcResultCommsCost.Object, CancellationToken.None), Times.Once);
     }
 
     [TestMethod]
