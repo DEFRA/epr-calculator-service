@@ -27,7 +27,6 @@ public interface IResultBuilder
 
 [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
 public class ResultBuilder(
-    IParameterService parameterService,
     ICalcResultLapcapDataBuilder lapcapDataBuilder,
     ICalcResultLateReportingBuilder lateReportingTonnageBuilder,
     ICalcResultParameterOtherCostBuilder otherCostsBuilder,

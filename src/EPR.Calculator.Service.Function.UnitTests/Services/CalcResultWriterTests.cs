@@ -321,8 +321,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             await _sut.StoreLapcapData(1, lapcapData, CancellationToken.None);
 
             var stored = await _dbContext.LapcapData.SingleAsync();
-            stored.CalculatorRunId.ShouldBe(1);
-            stored.LapcapData.ByMaterial[MaterialCodes.Aluminium].England.ShouldBe(10);
+            stored.LapcapData.ShouldBeEquivalentTo(lapcapData);
         }
 
         [TestMethod]
@@ -333,9 +332,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             await _sut.StoreCommsCost(1, commsCost, CancellationToken.None);
 
             var stored = await _dbContext.CommCost.SingleAsync();
-            stored.CalculatorRunId.ShouldBe(1);
-            stored.CommsCost.ByMaterial[MaterialCodes.Aluminium].TotalCost.ShouldBe(100);
-            stored.CommsCost.CommsCostUkWide.England.ShouldBe(1);
+            stored.CommsCost.ShouldBeEquivalentTo(commsCost);
         }
 
         [TestMethod]
@@ -346,8 +343,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             await _sut.StoreLateReportingTonnage(1, lateReportingTonnage, CancellationToken.None);
 
             var stored = await _dbContext.LateReportingTonnage.SingleAsync();
-            stored.CalculatorRunId.ShouldBe(1);
-            stored.LateReportingTonnage.ByMaterial[MaterialCodes.Aluminium].Total.ShouldBe(10);
+            stored.LateReportingTonnage.ShouldBeEquivalentTo(lateReportingTonnage);
         }
 
         [TestMethod]
@@ -358,9 +354,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             await _sut.StoreParameterOtherCost(1, parameterOtherCost, CancellationToken.None);
 
             var stored = await _dbContext.ParameterOtherCost.SingleAsync();
-            stored.CalculatorRunId.ShouldBe(1);
-            stored.ParameterOtherCost.SaOperatingCost.England.ShouldBe(1);
-            stored.ParameterOtherCost.BadDebtValue.ShouldBe(42);
+            stored.ParameterOtherCost.ShouldBeEquivalentTo(parameterOtherCost);
         }
 
         [TestMethod]
@@ -371,9 +365,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             await _sut.StoreOnePlusFourApportionment(1, onePlusFourApportionment, CancellationToken.None);
 
             var stored = await _dbContext.OnePlusFourApportionment.SingleAsync();
-            stored.CalculatorRunId.ShouldBe(1);
-            stored.OnePlusFourApportionment.LaDisposalCost.England.ShouldBe(1);
-            stored.OnePlusFourApportionment.LADataPrepCharge.England.ShouldBe(5);
+            stored.OnePlusFourApportionment.ShouldBeEquivalentTo(onePlusFourApportionment);
         }
 
         [TestMethod]
@@ -384,9 +376,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             await _sut.StoreLaDisposalCostData(1, laDisposalCostData, CancellationToken.None);
 
             var stored = await _dbContext.LaDisposalCostData.SingleAsync();
-            stored.CalculatorRunId.ShouldBe(1);
-            stored.LaDisposalCost.ByMaterial[MaterialCodes.Aluminium].Cost.England.ShouldBe(1);
-            stored.LaDisposalCost.ByMaterial[MaterialCodes.Aluminium].ActionedSelfManagedConsumerWasteTonnage.ShouldBe(2);
+            stored.LaDisposalCost.ShouldBeEquivalentTo(laDisposalCostData);
         }
 
         [TestMethod]
@@ -400,11 +390,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             await _sut.StoreCancelledProducers(1, cancelledProducers, CancellationToken.None);
 
-            var stored = await _dbContext.CancelledProducers.ToImmutableListAsync();
-            stored.Count.ShouldBe(2);
-            stored.All(p => p.CalculatorRunId == 1).ShouldBeTrue();
-            stored.Select(p => p.CancelledProducer.ProducerId).ShouldBe([1, 2], ignoreOrder: true);
-            stored.First(p => p.CancelledProducer.ProducerId == 1).CancelledProducer.TradingName.ShouldBe("Trading 1");
+            var stored = await _dbContext.CancelledProducers.ToListAsync();
+            stored.Select(x => x.CancelledProducer).ToList().ShouldBeEquivalentTo(cancelledProducers);
         }
 
         private static CalcResultCancelledProducer MkCancelledProducer(int producerId) =>

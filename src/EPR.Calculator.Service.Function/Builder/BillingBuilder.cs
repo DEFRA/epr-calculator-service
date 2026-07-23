@@ -16,7 +16,6 @@ public class BillingBuilder(
     ICalcResultDetailBuilder calcResultDetailBuilder,
     ICalcResultRejectedProducersBuilder rejectedProducersBuilder,
     ICalcResultReader calcResultReader,
-    IMaterialService materialService,
     ITelemetryClient telemetryClient,
     ILogger<BillingBuilder> logger
 )  : IBillingBuilder
@@ -27,7 +26,6 @@ public class BillingBuilder(
     private async Task<CalcResult> BuildResult(RunContext runContext, CancellationToken cancellationToken)
     {
         var result = CalcResult.Empty;
-        var materials = await materialService.GetMaterials();
 
         result.CalcResultDetail = await logger.LogDuration(
             () => calcResultDetailBuilder.ConstructAsync(runContext),
