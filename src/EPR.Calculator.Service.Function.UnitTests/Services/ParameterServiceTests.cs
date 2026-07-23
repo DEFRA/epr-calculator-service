@@ -1,7 +1,7 @@
 ﻿using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Services;
-using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
@@ -12,14 +12,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     [TestClass]
     public class ParameterServiceTests
     {
-        private Mock<IDbContextFactory<ApplicationDBContext>> dbContextFactory;
-        private ApplicationDBContext dbContext;
-        private ParameterService parameterService;
+        private readonly Mock<IDbContextFactory<ApplicationDBContext>> dbContextFactory;
+        private readonly ApplicationDBContext dbContext;
+        private readonly ParameterService parameterService;
 
         public ParameterServiceTests()
         {
             var options = new DbContextOptionsBuilder<ApplicationDBContext>()
-                .UseInMemoryDatabase(databaseName: "ParameterTestDatabase")
+                .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
 
             dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
@@ -42,47 +42,70 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task ShouldReturnDefaultParameters()
         {
             // Arrange
-            var runContext = TestDataHelper.CalculatorRun2024;
+            const int runId = 1;
+            const int masterId = 100;
 
-            var run = new CalculatorRun
+            var empty = DefaultParametersHelper.Empty();
+
+            var expected = empty with
             {
-                Id = runContext.RunId,
+                BadDebtProvision = 0.15m,
+                RedModulationFactor = 1.5m,
+                CommunicationCosts = empty.CommunicationCosts with
+                {
+                    ByMaterialCode = new Dictionary<string, decimal>(empty.CommunicationCosts.ByMaterialCode)
+                    {
+                        ["AL"] = 123.45m
+                    },
+
+                    ByCountry = empty.CommunicationCosts.ByCountry with
+                    {
+                        UnitedKingdom = 50m
+                    }
+                },
+
+                LateReportingTonnageByMaterialCode =
+                    new Dictionary<string, RamTonnageGroup>(empty.LateReportingTonnageByMaterialCode)
+                    {
+                        ["AL"] = new RamTonnageGroup
+                        {
+                            Amber = 10m,
+                            Green = 20m,
+                            Red = 30m,
+                            Total = 60m
+                        }
+                    }
+            };
+
+            dbContext.CalculatorRuns.Add(new CalculatorRun
+            {
+                Id = runId,
                 Name = "Some name",
-                DefaultParameterSettingMasterId = 100
-            };
+                DefaultParameterSettingMasterId = masterId
+            });
 
-            var master = new DefaultParameterSettingMaster
+            dbContext.DefaultParameterSettings.Add(new DefaultParameterSettingMaster
             {
-                Id = 100
-            };
+                Id = masterId
+            });
 
-            var detail = new DefaultParameterSettingDetail
-            {
-                DefaultParameterSettingMasterId = 100,
-                ParameterUniqueReferenceId = "PARAM1",
-                ParameterValue = "123"
-            };
-
-            var template = new DefaultParameterTemplateMaster
-            {
-                ParameterUniqueReferenceId = "PARAM1",
-                ParameterType = "Some Type",
-                ParameterCategory = "Some Category"
-            };
-
-            dbContext.CalculatorRuns.Add(run);
-            dbContext.DefaultParameterSettings.Add(master);
-            dbContext.DefaultParameterSettingDetail.Add(detail);
-            dbContext.DefaultParameterTemplateMasterList.Add(template);
+            dbContext.DefaultParameterSettingDetail.AddRange(DefaultParametersHelper.ToDetails(expected, masterId));
 
             await dbContext.SaveChangesAsync();
 
             // Act
-            var result = await parameterService.GetDefaultParameters(runContext);
+            var result = await parameterService.GetDefaultParameters(runId);
 
             // Assert
-            Assert.AreEqual(1    , result.Count);
-            Assert.AreEqual("123", result["PARAM1"]);
+            Assert.AreEqual(123.45m, result.CommunicationCosts.ByMaterialCode["AL"]);
+            Assert.AreEqual(50m,     result.CommunicationCosts.ByCountry.UnitedKingdom);
+            Assert.AreEqual(0.15m,   result.BadDebtProvision);
+            Assert.AreEqual(1.5m,    result.RedModulationFactor);
+            Assert.AreEqual(10m,     result.LateReportingTonnageByMaterialCode["AL"].Amber);
+            Assert.AreEqual(20m,     result.LateReportingTonnageByMaterialCode["AL"].Green);
+            Assert.AreEqual(30m,     result.LateReportingTonnageByMaterialCode["AL"].Red);
+            Assert.AreEqual(60m,     result.LateReportingTonnageByMaterialCode["AL"].Total);
         }
+
     }
 }

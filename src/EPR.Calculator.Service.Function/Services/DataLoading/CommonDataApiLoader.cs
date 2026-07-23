@@ -2,11 +2,12 @@ using System.Data;
 using EFCore.BulkExtensions;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.API.Data.DataTypes;
 using EPR.Calculator.Service.Function.Features.CalculatorRuns.Contexts;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Logging;
 using EPR.Calculator.Service.Function.Options;
 using EPR.Calculator.Service.Function.Services.CommonDataApi;
+using EPR.Calculator.Service.Function.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Options;
@@ -50,16 +51,16 @@ public class CommonDataApiLoader(
             return;
         }
 
-        await telemetry.TrackDuration("DataStream", () => Run(runContext.RelativeYear, timeProvider.GetUtcNow(), cancellationToken));
+        await telemetry.TrackDuration("DataStream", () => Run(runContext, timeProvider.GetUtcNow(), cancellationToken));
     }
 
     private async Task<(long totalPoms, long totalOrgs)> Run(
-        RelativeYear relativeYear, DateTimeOffset loadTime, CancellationToken cancellationToken)
+        RunContext runContext, DateTimeOffset loadTime, CancellationToken cancellationToken)
     {
         // If either stream fails, both should cancel.
         using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         var linkedCt = linkedCts.Token;
-        var (pomStream, orgStream) = await GetStreams(relativeYear, loadTime, linkedCt);
+        var (pomStream, orgStream) = await GetStreams(runContext, loadTime, linkedCt);
 
         try
         {
@@ -78,14 +79,14 @@ public class CommonDataApiLoader(
     }
 
     private async Task<(InitialisedStream<PomData> pomStream, InitialisedStream<OrganisationData> orgStream)>
-        GetStreams(RelativeYear relativeYear, DateTimeOffset loadTime, CancellationToken linkedCt)
+        GetStreams(RunContext runContext, DateTimeOffset loadTime, CancellationToken linkedCt)
     {
-        var pomStream = httpClient.StreamPoms(relativeYear, linkedCt)
+        var pomStream = httpClient.StreamPoms(runContext.RelativeYear, runContext.DefaultParameters.CutOffDate, linkedCt)
             .Select(CommonDataApiLoaderMapper.MapPom(loadTime, logger))
             .Chunk(options.Value.PomBatchSize)
             .GetAsyncEnumerator(linkedCt);
 
-        var orgStream = httpClient.StreamOrganisations(relativeYear, linkedCt)
+        var orgStream = httpClient.StreamOrganisations(runContext.RelativeYear, runContext.DefaultParameters.CutOffDate, linkedCt)
             .Select(CommonDataApiLoaderMapper.MapOrganisation(loadTime))
             .Chunk(options.Value.OrganisationBatchSize)
             .GetAsyncEnumerator(linkedCt);

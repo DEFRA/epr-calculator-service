@@ -2,6 +2,7 @@
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.Detail
@@ -30,6 +31,7 @@ namespace EPR.Calculator.Service.Function.Builder.Detail
                 RunBy = calculatorRun.CreatedBy,
                 RunDate = calculatorRun.CreatedAt,
                 RelativeYear = calculatorRun.RelativeYear,
+                CutOffDate = runContext.DefaultParameters.CutOffDate,
                 RpdFileORG = calculatorRun.CalculatorRunOrganisationDataMaster != null
                                 ? calculatorRun.CalculatorRunOrganisationDataMaster.CreatedAt.ToString(CalculationResults.DateFormat)
                                 : string.Empty,

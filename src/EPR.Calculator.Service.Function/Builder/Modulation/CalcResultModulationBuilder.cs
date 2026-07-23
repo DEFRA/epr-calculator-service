@@ -1,5 +1,6 @@
 ﻿using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Enums;
+using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.Utils;
@@ -9,7 +10,7 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
     public interface ICalcResultModulationBuilder
     {
         Task<ModulationResult> ConstructAsync(
-            IReadOnlyDictionary<string, string> defaultParams,
+            RunContext runContext,
             IImmutableList<MaterialDetail> materials,
             CalcResultLaDisposalCostData laDisposalCostData,
             SelfManagedConsumerWaste smcw
@@ -19,13 +20,13 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
     public class CalcResultModulationBuilder : ICalcResultModulationBuilder
     {
         public Task<ModulationResult> ConstructAsync(
-            IReadOnlyDictionary<string, string> defaultParams,
+            RunContext runContext,
             IImmutableList<MaterialDetail> materials,
             CalcResultLaDisposalCostData laDisposalCostData,
             SelfManagedConsumerWaste smcw
         )
         {
-            var redFactor = defaultParams["REDM-RF"].ToDecimal();
+            var redFactor = runContext.DefaultParameters.RedModulationFactor;
 
             decimal pricePerTonne(MaterialDetail material)
             {
@@ -35,11 +36,11 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
             var materialCosts =
                 materials.Select(material =>
                 {
-                    var materialDisposalCost = pricePerTonne(material);
-                    var netReportedTonnage = smcw.TotalByMaterial[material.Code].NetTonnage;
-                    var lateReportingTonnageR = GetLateReportingTonnage(defaultParams, material, RagRating.Red);
-                    var lateReportingTonnageA = GetLateReportingTonnage(defaultParams, material, RagRating.Amber);
-                    var lateReportingTonnageG = GetLateReportingTonnage(defaultParams, material, RagRating.Green);
+                    var materialDisposalCost  = pricePerTonne(material);
+                    var netReportedTonnage    = smcw.TotalByMaterial[material.Code].NetTonnage;
+                    var lateReportingTonnageR = runContext.DefaultParameters.LateReportingTonnageByMaterialCode[material.Code].Red;
+                    var lateReportingTonnageA = runContext.DefaultParameters.LateReportingTonnageByMaterialCode[material.Code].Amber;
+                    var lateReportingTonnageG = runContext.DefaultParameters.LateReportingTonnageByMaterialCode[material.Code].Green;
                     var redMaterialTonnages   = lateReportingTonnageR + netReportedTonnage.Red   ?? 0m;
                     var amberMaterialTonnages = lateReportingTonnageA + netReportedTonnage.Amber ?? 0m;
                     var greenMaterialTonnages = lateReportingTonnageG + netReportedTonnage.Green ?? 0m;
@@ -83,23 +84,11 @@ namespace EPR.Calculator.Service.Function.Builder.Modulation
 
             return Task.FromResult(new ModulationResult
             {
-                CalculatorRunId = smcw.CalculatorRunId,
-                GreenFactor = greenFactor,
-                RedFactor   = redFactor,
+                CalculatorRunId      = smcw.CalculatorRunId,
+                GreenFactor          = greenFactor,
+                RedFactor            = redFactor,
                 ModulationByMaterial = materialModulations
             });
-        }
-
-        private static decimal GetLateReportingTonnage(IReadOnlyDictionary<string, string> defaultParams, MaterialDetail material, RagRating ragRating)
-        {
-            var rag = ragRating switch
-            {
-                RagRating.Red   => "-R",
-                RagRating.Amber => "",
-                RagRating.Green => "-G",
-                _ => throw new ArgumentException("Invalid RagRating")
-            };
-            return defaultParams[$"LRET-{material.Code}{rag}"].ToDecimal();
         }
     }
 }

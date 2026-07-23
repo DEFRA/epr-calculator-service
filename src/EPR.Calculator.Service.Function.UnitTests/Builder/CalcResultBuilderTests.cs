@@ -324,7 +324,7 @@ public class CalcResultBuilderTests : TestsFor<CalcResultBuilder>
         Assert.AreSame(mockSummary.Object, result.ProducerFees);
 
         mockSelfManagedConsumerWasteService.Verify(m => m.Calculate(runContext, It.IsAny<IImmutableList<MaterialDetail>>()), Times.Never);
-        mockModulationBuilder.Verify(m => m.ConstructAsync(It.IsAny<IReadOnlyDictionary<string, string>>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<CalcResultLaDisposalCostData>(), It.IsAny<SelfManagedConsumerWaste>()), Times.Never);
+        mockModulationBuilder.Verify(m => m.ConstructAsync(It.IsAny<RunContext>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<CalcResultLaDisposalCostData>(), It.IsAny<SelfManagedConsumerWaste>()), Times.Never);
         mockSummaryBuilder.Verify(m => m.ConstructAsync(runContext, It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<CalcResult>(), It.IsAny<SelfManagedConsumerWaste>()), Times.Never);
     }
 }

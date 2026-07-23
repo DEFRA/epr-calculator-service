@@ -188,7 +188,8 @@
         "amount": "-£999,999,999.99",
         "percentage": "-999.99%"
       }
-    }
+    },
+    "cutOffDate": "2026-06-24"
   },
   "onePlusFourApportionment": {
     "oneFeeForLADisposalCosts": {

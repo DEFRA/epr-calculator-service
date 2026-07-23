@@ -96,7 +96,8 @@ namespace EPR.Calculator.Service.Function.Builder.ParametersOther
                 MaterialityIncrease   = new() { Amount = Value(materialityResults, "Amount Increase"), Percentage = Value(materialityResults, "Percent Increase") },
                 MaterialityDecrease   = new() { Amount = Value(materialityResults, "Amount Decrease"), Percentage = Value(materialityResults, "Percent Decrease") },
                 TonnageChangeIncrease = new() { Amount = Value(tonnageResults    , "Amount Increase"), Percentage = Value(tonnageResults    , "Percent Increase") },
-                TonnageChangeDecrease = new() { Amount = Value(tonnageResults    , "Amount Decrease"), Percentage = Value(tonnageResults    , "Percent Decrease") }
+                TonnageChangeDecrease = new() { Amount = Value(tonnageResults    , "Amount Decrease"), Percentage = Value(tonnageResults    , "Percent Decrease") },
+                CutOffDate            = runContext.DefaultParameters.CutOffDate
             };
         }
 

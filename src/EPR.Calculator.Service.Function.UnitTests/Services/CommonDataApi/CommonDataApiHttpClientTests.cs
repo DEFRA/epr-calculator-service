@@ -34,7 +34,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.CommonDataApi
             var client = CreateClient(handler);
 
             // Act
-            var results = await CollectAsync(client.StreamPoms(new RelativeYear(2024)));
+            var results = await CollectAsync(client.StreamPoms(new RelativeYear(2024), cutOffDate: null));
 
             // Assert
             Assert.AreEqual(3, results.Count);
@@ -54,7 +54,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.CommonDataApi
             var client = CreateClient(handler);
 
             // Act
-            var results = await CollectAsync(client.StreamOrganisations(new RelativeYear(2024)));
+            var results = await CollectAsync(client.StreamOrganisations(new RelativeYear(2024), cutOffDate: null));
 
             // Assert
             Assert.AreEqual(2, results.Count);
@@ -74,7 +74,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.CommonDataApi
 
             // Act & Assert
             await Should.ThrowAsync<HttpRequestException>(
-                async () => await CollectAsync(client.StreamPoms(new RelativeYear(2024))));
+                async () => await CollectAsync(client.StreamPoms(new RelativeYear(2024), cutOffDate: null)));
         }
 
         /// <summary>
@@ -89,14 +89,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.CommonDataApi
 
             // Act & Assert
             await Should.ThrowAsync<HttpRequestException>(
-                async () => await CollectAsync(client.StreamOrganisations(new RelativeYear(2024))));
+                async () => await CollectAsync(client.StreamOrganisations(new RelativeYear(2024), cutOffDate: null)));
         }
 
         /// <summary>
         ///     Verifies that the relative year is substituted into the POM URL.
         /// </summary>
         [TestMethod]
-        public async Task StreamPoms_FormatsUrlWithRelativeYear()
+        public async Task StreamPoms_FormatsUrlWithJustRelativeYear()
         {
             // Arrange
             string? capturedUrl = null;
@@ -108,18 +108,46 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.CommonDataApi
             var client = CreateClient(handler);
 
             // Act
-            await CollectAsync(client.StreamPoms(new RelativeYear(2025)));
+            await CollectAsync(client.StreamPoms(new RelativeYear(2025), cutOffDate: null));
 
             // Assert
             Assert.IsNotNull(capturedUrl);
             StringAssert.Contains(capturedUrl, "relativeYear=2025");
+            Assert.IsFalse(capturedUrl.Contains("cutOffDate"));
         }
+
+        /// <summary>
+        ///     Verifies that the cut-off date is formatted and substituted into the Organisation URL.
+        /// </summary>
+        [TestMethod]
+        public async Task StreamOrganisations_FormatsUrlWithCutOffDate()
+        {
+            // Arrange
+            string? capturedUrl = null;
+            var handler = new MockHandler(url =>
+            {
+                capturedUrl = url;
+                return OkNdJson(string.Empty);
+            });
+            var client = CreateClient(handler);
+
+            var cutOffDate = new DateTime(2026, 7, 9);
+
+            // Act
+            await CollectAsync(client.StreamOrganisations(new RelativeYear(2025), cutOffDate));
+
+            // Assert
+            Assert.IsNotNull(capturedUrl);
+            StringAssert.Contains(capturedUrl, "relativeYear=2025");
+            StringAssert.Contains(capturedUrl, "cutOffDate=2026-07-09");
+        }
+
 
         /// <summary>
         ///     Verifies that the relative year is substituted into the Organisation URL.
         /// </summary>
         [TestMethod]
-        public async Task StreamOrganisations_FormatsUrlWithRelativeYear()
+        public async Task StreamOrganisations_FormatsUrlWithJustRelativeYear()
         {
             // Arrange
             string? capturedUrl = null;
@@ -131,11 +159,36 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.CommonDataApi
             var client = CreateClient(handler);
 
             // Act
-            await CollectAsync(client.StreamOrganisations(new RelativeYear(2025)));
+            await CollectAsync(client.StreamOrganisations(new RelativeYear(2025), cutOffDate: null));
 
             // Assert
             Assert.IsNotNull(capturedUrl);
             StringAssert.Contains(capturedUrl, "relativeYear=2025");
+            Assert.IsFalse(capturedUrl.Contains("cutOffDate"));
+        }
+
+        /// <summary>
+        ///     Verifies that no cut-off date parameter is added when no cut-off date is supplied.
+        /// </summary>
+        [TestMethod]
+        public async Task StreamPoms_WhenCutOffDateIsNull_DoesNotAddCutOffDate()
+        {
+            // Arrange
+            string? capturedUrl = null;
+            var handler = new MockHandler(url =>
+            {
+                capturedUrl = url;
+                return OkNdJson(string.Empty);
+            });
+            var client = CreateClient(handler);
+
+            // Act
+            await CollectAsync(client.StreamPoms(new RelativeYear(2025), null));
+
+            // Assert
+            Assert.IsNotNull(capturedUrl);
+            StringAssert.Contains(capturedUrl, "relativeYear=2025");
+            Assert.IsFalse(capturedUrl.Contains("cutOffDate"));
         }
 
         /// <summary>
@@ -151,7 +204,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.CommonDataApi
             var client = CreateClient(handler);
 
             // Act
-            var results = await CollectAsync(client.StreamPoms(new RelativeYear(2024)));
+            var results = await CollectAsync(client.StreamPoms(new RelativeYear(2024), cutOffDate: null));
 
             // Assert
             Assert.AreEqual(1, results.Count);
@@ -168,7 +221,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.CommonDataApi
             var client = CreateClient(handler);
 
             // Act
-            var results = await CollectAsync(client.StreamPoms(new RelativeYear(2024)));
+            var results = await CollectAsync(client.StreamPoms(new RelativeYear(2024), cutOffDate: null));
 
             // Assert
             Assert.AreEqual(0, results.Count);
@@ -265,7 +318,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.CommonDataApi
             var client = CreateClient(handler, options);
 
             // Act
-            await CollectAsync(client.StreamPoms(new RelativeYear(2024)));
+            await CollectAsync(client.StreamPoms(new RelativeYear(2024), cutOffDate: null));
 
             // Assert
             Assert.IsNotNull(capturedRequest);
@@ -295,7 +348,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.CommonDataApi
             var client = CreateClient(handler, options);
 
             // Act
-            await CollectAsync(client.StreamPoms(new RelativeYear(2024)));
+            await CollectAsync(client.StreamPoms(new RelativeYear(2024), cutOffDate: null));
 
             // Assert
             Assert.IsNotNull(capturedRequest);
@@ -313,7 +366,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.CommonDataApi
             var client = CreateClient(handler);
 
             // Act
-            var results = await CollectAsync(client.StreamPoms(new RelativeYear(2024)));
+            var results = await CollectAsync(client.StreamPoms(new RelativeYear(2024), cutOffDate: null));
 
             // Assert
             Assert.AreEqual(2, results.Count);
@@ -332,7 +385,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services.CommonDataApi
             var client = CreateClient(handler);
 
             // Act
-            var results = await CollectAsync(client.StreamPoms(new RelativeYear(2024)));
+            var results = await CollectAsync(client.StreamPoms(new RelativeYear(2024), cutOffDate: null));
 
             // Assert
             Assert.AreEqual(2, results.Count);

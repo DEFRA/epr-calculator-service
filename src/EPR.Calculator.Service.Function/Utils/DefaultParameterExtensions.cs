@@ -15,24 +15,4 @@ public static class DefaultParameterExtensions
 
         throw new FormatException($"'{value}' is not a valid decimal.");
     }
-
-    public static DateTime? ToOptionalDate(this string value)
-    {
-        if (value.Equals("NA", StringComparison.OrdinalIgnoreCase))
-        {
-            return null;
-        }
-
-        if (DateTime.TryParseExact(
-                value,
-                "dd/MM/yyyy",
-                CultureInfo.InvariantCulture,
-                DateTimeStyles.None,
-                out var result))
-        {
-            return result;
-        }
-
-        throw new FormatException($"'{value}' is not a valid optional date.");
-    }
 }
