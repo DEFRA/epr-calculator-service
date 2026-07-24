@@ -12,15 +12,16 @@ public class CalcResultParameterOtherCostJsonTests
         // Arrange
         var otherCost = new CalcResultParameterOtherCost
         {
-            SaOperatingCost      = new() { England = 25000, Wales = 14000, Scotland = 17000, NorthernIreland = 9000 },
-            LaDataPrepCharge     = new() { England = 40, Wales = 30, Scotland = 20, NorthernIreland = 10 },
-            SchemeSetupCost      = new() { England = 17500, Wales = 23400, Scotland = 12400, NorthernIreland = 9450 },
-            CountryApportionment = new() { England = 43.83561644m, Wales = 19.17808219m, Scotland = 24.65753425m, NorthernIreland = 12.32876712m },
-            BadDebtValue = 6,
-            MaterialityIncrease = new Materiality { Amount = 5000, Percentage = 2 },
-            MaterialityDecrease = new Materiality { Amount = -1000, Percentage = -1 },
+            SaOperatingCost       = new() { England = 25000, Wales = 14000, Scotland = 17000, NorthernIreland = 9000 },
+            LaDataPrepCharge      = new() { England = 40, Wales = 30, Scotland = 20, NorthernIreland = 10 },
+            SchemeSetupCost       = new() { England = 17500, Wales = 23400, Scotland = 12400, NorthernIreland = 9450 },
+            CountryApportionment  = new() { England = 43.83561644m, Wales = 19.17808219m, Scotland = 24.65753425m, NorthernIreland = 12.32876712m },
+            BadDebtValue          = 6,
+            MaterialityIncrease   = new Materiality { Amount = 5000, Percentage = 2 },
+            MaterialityDecrease   = new Materiality { Amount = -1000, Percentage = -1 },
             TonnageChangeIncrease = new Materiality { Amount = 50, Percentage = 2 },
-            TonnageChangeDecrease = new Materiality { Amount = -10, Percentage = -0.5m }
+            TonnageChangeDecrease = new Materiality { Amount = -10, Percentage = -0.5m },
+            CutOffDate            = new DateTime(year: 2026, month: 6, day: 24)
         };
 
         // Act
@@ -85,7 +86,8 @@ public class CalcResultParameterOtherCostJsonTests
                 "amount"    : "-£10.00",
                 "percentage": "-0.50%"
               }
-            }
+            },
+            "cutOffDate": "2026-06-24"
             }
             """;
         JsonTestUtils.AssertJson(expectedJson, json);

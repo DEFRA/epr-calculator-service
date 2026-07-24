@@ -2,6 +2,7 @@
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Exceptions;
 using EPR.Calculator.Service.Function.Features.Common;
+using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Features.CalculatorRuns.Contexts;
@@ -23,6 +24,7 @@ public interface ICalculatorRunContextBuilder
 
 public class CalculatorRunContextBuilder(
     ApplicationDBContext dbContext,
+    IParameterService parameterService,
     TimeProvider timeProvider)
     : ICalculatorRunContextBuilder
 {
@@ -41,7 +43,8 @@ public class CalculatorRunContextBuilder(
             RunName = run.Name.Trim(),
             ProcessingStartedAt = now,
             RelativeYear = run.RelativeYear,
-            User = user
+            User = user,
+            DefaultParameters = await parameterService.GetDefaultParameters(runId)
         };
     }
 

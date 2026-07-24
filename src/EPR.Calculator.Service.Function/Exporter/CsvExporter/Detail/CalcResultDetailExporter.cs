@@ -17,6 +17,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail
         private const string RunDate = "Run Date";
         private const string Runby = "Run by";
         private const string FinancialYear = "Financial Year";
+        private const string CutOffDate = "Cut-off Date";
         private const string RPDFileORG = "RPD File - ORG";
         private const string RPDFilePOM = "RPD File - POM";
         private const string LapcapFile = "LAPCAP File";
@@ -30,16 +31,15 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail
             AppendCsvLine(stringBuilder, RunDate, calcResultDetail.RunDate.ToString(CalculationResults.DateFormat));
             AppendCsvLine(stringBuilder, Runby, calcResultDetail.RunBy);
             AppendCsvLine(stringBuilder, FinancialYear, calcResultDetail.RelativeYear.ToFinancialYear());
+            AppendCsvLine(stringBuilder, CutOffDate, calcResultDetail.CutOffDate?.ToString("dd/MM/yyyy") ?? "NA");
             AppendRpdFileInfo(stringBuilder, RPDFileORG, RPDFilePOM, calcResultDetail.RpdFileORG, calcResultDetail.RpdFilePOM);
             AppendFileInfo(stringBuilder, LapcapFile, calcResultDetail.LapcapFile);
             AppendFileInfo(stringBuilder, ParametersFile, calcResultDetail.ParametersFile);
             AppendFileInfo(stringBuilder, CountryApportionmentFile, calcResultDetail.CountryApportionmentFile);
         }
 
-        private static void AppendRpdFileInfo(StringBuilder csvContent, string rPDFileORG, string rPDFilePOM, string rpdFileORGValue, string rpdFilePOMValue)
-        {
+        private static void AppendRpdFileInfo(StringBuilder csvContent, string rPDFileORG, string rPDFilePOM, string rpdFileORGValue, string rpdFilePOMValue) =>
             csvContent.AppendLine($"{rPDFileORG},{CsvSanitiser.SanitiseData(rpdFileORGValue)},{rPDFilePOM},{CsvSanitiser.SanitiseData(rpdFilePOMValue)}");
-        }
 
         public static void AppendFileInfo(StringBuilder csvContent, string label, string filePath)
         {
@@ -53,9 +53,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.Detail
             }
         }
 
-        private static void AppendCsvLine(StringBuilder csvContent, string label, string value)
-        {
+        private static void AppendCsvLine(StringBuilder csvContent, string label, string value) =>
             csvContent.AppendLine($"{label},{CsvSanitiser.SanitiseData(value)}");
-        }
     }
 }

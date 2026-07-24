@@ -4,6 +4,7 @@ using EPR.Calculator.API.Data.DataTypes;
 using EPR.Calculator.Service.Function.Exceptions;
 using EPR.Calculator.Service.Function.Features.BillingRuns.Constants;
 using EPR.Calculator.Service.Function.Features.Common;
+using EPR.Calculator.Service.Function.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Features.BillingRuns.Contexts;
@@ -24,6 +25,7 @@ public interface IBillingRunContextBuilder
 
 public class BillingRunContextBuilder(
     ApplicationDBContext dbContext,
+    IParameterService parameterService,
     TimeProvider timeProvider,
     ILogger<BillingRunContextBuilder> logger)
     : IBillingRunContextBuilder
@@ -73,7 +75,8 @@ public class BillingRunContextBuilder(
                 ProcessingStartedAt = preValidationContext.StartedAt,
                 RelativeYear = preValidationContext.Run.RelativeYear,
                 User = preValidationContext.User!,
-                AcceptedProducerIds = preValidationContext.AcceptedProducerIds
+                AcceptedProducerIds = preValidationContext.AcceptedProducerIds,
+                DefaultParameters = await parameterService.GetDefaultParameters(preValidationContext.Run.Id)
             };
         }
         catch

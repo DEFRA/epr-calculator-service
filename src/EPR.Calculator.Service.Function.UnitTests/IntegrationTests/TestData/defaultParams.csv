@@ -58,4 +58,4 @@ TONT-AD,Tonnage change threshold,Amount Decrease,"-£999,999,999.99",£0.00,"-£
 TONT-PI,Tonnage change threshold,Percent Increase,0.00%,999.99%,999.99%,
 TONT-PD,Tonnage change threshold,Percent Decrease,-999.99%,0.00%,-999.99%,
 REDM-RF,Red modulation factor,Modulation Factor,1,2,1.2,
-Parameter upload version v1.2,,,,,,
+COFF-DT,Cut-off date,Optional Date,,,24/06/2026,

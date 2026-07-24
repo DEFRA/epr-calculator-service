@@ -48,13 +48,13 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
 
         var calculatorRunResult = await PerformCalculatorRun(calculatorRunId, rundBy);
         {
-            var contents       = fakeBlobStorage.Get(calculatorRunResult.ExportResult.CsvMetadata.FileName);
+            var contents      = fakeBlobStorage.Get(calculatorRunResult.ExportResult.CsvMetadata.FileName);
             var actualLines   = string.Join(Environment.NewLine, contents.Split(Environment.NewLine, StringSplitOptions.None                                   )).Trim().Split(Environment.NewLine);
             var expectedLines = string.Join(Environment.NewLine, await File.ReadAllLinesAsync($"IntegrationTests/ExpectedData/{relativeYear}-results.csv")).Trim().Split(Environment.NewLine);
 
             actualLines.Length.ShouldBe(expectedLines.Length, $"Results CSV mismatch: {DisplayFullContents(contents)}");
 
-            var ignoreLines = new List<int> {2, 3, 6, 7, 8}; // Ignore run id and date fields
+            var ignoreLines = new List<int> {2, 3, 7, 8, 9}; // Ignore run id and date fields
             AssertLines(actualLines, expectedLines, ignoreLines, "Results CSV", contents);
         }
 
@@ -68,7 +68,7 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
 
             actualLines.Length.ShouldBe(expectedLines.Length, $"Billing CSV mismatch: {DisplayFullContents(contents)}");
 
-            var ignoreLines = new List<int> {2, 3, 6, 7, 8}; // Ignore run id and date fields
+            var ignoreLines = new List<int> {2, 3, 7, 8, 9}; // Ignore run id and date fields
             AssertLines(actualLines, expectedLines, ignoreLines, "Billing CSV", contents);
         }
         {   // TODO sort json fields before comparison?
@@ -167,7 +167,7 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
             .ToListAsync();
 
         oldLapcapSettings.ForEach(x => { x.EffectiveTo = DateTime.UtcNow; }); // side effecting db update
-        
+
         var lapcap = new LapcapDataMaster
         {
             RelativeYear  = relativeYear,
@@ -230,9 +230,6 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
                 if (string.IsNullOrWhiteSpace(paramRef))
                     return Enumerable.Empty<DefaultParameterSettingDetail>();
 
-                if (paramRef.StartsWith("Parameter upload version"))
-                    return Enumerable.Empty<DefaultParameterSettingDetail>();
-
                 if (string.IsNullOrWhiteSpace(rawValue))
                     return Enumerable.Empty<DefaultParameterSettingDetail>();
 
@@ -242,16 +239,13 @@ public class CalculatorRunIntegrationTests : BaseIntegrationTest
                     .Replace(",", "")
                     .Trim();
 
-                if (!decimal.TryParse(valueClean, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal value))
-                    throw new Exception($"Failed to parse value '{rawValue}' -> '{valueClean}' for {paramRef}");
-
                 return
                 [
                     new DefaultParameterSettingDetail
                     {
                         DefaultParameterSettingMasterId = masterId,
                         ParameterUniqueReferenceId      = paramRef!,
-                        ParameterValue                  = value
+                        ParameterValue                  = valueClean
                     }
                 ];
             }).ToImmutableList();

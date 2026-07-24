@@ -333,24 +333,24 @@ public class CalcResultCommsCostBuilderTest : TestsFor<CalcResultCommsCostBuilde
         dbContext.SaveChanges();
     }
 
-    private static decimal GetValue(DefaultParameterTemplateMaster templateMaster)
+    private static string GetValue(DefaultParameterTemplateMaster templateMaster)
     {
         if (templateMaster.ParameterType == "Communication costs by material")
         {
             switch (templateMaster.ParameterCategory)
             {
                 case "England":
-                    return 40M;
+                    return "40";
                 case "Northern Ireland":
-                    return 10M;
+                    return "10";
                 case "Scotland":
-                    return 20M;
+                    return "20";
                 case "Wales":
-                    return 30M;
+                    return "30";
             }
         }
 
-        return 10;
+        return "10";
     }
 
     private IImmutableList<MaterialDetail> CreateMaterials()

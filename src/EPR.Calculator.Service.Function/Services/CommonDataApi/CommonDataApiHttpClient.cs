@@ -14,10 +14,12 @@ namespace EPR.Calculator.Service.Function.Services.CommonDataApi
     {
         IAsyncEnumerable<PomResponse> StreamPoms(
             RelativeYear relativeYear,
+            DateTime? cutOffDate,
             CancellationToken cancellationToken = default);
 
         IAsyncEnumerable<OrganisationResponse> StreamOrganisations(
             RelativeYear relativeYear,
+            DateTime? cutOffDate,
             CancellationToken cancellationToken = default);
     }
 
@@ -56,12 +58,19 @@ namespace EPR.Calculator.Service.Function.Services.CommonDataApi
         ///     Streams organisation records from the Common Data API for the specified relative year.
         /// </summary>
         /// <param name="relativeYear">The relative year to query.</param>
+        /// <param name="cutOffDate">The cut-off date to query.</param>
         /// <param name="cancellationToken">A token to cancel the operation.</param>
         /// <returns>An async enumerable of <see cref="OrganisationResponse" /> records.</returns>
-        public IAsyncEnumerable<OrganisationResponse> StreamOrganisations(RelativeYear relativeYear,
+        public IAsyncEnumerable<OrganisationResponse> StreamOrganisations(
+            RelativeYear relativeYear,
+            DateTime? cutOffDate,
             CancellationToken cancellationToken = default)
         {
             var url = $"/api/paycal/organisations/stream?relativeYear={relativeYear}";
+
+            if (cutOffDate.HasValue)
+                url += $"&cutOffDate={cutOffDate.Value:yyyy-MM-dd}";
+
             return ReadNdJsonStreamAsync<OrganisationResponse>(url, cancellationToken);
         }
 
@@ -69,12 +78,19 @@ namespace EPR.Calculator.Service.Function.Services.CommonDataApi
         ///     Streams POM records from the Common Data API for the specified relative year.
         /// </summary>
         /// <param name="relativeYear">The relative year to query.</param>
+        /// <param name="cutOffDate">The cut-off date to query.</param>
         /// <param name="cancellationToken">A token to cancel the operation.</param>
         /// <returns>An async enumerable of <see cref="PomResponse" /> records.</returns>
-        public IAsyncEnumerable<PomResponse> StreamPoms(RelativeYear relativeYear,
+        public IAsyncEnumerable<PomResponse> StreamPoms(
+            RelativeYear relativeYear,
+            DateTime? cutOffDate,
             CancellationToken cancellationToken = default)
         {
             var url = $"/api/paycal/poms/stream?relativeYear={relativeYear}";
+
+            if (cutOffDate.HasValue)
+                url += $"&cutOffDate={cutOffDate.Value:yyyy-MM-dd}";
+
             return ReadNdJsonStreamAsync<PomResponse>(url, cancellationToken);
         }
 

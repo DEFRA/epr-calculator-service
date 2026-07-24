@@ -28,7 +28,6 @@ public interface ICalcResultBuilder
 
 [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters", Justification = "This is suppressed for now and will be refactored later.")]
 public class CalcResultBuilder(
-    IParameterService parameterService,
     ICalcResultLapcapDataBuilder lapcapDataBuilder,
     ICalcResultLateReportingBuilder lateReportingTonnageBuilder,
     ICalcResultParameterOtherCostBuilder otherCostsBuilder,
@@ -71,21 +70,20 @@ public class CalcResultBuilder(
             },
             CalcResultParameterOtherCost = new CalcResultParameterOtherCost(),
             CalcResultPartialObligations = new CalcResultPartialObligations(){
-                PartialObligations = ImmutableList<CalcResultPartialObligation>.Empty,
+                PartialObligations = [],
             },
             CalcResultProjectedProducers = new CalcResultProjectedProducers(){
-                H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
-                H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty
+                H1ProjectedProducers = [],
+                H2ProjectedProducers = []
             },
             CalcResultScaledupProducers = new CalcResultScaledupProducers(){
-                ScaledupProducers = ImmutableList<CalcResultScaledupProducer>.Empty,
+                ScaledupProducers = [],
             },
             CalcResultCancelledProducers = new CalcResultCancelledProducersResponse(),
-            CalcResultRejectedProducers = new List<CalcResultRejectedProducer>()
+            CalcResultRejectedProducers = []
         };
 
         var materials = await materialService.GetMaterials();
-        var defaultParams = await parameterService.GetDefaultParameters(runContext);
 
         result.CalcResultLapcapData = await logger.LogDuration(
             () => lapcapDataBuilder.ConstructAsync(runContext, materials),
@@ -139,7 +137,7 @@ public class CalcResultBuilder(
             result.Smcw = await logger.LogDuration(
                 () => calcResultReader.ReadSmcw(runContext.RunId, cancellationToken),
                 nameof(calcResultReader.ReadSmcw));
-            
+
             result.CalcResultLaDisposalCostData = await logger.LogDuration(
                 () => laDisposalCostsBuilder.ConstructAsync(runContext, materials, result.CalcResultLapcapData, result.CalcResultLateReportingTonnageData, result.Smcw),
                 nameof(laDisposalCostsBuilder));
@@ -219,7 +217,7 @@ public class CalcResultBuilder(
             if (runContext.RequiresModulation)
             {
                 result.CalcResultModulation = await logger.LogDuration(
-                    () => modulationBuilder.ConstructAsync(defaultParams, materials, result.CalcResultLaDisposalCostData, result.Smcw),
+                    () => modulationBuilder.ConstructAsync(runContext, materials, result.CalcResultLaDisposalCostData, result.Smcw),
                     nameof(modulationBuilder));
 
                 await logger.LogDuration(
@@ -233,7 +231,7 @@ public class CalcResultBuilder(
 
             await logger.LogDuration(
                 () => calcResultWriter.StoreProducerFees(runContext.RunId, result.ProducerFees, cancellationToken),
-                nameof(calcResultWriter.StoreProducerFees));    
+                nameof(calcResultWriter.StoreProducerFees));
 
             result.CalcResultErrorReports = logger.LogDuration(
                 () => errorReportBuilder.Construct(runContext),

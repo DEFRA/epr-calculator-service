@@ -1,6 +1,5 @@
 ﻿using System.Text.Json.Serialization;
 using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Models
@@ -28,6 +27,9 @@ namespace EPR.Calculator.Service.Function.Models
         [JsonPropertyName("eightTonnageChange")]
         public ChangeJson EightTonnageChange { get; set; } = new ChangeJson();
 
+        [JsonPropertyName("cutOffDate")]
+        public DateOnly? CutOffDate { get; set; }
+
         public static CalcResultParametersOtherJson From(CalcResultParameterOtherCost otherCost)
         {
             return new CalcResultParametersOtherJson
@@ -42,6 +44,9 @@ namespace EPR.Calculator.Service.Function.Models
                 },
                 SevenMateriality = ChangeJson.From(otherCost.MaterialityIncrease, otherCost.MaterialityDecrease),
                 EightTonnageChange = ChangeJson.From(otherCost.TonnageChangeIncrease, otherCost.TonnageChangeDecrease),
+                CutOffDate = otherCost.CutOffDate is null
+                                ? null
+                                : DateOnly.FromDateTime(otherCost.CutOffDate.Value)
             };
         }
     }

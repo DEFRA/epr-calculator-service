@@ -67,7 +67,8 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
             var hdcTonnage = producerReportedMaterials.Where(p => p.MaterialId == material.Id && p.PackagingType == PackagingTypes.HouseholdDrinksContainers).Sum(p => p.PackagingTonnage);
 
             var materialDefault = materialDefaults.Single(m => m.ParameterCategory == material.Name);
-            var total = MathUtils.RoundAwayFromZero(materialDefault.ParameterValue, 2);
+
+            var total = MathUtils.RoundAwayFromZero(materialDefault.ParameterValue.ToDecimal(), 2);
             var commsCost = new CalcResultCommsCostCommsCostByMaterial{
                 Cost = new ByCountryCost
                 {
@@ -92,10 +93,10 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
 
         var ukCost = new ByCountryCost
         {
-            England         = commsCostByUk.ParameterValue * apportionmentDetail.England         / 100,
-            Wales           = commsCostByUk.ParameterValue * apportionmentDetail.Wales           / 100,
-            Scotland        = commsCostByUk.ParameterValue * apportionmentDetail.Scotland        / 100,
-            NorthernIreland = commsCostByUk.ParameterValue * apportionmentDetail.NorthernIreland / 100
+            England         = commsCostByUk.ParameterValue.ToDecimal() * apportionmentDetail.England         / 100,
+            Wales           = commsCostByUk.ParameterValue.ToDecimal() * apportionmentDetail.Wales           / 100,
+            Scotland        = commsCostByUk.ParameterValue.ToDecimal() * apportionmentDetail.Scotland        / 100,
+            NorthernIreland = commsCostByUk.ParameterValue.ToDecimal() * apportionmentDetail.NorthernIreland / 100
         };
 
         var commsCostByCountryList = GetCommsCostByCountry(allDefaultResults);
@@ -124,29 +125,20 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
     private static ByCountryCost GetCommsCostByCountry(
         IReadOnlyCollection<CalcCommsBuilderResult> allDefaultResults)
     {
-        var englandValue =
-            allDefaultResults.Single(x =>
-                x.ParameterType == CommunicationCostByCountry &&
-                x.ParameterCategory == "England").ParameterValue;
-        var walesValue =
-            allDefaultResults.Single(x =>
-                x.ParameterType == CommunicationCostByCountry &&
-                x.ParameterCategory == "Wales").ParameterValue;
-        var niValue =
-            allDefaultResults.Single(x =>
-                x.ParameterType == CommunicationCostByCountry &&
-                x.ParameterCategory == "Northern Ireland").ParameterValue;
-        var scotlandValue =
-            allDefaultResults.Single(x =>
-                x.ParameterType == CommunicationCostByCountry &&
-                x.ParameterCategory == "Scotland").ParameterValue;
+        decimal CommunicationCostValue(string category) =>
+            allDefaultResults
+                .Single(x =>
+                    x.ParameterType     == CommunicationCostByCountry &&
+                    x.ParameterCategory == category)
+                .ParameterValue
+                .ToDecimal();
 
         return new ByCountryCost
         {
-            England         = englandValue,
-            Wales           = walesValue,
-            Scotland        = scotlandValue,
-            NorthernIreland = niValue
+            England         = CommunicationCostValue("England"),
+            Wales           = CommunicationCostValue("Wales"),
+            Scotland        = CommunicationCostValue("Scotland"),
+            NorthernIreland = CommunicationCostValue("Northern Ireland")
         };
     }
 }

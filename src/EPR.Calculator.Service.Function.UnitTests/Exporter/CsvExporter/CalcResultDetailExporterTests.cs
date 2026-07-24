@@ -8,40 +8,57 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
     [TestClass]
     public class CalcResultDetailExporterTests
     {
-        private CalcResultDetailExporter _testClass;
+        private readonly CalcResultDetailExporter exporter;
 
-        public CalcResultDetailExporterTests()
-        {
-            _testClass = new CalcResultDetailExporter();
-        }
+        public CalcResultDetailExporterTests() => exporter = new CalcResultDetailExporter();
 
         [TestMethod]
         public void CalcResultDetailExporter_CanCallExport()
         {
             // Arrange
-            var fixture = new Fixture();
-            var calcResultDetail = fixture.Create<CalcResultDetail>();
-            calcResultDetail.RunName = "SomeRunName";
-            calcResultDetail.RunId = 999;
-            calcResultDetail.RunDate = new DateTime(2024, 12, 1);
-            calcResultDetail.RelativeYear = new RelativeYear(2024);
-            calcResultDetail.RpdFileORG = "RpdFileOrg";
-            calcResultDetail.RpdFilePOM = "RpdFilePom";
-            calcResultDetail.LapcapFile = "LapcapFile";
-            calcResultDetail.ParametersFile = "ParamsFile";
+            var calcResultDetail = new CalcResultDetail
+            {
+                RunId          = 999,
+                RunName        = "SomeRunName",
+                RunDate        = new DateTime(2026, 7, 9),
+                RelativeYear   = new RelativeYear(2026),
+                RunBy          = "Me",
+                RpdFileORG     = "09/07/2026 16:27",
+                RpdFilePOM     = "09/07/2026 16:27",
+                LapcapFile     = "09/07/2026 15:27",
+                ParametersFile = "09/07/2026 15:27",
+                CutOffDate     = null
+            };
 
             var csvContent = new StringBuilder();
 
             // Act
-            _testClass.Export(calcResultDetail, csvContent);
+            exporter.Export(calcResultDetail, csvContent);
 
-            var result = csvContent.ToString();
-            var lines = result.Split(Environment.NewLine);
-            Assert.AreEqual(7, lines.Count());
+            var result = csvContent.ToString()
+                .ReplaceLineEndings("\n")
+                .Split("\n")
+                .Select(s => s.TrimEnd(','))
+                .ToArray();
 
-            Assert.IsTrue(lines.First().Contains("Run Name"));
-            Assert.IsTrue(lines.First().Contains("SomeRunName"));
-            Assert.IsTrue(lines.Last().Contains(string.Empty));
+            var expected = new[]
+            {
+                @"Run Name,""SomeRunName""",
+                @"Run Id,""999""",
+                @"Run Date,""09/07/2026 00:00""",
+                @"Run by,""Me""",
+                @"Financial Year,""2026-27""",
+                @"Cut-off Date,""NA""",
+                @"RPD File - ORG,""09/07/2026 16:27"",,RPD File - POM,""09/07/2026 16:27""",
+                ""
+            };
+
+            Assert.HasCount(expected.Length, result, "CSV line count differs");
+
+            for (var i = 0; i < expected.Length; i++)
+            {
+                Assert.AreEqual(expected[i], result[i], $"CSV line {i + 1} differs");
+            }
         }
     }
 }

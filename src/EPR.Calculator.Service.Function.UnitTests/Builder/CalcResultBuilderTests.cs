@@ -191,7 +191,7 @@ public class CalcResultBuilderTests : TestsFor<CalcResultBuilder>
         {
             new(2, [new ProducerDetail { ProducerId = 2, SubsidiaryId = null }])
         };
-        
+
         var mockCalcResultProjectedProducersH1Data = new Mock<List<CalcResultH1ProjectedProducer>>();
         var mockCalcResultProjectedProducersH2Data = new Mock<List<CalcResultH2ProjectedProducer>>();
         var mockCalcResultPartialData = new Mock<List<CalcResultPartialObligation>>();
@@ -315,7 +315,7 @@ public class CalcResultBuilderTests : TestsFor<CalcResultBuilder>
             .ReturnsAsync(mockSmcw.Object);
         mockCalcResultReader.Setup(m => m.ReadModulationResult(runContext.RunId, CancellationToken.None))
             .ReturnsAsync(mockMod.Object);
-        
+
         var result = await testSubject.BuildAsync(runContext, CancellationToken.None);
 
         Assert.IsNotNull(result);
@@ -324,7 +324,7 @@ public class CalcResultBuilderTests : TestsFor<CalcResultBuilder>
         Assert.AreSame(mockSummary.Object, result.ProducerFees);
 
         mockSelfManagedConsumerWasteService.Verify(m => m.Calculate(runContext, It.IsAny<IImmutableList<MaterialDetail>>()), Times.Never);
-        mockModulationBuilder.Verify(m => m.ConstructAsync(It.IsAny<IReadOnlyDictionary<string, decimal>>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<CalcResultLaDisposalCostData>(), It.IsAny<SelfManagedConsumerWaste>()), Times.Never);
+        mockModulationBuilder.Verify(m => m.ConstructAsync(It.IsAny<RunContext>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<CalcResultLaDisposalCostData>(), It.IsAny<SelfManagedConsumerWaste>()), Times.Never);
         mockSummaryBuilder.Verify(m => m.ConstructAsync(runContext, It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<CalcResult>(), It.IsAny<SelfManagedConsumerWaste>()), Times.Never);
     }
 }

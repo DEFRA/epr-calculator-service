@@ -1,5 +1,6 @@
 ﻿using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.DataTypes;
+using EPR.Calculator.Service.Function.Services;
 
 namespace EPR.Calculator.Service.Function.Features.Common;
 
@@ -48,4 +49,10 @@ public abstract record RunContext
     ///     Whether scaled up producer data is required for this run.
     /// </summary>
     public bool RequiresScaling => RelativeYear == 2025;
+
+    /// <summary>
+    ///     The default parameters.
+    /// </summary>
+    public required DefaultParameters DefaultParameters { get; init; }
+
 }

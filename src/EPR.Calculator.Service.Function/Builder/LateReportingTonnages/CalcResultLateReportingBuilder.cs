@@ -2,6 +2,7 @@
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.LateReportingTonnages
@@ -14,7 +15,7 @@ namespace EPR.Calculator.Service.Function.Builder.LateReportingTonnages
     public class CalcResultLateReportingBuilder(ApplicationDBContext dbContext)
         : ICalcResultLateReportingBuilder
     {
-        private sealed record ParameterDetail(string ParameterCategory, decimal ParameterValue);
+        private sealed record ParameterDetail(string ParameterCategory, string ParameterValue);
 
         public async Task<CalcResultLateReportingTonnage> ConstructAsync(RunContext runContext, IImmutableList<MaterialDetail> materials)
         {
@@ -57,14 +58,15 @@ namespace EPR.Calculator.Service.Function.Builder.LateReportingTonnages
             };
         }
 
-        private static string RemoveSuffix(string value)
-        {
-            if (value.EndsWith("-R") || value.EndsWith("-G") || value.EndsWith("-A"))
-                return value.Substring(0, value.Length - 2);
-            return value;
-        }
+        private static string RemoveSuffix(string value) =>
+            (value.EndsWith("-R") || value.EndsWith("-G") || value.EndsWith("-A"))
+                ? value.Substring(0, value.Length - 2)
+                : value;
 
-        private static decimal GetParameterValueBySuffix(IEnumerable<ParameterDetail> values, string suffix)
-            => values.First(x => x.ParameterCategory.EndsWith(suffix)).ParameterValue;
+        private static decimal GetParameterValueBySuffix(IEnumerable<ParameterDetail> values, string suffix) =>
+            values
+                .First(x => x.ParameterCategory.EndsWith(suffix))
+                .ParameterValue
+                .ToDecimal();
     }
 }
