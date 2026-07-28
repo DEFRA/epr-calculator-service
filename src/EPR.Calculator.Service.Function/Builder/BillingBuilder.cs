@@ -47,10 +47,6 @@ public class BillingBuilder(
             () => calcResultReader.ReadOnePlusFourApportionment(runContext.RunId, cancellationToken),
             nameof(calcResultReader.ReadOnePlusFourApportionment));
 
-        result.CalcResultCancelledProducers = await logger.LogDuration(
-            () => calcResultReader.ReadCancelledProducers(runContext.RunId, cancellationToken),
-            nameof(calcResultReader.ReadCancelledProducers));
-
         if (runContext.RequiresModulation)
         {
             result.CalcResultProjectedProducers.H1ProjectedProducers = (await logger.LogDuration(
@@ -76,6 +72,15 @@ public class BillingBuilder(
         result.CalcResultRejectedProducers = await logger.LogDuration(
             () => rejectedProducersBuilder.ConstructAsync(runContext),
             nameof(rejectedProducersBuilder));
+
+
+        var rejectedProducerIds = result.CalcResultRejectedProducers.Select(r => r.ProducerId).ToHashSet();
+
+        result.CalcResultCancelledProducers = (
+            await logger.LogDuration(
+                () => calcResultReader.ReadCancelledProducers(runContext.RunId, cancellationToken),
+                nameof(calcResultReader.ReadCancelledProducers))
+            ).Where(p => !rejectedProducerIds.Contains(p.ProducerId)).ToList();
 
         result.Smcw = await logger.LogDuration(
             () => calcResultReader.ReadSmcw(runContext.RunId, cancellationToken),

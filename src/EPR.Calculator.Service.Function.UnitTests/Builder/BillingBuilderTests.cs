@@ -93,7 +93,7 @@ public class BillingBuilderTests : TestsFor<BillingBuilder>
         Assert.AreSame(mockOnePlusFourApportionment.Object, result.CalcResultOnePlusFourApportionment);
         Assert.AreSame(mockLaDisposalCostData.Object, result.CalcResultLaDisposalCostData);
         Assert.AreSame(mockCommsCost.Object, result.CalcResultCommsCostReportDetail);
-        Assert.AreSame(mockCancelledProducers.Object, result.CalcResultCancelledProducers);
+        CollectionAssert.AreEqual(mockCancelledProducers.Object, result.CalcResultCancelledProducers.ToList()); // List should not be the same - filtered by rejected
 
         mockSelfManagedConsumerWasteService.Verify(m => m.Calculate(runContext, It.IsAny<IImmutableList<MaterialDetail>>()), Times.Never);
         mockModulationBuilder.Verify(m => m.ConstructAsync(It.IsAny<RunContext>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<CalcResultLaDisposalCostData>(), It.IsAny<SelfManagedConsumerWaste>()), Times.Never);
