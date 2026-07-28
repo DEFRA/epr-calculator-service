@@ -22,12 +22,8 @@ public interface ICalcResultCommsCostBuilder
 public class CalcResultCommsCostBuilder(ApplicationDBContext context)
     : ICalcResultCommsCostBuilder
 {
-    public const string CommunicationCostByMaterial = "Communication costs by material";
-    public const string CommunicationCostByCountry = "Communication costs by country";
     public const string TwoCCommsCostByCountry = "2c Comms Costs - by Country";
-    public const string Uk = "United Kingdom";
     public const string TwoBCommsCostUkWide = "2b Comms Costs - UK wide";
-    public const string OnePlusFourApportionment = "1 + 4 Apportionment %s";
 
     public async Task<CalcResultCommsCost> ConstructAsync(
         RunContext runContext,
@@ -38,76 +34,48 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
     {
         var apportionmentDetail = apportionment.OnePlusFourApportionment;
 
-        var allDefaultResults = await (
-            from run in context.CalculatorRuns
-            join defaultMaster in context.DefaultParameterSettings on run.DefaultParameterSettingMasterId equals defaultMaster.Id
-            join defaultDetail in context.DefaultParameterSettingDetail on defaultMaster.Id equals defaultDetail.DefaultParameterSettingMasterId
-            join defaultTemplate in context.DefaultParameterTemplateMasterList on defaultDetail.ParameterUniqueReferenceId equals defaultTemplate.ParameterUniqueReferenceId
-            where run.Id == runContext.RunId
-            select new CalcCommsBuilderResult
-            {
-                ParameterValue = defaultDetail.ParameterValue,
-                ParameterType = defaultTemplate.ParameterType,
-                ParameterCategory = defaultTemplate.ParameterCategory
-            }).Distinct().ToListAsync();
-
-        var materialDefaults = allDefaultResults
-            .Where(x => x.ParameterType == CommunicationCostByMaterial
-                        && materialDetails.Select(m => m.Name).Contains(x.ParameterCategory))
-            .ToImmutableArray();
-
         var producerReportedMaterials = await GetProducerReportedMaterials(runContext);
-
         var commsCostByMaterial = materialDetails.Select(material =>
         {
-            var hhTonnage = producerReportedMaterials.Where(x => x.MaterialId == material.Id && x.PackagingType != PackagingTypes.PublicBin && x.PackagingType != PackagingTypes.HouseholdDrinksContainers)
-                .Sum(x => x.PackagingTonnage);
-
-            var lateReportingTonnage = calcResultLateReportingTonnage.ByMaterial[material.Code];
-            var pbTonnage = producerReportedMaterials.Where(p => p.MaterialId == material.Id && p.PackagingType == PackagingTypes.PublicBin).Sum(p => p.PackagingTonnage);
+            var hhTonnage  = producerReportedMaterials.Where(x => x.MaterialId == material.Id && x.PackagingType == PackagingTypes.Household                ).Sum(x => x.PackagingTonnage);
+            var pbTonnage  = producerReportedMaterials.Where(p => p.MaterialId == material.Id && p.PackagingType == PackagingTypes.PublicBin                ).Sum(p => p.PackagingTonnage);
             var hdcTonnage = producerReportedMaterials.Where(p => p.MaterialId == material.Id && p.PackagingType == PackagingTypes.HouseholdDrinksContainers).Sum(p => p.PackagingTonnage);
 
-            var materialDefault = materialDefaults.Single(m => m.ParameterCategory == material.Name);
-
-            var total = MathUtils.RoundAwayFromZero(materialDefault.ParameterValue.ToDecimal(), 2);
-            var commsCost = new CalcResultCommsCostCommsCostByMaterial{
+            var commsMatCost = MathUtils.RoundAwayFromZero(runContext.DefaultParameters.CommunicationCosts.ByMaterialCode[material.Code], 2);
+            var commsCost    = new CalcResultCommsCostCommsCostByMaterial
+            {
                 Cost = new ByCountryCost
                 {
-                    England         = total * apportionmentDetail.England         / 100,
-                    Wales           = total * apportionmentDetail.Wales           / 100,
-                    Scotland        = total * apportionmentDetail.Scotland        / 100,
-                    NorthernIreland = total * apportionmentDetail.NorthernIreland / 100
+                    England         = commsMatCost * apportionmentDetail.England         / 100,
+                    Wales           = commsMatCost * apportionmentDetail.Wales           / 100,
+                    Scotland        = commsMatCost * apportionmentDetail.Scotland        / 100,
+                    NorthernIreland = commsMatCost * apportionmentDetail.NorthernIreland / 100
                 },
-                TotalCost                      = total,
-                HouseholdPackagingWasteTonnage = hhTonnage,
-                PublicBinTonnage               = pbTonnage,
+                TotalCost                        = commsMatCost,
+                HouseholdPackagingWasteTonnage   = hhTonnage,
+                PublicBinTonnage                 = pbTonnage,
                 HouseholdDrinksContainersTonnage = hdcTonnage,
-                LateReportingTonnage           = lateReportingTonnage.Total
+                LateReportingTonnage             = calcResultLateReportingTonnage.ByMaterial[material.Code].Total
             };
 
             return (material.Code, commsCost);
         }).ToDictionary();
 
-        var commsCostByUk =
-            allDefaultResults.Single(x =>
-                x.ParameterType == CommunicationCostByCountry && x.ParameterCategory == Uk);
-
+        var uk     = runContext.DefaultParameters.CommunicationCosts.ByCountry.UnitedKingdom;
         var ukCost = new ByCountryCost
         {
-            England         = commsCostByUk.ParameterValue.ToDecimal() * apportionmentDetail.England         / 100,
-            Wales           = commsCostByUk.ParameterValue.ToDecimal() * apportionmentDetail.Wales           / 100,
-            Scotland        = commsCostByUk.ParameterValue.ToDecimal() * apportionmentDetail.Scotland        / 100,
-            NorthernIreland = commsCostByUk.ParameterValue.ToDecimal() * apportionmentDetail.NorthernIreland / 100
+            England         = uk * apportionmentDetail.England         / 100,
+            Wales           = uk * apportionmentDetail.Wales           / 100,
+            Scotland        = uk * apportionmentDetail.Scotland        / 100,
+            NorthernIreland = uk * apportionmentDetail.NorthernIreland / 100
         };
-
-        var commsCostByCountryList = GetCommsCostByCountry(allDefaultResults);
 
         return new CalcResultCommsCost()
         {
             OnePlusFourApportionment = apportionmentDetail,
             ByMaterial               = commsCostByMaterial,
             CommsCostUkWide          = ukCost,
-            CommsCostByCountry       = commsCostByCountryList
+            CommsCostByCountry       = runContext.DefaultParameters.CommunicationCosts.ByCountry
         };
     }
 
@@ -121,25 +89,5 @@ public class CalcResultCommsCostBuilder(ApplicationDBContext context)
                   mat.PackagingType != PackagingTypes.ConsumerWaste
             select mat
         ).Distinct().ToListAsync();
-    }
-
-    private static ByCountryCost GetCommsCostByCountry(
-        IReadOnlyCollection<CalcCommsBuilderResult> allDefaultResults)
-    {
-        decimal CommunicationCostValue(string category) =>
-            allDefaultResults
-                .Single(x =>
-                    x.ParameterType     == CommunicationCostByCountry &&
-                    x.ParameterCategory == category)
-                .ParameterValue
-                .ToDecimal();
-
-        return new ByCountryCost
-        {
-            England         = CommunicationCostValue("England"),
-            Wales           = CommunicationCostValue("Wales"),
-            Scotland        = CommunicationCostValue("Scotland"),
-            NorthernIreland = CommunicationCostValue("Northern Ireland")
-        };
     }
 }

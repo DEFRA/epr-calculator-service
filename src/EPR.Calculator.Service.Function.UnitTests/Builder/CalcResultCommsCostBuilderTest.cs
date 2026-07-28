@@ -5,10 +5,9 @@ using EPR.Calculator.Service.Function.Builder.CommsCost;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Features.Common;
-using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
-using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder;
 
@@ -20,13 +19,32 @@ public class CalcResultCommsCostBuilderTest : TestsFor<CalcResultCommsCostBuilde
     public async Task ConstructTest()
     {
         var calcResult = TestDataHelper.GetCalcResult();
-        var runContext = TestDataHelper.CalculatorRun2024;
 
         var materialDetails = CreateMaterials();
-        CreateDefaultTemplate();
-        CreateDefaultParameters(runContext);
+
+        var runContext = TestDataHelper.CalculatorRun2024;
+        runContext = runContext with
+        {
+            DefaultParameters = runContext.DefaultParameters with
+            {
+                CommunicationCosts = new CommunicationCosts
+                {
+                    ByMaterialCode = materialDetails.ToDictionary(m => m.Code, _ => 10m),
+                    ByCountry = new ByCountryCostWithUk
+                    {
+                        UnitedKingdom = 100,
+                        England = 40,
+                        Wales = 30,
+                        Scotland = 20,
+                        NorthernIreland = 10
+                    }
+                },
+            }
+        };
+
         CreateNewRun(runContext);
         CreateProducerDetail(runContext);
+
         var apportionment = new CalcResultOnePlusFourApportionment
         {
             LaDisposalCost = new ByCountryCost
@@ -230,67 +248,6 @@ public class CalcResultCommsCostBuilderTest : TestsFor<CalcResultCommsCostBuilde
         dbContext.SaveChanges();
     }
 
-    private void CreateDefaultTemplate()
-    {
-        dbContext.DefaultParameterTemplateMasterList.RemoveRange(
-            dbContext.DefaultParameterTemplateMasterList.ToList());
-        dbContext.SaveChanges();
-
-        var materialDictionary = new Dictionary<string, string>
-        {
-            { "AL", "Aluminium" },
-            { "FC", "Fibre composite" },
-            { "GL", "Glass" },
-            { "PC", "Paper or card" },
-            { "PL", "Plastic" },
-            { "ST", "Steel" },
-            { "WD", "Wood" },
-            { "OT", "Other materials" }
-        };
-
-        var parameterTypes = new[] { "Communication costs by material", "Late reporting tonnage" };
-        foreach (var material in materialDictionary.Values)
-        {
-            dbContext.DefaultParameterTemplateMasterList.Add(new DefaultParameterTemplateMaster
-            {
-                ParameterUniqueReferenceId = Guid.NewGuid().ToString(),
-                ParameterCategory = material,
-                ParameterType = parameterTypes[0]
-            });
-            var rag = new[] { "R", "A", "G" };
-            foreach (var v in rag)
-            {
-                dbContext.DefaultParameterTemplateMasterList.Add(new DefaultParameterTemplateMaster
-                {
-                    ParameterUniqueReferenceId = Guid.NewGuid().ToString(),
-                    ParameterCategory = $"{material}-{v}",
-                    ParameterType = parameterTypes[1]
-                });
-            }
-        }
-
-        var countries = new[]
-        {
-            "England",
-            "Northern Ireland",
-            "Scotland",
-            "United Kingdom",
-            "Wales"
-        };
-
-        foreach (var country in countries)
-        {
-            dbContext.DefaultParameterTemplateMasterList.Add(new DefaultParameterTemplateMaster
-            {
-                ParameterUniqueReferenceId = Guid.NewGuid().ToString(),
-                ParameterCategory = country,
-                ParameterType = "Communication costs by country"
-            });
-        }
-
-        dbContext.SaveChanges();
-    }
-
     private void CreateNewRun(RunContext runContext)
     {
         var run = new CalculatorRun
@@ -305,53 +262,6 @@ public class CalcResultCommsCostBuilderTest : TestsFor<CalcResultCommsCostBuilde
         };
         dbContext.CalculatorRuns.Add(run);
         dbContext.SaveChanges();
-    }
-
-    private void CreateDefaultParameters(RunContext runContext)
-    {
-        var templateMasterList = dbContext.DefaultParameterTemplateMasterList.ToList();
-
-        var defaultMaster = new DefaultParameterSettingMaster
-        {
-            RelativeYear = runContext.RelativeYear
-        };
-
-        dbContext.DefaultParameterSettings.Add(defaultMaster);
-        dbContext.SaveChanges();
-
-        foreach (var templateMaster in templateMasterList)
-        {
-            var defaultDetail = new DefaultParameterSettingDetail
-            {
-                ParameterUniqueReferenceId = templateMaster.ParameterUniqueReferenceId,
-                ParameterValue = GetValue(templateMaster),
-                DefaultParameterSettingMasterId = 1,
-                DefaultParameterSettingMaster = defaultMaster
-            };
-            dbContext.DefaultParameterSettingDetail.Add(defaultDetail);
-        }
-
-        dbContext.SaveChanges();
-    }
-
-    private static string GetValue(DefaultParameterTemplateMaster templateMaster)
-    {
-        if (templateMaster.ParameterType == "Communication costs by material")
-        {
-            switch (templateMaster.ParameterCategory)
-            {
-                case "England":
-                    return "40";
-                case "Northern Ireland":
-                    return "10";
-                case "Scotland":
-                    return "20";
-                case "Wales":
-                    return "30";
-            }
-        }
-
-        return "10";
     }
 
     private IImmutableList<MaterialDetail> CreateMaterials()
