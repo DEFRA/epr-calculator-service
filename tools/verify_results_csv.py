@@ -20,6 +20,16 @@ run were themselves correct.
 
 For each L1 producer row, the checks are:
 
+  0. L1 = sum(L2): for a multi-entity producer (one with subsidiaries), its L1
+     group-total row's raw tonnage columns (Household/Public Bin/HDC/Total
+     Tonnage, and their RAG breakdowns) should equal the sum of its L2
+     subsidiary rows' own copies of those columns -- exactly what
+     ProducerRowBuilder.GetL1TotalRow does. This is deliberately narrow: SMCW,
+     Net Tonnage, price and fee columns are computed once at the L1 (group)
+     level rather than summed from L2, and are NOT checked against a sum of
+     L2 (the source code itself documents them as "not derivable by summing
+     L2 values") -- doing so would produce false positives, not real findings.
+
   1. Modulation pricing (run-wide, checked once): the "Modulation Calculation"
      section derives a Red and Green disposal-cost-per-tonne for each
      material from a single Amber ("flat") price plus a Red Modulation
@@ -71,8 +81,10 @@ For each L1 producer row, the checks are:
 
 SCOPE / KNOWN LIMITATIONS
 =========================
-  * L1 rows only. L2 subsidiary rows and the single overall-total row are
-    read (for context) but not verified.
+  * The full fee/comms/billing chain (checks 1-6) covers L1 rows only. L2
+    subsidiary rows are read for check 0 (see above) -- only their raw
+    tonnage columns feed into that one check -- and the single overall-total
+    row is read for context but not independently verified.
   * Requires a Results file that includes the "Modulation Calculation"
     section (i.e. a run using RAG-rating disposal pricing). Files without
     that section are pre-modulation and are not supported -- the script
@@ -482,6 +494,90 @@ RAG_GROUPS = ["Red", "Amber", "Green"]  # RedMedical groups with Red, etc.
 
 
 @dataclass
+class TonnageBreakdown:
+    """
+    The raw (pre-SMCW) reported tonnage a material's Section 1 block carries for a single
+    row: Household/Public Bin/[Household Drinks Containers] packaging tonnage, each with
+    its RAG breakdown, plus the combined Total Tonnage with its own RAG and grouped-RAG
+    breakdown. Per ProducerRowBuilder.GetL1TotalRow, these specific fields ("Additive from
+    L2 rows") are the ones a multi-entity producer's L1 row derives by summing its L2
+    subsidiary rows -- unlike SMCW/Net Tonnage/price/fee, which are computed once at the
+    L1 (group) level and are NOT expected to equal a sum of the L2 rows.
+    """
+    household: Decimal
+    household_rag: dict[str, Decimal]
+    public_bin: Decimal
+    public_bin_rag: dict[str, Decimal]
+    hdc: Decimal
+    hdc_rag: dict[str, Decimal]
+    total: Decimal
+    total_rag: dict[str, Decimal]
+    total_grouped_rag: dict[str, Decimal]
+
+    def __add__(self, other: "TonnageBreakdown") -> "TonnageBreakdown":
+        def add_rag(a: dict[str, Decimal], b: dict[str, Decimal]) -> dict[str, Decimal]:
+            return {k: a[k] + b[k] for k in a}
+        return TonnageBreakdown(
+            household=self.household + other.household,
+            household_rag=add_rag(self.household_rag, other.household_rag),
+            public_bin=self.public_bin + other.public_bin,
+            public_bin_rag=add_rag(self.public_bin_rag, other.public_bin_rag),
+            hdc=self.hdc + other.hdc,
+            hdc_rag=add_rag(self.hdc_rag, other.hdc_rag),
+            total=self.total + other.total,
+            total_rag=add_rag(self.total_rag, other.total_rag),
+            total_grouped_rag=add_rag(self.total_grouped_rag, other.total_grouped_rag),
+        )
+
+    @staticmethod
+    def zero() -> "TonnageBreakdown":
+        return TonnageBreakdown(
+            household=Decimal(0), household_rag={k: Decimal(0) for k in RAG_KEYS},
+            public_bin=Decimal(0), public_bin_rag={k: Decimal(0) for k in RAG_KEYS},
+            hdc=Decimal(0), hdc_rag={k: Decimal(0) for k in RAG_KEYS},
+            total=Decimal(0), total_rag={k: Decimal(0) for k in RAG_KEYS},
+            total_grouped_rag={k: Decimal(0) for k in RAG_GROUPS},
+        )
+
+
+def parse_tonnage_breakdown(m: list[str], i: int, is_glass: bool) -> tuple[TonnageBreakdown, int]:
+    """Parses a Section1Materials-style tonnage block (household/public bin/[hdc]/total,
+    each with RAG breakdown) starting at index i, returning it plus the index just past it."""
+    household = parse_decimal(m[i]); i += 1
+    household_rag = {}
+    for key in RAG_KEYS:
+        household_rag[key] = parse_decimal(m[i]); i += 1
+
+    public_bin = parse_decimal(m[i]); i += 1
+    public_bin_rag = {}
+    for key in RAG_KEYS:
+        public_bin_rag[key] = parse_decimal(m[i]); i += 1
+
+    hdc = Decimal(0)
+    hdc_rag = {key: Decimal(0) for key in RAG_KEYS}
+    if is_glass:
+        hdc = parse_decimal(m[i]); i += 1
+        hdc_rag = {}
+        for key in RAG_KEYS:
+            hdc_rag[key] = parse_decimal(m[i]); i += 1
+
+    total = parse_decimal(m[i]); i += 1
+    total_rag = {}
+    for key in RAG_KEYS:
+        total_rag[key] = parse_decimal(m[i]); i += 1
+    total_grouped_rag = {}
+    for key in RAG_GROUPS:
+        total_grouped_rag[key] = parse_decimal(m[i]); i += 1
+
+    return TonnageBreakdown(
+        household=household, household_rag=household_rag,
+        public_bin=public_bin, public_bin_rag=public_bin_rag,
+        hdc=hdc, hdc_rag=hdc_rag,
+        total=total, total_rag=total_rag, total_grouped_rag=total_grouped_rag,
+    ), i
+
+
+@dataclass
 class Block:
     name: str
     width: int
@@ -599,6 +695,7 @@ class MaterialFigures:
     printed_fee_amber: Optional[Decimal]
     printed_fee_green: Optional[Decimal]
     fee: WithBdp
+    tonnage: TonnageBreakdown  # the raw HH/PB/HDC/Total tonnage this row prints for Section 1
     total_reported_tonnage_2a: Optional[Decimal]  # Section 2a's own "Total Tonnage" (should equal raw_total_tonnage)
     price_per_tonne_2a: Optional[Decimal]
     fee_2a: WithBdp
@@ -650,13 +747,8 @@ def parse_producer_row(
         is_glass = glass_name is not None and material == glass_name
         # Walk the block exactly as Section1MaterialsExporter wrote it.
         i = 1  # skip "Previous Invoiced Tonnage"
-        i += 1 + len(RAG_KEYS)  # household
-        i += 1 + len(RAG_KEYS)  # public bin
-        if is_glass:
-            i += 1 + len(RAG_KEYS)  # household drinks containers
-        # Total-tonnage block: total(1), rag(6), grouped-rag(3)
-        raw_total_tonnage = parse_decimal(m[i]); i += 1
-        i += 6 + 3  # skip the RAG(6) and grouped-RAG(3) breakdown of that same block
+        tonnage, i = parse_tonnage_breakdown(m, i, is_glass)
+        raw_total_tonnage = tonnage.total
         smcw_tonnage = parse_decimal(m[i]); i += 1
         i += 4  # actioned SMCW (total,red,amber,green)
         net_total = parse_decimal(m[i]); i += 1
@@ -688,6 +780,7 @@ def parse_producer_row(
             price_red=price_red, price_amber=price_amber, price_green=price_green,
             printed_fee_red=fee_red, printed_fee_amber=fee_amber, printed_fee_green=fee_green,
             fee=fee,
+            tonnage=tonnage,
             total_reported_tonnage_2a=total_reported_tonnage_2a,
             price_per_tonne_2a=price_per_tonne_2a,
             fee_2a=fee_2a,
@@ -763,6 +856,28 @@ def read_producer_rows(rows: list[list[str]], first_data_row: int) -> list[list[
         out.append(rows[r])
         r += 1
     return out
+
+
+def parse_l2_tonnage(
+    cells: list[str],
+    offsets: dict[str, tuple[int, int]],
+    materials_order: list[str],
+    glass_name: Optional[str],
+) -> dict[str, TonnageBreakdown]:
+    """
+    A lightweight parse of an L2 subsidiary row: only the raw tonnage breakdown per
+    material (Section 1's Household/Public Bin/HDC/Total figures), which is all that's
+    needed to check an L1 group-total row sums its subsidiaries correctly. Everything
+    else about an L2 row (its own price/fee/comms/billing columns) stays out of scope.
+    """
+    by_material: dict[str, TonnageBreakdown] = {}
+    for material in materials_order:
+        lo, hi = offsets[f"section1::{material}"]
+        m = cells[lo:hi]
+        is_glass = glass_name is not None and material == glass_name
+        tonnage, _i = parse_tonnage_breakdown(m, 1, is_glass)  # index 1 skips "Previous Invoiced Tonnage"
+        by_material[material] = tonnage
+    return by_material
 
 
 # ---------------------------------------------------------------------------
@@ -882,6 +997,62 @@ def producer_label(p: ProducerRow) -> str:
     if p.name:
         label += f" ({p.name})"
     return label
+
+
+def verify_l1_equals_sum_of_l2(
+    p: ProducerRow,
+    l2_tonnage_rows: list[dict[str, TonnageBreakdown]],
+    materials_order: list[str],
+    tonnage_tol: Decimal,
+    result: VerificationResult,
+):
+    """
+    Check 0: for a multi-entity producer, its L1 group-total row's raw tonnage columns
+    (Household/Public Bin/HDC/Total Tonnage, each with RAG breakdown) should equal the sum
+    of its L2 subsidiary rows' own copies of those same columns -- this is exactly what
+    ProducerRowBuilder.GetL1TotalRow does ("Additive from L2 rows").
+
+    This deliberately does NOT extend to SMCW, Net Tonnage, price, or fee columns: those
+    are computed once at the L1 (group) level from the group's aggregate SMCW allocation,
+    not by summing the L2 rows, and are explicitly documented as such in that same
+    function ("From L1 SMCW record -- not derivable by summing L2 values"). Checking those
+    against a sum of L2 would produce false positives.
+    """
+    if not l2_tonnage_rows:
+        return
+    label = producer_label(p)
+
+    for material in materials_order:
+        summed = TonnageBreakdown.zero()
+        for l2_material_tonnage in l2_tonnage_rows:
+            summed = summed + l2_material_tonnage[material]
+
+        l1 = p.by_material[material].tonnage
+
+        if not approx_equal(summed.household, l1.household, tonnage_tol):
+            result.add(label, f"L1 vs sum(L2) :: {material}", "Household Packaging Tonnage", summed.household, l1.household)
+        if not approx_equal(summed.public_bin, l1.public_bin, tonnage_tol):
+            result.add(label, f"L1 vs sum(L2) :: {material}", "Public Bin Tonnage", summed.public_bin, l1.public_bin)
+        if not approx_equal(summed.hdc, l1.hdc, tonnage_tol):
+            result.add(label, f"L1 vs sum(L2) :: {material}", "Household Drinks Containers Tonnage", summed.hdc, l1.hdc)
+        if not approx_equal(summed.total, l1.total, tonnage_tol):
+            result.add(label, f"L1 vs sum(L2) :: {material}", "Total Tonnage", summed.total, l1.total)
+
+        for rag_label, summed_rag, l1_rag in [
+            ("Household", summed.household_rag, l1.household_rag),
+            ("Public Bin", summed.public_bin_rag, l1.public_bin_rag),
+            ("Household Drinks Containers", summed.hdc_rag, l1.hdc_rag),
+            ("Total", summed.total_rag, l1.total_rag),
+        ]:
+            for key in RAG_KEYS:
+                if not approx_equal(summed_rag[key], l1_rag[key], tonnage_tol):
+                    result.add(label, f"L1 vs sum(L2) :: {material}", f"{rag_label} Tonnage ({key})",
+                                summed_rag[key], l1_rag[key])
+
+        for key in RAG_GROUPS:
+            if not approx_equal(summed.total_grouped_rag[key], l1.total_grouped_rag[key], tonnage_tol):
+                result.add(label, f"L1 vs sum(L2) :: {material}", f"Total Tonnage ({key} + {key}Medical)",
+                            summed.total_grouped_rag[key], l1.total_grouped_rag[key])
 
 
 def verify_section1_disposal_fee(
@@ -1416,13 +1587,29 @@ def main() -> int:
     }
 
     l1_count = 0
-    for cells in raw_producer_rows:
+    l2_count = 0
+    for idx, cells in enumerate(raw_producer_rows):
         producer_id, level = row_identity(cells)
         if level != "1" or producer_id == "":
             continue  # L2 subsidiary row, or the single overall-total row: out of scope
 
         p = parse_producer_row(cells, offsets, lapcap.materials_order, glass_name)
         l1_count += 1
+
+        # A multi-entity producer's L1 group-total row is immediately followed by all of
+        # its L2 subsidiary rows (CalcResultSummaryBuilder always writes them in that
+        # order) -- collect them so we can check the L1 row sums them correctly.
+        l2_tonnage_rows = []
+        j = idx + 1
+        while j < len(raw_producer_rows):
+            next_id, next_level = row_identity(raw_producer_rows[j])
+            if next_level != "2" or next_id != producer_id:
+                break
+            l2_tonnage_rows.append(parse_l2_tonnage(raw_producer_rows[j], offsets, lapcap.materials_order, glass_name))
+            l2_count += 1
+            j += 1
+
+        verify_l1_equals_sum_of_l2(p, l2_tonnage_rows, lapcap.materials_order, Decimal("0.01"), result)
 
         # Attach the run-wide modulation prices as each material's price, for
         # verify_section1_disposal_fee (per-producer prices are the same run-wide
@@ -1460,7 +1647,7 @@ def main() -> int:
     verify_modulation_vs_producers(modulation, late_reporting, lapcap.materials_order,
                                     net_tonnage_sum_by_material, Decimal("0.01"), result)
 
-    print(f"Checked {l1_count} Level-1 producer row(s) in {args.results_csv}")
+    print(f"Checked {l1_count} Level-1 producer row(s) ({l2_count} Level-2 subsidiary rows found) in {args.results_csv}")
     print(f"Materials: {', '.join(lapcap.materials_order)}")
     print(f"Red Modulation Factor: {modulation.red_factor}   Green Modulation Factor (printed): {modulation.green_factor_printed}")
     print()
