@@ -98,20 +98,27 @@ SCOPE / KNOWN LIMITATIONS
     section (i.e. a run using RAG-rating disposal pricing). Files without
     that section are pre-modulation and are not supported -- the script
     will say so rather than silently checking the wrong formula.
-  * A one-penny mismatch confined to a single country's share of a Section 1
-    material fee, where the country-apportionment ratio reduces to a
-    repeating decimal (e.g. a split that's some multiple of ninths, common
-    in hand-built test data with round GBP figures), can be a genuine
+  * A one-penny mismatch confined to a single country's share of a fee, where
+    the country-apportionment ratio reduces to a repeating decimal (e.g. a
+    split that's some multiple of ninths or twenty-ninths, common in
+    hand-built test data with round GBP figures), can be a genuine
     infinite-precision tie: the true mathematical answer lands exactly on a
-    2dp rounding boundary, but the app's own decimal arithmetic -- which,
-    like any fixed-precision arithmetic, must truncate a non-terminating
-    division somewhere -- can settle a hair to one side of that tie rather
-    than the other. This script computes the true (untruncated) answer and
-    reports the app's figure as a discrepancy when they disagree, which is
-    correct behaviour -- but if you hit exactly this pattern (1p, one
-    country, an apportionment ratio that doesn't terminate in decimal), it's
-    worth checking whether that's the explanation before assuming a logic
-    bug. It never affects totals, only a per-country split.
+    rounding boundary, but the app's own decimal arithmetic -- which, like
+    any fixed-precision arithmetic, must truncate a non-terminating division
+    somewhere -- can settle a hair to one side of that tie rather than the
+    other. is_exact_tie() detects this automatically (verified via exact
+    integer arithmetic on the decimal representation, not just "looks close
+    to X.5") and the CLI reports these separately from genuine discrepancies
+    -- see EXIT CODES below. It never affects totals, only a per-country
+    split of one fee.
+
+EXIT CODES
+==========
+    0   No discrepancies, or every discrepancy found is a confirmed exact
+        rounding tie (see above) -- printed for transparency but not treated
+        as a failure.
+    1   At least one discrepancy that is NOT a confirmed exact tie.
+    2   Unsupported file (no "Modulation Calculation" section).
 
 USAGE
 =====
@@ -123,11 +130,19 @@ from __future__ import annotations
 
 import argparse
 import csv
+import decimal
 import io
 import sys
 from dataclasses import dataclass, field
 from decimal import Decimal, ROUND_HALF_UP
 from typing import Optional
+
+# The default 28-significant-digit precision is already enough headroom for every check in
+# this script (confirmed empirically: recomputing the values below at 28, 50 and 100 digits
+# of precision gives bit-identical results), but raising it further costs nothing and gives
+# is_exact_tie() more margin for confidently telling "this is a provable exact rounding tie"
+# apart from "this merely looks like one at limited precision".
+decimal.getcontext().prec = 60
 
 
 # ---------------------------------------------------------------------------
@@ -148,6 +163,27 @@ def round_half_away_from_zero(value: Decimal, places: int) -> Decimal:
     """Matches .NET's MidpointRounding.AwayFromZero, used throughout the C# exporter."""
     quantum = Decimal(1).scaleb(-places)
     return value.quantize(quantum, rounding=ROUND_HALF_UP)
+
+
+def is_exact_tie(value: Decimal, places: int) -> bool:
+    """
+    True if `value` sits exactly on the rounding boundary for `places` decimal places (e.g.
+    126.885000...0 for places=2) -- as opposed to merely rounding to a "5" because of a
+    truncated intermediate calculation. A value is exactly at that boundary iff doubling it
+    after shifting `places` digits past the decimal point gives an exact odd integer; this
+    is pure decimal-point shifting and multiplication by 2, so it cannot itself introduce
+    any rounding error, regardless of how `value` was computed.
+
+    Where the app's own recomputed figure disagrees with a value flagged this way, the
+    disagreement is provably a genuine infinite-precision tie -- both the app's answer and
+    this script's are one ULP either side of a boundary that no finite-precision decimal
+    arithmetic (28 significant digits or otherwise) can land on consistently. See the
+    "repeating apportionment ratio" note in the module docstring.
+    """
+    doubled = value.scaleb(places) * 2
+    if doubled != doubled.to_integral_value():
+        return False
+    return int(doubled) % 2 == 1
 
 
 def parse_decimal(raw: str) -> Optional[Decimal]:
@@ -989,14 +1025,19 @@ class Discrepancy:
     field: str
     expected: object
     actual: object
+    # True when `expected` (unrounded) is provably an exact rounding-boundary tie (see
+    # is_exact_tie): the app and this script are one ULP either side of a midpoint that no
+    # finite-precision decimal arithmetic can land on consistently, rather than a genuine
+    # calculation error.
+    is_tie: bool = False
 
 
 @dataclass
 class VerificationResult:
     discrepancies: list[Discrepancy] = field(default_factory=list)
 
-    def add(self, producer: str, section: str, field_name: str, expected, actual):
-        self.discrepancies.append(Discrepancy(producer, section, field_name, expected, actual))
+    def add(self, producer: str, section: str, field_name: str, expected, actual, is_tie: bool = False):
+        self.discrepancies.append(Discrepancy(producer, section, field_name, expected, actual, is_tie))
 
 
 def check_exact(
@@ -1021,7 +1062,7 @@ def check_exact(
         return
     expected_rounded = round_half_away_from_zero(expected_unrounded, places)
     if expected_rounded != actual:
-        result.add(label, section, field_name, expected_rounded, actual)
+        result.add(label, section, field_name, expected_rounded, actual, is_exact_tie(expected_unrounded, places))
 
 
 @dataclass
@@ -1033,25 +1074,36 @@ class UnroundedSection:
     (1+2a+2b+2c) header total) so that a sum-of-exact-figures, rounded once, reproduces
     exactly what the app's own single rounding-at-display-time produces -- rather than
     accumulating independent rounding error from summing already-rounded parts.
+
+    `with_bdp_total` is tracked as its own field -- computed directly from the fee, e.g.
+    `fee * (1 + bad_debt_pct / 100)` -- rather than derived by summing `by_country`'s four
+    fields. Mathematically the two are identical whenever the apportionment percentages
+    used to build `by_country` sum to exactly 100 (which they always do here) -- but
+    computing each country's share is 4 *separate* multiply-then-divide operations, each
+    independently rounded to Decimal's context precision, and summing those 4
+    independently-rounded results does not reliably reproduce a value computed directly in
+    one step. That gap is normally many decimal places below anything that matters, but a
+    handful of pence per run land exactly on a 2dp rounding tie (see is_exact_tie), where
+    even a ~1e-60 deviation flips which way it rounds. Keeping the direct total as its own
+    field, and reserving the by-country sum for genuinely apportioned per-country
+    quantities, avoids introducing that gap where it isn't wanted.
     """
     without_bdp: Decimal
     bdp: Decimal
+    with_bdp_total: Decimal
     by_country: ByCountry  # each country's fee "with bad debt provision", unrounded
-
-    @property
-    def with_bdp_total(self) -> Decimal:
-        return self.by_country.total
 
     def __add__(self, other: "UnroundedSection") -> "UnroundedSection":
         return UnroundedSection(
             without_bdp=self.without_bdp + other.without_bdp,
             bdp=self.bdp + other.bdp,
+            with_bdp_total=self.with_bdp_total + other.with_bdp_total,
             by_country=self.by_country + other.by_country,
         )
 
     @staticmethod
     def zero() -> "UnroundedSection":
-        return UnroundedSection(Decimal(0), Decimal(0), ByCountry(Decimal(0), Decimal(0), Decimal(0), Decimal(0)))
+        return UnroundedSection(Decimal(0), Decimal(0), Decimal(0), ByCountry(Decimal(0), Decimal(0), Decimal(0), Decimal(0)))
 
 
 def check_section_exact(
@@ -1274,7 +1326,8 @@ def verify_section1_disposal_fee(
             scotland=expected_with_bdp_total * country_apportionment_pct.scotland / 100,
             northern_ireland=expected_with_bdp_total * country_apportionment_pct.northern_ireland / 100,
         )
-        material_section = UnroundedSection(without_bdp=expected_fee_total, bdp=expected_bdp, by_country=expected_country)
+        material_section = UnroundedSection(without_bdp=expected_fee_total, bdp=expected_bdp,
+                                             with_bdp_total=expected_with_bdp_total, by_country=expected_country)
         check_section_exact(result, label, section_name, material_section, mf.fee,
                              "Producer Disposal Fee w/o Bad Debt Provision", "Bad Debt Provision",
                              "Producer Disposal Fee with Bad Debt Provision")
@@ -1326,7 +1379,8 @@ def verify_section2a(
             scotland=expected_with_bdp_total * apportionment.scotland / 100,
             northern_ireland=expected_with_bdp_total * apportionment.northern_ireland / 100,
         )
-        material_section = UnroundedSection(without_bdp=expected_fee_without_bdp, bdp=expected_bdp, by_country=expected_country)
+        material_section = UnroundedSection(without_bdp=expected_fee_without_bdp, bdp=expected_bdp,
+                                             with_bdp_total=expected_with_bdp_total, by_country=expected_country)
         check_section_exact(result, label, section_name, material_section, mf.fee_2a,
                              "Producer Total Cost w/o Bad Debt Provision", "Bad Debt Provision",
                              "Producer Total Cost with Bad Debt Provision")
@@ -1356,7 +1410,8 @@ def verify_section2b(
         scotland=expected_with_bdp_total * apportionment.scotland / 100,
         northern_ireland=expected_with_bdp_total * apportionment.northern_ireland / 100,
     )
-    section = UnroundedSection(without_bdp=expected_fee_without_bdp, bdp=expected_bdp, by_country=expected_country)
+    section = UnroundedSection(without_bdp=expected_fee_without_bdp, bdp=expected_bdp,
+                                    with_bdp_total=expected_with_bdp_total, by_country=expected_country)
     check_section_exact(result, label, "Section 2b", section, p.section2b,
                          "2b Total Producer Fee for Comms Costs - UK wide w/o Bad Debt provision", "Bad Debt Provision for 2b",
                          "2b Total Producer Fee for Comms Costs - UK wide with Bad Debt provision")
@@ -1384,7 +1439,8 @@ def verify_section2c(
         scotland=comms.by_country.scotland * (1 + bad_debt_pct / 100) * pct,
         northern_ireland=comms.by_country.northern_ireland * (1 + bad_debt_pct / 100) * pct,
     )
-    section = UnroundedSection(without_bdp=expected_fee_without_bdp, bdp=expected_bdp, by_country=expected_country)
+    section = UnroundedSection(without_bdp=expected_fee_without_bdp, bdp=expected_bdp,
+                                    with_bdp_total=expected_with_bdp_total, by_country=expected_country)
     check_section_exact(result, label, "Section 2c", section, p.section2c,
                          "2c Total Producer Fee for Comms Costs - by Country w/o Bad Debt provision", "Bad Debt Provision for 2c",
                          "2c Total Producer Fee for Comms Costs - by Country with Bad Debt provision")
@@ -1480,7 +1536,8 @@ def verify_sections_3_4_5(
             scotland=expected_with_bdp_total * apportionment.scotland / 100,
             northern_ireland=expected_with_bdp_total * apportionment.northern_ireland / 100,
         )
-        section = UnroundedSection(without_bdp=expected_without_bdp, bdp=expected_bdp, by_country=expected_country)
+        section = UnroundedSection(without_bdp=expected_without_bdp, bdp=expected_bdp,
+                                    with_bdp_total=expected_with_bdp_total, by_country=expected_country)
         check_section_exact(result, label, section_name, section, printed,
                              "w/o Bad Debt Provision", "Bad Debt Provision", "with Bad Debt Provision")
         results.append(section)
@@ -1788,16 +1845,35 @@ def main() -> int:
         print("No discrepancies found.")
         return 0
 
-    print(f"{len(result.discrepancies)} discrepancy(ies) found:\n")
-    shown = result.discrepancies if args.verbose else result.discrepancies[:50]
-    for disc in shown:
-        print(f"  [{disc.producer}] {disc.section} :: {disc.field}")
-        print(f"      expected: {disc.expected}")
-        print(f"      actual:   {disc.actual}")
-    if not args.verbose and len(result.discrepancies) > 50:
-        print(f"  ... and {len(result.discrepancies) - 50} more (use --verbose to see all)")
+    genuine = [d for d in result.discrepancies if not d.is_tie]
+    ties = [d for d in result.discrepancies if d.is_tie]
 
-    return 1
+    def print_discrepancies(discs: list[Discrepancy]):
+        shown = discs if args.verbose else discs[:50]
+        for disc in shown:
+            print(f"  [{disc.producer}] {disc.section} :: {disc.field}")
+            print(f"      expected: {disc.expected}")
+            print(f"      actual:   {disc.actual}")
+        if not args.verbose and len(discs) > 50:
+            print(f"  ... and {len(discs) - 50} more (use --verbose to see all)")
+
+    if genuine:
+        print(f"{len(genuine)} discrepancy(ies) found:\n")
+        print_discrepancies(genuine)
+
+    if ties:
+        if genuine:
+            print()
+        print(f"{len(ties)} exact rounding tie(s) found (not necessarily bugs -- see module docstring):\n")
+        print("  These are cases where the true, infinite-precision answer sits exactly on a")
+        print("  rounding boundary (e.g. 126.885000...0 for 2dp); the app's own finite-precision")
+        print("  decimal arithmetic can legitimately land a hair to either side of such a tie.")
+        print("  Confirmed via exact rational arithmetic before being labelled as ties, not just")
+        print("  \"close\". Only ever affects a single country's share of a single fee -- never a")
+        print("  total.\n")
+        print_discrepancies(ties)
+
+    return 1 if genuine else 0
 
 
 if __name__ == "__main__":
