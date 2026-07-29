@@ -18,6 +18,15 @@ this script only tells you "is this file internally consistent with its own
 documented formulas?" -- it cannot tell you whether the *inputs* fed into the
 run were themselves correct.
 
+Every comparison is an EXACT equality, not a tolerance-bounded "close enough":
+each recomputed value is carried at full (unrounded) Decimal precision through
+every intermediate step -- summed, apportioned, whatever -- and only rounded
+once, the same way and to the same number of decimal places the app's own
+CsvSanitiser does for that specific column, immediately before comparing. The
+app itself never rounds until the point it writes a value to CSV, so
+replicating that gives an exact match rather than an approximate one; a
+mismatch of any size is a genuine finding, not rounding noise.
+
 For each L1 producer row, the checks are:
 
   0. L1 = sum(L2): for a multi-entity producer (one with subsidiaries), its L1
@@ -89,12 +98,25 @@ SCOPE / KNOWN LIMITATIONS
     section (i.e. a run using RAG-rating disposal pricing). Files without
     that section are pre-modulation and are not supported -- the script
     will say so rather than silently checking the wrong formula.
+  * A one-penny mismatch confined to a single country's share of a Section 1
+    material fee, where the country-apportionment ratio reduces to a
+    repeating decimal (e.g. a split that's some multiple of ninths, common
+    in hand-built test data with round GBP figures), can be a genuine
+    infinite-precision tie: the true mathematical answer lands exactly on a
+    2dp rounding boundary, but the app's own decimal arithmetic -- which,
+    like any fixed-precision arithmetic, must truncate a non-terminating
+    division somewhere -- can settle a hair to one side of that tie rather
+    than the other. This script computes the true (untruncated) answer and
+    reports the app's figure as a discrepancy when they disagree, which is
+    correct behaviour -- but if you hit exactly this pattern (1p, one
+    country, an apportionment ratio that doesn't terminate in decimal), it's
+    worth checking whether that's the explanation before assuming a logic
+    bug. It never affects totals, only a per-country split.
 
 USAGE
 =====
     python3 verify_results_csv.py path/to/2026-results.csv
     python3 verify_results_csv.py path/to/2026-results.csv --verbose
-    python3 verify_results_csv.py path/to/2026-results.csv --tolerance 0.02
 """
 
 from __future__ import annotations
@@ -236,6 +258,26 @@ class ByCountry:
         )
 
 
+def derive_apportionment_pct(total: ByCountry) -> ByCountry:
+    """
+    Every country-apportionment percentage in this calculator (LAPCAP's own, 1+4, and LA
+    Data Prep's own) is defined the same way in the source: England / Total * 100, with
+    no intermediate rounding (see CalcResultLapcapData.CountryApportionment and
+    CalcResultParameterOtherCostBuilder.GetCountryApportionment). Deriving it here via
+    exact Decimal division from the raw GBP totals -- rather than reading the file's own
+    printed percentage, which is itself rounded to 8dp for display -- avoids feeding an
+    already-rounded input into every downstream apportioned figure.
+    """
+    if total.total == 0:
+        return ByCountry(england=Decimal(0), wales=Decimal(0), scotland=Decimal(0), northern_ireland=Decimal(0))
+    return ByCountry(
+        england=total.england / total.total * 100,
+        wales=total.wales / total.total * 100,
+        scotland=total.scotland / total.total * 100,
+        northern_ireland=total.northern_ireland / total.total * 100,
+    )
+
+
 # ---------------------------------------------------------------------------
 # Section parsers: pull run-wide (not per-producer) figures out of the
 # header portion of the file, before the per-producer table begins.
@@ -245,7 +287,9 @@ class ByCountry:
 @dataclass
 class LapcapData:
     materials_order: list[str]
-    country_apportionment_pct: ByCountry  # "1 Country Apportionment %s"
+    total_by_country: ByCountry  # "1 LA Disposal Cost Total" row, in GBP
+    country_apportionment_pct: ByCountry  # derived exactly from total_by_country
+    printed_country_apportionment_pct: ByCountry  # "1 Country Apportionment %s" as printed, for cross-check
 
 
 def parse_lapcap_data(rows: list[list[str]]) -> LapcapData:
@@ -256,16 +300,25 @@ def parse_lapcap_data(rows: list[list[str]]) -> LapcapData:
     while rows[r][0].strip() != "Total":
         materials.append(rows[r][0].strip())
         r += 1
-    total_row = r
-    apportionment_row = rows[total_row + 1]
+    total_row = rows[r]
+    total_by_country = ByCountry(
+        england=d(parse_money(total_row[1])), wales=d(parse_money(total_row[2])),
+        scotland=d(parse_money(total_row[3])), northern_ireland=d(parse_money(total_row[4])),
+    )
+    apportionment_row = rows[r + 1]
     assert apportionment_row[0].strip() == "1 Country Apportionment %s", apportionment_row[0]
-    apportionment = ByCountry(
+    printed_apportionment = ByCountry(
         england=parse_percent(apportionment_row[1]),
         wales=parse_percent(apportionment_row[2]),
         scotland=parse_percent(apportionment_row[3]),
         northern_ireland=parse_percent(apportionment_row[4]),
     )
-    return LapcapData(materials_order=materials, country_apportionment_pct=apportionment)
+    return LapcapData(
+        materials_order=materials,
+        total_by_country=total_by_country,
+        country_apportionment_pct=derive_apportionment_pct(total_by_country),
+        printed_country_apportionment_pct=printed_apportionment,
+    )
 
 
 @dataclass
@@ -399,8 +452,9 @@ class Materiality:
 @dataclass
 class OtherParameters:
     sa_operating_cost_total: Decimal  # "3 SA Operating Costs" Total column
-    la_data_prep_charge_total: Decimal  # "4 LA Data Prep Charge" Total column
-    la_data_prep_apportionment_pct: ByCountry  # "4 Country Apportionment %s"
+    la_data_prep_by_country: ByCountry  # "4 LA Data Prep Charge" row, in GBP
+    la_data_prep_apportionment_pct: ByCountry  # derived exactly from la_data_prep_by_country
+    printed_la_data_prep_apportionment_pct: ByCountry  # "4 Country Apportionment %s" as printed, for cross-check
     scheme_setup_cost_total: Decimal  # "5 Scheme set up cost Yearly Cost" Total column
     bad_debt_pct: Decimal
     materiality_increase: Materiality
@@ -408,16 +462,24 @@ class OtherParameters:
     tonnage_change_increase: Materiality
     tonnage_change_decrease: Materiality
 
+    @property
+    def la_data_prep_charge_total(self) -> Decimal:
+        return self.la_data_prep_by_country.total
+
 
 def parse_other_parameters(rows: list[list[str]]) -> OtherParameters:
     sa_operating_row = rows[find_row(rows, "3 SA Operating Costs")]
     sa_operating_cost_total = parse_money(sa_operating_row[5])
 
     la_data_prep_row_idx = find_row(rows, "4 LA Data Prep Charge")
-    la_data_prep_charge_total = parse_money(rows[la_data_prep_row_idx][5])
+    la_data_prep_row = rows[la_data_prep_row_idx]
+    la_data_prep_by_country = ByCountry(
+        england=d(parse_money(la_data_prep_row[1])), wales=d(parse_money(la_data_prep_row[2])),
+        scotland=d(parse_money(la_data_prep_row[3])), northern_ireland=d(parse_money(la_data_prep_row[4])),
+    )
     la_data_prep_apportionment_row = rows[la_data_prep_row_idx + 1]
     assert la_data_prep_apportionment_row[0].strip() == "4 Country Apportionment %s", la_data_prep_apportionment_row[0]
-    la_data_prep_apportionment_pct = ByCountry(
+    printed_la_data_prep_apportionment_pct = ByCountry(
         england=parse_percent(la_data_prep_apportionment_row[1]),
         wales=parse_percent(la_data_prep_apportionment_row[2]),
         scotland=parse_percent(la_data_prep_apportionment_row[3]),
@@ -442,8 +504,9 @@ def parse_other_parameters(rows: list[list[str]]) -> OtherParameters:
 
     return OtherParameters(
         sa_operating_cost_total=sa_operating_cost_total,
-        la_data_prep_charge_total=la_data_prep_charge_total,
-        la_data_prep_apportionment_pct=la_data_prep_apportionment_pct,
+        la_data_prep_by_country=la_data_prep_by_country,
+        la_data_prep_apportionment_pct=derive_apportionment_pct(la_data_prep_by_country),
+        printed_la_data_prep_apportionment_pct=printed_la_data_prep_apportionment_pct,
         scheme_setup_cost_total=scheme_setup_cost_total,
         bad_debt_pct=bad_debt_pct,
         materiality_increase=Materiality(parse_money(mat_increase[1]), parse_percent(mat_increase[2])),
@@ -455,21 +518,34 @@ def parse_other_parameters(rows: list[list[str]]) -> OtherParameters:
 
 @dataclass
 class CommsCostParameters:
-    one_plus_four_apportionment_pct: ByCountry  # "1 + 4 Apportionment %s" (within Parameters - Comms Costs)
+    one_plus_four_apportionment_pct: ByCountry  # derived exactly from LAPCAP + LA Data Prep totals
+    printed_one_plus_four_apportionment_pct: ByCountry  # "1 + 4 Apportionment %s" as printed, for cross-check
     price_per_tonne_by_material: dict[str, Decimal]  # "2a Comms Costs - by Material" -- price per tonne column
-    uk_wide: ByCountry  # "2b Comms Costs - UK wide" row (before bad debt)
-    by_country: ByCountry  # "2c Comms Costs - by Country" row (before bad debt)
+    # "2b Comms Costs - UK wide"'s Total column, read directly rather than summed from its
+    # four country cells: those are each independently rounded from an apportioned share
+    # (unlike 2c's, which are raw un-apportioned input parameters), so summing them can be
+    # a penny off the true total that CalcResultCommsCostBuilder actually computed.
+    uk_wide_total: Decimal
+    by_country: ByCountry  # "2c Comms Costs - by Country" row (before bad debt) -- raw per-country inputs, exact
 
 
-def parse_comms_cost_parameters(rows: list[list[str]], materials_order: list[str]) -> CommsCostParameters:
+def parse_comms_cost_parameters(
+    rows: list[list[str]],
+    materials_order: list[str],
+    lapcap_total_by_country: ByCountry,
+    la_data_prep_by_country: ByCountry,
+) -> CommsCostParameters:
     section = find_row(rows, "Parameters - Comms Costs")
     apportionment_row = rows[find_row(rows, "1 + 4 Apportionment %s", start=section)]
-    one_plus_four_apportionment_pct = ByCountry(
+    printed_one_plus_four_apportionment_pct = ByCountry(
         england=parse_percent(apportionment_row[1]),
         wales=parse_percent(apportionment_row[2]),
         scotland=parse_percent(apportionment_row[3]),
         northern_ireland=parse_percent(apportionment_row[4]),
     )
+    # CalcResultOnePlusFourApportionment.OnePlusFourApportionment: 100 * (LaDisposalCost + LADataPrepCharge)
+    # by country, over their combined total -- exact division, no intermediate rounding.
+    one_plus_four_apportionment_pct = derive_apportionment_pct(lapcap_total_by_country + la_data_prep_by_country)
 
     header_row = find_row(rows, "2a Comms Costs - by Material", start=section)
     header = rows[header_row]
@@ -482,10 +558,7 @@ def parse_comms_cost_parameters(rows: list[list[str]], materials_order: list[str
         r += 1
 
     uk_wide_row = rows[find_row(rows, "2b Comms Costs - UK wide", start=section)]
-    uk_wide = ByCountry(
-        england=d(parse_money(uk_wide_row[1])), wales=d(parse_money(uk_wide_row[2])),
-        scotland=d(parse_money(uk_wide_row[3])), northern_ireland=d(parse_money(uk_wide_row[4])),
-    )
+    uk_wide_total = d(parse_money(uk_wide_row[5]))
 
     by_country_row = rows[find_row(rows, "2c Comms Costs - by Country", start=section)]
     by_country = ByCountry(
@@ -495,8 +568,9 @@ def parse_comms_cost_parameters(rows: list[list[str]], materials_order: list[str
 
     return CommsCostParameters(
         one_plus_four_apportionment_pct=one_plus_four_apportionment_pct,
+        printed_one_plus_four_apportionment_pct=printed_one_plus_four_apportionment_pct,
         price_per_tonne_by_material=price_per_tonne_by_material,
-        uk_wide=uk_wide,
+        uk_wide_total=uk_wide_total,
         by_country=by_country,
     )
 
@@ -925,26 +999,108 @@ class VerificationResult:
         self.discrepancies.append(Discrepancy(producer, section, field_name, expected, actual))
 
 
-def approx_equal(a: Optional[Decimal], b: Optional[Decimal], tolerance: Decimal) -> bool:
-    if a is None and b is None:
-        return True
-    if a is None or b is None:
-        return False
-    return abs(a - b) <= tolerance
+def check_exact(
+    result: VerificationResult,
+    label: str,
+    section: str,
+    field_name: str,
+    expected_unrounded: Decimal,
+    actual: Optional[Decimal],
+    places: int,
+):
+    """
+    The app only ever rounds a value once -- at the point it's written to CSV (see
+    CsvSanitiser.SanitiseData) -- carrying full (unrounded) Decimal precision through every
+    intermediate step. As long as `expected_unrounded` was computed the same way (from
+    exact inputs, at full precision, only rounded here), rounding it to the same number of
+    decimal places the app used for this exact field should reproduce the printed value
+    exactly -- so this requires equality, not closeness.
+    """
+    if actual is None:
+        result.add(label, section, field_name, round_half_away_from_zero(expected_unrounded, places), None)
+        return
+    expected_rounded = round_half_away_from_zero(expected_unrounded, places)
+    if expected_rounded != actual:
+        result.add(label, section, field_name, expected_rounded, actual)
 
 
-def verify_modulation(mod: ModulationCalculation, materials_order: list[str], tol: Decimal, result: VerificationResult):
-    """Check 1: the run-wide Red/Green modulation pricing is internally consistent."""
+@dataclass
+class UnroundedSection:
+    """
+    A section's fee figures at full (unrounded) precision -- the in-memory shape of a
+    CalcResultSummaryBadDebtProvision before CSV rounding is ever applied. Sections are
+    summed at this precision (e.g. for the Total Producer Bill, or the run-wide
+    (1+2a+2b+2c) header total) so that a sum-of-exact-figures, rounded once, reproduces
+    exactly what the app's own single rounding-at-display-time produces -- rather than
+    accumulating independent rounding error from summing already-rounded parts.
+    """
+    without_bdp: Decimal
+    bdp: Decimal
+    by_country: ByCountry  # each country's fee "with bad debt provision", unrounded
+
+    @property
+    def with_bdp_total(self) -> Decimal:
+        return self.by_country.total
+
+    def __add__(self, other: "UnroundedSection") -> "UnroundedSection":
+        return UnroundedSection(
+            without_bdp=self.without_bdp + other.without_bdp,
+            bdp=self.bdp + other.bdp,
+            by_country=self.by_country + other.by_country,
+        )
+
+    @staticmethod
+    def zero() -> "UnroundedSection":
+        return UnroundedSection(Decimal(0), Decimal(0), ByCountry(Decimal(0), Decimal(0), Decimal(0), Decimal(0)))
+
+
+def check_section_exact(
+    result: VerificationResult,
+    label: str,
+    section_name: str,
+    expected: UnroundedSection,
+    printed: WithBdp,
+    without_bdp_field: str,
+    bdp_field: str,
+    total_field: str,
+):
+    """Checks all 7 cells of a WithBdp block (w/o BDP, BDP, total, x4 countries) exactly."""
+    check_exact(result, label, section_name, without_bdp_field, expected.without_bdp, printed.without_bdp, 2)
+    check_exact(result, label, section_name, bdp_field, expected.bdp, printed.bdp, 2)
+    check_exact(result, label, section_name, total_field, expected.with_bdp_total, printed.total, 2)
+    for country_name, exp_val, actual_val in [
+        ("England", expected.by_country.england, printed.by_country.england),
+        ("Wales", expected.by_country.wales, printed.by_country.wales),
+        ("Scotland", expected.by_country.scotland, printed.by_country.scotland),
+        ("Northern Ireland", expected.by_country.northern_ireland, printed.by_country.northern_ireland),
+    ]:
+        check_exact(result, label, section_name, f"{country_name} with Bad Debt Provision", exp_val, actual_val, 2)
+
+
+def verify_modulation(mod: ModulationCalculation, materials_order: list[str], result: VerificationResult):
+    """
+    Check 1: the run-wide Red/Green modulation pricing is internally consistent.
+
+    Every figure here is rounded to the exact decimal places CalcResultModulationExporter
+    uses for that specific column, then compared for exact equality -- not "closeness" --
+    since every input (tonnage, prices) is either exact or itself the app's own rounded
+    value used downstream (see CalcResultModulationBuilder), so there is nothing left to
+    absorb into a tolerance.
+    """
     section = "Modulation Calculation"
+    label = "(run-wide)"
 
+    # The Total row sums the *already-2dp-rounded* per-material figures (see
+    # CalcResultModulationExporter), so summing those same rounded values here reproduces
+    # it exactly -- no further rounding needed on this sum.
     sum_red_at_amber = sum((mod.by_material[m].total_red_at_amber_cost for m in materials_order), Decimal(0))
     sum_green_at_amber = sum((mod.by_material[m].total_green_at_amber_cost for m in materials_order), Decimal(0))
 
-    if not approx_equal(sum_red_at_amber, mod.total_red_at_amber_cost, tol):
-        result.add("(run-wide)", section, "Total row: Total Red Material at Amber Disposal Cost",
+    if sum_red_at_amber != mod.total_red_at_amber_cost:
+        result.add(label, section, "Total row: Total Red Material at Amber Disposal Cost",
                     sum_red_at_amber, mod.total_red_at_amber_cost)
-    if not approx_equal(sum_green_at_amber, mod.total_green_at_amber_cost, tol):
-        result.add("(run-wide)", section, "Total row: Total Green Material at Amber Disposal Cost",
+    if sum_green_at_amber != mod.total_green_at_amber_cost:
+        result.add(label, section, "Total row: Total Green Material at Amber Disposal Cost",
                     sum_green_at_amber, mod.total_green_at_amber_cost)
 
     if mod.total_green_at_amber_cost == 0:
@@ -953,27 +1109,21 @@ def verify_modulation(mod: ModulationCalculation, materials_order: list[str], to
         green_discount = (mod.red_factor - 1) * mod.total_red_at_amber_cost / mod.total_green_at_amber_cost
         green_factor = round_half_away_from_zero(1 - green_discount, 6)
 
-    if not approx_equal(green_factor, mod.green_factor_printed, Decimal("0.000001")):
-        result.add("(run-wide)", section, "Green Modulation Factor", green_factor, mod.green_factor_printed)
+    if green_factor != mod.green_factor_printed:
+        result.add(label, section, "Green Modulation Factor", green_factor, mod.green_factor_printed)
 
     for material in materials_order:
         mm = mod.by_material[material]
+        mat_label = f"(modulation:{material})"
 
-        expected_red_at_amber = round_half_away_from_zero(mm.red_net_tonnage * mm.amber_price, 2)
-        expected_green_at_amber = round_half_away_from_zero(mm.green_net_tonnage * mm.amber_price, 2)
-        if not approx_equal(expected_red_at_amber, mm.total_red_at_amber_cost, tol):
-            result.add(f"(modulation:{material})", section, "Total Red Material at Amber Disposal Cost",
-                        expected_red_at_amber, mm.total_red_at_amber_cost)
-        if not approx_equal(expected_green_at_amber, mm.total_green_at_amber_cost, tol):
-            result.add(f"(modulation:{material})", section, "Total Green Material at Amber Disposal Cost",
-                        expected_green_at_amber, mm.total_green_at_amber_cost)
-
-        expected_red_price = round_half_away_from_zero(mm.amber_price * mod.red_factor, 4)
-        expected_green_price = round_half_away_from_zero(mm.amber_price * green_factor, 4)
-        if not approx_equal(expected_red_price, mm.red_price, Decimal("0.0001")):
-            result.add(f"(modulation:{material})", section, "Red Material Disposal Cost", expected_red_price, mm.red_price)
-        if not approx_equal(expected_green_price, mm.green_price, Decimal("0.0001")):
-            result.add(f"(modulation:{material})", section, "Green Material Disposal Cost", expected_green_price, mm.green_price)
+        check_exact(result, mat_label, section, "Total Red Material at Amber Disposal Cost",
+                    mm.red_net_tonnage * mm.amber_price, mm.total_red_at_amber_cost, 2)
+        check_exact(result, mat_label, section, "Total Green Material at Amber Disposal Cost",
+                    mm.green_net_tonnage * mm.amber_price, mm.total_green_at_amber_cost, 2)
+        check_exact(result, mat_label, section, "Red Material Disposal Cost",
+                    mm.amber_price * mod.red_factor, mm.red_price, 4)
+        check_exact(result, mat_label, section, "Green Material Disposal Cost",
+                    mm.amber_price * green_factor, mm.green_price, 4)
 
 
 def verify_modulation_vs_producers(
@@ -981,16 +1131,18 @@ def verify_modulation_vs_producers(
     late_reporting: LateReportingTonnages,
     materials_order: list[str],
     net_tonnage_sum_by_material: dict[str, RagAmounts],
-    tonnage_tol: Decimal,
     result: VerificationResult,
 ):
     """
     Check 1b: the "Net Tonnage + Late Reporting Tonnage" figures that the Modulation
     Calculation section's pricing is built on should equal the sum of every L1
     producer's own Net Tonnage (by RAG group) plus the Late Reporting Tonnage
-    parameter. This ties the run-wide modulation pricing back to the same
-    per-producer data used in check 2, rather than trusting it as a disconnected
-    input.
+    parameter. This ties the run-wide modulation pricing back to the same per-producer
+    data used in check 2, rather than trusting it as a disconnected input.
+
+    Tonnage has no rounding step anywhere in its calculation (the SMCW cascade is pure
+    subtraction -- see ApplySubSmcw), so this is exact equality at the 3dp precision the
+    file prints tonnage to, not a tolerance-bounded comparison.
     """
     section = "Modulation Calculation vs producer data"
     for material in materials_order:
@@ -998,19 +1150,15 @@ def verify_modulation_vs_producers(
         lrt = late_reporting.by_material[material]
         summed = net_tonnage_sum_by_material[material]
 
-        expected_red = summed.red + lrt.red
-        expected_amber = summed.amber + lrt.amber
-        expected_green = summed.green + lrt.green
-
-        if not approx_equal(expected_red, mm.red_net_tonnage, tonnage_tol):
-            result.add(f"(modulation:{material})", section,
-                        "Red + Red Medical Net Tonnage + Late Reporting Tonnage", expected_red, mm.red_net_tonnage)
-        if not approx_equal(expected_amber, mm.amber_net_tonnage, tonnage_tol):
-            result.add(f"(modulation:{material})", section,
-                        "Amber + Amber Medical Net Tonnage + Late Reporting Tonnage", expected_amber, mm.amber_net_tonnage)
-        if not approx_equal(expected_green, mm.green_net_tonnage, tonnage_tol):
-            result.add(f"(modulation:{material})", section,
-                        "Green + Green Medical Net Tonnage + Late Reporting Tonnage", expected_green, mm.green_net_tonnage)
+        check_exact(result, f"(modulation:{material})", section,
+                    "Red + Red Medical Net Tonnage + Late Reporting Tonnage",
+                    summed.red + lrt.red, mm.red_net_tonnage, 3)
+        check_exact(result, f"(modulation:{material})", section,
+                    "Amber + Amber Medical Net Tonnage + Late Reporting Tonnage",
+                    summed.amber + lrt.amber, mm.amber_net_tonnage, 3)
+        check_exact(result, f"(modulation:{material})", section,
+                    "Green + Green Medical Net Tonnage + Late Reporting Tonnage",
+                    summed.green + lrt.green, mm.green_net_tonnage, 3)
 
 
 def producer_label(p: ProducerRow) -> str:
@@ -1026,14 +1174,15 @@ def verify_l1_equals_sum_of_l2(
     p: ProducerRow,
     l2_tonnage_rows: list[dict[str, TonnageBreakdown]],
     materials_order: list[str],
-    tonnage_tol: Decimal,
     result: VerificationResult,
 ):
     """
     Check 0: for a multi-entity producer, its L1 group-total row's raw tonnage columns
     (Household/Public Bin/HDC/Total Tonnage, each with RAG breakdown) should equal the sum
     of its L2 subsidiary rows' own copies of those same columns -- this is exactly what
-    ProducerRowBuilder.GetL1TotalRow does ("Additive from L2 rows").
+    ProducerRowBuilder.GetL1TotalRow does ("Additive from L2 rows"). Tonnage has no
+    rounding step in its calculation, so this is exact equality at the 3dp precision the
+    file prints tonnage to.
 
     This deliberately does NOT extend to SMCW, Net Tonnage, price, or fee columns: those
     are computed once at the L1 (group) level from the group's aggregate SMCW allocation,
@@ -1051,15 +1200,12 @@ def verify_l1_equals_sum_of_l2(
             summed = summed + l2_material_tonnage[material]
 
         l1 = p.by_material[material].tonnage
+        section_name = f"L1 vs sum(L2) :: {material}"
 
-        if not approx_equal(summed.household, l1.household, tonnage_tol):
-            result.add(label, f"L1 vs sum(L2) :: {material}", "Household Packaging Tonnage", summed.household, l1.household)
-        if not approx_equal(summed.public_bin, l1.public_bin, tonnage_tol):
-            result.add(label, f"L1 vs sum(L2) :: {material}", "Public Bin Tonnage", summed.public_bin, l1.public_bin)
-        if not approx_equal(summed.hdc, l1.hdc, tonnage_tol):
-            result.add(label, f"L1 vs sum(L2) :: {material}", "Household Drinks Containers Tonnage", summed.hdc, l1.hdc)
-        if not approx_equal(summed.total, l1.total, tonnage_tol):
-            result.add(label, f"L1 vs sum(L2) :: {material}", "Total Tonnage", summed.total, l1.total)
+        check_exact(result, label, section_name, "Household Packaging Tonnage", summed.household, l1.household, 3)
+        check_exact(result, label, section_name, "Public Bin Tonnage", summed.public_bin, l1.public_bin, 3)
+        check_exact(result, label, section_name, "Household Drinks Containers Tonnage", summed.hdc, l1.hdc, 3)
+        check_exact(result, label, section_name, "Total Tonnage", summed.total, l1.total, 3)
 
         for rag_label, summed_rag, l1_rag in [
             ("Household", summed.household_rag, l1.household_rag),
@@ -1068,14 +1214,11 @@ def verify_l1_equals_sum_of_l2(
             ("Total", summed.total_rag, l1.total_rag),
         ]:
             for key in RAG_KEYS:
-                if not approx_equal(summed_rag[key], l1_rag[key], tonnage_tol):
-                    result.add(label, f"L1 vs sum(L2) :: {material}", f"{rag_label} Tonnage ({key})",
-                                summed_rag[key], l1_rag[key])
+                check_exact(result, label, section_name, f"{rag_label} Tonnage ({key})", summed_rag[key], l1_rag[key], 3)
 
         for key in RAG_GROUPS:
-            if not approx_equal(summed.total_grouped_rag[key], l1.total_grouped_rag[key], tonnage_tol):
-                result.add(label, f"L1 vs sum(L2) :: {material}", f"Total Tonnage ({key} + {key}Medical)",
-                            summed.total_grouped_rag[key], l1.total_grouped_rag[key])
+            check_exact(result, label, section_name, f"Total Tonnage ({key} + {key}Medical)",
+                        summed.total_grouped_rag[key], l1.total_grouped_rag[key], 3)
 
 
 def verify_section1_disposal_fee(
@@ -1083,21 +1226,19 @@ def verify_section1_disposal_fee(
     materials_order: list[str],
     country_apportionment_pct: ByCountry,
     bad_debt_pct: Decimal,
-    tol: Decimal,
     result: VerificationResult,
-):
-    """Checks 2: per-material and total Section 1 (LA Disposal Fee)."""
+) -> UnroundedSection:
+    """Checks 2: per-material and total Section 1 (LA Disposal Fee). Returns the producer's
+    unrounded Section 1 total, for exact summation into the Total Producer Bill."""
     label = producer_label(p)
-    total_without_bdp = Decimal(0)
-    total_bdp = Decimal(0)
-    total_with_bdp = Decimal(0)
-    total_by_country = ByCountry(Decimal(0), Decimal(0), Decimal(0), Decimal(0))
+    total = UnroundedSection.zero()
 
     for material in materials_order:
         mf = p.by_material[material]
         if mf.net_red is None:
             # No modulation data for this producer/material combination -- nothing to check.
             continue
+        section_name = f"Section 1 :: {material}"
 
         # The app zeroes a material's disposal fee outright if self-managed consumer
         # waste tonnage exceeds raw reported tonnage. For a multi-entity producer this
@@ -1121,57 +1262,29 @@ def verify_section1_disposal_fee(
             expected_fee_green = mf.net_green * mf.price_green
         expected_fee_total = expected_fee_red + expected_fee_amber + expected_fee_green
 
-        if not approx_equal(expected_fee_red, mf.printed_fee_red, tol):
-            result.add(label, f"Section 1 :: {material}", "Producer Red Material Disposal Cost",
-                        expected_fee_red, mf.printed_fee_red)
-        if not approx_equal(expected_fee_amber, mf.printed_fee_amber, tol):
-            result.add(label, f"Section 1 :: {material}", "Producer Amber Material Disposal Cost",
-                        expected_fee_amber, mf.printed_fee_amber)
-        if not approx_equal(expected_fee_green, mf.printed_fee_green, tol):
-            result.add(label, f"Section 1 :: {material}", "Producer Green Material Disposal Cost",
-                        expected_fee_green, mf.printed_fee_green)
-        if not approx_equal(expected_fee_total, mf.fee.without_bdp, tol):
-            result.add(label, f"Section 1 :: {material}", "Producer Disposal Fee w/o Bad Debt Provision",
-                        expected_fee_total, mf.fee.without_bdp)
+        check_exact(result, label, section_name, "Producer Red Material Disposal Cost", expected_fee_red, mf.printed_fee_red, 2)
+        check_exact(result, label, section_name, "Producer Amber Material Disposal Cost", expected_fee_amber, mf.printed_fee_amber, 2)
+        check_exact(result, label, section_name, "Producer Green Material Disposal Cost", expected_fee_green, mf.printed_fee_green, 2)
 
         expected_bdp = expected_fee_total * bad_debt_pct / 100
-        if not approx_equal(expected_bdp, mf.fee.bdp, tol):
-            result.add(label, f"Section 1 :: {material}", "Bad Debt Provision",
-                        expected_bdp, mf.fee.bdp)
-
         expected_with_bdp_total = expected_fee_total * (1 + bad_debt_pct / 100)
-        if not approx_equal(expected_with_bdp_total, mf.fee.total, tol):
-            result.add(label, f"Section 1 :: {material}", "Producer Disposal Fee with Bad Debt Provision",
-                        expected_with_bdp_total, mf.fee.total)
-
         expected_country = ByCountry(
             england=expected_with_bdp_total * country_apportionment_pct.england / 100,
             wales=expected_with_bdp_total * country_apportionment_pct.wales / 100,
             scotland=expected_with_bdp_total * country_apportionment_pct.scotland / 100,
             northern_ireland=expected_with_bdp_total * country_apportionment_pct.northern_ireland / 100,
         )
-        for country_name, exp_val, actual_val in [
-            ("England", expected_country.england, mf.fee.by_country.england),
-            ("Wales", expected_country.wales, mf.fee.by_country.wales),
-            ("Scotland", expected_country.scotland, mf.fee.by_country.scotland),
-            ("Northern Ireland", expected_country.northern_ireland, mf.fee.by_country.northern_ireland),
-        ]:
-            if not approx_equal(exp_val, actual_val, tol):
-                result.add(label, f"Section 1 :: {material}", f"{country_name} with Bad Debt Provision", exp_val, actual_val)
+        material_section = UnroundedSection(without_bdp=expected_fee_total, bdp=expected_bdp, by_country=expected_country)
+        check_section_exact(result, label, section_name, material_section, mf.fee,
+                             "Producer Disposal Fee w/o Bad Debt Provision", "Bad Debt Provision",
+                             "Producer Disposal Fee with Bad Debt Provision")
 
-        total_without_bdp += expected_fee_total
-        total_bdp += expected_bdp
-        total_with_bdp += expected_with_bdp_total
-        total_by_country = total_by_country + expected_country
+        total = total + material_section
 
-    if not approx_equal(total_without_bdp, p.section1_total.without_bdp, tol):
-        result.add(label, "Section 1 total", "1 Total Producer Fee for LA Disposal Costs w/o Bad Debt provision",
-                    total_without_bdp, p.section1_total.without_bdp)
-    if not approx_equal(total_bdp, p.section1_total.bdp, tol):
-        result.add(label, "Section 1 total", "Bad Debt Provision", total_bdp, p.section1_total.bdp)
-    if not approx_equal(total_with_bdp, p.section1_total.total, tol):
-        result.add(label, "Section 1 total", "1 Total Producer Fee for LA Disposal Costs with Bad Debt provision",
-                    total_with_bdp, p.section1_total.total)
+    check_section_exact(result, label, "Section 1 total", total, p.section1_total,
+                         "1 Total Producer Fee for LA Disposal Costs w/o Bad Debt provision", "Bad Debt Provision",
+                         "1 Total Producer Fee for LA Disposal Costs with Bad Debt provision")
+    return total
 
 
 def verify_section2a(
@@ -1179,276 +1292,227 @@ def verify_section2a(
     materials_order: list[str],
     comms: CommsCostParameters,
     bad_debt_pct: Decimal,
-    tol: Decimal,
     result: VerificationResult,
-):
-    """Check 3a: Comms Costs by Material -- tonnage x price per material, apportioned by 1+4%."""
+) -> UnroundedSection:
+    """Check 3a: Comms Costs by Material -- tonnage x price per material, apportioned by 1+4%.
+    Returns the producer's unrounded Section 2a total."""
     label = producer_label(p)
     apportionment = comms.one_plus_four_apportionment_pct
-    total_without_bdp = Decimal(0)
-    total_bdp = Decimal(0)
-    total_with_bdp = Decimal(0)
+    total = UnroundedSection.zero()
 
     for material in materials_order:
         mf = p.by_material[material]
         if mf.total_reported_tonnage_2a is None:
             continue
+        section_name = f"Section 2a :: {material}"
 
         # The same raw (pre-SMCW) tonnage feeds both Section 1's disposal fee and
-        # Section 2a's comms fee -- cross-check the file prints the same number twice.
-        if mf.raw_total_tonnage is not None and not approx_equal(mf.raw_total_tonnage, mf.total_reported_tonnage_2a, Decimal("0.001")):
-            result.add(label, f"Section 2a :: {material}", "Total Tonnage (vs Section 1's own copy)",
+        # Section 2a's comms fee -- both are printed independently, so cross-check
+        # the file agrees with itself.
+        if mf.raw_total_tonnage is not None and mf.raw_total_tonnage != mf.total_reported_tonnage_2a:
+            result.add(label, section_name, "Total Tonnage (vs Section 1's own copy)",
                         mf.raw_total_tonnage, mf.total_reported_tonnage_2a)
 
         expected_price = comms.price_per_tonne_by_material[material]
-        if mf.price_per_tonne_2a is not None and not approx_equal(expected_price, mf.price_per_tonne_2a, Decimal("0.0001")):
-            result.add(label, f"Section 2a :: {material}", "Price per Tonne", expected_price, mf.price_per_tonne_2a)
+        if mf.price_per_tonne_2a is not None and expected_price != mf.price_per_tonne_2a:
+            result.add(label, section_name, "Price per Tonne", expected_price, mf.price_per_tonne_2a)
 
         expected_fee_without_bdp = mf.total_reported_tonnage_2a * expected_price
-        if not approx_equal(expected_fee_without_bdp, mf.fee_2a.without_bdp, tol):
-            result.add(label, f"Section 2a :: {material}", "Producer Total Cost w/o Bad Debt Provision",
-                        expected_fee_without_bdp, mf.fee_2a.without_bdp)
-
         expected_bdp = expected_fee_without_bdp * bad_debt_pct / 100
-        if not approx_equal(expected_bdp, mf.fee_2a.bdp, tol):
-            result.add(label, f"Section 2a :: {material}", "Bad Debt Provision", expected_bdp, mf.fee_2a.bdp)
-
         expected_with_bdp_total = expected_fee_without_bdp * (1 + bad_debt_pct / 100)
-        if not approx_equal(expected_with_bdp_total, mf.fee_2a.total, tol):
-            result.add(label, f"Section 2a :: {material}", "Producer Total Cost with Bad Debt Provision",
-                        expected_with_bdp_total, mf.fee_2a.total)
-
         expected_country = ByCountry(
             england=expected_with_bdp_total * apportionment.england / 100,
             wales=expected_with_bdp_total * apportionment.wales / 100,
             scotland=expected_with_bdp_total * apportionment.scotland / 100,
             northern_ireland=expected_with_bdp_total * apportionment.northern_ireland / 100,
         )
-        for country_name, exp_val, actual_val in [
-            ("England", expected_country.england, mf.fee_2a.by_country.england),
-            ("Wales", expected_country.wales, mf.fee_2a.by_country.wales),
-            ("Scotland", expected_country.scotland, mf.fee_2a.by_country.scotland),
-            ("Northern Ireland", expected_country.northern_ireland, mf.fee_2a.by_country.northern_ireland),
-        ]:
-            if not approx_equal(exp_val, actual_val, tol):
-                result.add(label, f"Section 2a :: {material}", f"{country_name} with Bad Debt Provision", exp_val, actual_val)
+        material_section = UnroundedSection(without_bdp=expected_fee_without_bdp, bdp=expected_bdp, by_country=expected_country)
+        check_section_exact(result, label, section_name, material_section, mf.fee_2a,
+                             "Producer Total Cost w/o Bad Debt Provision", "Bad Debt Provision",
+                             "Producer Total Cost with Bad Debt Provision")
 
-        total_without_bdp += expected_fee_without_bdp
-        total_bdp += expected_bdp
-        total_with_bdp += expected_with_bdp_total
+        total = total + material_section
 
-    if not approx_equal(total_without_bdp, p.section2a.without_bdp, tol):
-        result.add(label, "Section 2a total", "2a Total Producer Fee for Comms Costs - by Material w/o Bad Debt provision",
-                    total_without_bdp, p.section2a.without_bdp)
-    if not approx_equal(total_bdp, p.section2a.bdp, tol):
-        result.add(label, "Section 2a total", "Total Bad Debt Provision", total_bdp, p.section2a.bdp)
-    if not approx_equal(total_with_bdp, p.section2a.total, tol):
-        result.add(label, "Section 2a total", "2a Total Producer Fee for Comms Costs - by Material with Bad Debt provision",
-                    total_with_bdp, p.section2a.total)
+    check_section_exact(result, label, "Section 2a total", total, p.section2a,
+                         "2a Total Producer Fee for Comms Costs - by Material w/o Bad Debt provision", "Total Bad Debt Provision",
+                         "2a Total Producer Fee for Comms Costs - by Material with Bad Debt provision")
+    return total
 
 
-def verify_section2b(p: ProducerRow, comms: CommsCostParameters, bad_debt_pct: Decimal, tol: Decimal, result: VerificationResult):
-    """Check 3b: Comms Costs UK-wide, apportioned to this producer by its share of all producers' tonnage."""
+def verify_section2b(
+    p: ProducerRow, pct_tonnage: Decimal, comms: CommsCostParameters, bad_debt_pct: Decimal, result: VerificationResult
+) -> UnroundedSection:
+    """Check 3b: Comms Costs UK-wide, apportioned to this producer by its share (`pct_tonnage`,
+    unrounded) of all producers' tonnage. Returns the producer's unrounded Section 2b total."""
     label = producer_label(p)
-    if p.pct_tonnage_vs_all_producers is None:
-        return
     apportionment = comms.one_plus_four_apportionment_pct
 
-    expected_fee_without_bdp = comms.uk_wide.total * p.pct_tonnage_vs_all_producers / 100
-    if not approx_equal(expected_fee_without_bdp, p.section2b.without_bdp, tol):
-        result.add(label, "Section 2b", "2b Total Producer Fee for Comms Costs - UK wide w/o Bad Debt provision",
-                    expected_fee_without_bdp, p.section2b.without_bdp)
-
+    expected_fee_without_bdp = comms.uk_wide_total * pct_tonnage / 100
     expected_bdp = expected_fee_without_bdp * bad_debt_pct / 100
-    if not approx_equal(expected_bdp, p.section2b.bdp, tol):
-        result.add(label, "Section 2b", "Bad Debt Provision for 2b", expected_bdp, p.section2b.bdp)
-
     expected_with_bdp_total = expected_fee_without_bdp * (1 + bad_debt_pct / 100)
-    if not approx_equal(expected_with_bdp_total, p.section2b.total, tol):
-        result.add(label, "Section 2b", "2b Total Producer Fee for Comms Costs - UK wide with Bad Debt provision",
-                    expected_with_bdp_total, p.section2b.total)
-
     expected_country = ByCountry(
         england=expected_with_bdp_total * apportionment.england / 100,
         wales=expected_with_bdp_total * apportionment.wales / 100,
         scotland=expected_with_bdp_total * apportionment.scotland / 100,
         northern_ireland=expected_with_bdp_total * apportionment.northern_ireland / 100,
     )
-    for country_name, exp_val, actual_val in [
-        ("England", expected_country.england, p.section2b.by_country.england),
-        ("Wales", expected_country.wales, p.section2b.by_country.wales),
-        ("Scotland", expected_country.scotland, p.section2b.by_country.scotland),
-        ("Northern Ireland", expected_country.northern_ireland, p.section2b.by_country.northern_ireland),
-    ]:
-        if not approx_equal(exp_val, actual_val, tol):
-            result.add(label, "Section 2b", f"{country_name} Total with Bad Debt provision", exp_val, actual_val)
+    section = UnroundedSection(without_bdp=expected_fee_without_bdp, bdp=expected_bdp, by_country=expected_country)
+    check_section_exact(result, label, "Section 2b", section, p.section2b,
+                         "2b Total Producer Fee for Comms Costs - UK wide w/o Bad Debt provision", "Bad Debt Provision for 2b",
+                         "2b Total Producer Fee for Comms Costs - UK wide with Bad Debt provision")
+    return section
 
 
-def verify_section2c(p: ProducerRow, comms: CommsCostParameters, bad_debt_pct: Decimal, tol: Decimal, result: VerificationResult):
+def verify_section2c(
+    p: ProducerRow, pct_tonnage: Decimal, comms: CommsCostParameters, bad_debt_pct: Decimal, result: VerificationResult
+) -> UnroundedSection:
     """
-    Check 3c: Comms Costs by Country, apportioned to this producer by its share of all
-    producers' tonnage. Unlike 2b, the per-country split here follows the *raw* by-country
-    comms cost split directly (not the 1+4 apportionment).
+    Check 3c: Comms Costs by Country, apportioned to this producer by its share (`pct_tonnage`,
+    unrounded) of all producers' tonnage. Unlike 2b, the per-country split here follows the
+    *raw* by-country comms cost split directly (not the 1+4 apportionment). Returns the
+    producer's unrounded Section 2c total.
     """
     label = producer_label(p)
-    if p.pct_tonnage_vs_all_producers is None:
-        return
-    pct = p.pct_tonnage_vs_all_producers / 100
+    pct = pct_tonnage / 100
 
     expected_fee_without_bdp = comms.by_country.total * pct
-    if not approx_equal(expected_fee_without_bdp, p.section2c.without_bdp, tol):
-        result.add(label, "Section 2c", "2c Total Producer Fee for Comms Costs - by Country w/o Bad Debt provision",
-                    expected_fee_without_bdp, p.section2c.without_bdp)
-
     expected_bdp = expected_fee_without_bdp * bad_debt_pct / 100
-    if not approx_equal(expected_bdp, p.section2c.bdp, tol):
-        result.add(label, "Section 2c", "Bad Debt Provision for 2c", expected_bdp, p.section2c.bdp)
-
     expected_with_bdp_total = expected_fee_without_bdp * (1 + bad_debt_pct / 100)
-    if not approx_equal(expected_with_bdp_total, p.section2c.total, tol):
-        result.add(label, "Section 2c", "2c Total Producer Fee for Comms Costs - by Country with Bad Debt provision",
-                    expected_with_bdp_total, p.section2c.total)
-
     expected_country = ByCountry(
         england=comms.by_country.england * (1 + bad_debt_pct / 100) * pct,
         wales=comms.by_country.wales * (1 + bad_debt_pct / 100) * pct,
         scotland=comms.by_country.scotland * (1 + bad_debt_pct / 100) * pct,
         northern_ireland=comms.by_country.northern_ireland * (1 + bad_debt_pct / 100) * pct,
     )
-    for country_name, exp_val, actual_val in [
-        ("England", expected_country.england, p.section2c.by_country.england),
-        ("Wales", expected_country.wales, p.section2c.by_country.wales),
-        ("Scotland", expected_country.scotland, p.section2c.by_country.scotland),
-        ("Northern Ireland", expected_country.northern_ireland, p.section2c.by_country.northern_ireland),
-    ]:
-        if not approx_equal(exp_val, actual_val, tol):
-            result.add(label, "Section 2c", f"{country_name} Total with Bad Debt provision", exp_val, actual_val)
+    section = UnroundedSection(without_bdp=expected_fee_without_bdp, bdp=expected_bdp, by_country=expected_country)
+    check_section_exact(result, label, "Section 2c", section, p.section2c,
+                         "2c Total Producer Fee for Comms Costs - by Country w/o Bad Debt provision", "Bad Debt Provision for 2c",
+                         "2c Total Producer Fee for Comms Costs - by Country with Bad Debt provision")
+    return section
+
+
+def verify_pct_tonnage_vs_all_producers(
+    p: ProducerRow, producer_tonnage: Decimal, tonnage_grand_total: Decimal, result: VerificationResult
+) -> Decimal:
+    """
+    Checks "Percentage of Producer Tonnage vs All Producers" -- the input Sections 2b and
+    2c apportion by -- against this producer's own total packaging tonnage (summed across
+    materials) as a percentage of the exact run-wide tonnage total (accumulated from every
+    L1 producer in an earlier pass). Returns the unrounded percentage: like the cost
+    percentage below, TonnageVsAllProducerUtil computes this without any intermediate
+    rounding, and Sections 2b/2c apportion by that unrounded in-memory value, not the 8dp
+    figure the file prints.
+    """
+    label = producer_label(p)
+    expected_pct = Decimal(0) if tonnage_grand_total == 0 else producer_tonnage / tonnage_grand_total * 100
+    check_exact(result, label, "Percentage of Producer Tonnage vs All Producers",
+                "Percentage of Producer Tonnage vs All Producers", expected_pct, p.pct_tonnage_vs_all_producers, 8)
+    return expected_pct
 
 
 def verify_producer_pct_cost_vs_all_producers(
-    p: ProducerRow, header_total_1_2a2b2c: Decimal, result: VerificationResult
-):
+    p: ProducerRow,
+    section1: UnroundedSection,
+    section2a: UnroundedSection,
+    section2b: UnroundedSection,
+    section2c: UnroundedSection,
+    header_total_1_2a2b2c: Decimal,
+    result: VerificationResult,
+) -> Decimal:
     """
     Checks that "Producer Percentage of Overall Producer Cost for (1+2a+2b+2c)" -- the input
     that sections 3, 4 and 5 apportion by -- is this producer's own (1+2a+2b+2c) total as a
-    percentage of the run-wide (1+2a+2b+2c) total (read once from the file's header row).
+    percentage of the run-wide (1+2a+2b+2c) total. `header_total_1_2a2b2c` is computed in an
+    earlier pass over the whole file as Section 1 and 2a summed across every L1 producer
+    (both additive) plus Section 2b/2c computed directly from the run-wide comms totals
+    (TwoBCommsCostProducer/TwoCCommsCostProducer -- these are NOT sums of individual
+    producers' 2b/2c shares, which is a distinction that matters here: it isn't the file's
+    own printed header cell, which is already rounded to 2dp for display and would
+    reintroduce a rounding step the app itself never takes at this point.
+
+    Returns the unrounded percentage (not the 8dp-rounded value the file prints): this is
+    what OnePlus2A2B2CProducer.GetOverallProducerPercentage computes and what sections 3/4/5
+    actually apportion by in-memory, before the CSV exporter rounds it for display -- so
+    sections 3/4/5 must use this exact value, not the printed 8dp approximation of it.
     """
     label = producer_label(p)
-    producer_total = p.section1_total.total + p.section2a.total + p.section2b.total + p.section2c.total
+    producer_total = section1.with_bdp_total + section2a.with_bdp_total + section2b.with_bdp_total + section2c.with_bdp_total
 
-    if header_total_1_2a2b2c == 0:
-        expected_pct = Decimal(0)
-    else:
-        expected_pct = producer_total / header_total_1_2a2b2c * 100
-
-    if not approx_equal(expected_pct, p.pct_cost_vs_all_producers, Decimal("0.01")):
-        result.add(label, "Producer Percentage of Overall Producer Cost",
-                    "Producer Percentage of Overall Producer Cost for (1+2a+2b+2c)",
-                    expected_pct, p.pct_cost_vs_all_producers)
+    expected_pct = Decimal(0) if header_total_1_2a2b2c == 0 else producer_total / header_total_1_2a2b2c * 100
+    check_exact(result, label, "Producer Percentage of Overall Producer Cost",
+                "Producer Percentage of Overall Producer Cost for (1+2a+2b+2c)",
+                expected_pct, p.pct_cost_vs_all_producers, 8)
+    return expected_pct
 
 
 def verify_sections_3_4_5(
     p: ProducerRow,
+    producer_pct: Decimal,
     comms: CommsCostParameters,
     other_params: OtherParameters,
     bad_debt_pct: Decimal,
-    tol: Decimal,
     result: VerificationResult,
-):
+) -> tuple[UnroundedSection, UnroundedSection, UnroundedSection]:
     """
     Check 4: SA Operating Costs, LA Data Prep Costs, SA Set Up Costs. All three are
     structurally identical -- a fixed run-wide total apportioned to this producer by its
-    'Percentage of Overall Producer Cost for (1+2a+2b+2c)', then split by country.
-    Section 4 uses its own ("4 Country Apportionment %s") apportionment; 3 and 5 use 1+4%.
+    (unrounded) 'Percentage of Overall Producer Cost for (1+2a+2b+2c)', then split by
+    country. Section 4 uses its own ("4 Country Apportionment %s") apportionment; 3 and 5
+    use 1+4%. Returns the three unrounded sections, for exact summation into the Total
+    Producer Bill.
     """
     label = producer_label(p)
-    if p.pct_cost_vs_all_producers is None:
-        return
-    producer_pct = p.pct_cost_vs_all_producers
 
     sections = [
         ("Section 3", other_params.sa_operating_cost_total, comms.one_plus_four_apportionment_pct, p.section3),
         ("Section 4", other_params.la_data_prep_charge_total, other_params.la_data_prep_apportionment_pct, p.section4),
         ("Section 5", other_params.scheme_setup_cost_total, comms.one_plus_four_apportionment_pct, p.section5),
     ]
+    results = []
 
     for section_name, section_total, apportionment, printed in sections:
         expected_without_bdp = producer_pct * section_total / 100
-        if not approx_equal(expected_without_bdp, printed.without_bdp, tol):
-            result.add(label, section_name, "w/o Bad Debt Provision", expected_without_bdp, printed.without_bdp)
-
         expected_bdp = expected_without_bdp * bad_debt_pct / 100
-        if not approx_equal(expected_bdp, printed.bdp, tol):
-            result.add(label, section_name, "Bad Debt Provision", expected_bdp, printed.bdp)
-
         expected_with_bdp_total = expected_without_bdp * (1 + bad_debt_pct / 100)
-        if not approx_equal(expected_with_bdp_total, printed.total, tol):
-            result.add(label, section_name, "with Bad Debt Provision", expected_with_bdp_total, printed.total)
-
         expected_country = ByCountry(
             england=expected_with_bdp_total * apportionment.england / 100,
             wales=expected_with_bdp_total * apportionment.wales / 100,
             scotland=expected_with_bdp_total * apportionment.scotland / 100,
             northern_ireland=expected_with_bdp_total * apportionment.northern_ireland / 100,
         )
-        for country_name, exp_val, actual_val in [
-            ("England", expected_country.england, printed.by_country.england),
-            ("Wales", expected_country.wales, printed.by_country.wales),
-            ("Scotland", expected_country.scotland, printed.by_country.scotland),
-            ("Northern Ireland", expected_country.northern_ireland, printed.by_country.northern_ireland),
-        ]:
-            if not approx_equal(exp_val, actual_val, tol):
-                result.add(label, section_name, f"{country_name} Total with Bad Debt provision", exp_val, actual_val)
+        section = UnroundedSection(without_bdp=expected_without_bdp, bdp=expected_bdp, by_country=expected_country)
+        check_section_exact(result, label, section_name, section, printed,
+                             "w/o Bad Debt Provision", "Bad Debt Provision", "with Bad Debt Provision")
+        results.append(section)
+
+    return tuple(results)
 
 
-def verify_total_bill(p: ProducerRow, tol: Decimal, result: VerificationResult):
+def verify_total_bill(
+    p: ProducerRow,
+    section1: UnroundedSection, section2a: UnroundedSection, section2b: UnroundedSection, section2c: UnroundedSection,
+    section3: UnroundedSection, section4: UnroundedSection, section5: UnroundedSection,
+    result: VerificationResult,
+) -> UnroundedSection:
     """
-    Check 5: Total Producer Bill = Section 1 + 2a + 2b + 2c + 3 + 4 + 5.
-
-    Sections 1 through 5 are each already independently verified above --
-    this check only re-derives the *addition*, using every
-    section's own printed total. That's why the tolerance here is a little
-    looser than elsewhere: each of the 7 inputs was itself rounded once for
-    display, so their sum can legitimately differ from the printed grand
-    total (which was rounded once from the true, unrounded sum) by a few
-    pence -- that is expected rounding noise, not a discrepancy.
+    Check 5: Total Producer Bill = Section 1 + 2a + 2b + 2c + 3 + 4 + 5, using each
+    section's own exact (unrounded) recomputed figures -- matching
+    TotalBillBreakdownProducer, which sums the in-memory (unrounded)
+    CalcResultSummaryBadDebtProvision objects and only rounds once, at CSV-display time.
+    Returns the unrounded Total Producer Bill for the billing-instruction check.
     """
     label = producer_label(p)
-    loose_tol = max(tol, Decimal("0.05"))
-
-    expected_total = (
-        p.section1_total.total
-        + p.section2a.total
-        + p.section2b.total
-        + p.section2c.total
-        + p.section3.total
-        + p.section4.total
-        + p.section5.total
-    )
-    if not approx_equal(expected_total, p.total_bill.total, loose_tol):
-        result.add(label, "Total Producer Bill", "Total Producer Bill (1+2a+2b+2c+3+4+5) with Bad Debt Provision",
-                    expected_total, p.total_bill.total)
-
-    expected_by_country = (
-        p.section1_total.by_country
-        + p.section2a.by_country
-        + p.section2b.by_country
-        + p.section2c.by_country
-        + p.section3.by_country
-        + p.section4.by_country
-        + p.section5.by_country
-    )
-    for country_name, exp_val, actual_val in [
-        ("England", expected_by_country.england, p.total_bill.by_country.england),
-        ("Wales", expected_by_country.wales, p.total_bill.by_country.wales),
-        ("Scotland", expected_by_country.scotland, p.total_bill.by_country.scotland),
-        ("Northern Ireland", expected_by_country.northern_ireland, p.total_bill.by_country.northern_ireland),
-    ]:
-        if not approx_equal(exp_val, actual_val, loose_tol):
-            result.add(label, "Total Producer Bill", f"{country_name} Total with Bad Debt provision", exp_val, actual_val)
+    total = section1 + section2a + section2b + section2c + section3 + section4 + section5
+    check_section_exact(result, label, "Total Producer Bill", total, p.total_bill,
+                         "Total Producer Bill (1+2a+2b+2c+3+4+5) w/o Bad Debt Provision",
+                         "Bad Debt Provision for Total Producer Bill",
+                         "Total Producer Bill (1+2a+2b+2c+3+4+5) with Bad Debt Provision")
+    return total
 
 
-def verify_billing_instruction(p: ProducerRow, params: OtherParameters, tol: Decimal, result: VerificationResult):
+def verify_billing_instruction(
+    p: ProducerRow, total_bill: UnroundedSection, params: OtherParameters, result: VerificationResult
+):
     """Check 6: suggested billing instruction and invoice amount."""
     label = producer_label(p)
     prior = p.current_year_invoiced_total_to_date
@@ -1457,11 +1521,14 @@ def verify_billing_instruction(p: ProducerRow, params: OtherParameters, tol: Dec
         expected_liability_diff = None
     else:
         expected_liability_diff = (
-            round_half_away_from_zero(p.total_bill.total, 2)
+            round_half_away_from_zero(total_bill.with_bdp_total, 2)
             - round_half_away_from_zero(prior, 2)
         )
 
-    if not approx_equal(expected_liability_diff, p.liability_difference, tol):
+    if expected_liability_diff is None:
+        if p.liability_difference is not None:
+            result.add(label, "Billing Instruction", "Liability Difference (Calc vs Prev)", None, p.liability_difference)
+    elif expected_liability_diff != p.liability_difference:
         result.add(label, "Billing Instruction", "Liability Difference (Calc vs Prev)",
                     expected_liability_diff, p.liability_difference)
 
@@ -1495,7 +1562,7 @@ def verify_billing_instruction(p: ProducerRow, params: OtherParameters, tol: Dec
         expected_pct_diff = None
     else:
         expected_pct_diff = round_half_away_from_zero(expected_liability_diff / prior * 100, 2)
-    if not approx_equal(expected_pct_diff, p.pct_liability_difference, Decimal("0.01")):
+    if expected_pct_diff != p.pct_liability_difference:
         result.add(label, "Billing Instruction", "% Liability Difference (Calc vs Prev)",
                     expected_pct_diff, p.pct_liability_difference)
 
@@ -1534,13 +1601,13 @@ def verify_billing_instruction(p: ProducerRow, params: OtherParameters, tol: Dec
                     expected_instruction, p.suggested_billing_instruction)
 
     if expected_instruction in ("INITIAL", "REBILL"):
-        expected_amount = p.total_bill.total
+        expected_amount = round_half_away_from_zero(total_bill.with_bdp_total, 2)
     elif expected_instruction == "DELTA":
         expected_amount = expected_liability_diff
     else:
         expected_amount = None
 
-    if not approx_equal(expected_amount, p.suggested_invoice_amount, tol):
+    if expected_amount != p.suggested_invoice_amount:
         result.add(label, "Billing Instruction", "Suggested Invoice Amount",
                     expected_amount, p.suggested_invoice_amount)
 
@@ -1553,12 +1620,9 @@ def verify_billing_instruction(p: ProducerRow, params: OtherParameters, tol: Dec
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("results_csv", help="Path to a Results CSV export")
-    parser.add_argument("--tolerance", type=str, default="0.01",
-                         help="Currency comparison tolerance in pounds (default: 0.01)")
     parser.add_argument("--verbose", action="store_true", help="Print every discrepancy in full")
     args = parser.parse_args()
 
-    tol = Decimal(args.tolerance)
     rows = load_rows(args.results_csv)
 
     lapcap = parse_lapcap_data(rows)
@@ -1566,19 +1630,31 @@ def main() -> int:
     modulation = parse_modulation_calculation(rows, lapcap.materials_order)
     late_reporting = parse_late_reporting_tonnages(rows, lapcap.materials_order)
     other_params = parse_other_parameters(rows)
-    comms = parse_comms_cost_parameters(rows, lapcap.materials_order)
+    comms = parse_comms_cost_parameters(rows, lapcap.materials_order, lapcap.total_by_country, other_params.la_data_prep_by_country)
 
     if modulation is None:
         print("This file has no 'Modulation Calculation' section -- it is a pre-modulation")
         print("Results file, which this version of the script does not support.")
         return 2
 
+    result = VerificationResult()
+
+    # Sanity-check the derived (exact) apportionment percentages against the file's own
+    # printed (8dp-rounded) percentages -- confirms the derivation matches what the app
+    # actually computed, rather than silently drifting from it.
+    check_exact(result, "(run-wide)", "Apportionment", "1 Country Apportionment %s (England)",
+                lapcap.country_apportionment_pct.england, lapcap.printed_country_apportionment_pct.england, 8)
+    check_exact(result, "(run-wide)", "Apportionment", "1 + 4 Apportionment %s (England)",
+                comms.one_plus_four_apportionment_pct.england, comms.printed_one_plus_four_apportionment_pct.england, 8)
+    check_exact(result, "(run-wide)", "Apportionment", "4 Country Apportionment %s (England)",
+                other_params.la_data_prep_apportionment_pct.england, other_params.printed_la_data_prep_apportionment_pct.england, 8)
+
     # Sanity-check the modulation section's Amber price against LA Disposal Cost Data
     # (both should be the same underlying flat price-per-tonne).
     for material in lapcap.materials_order:
         expected_amber = la_disposal.price_per_tonne[material]
         actual_amber = modulation.by_material[material].amber_price
-        if expected_amber is not None and actual_amber is not None and abs(expected_amber - actual_amber) > Decimal("0.0001"):
+        if expected_amber is not None and actual_amber is not None and expected_amber != actual_amber:
             print(f"WARNING: Amber price mismatch between 'LA Disposal Cost Data' and 'Modulation Calculation' "
                   f"for {material}: {expected_amber} vs {actual_amber}")
 
@@ -1588,13 +1664,6 @@ def main() -> int:
     schema = build_producer_table_schema(lapcap.materials_order, glass_name)
     offsets = block_offsets(schema)
 
-    # The "group header" row -- one row above the column-header row -- carries each
-    # PartExporter's AppendGroupHeader output, written once per file at the same column
-    # positions as the per-producer data rows. That's where the run-wide (1+2a+2b+2c)
-    # total (the denominator for each producer's share of overall cost) is printed.
-    op_lo, _op_hi = offsets["oneplus_2a2b2c"]
-    header_total_1_2a2b2c = d(parse_money(rows[header_row - 1][op_lo]))
-
     raw_producer_rows = read_producer_rows(rows, first_data_row)
     id_lo, id_hi = offsets["identity"]
 
@@ -1602,13 +1671,21 @@ def main() -> int:
         idn = cells[id_lo:id_hi]
         return idn[0].strip(), idn[4].strip()  # producer_id, level
 
-    result = VerificationResult()
-    verify_modulation(modulation, lapcap.materials_order, tol, result)
+    verify_modulation(modulation, lapcap.materials_order, result)
 
     net_tonnage_sum_by_material = {
         m: RagAmounts(red=Decimal(0), amber=Decimal(0), green=Decimal(0)) for m in lapcap.materials_order
     }
 
+    # --- Pass 1: parse every L1 producer, verify Sections 1 and 2a (each only needs
+    # run-wide inputs known upfront), and accumulate two exact run-wide totals that later
+    # sections depend on: the total packaging tonnage across every producer (the
+    # denominator Sections 2b/2c apportion by) and the (1+2a+2b+2c) total (the denominator
+    # Sections 3/4/5 apportion by). Sections 2b/2c, 3/4/5, the Total Bill, and the billing
+    # instruction all wait for pass 2, once every producer has been folded into these.
+    cached = []
+    header_total_1_2a2b2c = Decimal(0)
+    tonnage_grand_total = Decimal(0)
     l1_count = 0
     l2_count = 0
     for idx, cells in enumerate(raw_producer_rows):
@@ -1632,7 +1709,7 @@ def main() -> int:
             l2_count += 1
             j += 1
 
-        verify_l1_equals_sum_of_l2(p, l2_tonnage_rows, lapcap.materials_order, Decimal("0.01"), result)
+        verify_l1_equals_sum_of_l2(p, l2_tonnage_rows, lapcap.materials_order, result)
 
         # Attach the run-wide modulation prices as each material's price, for
         # verify_section1_disposal_fee (per-producer prices are the same run-wide
@@ -1641,13 +1718,13 @@ def main() -> int:
         for material in lapcap.materials_order:
             mf = p.by_material[material]
             mm = modulation.by_material[material]
-            if mf.price_red is not None and abs(mf.price_red - mm.red_price) > Decimal("0.0001"):
+            if mf.price_red is not None and mf.price_red != mm.red_price:
                 result.add(producer_label(p), f"Section 1 :: {material}", "Red + Red Medical Material Price per Tonne",
                             mm.red_price, mf.price_red)
-            if mf.price_amber is not None and abs(mf.price_amber - mm.amber_price) > Decimal("0.0001"):
+            if mf.price_amber is not None and mf.price_amber != mm.amber_price:
                 result.add(producer_label(p), f"Section 1 :: {material}", "Amber + Amber Medical Material Price per Tonne",
                             mm.amber_price, mf.price_amber)
-            if mf.price_green is not None and abs(mf.price_green - mm.green_price) > Decimal("0.0001"):
+            if mf.price_green is not None and mf.price_green != mm.green_price:
                 result.add(producer_label(p), f"Section 1 :: {material}", "Green + Green Medical Material Price per Tonne",
                             mm.green_price, mf.price_green)
 
@@ -1657,18 +1734,50 @@ def main() -> int:
                     red=totals.red + mf.net_red, amber=totals.amber + mf.net_amber, green=totals.green + mf.net_green
                 )
 
-        verify_section1_disposal_fee(p, lapcap.materials_order, lapcap.country_apportionment_pct,
-                                      other_params.bad_debt_pct, tol, result)
-        verify_section2a(p, lapcap.materials_order, comms, other_params.bad_debt_pct, tol, result)
-        verify_section2b(p, comms, other_params.bad_debt_pct, tol, result)
-        verify_section2c(p, comms, other_params.bad_debt_pct, tol, result)
-        verify_producer_pct_cost_vs_all_producers(p, header_total_1_2a2b2c, result)
-        verify_sections_3_4_5(p, comms, other_params, other_params.bad_debt_pct, tol, result)
-        verify_total_bill(p, tol, result)
-        verify_billing_instruction(p, other_params, tol, result)
+        section1 = verify_section1_disposal_fee(p, lapcap.materials_order, lapcap.country_apportionment_pct,
+                                                  other_params.bad_debt_pct, result)
+        section2a = verify_section2a(p, lapcap.materials_order, comms, other_params.bad_debt_pct, result)
+
+        # The run-wide (1+2a+2b+2c) header total is NOT the sum of every producer's own
+        # 2b/2c share -- TwoBCommsCostProducer/TwoCCommsCostProducer compute the header's
+        # Section 2b/2c directly from the run-wide comms totals (with bad debt), with no
+        # per-producer percentage weighting at all. Only Sections 1 and 2a are additive
+        # across producers here; Section 2b/2c's own (global) contribution is added once,
+        # below, after this loop.
+        header_total_1_2a2b2c += section1.with_bdp_total + section2a.with_bdp_total
+
+        # This producer's own total packaging tonnage (Household + Public Bin + [Glass]
+        # Household Drinks Containers, summed across materials) -- the numerator for its
+        # share of tonnage_grand_total, which Sections 2b/2c apportion by.
+        producer_tonnage = sum((p.by_material[m].tonnage.total for m in lapcap.materials_order), Decimal(0))
+        tonnage_grand_total += producer_tonnage
+
+        cached.append((p, section1, section2a, producer_tonnage))
+
+    header_total_1_2a2b2c += (
+        comms.uk_wide_total * (1 + other_params.bad_debt_pct / 100)
+        + comms.by_country.total * (1 + other_params.bad_debt_pct / 100)
+    )
+
+    # --- Pass 2: now that tonnage_grand_total and header_total_1_2a2b2c are the exact
+    # totals across every producer, verify each producer's share of each, Sections 2b/2c,
+    # 3/4/5, the Total Bill, and billing instruction.
+    for p, section1, section2a, producer_tonnage in cached:
+        pct_tonnage = verify_pct_tonnage_vs_all_producers(p, producer_tonnage, tonnage_grand_total, result)
+        section2b = verify_section2b(p, pct_tonnage, comms, other_params.bad_debt_pct, result)
+        section2c = verify_section2c(p, pct_tonnage, comms, other_params.bad_debt_pct, result)
+
+        producer_pct = verify_producer_pct_cost_vs_all_producers(
+            p, section1, section2a, section2b, section2c, header_total_1_2a2b2c, result
+        )
+        section3, section4, section5 = verify_sections_3_4_5(
+            p, producer_pct, comms, other_params, other_params.bad_debt_pct, result
+        )
+        total_bill = verify_total_bill(p, section1, section2a, section2b, section2c, section3, section4, section5, result)
+        verify_billing_instruction(p, total_bill, other_params, result)
 
     verify_modulation_vs_producers(modulation, late_reporting, lapcap.materials_order,
-                                    net_tonnage_sum_by_material, Decimal("0.01"), result)
+                                    net_tonnage_sum_by_material, result)
 
     print(f"Checked {l1_count} Level-1 producer row(s) ({l2_count} Level-2 subsidiary rows found) in {args.results_csv}")
     print(f"Materials: {', '.join(lapcap.materials_order)}")
