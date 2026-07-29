@@ -24,7 +24,11 @@ For each L1 producer row, the checks are:
      section derives a Red and Green disposal-cost-per-tonne for each
      material from a single Amber ("flat") price plus a Red Modulation
      Factor. We recompute the Green Modulation Factor and the per-material
-     Red/Green prices from that section's own printed intermediate figures.
+     Red/Green prices from that section's own printed intermediate figures,
+     and separately confirm that section's starting tonnage figures equal
+     the sum of every L1 producer's own Net Tonnage plus the Late Reporting
+     Tonnage parameter -- tying the run-wide pricing back to the same
+     per-producer data checked in step 2, rather than trusting it in isolation.
 
   2. Section 1 -- LA Disposal Fee: for each material, the producer's own
      "Net Tonnage" (Red/Amber/Green) is multiplied by that material's
@@ -55,11 +59,13 @@ SCOPE / KNOWN LIMITATIONS
   * Sections 2a, 2b, 2c, 3, 4 and 5 are trusted as given inputs when
     checking the Total Producer Bill -- their own formulas are not
     independently re-derived by this version of the script.
-  * One documented edge case is not modelled: when a producer's aggregated
-    Level-1 disposal fee is forced to zero because its self-managed
-    consumer waste tonnage exceeds its total reported tonnage, this script
-    will still expect fee = net tonnage x price and may report a false
-    discrepancy. This is rare and only affects producers with subsidiaries.
+  * The app zeroes a material's disposal fee outright if self-managed
+    consumer waste tonnage exceeds raw reported tonnage. For a multi-entity
+    producer that comparison is against group-level (summed-across-L2)
+    figures, but the app prints those already-aggregated group figures
+    directly on the L1 row itself (see ProducerRowBuilder.GetL1TotalRow), so
+    this script replicates the guard from the L1 row alone -- no L2 data
+    needed, for single-entity and multi-entity producers alike.
 
 USAGE
 =====
@@ -233,6 +239,37 @@ def parse_la_disposal_cost_data(rows: list[list[str]], materials_order: list[str
         prices[material] = parse_money(rows[r][price_col])
         r += 1
     return LaDisposalCostData(price_per_tonne=prices)
+
+
+@dataclass
+class RagAmounts:
+    red: Decimal
+    amber: Decimal
+    green: Decimal
+
+
+@dataclass
+class LateReportingTonnages:
+    # material name -> grouped (Red+RedMedical, Amber+AmberMedical, Green+GreenMedical) late reporting tonnage
+    by_material: dict[str, RagAmounts]
+
+
+def parse_late_reporting_tonnages(rows: list[list[str]], materials_order: list[str]) -> LateReportingTonnages:
+    section = find_row(rows, "Parameters - Late Reporting Tonnages")
+    header = rows[section + 1]
+    col = {name: i for i, name in enumerate(header)}
+    by_material = {}
+    r = section + 2
+    for _ in materials_order:
+        cells = rows[r]
+        material = cells[0].strip()
+        by_material[material] = RagAmounts(
+            red=parse_decimal(cells[col["Red + Red Medical Late Reporting Tonnage"]]),
+            amber=parse_decimal(cells[col["Amber + Amber Medical Late Reporting Tonnage"]]),
+            green=parse_decimal(cells[col["Green + Green Medical Late Reporting Tonnage"]]),
+        )
+        r += 1
+    return LateReportingTonnages(by_material=by_material)
 
 
 @dataclass
@@ -465,6 +502,8 @@ def parse_with_bdp(cells: list[str], i: int) -> tuple[WithBdp, int]:
 
 @dataclass
 class MaterialFigures:
+    raw_total_tonnage: Optional[Decimal]  # "Total Tonnage" -- reported tonnage before SMCW is deducted
+    smcw_tonnage: Optional[Decimal]  # "Self Managed Consumer Waste Tonnage"
     net_red: Optional[Decimal]
     net_amber: Optional[Decimal]
     net_green: Optional[Decimal]
@@ -527,8 +566,9 @@ def parse_producer_row(
         if is_glass:
             i += 1 + len(RAG_KEYS)  # household drinks containers
         # Total-tonnage block: total(1), rag(6), grouped-rag(3)
-        i += 10
-        i += 1  # SMCW
+        raw_total_tonnage = parse_decimal(m[i]); i += 1
+        i += 6 + 3  # skip the RAG(6) and grouped-RAG(3) breakdown of that same block
+        smcw_tonnage = parse_decimal(m[i]); i += 1
         i += 4  # actioned SMCW (total,red,amber,green)
         net_total = parse_decimal(m[i]); i += 1
         net_red = parse_decimal(m[i]); i += 1
@@ -545,6 +585,7 @@ def parse_producer_row(
         fee, i = parse_with_bdp(m, i)
 
         by_material[material] = MaterialFigures(
+            raw_total_tonnage=raw_total_tonnage, smcw_tonnage=smcw_tonnage,
             net_red=net_red, net_amber=net_amber, net_green=net_green, net_total=net_total,
             price_red=price_red, price_amber=price_amber, price_green=price_green,
             printed_fee_red=fee_red, printed_fee_amber=fee_amber, printed_fee_green=fee_green,
@@ -687,6 +728,43 @@ def verify_modulation(mod: ModulationCalculation, materials_order: list[str], to
             result.add(f"(modulation:{material})", section, "Green Material Disposal Cost", expected_green_price, mm.green_price)
 
 
+def verify_modulation_vs_producers(
+    mod: ModulationCalculation,
+    late_reporting: LateReportingTonnages,
+    materials_order: list[str],
+    net_tonnage_sum_by_material: dict[str, RagAmounts],
+    tonnage_tol: Decimal,
+    result: VerificationResult,
+):
+    """
+    Check 1b: the "Net Tonnage + Late Reporting Tonnage" figures that the Modulation
+    Calculation section's pricing is built on should equal the sum of every L1
+    producer's own Net Tonnage (by RAG group) plus the Late Reporting Tonnage
+    parameter. This ties the run-wide modulation pricing back to the same
+    per-producer data used in check 2, rather than trusting it as a disconnected
+    input.
+    """
+    section = "Modulation Calculation vs producer data"
+    for material in materials_order:
+        mm = mod.by_material[material]
+        lrt = late_reporting.by_material[material]
+        summed = net_tonnage_sum_by_material[material]
+
+        expected_red = summed.red + lrt.red
+        expected_amber = summed.amber + lrt.amber
+        expected_green = summed.green + lrt.green
+
+        if not approx_equal(expected_red, mm.red_net_tonnage, tonnage_tol):
+            result.add(f"(modulation:{material})", section,
+                        "Red + Red Medical Net Tonnage + Late Reporting Tonnage", expected_red, mm.red_net_tonnage)
+        if not approx_equal(expected_amber, mm.amber_net_tonnage, tonnage_tol):
+            result.add(f"(modulation:{material})", section,
+                        "Amber + Amber Medical Net Tonnage + Late Reporting Tonnage", expected_amber, mm.amber_net_tonnage)
+        if not approx_equal(expected_green, mm.green_net_tonnage, tonnage_tol):
+            result.add(f"(modulation:{material})", section,
+                        "Green + Green Medical Net Tonnage + Late Reporting Tonnage", expected_green, mm.green_net_tonnage)
+
+
 def producer_label(p: ProducerRow) -> str:
     label = f"Producer {p.producer_id}"
     if p.subsidiary_id:
@@ -717,9 +795,26 @@ def verify_section1_disposal_fee(
             # No modulation data for this producer/material combination -- nothing to check.
             continue
 
-        expected_fee_red = mf.net_red * mf.price_red
-        expected_fee_amber = mf.net_amber * mf.price_amber
-        expected_fee_green = mf.net_green * mf.price_green
+        # The app zeroes a material's disposal fee outright if self-managed consumer
+        # waste tonnage exceeds raw reported tonnage. For a multi-entity producer this
+        # compares the *group's* SMCW tonnage against the *group's* summed raw tonnage
+        # -- but the app prints exactly those two (already-aggregated) group figures as
+        # this L1 row's own "Self Managed Consumer Waste Tonnage" and "Total Tonnage"
+        # columns (see ProducerRowBuilder.GetL1TotalRow), so no L2 data is needed to
+        # replicate it: this row's own printed columns are already the right inputs,
+        # for single-entity and multi-entity producers alike.
+        zero_override = (
+            mf.smcw_tonnage is not None
+            and mf.raw_total_tonnage is not None
+            and mf.smcw_tonnage > mf.raw_total_tonnage
+        )
+
+        if zero_override:
+            expected_fee_red = expected_fee_amber = expected_fee_green = Decimal(0)
+        else:
+            expected_fee_red = mf.net_red * mf.price_red
+            expected_fee_amber = mf.net_amber * mf.price_amber
+            expected_fee_green = mf.net_green * mf.price_green
         expected_fee_total = expected_fee_red + expected_fee_amber + expected_fee_green
 
         if not approx_equal(expected_fee_red, mf.printed_fee_red, tol):
@@ -938,6 +1033,7 @@ def main() -> int:
     lapcap = parse_lapcap_data(rows)
     la_disposal = parse_la_disposal_cost_data(rows, lapcap.materials_order)
     modulation = parse_modulation_calculation(rows, lapcap.materials_order)
+    late_reporting = parse_late_reporting_tonnages(rows, lapcap.materials_order)
     other_params = parse_other_parameters(rows)
 
     if modulation is None:
@@ -961,15 +1057,26 @@ def main() -> int:
     offsets = block_offsets(schema)
 
     raw_producer_rows = read_producer_rows(rows, first_data_row)
+    id_lo, id_hi = offsets["identity"]
+
+    def row_identity(cells: list[str]) -> tuple[str, str]:
+        idn = cells[id_lo:id_hi]
+        return idn[0].strip(), idn[4].strip()  # producer_id, level
 
     result = VerificationResult()
     verify_modulation(modulation, lapcap.materials_order, tol, result)
 
+    net_tonnage_sum_by_material = {
+        m: RagAmounts(red=Decimal(0), amber=Decimal(0), green=Decimal(0)) for m in lapcap.materials_order
+    }
+
     l1_count = 0
     for cells in raw_producer_rows:
-        p = parse_producer_row(cells, offsets, lapcap.materials_order, glass_name)
-        if p.level != "1" or p.producer_id == "":
+        producer_id, level = row_identity(cells)
+        if level != "1" or producer_id == "":
             continue  # L2 subsidiary row, or the single overall-total row: out of scope
+
+        p = parse_producer_row(cells, offsets, lapcap.materials_order, glass_name)
         l1_count += 1
 
         # Attach the run-wide modulation prices as each material's price, for
@@ -989,10 +1096,19 @@ def main() -> int:
                 result.add(producer_label(p), f"Section 1 :: {material}", "Green + Green Medical Material Price per Tonne",
                             mm.green_price, mf.price_green)
 
+            if mf.net_red is not None:
+                totals = net_tonnage_sum_by_material[material]
+                net_tonnage_sum_by_material[material] = RagAmounts(
+                    red=totals.red + mf.net_red, amber=totals.amber + mf.net_amber, green=totals.green + mf.net_green
+                )
+
         verify_section1_disposal_fee(p, lapcap.materials_order, lapcap.country_apportionment_pct,
                                       other_params.bad_debt_pct, tol, result)
         verify_total_bill(p, tol, result)
         verify_billing_instruction(p, other_params, tol, result)
+
+    verify_modulation_vs_producers(modulation, late_reporting, lapcap.materials_order,
+                                    net_tonnage_sum_by_material, Decimal("0.01"), result)
 
     print(f"Checked {l1_count} Level-1 producer row(s) in {args.results_csv}")
     print(f"Materials: {', '.join(lapcap.materials_order)}")
