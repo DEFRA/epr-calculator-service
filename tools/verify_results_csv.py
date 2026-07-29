@@ -101,6 +101,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import io
 import sys
 from dataclasses import dataclass, field
 from decimal import Decimal, ROUND_HALF_UP
@@ -168,8 +169,30 @@ def d(value) -> Decimal:
 
 
 def load_rows(path: str) -> list[list[str]]:
-    with open(path, newline="", encoding="utf-8-sig") as f:
-        return list(csv.reader(f))
+    """
+    Reads and CSV-parses the Results file, auto-detecting its text encoding. Results
+    files exported by the real application have been seen in the wild as UTF-16LE with
+    no byte-order mark (a common outcome of .NET's default Encoding.Unicode), which
+    plain UTF-8 decoding rejects outright -- as well as plain UTF-8 and UTF-8 with a
+    byte-order mark (used by this project's own test fixtures).
+    """
+    with open(path, "rb") as f:
+        raw = f.read()
+
+    if raw.startswith(b"\xff\xfe"):
+        text = raw.decode("utf-16-le")
+    elif raw.startswith(b"\xfe\xff"):
+        text = raw.decode("utf-16-be")
+    elif raw.startswith(b"\xef\xbb\xbf"):
+        text = raw.decode("utf-8-sig")
+    elif len(raw) >= 2 and raw[0] != 0 and raw[1] == 0:
+        # No BOM, but every other byte is null -- consistent with ASCII/Latin text
+        # encoded as UTF-16LE without a leading byte-order mark.
+        text = raw.decode("utf-16-le")
+    else:
+        text = raw.decode("utf-8")
+
+    return list(csv.reader(io.StringIO(text)))
 
 
 def find_row(rows: list[list[str]], first_cell: str, start: int = 0) -> int:
