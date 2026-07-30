@@ -313,6 +313,174 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             stored.ShouldBeEquivalentTo(modulation);
         }
 
+        [TestMethod]
+        public async Task StoreLapcapData_WorksAsExpected()
+        {
+            var lapcapData = MkLapcapData();
+
+            await _sut.StoreLapcapData(1, lapcapData, CancellationToken.None);
+
+            var stored = await _dbContext.LapcapData.SingleAsync();
+            stored.LapcapData.ShouldBeEquivalentTo(lapcapData);
+        }
+
+        [TestMethod]
+        public async Task StoreCommsCost_WorksAsExpected()
+        {
+            var commsCost = MkCommsCost();
+
+            await _sut.StoreCommsCost(1, commsCost, CancellationToken.None);
+
+            var stored = await _dbContext.CommCost.SingleAsync();
+            stored.CommsCost.ShouldBeEquivalentTo(commsCost);
+        }
+
+        [TestMethod]
+        public async Task StoreLateReportingTonnage_WorksAsExpected()
+        {
+            var lateReportingTonnage = MkLateReportingTonnage();
+
+            await _sut.StoreLateReportingTonnage(1, lateReportingTonnage, CancellationToken.None);
+
+            var stored = await _dbContext.LateReportingTonnage.SingleAsync();
+            stored.LateReportingTonnage.ShouldBeEquivalentTo(lateReportingTonnage);
+        }
+
+        [TestMethod]
+        public async Task StoreParameterOtherCost_WorksAsExpected()
+        {
+            var parameterOtherCost = MkParameterOtherCost();
+
+            await _sut.StoreParameterOtherCost(1, parameterOtherCost, CancellationToken.None);
+
+            var stored = await _dbContext.ParameterOtherCost.SingleAsync();
+            stored.ParameterOtherCost.ShouldBeEquivalentTo(parameterOtherCost);
+        }
+
+        [TestMethod]
+        public async Task StoreOnePlusFourApportionment_WorksAsExpected()
+        {
+            var onePlusFourApportionment = MkOnePlusFourApportionment();
+
+            await _sut.StoreOnePlusFourApportionment(1, onePlusFourApportionment, CancellationToken.None);
+
+            var stored = await _dbContext.OnePlusFourApportionment.SingleAsync();
+            stored.OnePlusFourApportionment.ShouldBeEquivalentTo(onePlusFourApportionment);
+        }
+
+        [TestMethod]
+        public async Task StoreLaDisposalCostData_WorksAsExpected()
+        {
+            var laDisposalCostData = MkLaDisposalCostData();
+
+            await _sut.StoreLaDisposalCostData(1, laDisposalCostData, CancellationToken.None);
+
+            var stored = await _dbContext.LaDisposalCostData.SingleAsync();
+            stored.LaDisposalCost.ShouldBeEquivalentTo(laDisposalCostData);
+        }
+
+        [TestMethod]
+        public async Task StoreCancelledProducers_WorksAsExpected()
+        {
+            var cancelledProducers = new List<CalcResultCancelledProducer>
+            {
+                MkCancelledProducer(1),
+                MkCancelledProducer(2)
+            };
+
+            await _sut.StoreCancelledProducers(1, cancelledProducers, CancellationToken.None);
+
+            var stored = await _dbContext.CancelledProducers.ToListAsync();
+            stored.Select(x => x.CancelledProducer).ToList().ShouldBeEquivalentTo(cancelledProducers);
+        }
+
+        private static CalcResultCancelledProducer MkCancelledProducer(int producerId) =>
+            new()
+            {
+                ProducerId = producerId,
+                SubsidiaryId = null,
+                ProducerOrSubsidiaryName = $"Producer {producerId}",
+                TradingName = $"Trading {producerId}",
+                LastTonnage = new LastTonnage { Aluminium = 10 },
+                LatestInvoice = new LatestInvoice { RunName = "RunName", RunNumber = "1", BillingInstructionId = "1_1", CurrentYearInvoicedTotalToDate = 100 }
+            };
+
+        private static CalcResultLapcapData MkLapcapData() =>
+            new()
+            {
+                ByMaterial = new Dictionary<string, ByCountryCost>
+                {
+                    [MaterialCodes.Aluminium] = new ByCountryCost { England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40 }
+                }
+            };
+
+        private static CalcResultCommsCost MkCommsCost() =>
+            new()
+            {
+                OnePlusFourApportionment = new ByCountryApportionment { England = 25, Wales = 25, Scotland = 25, NorthernIreland = 25 },
+                ByMaterial = new Dictionary<string, CalcResultCommsCostCommsCostByMaterial>
+                {
+                    [MaterialCodes.Aluminium] = new CalcResultCommsCostCommsCostByMaterial
+                    {
+                        Cost = new ByCountryCost { England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40 },
+                        TotalCost = 100,
+                        HouseholdPackagingWasteTonnage = 1,
+                        PublicBinTonnage = 2,
+                        HouseholdDrinksContainersTonnage = 3,
+                        LateReportingTonnage = 4
+                    }
+                },
+                CommsCostUkWide = new ByCountryCost { England = 1, Wales = 2, Scotland = 3, NorthernIreland = 4 },
+                CommsCostByCountry = new ByCountryCost { England = 5, Wales = 6, Scotland = 7, NorthernIreland = 8 }
+            };
+
+        private static CalcResultLateReportingTonnage MkLateReportingTonnage() =>
+            new()
+            {
+                ByMaterial = new Dictionary<string, CalcResultLateReportingTonnageDetail>
+                {
+                    [MaterialCodes.Aluminium] = new CalcResultLateReportingTonnageDetail { Total = 10, Red = 2, Amber = 3, Green = 5 }
+                }
+            };
+
+        private static CalcResultParameterOtherCost MkParameterOtherCost() =>
+            new()
+            {
+                SaOperatingCost = new ByCountryCost { England = 1, Wales = 2, Scotland = 3, NorthernIreland = 4 },
+                LaDataPrepCharge = new ByCountryCost { England = 5, Wales = 6, Scotland = 7, NorthernIreland = 8 },
+                CountryApportionment = new ByCountryApportionment { England = 25, Wales = 25, Scotland = 25, NorthernIreland = 25 },
+                SchemeSetupCost = new ByCountryCost { England = 9, Wales = 10, Scotland = 11, NorthernIreland = 12 },
+                MaterialityIncrease = new Materiality { Amount = 100, Percentage = 5 },
+                MaterialityDecrease = new Materiality { Amount = 50, Percentage = 2 },
+                TonnageChangeIncrease = new Materiality { Amount = 10, Percentage = 1 },
+                TonnageChangeDecrease = new Materiality { Amount = 5, Percentage = 0.5m },
+                BadDebtValue = 42
+            };
+
+        private static CalcResultOnePlusFourApportionment MkOnePlusFourApportionment() =>
+            new()
+            {
+                LaDisposalCost = new ByCountryCost { England = 1, Wales = 2, Scotland = 3, NorthernIreland = 4 },
+                LADataPrepCharge = new ByCountryCost { England = 5, Wales = 6, Scotland = 7, NorthernIreland = 8 }
+            };
+
+        private static CalcResultLaDisposalCostData MkLaDisposalCostData() =>
+            new()
+            {
+                ByMaterial = new Dictionary<string, CalcResultLaDisposalCostDataDetail>
+                {
+                    [MaterialCodes.Aluminium] = new CalcResultLaDisposalCostDataDetail
+                    {
+                        Cost = new ByCountryCost { England = 1, Wales = 2, Scotland = 3, NorthernIreland = 4 },
+                        HouseholdPackagingWasteTonnage = 10,
+                        PublicBinTonnage = 20,
+                        HouseholdDrinkContainersTonnage = 30,
+                        LateReportingTonnage = 5,
+                        ActionedSelfManagedConsumerWasteTonnage = 2
+                    }
+                }
+            };
+
         private SelfManagedConsumerWaste MkSelfManagedConsumerWaste(int runId)
         {
             var smcwData = new SelfManagedConsumerWasteData

@@ -191,6 +191,200 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             result.ModulationByMaterial[material].RedMaterialDisposalCost.ShouldBe(10);
         }
 
+        [TestMethod]
+        public async Task ReadLapcapData_WorksAsExpected()
+        {
+            var lapcapData = MkLapcapData();
+            _dbContext.Add(new CalcResultLapcapDataEntry { CalculatorRunId = 1, LapcapData = lapcapData });
+            await _dbContext.SaveChangesAsync();
+
+            var result = await _sut.ReadLapcapData(1, CancellationToken.None);
+
+            result.ByMaterial[MaterialCodes.Aluminium].England.ShouldBe(10);
+            result.Total.England.ShouldBe(10);
+        }
+
+        [TestMethod]
+        public async Task ReadCommsCost_WorksAsExpected()
+        {
+            var commsCost = MkCommsCost();
+            _dbContext.Add(new CalcResultCommsCostEntry { CalculatorRunId = 1, CommsCost = commsCost });
+            await _dbContext.SaveChangesAsync();
+
+            var result = await _sut.ReadCommsCost(1, CancellationToken.None);
+
+            result.ByMaterial[MaterialCodes.Aluminium].TotalCost.ShouldBe(100);
+            result.CommsCostUkWide.England.ShouldBe(1);
+            result.CommsCostByCountry.England.ShouldBe(5);
+            result.OnePlusFourApportionment.England.ShouldBe(25);
+        }
+
+        [TestMethod]
+        public async Task ReadLateReportingTonnage_WorksAsExpected()
+        {
+            var lateReportingTonnage = MkLateReportingTonnage();
+            _dbContext.Add(new CalcResultLateReportingTonnageEntry { CalculatorRunId = 1, LateReportingTonnage = lateReportingTonnage });
+            await _dbContext.SaveChangesAsync();
+
+            var result = await _sut.ReadLateReportingTonnage(1, CancellationToken.None);
+
+            result.ByMaterial[MaterialCodes.Aluminium].Total.ShouldBe(10);
+            result.ByMaterial[MaterialCodes.Aluminium].Red.ShouldBe(2);
+            result.ByMaterial[MaterialCodes.Aluminium].Amber.ShouldBe(3);
+            result.ByMaterial[MaterialCodes.Aluminium].Green.ShouldBe(5);
+        }
+
+        [TestMethod]
+        public async Task ReadParameterOtherCost_WorksAsExpected()
+        {
+            var parameterOtherCost = MkParameterOtherCost();
+            _dbContext.Add(new CalcResultParameterOtherCostEntry { CalculatorRunId = 1, ParameterOtherCost = parameterOtherCost });
+            await _dbContext.SaveChangesAsync();
+
+            var result = await _sut.ReadParameterOtherCost(1, CancellationToken.None);
+
+            result.SaOperatingCost.England.ShouldBe(1);
+            result.LaDataPrepCharge.England.ShouldBe(5);
+            result.SchemeSetupCost.England.ShouldBe(9);
+            result.MaterialityIncrease.Amount.ShouldBe(100);
+            result.BadDebtValue.ShouldBe(42);
+        }
+
+        [TestMethod]
+        public async Task ReadOnePlusFourApportionment_WorksAsExpected()
+        {
+            var onePlusFourApportionment = MkOnePlusFourApportionment();
+            _dbContext.Add(new CalcResultOnePlusFourApportionmentEntry { CalculatorRunId = 1, OnePlusFourApportionment = onePlusFourApportionment });
+            await _dbContext.SaveChangesAsync();
+
+            var result = await _sut.ReadOnePlusFourApportionment(1, CancellationToken.None);
+
+            result.LaDisposalCost.England.ShouldBe(1);
+            result.LADataPrepCharge.England.ShouldBe(5);
+        }
+
+        [TestMethod]
+        public async Task ReadLaDisposalCostData_WorksAsExpected()
+        {
+            var laDisposalCostData = MkLaDisposalCostData();
+            _dbContext.Add(new CalcResultLaDisposalCostDataEntry { CalculatorRunId = 1, LaDisposalCost = laDisposalCostData });
+            await _dbContext.SaveChangesAsync();
+
+            var result = await _sut.ReadLaDisposalCostData(1, CancellationToken.None);
+
+            result.ByMaterial[MaterialCodes.Aluminium].Cost.England.ShouldBe(1);
+            result.ByMaterial[MaterialCodes.Aluminium].HouseholdPackagingWasteTonnage.ShouldBe(10);
+            result.ByMaterial[MaterialCodes.Aluminium].ActionedSelfManagedConsumerWasteTonnage.ShouldBe(2);
+        }
+
+        [TestMethod]
+        public async Task ReadCancelledProducers_WorksAsExpected()
+        {
+            _dbContext.AddRange(new List<CalcResultCancelledProducerEntry>
+            {
+                new() { CalculatorRunId = 1, CancelledProducer = MkCancelledProducer(1) },
+                new() { CalculatorRunId = 1, CancelledProducer = MkCancelledProducer(2) },
+                new() { CalculatorRunId = 2, CancelledProducer = MkCancelledProducer(3) }
+            });
+            await _dbContext.SaveChangesAsync();
+
+            var result = await _sut.ReadCancelledProducers(1, CancellationToken.None);
+
+            result.Count.ShouldBe(2);
+            result.Select(p => p.ProducerId).ShouldBe([1, 2], ignoreOrder: true);
+            var producer = result.First(p => p.ProducerId == 1);
+            producer.TradingName.ShouldBe("Trading 1");
+            producer.LastTonnage!.Aluminium.ShouldBe(10);
+            producer.LatestInvoice!.RunName.ShouldBe("RunName");
+        }
+
+        private static CalcResultCancelledProducer MkCancelledProducer(int producerId) =>
+            new()
+            {
+                ProducerId = producerId,
+                SubsidiaryId = null,
+                ProducerOrSubsidiaryName = $"Producer {producerId}",
+                TradingName = $"Trading {producerId}",
+                LastTonnage = new LastTonnage { Aluminium = 10 },
+                LatestInvoice = new LatestInvoice { RunName = "RunName", RunNumber = "1", BillingInstructionId = "1_1", CurrentYearInvoicedTotalToDate = 100 }
+            };
+
+        private static CalcResultLapcapData MkLapcapData() =>
+            new()
+            {
+                ByMaterial = new Dictionary<string, ByCountryCost>
+                {
+                    [MaterialCodes.Aluminium] = new ByCountryCost { England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40 }
+                }
+            };
+
+        private static CalcResultCommsCost MkCommsCost() =>
+            new()
+            {
+                OnePlusFourApportionment = new ByCountryApportionment { England = 25, Wales = 25, Scotland = 25, NorthernIreland = 25 },
+                ByMaterial = new Dictionary<string, CalcResultCommsCostCommsCostByMaterial>
+                {
+                    [MaterialCodes.Aluminium] = new CalcResultCommsCostCommsCostByMaterial
+                    {
+                        Cost = new ByCountryCost { England = 10, Wales = 20, Scotland = 30, NorthernIreland = 40 },
+                        TotalCost = 100,
+                        HouseholdPackagingWasteTonnage = 1,
+                        PublicBinTonnage = 2,
+                        HouseholdDrinksContainersTonnage = 3,
+                        LateReportingTonnage = 4
+                    }
+                },
+                CommsCostUkWide = new ByCountryCost { England = 1, Wales = 2, Scotland = 3, NorthernIreland = 4 },
+                CommsCostByCountry = new ByCountryCost { England = 5, Wales = 6, Scotland = 7, NorthernIreland = 8 }
+            };
+
+        private static CalcResultLateReportingTonnage MkLateReportingTonnage() =>
+            new()
+            {
+                ByMaterial = new Dictionary<string, CalcResultLateReportingTonnageDetail>
+                {
+                    [MaterialCodes.Aluminium] = new CalcResultLateReportingTonnageDetail { Total = 10, Red = 2, Amber = 3, Green = 5 }
+                }
+            };
+
+        private static CalcResultParameterOtherCost MkParameterOtherCost() =>
+            new()
+            {
+                SaOperatingCost = new ByCountryCost { England = 1, Wales = 2, Scotland = 3, NorthernIreland = 4 },
+                LaDataPrepCharge = new ByCountryCost { England = 5, Wales = 6, Scotland = 7, NorthernIreland = 8 },
+                CountryApportionment = new ByCountryApportionment { England = 25, Wales = 25, Scotland = 25, NorthernIreland = 25 },
+                SchemeSetupCost = new ByCountryCost { England = 9, Wales = 10, Scotland = 11, NorthernIreland = 12 },
+                MaterialityIncrease = new Materiality { Amount = 100, Percentage = 5 },
+                MaterialityDecrease = new Materiality { Amount = 50, Percentage = 2 },
+                TonnageChangeIncrease = new Materiality { Amount = 10, Percentage = 1 },
+                TonnageChangeDecrease = new Materiality { Amount = 5, Percentage = 0.5m },
+                BadDebtValue = 42
+            };
+
+        private static CalcResultOnePlusFourApportionment MkOnePlusFourApportionment() =>
+            new()
+            {
+                LaDisposalCost = new ByCountryCost { England = 1, Wales = 2, Scotland = 3, NorthernIreland = 4 },
+                LADataPrepCharge = new ByCountryCost { England = 5, Wales = 6, Scotland = 7, NorthernIreland = 8 }
+            };
+
+        private static CalcResultLaDisposalCostData MkLaDisposalCostData() =>
+            new()
+            {
+                ByMaterial = new Dictionary<string, CalcResultLaDisposalCostDataDetail>
+                {
+                    [MaterialCodes.Aluminium] = new CalcResultLaDisposalCostDataDetail
+                    {
+                        Cost = new ByCountryCost { England = 1, Wales = 2, Scotland = 3, NorthernIreland = 4 },
+                        HouseholdPackagingWasteTonnage = 10,
+                        PublicBinTonnage = 20,
+                        HouseholdDrinkContainersTonnage = 30,
+                        LateReportingTonnage = 5,
+                        ActionedSelfManagedConsumerWasteTonnage = 2
+                    }
+                }
+            };
+
         private ModulationResult MkModulationResult(int runId)
         {
             var material = new MaterialDetail { Id = 1, Code = MaterialCodes.Aluminium, Name = "Aluminium" };

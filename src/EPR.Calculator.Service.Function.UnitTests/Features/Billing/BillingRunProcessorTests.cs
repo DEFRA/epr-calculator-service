@@ -13,14 +13,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Features.Billing;
 [TestClass]
 public class BillingRunProcessorTests : TestsFor<BillingRunProcessor>
 {
-    private Mock<ICalcResultBuilder> builder = null!;
+    private Mock<IBillingBuilder> builder = null!;
     private Mock<ILogger<BillingRunProcessor>> logger = null!;
     private BillingRunContext runContext = null!;
 
     protected override void TestInitialize()
     {
         runContext = TestDataHelper.BillingRun2025;
-        builder = fixture.Freeze<Mock<ICalcResultBuilder>>();
+        builder = fixture.Freeze<Mock<IBillingBuilder>>();
         logger = fixture.Freeze<Mock<ILogger<BillingRunProcessor>>>();
     }
 

@@ -44,8 +44,6 @@ public class BillingInstructionService(
         var producers = calcResult.ProducerFees.Details
             .Where(producer => producer.FeeDetail.Level == CommonConstants.LevelOne.ToString());
 
-        var cancelledProducers = calcResult.CalcResultCancelledProducers;
-
         var billingInstructions = ImmutableList.CreateBuilder<ProducerResultFileSuggestedBillingInstruction>();
 
         foreach (var producer in producers.Select(fee => fee.FeeDetail))
@@ -72,14 +70,14 @@ public class BillingInstructionService(
             billingInstructions.Add(billingInstruction);
         }
 
-        foreach (var cancelledProducer in cancelledProducers.CancelledProducers)
+        foreach (var cancelledProducer in calcResult.CalcResultCancelledProducers)
         {
             var billingInstruction = new ProducerResultFileSuggestedBillingInstruction
             {
                 CalculatorRunId = calcResult.CalcResultDetail.RunId,
                 ProducerId = cancelledProducer.ProducerId,
                 TotalProducerBillWithBadDebt = null,
-                CurrentYearInvoiceTotalToDate = cancelledProducer.LatestInvoice?.CurrentYearInvoicedTotalToDateValue,
+                CurrentYearInvoiceTotalToDate = cancelledProducer.LatestInvoice?.CurrentYearInvoicedTotalToDate,
                 TonnageChangeSinceLastInvoice = null,
                 AmountLiabilityDifferenceCalcVsPrev = null,
                 MaterialPoundThresholdBreached = null,

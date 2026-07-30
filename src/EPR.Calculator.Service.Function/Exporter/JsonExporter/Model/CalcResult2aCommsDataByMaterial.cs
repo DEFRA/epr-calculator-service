@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.Utils;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Utils;
 
@@ -16,7 +17,7 @@ public class CalcResult2ACommsDataByMaterial
     [JsonPropertyName("calcResult2aCommsDataDetailsTotal")]
     public required CalcResult2ACommsDataDetailsTotal CalcResult2aCommsDataDetailsTotal { get; set; }
 
-    public static CalcResult2ACommsDataByMaterial From(IImmutableList<MaterialDetail> materials, Dictionary<string, CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial, CalcResultCommsCostCommsCostByMaterial total)
+    public static CalcResult2ACommsDataByMaterial From(IImmutableList<MaterialDetail> materials, IReadOnlyDictionary<string, CalcResultCommsCostCommsCostByMaterial> commsCostByMaterial, CalcResultCommsCostCommsCostByMaterial total)
     {
         var commsByMaterialDataDetails = new List<CalcResult2ACommsDataDetails>();
         foreach (var item in commsCostByMaterial)

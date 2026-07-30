@@ -16,6 +16,13 @@ namespace EPR.Calculator.Service.Function.Services
         Task<ProducerFees> ReadProducerFees(int runId, CancellationToken cancellationToken);
         Task<SelfManagedConsumerWaste> ReadSmcw(int runId, CancellationToken cancellationToken);
         Task<ModulationResult> ReadModulationResult(int runId, CancellationToken cancellationToken);
+        Task<CalcResultLapcapData> ReadLapcapData(int runId, CancellationToken cancellationToken);
+        Task<CalcResultCommsCost> ReadCommsCost(int runId, CancellationToken cancellationToken);
+        Task<CalcResultLateReportingTonnage> ReadLateReportingTonnage(int runId, CancellationToken cancellationToken);
+        Task<CalcResultParameterOtherCost> ReadParameterOtherCost(int runId, CancellationToken cancellationToken);
+        Task<CalcResultOnePlusFourApportionment> ReadOnePlusFourApportionment(int runId, CancellationToken cancellationToken);
+        Task<CalcResultLaDisposalCostData> ReadLaDisposalCostData(int runId, CancellationToken cancellationToken);
+        Task<IReadOnlyList<CalcResultCancelledProducer>> ReadCancelledProducers(int runId, CancellationToken cancellationToken);
     }
 
     public class CalcResultReader(ApplicationDBContext dbContext) : ICalcResultReader
@@ -132,7 +139,56 @@ namespace EPR.Calculator.Service.Function.Services
             await dbContext.ModulationResult
                     .Where(p => p.CalculatorRunId == runId)
                     .SingleAsync(cancellationToken);
-    
+
+        public async Task<CalcResultLapcapData> ReadLapcapData(int runId, CancellationToken cancellationToken) =>
+            await dbContext.LapcapData
+                    .AsNoTracking()
+                    .Where(p => p.CalculatorRunId == runId)
+                    .Select(x => x.LapcapData)
+                    .SingleAsync(cancellationToken);
+
+        public async Task<CalcResultCommsCost> ReadCommsCost(int runId, CancellationToken cancellationToken) =>
+            await dbContext.CommCost
+                    .AsNoTracking()
+                    .Where(p => p.CalculatorRunId == runId)
+                    .Select(x => x.CommsCost)
+                    .SingleAsync(cancellationToken);
+
+        public async Task<CalcResultLateReportingTonnage> ReadLateReportingTonnage(int runId, CancellationToken cancellationToken) =>
+            await dbContext.LateReportingTonnage
+                    .AsNoTracking()
+                    .Where(p => p.CalculatorRunId == runId)
+                    .Select(x => x.LateReportingTonnage)
+                    .SingleAsync(cancellationToken);
+
+        public async Task<CalcResultParameterOtherCost> ReadParameterOtherCost(int runId, CancellationToken cancellationToken) =>
+            await dbContext.ParameterOtherCost
+                    .AsNoTracking()
+                    .Where(p => p.CalculatorRunId == runId)
+                    .Select(x => x.ParameterOtherCost)
+                    .SingleAsync(cancellationToken);
+
+        public async Task<CalcResultOnePlusFourApportionment> ReadOnePlusFourApportionment(int runId, CancellationToken cancellationToken) =>
+            await dbContext.OnePlusFourApportionment
+                    .AsNoTracking()
+                    .Where(p => p.CalculatorRunId == runId)
+                    .Select(x => x.OnePlusFourApportionment)
+                    .SingleAsync(cancellationToken);
+
+        public async Task<CalcResultLaDisposalCostData> ReadLaDisposalCostData(int runId, CancellationToken cancellationToken) =>
+            await dbContext.LaDisposalCostData
+                    .AsNoTracking()
+                    .Where(p => p.CalculatorRunId == runId)
+                    .Select(x => x.LaDisposalCost)
+                    .SingleAsync(cancellationToken);
+
+        public async Task<IReadOnlyList<CalcResultCancelledProducer>> ReadCancelledProducers(int runId, CancellationToken cancellationToken) =>
+            await dbContext.CancelledProducers
+                    .AsNoTracking()
+                    .Where(p => p.CalculatorRunId == runId)
+                    .Select(x => x.CancelledProducer)
+                    .ToImmutableListAsync(cancellationToken);
+
         private static Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage> MapToH1MaterialTonnages(List<TransformProjectedH1> transformProjectedH1s)
         {
             return transformProjectedH1s.ToDictionary(

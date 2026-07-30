@@ -14,6 +14,13 @@ namespace EPR.Calculator.Service.Function.Services
         Task StoreProducerFees(int runId, ProducerFees producerFees, CancellationToken cancellationToken);
         Task StoreSmcw(int runId, SelfManagedConsumerWaste smcw, CancellationToken cancellationToken);
         Task StoreModulationResult(int runId, ModulationResult modulation, CancellationToken cancellationToken);
+        Task StoreLapcapData(int runId, CalcResultLapcapData lapcapData, CancellationToken cancellationToken);
+        Task StoreCommsCost(int runId, CalcResultCommsCost commsCost, CancellationToken cancellationToken);
+        Task StoreLateReportingTonnage(int runId, CalcResultLateReportingTonnage lateReportingTonnage, CancellationToken cancellationToken);
+        Task StoreParameterOtherCost(int runId, CalcResultParameterOtherCost parameterOtherCost, CancellationToken cancellationToken);
+        Task StoreOnePlusFourApportionment(int runId, CalcResultOnePlusFourApportionment onePlusFourApportionment, CancellationToken cancellationToken);
+        Task StoreLaDisposalCostData(int runId, CalcResultLaDisposalCostData laDisposalCostData, CancellationToken cancellationToken);
+        Task StoreCancelledProducers(int runId, IReadOnlyList<CalcResultCancelledProducer> cancelledProducers, CancellationToken cancellationToken);
     }
 
     public class CalcResultWriter(IBulkOperations bulkOps, ApplicationDBContext dbContext) : ICalcResultWriter
@@ -108,6 +115,47 @@ namespace EPR.Calculator.Service.Function.Services
         public async Task StoreModulationResult(int runId, ModulationResult modulation, CancellationToken cancellationToken)
         {
             dbContext.ModulationResult.Add(modulation);
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task StoreLapcapData(int runId, CalcResultLapcapData lapcapData, CancellationToken cancellationToken)
+        {
+            dbContext.LapcapData.Add(new CalcResultLapcapDataEntry { CalculatorRunId = runId, LapcapData = lapcapData });
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task StoreCommsCost(int runId, CalcResultCommsCost commsCost, CancellationToken cancellationToken)
+        {
+            dbContext.CommCost.Add(new CalcResultCommsCostEntry { CalculatorRunId = runId, CommsCost = commsCost });
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task StoreLateReportingTonnage(int runId, CalcResultLateReportingTonnage lateReportingTonnage, CancellationToken cancellationToken)
+        {
+            dbContext.LateReportingTonnage.Add(new CalcResultLateReportingTonnageEntry { CalculatorRunId = runId, LateReportingTonnage = lateReportingTonnage });
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task StoreParameterOtherCost(int runId, CalcResultParameterOtherCost parameterOtherCost, CancellationToken cancellationToken)
+        {
+            dbContext.ParameterOtherCost.Add(new CalcResultParameterOtherCostEntry { CalculatorRunId = runId, ParameterOtherCost = parameterOtherCost });
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task StoreOnePlusFourApportionment(int runId, CalcResultOnePlusFourApportionment onePlusFourApportionment, CancellationToken cancellationToken)
+        {
+            dbContext.OnePlusFourApportionment.Add(new CalcResultOnePlusFourApportionmentEntry { CalculatorRunId = runId, OnePlusFourApportionment = onePlusFourApportionment });
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task StoreLaDisposalCostData(int runId, CalcResultLaDisposalCostData laDisposalCostData, CancellationToken cancellationToken)
+        {
+            dbContext.LaDisposalCostData.Add(new CalcResultLaDisposalCostDataEntry { CalculatorRunId = runId, LaDisposalCost = laDisposalCostData });
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task StoreCancelledProducers(int runId, IReadOnlyList<CalcResultCancelledProducer> cancelledProducers, CancellationToken cancellationToken) {
+            dbContext.CancelledProducers.AddRange(cancelledProducers.Select(c => new CalcResultCancelledProducerEntry { CalculatorRunId = runId, CancelledProducer = c }));
             await dbContext.SaveChangesAsync(cancellationToken);
         }
 

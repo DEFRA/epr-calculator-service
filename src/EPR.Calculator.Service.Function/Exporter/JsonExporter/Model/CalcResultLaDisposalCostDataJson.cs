@@ -19,7 +19,7 @@ public class CalcResultLaDisposalCostDataJson
     public required CalcResultLaDisposalCostDataDetailsTotal CalcResultLaDisposalCostDataDetailsTotal { get; set; }
 
     public static CalcResultLaDisposalCostDataJson From(
-        Dictionary<string, CalcResultLaDisposalCostDataDetail> detailsByMaterial,
+        IReadOnlyDictionary<string, CalcResultLaDisposalCostDataDetail> detailsByMaterial,
         CalcResultLaDisposalCostDataDetail total,
         IImmutableList<MaterialDetail> materials
     )

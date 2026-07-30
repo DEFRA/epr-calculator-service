@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.CancelledProducers;
-using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.CancelledProducers
 {
@@ -18,23 +18,19 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Cancell
         public void Export_ShouldBeCalledWithCorrectParameters()
         {
             // Arrange
-            var response = new CalcResultCancelledProducersResponse
+            var response = new List<CalcResultCancelledProducer>
             {
-                TitleHeader = "Cancelled Producers Export",
-                CancelledProducers = new List<CalcResultCancelledProducersDto>
+                new CalcResultCancelledProducer
                 {
-                    new CalcResultCancelledProducersDto
+                    ProducerId = 123,
+                    TradingName = "Acme Ltd",
+                    LastTonnage = new LastTonnage
                     {
-                        ProducerId = 123,
-                        TradingNameValue = "Acme Ltd",
-                        LastTonnage = new LastTonnage
-                        {
-                            AluminiumValue = 25.5M
-                        },
-                        LatestInvoice = new LatestInvoice
-                        {
-                            CurrentYearInvoicedTotalToDateValue = 1010.75M
-                        }
+                        Aluminium = 25.5M
+                    },
+                    LatestInvoice = new LatestInvoice
+                    {
+                        CurrentYearInvoicedTotalToDate = 1010.75M
                     }
                 }
             };

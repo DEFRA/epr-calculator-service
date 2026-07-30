@@ -9,57 +9,48 @@ namespace EPR.Calculator.Service.Function.Builder.CancelledProducers;
 
 public interface ICalcResultCancelledProducersBuilder
 {
-    Task<CalcResultCancelledProducersResponse> ConstructAsync(RunContext runContext, IReadOnlyCollection<MaterialDetail> materialDetails);
+    Task<IReadOnlyList<CalcResultCancelledProducer>> ConstructAsync(RunContext runContext, IReadOnlyCollection<MaterialDetail> materialDetails);
 }
 
 [ExcludeFromCodeCoverage(Justification = "Tests to be re-added within ECV-473")]
 public class CalcResultCancelledProducersBuilder(IInvoicedProducerService invoicedProducerService)
     : ICalcResultCancelledProducersBuilder
 {
-    public async Task<CalcResultCancelledProducersResponse> ConstructAsync(RunContext runContext, IReadOnlyCollection<MaterialDetail> materialDetails)
-    {
-        return new CalcResultCancelledProducersResponse
-        {
-            TitleHeader = CommonConstants.CancelledProducers,
-            CancelledProducers = await GetCancelledProducers(runContext, materialDetails)
-        };
-    }
-
-    private async Task<ImmutableList<CalcResultCancelledProducersDto>> GetCancelledProducers(RunContext runContext, IReadOnlyCollection<MaterialDetail> materialDetails)
+    public async Task<IReadOnlyList<CalcResultCancelledProducer>> ConstructAsync(RunContext runContext, IReadOnlyCollection<MaterialDetail> materialDetails)
     {
         var lookup = await GetMissingAcceptedCancelledInvoicedProducersLookup(runContext);
         var materialsByCode = materialDetails.ToImmutableDictionary(m => m.Code);
 
-        var builder = ImmutableList.CreateBuilder<CalcResultCancelledProducersDto>();
+        var builder = ImmutableList.CreateBuilder<CalcResultCancelledProducer>();
 
         foreach (var (producerId, recordsByMaterialId) in lookup)
         {
             var latestRecord = recordsByMaterialId.Values.OrderByDescending(r => r.CalculatorRunId).First();
 
-            builder.Add(new CalcResultCancelledProducersDto
+            builder.Add(new CalcResultCancelledProducer
             {
                 ProducerId = producerId,
-                ProducerOrSubsidiaryNameValue = latestRecord.ProducerName,
-                TradingNameValue = latestRecord.TradingName,
+                ProducerOrSubsidiaryName = latestRecord.ProducerName,
+                TradingName = latestRecord.TradingName,
 
                 LastTonnage = new LastTonnage
                 {
-                    AluminiumValue = recordsByMaterialId.GetValueOrDefault(materialsByCode[MaterialCodes.Aluminium].Id)?.InvoicedNetTonnage,
-                    FibreCompositeValue = recordsByMaterialId.GetValueOrDefault(materialsByCode[MaterialCodes.FibreComposite].Id)?.InvoicedNetTonnage,
-                    GlassValue = recordsByMaterialId.GetValueOrDefault(materialsByCode[MaterialCodes.Glass].Id)?.InvoicedNetTonnage,
-                    PaperOrCardValue = recordsByMaterialId.GetValueOrDefault(materialsByCode[MaterialCodes.PaperOrCard].Id)?.InvoicedNetTonnage,
-                    PlasticValue = recordsByMaterialId.GetValueOrDefault(materialsByCode[MaterialCodes.Plastic].Id)?.InvoicedNetTonnage,
-                    WoodValue = recordsByMaterialId.GetValueOrDefault(materialsByCode[MaterialCodes.Wood].Id)?.InvoicedNetTonnage,
-                    SteelValue = recordsByMaterialId.GetValueOrDefault(materialsByCode[MaterialCodes.Steel].Id)?.InvoicedNetTonnage,
-                    OtherMaterialsValue = recordsByMaterialId.GetValueOrDefault(materialsByCode[MaterialCodes.OtherMaterials].Id)?.InvoicedNetTonnage
+                    Aluminium = recordsByMaterialId.GetValueOrDefault(materialsByCode[MaterialCodes.Aluminium].Id)?.InvoicedNetTonnage,
+                    FibreComposite = recordsByMaterialId.GetValueOrDefault(materialsByCode[MaterialCodes.FibreComposite].Id)?.InvoicedNetTonnage,
+                    Glass = recordsByMaterialId.GetValueOrDefault(materialsByCode[MaterialCodes.Glass].Id)?.InvoicedNetTonnage,
+                    PaperOrCard = recordsByMaterialId.GetValueOrDefault(materialsByCode[MaterialCodes.PaperOrCard].Id)?.InvoicedNetTonnage,
+                    Plastic = recordsByMaterialId.GetValueOrDefault(materialsByCode[MaterialCodes.Plastic].Id)?.InvoicedNetTonnage,
+                    Wood = recordsByMaterialId.GetValueOrDefault(materialsByCode[MaterialCodes.Wood].Id)?.InvoicedNetTonnage,
+                    Steel = recordsByMaterialId.GetValueOrDefault(materialsByCode[MaterialCodes.Steel].Id)?.InvoicedNetTonnage,
+                    OtherMaterials = recordsByMaterialId.GetValueOrDefault(materialsByCode[MaterialCodes.OtherMaterials].Id)?.InvoicedNetTonnage
                 },
 
                 LatestInvoice = new LatestInvoice
                 {
-                    BillingInstructionIdValue = latestRecord.BillingInstructionId,
-                    RunNumberValue = latestRecord.CalculatorRunId.ToString(),
-                    RunNameValue = latestRecord.CalculatorName,
-                    CurrentYearInvoicedTotalToDateValue = latestRecord.CurrentYearInvoicedTotalAfterThisRun
+                    BillingInstructionId = latestRecord.BillingInstructionId,
+                    RunNumber = latestRecord.CalculatorRunId.ToString(),
+                    RunName = latestRecord.CalculatorName,
+                    CurrentYearInvoicedTotalToDate = latestRecord.CurrentYearInvoicedTotalAfterThisRun
                 }
             });
         }

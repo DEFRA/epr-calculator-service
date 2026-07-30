@@ -1,6 +1,5 @@
 ﻿using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.Service.Function.Builder.Modulation;
-using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.API.Data.DataTypes;
 
 namespace EPR.Calculator.Service.Function.Models
 {
@@ -9,18 +8,18 @@ namespace EPR.Calculator.Service.Function.Models
         public required CalcResultDetail CalcResultDetail { get; set; }
 
         public required CalcResultLapcapData CalcResultLapcapData { get; set; } =
-            new() { ByMaterial = [] };
+            new() { ByMaterial = new Dictionary<string, ByCountryCost>() };
 
         public CalcResultCommsCost CalcResultCommsCostReportDetail { get; set; } =
             new() {
                 OnePlusFourApportionment = ByCountryApportionment.Empty,
-                ByMaterial               = [],
+                ByMaterial               = new Dictionary<string, CalcResultCommsCostCommsCostByMaterial>(),
                 CommsCostUkWide          = ByCountryCost.Empty,
                 CommsCostByCountry       = ByCountryCost.Empty
             };
 
         public required CalcResultLateReportingTonnage CalcResultLateReportingTonnageData { get; set; } =
-            new() { ByMaterial = [] };
+            new() { ByMaterial = new Dictionary<string, CalcResultLateReportingTonnageDetail>() };
 
 
         public required CalcResultParameterOtherCost CalcResultParameterOtherCost { get; set; } =
@@ -37,7 +36,7 @@ namespace EPR.Calculator.Service.Function.Models
             };
 
         public CalcResultLaDisposalCostData CalcResultLaDisposalCostData { get; set; }
-            = new() { ByMaterial = [] };
+            = new() { ByMaterial = new Dictionary<string, CalcResultLaDisposalCostDataDetail>() };
 
         public required CalcResultPartialObligations CalcResultPartialObligations { get; set; }
 
@@ -45,12 +44,7 @@ namespace EPR.Calculator.Service.Function.Models
 
         public required CalcResultScaledupProducers CalcResultScaledupProducers { get; set; }
 
-        public CalcResultCancelledProducersResponse CalcResultCancelledProducers { get; set; }
-            = new()
-            {
-                TitleHeader = string.Empty,
-                CancelledProducers = []
-            };
+        public IReadOnlyList<CalcResultCancelledProducer> CalcResultCancelledProducers { get; set; } = [];
 
         public IEnumerable<CalcResultRejectedProducer> CalcResultRejectedProducers { get; set; } = [];
 
@@ -61,5 +55,32 @@ namespace EPR.Calculator.Service.Function.Models
         public SelfManagedConsumerWaste? Smcw { get; set; }
 
         public ModulationResult? CalcResultModulation { get; set; }
+
+        public static CalcResult Empty => 
+            new CalcResult
+            {
+                CalcResultDetail = new CalcResultDetail { RunId = 0, RelativeYear = new RelativeYear() } ,
+                CalcResultLapcapData = new CalcResultLapcapData
+                {
+                    ByMaterial = new Dictionary<string, ByCountryCost>()
+                },
+                CalcResultLateReportingTonnageData = new CalcResultLateReportingTonnage
+                {
+                    ByMaterial = new Dictionary<string, CalcResultLateReportingTonnageDetail>()
+                },
+                CalcResultParameterOtherCost = new CalcResultParameterOtherCost(),
+                CalcResultPartialObligations = new CalcResultPartialObligations(){
+                    PartialObligations = ImmutableList<CalcResultPartialObligation>.Empty,
+                },
+                CalcResultProjectedProducers = new CalcResultProjectedProducers(){
+                    H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
+                    H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty
+                },
+                CalcResultScaledupProducers = new CalcResultScaledupProducers(){
+                    ScaledupProducers = ImmutableList<CalcResultScaledupProducer>.Empty,
+                },
+                CalcResultCancelledProducers = ImmutableList<CalcResultCancelledProducer>.Empty,
+                CalcResultRejectedProducers = new List<CalcResultRejectedProducer>()
+            };
     }
 }

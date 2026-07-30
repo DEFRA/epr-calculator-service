@@ -11,7 +11,7 @@ public interface IBillingRunProcessor
 }
 
 public class BillingRunProcessor(
-    ICalcResultBuilder resultBuilder,
+    IBillingBuilder resultBuilder,
     IBillingFileGenerator fileGenerator,
     IBillingRunFinalizer finalizer,
     ILogger<BillingRunProcessor> logger)
