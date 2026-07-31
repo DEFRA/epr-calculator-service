@@ -1,13 +1,10 @@
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Utils;
-using EPR.Calculator.Service.Function.Builder.Modulation;
+using EPR.Calculator.Service.Function.Builder.Summary;
 using EPR.Calculator.Service.Function.Builder.Summary.Common;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
-using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common;
 
@@ -15,32 +12,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common;
 [TestClass]
 public class ProducerFeesUtilTests
 {
-    private readonly CalcResult calcResult;
-
-    public ProducerFeesUtilTests()
+    private readonly FeesState state = new()
     {
-        calcResult = new CalcResult
-        {
-            CalcResultScaledupProducers = new CalcResultScaledupProducers(){
-                    ScaledupProducers = ImmutableList<CalcResultScaledupProducer>.Empty
-                },
-                CalcResultPartialObligations = new CalcResultPartialObligations(){
-                    PartialObligations = ImmutableList<CalcResultPartialObligation>.Empty,
-                },
-            CalcResultParameterOtherCost       = TestDataHelper.GetCalcResultParameterOtherCost(),
-            CalcResultDetail                   = TestDataHelper.GetCalcResultDetail(),
-            CalcResultLaDisposalCostData       = TestDataHelper.GetCalcResultLaDisposalCostData(),
-            CalcResultLapcapData               = TestDataHelper.GetCalcResultLapcapData(),
-            CalcResultOnePlusFourApportionment = TestDataHelper.GetCalcResultOnePlusFourApportionment(),
-            ProducerFees                       = TestDataHelper.GetProducerFees(),
-            CalcResultCommsCostReportDetail    = TestDataHelper.GetCalcResultCommsCostReportDetail(),
-            CalcResultLateReportingTonnageData = GetCalcResultLateReportingTonnage(),
-            CalcResultProjectedProducers       = new CalcResultProjectedProducers(){
-                H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
-                H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty,
-            }
-        };
-    }
+        CommsCost     = TestDataHelper.GetCalcResultCommsCostReportDetail(),
+        OtherCost     = TestDataHelper.GetCalcResultParameterOtherCost(),
+        DisposalCost  = TestDataHelper.GetCalcResultLaDisposalCostData(),
+        LapcapData    = TestDataHelper.GetCalcResultLapcapData(),
+        Apportionment = null!,
+        Materials     = null!,
+        Smcw          = null!,
+        Modulation    = null
+    };
 
     private Fixture Fixture { get; } = new();
 
@@ -146,7 +128,7 @@ public class ProducerFeesUtilTests
         var material = Fixture.Create<MaterialDetail>();
 
         // Act
-        var result = ProducerFeesUtil.GetPricePerTonne(material, calcResult);
+        var result = ProducerFeesUtil.GetPricePerTonne(material, state);
 
         // Assert
         Assert.AreEqual(new RamTonnageGroup{ Total = null, Red = null, Amber = null, Green = null }, result);
@@ -159,7 +141,7 @@ public class ProducerFeesUtilTests
         var material = TestDataHelper.GetMaterialDetails().First(m => m.Code == "AL");
 
         // Act
-        var result = ProducerFeesUtil.GetPricePerTonne(material, calcResult);
+        var result = ProducerFeesUtil.GetPricePerTonne(material, state);
 
         // Assert
         Assert.AreEqual(new RamTonnageGroup{ Total = 0.5889m, Red = null, Amber = null, Green= null }, result);
@@ -172,7 +154,7 @@ public class ProducerFeesUtilTests
         var material = TestDataHelper.GetMaterialDetails().First(m => m.Code == "AL");
 
         // Act
-        var result = ProducerFeesUtil.GetProducerDisposalFee(material, calcResult, SelfManagedConsumerWasteData.Zero);
+        var result = ProducerFeesUtil.GetProducerDisposalFee(material, state, SelfManagedConsumerWasteData.Zero);
 
         // Assert
         Assert.AreEqual(new RamTonnageGroup{ Total = 0m, Red = null, Amber = null, Green = null }, result);
@@ -182,15 +164,17 @@ public class ProducerFeesUtilTests
     public void CanGetProducerDisposalFee_WithModulation()
     {
         var material = TestDataHelper.GetMaterialDetails().First(m => m.Code == "AL");
-
-        calcResult.CalcResultModulation = new ModulationResult
+        var feesWithModulation = state with
         {
-            CalculatorRunId = 1,
-            GreenFactor = 2,
-            RedFactor = 4,
-            ModulationByMaterial = new Dictionary<MaterialDetail, ModulationDetail>
+            Modulation = new ModulationResult
             {
-                [material] = mkModulationDetail(100, 120, 77.1423m, 90, 220, 550, 22000, 55000)
+                CalculatorRunId = 1,
+                GreenFactor = 2,
+                RedFactor = 4,
+                ModulationByMaterial = new Dictionary<MaterialDetail, ModulationDetail>
+                {
+                    [material] = mkModulationDetail(100, 120, 77.1423m, 90, 220, 550, 22000, 55000)
+                }
             }
         };
 
@@ -202,7 +186,7 @@ public class ProducerFeesUtilTests
             NetTonnage = new RamTonnageGroup { Total = null, Red = 1m, Amber = 2m, Green = 3m }
         };
 
-        var result = ProducerFeesUtil.GetProducerDisposalFee(material, calcResult, smcw);
+        var result = ProducerFeesUtil.GetProducerDisposalFee(material, feesWithModulation, smcw);
 
         Assert.AreEqual(new RamTonnageGroup{ Total = 551.4269m, Red = 120, Amber = 200, Green = 231.4269m }, result);
     }
@@ -211,14 +195,14 @@ public class ProducerFeesUtilTests
     [TestMethod]
     public void GetBadDebtProvision_ValidPercentage_WithPercent()
     {
-        var result = ProducerFeesUtil.GetBadDebtProvision(calcResult, 200m);
+        var result = ProducerFeesUtil.GetBadDebtProvision(state, 200m);
         Assert.AreEqual(12m, result);
     }
 
     [TestMethod]
     public void GetProducerDisposalFeeWithBadDebtProvision_AddsPercentage()
     {
-        var result = ProducerFeesUtil.GetProducerDisposalFeeWithBadDebtProvision(calcResult, 100m);
+        var result = ProducerFeesUtil.GetProducerDisposalFeeWithBadDebtProvision(state, 100m);
         Assert.AreEqual(106m, MathUtils.RoundAwayFromZero(result.Total, 10));
     }
 
@@ -226,7 +210,7 @@ public class ProducerFeesUtilTests
     public void CanGetCommsCostHeaderWithoutBadDebtFor2bTitle()
     {
         // Act
-        var result = ProducerFeesUtil.GetCommsCostHeaderWithoutBadDebtFor2bTitle(calcResult);
+        var result = ProducerFeesUtil.GetCommsCostHeaderWithoutBadDebtFor2bTitle(state);
 
         // Assert
         Assert.AreEqual(2531, result);
@@ -259,8 +243,6 @@ public class ProducerFeesUtilTests
         // Assert
         Assert.AreEqual(20.00m, result);
     }
-
-    private CalcResultLateReportingTonnage GetCalcResultLateReportingTonnage() => Fixture.Create<CalcResultLateReportingTonnage>();
 
     private ModulationDetail mkModulationDetail(decimal adc, decimal rdc, decimal gdc, decimal at, decimal rt, decimal gt, decimal rAtAdc, decimal gAtAdc)
     {

@@ -1062,7 +1062,7 @@ public static partial class TestDataHelper
         };
     }
 
-    public static IImmutableList<MaterialDetail> GetMaterialDetails() =>
+    public static ImmutableList<MaterialDetail> GetMaterialDetails() =>
         MaterialHelper.GetMaterials().ToDetails();
 
     public static List<ProducerDetail> GetProducers()

@@ -177,7 +177,17 @@ public class ResultBuilder(
         }
 
         result.ProducerFees = await logger.LogDuration(
-            () => producerFeesBuilder.ConstructAsync(runContext, materials, result, result.Smcw),
+            () => producerFeesBuilder.ConstructAsync(runContext, new FeesState
+            {
+                Materials = materials,
+                CommsCost = result.CalcResultCommsCostReportDetail,
+                OtherCost = result.CalcResultParameterOtherCost,
+                Apportionment = result.CalcResultOnePlusFourApportionment,
+                DisposalCost = result.CalcResultLaDisposalCostData,
+                Modulation = result.CalcResultModulation,
+                LapcapData = result.CalcResultLapcapData,
+                Smcw = result.Smcw
+            }),
             nameof(producerFeesBuilder));
 
         await logger.LogDuration(

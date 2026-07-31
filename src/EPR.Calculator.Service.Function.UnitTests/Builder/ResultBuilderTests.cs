@@ -108,7 +108,7 @@ public class ResultBuilderTests : TestsFor<ResultBuilder>
             .ReturnsAsync((mockProducers2, mockCalcResultScaledUpProducersData.Object));
         mockCalcResultPartialObligationBuilder.Setup(m => m.ConstructAsync(runContext, It.IsAny<IImmutableList<MaterialDetail>>(), mockProducers2))
             .ReturnsAsync((mockProducers2, mockCalcResultPartialObligationsData.Object));
-        mockSummaryBuilder.Setup(x => x.ConstructAsync(runContext, It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<CalcResult>(), It.IsAny<SelfManagedConsumerWaste>()))
+        mockSummaryBuilder.Setup(x => x.ConstructAsync(runContext, It.IsAny<FeesState>()))
             .ReturnsAsync(mockProducerFees.Object);
 
         mockSelfManagedConsumerWasteService.Setup(x => x.Calculate(
@@ -201,7 +201,6 @@ public class ResultBuilderTests : TestsFor<ResultBuilder>
         {
             new L1Producer(2, [new ProducerDetail { ProducerId = 2, SubsidiaryId = null }])
         };
-        var mockMaterials = ImmutableList<MaterialDetail>.Empty;
 
         var mockCalcResultScaledUpProducersData = new Mock<CalcResultScaledupProducers>();
         var mockCalcResultProjectedProducersData = new Mock<CalcResultProjectedProducers>();

@@ -12,7 +12,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary;
 public class CalcResultSummaryCommsCostTwoBTotalBillTests
 {
     private List<CalcResultProducerAndReportMaterialDetail> allResults;
-    private CalcResult calcResult;
+    private FeesState state;
     private List<ProducerDetail> producers;
     public required IReadOnlyList<TotalPackagingTonnagePerRun> TotalPackagingTonnage;
 
@@ -20,29 +20,19 @@ public class CalcResultSummaryCommsCostTwoBTotalBillTests
     {
         producers = GetProducers();
 
-        calcResult = new CalcResult
+        state = new FeesState
         {
-            CalcResultParameterOtherCost = TestDataHelper.GetCalcResultParameterOtherCost(),
-            CalcResultDetail = TestDataHelper.GetCalcResultDetail(),
-            CalcResultLaDisposalCostData = TestDataHelper.GetCalcResultLaDisposalCostData(),
-            CalcResultLapcapData = TestDataHelper.GetCalcResultLapcapData(),
-            CalcResultOnePlusFourApportionment = GetCalcResultOnePlusFourApportionment(),
-            ProducerFees = TestDataHelper.GetProducerFees(),
-            CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
-            CalcResultLateReportingTonnageData = GetCalcResultLateReportingTonnage(),
-            CalcResultScaledupProducers = TestDataHelper.GetScaledupProducers(),
-            CalcResultPartialObligations = new CalcResultPartialObligations(){
-                PartialObligations = ImmutableList<CalcResultPartialObligation>.Empty,
-            },
-            CalcResultProjectedProducers = new CalcResultProjectedProducers(){
-                H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
-                H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty,
-            }
+            CommsCost     = TestDataHelper.GetCalcResultCommsCostReportDetail(),
+            OtherCost     = new CalcResultParameterOtherCost{ BadDebtValue = 10 },
+            Apportionment = GetCalcResultOnePlusFourApportionment(),
+            Materials     = TestDataHelper.GetMaterialDetails(),
+            Smcw          = null!,
+            DisposalCost  = null!,
+            Modulation    = null!,
+            LapcapData    = null!,
         };
 
         // Set up consistent data
-        calcResult.CalcResultParameterOtherCost = Fixture.Create<CalcResultParameterOtherCost>();
-        calcResult.CalcResultParameterOtherCost.BadDebtValue = 10;
         var producer1 = new ProducerDetail
         {
             Id = 1,
@@ -59,8 +49,8 @@ public class CalcResultSummaryCommsCostTwoBTotalBillTests
             ProducerId = 2,
             ProducerName = "Producer2"
         };
-        allResults = new List<CalcResultProducerAndReportMaterialDetail>
-        {
+        allResults =
+        [
             new()
             {
                 ProducerDetail = producer1,
@@ -81,6 +71,7 @@ public class CalcResultSummaryCommsCostTwoBTotalBillTests
                         }
                     }
             },
+
             new()
             {
                 ProducerDetail = producer1,
@@ -101,6 +92,7 @@ public class CalcResultSummaryCommsCostTwoBTotalBillTests
                         }
                     }
             },
+
             new()
             {
                 ProducerDetail = producer2,
@@ -121,6 +113,7 @@ public class CalcResultSummaryCommsCostTwoBTotalBillTests
                         }
                     }
             },
+
             new()
             {
                 ProducerDetail = producer2,
@@ -141,19 +134,16 @@ public class CalcResultSummaryCommsCostTwoBTotalBillTests
                         }
                     }
             }
-        };
+        ];
 
-        var materials = TestDataHelper.GetMaterialDetails();
-        TotalPackagingTonnage = ProducerFeesBuilder.GetTotalPackagingTonnagePerRun(allResults, materials, 1);
+        TotalPackagingTonnage = ProducerFeesBuilder.GetTotalPackagingTonnagePerRun(allResults, state, 1);
     }
-
-    private IFixture Fixture { get; } = TestFixtures.New();
 
     [TestCleanup]
     public void TestCleanup()
     {
         producers = null!;
-        calcResult = null!;
+        state = null!;
         allResults = null!;
     }
 
@@ -161,7 +151,7 @@ public class CalcResultSummaryCommsCostTwoBTotalBillTests
     public void GetCommsCosts_ShouldReturnCorrectValues()
     {
         // Act
-        var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsCosts(calcResult, producers[0], TotalPackagingTonnage);
+        var result = CalcResultSummaryCommsCostTwoBTotalBill.GetCommsCosts(state, producers[0], TotalPackagingTonnage);
 
         // Assert
         Assert.AreEqual(253.1m,   result.FeeWithoutBadDebt);
@@ -172,9 +162,9 @@ public class CalcResultSummaryCommsCostTwoBTotalBillTests
         Assert.AreEqual(41.7615m, result.ByCountry.NorthernIreland);
     }
 
-    private List<ProducerDetail> GetProducers()
+    private static List<ProducerDetail> GetProducers()
     {
-        var producers = Fixture.CreateMany<ProducerDetail>(2).ToList();
+        var producers = TestFixtures.New().CreateMany<ProducerDetail>(2).ToList();
         producers[0].SubsidiaryId = "1";
         producers[0].CalculatorRunId = 1;
         producers[0].ProducerId = 1;
@@ -200,8 +190,6 @@ public class CalcResultSummaryCommsCostTwoBTotalBillTests
 
         return producers;
     }
-
-    private CalcResultLateReportingTonnage GetCalcResultLateReportingTonnage() => Fixture.Create<CalcResultLateReportingTonnage>();
 
     private CalcResultOnePlusFourApportionment GetCalcResultOnePlusFourApportionment()
     {

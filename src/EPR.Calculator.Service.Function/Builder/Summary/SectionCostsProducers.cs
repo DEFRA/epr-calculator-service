@@ -10,36 +10,36 @@ namespace EPR.Calculator.Service.Function.Builder.Summary;
 
 public static class ThreeSaCostsProducer
 {
-    public static void SetValues(CalcResult calcResult, ProducerFees producerFees) =>
+    public static void SetValues(FeesState state, ProducerFees producerFees) =>
         SectionCosts.Apply(
             producerFees,
-            badDebt:       calcResult.CalcResultParameterOtherCost.BadDebtValue,
-            total:         calcResult.CalcResultParameterOtherCost.SaOperatingCost.Total,
-            apportionment: calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment,
+            badDebt:       state.OtherCost.BadDebtValue,
+            total:         state.OtherCost.SaOperatingCost.Total,
+            apportionment: state.Apportionment.OnePlusFourApportionment,
             setFee:    (f, p) => f.SaOperatingCostsSection3 = p
         );
 }
 
 public static class LaDataPrepCostsProducer
 {
-    public static void SetValues(CalcResult calcResult, ProducerFees producerFees) =>
+    public static void SetValues(FeesState state, ProducerFees producerFees) =>
         SectionCosts.Apply(
             producerFees,
-            badDebt:       calcResult.CalcResultParameterOtherCost.BadDebtValue,
-            total:         calcResult.CalcResultParameterOtherCost.LaDataPrepCharge.Total,
-            apportionment: calcResult.CalcResultParameterOtherCost.CountryApportionment,
+            badDebt:       state.OtherCost.BadDebtValue,
+            total:         state.OtherCost.LaDataPrepCharge.Total,
+            apportionment: state.OtherCost.CountryApportionment,
             setFee:    (f, p) => f.LaDataPrepSection4 = p
         );
 }
 
 public static class SaSetupCostsProducer
 {
-    public static void SetValues(CalcResult calcResult, ProducerFees producerFees) =>
+    public static void SetValues(FeesState state, ProducerFees producerFees) =>
         SectionCosts.Apply(
             producerFees,
-            badDebt:       calcResult.CalcResultParameterOtherCost.BadDebtValue,
-            total:         calcResult.CalcResultParameterOtherCost.SchemeSetupCost.Total,
-            apportionment: calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment,
+            badDebt:       state.OtherCost.BadDebtValue,
+            total:         state.OtherCost.SchemeSetupCost.Total,
+            apportionment: state.Apportionment.OnePlusFourApportionment,
             setFee:    (f, p) => f.SaSetupCostsSection5 = p
         );
 }

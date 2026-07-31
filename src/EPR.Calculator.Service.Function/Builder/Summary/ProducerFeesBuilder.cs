@@ -15,10 +15,20 @@ public interface IProducerFeesBuilder
 {
     Task<ProducerFees> ConstructAsync(
         RunContext runContext,
-        IImmutableList<MaterialDetail> materialDetails,
-        CalcResult calcResult,
-        SelfManagedConsumerWaste smcw
+        FeesState state
     );
+}
+
+public record FeesState
+{
+    public required ImmutableList<MaterialDetail> Materials { get; init; }
+    public required SelfManagedConsumerWaste Smcw { get; init; }
+    public required CalcResultParameterOtherCost OtherCost { get; init; }
+    public required CalcResultCommsCost CommsCost { get; init; }
+    public required CalcResultOnePlusFourApportionment Apportionment { get; init; }
+    public required CalcResultLaDisposalCostData DisposalCost { get; init; }
+    public required ModulationResult? Modulation { get; init; }
+    public required CalcResultLapcapData LapcapData { get; init; }
 }
 
 public class ProducerFeesBuilder(
@@ -28,9 +38,7 @@ public class ProducerFeesBuilder(
 {
     public async Task<ProducerFees> ConstructAsync(
         RunContext runContext,
-        IImmutableList<MaterialDetail> materialDetails,
-        CalcResult calcResult,
-        SelfManagedConsumerWaste smcw
+        FeesState state
     )
     {
         var runProducerMaterialDetails = await (
@@ -65,7 +73,7 @@ public class ProducerFeesBuilder(
         // Household + PublicBin + HDC.
         // PERF: wrap in an index so downstream callers (TonnageVsAllProducerUtil / 2B / 2C) get O(1)
         // per-producer percentage lookups instead of paying O(producers) per call.
-        var totalPackagingTonnage = new TotalPackagingTonnageIndex(GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, materialDetails, runContext.RunId));
+        var totalPackagingTonnage = new TotalPackagingTonnageIndex(GetTotalPackagingTonnagePerRun(runProducerMaterialDetails, state, runContext.RunId));
 
         var organisations = await (
             from run in context.CalculatorRuns
@@ -101,11 +109,9 @@ public class ProducerFeesBuilder(
             runContext,
             projectedMaterialsLookup,
             producerDetails,
-            materialDetails,
-            calcResult,
+            state,
             totalPackagingTonnage,
             producerInvoicedMaterialNetTonnage,
-            smcw,
             rowBuilder
         );
     }
@@ -149,11 +155,9 @@ public class ProducerFeesBuilder(
         RunContext runContext,
         ILookup<(int, string?), ProducerMaterialPackaging> projectedMaterialsLookup,
         IReadOnlyList<ProducerDetail> orderedProducerDetails,
-        IReadOnlyList<MaterialDetail> materials,
-        CalcResult calcResult,
+        FeesState state,
         IReadOnlyList<TotalPackagingTonnagePerRun> totalPackagingTonnage,
         IReadOnlyList<InvoicedProducer> producerInvoicedMaterialNetTonnage,
-        SelfManagedConsumerWaste smcw,
         ProducerRowBuilder rowBuilder
     )
     {
@@ -161,8 +165,8 @@ public class ProducerFeesBuilder(
 
         if (orderedProducerDetails.Count == 0)
         {
-            result.Total = ProducerRowBuilder.GetOverallTotalRow([], materials);
-            BillingInstructionsProducer.SetValues(result, producerInvoicedMaterialNetTonnage, calcResult.CalcResultParameterOtherCost);
+            result.Total = ProducerRowBuilder.GetOverallTotalRow([], state.Materials);
+            BillingInstructionsProducer.SetValues(result, producerInvoicedMaterialNetTonnage, state.OtherCost);
             return result;
         }
 
@@ -175,47 +179,47 @@ public class ProducerFeesBuilder(
 
             // Build L2 rows first so the L1 total can be derived by aggregation.
             var l2Rows = subsidiariesList
-                .Select(producer => rowBuilder.GetProducerRow(runContext, projectedMaterialsLookup, hasGroupTotalRow, subsidiariesList, producer, materials, calcResult, totalPackagingTonnage, smcw))
+                .Select(producer => rowBuilder.GetProducerRow(runContext, projectedMaterialsLookup, hasGroupTotalRow, subsidiariesList, producer, state, totalPackagingTonnage))
                 .ToList();
 
             if (hasGroupTotalRow)
-                producerDisposalFees.Add(rowBuilder.GetL1TotalRow(subsidiariesList[0].ProducerId, l2Rows, calcResult, smcw, materials));
+                producerDisposalFees.Add(rowBuilder.GetL1TotalRow(subsidiariesList[0].ProducerId, l2Rows, state));
 
             producerDisposalFees.AddRange(l2Rows);
         }
 
         var l1Rows = producerDisposalFees.Where(r => r.FeeDetail.Level == CommonConstants.LevelOne.ToString()).ToList();
-        result.Total = ProducerRowBuilder.GetOverallTotalRow(l1Rows, materials);
+        result.Total = ProducerRowBuilder.GetOverallTotalRow(l1Rows, state.Materials);
         result.Details = producerDisposalFees;
 
         // Section 2b comms cost
-        TwoBCommsCostProducer.SetValues(calcResult, result);
-        TwoCCommsCostProducer.SetValues(calcResult, result);
+        TwoBCommsCostProducer.SetValues(state, result);
+        TwoCCommsCostProducer.SetValues(state, result);
 
         // Section Total bill (1 + 2a + 2b + 2c)
         OnePlus2A2B2CProducer.SetValues(result);
 
         // Section-3 SA Operating costs section
-        ThreeSaCostsProducer.SetValues(calcResult, result);
+        ThreeSaCostsProducer.SetValues(state, result);
 
         // Section-4 LA data prep costs
-        LaDataPrepCostsProducer.SetValues(calcResult, result);
+        LaDataPrepCostsProducer.SetValues(state, result);
 
         // Section-5 SA setup costs
-        SaSetupCostsProducer.SetValues(calcResult, result);
+        SaSetupCostsProducer.SetValues(state, result);
 
         // Total bill section
         TotalBillBreakdownProducer.SetValues(result);
 
         // Billing instructions section
-        BillingInstructionsProducer.SetValues(result, producerInvoicedMaterialNetTonnage, calcResult.CalcResultParameterOtherCost);
+        BillingInstructionsProducer.SetValues(result, producerInvoicedMaterialNetTonnage, state.OtherCost);
 
         return result;
     }
 
     public static ImmutableList<TotalPackagingTonnagePerRun> GetTotalPackagingTonnagePerRun(
         IReadOnlyList<CalcResultProducerAndReportMaterialDetail> allResults,
-        IReadOnlyList<MaterialDetail> materials,
+        FeesState state,
         int runId
     )
     {
@@ -225,7 +229,7 @@ public class ProducerFeesBuilder(
         var result =
             (from p in allProducerDetails
              join pm in allProducerReportedMaterials on p.Id equals pm.ProducerDetailId
-             join m in materials on pm.MaterialId equals m.Id
+             join m in state.Materials on pm.MaterialId equals m.Id
              where p.CalculatorRunId == runId &&
              (
                  pm.PackagingType == PackagingTypes.Household

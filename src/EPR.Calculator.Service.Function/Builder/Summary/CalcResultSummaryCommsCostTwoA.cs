@@ -9,9 +9,9 @@ public static class CalcResultSummaryCommsCostTwoA
 {
     public static decimal GetPriceperTonneForComms(
         MaterialDetail material,
-        CalcResult calcResult
+        FeesState state
     ) =>
-        calcResult.CalcResultCommsCostReportDetail.ByMaterial.GetValueOrDefault(material.Code)?.PricePerTonne ?? 0m;
+        state.CommsCost.ByMaterial.GetValueOrDefault(material.Code)?.PricePerTonne ?? 0m;
 
     public static decimal GetTotalReportedTonnage(
         ILookup<(int, string?), ProducerMaterialPackaging> projectedMaterialsLookup,
@@ -28,19 +28,19 @@ public static class CalcResultSummaryCommsCostTwoA
         ILookup<(int, string?), ProducerMaterialPackaging> projectedMaterialsLookup,
         ProducerDetail producer,
         MaterialDetail material,
-        CalcResult calcResult
+        FeesState state
     ) =>
-        GetCommsFeesCosts(GetTotalReportedTonnage(projectedMaterialsLookup, producer, material), material, calcResult);
+        GetCommsFeesCosts(GetTotalReportedTonnage(projectedMaterialsLookup, producer, material), material, state);
 
     public static FeeWithBadDebt GetCommsFeesCosts(
         decimal totalReportedTonnage,
         MaterialDetail material,
-        CalcResult calcResult
+        FeesState state
     )
     {
-        var feeWithoutBadDebt = totalReportedTonnage * GetPriceperTonneForComms(material, calcResult);
-        var badDebtRate       = calcResult.CalcResultParameterOtherCost.BadDebtValue;
-        var apportionment     = calcResult.CalcResultOnePlusFourApportionment.OnePlusFourApportionment;
+        var feeWithoutBadDebt = totalReportedTonnage * GetPriceperTonneForComms(material, state);
+        var badDebtRate       = state.OtherCost.BadDebtValue;
+        var apportionment     = state.Apportionment.OnePlusFourApportionment;
         return new FeeWithBadDebt
         {
             FeeWithoutBadDebt = feeWithoutBadDebt,

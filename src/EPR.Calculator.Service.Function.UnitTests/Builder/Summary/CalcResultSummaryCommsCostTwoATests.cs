@@ -1,6 +1,5 @@
 ﻿using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.Summary;
-using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.UnitTests.Builder.Summary.Common;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
@@ -11,7 +10,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.Summary;
 [TestClass]
 public class CalcResultSummaryCommsCostTwoATests
 {
-    private readonly CalcResult calcResult;
+    private readonly FeesState state;
     private readonly MaterialDetail material;
     private readonly List<ProducerDetail> producers;
 
@@ -20,36 +19,24 @@ public class CalcResultSummaryCommsCostTwoATests
         material = GetMaterial();
         producers = GetProducers();
 
-            calcResult = new CalcResult
-            {
-                CalcResultScaledupProducers = new CalcResultScaledupProducers(){
-                    ScaledupProducers = ImmutableList<CalcResultScaledupProducer>.Empty
-                },
-                CalcResultPartialObligations = new CalcResultPartialObligations(){
-                    PartialObligations = ImmutableList<CalcResultPartialObligation>.Empty,
-                },
-                CalcResultParameterOtherCost = TestDataHelper.GetCalcResultParameterOtherCost(),
-                CalcResultDetail = TestDataHelper.GetCalcResultDetail(),
-                CalcResultLaDisposalCostData = TestDataHelper.GetCalcResultLaDisposalCostData(),
-                CalcResultLapcapData = TestDataHelper.GetCalcResultLapcapData(),
-                CalcResultOnePlusFourApportionment = TestDataHelper.GetCalcResultOnePlusFourApportionment(),
-                ProducerFees = TestDataHelper.GetProducerFees(),
-                CalcResultCommsCostReportDetail = TestDataHelper.GetCalcResultCommsCostReportDetail(),
-                CalcResultLateReportingTonnageData = this.GetCalcResultLateReportingTonnage(),
-                CalcResultProjectedProducers = new CalcResultProjectedProducers(){
-                    H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
-                    H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty,
-                },
-            };
-        }
-
-    private Fixture Fixture { get; } = new();
+        state = new FeesState
+        {
+            CommsCost     = TestDataHelper.GetCalcResultCommsCostReportDetail(),
+            OtherCost     = TestDataHelper.GetCalcResultParameterOtherCost(),
+            Apportionment = TestDataHelper.GetCalcResultOnePlusFourApportionment(),
+            Materials     = null!,
+            Smcw          = null!,
+            DisposalCost  = null!,
+            Modulation    = null!,
+            LapcapData    = null!
+        };
+    }
 
     [TestMethod]
     public void GetPriceperTonneForComms_ShouldReturnCorrectTotal()
     {
         // Act
-        var totalCost = CalcResultSummaryCommsCostTwoA.GetPriceperTonneForComms(material, calcResult);
+        var totalCost = CalcResultSummaryCommsCostTwoA.GetPriceperTonneForComms(material, state);
 
         // Assert
         Assert.AreEqual(0.42m, totalCost);
@@ -62,7 +49,7 @@ public class CalcResultSummaryCommsCostTwoATests
         var material2 = GetMaterial() with { Code = "Unknown" };
 
         // Act
-        var totalCost = CalcResultSummaryCommsCostTwoA.GetPriceperTonneForComms(material2, calcResult);
+        var totalCost = CalcResultSummaryCommsCostTwoA.GetPriceperTonneForComms(material2, state);
 
         // Assert
         Assert.AreEqual(0m, totalCost);
@@ -72,7 +59,7 @@ public class CalcResultSummaryCommsCostTwoATests
     public void GetCommsFeesCosts_ShouldReturnCorrectValues()
     {
         // Act
-        var result = CalcResultSummaryCommsCostTwoA.GetCommsFeesCosts(ProducerFeesUtilTests.ProjectedMaterialsLookup(producers), producers[0], material, calcResult);
+        var result = CalcResultSummaryCommsCostTwoA.GetCommsFeesCosts(ProducerFeesUtilTests.ProjectedMaterialsLookup(producers), producers[0], material, state);
 
         // Assert
         Assert.AreEqual(504.00m, result.FeeWithoutBadDebt);
@@ -148,17 +135,4 @@ public class CalcResultSummaryCommsCostTwoATests
         };
         return material;
     }
-
-    private static MaterialDetail GetHDCMaterial()
-    {
-        var material = new MaterialDetail
-        {
-            Id = 3,
-            Code = "GL",
-            Name = "Material2"
-        };
-        return material;
-    }
-
-    private CalcResultLateReportingTonnage GetCalcResultLateReportingTonnage() => Fixture.Create<CalcResultLateReportingTonnage>();
 }

@@ -7,13 +7,13 @@ namespace EPR.Calculator.Service.Function.Services;
 
 public interface IMaterialService
 {
-    public Task<IImmutableList<MaterialDetail>> GetMaterials();
+    public Task<ImmutableList<MaterialDetail>> GetMaterials();
 }
 
 public class MaterialService(ApplicationDBContext dbContext)
     : IMaterialService
 {
-    public async Task<IImmutableList<MaterialDetail>> GetMaterials()
+    public async Task<ImmutableList<MaterialDetail>> GetMaterials()
     {
         return await dbContext
             .Material

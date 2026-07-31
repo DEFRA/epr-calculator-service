@@ -97,22 +97,13 @@ public class BillingBuilderTests : TestsFor<BillingBuilder>
 
         mockSelfManagedConsumerWasteService.Verify(m => m.Calculate(runContext, It.IsAny<IImmutableList<MaterialDetail>>()), Times.Never);
         mockModulationBuilder.Verify(m => m.ConstructAsync(It.IsAny<RunContext>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<CalcResultLaDisposalCostData>(), It.IsAny<SelfManagedConsumerWaste>()), Times.Never);
-        mockSummaryBuilder.Verify(m => m.ConstructAsync(runContext, It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<CalcResult>(), It.IsAny<SelfManagedConsumerWaste>()), Times.Never);
+        mockSummaryBuilder.Verify(m => m.ConstructAsync(runContext, It.IsAny<FeesState>()), Times.Never);
     }
 
     [TestMethod]
     public async Task Build_ShouldReturnCalcResult_WithProjectedProducers()
     {
         var runContext = TestDataHelper.BillingRun2026;
-        var mockProducers1 = new List<L1Producer>
-        {
-            new(1, [new ProducerDetail { ProducerId = 1, SubsidiaryId = null }])
-        };
-        var mockProducers2 = new List<L1Producer>
-        {
-            new(2, [new ProducerDetail { ProducerId = 2, SubsidiaryId = null }])
-        };
-
         var mockCalcResultProjectedProducersH1Data = new Mock<List<CalcResultH1ProjectedProducer>>();
         var mockCalcResultProjectedProducersH2Data = new Mock<List<CalcResultH2ProjectedProducer>>();
         var mockCalcResultPartialData = new Mock<List<CalcResultPartialObligation>>();

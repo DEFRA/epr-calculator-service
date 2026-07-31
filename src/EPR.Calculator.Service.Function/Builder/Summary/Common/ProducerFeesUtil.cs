@@ -1,8 +1,6 @@
 ﻿using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.Service.Function.Constants;
-using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.Services;
 
 namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 {
@@ -81,10 +79,10 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         public static RamTonnageGroup GetPricePerTonne(
             MaterialDetail material,
-            CalcResult calcResult
+            FeesState state
         )
         {
-            var laDisposalCostDataDetail = calcResult.CalcResultLaDisposalCostData.ByMaterial.GetValueOrDefault(material.Code);
+            var laDisposalCostDataDetail = state.DisposalCost.ByMaterial.GetValueOrDefault(material.Code);
 
             if (laDisposalCostDataDetail == null)
             {
@@ -93,12 +91,12 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
             var total = laDisposalCostDataDetail.DisposalCostPricePerTonne ?? 0m;
 
-            if (calcResult.CalcResultModulation is not null) {
+            if (state.Modulation is not null) {
                 return new RamTonnageGroup {
                     Total = total,
-                    Red = calcResult.CalcResultModulation.ModulationByMaterial[material].RedMaterialDisposalCost,
-                    Amber = calcResult.CalcResultModulation.ModulationByMaterial[material].AmberMaterialDisposalCost,
-                    Green = calcResult.CalcResultModulation.ModulationByMaterial[material].GreenMaterialDisposalCost
+                    Red = state.Modulation.ModulationByMaterial[material].RedMaterialDisposalCost,
+                    Amber = state.Modulation.ModulationByMaterial[material].AmberMaterialDisposalCost,
+                    Green = state.Modulation.ModulationByMaterial[material].GreenMaterialDisposalCost
                 };
             } else {
                 return new RamTonnageGroup { Total = total, Red = null, Amber = null, Green = null };
@@ -107,13 +105,13 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
 
         public static RamTonnageGroup GetProducerDisposalFee(
             MaterialDetail material,
-            CalcResult calcResult,
+            FeesState state,
             SelfManagedConsumerWasteData smcw
         )
         {
-            var pricePerTonne = GetPricePerTonne(material, calcResult);
+            var pricePerTonne = GetPricePerTonne(material, state);
 
-            if (calcResult.CalcResultModulation is not null) {
+            if (state.Modulation is not null) {
                 var red   = smcw.NetTonnage.Red   * pricePerTonne.Red;
                 var amber = smcw.NetTonnage.Amber * pricePerTonne.Amber;
                 var green = smcw.NetTonnage.Green * pricePerTonne.Green;
@@ -131,23 +129,23 @@ namespace EPR.Calculator.Service.Function.Builder.Summary.Common
         }
 
         public static decimal GetBadDebtProvision(
-            CalcResult calcResult,
+            FeesState state,
             decimal? producerDisposalFeeTotal
         ) =>
-           (producerDisposalFeeTotal ?? 0) * calcResult.CalcResultParameterOtherCost.BadDebtValue / 100;
+           (producerDisposalFeeTotal ?? 0) * state.OtherCost.BadDebtValue / 100;
 
         public static ByCountryCost GetProducerDisposalFeeWithBadDebtProvision(
-            CalcResult calcResult,
+            FeesState state,
             decimal? producerDisposalFeeTotal
         )
         {
-            var total = (producerDisposalFeeTotal ?? 0) * (1 + calcResult.CalcResultParameterOtherCost.BadDebtValue / 100);
-            var countryApportionment = calcResult.CalcResultLapcapData.CountryApportionment;
+            var total = (producerDisposalFeeTotal ?? 0) * (1 + state.OtherCost.BadDebtValue / 100);
+            var countryApportionment = state.LapcapData.CountryApportionment;
             return total * countryApportionment;
         }
 
         public static decimal GetCommsCostHeaderWithoutBadDebtFor2bTitle(
-            CalcResult calcResult
-        ) => calcResult.CalcResultCommsCostReportDetail.CommsCostUkWide.Total;
+            FeesState state
+        ) => state.CommsCost.CommsCostUkWide.Total;
     }
 }
