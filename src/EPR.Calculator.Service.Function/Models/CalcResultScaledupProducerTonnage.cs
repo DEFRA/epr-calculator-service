@@ -2,27 +2,16 @@
 
 public record CalcResultScaledupProducerTonnage
 {
-    public decimal ReportedHouseholdPackagingWasteTonnage { get; set; }
-
-    public decimal ReportedPublicBinTonnage { get; set; }
-
-    public decimal TotalReportedTonnage { get; set; }
-
-    public decimal ReportedSelfManagedConsumerWasteTonnage { get; set; }
-
-    public decimal NetReportedTonnage { get; set; }
-
-    public decimal ScaledupReportedHouseholdPackagingWasteTonnage { get; set; }
-
-    public decimal ScaledupReportedPublicBinTonnage { get; set; }
-
-    public decimal ScaledupTotalReportedTonnage { get; set; }
-
-    public decimal ScaledupReportedSelfManagedConsumerWasteTonnage { get; set; }
-
-    public decimal ScaledupNetReportedTonnage { get; set; }
-
-    public decimal HouseholdDrinksContainersTonnageGlass { get; set; }
-
-    public decimal ScaledupHouseholdDrinksContainersTonnageGlass { get; set; }
+    public required decimal ReportedHouseholdPackagingWasteTonnage { get; init; }
+    public required decimal ReportedPublicBinTonnage { get; init; }
+    public required decimal TotalReportedTonnage { get; init; }
+    public required decimal ReportedSelfManagedConsumerWasteTonnage { get; init; }
+    public required decimal NetReportedTonnage { get; init; }
+    public required decimal ScaledupReportedHouseholdPackagingWasteTonnage { get; init; }
+    public required decimal ScaledupReportedPublicBinTonnage { get; init; }
+    public required decimal ScaledupTotalReportedTonnage { get; init; }
+    public required decimal ScaledupReportedSelfManagedConsumerWasteTonnage { get; init; }
+    public required decimal ScaledupNetReportedTonnage { get; init; }
+    public required decimal HouseholdDrinksContainersTonnageGlass { get; init; }
+    public required decimal ScaledupHouseholdDrinksContainersTonnageGlass { get; init; }
 }

@@ -1029,7 +1029,9 @@ public static partial class TestDataHelper
                                 ScaledupReportedPublicBinTonnage = 40,
                                 ScaledupTotalReportedTonnage = 240,
                                 ScaledupReportedSelfManagedConsumerWasteTonnage = 120,
-                                ScaledupNetReportedTonnage = 360
+                                ScaledupNetReportedTonnage = 360,
+                                HouseholdDrinksContainersTonnageGlass = 0,
+                                ScaledupHouseholdDrinksContainersTonnageGlass = 0
                             }
                         },
                         {

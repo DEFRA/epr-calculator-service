@@ -280,6 +280,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
                 ScaledupTotalReportedTonnage = 10,
                 ScaledupReportedSelfManagedConsumerWasteTonnage = 10,
                 ScaledupNetReportedTonnage = 10,
+                HouseholdDrinksContainersTonnageGlass = 0,
+                ScaledupHouseholdDrinksContainersTonnageGlass = 0,
             });
             runProducerMaterialDetails.Add(new CalcResultScaledupProducer
             {

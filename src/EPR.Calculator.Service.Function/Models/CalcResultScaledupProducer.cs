@@ -1,6 +1,9 @@
 ﻿namespace EPR.Calculator.Service.Function.Models;
 
-public record ScaledupPomEntry(int MaterialId, string PackagingType, decimal Tonnage, decimal ScaledTonnage);
+public record ScaledupPomEntry(int MaterialId, string PackagingType, decimal Tonnage, decimal ScaledTonnage)
+{
+    public static ScaledupPomEntry Zero => new(0, "", 0, 0);
+}
 
 public record CalcResultScaledupProducer
 {
