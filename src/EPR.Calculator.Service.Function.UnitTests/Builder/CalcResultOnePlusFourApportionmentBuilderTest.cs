@@ -59,7 +59,7 @@ public class CalcResultOnePlusFourApportionmentBuilderTest : CalcResultOnePlusFo
                 },
         };
 
-        var resultCalc = Construct(calcResult);
+        var resultCalc = Construct(calcResult.CalcResultLapcapData, calcResult.CalcResultParameterOtherCost);
 
         // Assert
         Assert.IsNotNull(calcResult);

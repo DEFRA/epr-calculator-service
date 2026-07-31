@@ -86,7 +86,7 @@ public class ResultBuilder(
             nameof(calcResultWriter.StoreParameterOtherCost));
 
         result.CalcResultOnePlusFourApportionment = logger.LogDuration(
-            () => onePlusFourApportionmentBuilder.Construct(result),
+            () => onePlusFourApportionmentBuilder.Construct(result.CalcResultLapcapData, result.CalcResultParameterOtherCost),
             nameof(onePlusFourApportionmentBuilder));
 
         await logger.LogDuration(

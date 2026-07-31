@@ -1,20 +1,19 @@
 ﻿using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Builder.OnePlusFourApportionment
 {
     public interface ICalcResultOnePlusFourApportionmentBuilder
     {
-        CalcResultOnePlusFourApportionment Construct(CalcResult calcResult);
+        CalcResultOnePlusFourApportionment Construct(CalcResultLapcapData lapcapData, CalcResultParameterOtherCost otherCost);
     }
 
     public class CalcResultOnePlusFourApportionmentBuilder : ICalcResultOnePlusFourApportionmentBuilder
     {
-        public CalcResultOnePlusFourApportionment Construct(CalcResult calcResult)
+        public CalcResultOnePlusFourApportionment Construct(CalcResultLapcapData lapcapData, CalcResultParameterOtherCost otherCost)
         {
             return new CalcResultOnePlusFourApportionment {
-                LaDisposalCost   = calcResult.CalcResultLapcapData.Total,
-                LADataPrepCharge = calcResult.CalcResultParameterOtherCost.LaDataPrepCharge with { }
+                LaDisposalCost   = lapcapData.Total,
+                LADataPrepCharge = otherCost.LaDataPrepCharge with { }
             };
         }
     }

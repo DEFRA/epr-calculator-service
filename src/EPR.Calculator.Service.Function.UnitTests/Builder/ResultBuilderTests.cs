@@ -93,7 +93,7 @@ public class ResultBuilderTests : TestsFor<ResultBuilder>
             .ReturnsAsync(mockLapcapData.Object);
         mockCalcResultParameterOtherCostBuilder.Setup(m => m.ConstructAsync(runContext))
             .ReturnsAsync(mockOtherParams.Object);
-        mockOnePlusFourApportionmentBuilder.Setup(m => m.Construct(It.IsAny<CalcResult>()))
+        mockOnePlusFourApportionmentBuilder.Setup(m => m.Construct(It.IsAny<CalcResultLapcapData>(), It.IsAny<CalcResultParameterOtherCost>()))
             .Returns(mockOnePlusFourApp.Object);
         mockCommsCostReportBuilder
             .Setup(m => m.ConstructAsync(runContext, It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<CalcResultOnePlusFourApportionment>(), It.IsAny<CalcResultLateReportingTonnage>()))
