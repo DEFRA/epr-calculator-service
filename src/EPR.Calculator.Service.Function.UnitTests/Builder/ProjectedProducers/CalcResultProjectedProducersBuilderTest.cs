@@ -495,7 +495,7 @@ public class CalcResultProjectedProducersBuilderTest : TestsFor<CalcResultProjec
         var (_, result) = testSubject.Construct(runContext, materialDetails, ToL1Producers(given));
 
         var l1 = result.H1ProjectedProducers.Single(p => p.Level == "1");
-        var proportions = l1.H1ProjectedTonnageByMaterial["AL"].H2RamProportions;
+        var proportions = l1.ProjectedTonnageByMaterial["AL"].H2RamProportions;
 
         Assert.AreEqual(0.6m, proportions.Red);
         Assert.AreEqual(0.4m, proportions.Amber);
@@ -665,7 +665,26 @@ public class CalcResultProjectedProducersBuilderTest : TestsFor<CalcResultProjec
 
         if (given.H1ProjectedProducers != null && given.H2ProjectedProducers != null)
         {
-            foreach (var producer in given.H1ProjectedProducers.Cast<ICalcResultProjectedProducer>().Concat(given.H2ProjectedProducers))
+            foreach (var producer in given.H1ProjectedProducers)
+            {
+                var producerId = producer.ProducerId;
+                var subsidiaryId = producer.SubsidiaryId;
+                var submissionPeriod = producer.SubmissionPeriodCode;
+
+                foreach (var kv in producer.ProjectedTonnageByMaterial)
+                {
+                    var materialCode = kv.Key;
+                    var v = kv.Value;
+                    var hhRow = createRow(producerId, subsidiaryId, producer.SubmissionPeriodCode, materialCode, "HH", producer.Level, v.ProjectedHouseholdRAMTonnage, v.ProjectedHouseholdTonnage);
+                    if (hhRow != null) result.Add(hhRow);
+                    var pbRow = createRow(producerId, subsidiaryId, producer.SubmissionPeriodCode, materialCode, "PB", producer.Level, v.ProjectedPublicBinRAMTonnage, v.ProjectedPublicBinTonnage);
+                    if (pbRow != null) result.Add(pbRow);
+                    var hdcRow = createRow(producerId, subsidiaryId, producer.SubmissionPeriodCode, materialCode, "HDC", producer.Level, v.ProjectedHouseholdDrinksContainerRAMTonnage, v.ProjectedHouseholdDrinksContainerTonnage);
+                    if (hdcRow != null) result.Add(hdcRow);
+                }
+            }
+
+            foreach (var producer in given.H2ProjectedProducers)
             {
                 var producerId = producer.ProducerId;
                 var subsidiaryId = producer.SubsidiaryId;

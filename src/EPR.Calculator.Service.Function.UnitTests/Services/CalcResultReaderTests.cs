@@ -64,9 +64,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var result = await _sut.ReadH1ProjectedData(1, CancellationToken.None);
             result.Count.ShouldBe(3);
-            result.First(p => p.ProducerId == 1 && p.SubsidiaryId == null && p.Level == "1").H1ProjectedTonnageByMaterial.Count.ShouldBe(3);
-            result.First(p => p.ProducerId == 1 && p.SubsidiaryId == null && p.Level == "2").H1ProjectedTonnageByMaterial.Count.ShouldBe(3);
-            result.First(p => p.ProducerId == 1 && p.SubsidiaryId == "A" && p.Level == "2").H1ProjectedTonnageByMaterial.Count.ShouldBe(3);
+            result.First(p => p.ProducerId == 1 && p.SubsidiaryId == null && p.Level == "1").ProjectedTonnageByMaterial.Count.ShouldBe(3);
+            result.First(p => p.ProducerId == 1 && p.SubsidiaryId == null && p.Level == "2").ProjectedTonnageByMaterial.Count.ShouldBe(3);
+            result.First(p => p.ProducerId == 1 && p.SubsidiaryId == "A" && p.Level == "2").ProjectedTonnageByMaterial.Count.ShouldBe(3);
         }
 
         [TestMethod]
@@ -91,9 +91,9 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
 
             var result = await _sut.ReadH2ProjectedData(1, CancellationToken.None);
             result.Count.ShouldBe(3);
-            result.First(p => p.ProducerId == 1 && p.SubsidiaryId == null && p.Level == "1").H2ProjectedTonnageByMaterial.Count.ShouldBe(3);
-            result.First(p => p.ProducerId == 1 && p.SubsidiaryId == null && p.Level == "2").H2ProjectedTonnageByMaterial.Count.ShouldBe(3);
-            result.First(p => p.ProducerId == 1 && p.SubsidiaryId == "A" && p.Level == "2").H2ProjectedTonnageByMaterial.Count.ShouldBe(3);
+            result.First(p => p.ProducerId == 1 && p.SubsidiaryId == null && p.Level == "1").ProjectedTonnageByMaterial.Count.ShouldBe(3);
+            result.First(p => p.ProducerId == 1 && p.SubsidiaryId == null && p.Level == "2").ProjectedTonnageByMaterial.Count.ShouldBe(3);
+            result.First(p => p.ProducerId == 1 && p.SubsidiaryId == "A" && p.Level == "2").ProjectedTonnageByMaterial.Count.ShouldBe(3);
         }
 
         [TestMethod]

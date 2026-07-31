@@ -27,8 +27,8 @@ namespace EPR.Calculator.Service.Function.Services
     {
         public async Task StoreProjectedH1Data(int runId, IReadOnlyList<CalcResultH1ProjectedProducer> projectedProducers, CancellationToken cancellationToken)
         {
-            await bulkOps.BulkInsertAsync(dbContext, projectedProducers.SelectMany(p => 
-                p.H1ProjectedTonnageByMaterial.Select(m => 
+            await bulkOps.BulkInsertAsync(dbContext, projectedProducers.SelectMany(p =>
+                p.ProjectedTonnageByMaterial.Select(m =>
                     MapToTransformProjectedH1(runId, p.ProducerId, p.SubsidiaryId, m.Key, p.SubmissionPeriodCode, p.Level, m.Value)
                 )
             ), cancellationToken);
@@ -36,8 +36,8 @@ namespace EPR.Calculator.Service.Function.Services
 
         public async Task StoreProjectedH2Data(int runId, IReadOnlyList<CalcResultH2ProjectedProducer> projectedProducers, CancellationToken cancellationToken)
         {
-            await bulkOps.BulkInsertAsync(dbContext, projectedProducers.SelectMany(p => 
-                p.H2ProjectedTonnageByMaterial.Select(m => 
+            await bulkOps.BulkInsertAsync(dbContext, projectedProducers.SelectMany(p =>
+                p.ProjectedTonnageByMaterial.Select(m =>
                     MapToTransformProjectedH2(runId, p.ProducerId, p.SubsidiaryId, m.Key, p.SubmissionPeriodCode, p.Level, m.Value)
                 )
             ), cancellationToken);
@@ -45,12 +45,12 @@ namespace EPR.Calculator.Service.Function.Services
 
         public async Task StoreScaledData(int runId, IReadOnlyList<CalcResultScaledupProducer> scaled, CancellationToken cancellationToken)
         {
-             await bulkOps.BulkInsertAsync(dbContext, scaled.SelectMany(p => 
-                p.PomData.Select(m => 
+             await bulkOps.BulkInsertAsync(dbContext, scaled.SelectMany(p =>
+                p.PomData.Select(m =>
                     new TransformScaled
                     {
                         CalculatorRunId = runId,
-                        ProducerId = p.ProducerId, 
+                        ProducerId = p.ProducerId,
                         SubsidiaryId = p.SubsidiaryId,
                         ProducerName = p.ProducerName,
                         TradingName = p.TradingName,
@@ -68,10 +68,10 @@ namespace EPR.Calculator.Service.Function.Services
                 )
             ), cancellationToken);
         }
-        
+
         public async Task StorePartialData(int runId, IReadOnlyList<CalcResultPartialObligation> partial, CancellationToken cancellationToken){
-            await bulkOps.BulkInsertAsync(dbContext, partial.SelectMany(p => 
-                p.PartialObligationTonnageByMaterial.Select(m => 
+            await bulkOps.BulkInsertAsync(dbContext, partial.SelectMany(p =>
+                p.PartialObligationTonnageByMaterial.Select(m =>
                     MapToTransformPartial(runId, m.Key, p, m.Value)
                 )
             ), cancellationToken);

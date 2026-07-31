@@ -9,7 +9,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
 {
     public static class H2ProjectedProducersExporterUtils
     {
-        public static void AppendProjectedProducers(IImmutableList<CalcResultH2ProjectedProducer> h2ProjectedProducers, StringBuilder csvContent)
+        public static void AppendProjectedProducers(IImmutableList<CalcResultH2ProjectedProducer> h2ProjectedProducers, IImmutableList<MaterialDetail> materials, StringBuilder csvContent)
         {
             foreach (var producer in h2ProjectedProducers)
             {
@@ -18,13 +18,21 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.Level));
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.SubmissionPeriodCode));
 
-                AppendProjectedProducerTonnageByMaterial(csvContent, producer.H2ProjectedTonnageByMaterial);
+                AppendProjectedProducerTonnageByMaterial(csvContent, materials, producer.ProjectedTonnageByMaterial);
 
                 csvContent.AppendLine();
             }
         }
 
-        private static void AppendProjectedProducerTonnageByMaterial(StringBuilder csvContent, IReadOnlyDictionary<string, CalcResultH2ProjectedProducerMaterialTonnage> h2ProjectedProducerTonnageByMaterial)
+        /// <remarks>
+        /// Materials are iterated in the same order used to build the column headers (see
+        /// <see cref="GetColumnHeaders"/>), so each tonnage block lines up with its header.
+        /// Do not iterate the dictionary directly; its enumeration order is unspecified.
+        /// </remarks>
+        private static void AppendProjectedProducerTonnageByMaterial(
+            StringBuilder csvContent,
+            IImmutableList<MaterialDetail> materials,
+            IReadOnlyDictionary<string, CalcResultH2ProjectedProducerMaterialTonnage> tonnageByMaterial)
         {
             void appendRamTonnage(RamTonnage tonnage)
             {
@@ -36,10 +44,12 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
                 csvContent.Append(CsvSanitiser.SanitiseData(tonnage.GreenMedical, DecimalPlaces.Three, DecimalFormats.F3));
             }
 
-            foreach (var producerTonnage in h2ProjectedProducerTonnageByMaterial)
+            foreach (var material in materials)
             {
-                var materialCode = producerTonnage.Key;
-                var tonnage = producerTonnage.Value;
+                var materialCode = material.Code;
+
+                if (!tonnageByMaterial.TryGetValue(materialCode, out var tonnage))
+                    continue;
 
                 csvContent.Append(CsvSanitiser.SanitiseData(tonnage.HouseholdTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 appendRamTonnage(tonnage.HouseholdRAMTonnage);

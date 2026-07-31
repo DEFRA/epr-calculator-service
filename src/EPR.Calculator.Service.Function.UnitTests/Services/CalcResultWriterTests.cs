@@ -55,13 +55,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Level = "1",
                     SubmissionPeriodCode = "2025-H1",
                     IsSubtotal = true,
-                    H1ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>
+                    ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>
                     {
                         [MaterialCodes.Aluminium] = MkH1MaterialTonnage(),
                         [MaterialCodes.Glass] = MkH1MaterialTonnage(isGlass: true),
                         [MaterialCodes.PaperOrCard] = MkH1MaterialTonnage(),
                         [MaterialCodes.Steel] = MkH1MaterialTonnage()
-                    }
+                    }.ToImmutableDictionary()
                 },
                 new CalcResultH1ProjectedProducer
                 {
@@ -70,12 +70,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Level = "2",
                     SubmissionPeriodCode = "2025-H1",
                     IsSubtotal = false,
-                    H1ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>
+                    ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>
                     {
                         [MaterialCodes.Aluminium] = MkH1MaterialTonnage(),
                         [MaterialCodes.Glass] = MkH1MaterialTonnage(isGlass: true),
                         [MaterialCodes.PaperOrCard] = MkH1MaterialTonnage()
-                    }
+                    }.ToImmutableDictionary()
                 },
                 new CalcResultH1ProjectedProducer
                 {
@@ -84,11 +84,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Level = "2",
                     SubmissionPeriodCode = "2025-H1",
                     IsSubtotal = false,
-                    H1ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>
+                    ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>
                     {
                         [MaterialCodes.Aluminium] = MkH1MaterialTonnage(),
                         [MaterialCodes.Steel] = MkH1MaterialTonnage()
-                    }
+                    }.ToImmutableDictionary()
                 }
             );
             await _sut.StoreProjectedH1Data(1, projectedProducers, CancellationToken.None);
@@ -111,13 +111,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Level = "1",
                     SubmissionPeriodCode = "2025-H2",
                     IsSubtotal = true,
-                    H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
+                    ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
                     {
                         [MaterialCodes.Aluminium] = MkH2MaterialTonnage(),
                         [MaterialCodes.Glass] = MkH2MaterialTonnage(isGlass: true),
                         [MaterialCodes.PaperOrCard] = MkH2MaterialTonnage(),
                         [MaterialCodes.Steel] = MkH2MaterialTonnage()
-                    }
+                    }.ToImmutableDictionary()
                 },
                 new CalcResultH2ProjectedProducer
                 {
@@ -126,12 +126,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Level = "2",
                     SubmissionPeriodCode = "2025-H2",
                     IsSubtotal = false,
-                    H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
+                    ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
                     {
                         [MaterialCodes.Aluminium] = MkH2MaterialTonnage(),
                         [MaterialCodes.Glass] = MkH2MaterialTonnage(isGlass: true),
                         [MaterialCodes.PaperOrCard] = MkH2MaterialTonnage()
-                    }
+                    }.ToImmutableDictionary()
                 },
                 new CalcResultH2ProjectedProducer
                 {
@@ -140,11 +140,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     Level = "2",
                     SubmissionPeriodCode = "2025-H2",
                     IsSubtotal = false,
-                    H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
+                    ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
                     {
                         [MaterialCodes.Aluminium] = MkH2MaterialTonnage(),
                         [MaterialCodes.Steel] = MkH2MaterialTonnage()
-                    }
+                    }.ToImmutableDictionary()
                 }
             );
             await _sut.StoreProjectedH2Data(1, projectedProducers, CancellationToken.None);

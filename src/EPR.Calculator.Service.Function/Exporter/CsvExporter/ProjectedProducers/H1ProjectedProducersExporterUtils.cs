@@ -9,13 +9,13 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
 {
     public static class H1ProjectedProducersExporterUtils
     {
-        public static void AppendProjectedProducers(IImmutableList<CalcResultH1ProjectedProducer> h1ProjectedProducers, StringBuilder csvContent)
+        public static void AppendProjectedProducers(IImmutableList<CalcResultH1ProjectedProducer> h1ProjectedProducers, IImmutableList<MaterialDetail> materials, StringBuilder csvContent)
         {
             var l1ProportionsByProducer = h1ProjectedProducers
                 .Where(p => p.Level == CommonConstants.LevelOne.ToString())
                 .ToDictionary(
                     p => p.ProducerId,
-                    p => (IReadOnlyDictionary<string, RAMProportions>)p.H1ProjectedTonnageByMaterial
+                    p => (IReadOnlyDictionary<string, RAMProportions>)p.ProjectedTonnageByMaterial
                         .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.H2RamProportions));
 
             foreach (var producer in h1ProjectedProducers)
@@ -26,18 +26,30 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.SubmissionPeriodCode));
 
                 var l1Proportions = l1ProportionsByProducer.GetValueOrDefault(producer.ProducerId);
-                AppendProjectedProducerTonnageByMaterial(csvContent, producer.H1ProjectedTonnageByMaterial, l1Proportions);
+                AppendProjectedProducerTonnageByMaterial(csvContent, materials, producer.ProjectedTonnageByMaterial, l1Proportions);
 
                 csvContent.AppendLine();
             }
         }
 
-        private static void AppendProjectedProducerTonnageByMaterial(StringBuilder csvContent, IReadOnlyDictionary<string, CalcResultH1ProjectedProducerMaterialTonnage> h1ProjectedProducerTonnageByMaterial, IReadOnlyDictionary<string, RAMProportions>? l1Proportions)
+        /// <remarks>
+        /// Materials are iterated in the same order used to build the column headers (see
+        /// <see cref="GetColumnHeaders"/>), so each tonnage block lines up with its header.
+        /// Do not iterate the dictionary directly; its enumeration order is unspecified.
+        /// </remarks>
+        private static void AppendProjectedProducerTonnageByMaterial(
+            StringBuilder csvContent,
+            IImmutableList<MaterialDetail> materials,
+            IReadOnlyDictionary<string, CalcResultH1ProjectedProducerMaterialTonnage> tonnageByMaterial,
+            IReadOnlyDictionary<string, RAMProportions>? l1Proportions)
         {
-            foreach (var producerTonnage in h1ProjectedProducerTonnageByMaterial)
+            foreach (var material in materials)
             {
-                var materialL1Proportions = l1Proportions?.GetValueOrDefault(producerTonnage.Key);
-                AppendMaterialTonnage(csvContent, producerTonnage.Key, producerTonnage.Value, materialL1Proportions);
+                if (!tonnageByMaterial.TryGetValue(material.Code, out var tonnage))
+                    continue;
+
+                var materialL1Proportions = l1Proportions?.GetValueOrDefault(material.Code);
+                AppendMaterialTonnage(csvContent, material.Code, tonnage, materialL1Proportions);
             }
         }
 

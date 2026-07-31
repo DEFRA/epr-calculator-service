@@ -2,7 +2,6 @@ using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.Utils;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.Utils;
 
 namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 {
@@ -18,11 +17,11 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 
             return producerDetails.Select(pd => new CalcResultH1ProjectedProducer
             {
-                ProducerId                   = pd.ProducerId,
-                SubsidiaryId                 = pd.SubsidiaryId,
-                Level                        = string.Empty, // Level will be set later when subtotals are added
-                SubmissionPeriodCode         = submissionPeriod,
-                H1ProjectedTonnageByMaterial = GetProjectedTonnages(
+                ProducerId                 = pd.ProducerId,
+                SubsidiaryId               = pd.SubsidiaryId,
+                Level                      = string.Empty, // Level will be set later when subtotals are added
+                SubmissionPeriodCode       = submissionPeriod,
+                ProjectedTonnageByMaterial = GetProjectedTonnages(
                     materials,
                     pd.ProducerReportedMaterials.Where(rm => rm.SubmissionPeriod == submissionPeriod)
                         .ToList(),
@@ -32,8 +31,8 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             }).ToList();
         }
 
-        private static Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage> GetProjectedTonnages(IReadOnlyCollection<MaterialDetail> materials, List<ProducerReportedMaterial> reportedMaterials, CalcResultH2ProjectedProducer? h2ProjectedProducer) =>
-            materials.ToDictionary(m => m.Code, m => GetProjectedTonnage(m, reportedMaterials.Where(rm => rm.MaterialId == m.Id).ToList(), h2ProjectedProducer));
+        private static ImmutableDictionary<string, CalcResultH1ProjectedProducerMaterialTonnage> GetProjectedTonnages(IReadOnlyCollection<MaterialDetail> materials, List<ProducerReportedMaterial> reportedMaterials, CalcResultH2ProjectedProducer? h2ProjectedProducer) =>
+            materials.ToImmutableDictionary(m => m.Code, m => GetProjectedTonnage(m, reportedMaterials.Where(rm => rm.MaterialId == m.Id).ToList(), h2ProjectedProducer));
 
         private static CalcResultH1ProjectedProducerMaterialTonnage GetProjectedTonnage(MaterialDetail material, List<ProducerReportedMaterial> reportedMaterials, CalcResultH2ProjectedProducer? h2ProjectedProducer)
         {
@@ -53,7 +52,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             var pbTonnageWithoutRAM = CalcResultProjectedProducersBuilder.TonnageWithoutRAM(pbTonnage, pbRAMTonnage);
             decimal? hdcTonnageWithoutRAM = (hdcTonnage != null && hdcRAMTonnage != null) ? CalcResultProjectedProducersBuilder.TonnageWithoutRAM(hdcTonnage.Value, hdcRAMTonnage) : null;
 
-            var h2ProjectedTotalTonnage = h2ProjectedProducer?.H2ProjectedTonnageByMaterial[material.Code].TotalTonnage() ?? 0;
+            var h2ProjectedTotalTonnage = h2ProjectedProducer?.ProjectedTonnageByMaterial[material.Code].TotalTonnage() ?? 0;
             var h2RamProportions = ComputeProportionsFromH2(h2ProjectedProducer, material.Code);
 
             var h1ProportionateRAMTonnage = (decimal tonnage, RamTonnage ramTonnage, decimal tonnageWithoutRAM, decimal h2TotalTonnage)
@@ -82,7 +81,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 
         private static RAMProportions ComputeProportionsFromH2(CalcResultH2ProjectedProducer? h2Producer, string materialCode)
         {
-            var t = h2Producer != null ? h2Producer.H2ProjectedTonnageByMaterial[materialCode] : GetEmptyH2MaterialTonnage(materialCode);
+            var t = h2Producer != null ? h2Producer.ProjectedTonnageByMaterial[materialCode] : GetEmptyH2MaterialTonnage(materialCode);
             var total = t.TotalTonnage();
             return new RAMProportions
             {
@@ -154,12 +153,12 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             var h2Subtotal = h2Producers.FirstOrDefault(h2 => h2.IsSubtotal) ?? h2Producers.FirstOrDefault();
             return new CalcResultH1ProjectedProducer
                 {
-                    ProducerId                   = p.ProducerId,
-                    SubsidiaryId                 = null,
-                    Level                        = CommonConstants.LevelOne.ToString(),
-                    SubmissionPeriodCode         = p.SubmissionPeriodCode,
-                    IsSubtotal                   = true,
-                    H1ProjectedTonnageByMaterial = p.H1ProjectedTonnageByMaterial.ToDictionary(
+                    ProducerId                 = p.ProducerId,
+                    SubsidiaryId               = null,
+                    Level                      = CommonConstants.LevelOne.ToString(),
+                    SubmissionPeriodCode       = p.SubmissionPeriodCode,
+                    IsSubtotal                 = true,
+                    ProjectedTonnageByMaterial = p.ProjectedTonnageByMaterial.ToImmutableDictionary(
                         kvp => kvp.Key,
                         kvp => kvp.Value with { H2RamProportions = ComputeProportionsFromH2(h2Subtotal, kvp.Key) })
                 };
@@ -170,33 +169,33 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             var producer = prodGroup.First();
             var h2Subtotal = h2Producers.FirstOrDefault(h2 => h2.IsSubtotal);
             var sumRam = (string matKey, Func<CalcResultProjectedProducerMaterialTonnage, RamTonnage?> tonnageFunc) =>
-                CalcResultProjectedProducersBuilder.SumRAMTonnages(prodGroup.Cast<ICalcResultProjectedProducer>().ToList(), matKey, tonnageFunc);
+                CalcResultProjectedProducersBuilder.SumRAMTonnages(prodGroup, matKey, tonnageFunc);
 
             return new CalcResultH1ProjectedProducer
             {
-                ProducerId                   = producer.ProducerId,
-                SubsidiaryId                 = null,
-                Level                        = CommonConstants.LevelOne.ToString(),
-                SubmissionPeriodCode         = producer.SubmissionPeriodCode,
-                IsSubtotal                   = true,
-                H1ProjectedTonnageByMaterial = producer.H1ProjectedTonnageByMaterial.ToDictionary(
+                ProducerId                 = producer.ProducerId,
+                SubsidiaryId               = null,
+                Level                      = CommonConstants.LevelOne.ToString(),
+                SubmissionPeriodCode       = producer.SubmissionPeriodCode,
+                IsSubtotal                 = true,
+                ProjectedTonnageByMaterial = producer.ProjectedTonnageByMaterial.ToImmutableDictionary(
                     kvp => kvp.Key,
                     kvp => new CalcResultH1ProjectedProducerMaterialTonnage {
-                        HouseholdTonnage                            = prodGroup.Sum(p => p.H1ProjectedTonnageByMaterial[kvp.Key].HouseholdTonnage),
+                        HouseholdTonnage                            = prodGroup.Sum(p => p.ProjectedTonnageByMaterial[kvp.Key].HouseholdTonnage),
                         HouseholdRAMTonnage                         = sumRam(kvp.Key, p => p.HouseholdRAMTonnage),
-                        PublicBinTonnage                            = prodGroup.Sum(p => p.H1ProjectedTonnageByMaterial[kvp.Key].PublicBinTonnage),
+                        PublicBinTonnage                            = prodGroup.Sum(p => p.ProjectedTonnageByMaterial[kvp.Key].PublicBinTonnage),
                         PublicBinRAMTonnage                         = sumRam(kvp.Key, p => p.PublicBinRAMTonnage),
-                        HouseholdDrinksContainerTonnage             = kvp.Key == MaterialCodes.Glass ? prodGroup.Sum(p => p.H1ProjectedTonnageByMaterial[kvp.Key].HouseholdDrinksContainerTonnage) : null,
+                        HouseholdDrinksContainerTonnage             = kvp.Key == MaterialCodes.Glass ? prodGroup.Sum(p => p.ProjectedTonnageByMaterial[kvp.Key].HouseholdDrinksContainerTonnage) : null,
                         HouseholdDrinksContainerRAMTonnage          = kvp.Key == MaterialCodes.Glass ? sumRam(kvp.Key, p => p.HouseholdDrinksContainerRAMTonnage) : null,
-                        HouseholdTonnageWithoutRAM                  = prodGroup.Sum(p => p.H1ProjectedTonnageByMaterial[kvp.Key].HouseholdTonnageWithoutRAM),
-                        PublicBinTonnageWithoutRAM                  = prodGroup.Sum(p => p.H1ProjectedTonnageByMaterial[kvp.Key].PublicBinTonnageWithoutRAM),
-                        HouseholdDrinksContainerTonnageWithoutRAM   = kvp.Key == MaterialCodes.Glass ? prodGroup.Sum(p => p.H1ProjectedTonnageByMaterial[kvp.Key].HouseholdDrinksContainerTonnageWithoutRAM ?? 0) : null,
+                        HouseholdTonnageWithoutRAM                  = prodGroup.Sum(p => p.ProjectedTonnageByMaterial[kvp.Key].HouseholdTonnageWithoutRAM),
+                        PublicBinTonnageWithoutRAM                  = prodGroup.Sum(p => p.ProjectedTonnageByMaterial[kvp.Key].PublicBinTonnageWithoutRAM),
+                        HouseholdDrinksContainerTonnageWithoutRAM   = kvp.Key == MaterialCodes.Glass ? prodGroup.Sum(p => p.ProjectedTonnageByMaterial[kvp.Key].HouseholdDrinksContainerTonnageWithoutRAM ?? 0) : null,
                         H2RamProportions                            = ComputeProportionsFromH2(h2Subtotal, kvp.Key),
-                        ProjectedHouseholdTonnage                   = prodGroup.Sum(p => p.H1ProjectedTonnageByMaterial[kvp.Key].ProjectedHouseholdTonnage),
+                        ProjectedHouseholdTonnage                   = prodGroup.Sum(p => p.ProjectedTonnageByMaterial[kvp.Key].ProjectedHouseholdTonnage),
                         ProjectedHouseholdRAMTonnage                = sumRam(kvp.Key, p => p.ProjectedHouseholdRAMTonnage),
-                        ProjectedPublicBinTonnage                   = prodGroup.Sum(p => p.H1ProjectedTonnageByMaterial[kvp.Key].ProjectedPublicBinTonnage),
+                        ProjectedPublicBinTonnage                   = prodGroup.Sum(p => p.ProjectedTonnageByMaterial[kvp.Key].ProjectedPublicBinTonnage),
                         ProjectedPublicBinRAMTonnage                = sumRam(kvp.Key, p => p.ProjectedPublicBinRAMTonnage),
-                        ProjectedHouseholdDrinksContainerTonnage    = kvp.Key == MaterialCodes.Glass ? prodGroup.Sum(p => p.H1ProjectedTonnageByMaterial[kvp.Key].ProjectedHouseholdDrinksContainerTonnage) : null,
+                        ProjectedHouseholdDrinksContainerTonnage    = kvp.Key == MaterialCodes.Glass ? prodGroup.Sum(p => p.ProjectedTonnageByMaterial[kvp.Key].ProjectedHouseholdDrinksContainerTonnage) : null,
                         ProjectedHouseholdDrinksContainerRAMTonnage = kvp.Key == MaterialCodes.Glass ? sumRam(kvp.Key, p => p.ProjectedHouseholdDrinksContainerRAMTonnage) : null
                     })
             };

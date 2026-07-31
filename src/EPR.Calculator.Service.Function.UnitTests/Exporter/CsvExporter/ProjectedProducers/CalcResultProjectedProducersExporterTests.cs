@@ -227,7 +227,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
                     SubsidiaryId = null,
                     Level = "1",
                     SubmissionPeriodCode = "2026-H2",
-                    H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
+                    ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
                     {
                         {
                             "AL", new CalcResultH2ProjectedProducerMaterialTonnage
@@ -336,7 +336,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
                                 },
                             }
                         },
-                    },
+                    }.ToImmutableDictionary(),
                     IsSubtotal = false,
                 },
             }.ToImmutableList();
@@ -352,7 +352,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
                     SubsidiaryId = null,
                     Level = "1",
                     SubmissionPeriodCode = "2026-H2",
-                    H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
+                    ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
                     {
                         {
                             "AL", new CalcResultH2ProjectedProducerMaterialTonnage
@@ -469,7 +469,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
                                 },
                             }
                         },
-                    },
+                    }.ToImmutableDictionary(),
                     IsSubtotal = false,
                 },
                 new CalcResultH2ProjectedProducer
@@ -478,7 +478,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
                     SubsidiaryId = null,
                     Level = "2",
                     SubmissionPeriodCode = "2026-H2",
-                    H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
+                    ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
                     {
                         {
                             "AL", new CalcResultH2ProjectedProducerMaterialTonnage
@@ -595,7 +595,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
                                 },
                             }
                         },
-                    },
+                    }.ToImmutableDictionary(),
                     IsSubtotal = false,
                 },
                 new CalcResultH2ProjectedProducer
@@ -604,7 +604,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
                     SubsidiaryId = "ABC",
                     Level = "2",
                     SubmissionPeriodCode = "2026-H2",
-                    H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
+                    ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
                     {
                         {
                             "AL", new CalcResultH2ProjectedProducerMaterialTonnage
@@ -653,7 +653,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
                                 },
                             }
                         }
-                    },
+                    }.ToImmutableDictionary(),
                     IsSubtotal = false,
                 }
             }.ToImmutableList();
@@ -669,7 +669,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
                     SubsidiaryId = null,
                     Level = "1",
                     SubmissionPeriodCode = "2026-H1",
-                    H1ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>
+                    ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>
                     {
                         {
                             "AL", new CalcResultH1ProjectedProducerMaterialTonnage
@@ -852,7 +852,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
                                 }
                             }
                         },
-                    },
+                    }.ToImmutableDictionary(),
                     IsSubtotal = false,
                 },
             }.ToImmutableList();
@@ -869,7 +869,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
                     SubsidiaryId = null,
                     Level = "1",
                     SubmissionPeriodCode = "2026-H1",
-                    H1ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>
+                    ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>
                     {
                         {
                             "AL", new CalcResultH1ProjectedProducerMaterialTonnage
@@ -1004,7 +1004,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
                                 }
                             }
                         }
-                    },
+                    }.ToImmutableDictionary(),
                 },
                 new CalcResultH1ProjectedProducer
                 {
@@ -1013,7 +1013,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
                     SubsidiaryId = null,
                     Level = "2",
                     SubmissionPeriodCode = "2026-H1",
-                    H1ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>
+                    ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>
                     {
                         {
                             "GL",
@@ -1037,7 +1037,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
                                 ProjectedHouseholdDrinksContainerRAMTonnage = new RamTonnage{ Red = 400, RedMedical = 100, Amber = 0, AmberMedical = 0, Green = 0, GreenMedical = 0 }
                             }
                         }
-                    },
+                    }.ToImmutableDictionary(),
                 },
                 new CalcResultH1ProjectedProducer
                 {
@@ -1046,7 +1046,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
                     SubsidiaryId = "CDE",
                     Level = "2",
                     SubmissionPeriodCode = "2026-H1",
-                    H1ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>
+                    ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>
                     {
                         {
                             "AL", new CalcResultH1ProjectedProducerMaterialTonnage
@@ -1181,7 +1181,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Project
                                 }
                             }
                         }
-                    },
+                    }.ToImmutableDictionary(),
                 },
             }.ToImmutableList();
         }

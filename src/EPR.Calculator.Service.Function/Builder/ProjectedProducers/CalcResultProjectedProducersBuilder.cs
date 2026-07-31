@@ -70,8 +70,8 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
 
         private ProducerDetail ApplyProjectedMaterials(
             ProducerDetail pd,
-            ICalcResultProjectedProducer h1Row,
-            ICalcResultProjectedProducer h2Row,
+            CalcResultH1ProjectedProducer h1Row,
+            CalcResultH2ProjectedProducer h2Row,
             IImmutableList<MaterialDetail> materials,
             string h1Period,
             string h2Period
@@ -82,7 +82,8 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             var h2ById = h2Row.ProjectedTonnageByMaterial
                 .ToDictionary(kvp => materials.FirstOrDefault(m => m.Code == kvp.Key)?.Id ?? -1, kvp => kvp.Value);
 
-            ProducerReportedMaterial Apply(ProducerReportedMaterial rm, Dictionary<int, CalcResultProjectedProducerMaterialTonnage> projectedById)
+            ProducerReportedMaterial Apply<T>(ProducerReportedMaterial rm, IReadOnlyDictionary<int, T> projectedById)
+                where T : CalcResultProjectedProducerMaterialTonnage
             {
                 if (!projectedById.TryGetValue(rm.MaterialId, out var projected)) return rm;
                 var projectedRam = rm.PackagingType switch
@@ -127,14 +128,15 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             return Math.Max(0, tonnage - ramTonnage.TotalRamTonnage());
         }
 
-        public static RamTonnage SumRAMTonnages(List<ICalcResultProjectedProducer> producers, string materialCode, Func<CalcResultProjectedProducerMaterialTonnage, RamTonnage?> getRAMTonnage)
+        public static RamTonnage SumRAMTonnages<T>(IReadOnlyCollection<CalcResultProjectedProducer<T>> producers, string materialCode, Func<CalcResultProjectedProducerMaterialTonnage, RamTonnage?> getRAMTonnage)
+            where T : CalcResultProjectedProducerMaterialTonnage
         {
             decimal red = 0, redMed = 0, amber = 0, amberMed = 0, green = 0, greenMed = 0;
 
             foreach (var p in producers)
             {
-                CalcResultProjectedProducerMaterialTonnage? material = p.ProjectedTonnageByMaterial.FirstOrDefault(v => v.Key == materialCode).Value;
-                if (material == null) continue;
+                if (!p.ProjectedTonnageByMaterial.TryGetValue(materialCode, out var material))
+                    continue;
 
                 var ram = getRAMTonnage(material);
                 if (ram == null) continue;
@@ -162,7 +164,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
             List<TSubmissionPeriodProducer> projectedProducers,
             Func<TSubmissionPeriodProducer, TSubmissionPeriodProducer> deriveL1,
             Func<List<TSubmissionPeriodProducer>, TSubmissionPeriodProducer> sumProducerGroupTonnages)
-            where TSubmissionPeriodProducer : ICalcResultProjectedProducer
+            where TSubmissionPeriodProducer : CalcResultProjectedProducer
         {
             List<TSubmissionPeriodProducer> result = [];
             var producerGroups = projectedProducers.GroupBy(p => p.ProducerId);

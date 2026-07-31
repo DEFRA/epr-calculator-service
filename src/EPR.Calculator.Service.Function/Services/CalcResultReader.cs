@@ -38,7 +38,7 @@ namespace EPR.Calculator.Service.Function.Services
                             SubsidiaryId = g.Key.SubsidiaryId,
                             Level = g.Key.Level,
                             SubmissionPeriodCode = g.Key.SubmissionPeriodCode,
-                            H1ProjectedTonnageByMaterial = MapToH1MaterialTonnages(g.ToList()),
+                            ProjectedTonnageByMaterial = MapToH1MaterialTonnages(g.ToList()),
                             IsSubtotal = false
                         })
                         .OrderBy(p => p.ProducerId)
@@ -58,7 +58,7 @@ namespace EPR.Calculator.Service.Function.Services
                             SubsidiaryId = g.Key.SubsidiaryId,
                             Level = g.Key.Level,
                             SubmissionPeriodCode = g.Key.SubmissionPeriodCode,
-                            H2ProjectedTonnageByMaterial = MapToH2MaterialTonnages(g.ToList()),
+                            ProjectedTonnageByMaterial = MapToH2MaterialTonnages(g.ToList()),
                             IsSubtotal = false
                         })
                         .OrderBy(p => p.ProducerId)
@@ -197,9 +197,9 @@ namespace EPR.Calculator.Service.Function.Services
                     .Select(x => x.CancelledProducer)
                     .ToImmutableListAsync(cancellationToken);
 
-        private static Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage> MapToH1MaterialTonnages(List<TransformProjectedH1> transformProjectedH1s)
+        private static ImmutableDictionary<string, CalcResultH1ProjectedProducerMaterialTonnage> MapToH1MaterialTonnages(List<TransformProjectedH1> transformProjectedH1s)
         {
-            return transformProjectedH1s.ToDictionary(
+            return transformProjectedH1s.ToImmutableDictionary(
                 t => t.MaterialCode,
                 t => new CalcResultH1ProjectedProducerMaterialTonnage
                 {
@@ -279,9 +279,9 @@ namespace EPR.Calculator.Service.Function.Services
             );
         }
 
-        private static Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage> MapToH2MaterialTonnages(List<TransformProjectedH2> transformProjectedH2s)
+        private static ImmutableDictionary<string, CalcResultH2ProjectedProducerMaterialTonnage> MapToH2MaterialTonnages(List<TransformProjectedH2> transformProjectedH2s)
         {
-            return transformProjectedH2s.ToDictionary(
+            return transformProjectedH2s.ToImmutableDictionary(
                 t => t.MaterialCode,
                 t => new CalcResultH2ProjectedProducerMaterialTonnage
                 {

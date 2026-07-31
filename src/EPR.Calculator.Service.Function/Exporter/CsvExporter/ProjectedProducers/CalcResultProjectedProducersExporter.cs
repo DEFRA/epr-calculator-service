@@ -15,13 +15,13 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
     {
         public void Export(CalcResultProjectedProducers calcResultProjectedProducers, IImmutableList<MaterialDetail> materials, StringBuilder stringBuilder)
         {
-            var allH2 = calcResultProjectedProducers.H2ProjectedProducers ?? ImmutableList<CalcResultH2ProjectedProducer>.Empty;
-            var allH1 = calcResultProjectedProducers.H1ProjectedProducers ?? ImmutableList<CalcResultH1ProjectedProducer>.Empty;
+            var allH2 = calcResultProjectedProducers.H2ProjectedProducers;
+            var allH1 = calcResultProjectedProducers.H1ProjectedProducers;
             var completeH1AndH2RamProducers = allH2
-                .Cast<ICalcResultProjectedProducer>()
+                .Cast<CalcResultProjectedProducer>()
                 .Concat(allH1)
                 .GroupBy(p => p.ProducerId)
-                .Where(g => g.All(p => p.ProjectedTonnageByMaterial.All(m => !m.Value.IsWithoutRamTonnage())))
+                .Where(g => g.All(p => p.HasCompleteRamTonnage))
                 .Select(g => g.Key)
                 .ToHashSet();
 
@@ -38,7 +38,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
             // Add H2 data
             if (h2WhereModified.Any())
             {
-                H2ProjectedProducersExporterUtils.AppendProjectedProducers(h2WhereModified, stringBuilder);
+                H2ProjectedProducersExporterUtils.AppendProjectedProducers(h2WhereModified, materials, stringBuilder);
             }
             else
             {
@@ -55,7 +55,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
             // Add H1 data
             if (h1WhereModified.Any())
             {
-                H1ProjectedProducersExporterUtils.AppendProjectedProducers(h1WhereModified, stringBuilder);
+                H1ProjectedProducersExporterUtils.AppendProjectedProducers(h1WhereModified, materials, stringBuilder);
             }
             else
             {

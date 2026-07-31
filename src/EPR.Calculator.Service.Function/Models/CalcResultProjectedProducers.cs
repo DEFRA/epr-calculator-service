@@ -1,47 +1,41 @@
-﻿namespace EPR.Calculator.Service.Function.Models
+﻿namespace EPR.Calculator.Service.Function.Models;
+
+public record ProjectedProducersHeader
 {
-    public record ProjectedProducersHeader
-    {
-        public required string Name { get; init; }
-        public int ColumnIndex { get; init; }
-    }
+    public required string Name { get; init; }
+    public int ColumnIndex { get; init; }
+}
 
-    public record ProjectedProducersHeaders {
-        public required ProjectedProducersHeader TitleHeader { get; init; }
-        public required ImmutableList<ProjectedProducersHeader> MaterialBreakdownHeaders { get; init; }
-        public required ImmutableList<ProjectedProducersHeader> ColumnHeaders { get; init; }
-    }
+public record ProjectedProducersHeaders
+{
+    public required ProjectedProducersHeader TitleHeader { get; init; }
+    public required ImmutableList<ProjectedProducersHeader> MaterialBreakdownHeaders { get; init; }
+    public required ImmutableList<ProjectedProducersHeader> ColumnHeaders { get; init; }
+}
 
-    public abstract record ICalcResultProjectedProducer
-    {
-        public required int ProducerId { get; init; }
-        public required string? SubsidiaryId { get; init; }
-        public required string Level { get; init; }
-        public required string SubmissionPeriodCode { get; init; }
-        public required bool IsSubtotal { get; init; }
-        public abstract IEnumerable<KeyValuePair<string, CalcResultProjectedProducerMaterialTonnage>> ProjectedTonnageByMaterial { get; }
-    }
+public abstract record CalcResultProjectedProducer
+{
+    public required int ProducerId { get; init; }
+    public required string? SubsidiaryId { get; init; }
+    public required string Level { get; init; }
+    public required string SubmissionPeriodCode { get; init; }
+    public required bool IsSubtotal { get; init; }
+    public abstract bool HasCompleteRamTonnage { get; }
+}
 
-    public record CalcResultH2ProjectedProducer : ICalcResultProjectedProducer
-    {
-        public IReadOnlyDictionary<string, CalcResultH2ProjectedProducerMaterialTonnage> H2ProjectedTonnageByMaterial { get; init; }
-            = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>();
+public abstract record CalcResultProjectedProducer<T> : CalcResultProjectedProducer
+    where T : CalcResultProjectedProducerMaterialTonnage
+{
+    public required ImmutableDictionary<string, T> ProjectedTonnageByMaterial { get; init; }
+    public override bool HasCompleteRamTonnage => ProjectedTonnageByMaterial.All(m => !m.Value.IsWithoutRamTonnage());
+}
 
-        public override IEnumerable<KeyValuePair<string, CalcResultProjectedProducerMaterialTonnage>> ProjectedTonnageByMaterial =>
-            H2ProjectedTonnageByMaterial.Select(kv => new KeyValuePair<string, CalcResultProjectedProducerMaterialTonnage>(kv.Key, kv.Value));
-    }
+public record CalcResultH1ProjectedProducer : CalcResultProjectedProducer<CalcResultH1ProjectedProducerMaterialTonnage>;
 
-    public record CalcResultH1ProjectedProducer : ICalcResultProjectedProducer
-    {
-        public IReadOnlyDictionary<string, CalcResultH1ProjectedProducerMaterialTonnage> H1ProjectedTonnageByMaterial { get; init; }
-            = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>();
-        public override IEnumerable<KeyValuePair<string, CalcResultProjectedProducerMaterialTonnage>> ProjectedTonnageByMaterial =>
-            H1ProjectedTonnageByMaterial.Select(kv => new KeyValuePair<string, CalcResultProjectedProducerMaterialTonnage>(kv.Key, kv.Value));
-    }
+public record CalcResultH2ProjectedProducer : CalcResultProjectedProducer<CalcResultH2ProjectedProducerMaterialTonnage>;
 
-    public record CalcResultProjectedProducers
-    {
-        public required IImmutableList<CalcResultH2ProjectedProducer> H2ProjectedProducers { get; init; }
-        public required IImmutableList<CalcResultH1ProjectedProducer> H1ProjectedProducers { get; init; }
-    }
+public record CalcResultProjectedProducers
+{
+    public required ImmutableList<CalcResultH2ProjectedProducer> H2ProjectedProducers { get; init; }
+    public required ImmutableList<CalcResultH1ProjectedProducer> H1ProjectedProducers { get; init; }
 }

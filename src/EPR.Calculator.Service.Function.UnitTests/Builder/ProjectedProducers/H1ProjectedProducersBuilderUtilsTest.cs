@@ -27,10 +27,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             var result = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1NoRamReportedMaterials, h2FullRamProjectedProducers, materials, "2026-H1");
 
             Assert.AreEqual(1, result.Count());
-            Assert.AreEqual(3, result.First().H1ProjectedTonnageByMaterial.Count());
+            Assert.AreEqual(3, result.First().ProjectedTonnageByMaterial.Count());
 
-            var projectedAluminium = result.First().H1ProjectedTonnageByMaterial[MaterialCodes.Aluminium];
-            var projectedGlass = result.First().H1ProjectedTonnageByMaterial[MaterialCodes.Glass];
+            var projectedAluminium = result.First().ProjectedTonnageByMaterial[MaterialCodes.Aluminium];
+            var projectedGlass = result.First().ProjectedTonnageByMaterial[MaterialCodes.Glass];
 
             Assert.AreEqual(ProducerReportedMaterialToRAMTonnage(h1HHAlm), projectedAluminium.HouseholdRAMTonnage);
             Assert.AreEqual(RamTonnage.Empty, projectedAluminium.PublicBinRAMTonnage);
@@ -96,10 +96,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             var result = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1NoRamReportedMaterials, h2PartialRamProjectedProducers, materials, "2026-H1");
 
             Assert.AreEqual(1, result.Count());
-            Assert.AreEqual(3, result.First().H1ProjectedTonnageByMaterial.Count());
+            Assert.AreEqual(3, result.First().ProjectedTonnageByMaterial.Count());
 
-            var projectedAluminium = result.First().H1ProjectedTonnageByMaterial[MaterialCodes.Aluminium];
-            var projectedGlass = result.First().H1ProjectedTonnageByMaterial[MaterialCodes.Glass];
+            var projectedAluminium = result.First().ProjectedTonnageByMaterial[MaterialCodes.Aluminium];
+            var projectedGlass = result.First().ProjectedTonnageByMaterial[MaterialCodes.Glass];
 
             var h2AlmTotalTonnage = h2Alm.TotalTonnage();
             var expAlmH2Proportions = new RAMProportions {
@@ -151,10 +151,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             var result = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1PartialRamReportedMaterials, h2FullRamProjectedProducers, materials, "2026-H1");
 
             Assert.AreEqual(1, result.Count());
-            Assert.AreEqual(3, result.First().H1ProjectedTonnageByMaterial.Count());
+            Assert.AreEqual(3, result.First().ProjectedTonnageByMaterial.Count());
 
-            var projectedAluminium = result.First().H1ProjectedTonnageByMaterial[MaterialCodes.Aluminium];
-            var projectedGlass = result.First().H1ProjectedTonnageByMaterial[MaterialCodes.Glass];
+            var projectedAluminium = result.First().ProjectedTonnageByMaterial[MaterialCodes.Aluminium];
+            var projectedGlass = result.First().ProjectedTonnageByMaterial[MaterialCodes.Glass];
 
             Assert.AreEqual(ProducerReportedMaterialToRAMTonnage(h1HHAlm), projectedAluminium.HouseholdRAMTonnage);
             Assert.AreEqual(RamTonnage.Empty, projectedAluminium.PublicBinRAMTonnage);
@@ -221,10 +221,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             var result = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1FullRamReportedMaterials, h2FullRamProjectedProducers, materials, "2026-H1");
 
             Assert.AreEqual(1, result.Count());
-            Assert.AreEqual(3, result.First().H1ProjectedTonnageByMaterial.Count());
+            Assert.AreEqual(3, result.First().ProjectedTonnageByMaterial.Count());
 
-            var projectedAluminium = result.First().H1ProjectedTonnageByMaterial[MaterialCodes.Aluminium];
-            var projectedGlass = result.First().H1ProjectedTonnageByMaterial[MaterialCodes.Glass];
+            var projectedAluminium = result.First().ProjectedTonnageByMaterial[MaterialCodes.Aluminium];
+            var projectedGlass = result.First().ProjectedTonnageByMaterial[MaterialCodes.Glass];
 
             Assert.AreEqual(ProducerReportedMaterialToRAMTonnage(h1HHAlm), projectedAluminium.HouseholdRAMTonnage);
             Assert.AreEqual(RamTonnage.Empty, projectedAluminium.PublicBinRAMTonnage);
@@ -256,10 +256,10 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             var result = H1ProjectedProducersBuilderUtils.GetProjectedProducers(h1NoRamReportedMaterials, h2NoReportedMaterialProjectedProducers, materials, "2026-H1");
 
             Assert.AreEqual(1, result.Count());
-            Assert.AreEqual(3, result.First().H1ProjectedTonnageByMaterial.Count());
+            Assert.AreEqual(3, result.First().ProjectedTonnageByMaterial.Count());
 
-            var projectedAluminium = result.First().H1ProjectedTonnageByMaterial[MaterialCodes.Aluminium];
-            var projectedGlass = result.First().H1ProjectedTonnageByMaterial[MaterialCodes.Glass];
+            var projectedAluminium = result.First().ProjectedTonnageByMaterial[MaterialCodes.Aluminium];
+            var projectedGlass = result.First().ProjectedTonnageByMaterial[MaterialCodes.Glass];
 
             Assert.AreEqual(RAMProportions.Empty, projectedAluminium.H2RamProportions);
             Assert.AreEqual(RAMProportions.Empty, projectedGlass.H2RamProportions);
@@ -312,7 +312,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 
             Assert.AreEqual(1, result.Count());
 
-            var projectedOtherMaterials = result.First().H1ProjectedTonnageByMaterial[MaterialCodes.OtherMaterials];
+            var projectedOtherMaterials = result.First().ProjectedTonnageByMaterial[MaterialCodes.OtherMaterials];
             Assert.AreEqual(RamTonnage.Empty, projectedOtherMaterials.HouseholdRAMTonnage);
             Assert.AreEqual(RamTonnage.Empty, projectedOtherMaterials.PublicBinRAMTonnage);
             Assert.IsNull(projectedOtherMaterials.HouseholdDrinksContainerRAMTonnage);
@@ -337,8 +337,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             Assert.AreEqual(1, result.Count());
             Assert.AreEqual(3, result.First().ProjectedTonnageByMaterial.Count());
 
-            var projectedAluminium = result.First().H1ProjectedTonnageByMaterial[MaterialCodes.Aluminium];
-            var projectedGlass = result.First().H1ProjectedTonnageByMaterial[MaterialCodes.Glass];
+            var projectedAluminium = result.First().ProjectedTonnageByMaterial[MaterialCodes.Aluminium];
+            var projectedGlass = result.First().ProjectedTonnageByMaterial[MaterialCodes.Glass];
 
             Assert.AreEqual(ProducerReportedMaterialToRAMTonnage(h1HHAlm), projectedAluminium.HouseholdRAMTonnage);
             Assert.AreEqual(RamTonnage.Empty, projectedAluminium.PublicBinRAMTonnage);
@@ -374,13 +374,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             var sub = result.Where(p => p.ProducerId == 11 && p.SubsidiaryId == "A").FirstOrDefault();
             Assert.IsNotNull(hc);
             Assert.IsNotNull(sub);
-            Assert.AreEqual(3, hc.H1ProjectedTonnageByMaterial.Count());
-            Assert.AreEqual(3, sub.H1ProjectedTonnageByMaterial.Count());
+            Assert.AreEqual(3, hc.ProjectedTonnageByMaterial.Count());
+            Assert.AreEqual(3, sub.ProjectedTonnageByMaterial.Count());
 
-            var projectedHCAluminium = hc.H1ProjectedTonnageByMaterial[MaterialCodes.Aluminium];
-            var projectedHCGlass = hc.H1ProjectedTonnageByMaterial[MaterialCodes.Glass];
-            var projectedSubAluminium = sub.H1ProjectedTonnageByMaterial[MaterialCodes.Aluminium];
-            var projectedSubGlass = sub.H1ProjectedTonnageByMaterial[MaterialCodes.Glass];
+            var projectedHCAluminium = hc.ProjectedTonnageByMaterial[MaterialCodes.Aluminium];
+            var projectedHCGlass = hc.ProjectedTonnageByMaterial[MaterialCodes.Glass];
+            var projectedSubAluminium = sub.ProjectedTonnageByMaterial[MaterialCodes.Aluminium];
+            var projectedSubGlass = sub.ProjectedTonnageByMaterial[MaterialCodes.Glass];
 
             var h2SubtotalAlmTotal = h2SubtotalAlm.TotalTonnage();
             var expAlmH2SubtotalProportions = new RAMProportions{
@@ -504,7 +504,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     Level = "1",
                     SubmissionPeriodCode = "2025-H1",
                     IsSubtotal = true,
-                    H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
+                    ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
                     {
                         ["AL"] = new()
                         {
@@ -551,7 +551,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                                 GreenMedical = 0
                             }
                         }
-                    },
+                    }.ToImmutableDictionary(),
                     SubsidiaryId = null
                 }
             };
@@ -563,7 +563,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     SubsidiaryId = null,
                     SubmissionPeriodCode = "2025-H1",
                     Level = string.Empty,
-                    H1ProjectedTonnageByMaterial =
+                    ProjectedTonnageByMaterial =
                         new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>()
                         {
                             ["AL"] = new()
@@ -612,7 +612,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                                     GreenMedical = 0
                                 }
                             }
-                        },
+                        }.ToImmutableDictionary(),
                     IsSubtotal = false
                 },
                 new ()
@@ -621,7 +621,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     SubsidiaryId = "A",
                     SubmissionPeriodCode = "2025-H1",
                     Level = string.Empty,
-                    H1ProjectedTonnageByMaterial =
+                    ProjectedTonnageByMaterial =
                         new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>()
                         {
                             ["AL"] = new()
@@ -670,7 +670,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                                     GreenMedical = 0
                                 }
                             }
-                        },
+                        }.ToImmutableDictionary(),
                     IsSubtotal = false
                 },
             };
@@ -693,7 +693,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 
             Assert.IsTrue(result.IsSubtotal);
             Assert.AreEqual("1", result.Level);
-            Assert.AreEqual(expSummedAlm, result.H1ProjectedTonnageByMaterial["AL"]);
+            Assert.AreEqual(expSummedAlm, result.ProjectedTonnageByMaterial["AL"]);
         }
 
         [TestMethod]
@@ -709,7 +709,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 SubsidiaryId         = null,
                 Level                = string.Empty,
                 SubmissionPeriodCode = "2026-H1",
-                H1ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>
+                ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>
                 {
                     [MaterialCodes.Aluminium] = new()
                     {
@@ -725,7 +725,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                         ProjectedPublicBinTonnage    = 0,
                         ProjectedPublicBinRAMTonnage = RamTonnage.Empty
                     }
-                },
+                }.ToImmutableDictionary(),
                 IsSubtotal = false
             };
 
@@ -742,7 +742,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 GreenMedical = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.GreenMedical + h2Alm.ProjectedPublicBinRAMTonnage.GreenMedical) / almTotal)
             };
 
-            Assert.AreEqual(expProportions, result.H1ProjectedTonnageByMaterial[MaterialCodes.Aluminium].H2RamProportions);
+            Assert.AreEqual(expProportions, result.ProjectedTonnageByMaterial[MaterialCodes.Aluminium].H2RamProportions);
         }
 
         [TestMethod]
@@ -757,7 +757,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 SubsidiaryId         = null,
                 Level                = string.Empty,
                 SubmissionPeriodCode = "2026-H1",
-                H1ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>
+                ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>
                 {
                     [MaterialCodes.Aluminium] = new()
                     {
@@ -773,7 +773,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                         ProjectedPublicBinTonnage    = 0,
                         ProjectedPublicBinRAMTonnage = RamTonnage.Empty
                     }
-                },
+                }.ToImmutableDictionary(),
                 IsSubtotal = false
             };
 
@@ -790,7 +790,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                 GreenMedical = To6DP((h2Alm.ProjectedHouseholdRAMTonnage.GreenMedical + h2Alm.ProjectedPublicBinRAMTonnage.GreenMedical) / almTotal)
             };
 
-            Assert.AreEqual(expProportions, result.H1ProjectedTonnageByMaterial[MaterialCodes.Aluminium].H2RamProportions);
+            Assert.AreEqual(expProportions, result.ProjectedTonnageByMaterial[MaterialCodes.Aluminium].H2RamProportions);
         }
 
         private static decimal To3DP(decimal value) =>
@@ -923,11 +923,11 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     Level = string.Empty,
                     SubmissionPeriodCode = "2026-H2",
                     IsSubtotal = true,
-                    H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
+                    ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
                     {
                         { MaterialCodes.Aluminium, alm },
                         { MaterialCodes.Glass, glass }
-                    }
+                    }.ToImmutableDictionary()
                 },
                 new()
                 {
@@ -935,7 +935,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     SubsidiaryId = null,
                     Level = string.Empty,
                     SubmissionPeriodCode = "2026-H2",
-                    H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
+                    ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
                     {
                         {
                             MaterialCodes.Aluminium, GetEmptyH2MaterialTonnage()
@@ -943,7 +943,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                         {
                             MaterialCodes.Glass, GetEmptyH2MaterialTonnageWithHDC()
                         }
-                    },
+                    }.ToImmutableDictionary(),
                     IsSubtotal = false
                 },
                 new()
@@ -952,7 +952,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     SubsidiaryId = "A",
                     Level = string.Empty,
                     SubmissionPeriodCode = "2026-H2",
-                    H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
+                    ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
                     {
                         {
                             MaterialCodes.Aluminium, GetEmptyH2MaterialTonnage()
@@ -960,7 +960,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                         {
                             MaterialCodes.Glass, GetEmptyH2MaterialTonnageWithHDC()
                         }
-                    },
+                    }.ToImmutableDictionary(),
                     IsSubtotal = false
                 }
             });
@@ -1007,7 +1007,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     SubsidiaryId = null,
                     Level = string.Empty,
                     SubmissionPeriodCode = "2026-H2",
-                    H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
+                    ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
                     {
                         {
                             MaterialCodes.Aluminium, alm
@@ -1015,7 +1015,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                         {
                             MaterialCodes.Glass, glass
                         }
-                    },
+                    }.ToImmutableDictionary(),
                     IsSubtotal = false
                 }
             });
@@ -1062,7 +1062,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     SubsidiaryId = null,
                     Level = string.Empty,
                     SubmissionPeriodCode = "2026-H2",
-                    H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
+                    ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
                     {
                         {
                             MaterialCodes.Aluminium, alm
@@ -1070,7 +1070,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                         {
                             MaterialCodes.Glass, glass
                         }
-                    },
+                    }.ToImmutableDictionary(),
                     IsSubtotal = false
                 }
             });
@@ -1122,7 +1122,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     SubsidiaryId = null,
                     Level = string.Empty,
                     SubmissionPeriodCode = "2026-H2",
-                    H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
+                    ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
                     {
                         {
                             MaterialCodes.Aluminium, alm
@@ -1178,7 +1178,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 
                             }
                         }
-                    },
+                    }.ToImmutableDictionary(),
                     IsSubtotal = false
                 }
             });

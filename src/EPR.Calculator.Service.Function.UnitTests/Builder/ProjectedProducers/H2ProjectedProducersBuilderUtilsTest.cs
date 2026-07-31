@@ -68,7 +68,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             Assert.AreEqual(string.Empty, prod11.Level);
             Assert.AreEqual("2026-H2", prod11.SubmissionPeriodCode);
 
-            var prod11Mats = prod11.H2ProjectedTonnageByMaterial;
+            var prod11Mats = prod11.ProjectedTonnageByMaterial;
             var expProd11MatAl = new RamTonnage{ Red = 30, RedMedical = 40, Amber = 40, AmberMedical = 0, Green = 0, GreenMedical = 0 };
             var expProd11AlDefaultRed = 0;
             var expProd11AlTotalTonnage = 100;
@@ -86,7 +86,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
             Assert.AreEqual(string.Empty, prod11Sub22.Level);
             Assert.AreEqual("2026-H2", prod11Sub22.SubmissionPeriodCode);
 
-            var prod11Sub22Mats = prod11Sub22.H2ProjectedTonnageByMaterial;
+            var prod11Sub22Mats = prod11Sub22.ProjectedTonnageByMaterial;
             var expProd11Sub22HDC = new RamTonnage{ Red = 0, RedMedical = 0, Amber = 0, AmberMedical = 0, Green = 0, GreenMedical = 0 };
             var expProd11Sub22HDCDefaultRed = 500;
             var expProd11Sub22HDCTotalTonnage = 500;
@@ -109,7 +109,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     SubsidiaryId = null,
                     SubmissionPeriodCode = "2025-H1",
                     Level = string.Empty,
-                    H2ProjectedTonnageByMaterial =
+                    ProjectedTonnageByMaterial =
                         new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>()
                         {
                             ["AL"] = new()
@@ -157,7 +157,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                                     GreenMedical = 0
                                 }
                             }
-                        },
+                        }.ToImmutableDictionary(),
                     IsSubtotal = false
                 },
                 new ()
@@ -166,7 +166,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     SubsidiaryId = "A",
                     SubmissionPeriodCode = "2025-H1",
                     Level = string.Empty,
-                    H2ProjectedTonnageByMaterial =
+                    ProjectedTonnageByMaterial =
                         new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>()
                         {
                             ["AL"] = new()
@@ -214,7 +214,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                                     GreenMedical = 0
                                 }
                             }
-                        },
+                        }.ToImmutableDictionary(),
                     IsSubtotal = false
                 },
             };
@@ -235,7 +235,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
 
             Assert.IsTrue(result.IsSubtotal);
             Assert.AreEqual("1", result.Level);
-            Assert.AreEqual(expSummedAlm, result.H2ProjectedTonnageByMaterial["AL"]);
+            Assert.AreEqual(expSummedAlm, result.ProjectedTonnageByMaterial["AL"]);
         }
     }
 }

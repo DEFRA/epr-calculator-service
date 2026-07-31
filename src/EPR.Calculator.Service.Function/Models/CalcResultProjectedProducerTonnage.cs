@@ -66,7 +66,7 @@ public abstract record CalcResultProjectedProducerMaterialTonnage
     }
 }
 
-public record CalcResultH2ProjectedProducerMaterialTonnage : CalcResultProjectedProducerMaterialTonnage {}
+public record CalcResultH2ProjectedProducerMaterialTonnage : CalcResultProjectedProducerMaterialTonnage;
 
 public record CalcResultH1ProjectedProducerMaterialTonnage : CalcResultProjectedProducerMaterialTonnage
 {
