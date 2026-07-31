@@ -171,24 +171,47 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
             return [
                 new CalcResultScaledupProducer
                 {
+                    IsSubtotalRow = false,
                     ProducerId = 101001,
                     SubsidiaryId = string.Empty,
+                    TradingName = null,
                     ProducerName = "Allied Packaging",
                     Level = "1",
                     SubmissionPeriodCode = "2024-P2",
                     DaysInSubmissionPeriod = 91,
                     DaysInWholePeriod = 91,
                     ScaleupFactor = 2,
-                    PomData = new List<ScaledupPomEntry>
-                    {
-                        new ScaledupPomEntry(1, PackagingTypes.Household, 1000, 2000),
-                        new ScaledupPomEntry(1, PackagingTypes.PublicBin, 100, 200),
-                        new ScaledupPomEntry(1, PackagingTypes.ConsumerWaste, 500, 1000),
-                        new ScaledupPomEntry(2, PackagingTypes.Household, 1000, 2000),
-                        new ScaledupPomEntry(2, PackagingTypes.PublicBin, 100, 200),
-                        new ScaledupPomEntry(2, PackagingTypes.HouseholdDrinksContainers, 120, 240),
-                        new ScaledupPomEntry(2, PackagingTypes.ConsumerWaste, 500, 1000),
-                    },
+                    PomData =
+                    [
+                        new ScaledupPomEntry(1,
+                            PackagingTypes.Household,
+                            1000,
+                            2000),
+                        new ScaledupPomEntry(1,
+                            PackagingTypes.PublicBin,
+                            100,
+                            200),
+                        new ScaledupPomEntry(1,
+                            PackagingTypes.ConsumerWaste,
+                            500,
+                            1000),
+                        new ScaledupPomEntry(2,
+                            PackagingTypes.Household,
+                            1000,
+                            2000),
+                        new ScaledupPomEntry(2,
+                            PackagingTypes.PublicBin,
+                            100,
+                            200),
+                        new ScaledupPomEntry(2,
+                            PackagingTypes.HouseholdDrinksContainers,
+                            120,
+                            240),
+                        new ScaledupPomEntry(2,
+                            PackagingTypes.ConsumerWaste,
+                            500,
+                            1000),
+                    ]
                 }
             ];
         }
@@ -244,8 +267,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
         public void GetOverallTotalRowTest()
         {
             var runProducerMaterialDetails = new List<CalcResultScaledupProducer>();
-            var dictionary = new Dictionary<string, CalcResultScaledupProducerTonnage>();
-            dictionary.Add("AL", new CalcResultScaledupProducerTonnage
+            var dictionary = ImmutableDictionary.Create<string, CalcResultScaledupProducerTonnage>();
+            dictionary = dictionary.Add("AL", new CalcResultScaledupProducerTonnage
             {
                 ReportedHouseholdPackagingWasteTonnage = 10,
                 ReportedPublicBinTonnage = 10,
@@ -263,7 +286,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
                 ProducerId = 1,
                 ScaledupProducerTonnageByMaterial = dictionary,
                 Level = "1",
-                SubmissionPeriodCode = "2025-P2"
+                SubmissionPeriodCode = "2025-P2",
+                SubsidiaryId = null,
+                ProducerName = null,
+                TradingName = null,
+                IsSubtotalRow = false,
+                DaysInSubmissionPeriod = 0,
+                DaysInWholePeriod = 0,
+                ScaleupFactor = 0
             });
             runProducerMaterialDetails.Add(new CalcResultScaledupProducer
             {
@@ -271,7 +301,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
                 SubsidiaryId = "Sub1",
                 ScaledupProducerTonnageByMaterial = dictionary,
                 Level = "2",
-                SubmissionPeriodCode = "2025-P2"
+                SubmissionPeriodCode = "2025-P2",
+                ProducerName = null,
+                TradingName = null,
+                IsSubtotalRow = false,
+                DaysInSubmissionPeriod = 0,
+                DaysInWholePeriod = 0,
+                ScaleupFactor = 0
             });
             runProducerMaterialDetails.Add(new CalcResultScaledupProducer
             {
@@ -279,14 +315,27 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
                 SubsidiaryId = "Sub2",
                 ScaledupProducerTonnageByMaterial = dictionary,
                 Level = "2",
-                SubmissionPeriodCode = "2025-P2"
+                SubmissionPeriodCode = "2025-P2",
+                ProducerName = null,
+                TradingName = null,
+                IsSubtotalRow = false,
+                DaysInSubmissionPeriod = 0,
+                DaysInWholePeriod = 0,
+                ScaleupFactor = 0
             });
             runProducerMaterialDetails.Add(new CalcResultScaledupProducer
             {
                 ProducerId = 2,
                 ScaledupProducerTonnageByMaterial = dictionary,
                 Level = "1",
-                SubmissionPeriodCode = "2025-P2"
+                SubmissionPeriodCode = "2025-P2",
+                SubsidiaryId = null,
+                ProducerName = null,
+                TradingName = null,
+                IsSubtotalRow = false,
+                DaysInSubmissionPeriod = 0,
+                DaysInWholePeriod = 0,
+                ScaleupFactor = 0
             });
             runProducerMaterialDetails.Add(new CalcResultScaledupProducer
             {
@@ -294,7 +343,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
                 SubsidiaryId = "Sub3",
                 ScaledupProducerTonnageByMaterial = dictionary,
                 Level = "2",
-                SubmissionPeriodCode = "2025-P2"
+                SubmissionPeriodCode = "2025-P2",
+                ProducerName = null,
+                TradingName = null,
+                IsSubtotalRow = false,
+                DaysInSubmissionPeriod = 0,
+                DaysInWholePeriod = 0,
+                ScaleupFactor = 0
             });
             runProducerMaterialDetails.Add(new CalcResultScaledupProducer
             {
@@ -302,7 +357,13 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Scaledu
                 SubsidiaryId = "Sub4",
                 ScaledupProducerTonnageByMaterial = dictionary,
                 Level = "2",
-                SubmissionPeriodCode = "2025-P2"
+                SubmissionPeriodCode = "2025-P2",
+                ProducerName = null,
+                TradingName = null,
+                IsSubtotalRow = false,
+                DaysInSubmissionPeriod = 0,
+                DaysInWholePeriod = 0,
+                ScaleupFactor = 0
             });
 
             List<MaterialDetail> materialDetails = [new() { Id = 1, Code = "AL", Name = "Aluminium" }];

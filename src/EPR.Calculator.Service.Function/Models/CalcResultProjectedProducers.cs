@@ -2,23 +2,23 @@
 {
     public record ProjectedProducersHeader
     {
-        required public string Name { get; init; }
+        public required string Name { get; init; }
         public int ColumnIndex { get; init; }
     }
 
     public record ProjectedProducersHeaders {
         public required ProjectedProducersHeader TitleHeader { get; init; }
-        public required IEnumerable<ProjectedProducersHeader> MaterialBreakdownHeaders { get; init; }
-        public required IEnumerable<ProjectedProducersHeader> ColumnHeaders { get; init; }
+        public required ImmutableList<ProjectedProducersHeader> MaterialBreakdownHeaders { get; init; }
+        public required ImmutableList<ProjectedProducersHeader> ColumnHeaders { get; init; }
     }
 
     public abstract record ICalcResultProjectedProducer
     {
         public required int ProducerId { get; init; }
-        public string? SubsidiaryId { get; init; }
+        public required string? SubsidiaryId { get; init; }
         public required string Level { get; init; }
         public required string SubmissionPeriodCode { get; init; }
-        public bool IsSubtotal { get; init; }
+        public required bool IsSubtotal { get; init; }
         public abstract IEnumerable<KeyValuePair<string, CalcResultProjectedProducerMaterialTonnage>> ProjectedTonnageByMaterial { get; }
     }
 
@@ -41,7 +41,7 @@
 
     public record CalcResultProjectedProducers
     {
-        public required IImmutableList<CalcResultH2ProjectedProducer> H2ProjectedProducers { get; set; }
-        public required IImmutableList<CalcResultH1ProjectedProducer> H1ProjectedProducers { get; set; }
+        public required IImmutableList<CalcResultH2ProjectedProducer> H2ProjectedProducers { get; init; }
+        public required IImmutableList<CalcResultH1ProjectedProducer> H1ProjectedProducers { get; init; }
     }
 }

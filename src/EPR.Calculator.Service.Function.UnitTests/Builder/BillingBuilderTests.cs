@@ -1,10 +1,6 @@
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder;
-using EPR.Calculator.Service.Function.Builder.Modulation;
-using EPR.Calculator.Service.Function.Builder.PartialObligations;
-using EPR.Calculator.Service.Function.Builder.ProjectedProducers;
-using EPR.Calculator.Service.Function.Builder.ScaledupProducers;
-using EPR.Calculator.Service.Function.Builder.Summary;
+using EPR.Calculator.Service.Function.Builder.RejectedProducers;
 using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
@@ -17,32 +13,22 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder;
 [TestClass]
 public class BillingBuilderTests : TestsFor<BillingBuilder>
 {
-    private Mock<ICalcResultPartialObligationBuilder> mockCalcResultPartialObligationBuilder = null!;
-    private Mock<ICalcResultProjectedProducersBuilder> mockCalcResultProjectedProducersBuilder = null!;
-    private Mock<ICalcResultScaledupProducersBuilder> mockCalcResultScaledupProducersBuilder = null!;
-    private Mock<ISelfManagedConsumerWasteService> mockSelfManagedConsumerWasteService = null!;
-    private Mock<IProducerFeesBuilder> mockSummaryBuilder = null!;
+    private Mock<ICalcResultRejectedProducersBuilder> mockCalcResultRejectedProducersBuilder = null!;
     private Mock<ICalcResultReader> mockCalcResultReader = null!;
-    private Mock<ICalcResultModulationBuilder> mockModulationBuilder = null!;
 
     protected override void TestInitialize()
     {
-        mockSummaryBuilder = fixture.Freeze<Mock<IProducerFeesBuilder>>();
-        mockCalcResultScaledupProducersBuilder = fixture.Freeze<Mock<ICalcResultScaledupProducersBuilder>>();
-        mockCalcResultPartialObligationBuilder = fixture.Freeze<Mock<ICalcResultPartialObligationBuilder>>();
-        mockCalcResultProjectedProducersBuilder = fixture.Freeze<Mock<ICalcResultProjectedProducersBuilder>>();
-        mockSelfManagedConsumerWasteService = fixture.Freeze<Mock<ISelfManagedConsumerWasteService>>();
+        mockCalcResultRejectedProducersBuilder = fixture.Freeze<Mock<ICalcResultRejectedProducersBuilder>>();
         mockCalcResultReader = fixture.Freeze<Mock<ICalcResultReader>>();
-        mockModulationBuilder = fixture.Freeze<Mock<ICalcResultModulationBuilder>>();
+
+        mockCalcResultRejectedProducersBuilder.Setup(x => x.ConstructAsync(It.IsAny<RunContext>())).ReturnsAsync([]);
     }
 
     [TestMethod]
-    public async Task Build_ShouldReturnCalcResult()
+    public async Task Build_ShouldReturnResult()
     {
         var runContext = TestDataHelper.BillingRun2026;
-        var mockCalcResultProjectedProducersH1Data = new Mock<List<CalcResultH1ProjectedProducer>>();
-        var mockCalcResultProjectedProducersH2Data = new Mock<List<CalcResultH2ProjectedProducer>>();
-        var mockCalcResultPartialData = new Mock<List<CalcResultPartialObligation>>();
+        var mockCalcResultPartialData = new Mock<CalcResultPartialObligations>();
         var mockSummary = new Mock<ProducerFees>();
         var mockSmcw = new Mock<SelfManagedConsumerWaste>();
         var mockMod = new Mock<ModulationResult>();
@@ -52,36 +38,35 @@ public class BillingBuilderTests : TestsFor<BillingBuilder>
         var mockOnePlusFourApportionment = new Mock<CalcResultOnePlusFourApportionment>();
         var mockLaDisposalCostData = new Mock<CalcResultLaDisposalCostData>();
         var mockCommsCost = new Mock<CalcResultCommsCost>();
-        var mockCancelledProducers = new Mock<List<CalcResultCancelledProducer>>();
 
-        mockCalcResultReader.Setup(m => m.ReadCancelledProducers(runContext.RunId, CancellationToken.None))
-            .ReturnsAsync(mockCancelledProducers.Object);
-        mockCalcResultReader.Setup(m => m.ReadH1ProjectedData(runContext.RunId, CancellationToken.None))
-            .ReturnsAsync(mockCalcResultProjectedProducersH1Data.Object);
-        mockCalcResultReader.Setup(m => m.ReadH2ProjectedData(runContext.RunId, CancellationToken.None))
-            .ReturnsAsync(mockCalcResultProjectedProducersH2Data.Object);
-        mockCalcResultReader.Setup(m => m.ReadPartialData(runContext.RunId, CancellationToken.None))
+        mockCalcResultReader.Setup(m => m.ReadCancelledProducers(runContext.RunId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync([]);
+        mockCalcResultReader.Setup(m => m.ReadH1ProjectedData(runContext.RunId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync([]);
+        mockCalcResultReader.Setup(m => m.ReadH2ProjectedData(runContext.RunId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync([]);
+        mockCalcResultReader.Setup(m => m.ReadPartialData(runContext.RunId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(mockCalcResultPartialData.Object);
-        mockCalcResultReader.Setup(m => m.ReadProducerFees(runContext.RunId, CancellationToken.None))
+        mockCalcResultReader.Setup(m => m.ReadProducerFees(runContext.RunId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(mockSummary.Object);
-        mockCalcResultReader.Setup(m => m.ReadSmcw(runContext.RunId, CancellationToken.None))
+        mockCalcResultReader.Setup(m => m.ReadSmcw(runContext.RunId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(mockSmcw.Object);
-        mockCalcResultReader.Setup(m => m.ReadModulationResult(runContext.RunId, CancellationToken.None))
+        mockCalcResultReader.Setup(m => m.ReadModulationResult(runContext.RunId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(mockMod.Object);
-        mockCalcResultReader.Setup(m => m.ReadLapcapData(runContext.RunId, CancellationToken.None))
+        mockCalcResultReader.Setup(m => m.ReadLapcapData(runContext.RunId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(mockLapcapData.Object);
-        mockCalcResultReader.Setup(m => m.ReadLateReportingTonnage(runContext.RunId, CancellationToken.None))
+        mockCalcResultReader.Setup(m => m.ReadLateReportingTonnage(runContext.RunId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(mockLateReportingTonnage.Object);
-        mockCalcResultReader.Setup(m => m.ReadParameterOtherCost(runContext.RunId, CancellationToken.None))
+        mockCalcResultReader.Setup(m => m.ReadParameterOtherCost(runContext.RunId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(mockParameterOtherCost.Object);
-        mockCalcResultReader.Setup(m => m.ReadOnePlusFourApportionment(runContext.RunId, CancellationToken.None))
+        mockCalcResultReader.Setup(m => m.ReadOnePlusFourApportionment(runContext.RunId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(mockOnePlusFourApportionment.Object);
-        mockCalcResultReader.Setup(m => m.ReadLaDisposalCostData(runContext.RunId, CancellationToken.None))
+        mockCalcResultReader.Setup(m => m.ReadLaDisposalCostData(runContext.RunId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(mockLaDisposalCostData.Object);
-        mockCalcResultReader.Setup(m => m.ReadCommsCost(runContext.RunId, CancellationToken.None))
+        mockCalcResultReader.Setup(m => m.ReadCommsCost(runContext.RunId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(mockCommsCost.Object);
 
-        var result = await testSubject.BuildAsync(runContext, CancellationToken.None);
+        var result = await testSubject.BuildAsync(runContext, It.IsAny<CancellationToken>());
 
         Assert.IsNotNull(result);
         Assert.AreSame(mockSmcw.Object, result.Smcw);
@@ -93,61 +78,49 @@ public class BillingBuilderTests : TestsFor<BillingBuilder>
         Assert.AreSame(mockOnePlusFourApportionment.Object, result.CalcResultOnePlusFourApportionment);
         Assert.AreSame(mockLaDisposalCostData.Object, result.CalcResultLaDisposalCostData);
         Assert.AreSame(mockCommsCost.Object, result.CalcResultCommsCostReportDetail);
-        CollectionAssert.AreEqual(mockCancelledProducers.Object, result.CalcResultCancelledProducers.ToList()); // List should not be the same - filtered by rejected
-
-        mockSelfManagedConsumerWasteService.Verify(m => m.Calculate(runContext, It.IsAny<IImmutableList<MaterialDetail>>()), Times.Never);
-        mockModulationBuilder.Verify(m => m.ConstructAsync(It.IsAny<RunContext>(), It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<CalcResultLaDisposalCostData>(), It.IsAny<SelfManagedConsumerWaste>()), Times.Never);
-        mockSummaryBuilder.Verify(m => m.ConstructAsync(runContext, It.IsAny<FeesState>()), Times.Never);
+        result.CalcResultCancelledProducers.ShouldBe([]);
     }
 
     [TestMethod]
-    public async Task Build_ShouldReturnCalcResult_WithProjectedProducers()
+    public async Task Build_ShouldReturnResult_WithProjectedProducers()
     {
         var runContext = TestDataHelper.BillingRun2026;
-        var mockCalcResultProjectedProducersH1Data = new Mock<List<CalcResultH1ProjectedProducer>>();
-        var mockCalcResultProjectedProducersH2Data = new Mock<List<CalcResultH2ProjectedProducer>>();
-        var mockCalcResultPartialData = new Mock<List<CalcResultPartialObligation>>();
+        var mockCalcResultPartialData = new Mock<CalcResultPartialObligations>();
 
-        mockCalcResultReader.Setup(m => m.ReadH1ProjectedData(runContext.RunId, CancellationToken.None))
-            .ReturnsAsync(mockCalcResultProjectedProducersH1Data.Object);
-        mockCalcResultReader.Setup(m => m.ReadH2ProjectedData(runContext.RunId, CancellationToken.None))
-            .ReturnsAsync(mockCalcResultProjectedProducersH2Data.Object);
-        mockCalcResultReader.Setup(m => m.ReadPartialData(runContext.RunId, CancellationToken.None))
+        mockCalcResultReader.Setup(m => m.ReadCancelledProducers(runContext.RunId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync([]);
+        mockCalcResultReader.Setup(m => m.ReadH1ProjectedData(runContext.RunId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync([]);
+        mockCalcResultReader.Setup(m => m.ReadH2ProjectedData(runContext.RunId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync([]);
+        mockCalcResultReader.Setup(m => m.ReadPartialData(runContext.RunId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(mockCalcResultPartialData.Object);
 
-        var result = await testSubject.BuildAsync(runContext, CancellationToken.None);
-
+        var result = await testSubject.BuildAsync(runContext, It.IsAny<CancellationToken>());
 
         Assert.IsNotNull(result);
-        Assert.AreSame(mockCalcResultProjectedProducersH1Data.Object.ToImmutableList(), result.CalcResultProjectedProducers.H1ProjectedProducers);
-        Assert.AreSame(mockCalcResultProjectedProducersH2Data.Object.ToImmutableList(), result.CalcResultProjectedProducers.H2ProjectedProducers);
-        Assert.AreSame(mockCalcResultPartialData.Object.ToImmutableList(), result.CalcResultPartialObligations.PartialObligations);
-
-        mockCalcResultScaledupProducersBuilder.Verify(m => m.ConstructAsync(runContext, It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<L1Producer>>()), Times.Never);
-        mockCalcResultProjectedProducersBuilder.Verify(m => m.Construct(runContext, It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<L1Producer>>()), Times.Never);
-        mockCalcResultPartialObligationBuilder.Verify(m => m.ConstructAsync(runContext,It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<L1Producer>>()), Times.Never);
+        result.CalcResultProjectedProducers!.H1ProjectedProducers.ShouldBe([]);
+        result.CalcResultProjectedProducers!.H2ProjectedProducers.ShouldBe([]);
+        Assert.AreSame(mockCalcResultPartialData.Object, result.CalcResultPartialObligations);
     }
 
     [TestMethod]
-    public async Task Build_ShouldReturnCalcResult_WithScaledUpProducers()
+    public async Task Build_ShouldReturnResult_WithScaledUpProducers()
     {
         var runContext = TestDataHelper.BillingRun2025;
-        var mockCalcResultScaledUpData = new Mock<List<CalcResultScaledupProducer>>();
-        var mockCalcResultPartialData = new Mock<List<CalcResultPartialObligation>>();
+        var mockCalcResultPartialData = new Mock<CalcResultPartialObligations>();
 
-        mockCalcResultReader.Setup(m => m.ReadScaledData(runContext.RunId, CancellationToken.None))
-            .ReturnsAsync(mockCalcResultScaledUpData.Object);
-        mockCalcResultReader.Setup(m => m.ReadPartialData(runContext.RunId, CancellationToken.None))
+        mockCalcResultReader.Setup(m => m.ReadCancelledProducers(runContext.RunId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync([]);
+        mockCalcResultReader.Setup(m => m.ReadScaledData(runContext.RunId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync([]);
+        mockCalcResultReader.Setup(m => m.ReadPartialData(runContext.RunId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(mockCalcResultPartialData.Object);
 
-        var result = await testSubject.BuildAsync(runContext, CancellationToken.None);
+        var result = await testSubject.BuildAsync(runContext, It.IsAny<CancellationToken>());
 
         Assert.IsNotNull(result);
-        Assert.AreSame(mockCalcResultScaledUpData.Object.ToImmutableList(), result.CalcResultScaledupProducers.ScaledupProducers);
-        Assert.AreSame(mockCalcResultPartialData.Object.ToImmutableList(), result.CalcResultPartialObligations.PartialObligations);
-
-        mockCalcResultScaledupProducersBuilder.Verify(m => m.ConstructAsync(runContext,It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<L1Producer>>()), Times.Never);
-        mockCalcResultPartialObligationBuilder.Verify(m => m.ConstructAsync(runContext,It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<L1Producer>>()), Times.Never);
-        mockCalcResultProjectedProducersBuilder.Verify(m => m.Construct(runContext,It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<L1Producer>>()), Times.Never);
+        result.CalcResultScaledupProducers!.ScaledupProducers.ShouldBe([]);
+        Assert.AreSame(mockCalcResultPartialData.Object, result.CalcResultPartialObligations);
     }
 }

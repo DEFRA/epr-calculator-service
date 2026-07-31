@@ -153,7 +153,7 @@ public class CalcResultScaledupProducersBuilder(ApplicationDBContext dbContext) 
                         var entries = scaledWithEntries
                             .Where(x => x.scaledRm.SubmissionPeriod == period)
                             .Select(x => x.entry)
-                            .ToList();
+                            .ToImmutableList();
                         row.PomData = entries;
 
                         var key = (pd.ProducerId, period);
@@ -180,7 +180,7 @@ public class CalcResultScaledupProducersBuilder(ApplicationDBContext dbContext) 
                     .Select(g => new ScaledupPomEntry(
                         g.Key.MaterialId, g.Key.PackagingType,
                         g.Sum(e => e.Tonnage), g.Sum(e => e.ScaledTonnage)))
-                    .ToList();
+                    .ToImmutableList();
             }
         }
 
@@ -268,6 +268,7 @@ public class CalcResultScaledupProducersBuilder(ApplicationDBContext dbContext) 
 
         var producers = rows.Select(r => new CalcResultScaledupProducer
         {
+            IsSubtotalRow          = false,
             ProducerId             = r.ProducerId,
             SubsidiaryId           = r.SubsidiaryId,
             ProducerName           = r.ProducerName,

@@ -55,34 +55,4 @@ public class CalcResultDetailBuilderTests : TestsFor<CalcResultDetailBuilder>
         Assert.AreEqual("LapcapFile.csv,01/01/2023 00:00,TestUser", result.LapcapFile);
         Assert.AreEqual("Parameters.csv,01/01/2023 00:00,TestUser", result.ParametersFile);
     }
-
-    [TestMethod]
-    public async Task Construct_MissingOptionalProperties_ReturnsPartialData()
-    {
-        var runContext = TestDataHelper.CalculatorRun2025;
-
-        var calculatorRun = new CalculatorRun
-        {
-            Id = runContext.RunId,
-            Name = runContext.RunName,
-            CreatedBy = runContext.User,
-            CreatedAt = new DateTime(2024, 1, 1),
-            RelativeYear = runContext.RelativeYear
-        };
-
-        dbContext.CalculatorRuns.Add(calculatorRun);
-        await dbContext.SaveChangesAsync();
-
-        var result = await testSubject.ConstructAsync(runContext);
-
-        Assert.AreEqual(runContext.RunId, result.RunId);
-        Assert.AreEqual(runContext.RunName, result.RunName);
-        Assert.AreEqual(runContext.User, result.RunBy);
-        Assert.AreEqual(new DateTime(2024, 1, 1), result.RunDate);
-        Assert.AreEqual(runContext.RelativeYear, result.RelativeYear);
-        Assert.IsTrue(string.IsNullOrEmpty(result.RpdFileORG));
-        Assert.IsTrue(string.IsNullOrEmpty(result.RpdFilePOM));
-        Assert.IsTrue(string.IsNullOrEmpty(result.LapcapFile));
-        Assert.IsTrue(string.IsNullOrEmpty(result.ParametersFile));
-    }
 }

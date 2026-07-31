@@ -14,7 +14,7 @@ public interface IBillingFileGenerator
     /// <summary>
     ///     Serializes the calcResult to CSV/JSON billing files and exports them.
     /// </summary>
-    Task<BillingFileResult> SerializeAndExport(BillingRunContext runContext, CalcResult calcResult, CancellationToken cancellationToken);
+    Task<BillingFileResult> SerializeAndExport(BillingRunContext runContext, BillingResult runResult, CancellationToken cancellationToken);
 }
 
 public class BillingFileGenerator(
@@ -25,12 +25,12 @@ public class BillingFileGenerator(
     ILogger<BillingFileGenerator> logger)
     : IBillingFileGenerator
 {
-    public async Task<BillingFileResult> SerializeAndExport(BillingRunContext runContext, CalcResult calcResult, CancellationToken cancellationToken)
+    public async Task<BillingFileResult> SerializeAndExport(BillingRunContext runContext, BillingResult runResult, CancellationToken cancellationToken)
     {
-        var csvMetaData = await HandleCsvFile(runContext, calcResult, cancellationToken);
+        var csvMetaData = await HandleCsvFile(runContext, runResult, cancellationToken);
         logger.LogInformation($"{nameof(HandleCsvFile)} Completed. File: {{Filename}}", csvMetaData.FileName);
 
-        var jsonMetaData = await HandleJsonFile(runContext, calcResult, csvMetaData, cancellationToken);
+        var jsonMetaData = await HandleJsonFile(runContext, runResult, csvMetaData, cancellationToken);
         logger.LogInformation($"{nameof(HandleJsonFile)} Completed. File: {{Filename}}", jsonMetaData.BillingJsonFileName);
 
         return new BillingFileResult
@@ -42,11 +42,11 @@ public class BillingFileGenerator(
 
     private async Task<CalculatorRunCsvFileMetadata> HandleCsvFile(
         BillingRunContext runContext,
-        CalcResult calcResults,
+        BillingResult runResult,
         CancellationToken ct)
     {
         var csvFilename = new CalcResultsAndBillingFileName(runContext.RunId, runContext.RunName, runContext.ProcessingStartedAt.UtcDateTime, true);
-        var csvContent = await exporter.Export(runContext, calcResults);
+        var csvContent = await exporter.Export(runContext, runResult);
 
         var csvBlobUri = await storageService.UploadFileContentAsync((
             FileName: csvFilename,
@@ -65,12 +65,12 @@ public class BillingFileGenerator(
 
     private async Task<CalculatorRunBillingFileMetadata> HandleJsonFile(
         BillingRunContext runContext,
-        CalcResult calcResults,
+        BillingResult runResult,
         CalculatorRunCsvFileMetadata csvMetaData,
         CancellationToken ct)
     {
         var jsonFilename = new CalcResultsAndBillingFileName(runContext.RunId);
-        var jsonContent = await jsonWriter.WriteToString(runContext, calcResults);
+        var jsonContent = await jsonWriter.WriteToString(runContext, runResult);
 
         await storageService.UploadFileContentAsync((
             FileName: jsonFilename,

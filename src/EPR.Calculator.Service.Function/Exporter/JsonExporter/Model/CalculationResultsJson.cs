@@ -19,14 +19,14 @@ public class CalculationResultsJson
 
     public static CalculationResultsJson From(
         BillingRunContext runContext,
-        CalcResult calcResult,
+        BillingResult runResult,
         IImmutableList<MaterialDetail> materials)
     {
         return new CalculationResultsJson
         {
-            ProducerCalculationResultsSummary = ArrangeSummary(calcResult.ProducerFees),
-            ProducerCalculationResults        = ArrangeProducerCalculationResult(runContext, calcResult, materials),
-            ProducerCalculationResultsTotal   = ArrangeProducerCalculationResultsTotal(calcResult.ProducerFees),
+            ProducerCalculationResultsSummary = ArrangeSummary(runResult.ProducerFees),
+            ProducerCalculationResults        = ArrangeProducerCalculationResult(runContext, runResult, materials),
+            ProducerCalculationResultsTotal   = ArrangeProducerCalculationResultsTotal(runResult.ProducerFees),
         };
     }
 
@@ -72,15 +72,15 @@ public class CalculationResultsJson
 
     private static List<CalcSummaryProducerCalculationResults> ArrangeProducerCalculationResult(
         BillingRunContext runContext,
-        CalcResult calcResult,
+        BillingResult runResult,
         IImmutableList<MaterialDetail> materials)
     {
         var results = new List<CalcSummaryProducerCalculationResults>();
 
-        var filteredProducers = calcResult.ProducerFees.Details
+        var filteredProducers = runResult.ProducerFees.Details
             .Where(producer => runContext.AcceptedProducerIds.Contains(producer.FeeDetail.ProducerId));
 
-        var scaledupProducers = calcResult.CalcResultScaledupProducers.ScaledupProducers.Select(p => p.ProducerId).ToImmutableList();
+        var scaledupProducers = runResult.CalcResultScaledupProducers?.ScaledupProducers.Select(p => p.ProducerId).ToImmutableList() ?? [];
         foreach (var producer in filteredProducers)
         {
             results.Add(CalcSummaryProducerCalculationResults.From(producer, materials, runContext.RequiresModulation, scaledupProducers));

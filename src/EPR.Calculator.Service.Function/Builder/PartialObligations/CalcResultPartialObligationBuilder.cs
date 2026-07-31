@@ -5,7 +5,6 @@ using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
-using EPR.Calculator.Service.Function.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.PartialObligations
@@ -149,7 +148,7 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
             ).ToListAsync();
         }
 
-        private static Dictionary<string, CalcResultPartialObligationTonnage> ComputeTonnageByMaterial(
+        private static ImmutableDictionary<string, CalcResultPartialObligationTonnage> ComputeTonnageByMaterial(
             ICollection<ProducerReportedMaterial> reportedMaterials,
             IEnumerable<MaterialDetail> materials,
             decimal partialAmount,
@@ -205,7 +204,7 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
                     g => ToTonnage(g, materials.First(m => m.Id == g.Key).Code)
                 );
 
-            return materials.ToDictionary(
+            return materials.ToImmutableDictionary(
                 m => m.Code,
                 m => byMaterialCode.TryGetValue(m.Code, out var val) ? val : EmptyPartialTonnage(applyModulation, m.Code, partialAmount)
             );
@@ -232,11 +231,14 @@ namespace EPR.Calculator.Service.Function.Builder.PartialObligations
             {
                 return new CalcResultPartialObligationTonnage()
                 {
-                    ObligatedFactor                  = partialAmount,
-                    HouseholdTonnage                 = 0m,
-                    PublicBinTonnage                 = 0m,
-                    HouseholdDrinksContainersTonnage = isGlass ? 0m : null,
-                    SelfManagedConsumerWasteTonnage  = 0m
+                    ObligatedFactor                     = partialAmount,
+                    HouseholdTonnage                    = 0m,
+                    HouseholdRAMTonnage                 = null,
+                    PublicBinTonnage                    = 0m,
+                    PublicBinRAMTonnage                 = null,
+                    HouseholdDrinksContainersTonnage    = isGlass ? 0m : null,
+                    HouseholdDrinksContainersRAMTonnage = null,
+                    SelfManagedConsumerWasteTonnage     = 0m
                 };
             }
         }

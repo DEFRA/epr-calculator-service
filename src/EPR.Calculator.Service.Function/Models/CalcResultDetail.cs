@@ -1,19 +1,18 @@
 ﻿using EPR.Calculator.API.Data.DataTypes;
 
-namespace EPR.Calculator.Service.Function.Models
+namespace EPR.Calculator.Service.Function.Models;
+
+public record CalcResultDetail
 {
-    public class CalcResultDetail
-    {
-        public string RunName { get; set; } = string.Empty;
-        public required int RunId { get; set; }
-        public required RelativeYear RelativeYear { get; set; }
-        public DateTime? CutOffDate { get; set; }
-        public DateTime RunDate { get; set; }
-        public string RunBy { get; set; } = string.Empty;
-        public string RpdFileORG { get; set; } = string.Empty;
-        public string RpdFilePOM { get; set; } = string.Empty;
-        public string LapcapFile { get; set; } = string.Empty;
-        public string ParametersFile { get; set; } = string.Empty;
-        public string CountryApportionmentFile { get; set; } = string.Empty;
-    }
+    public required string RunName { get; init; }
+    public required int RunId { get; init; }
+    public required RelativeYear RelativeYear { get; init; }
+    public required DateTime? CutOffDate { get; init; }
+    public required DateTime RunDate { get; init; }
+    public required string RunBy { get; init; }
+    public required string RpdFileORG { get; init; }
+    public required string RpdFilePOM { get; init; }
+    public required string LapcapFile { get; init; }
+    public required string ParametersFile { get; init; }
+    public required string CountryApportionmentFile { get; init; }
 }

@@ -607,13 +607,40 @@ public class CalcResultScaledupProducersBuilderTest : TestsFor<CalcResultScaledu
         };
 
         var calcResult = TestDataHelper.GetCalcResult();
-        calcResult.CalcResultScaledupProducers = new CalcResultScaledupProducers
+        calcResult = calcResult with
         {
-            ScaledupProducers =
-            [
-                new CalcResultScaledupProducer { ProducerId = 1, Level = "1", SubmissionPeriodCode = "2025-P1" },
-                new CalcResultScaledupProducer { ProducerId = 3, Level = "1", SubmissionPeriodCode = "2025-P1" }
-            ]
+            CalcResultScaledupProducers = new CalcResultScaledupProducers
+            {
+                ScaledupProducers =
+                [
+                    new CalcResultScaledupProducer
+                    {
+                        ProducerId = 1,
+                        Level = "1",
+                        SubmissionPeriodCode = "2025-P1",
+                        SubsidiaryId = null,
+                        ProducerName = null,
+                        TradingName = null,
+                        IsSubtotalRow = false,
+                        DaysInSubmissionPeriod = 0,
+                        DaysInWholePeriod = 0,
+                        ScaleupFactor = 0
+                    },
+                    new CalcResultScaledupProducer
+                    {
+                        ProducerId = 3,
+                        Level = "1",
+                        SubmissionPeriodCode = "2025-P1",
+                        SubsidiaryId = null,
+                        ProducerName = null,
+                        TradingName = null,
+                        IsSubtotalRow = false,
+                        DaysInSubmissionPeriod = 0,
+                        DaysInWholePeriod = 0,
+                        ScaleupFactor = 0
+                    }
+                ]
+            }
         };
 
         // Act
@@ -633,41 +660,79 @@ public class CalcResultScaledupProducersBuilderTest : TestsFor<CalcResultScaledu
             {
                 ProducerId = 1,
                 Level = "1",
-                SubmissionPeriodCode = "2025-P1"
+                SubmissionPeriodCode = "2025-P1",
+                SubsidiaryId = null,
+                ProducerName = null,
+                TradingName = null,
+                IsSubtotalRow = false,
+                DaysInSubmissionPeriod = 0,
+                DaysInWholePeriod = 0,
+                ScaleupFactor = 0
             },
             new CalcResultScaledupProducer
             {
                 ProducerId = 1,
                 SubsidiaryId = "Sub1",
                 Level = "2",
-                SubmissionPeriodCode = "2025-P1"
+                SubmissionPeriodCode = "2025-P1",
+                ProducerName = null,
+                TradingName = null,
+                IsSubtotalRow = false,
+                DaysInSubmissionPeriod = 0,
+                DaysInWholePeriod = 0,
+                ScaleupFactor = 0
             },
             new CalcResultScaledupProducer
             {
                 ProducerId = 1,
                 SubsidiaryId = "Sub2",
                 Level = "2",
-                SubmissionPeriodCode = "2025-P1"
+                SubmissionPeriodCode = "2025-P1",
+                ProducerName = null,
+                TradingName = null,
+                IsSubtotalRow = false,
+                DaysInSubmissionPeriod = 0,
+                DaysInWholePeriod = 0,
+                ScaleupFactor = 0
             },
             new CalcResultScaledupProducer
             {
                 ProducerId = 2,
                 Level = "1",
-                SubmissionPeriodCode = "2025-P1"
+                SubmissionPeriodCode = "2025-P1",
+                SubsidiaryId = null,
+                ProducerName = null,
+                TradingName = null,
+                IsSubtotalRow = false,
+                DaysInSubmissionPeriod = 0,
+                DaysInWholePeriod = 0,
+                ScaleupFactor = 0
             },
             new CalcResultScaledupProducer
             {
                 ProducerId = 2,
                 SubsidiaryId = "Sub3",
                 Level = "2",
-                SubmissionPeriodCode = "2025-P1"
+                SubmissionPeriodCode = "2025-P1",
+                ProducerName = null,
+                TradingName = null,
+                IsSubtotalRow = false,
+                DaysInSubmissionPeriod = 0,
+                DaysInWholePeriod = 0,
+                ScaleupFactor = 0
             },
             new CalcResultScaledupProducer
             {
                 ProducerId = 2,
                 SubsidiaryId = "Sub4",
                 Level = "2",
-                SubmissionPeriodCode = "2025-P1"
+                SubmissionPeriodCode = "2025-P1",
+                ProducerName = null,
+                TradingName = null,
+                IsSubtotalRow = false,
+                DaysInSubmissionPeriod = 0,
+                DaysInWholePeriod = 0,
+                ScaleupFactor = 0
             }
         ]);
 

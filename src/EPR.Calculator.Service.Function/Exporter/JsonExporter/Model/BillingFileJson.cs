@@ -49,7 +49,7 @@ public class BillingFileJson
     [JsonPropertyName("calculationResults")]
     public object? CalculationResults { get; set; }
 
-    public static BillingFileJson From(BillingRunContext runContext, CalcResult calcResult, IImmutableList<MaterialDetail> materials)
+    public static BillingFileJson From(BillingRunContext runContext, BillingResult calcResult, IImmutableList<MaterialDetail> materials)
     {
         return new BillingFileJson {
             CalcResultDetail                   = CalcResultDetailJson.From(calcResult.CalcResultDetail),
@@ -63,7 +63,7 @@ public class BillingFileJson
             CalcResult2cCommsDataByCountry     = CalcResultCommsCostOnePlusFourApportionmentCountryWide.From(calcResult.CalcResultCommsCostReportDetail.CommsCostByCountry),
             CalcResultLaDisposalCostData       = CalcResultLaDisposalCostDataJson.From(calcResult.CalcResultLaDisposalCostData.ByMaterial, calcResult.CalcResultLaDisposalCostData.Total, materials),
             CancelledProducers                 = CancelledProducers.From(calcResult.CalcResultCancelledProducers),
-            ScaleUpProducers                   = CalcResultScaledupProducersJson.From(runContext, calcResult.CalcResultScaledupProducers, materials),
+            ScaleUpProducers                   = CalcResultScaledupProducersJson.From(runContext, calcResult.CalcResultScaledupProducers ?? new CalcResultScaledupProducers { ScaledupProducers = [] }, materials),
             ModulationResults                  = runContext.RequiresModulation && calcResult.CalcResultModulation is not null ? CalcResultModulationResults.From(calcResult.CalcResultModulation) : null,
             CalculationResults                 = CalculationResultsJson.From(runContext, calcResult, materials)
         };

@@ -1,7 +1,6 @@
-﻿namespace EPR.Calculator.Service.Function.Models
+﻿namespace EPR.Calculator.Service.Function.Models;
+
+public record CalcResultPartialObligations
 {
-    public class CalcResultPartialObligations
-    {
-        public required ImmutableList<CalcResultPartialObligation> PartialObligations { get; set; }
-    }
+    public required ImmutableList<CalcResultPartialObligation> PartialObligations { get; init; }
 }

@@ -23,7 +23,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter;
 
 public interface IBillingFileExporter
 {
-    Task<string> Export(BillingRunContext runContext, CalcResult calcResult);
+    Task<string> Export(BillingRunContext runContext, BillingResult runResult);
 }
 
 [SuppressMessage("Constructor has 8 parameters, which is greater than the 7 authorized.", "S107", Justification = "This is suppressed for now and will be refactored later")]
@@ -46,60 +46,60 @@ public class BillingFileExporter(
     ILogger<BillingFileExporter> logger
 )  : IBillingFileExporter
 {
-    public async Task<string> Export(BillingRunContext runContext, CalcResult calcResult)
+    public async Task<string> Export(BillingRunContext runContext, BillingResult runResult)
     {
         var materials = await materialService.GetMaterials();
         var csvContent = new StringBuilder();
 
         logger.LogDuration(
-            () => resultDetailExporter.Export(calcResult.CalcResultDetail, csvContent),
+            () => resultDetailExporter.Export(runResult.CalcResultDetail, csvContent),
             nameof(resultDetailExporter)
         );
 
         logger.LogDuration(
-            () => lapcapDataExporter.Export(calcResult.CalcResultLapcapData, materials, csvContent),
+            () => lapcapDataExporter.Export(runResult.CalcResultLapcapData, materials, csvContent),
             nameof(lapcapDataExporter)
         );
 
         logger.LogDuration(
-            () => lateReportingExporter.Export(calcResult.CalcResultLateReportingTonnageData, materials, csvContent),
+            () => lateReportingExporter.Export(runResult.CalcResultLateReportingTonnageData, materials, csvContent),
             nameof(lateReportingExporter)
         );
 
         logger.LogDuration(
-            () => parameterOtherCostExporter.Export(calcResult.CalcResultParameterOtherCost, csvContent),
+            () => parameterOtherCostExporter.Export(runResult.CalcResultParameterOtherCost, csvContent),
             nameof(parameterOtherCostExporter)
         );
 
         logger.LogDuration(
-            () => onePlusFourApportionmentExporter.Export(calcResult.CalcResultOnePlusFourApportionment, csvContent),
+            () => onePlusFourApportionmentExporter.Export(runResult.CalcResultOnePlusFourApportionment, csvContent),
             nameof(onePlusFourApportionmentExporter)
         );
 
         logger.LogDuration(
-            () => commsCostExporter.Export(calcResult.CalcResultCommsCostReportDetail, materials, csvContent),
+            () => commsCostExporter.Export(runResult.CalcResultCommsCostReportDetail, materials, csvContent),
             nameof(commsCostExporter)
         );
 
         logger.LogDuration(
-            () => laDisposalCostExporter.Export(runContext, calcResult.CalcResultLaDisposalCostData, materials, csvContent),
+            () => laDisposalCostExporter.Export(runContext, runResult.CalcResultLaDisposalCostData, materials, csvContent),
             nameof(laDisposalCostExporter)
         );
 
-        if (calcResult.Smcw is not null && calcResult.CalcResultModulation is not null)
+        if (runResult.Smcw is not null && runResult.CalcResultModulation is not null)
             logger.LogDuration(
-                () => modulationExporter.Export(calcResult.CalcResultLaDisposalCostData, calcResult.Smcw, calcResult.CalcResultModulation, csvContent),
+                () => modulationExporter.Export(runResult.CalcResultLaDisposalCostData, runResult.Smcw, runResult.CalcResultModulation, csvContent),
                 nameof(modulationExporter)
             );
 
         logger.LogDuration(
-            () => cancelledProducersExporter.Export(calcResult.CalcResultCancelledProducers, csvContent),
+            () => cancelledProducersExporter.Export(runResult.CalcResultCancelledProducers, csvContent),
             nameof(cancelledProducersExporter)
         );
 
         if (runContext.RequiresModulation)
         {
-            var accepted = GetProjectedProducerForExport(calcResult.CalcResultProjectedProducers, runContext.AcceptedProducerIds);
+            var accepted = GetProjectedProducerForExport(runResult.CalcResultProjectedProducers!, runContext.AcceptedProducerIds);
             logger.LogDuration(
                 () => projectedProducersExporter.Export(accepted, materials, csvContent),
                 nameof(projectedProducersExporter)
@@ -107,7 +107,7 @@ public class BillingFileExporter(
         }
         else
         {
-            var acceptedProducers = GetScaledUpProducersForExport(calcResult.CalcResultScaledupProducers, runContext.AcceptedProducerIds);
+            var acceptedProducers = GetScaledUpProducersForExport(runResult.CalcResultScaledupProducers!, runContext.AcceptedProducerIds);
             logger.LogDuration(
                 () => scaledUpProducersExporter.Export(acceptedProducers, materials, false, csvContent),
                 nameof(scaledUpProducersExporter)
@@ -115,13 +115,13 @@ public class BillingFileExporter(
         }
 
         logger.LogDuration(
-            () => partialObligationsExporter.Export(runContext, GetPartialObligationsForExport(calcResult.CalcResultPartialObligations, runContext.AcceptedProducerIds), materials, csvContent),
+            () => partialObligationsExporter.Export(runContext, GetPartialObligationsForExport(runResult.CalcResultPartialObligations, runContext.AcceptedProducerIds), materials, csvContent),
             nameof(partialObligationsExporter)
         );
 
-        var acceptedProducerFees = GetAcceptedProducerFees(runContext.RunId, calcResult.ProducerFees, runContext.AcceptedProducerIds);
-        var scaledupIds = calcResult.CalcResultScaledupProducers.ScaledupProducers.Select(p => p.ProducerId).ToList();
-        var partialIds = calcResult.CalcResultPartialObligations.PartialObligations.Select(p => (p.ProducerId, p.SubsidiaryId)).ToList();
+        var acceptedProducerFees = GetAcceptedProducerFees(runContext.RunId, runResult.ProducerFees, runContext.AcceptedProducerIds);
+        var scaledupIds = runResult.CalcResultScaledupProducers?.ScaledupProducers.Select(p => p.ProducerId).ToList() ?? [];
+        var partialIds = runResult.CalcResultPartialObligations.PartialObligations.Select(p => (p.ProducerId, p.SubsidiaryId)).ToList();
         logger.LogDuration(
             () => producerFeesExporter.Export(runContext, acceptedProducerFees, materials, scaledupIds, partialIds, csvContent),
             nameof(producerFeesExporter)
@@ -130,7 +130,7 @@ public class BillingFileExporter(
         csvContent = ResetTotals(csvContent.ToString());
 
         logger.LogDuration(
-            () => rejectedProducersExporter.Export(calcResult.CalcResultRejectedProducers, csvContent),
+            () => rejectedProducersExporter.Export(runResult.CalcResultRejectedProducers, csvContent),
             nameof(rejectedProducersExporter)
         );
 

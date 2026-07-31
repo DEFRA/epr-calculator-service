@@ -12,7 +12,7 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
         {
             CalcResultH2ProjectedProducer? GetH2Producer(ProducerDetail rm)
             {
-                var prodGroup = h2ProjectedProducers.Where(p => p.ProducerId == rm.ProducerId);
+                var prodGroup = h2ProjectedProducers.Where(p => p.ProducerId == rm.ProducerId).ToList();
                 return prodGroup.FirstOrDefault(p => p.IsSubtotal) ?? prodGroup.FirstOrDefault(p => p.SubsidiaryId == rm.SubsidiaryId);
             }
 
@@ -24,9 +24,11 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                 SubmissionPeriodCode         = submissionPeriod,
                 H1ProjectedTonnageByMaterial = GetProjectedTonnages(
                     materials,
-                    pd.ProducerReportedMaterials.Where(rm => rm.SubmissionPeriod == submissionPeriod).ToList(),
+                    pd.ProducerReportedMaterials.Where(rm => rm.SubmissionPeriod == submissionPeriod)
+                        .ToList(),
                     GetH2Producer(pd)
-                )
+                ),
+                IsSubtotal = false
             }).ToList();
         }
 

@@ -61,7 +61,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 MkTransformProjectedH1(2, 1, "A", MaterialCodes.PaperOrCard, "2")
              });
             await _dbContext.SaveChangesAsync();
-            
+
             var result = await _sut.ReadH1ProjectedData(1, CancellationToken.None);
             result.Count.ShouldBe(3);
             result.First(p => p.ProducerId == 1 && p.SubsidiaryId == null && p.Level == "1").H1ProjectedTonnageByMaterial.Count.ShouldBe(3);
@@ -88,7 +88,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 MkTransformProjectedH2(2, 1, "A", MaterialCodes.PaperOrCard, "2")
              });
             await _dbContext.SaveChangesAsync();
-            
+
             var result = await _sut.ReadH2ProjectedData(1, CancellationToken.None);
             result.Count.ShouldBe(3);
             result.First(p => p.ProducerId == 1 && p.SubsidiaryId == null && p.Level == "1").H2ProjectedTonnageByMaterial.Count.ShouldBe(3);
@@ -100,7 +100,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task ReadScaledData_WorksAsExpected()
         {
             _dbContext.AddRange(new List<TransformScaled>
-            {   
+            {
                 MkTransformScaled(1, 1, null, 1, "HH"),
                 MkTransformScaled(1, 1, null, 1, "PB"),
                 MkTransformScaled(1, 1, "A", 2, "HH"),
@@ -111,7 +111,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 MkTransformScaled(2, 2, "B", 4, "HDC"),
             });
             await _dbContext.SaveChangesAsync();
-            
+
             var result = await _sut.ReadScaledData(1, CancellationToken.None);
             result.Count.ShouldBe(3);
             result.First(p => p.ProducerId == 1 && p.SubsidiaryId == null).PomData.Count.ShouldBe(2);
@@ -123,7 +123,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         public async Task ReadPartialData_WorksAsExpected()
         {
             _dbContext.AddRange(new List<TransformPartial>
-            {   
+            {
                 MkTransformPartial(1, 1, null, MaterialCodes.Aluminium, "1", isModulated: true),
                 MkTransformPartial(1, 1, null, MaterialCodes.Glass, "1", isModulated: true, isGlass: true),
                 MkTransformPartial(1, 1, "A", MaterialCodes.Steel, "2", isModulated: true),
@@ -134,12 +134,12 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                 MkTransformPartial(2, 1, null, MaterialCodes.Glass, "1", isModulated: true, isGlass: true),
             });
             await _dbContext.SaveChangesAsync();
-            
+
             var result = await _sut.ReadPartialData(1, CancellationToken.None);
-            result.Count.ShouldBe(3);
-            result.First(p => p.ProducerId == 1 && p.SubsidiaryId == null).PartialObligationTonnageByMaterial.Count.ShouldBe(2);
-            result.First(p => p.ProducerId == 1 && p.SubsidiaryId == "A").PartialObligationTonnageByMaterial.Count.ShouldBe(2);
-            result.First(p => p.ProducerId == 2 && p.SubsidiaryId == "B").PartialObligationTonnageByMaterial.Count.ShouldBe(2);
+            result.PartialObligations.Count.ShouldBe(3);
+            result.PartialObligations.First(p => p.ProducerId == 1 && p.SubsidiaryId == null).PartialObligationTonnageByMaterial.Count.ShouldBe(2);
+            result.PartialObligations.First(p => p.ProducerId == 1 && p.SubsidiaryId == "A").PartialObligationTonnageByMaterial.Count.ShouldBe(2);
+            result.PartialObligations.First(p => p.ProducerId == 2 && p.SubsidiaryId == "B").PartialObligationTonnageByMaterial.Count.ShouldBe(2);
         }
 
         [TestMethod]
@@ -563,7 +563,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             return new TransformScaled()
             {
                 CalculatorRunId = runId,
-                ProducerId = producerId, 
+                ProducerId = producerId,
                 SubsidiaryId = subId,
                 ProducerName = "Producer",
                 TradingName = "Trading",
@@ -621,4 +621,3 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
     }
 }
-

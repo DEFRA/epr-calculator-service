@@ -116,7 +116,5 @@ public class CalcResultRejectedProducersBuilderTests : TestsFor<CalcResultReject
         Assert.AreEqual(confirmedDate, rejected.InstructionConfirmedDate);
         Assert.AreEqual("User A", rejected.InstructionConfirmedBy);
         Assert.AreEqual("Invalid data", rejected.ReasonForRejection);
-
-        Assert.AreEqual(runLatest.Id, rejected.RunId);
     }
 }

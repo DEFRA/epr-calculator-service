@@ -289,6 +289,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
                 {
                     ProducerId = 101001,
                     ProducerName = "Allied Packaging",
+                    TradingName = null,
                     DaysObligated = 183,
                     DaysInSubmissionYear = 366,
                     Level = "1",
@@ -299,60 +300,101 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
                     PartialObligationTonnageByMaterial = new Dictionary<string, CalcResultPartialObligationTonnage>
                     {
                         {
-                            "AL",
-                            new CalcResultPartialObligationTonnage
+                            "AL", new CalcResultPartialObligationTonnage
                             {
                                 ObligatedFactor = 0.5m,
                                 HouseholdTonnage = 100,
                                 HouseholdRAMTonnage = new RamTonnage()
                                 {
-                                    Red = 1, Amber = 2, Green = 3, RedMedical = 4, AmberMedical = 5, GreenMedical = 6
+                                    Red = 1,
+                                    Amber = 2,
+                                    Green = 3,
+                                    RedMedical = 4,
+                                    AmberMedical = 5,
+                                    GreenMedical = 6
                                 },
                                 PublicBinTonnage = 20,
                                 PublicBinRAMTonnage = new RamTonnage()
                                 {
-                                    Red = 7, Amber = 8, Green = 9, RedMedical = 10, AmberMedical = 11, GreenMedical = 12
+                                    Red = 7,
+                                    Amber = 8,
+                                    Green = 9,
+                                    RedMedical = 10,
+                                    AmberMedical = 11,
+                                    GreenMedical = 12
                                 },
-                                SelfManagedConsumerWasteTonnage = 60
+                                SelfManagedConsumerWasteTonnage = 60,
+                                HouseholdDrinksContainersTonnage = null,
+                                HouseholdDrinksContainersRAMTonnage = null
                             }
                         },
                         {
-                            "GL",
-                            new CalcResultPartialObligationTonnage
+                            "GL", new CalcResultPartialObligationTonnage
                             {
                                 ObligatedFactor = 0.5m,
                                 HouseholdTonnage = 100,
-                                HouseholdRAMTonnage = new RamTonnage(){
-                                    Red = 1, Amber = 2, Green = 3, RedMedical = 4, AmberMedical = 5, GreenMedical = 6
+                                HouseholdRAMTonnage = new RamTonnage()
+                                {
+                                    Red = 1,
+                                    Amber = 2,
+                                    Green = 3,
+                                    RedMedical = 4,
+                                    AmberMedical = 5,
+                                    GreenMedical = 6
                                 },
                                 PublicBinTonnage = 20,
-                                PublicBinRAMTonnage = new RamTonnage(){
-                                    Red = 7, Amber = 8, Green = 9, RedMedical = 10, AmberMedical = 11, GreenMedical = 12
+                                PublicBinRAMTonnage = new RamTonnage()
+                                {
+                                    Red = 7,
+                                    Amber = 8,
+                                    Green = 9,
+                                    RedMedical = 10,
+                                    AmberMedical = 11,
+                                    GreenMedical = 12
                                 },
                                 HouseholdDrinksContainersTonnage = 70,
-                                HouseholdDrinksContainersRAMTonnage = new RamTonnage(){
-                                    Red = 13, Amber = 14, Green = 15, RedMedical = 16, AmberMedical = 17, GreenMedical = 18
+                                HouseholdDrinksContainersRAMTonnage = new RamTonnage()
+                                {
+                                    Red = 13,
+                                    Amber = 14,
+                                    Green = 15,
+                                    RedMedical = 16,
+                                    AmberMedical = 17,
+                                    GreenMedical = 18
                                 },
                                 SelfManagedConsumerWasteTonnage = 60
                             }
                         },
                         {
-                            "OT",
-                            new CalcResultPartialObligationTonnage
+                            "OT", new CalcResultPartialObligationTonnage
                             {
                                 ObligatedFactor = 0.5m,
                                 HouseholdTonnage = 50,
-                                HouseholdRAMTonnage = new RamTonnage(){
-                                    Red = 1, Amber = 2, Green = 3, RedMedical = 4, AmberMedical = 5, GreenMedical = 6
+                                HouseholdRAMTonnage = new RamTonnage()
+                                {
+                                    Red = 1,
+                                    Amber = 2,
+                                    Green = 3,
+                                    RedMedical = 4,
+                                    AmberMedical = 5,
+                                    GreenMedical = 6
                                 },
                                 PublicBinTonnage = 10,
-                                PublicBinRAMTonnage = new RamTonnage(){
-                                    Red = 1, Amber = 2, Green = 3, RedMedical = 4, AmberMedical = 5, GreenMedical = 6
+                                PublicBinRAMTonnage = new RamTonnage()
+                                {
+                                    Red = 1,
+                                    Amber = 2,
+                                    Green = 3,
+                                    RedMedical = 4,
+                                    AmberMedical = 5,
+                                    GreenMedical = 6
                                 },
-                                SelfManagedConsumerWasteTonnage = 20
+                                SelfManagedConsumerWasteTonnage = 20,
+                                HouseholdDrinksContainersTonnage = null,
+                                HouseholdDrinksContainersRAMTonnage = null
                             }
                         }
-                    }
+                    }.ToImmutableDictionary()
                 }
             ];
         }
@@ -365,6 +407,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
                 {
                     ProducerId = 101001,
                     ProducerName = "Allied Packaging",
+                    TradingName = null,
                     DaysObligated = 183,
                     DaysInSubmissionYear = 366,
                     Level = "1",
@@ -375,37 +418,45 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Partial
                     PartialObligationTonnageByMaterial = new Dictionary<string, CalcResultPartialObligationTonnage>
                     {
                         {
-                            "AL",
-                            new CalcResultPartialObligationTonnage
+                            "AL", new CalcResultPartialObligationTonnage
                             {
                                 ObligatedFactor = 0.5m,
                                 HouseholdTonnage = 100,
                                 PublicBinTonnage = 20,
-                                SelfManagedConsumerWasteTonnage = 60
+                                SelfManagedConsumerWasteTonnage = 60,
+                                HouseholdRAMTonnage = null,
+                                PublicBinRAMTonnage = null,
+                                HouseholdDrinksContainersTonnage = null,
+                                HouseholdDrinksContainersRAMTonnage = null
                             }
                         },
                         {
-                            "GL",
-                            new CalcResultPartialObligationTonnage
+                            "GL", new CalcResultPartialObligationTonnage
                             {
                                 ObligatedFactor = 0.5m,
                                 HouseholdTonnage = 100,
                                 PublicBinTonnage = 20,
                                 HouseholdDrinksContainersTonnage = 70,
-                                SelfManagedConsumerWasteTonnage = 60
+                                SelfManagedConsumerWasteTonnage = 60,
+                                HouseholdRAMTonnage = null,
+                                PublicBinRAMTonnage = null,
+                                HouseholdDrinksContainersRAMTonnage = null
                             }
                         },
                         {
-                            "OT",
-                            new CalcResultPartialObligationTonnage
+                            "OT", new CalcResultPartialObligationTonnage
                             {
                                 ObligatedFactor = 0.5m,
                                 HouseholdTonnage = 50,
                                 PublicBinTonnage = 10,
-                                SelfManagedConsumerWasteTonnage = 20
+                                SelfManagedConsumerWasteTonnage = 20,
+                                HouseholdRAMTonnage = null,
+                                PublicBinRAMTonnage = null,
+                                HouseholdDrinksContainersTonnage = null,
+                                HouseholdDrinksContainersRAMTonnage = null
                             }
                         }
-                    }
+                    }.ToImmutableDictionary()
                 }
             }.ToImmutableList();
         }

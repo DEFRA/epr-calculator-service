@@ -1,36 +1,23 @@
-﻿namespace EPR.Calculator.Service.Function.Models
+﻿namespace EPR.Calculator.Service.Function.Models;
+
+public record ScaledupPomEntry(int MaterialId, string PackagingType, decimal Tonnage, decimal ScaledTonnage);
+
+public record CalcResultScaledupProducer
 {
-    public record ScaledupPomEntry(
-        int MaterialId,
-        string PackagingType,
-        decimal Tonnage,
-        decimal ScaledTonnage
-    );
+    public required int ProducerId { get; init; }
+    public required string? SubsidiaryId { get; init; }
+    public required string? ProducerName { get; init; }
+    public required string? TradingName { get; init; }
+    public required string Level { get; init; }
+    public required bool IsSubtotalRow { get; init; }
+    public required string SubmissionPeriodCode { get; init; }
+    public required int DaysInSubmissionPeriod { get; init; }
+    public required int DaysInWholePeriod { get; init; }
+    public required decimal ScaleupFactor { get; init; }
 
-    public record CalcResultScaledupProducer
-    {
-        public int ProducerId { get; set; }
+    // todo: should be required init
+    public ImmutableList<ScaledupPomEntry> PomData { get; set; } = [];
 
-        public string? SubsidiaryId { get; set; }
-
-        public string? ProducerName { get; set; }
-
-        public string? TradingName { get; set; }
-
-        public required string Level { get; set; }
-
-        public bool IsSubtotalRow { get; set; }
-
-        public required string SubmissionPeriodCode { get; set; }
-
-        public int DaysInSubmissionPeriod { get; set; }
-
-        public int DaysInWholePeriod { get; set; }
-
-        public decimal ScaleupFactor { get; set; }
-
-        public IReadOnlyList<ScaledupPomEntry> PomData { get; set; } = [];
-
-        public Dictionary<string, CalcResultScaledupProducerTonnage> ScaledupProducerTonnageByMaterial { get; set; } = new Dictionary<string, CalcResultScaledupProducerTonnage>();
-    }
+    // todo: should be required init
+    public ImmutableDictionary<string, CalcResultScaledupProducerTonnage> ScaledupProducerTonnageByMaterial { get; set; } = ImmutableDictionary<string, CalcResultScaledupProducerTonnage>.Empty;
 }

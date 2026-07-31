@@ -5,7 +5,6 @@ using EPR.Calculator.Service.Function.Enums;
 using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Misc;
 using EPR.Calculator.Service.Function.Models;
-using NetTopologySuite.Index.HPRtree;
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations
 {
@@ -33,9 +32,9 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligation
             PreparePartialObligationsHeader(materials, stringBuilder, runContext.RequiresModulation);
 
             // Add data
-            if (calcResultPartialObligations.PartialObligations?.Any() == true)
+            if (calcResultPartialObligations.PartialObligations.Any())
             {
-                AppendPartialObligations(calcResultPartialObligations.PartialObligations!, stringBuilder, runContext.RequiresModulation);
+                AppendPartialObligations(calcResultPartialObligations.PartialObligations, materials, stringBuilder, runContext.RequiresModulation);
             }
             else
             {
@@ -43,7 +42,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligation
             }
         }
 
-        private static void AppendPartialObligations(IEnumerable<CalcResultPartialObligation> partialObligations, StringBuilder csvContent, bool showModulation)
+        private static void AppendPartialObligations(IEnumerable<CalcResultPartialObligation> partialObligations, IReadOnlyCollection<MaterialDetail> materials, StringBuilder csvContent, bool showModulation)
         {
             foreach (var producer in partialObligations)
             {
@@ -58,13 +57,13 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligation
                 csvContent.Append(CsvSanitiser.SanitiseData(producer.DaysObligated));
                 csvContent.Append(CsvSanitiser.SanitiseData((producer.ObligatedFactor * 100).ToString("F2") + "%"));
 
-                AppendPartialObligationTonnageByMaterial(csvContent, producer.PartialObligationTonnageByMaterial, showModulation);
+                AppendPartialObligationTonnageByMaterial(csvContent, materials, producer.PartialObligationTonnageByMaterial, showModulation);
 
                 csvContent.AppendLine();
             }
         }
 
-        private static void AppendPartialObligationTonnageByMaterial(StringBuilder csvContent, Dictionary<string, CalcResultPartialObligationTonnage> partialObligationTonnageByMaterial, bool showModulation)
+        private static void AppendPartialObligationTonnageByMaterial(StringBuilder csvContent, IReadOnlyCollection<MaterialDetail> materials, IReadOnlyDictionary<string, CalcResultPartialObligationTonnage> partialObligationTonnageByMaterial, bool showModulation)
         {
             void AppendRam(RamTonnage? ram)
             {
@@ -79,10 +78,13 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligation
                 }
             }
 
-            foreach (var producerTonnage in partialObligationTonnageByMaterial)
+            // Dictionary order isn't guaranteed; iterate the materials so the data columns always with the headers
+            foreach (var materialCode in materials.Select(m => m.Code))
             {
-                var materialCode = producerTonnage.Key;
-                var tonnage = producerTonnage.Value;
+                if (!partialObligationTonnageByMaterial.TryGetValue(materialCode, out var tonnage))
+                {
+                    continue;
+                }
 
                 csvContent.Append(CsvSanitiser.SanitiseData(tonnage.HouseholdTonnage, DecimalPlaces.Three, DecimalFormats.F3));
                 AppendRam(tonnage.HouseholdRAMTonnage);

@@ -17,7 +17,7 @@ namespace EPR.Calculator.Service.Function.Features.BillingRuns;
 /// </summary>
 public interface IBillingRunFinalizer
 {
-    Task FinalizeAsCompleted(BillingRunContext runContext, CalcResult calcResult, BillingFileResult exportResult, CancellationToken cancellationToken);
+    Task FinalizeAsCompleted(BillingRunContext runContext, BillingResult runResult, BillingFileResult exportResult, CancellationToken cancellationToken);
     Task FinalizeAsErrored(BillingRunContext runContext, CancellationToken cancellationToken);
 }
 
@@ -28,13 +28,13 @@ public class BillingRunFinalizer(
 )
     : IBillingRunFinalizer
 {
-    public async Task FinalizeAsCompleted(BillingRunContext runContext, CalcResult calcResult, BillingFileResult exportResult, CancellationToken cancellationToken)
+    public async Task FinalizeAsCompleted(BillingRunContext runContext, BillingResult runResult, BillingFileResult exportResult, CancellationToken cancellationToken)
     {
         await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
 
         try
         {
-            await SaveSuggestedBillingFees(runContext, calcResult, cancellationToken);
+            await SaveSuggestedBillingFees(runContext, runResult, cancellationToken);
             await SaveExportMetadata(exportResult, cancellationToken);
             await SaveCompletedRunStatus(runContext, cancellationToken);
 
@@ -66,11 +66,11 @@ public class BillingRunFinalizer(
         }
     }
 
-    private async Task SaveSuggestedBillingFees(BillingRunContext runContext, CalcResult calcResults, CancellationToken cancellationToken)
+    private async Task SaveSuggestedBillingFees(BillingRunContext runContext, BillingResult runResult, CancellationToken cancellationToken)
     {
         await logger.LogDuration(async () =>
         {
-            var level1FeesByProducerId = calcResults.ProducerFees.Details
+            var level1FeesByProducerId = runResult.ProducerFees.Details
                 .Where(f => f.FeeDetail.Level == CommonConstants.LevelOne.ToString())
                 .ToImmutableDictionary(f => f.FeeDetail.ProducerId, f => f);
 

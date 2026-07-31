@@ -1,8 +1,8 @@
-﻿using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.API.Data.DataModels;
 
 namespace EPR.Calculator.Service.Function.Models;
 
-public record CalcResult
+public record BillingResult
 {
     public required CalcResultDetail CalcResultDetail { get; init; }
     public required CalcResultLapcapData CalcResultLapcapData { get; init; }
@@ -15,8 +15,8 @@ public record CalcResult
     public required CalcResultProjectedProducers? CalcResultProjectedProducers { get; init; }
     public required CalcResultScaledupProducers? CalcResultScaledupProducers { get; init; }
     public required ImmutableList<CalcResultCancelledProducer> CalcResultCancelledProducers { get; init; }
+    public required ImmutableList<CalcResultRejectedProducer> CalcResultRejectedProducers { get; init; }
     public required ProducerFees ProducerFees { get; init; }
     public required SelfManagedConsumerWaste Smcw { get; init; }
     public required ModulationResult? CalcResultModulation { get; init; }
-    public required ImmutableList<CalcResultErrorReport> CalcResultErrorReports { get; init; }
 }

@@ -73,9 +73,9 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
             };
         }
 
-        private static List<ProjectedProducersHeader> GetMaterialsBreakdownHeader(IImmutableList<MaterialDetail> materials)
+        private static ImmutableList<ProjectedProducersHeader> GetMaterialsBreakdownHeader(IImmutableList<MaterialDetail> materials)
         {
-            var materialsBreakdownHeaders = new List<ProjectedProducersHeader>();
+            var materialsBreakdownHeaders = ImmutableList.CreateBuilder<ProjectedProducersHeader>();
             var columnIndex = GetInitialColumnHeaders().Count + 1;
 
             foreach (var material in materials)
@@ -93,12 +93,12 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
                     : columnIndex + materialHeaderCount;
             }
 
-            return materialsBreakdownHeaders;
+            return materialsBreakdownHeaders.ToImmutable();
         }
 
-        private static List<ProjectedProducersHeader> GetColumnHeaders(IImmutableList<MaterialDetail> materials)
+        private static ImmutableList<ProjectedProducersHeader> GetColumnHeaders(IImmutableList<MaterialDetail> materials)
         {
-            var columnHeaders = new List<ProjectedProducersHeader>();
+            var columnHeaders = ImmutableList.CreateBuilder<ProjectedProducersHeader>();
 
             columnHeaders.AddRange(GetInitialColumnHeaders());
 
@@ -114,7 +114,7 @@ namespace EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducer
                 columnHeaders.AddRange(GetPostFixColumnHeaders());
             }
 
-            return columnHeaders;
+            return columnHeaders.ToImmutable();
         }
 
         private static List<ProjectedProducersHeader> GetInitialColumnHeaders()

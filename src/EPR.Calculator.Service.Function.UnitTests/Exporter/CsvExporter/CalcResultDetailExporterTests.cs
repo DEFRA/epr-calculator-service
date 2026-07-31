@@ -18,16 +18,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter
             // Arrange
             var calcResultDetail = new CalcResultDetail
             {
-                RunId          = 999,
-                RunName        = "SomeRunName",
-                RunDate        = new DateTime(2026, 7, 9),
-                RelativeYear   = new RelativeYear(2026),
-                RunBy          = "Me",
-                RpdFileORG     = "09/07/2026 16:27",
-                RpdFilePOM     = "09/07/2026 16:27",
-                LapcapFile     = "09/07/2026 15:27",
-                ParametersFile = "09/07/2026 15:27",
-                CutOffDate     = null
+                RunId                    = 999,
+                RunName                  = "SomeRunName",
+                RunDate                  = new DateTime(2026, 7, 9),
+                RelativeYear             = new RelativeYear(2026),
+                RunBy                    = "Me",
+                RpdFileORG               = "09/07/2026 16:27",
+                RpdFilePOM               = "09/07/2026 16:27",
+                LapcapFile               = "09/07/2026 15:27",
+                ParametersFile           = "09/07/2026 15:27",
+                CutOffDate               = null,
+                CountryApportionmentFile = ""
             };
 
             var csvContent = new StringBuilder();

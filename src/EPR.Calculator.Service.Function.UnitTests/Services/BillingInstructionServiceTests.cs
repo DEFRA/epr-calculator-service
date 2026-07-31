@@ -31,18 +31,29 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
         {
             CalcResultScaledupProducers = new CalcResultScaledupProducers
             {
-                ScaledupProducers = ImmutableList<CalcResultScaledupProducer>.Empty
+                ScaledupProducers =
+                [
+                ]
             },
             CalcResultPartialObligations = new CalcResultPartialObligations
             {
-                PartialObligations = ImmutableList<CalcResultPartialObligation>.Empty
+                PartialObligations =
+                [
+                ]
             },
             CalcResultDetail = new CalcResultDetail
             {
                 RunId = 4,
                 RunDate = DateTime.UtcNow,
                 RunName = "RunName",
-                RelativeYear = new RelativeYear(2024)
+                RelativeYear = new RelativeYear(2024),
+                CutOffDate = null,
+                RunBy = null!,
+                RpdFileORG = null!,
+                RpdFilePOM = null!,
+                LapcapFile = null!,
+                ParametersFile = null!,
+                CountryApportionmentFile = null!
             },
             CalcResultLapcapData = new CalcResultLapcapData
             {
@@ -58,12 +69,17 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
             },
             ProducerFees = new ProducerFees
             {
-                CalculatorRunId = 0, 
+                CalculatorRunId = 0,
                 Details = fixture.Create<List<ProducerFeeDetail>>(),
-                Total = new() { ProducerId = 0, SubsidiaryId = string.Empty, ProducerName = string.Empty }
+                Total = new()
+                {
+                    ProducerId = 0,
+                    SubsidiaryId = string.Empty,
+                    ProducerName = string.Empty
+                }
             },
-            CalcResultCancelledProducers = new List<CalcResultCancelledProducer>
-            {
+            CalcResultCancelledProducers =
+            [
                 new()
                 {
                     LastTonnage = null,
@@ -76,12 +92,18 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
                         RunNumber = "4"
                     }
                 }
-            },
+            ],
             CalcResultProjectedProducers = new CalcResultProjectedProducers
             {
-                H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
-                H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty
-            }
+                H1ProjectedProducers = [],
+                H2ProjectedProducers = []
+            },
+            CalcResultCommsCostReportDetail = null!,
+            CalcResultOnePlusFourApportionment = null!,
+            CalcResultLaDisposalCostData = null!,
+            Smcw = null!,
+            CalcResultModulation = null,
+            CalcResultErrorReports = null!
         };
 
         // Act & Assert
@@ -97,18 +119,29 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
         {
             CalcResultScaledupProducers = new CalcResultScaledupProducers
             {
-                ScaledupProducers = ImmutableList<CalcResultScaledupProducer>.Empty
+                ScaledupProducers =
+                [
+                ]
             },
             CalcResultPartialObligations = new CalcResultPartialObligations
             {
-                PartialObligations = ImmutableList<CalcResultPartialObligation>.Empty
+                PartialObligations =
+                [
+                ]
             },
             CalcResultDetail = new CalcResultDetail
             {
                 RunId = 4,
                 RunDate = DateTime.UtcNow,
                 RunName = "RunName",
-                RelativeYear = new RelativeYear(2024)
+                RelativeYear = new RelativeYear(2024),
+                CutOffDate = null,
+                RunBy = null!,
+                RpdFileORG = null!,
+                RpdFilePOM = null!,
+                LapcapFile = null!,
+                ParametersFile = null!,
+                CountryApportionmentFile = null!
             },
             CalcResultLapcapData = new CalcResultLapcapData
             {
@@ -122,15 +155,33 @@ public class BillingInstructionServiceTests : TestsFor<BillingInstructionService
             {
                 ByMaterial = new Dictionary<string, CalcResultLateReportingTonnageDetail>()
             },
-            ProducerFees = new ProducerFees {
-                CalculatorRunId = 0, 
+            ProducerFees = new ProducerFees
+            {
+                CalculatorRunId = 0,
                 Details = null!,
-                Total = new() { ProducerId = 0, SubsidiaryId = string.Empty, ProducerName = string.Empty }
+                Total = new()
+                {
+                    ProducerId = 0,
+                    SubsidiaryId = string.Empty,
+                    ProducerName = string.Empty
+                }
             },
-            CalcResultProjectedProducers = new CalcResultProjectedProducers(){
-                H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
-                H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty
-            }
+            CalcResultProjectedProducers = new CalcResultProjectedProducers()
+            {
+                H1ProjectedProducers =
+                [
+                ],
+                H2ProjectedProducers =
+                [
+                ]
+            },
+            CalcResultCommsCostReportDetail = null!,
+            CalcResultOnePlusFourApportionment = null!,
+            CalcResultLaDisposalCostData = null!,
+            CalcResultCancelledProducers = null!,
+            Smcw = null!,
+            CalcResultModulation = null,
+            CalcResultErrorReports = null!
         };
 
         // Act & Assert

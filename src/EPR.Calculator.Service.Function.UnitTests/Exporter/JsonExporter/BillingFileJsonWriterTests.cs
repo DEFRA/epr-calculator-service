@@ -19,7 +19,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
             var writer = CreateWriter();
             var json = await writer.WriteToString(
                 TestDataHelper.BillingRun2025,
-                TestDataHelper.GetCalcResult(applyModulation: false));
+                TestDataHelper.GetBillingResult(applyModulation: false));
 
             var result = schema.Evaluate(
                 JsonDocument.Parse(json).RootElement,
@@ -36,7 +36,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.JsonExporter
             var writer = CreateWriter();
             var json = await writer.WriteToString(
                 TestDataHelper.BillingRun2026,
-                TestDataHelper.GetCalcResult(applyModulation: true));
+                TestDataHelper.GetBillingResult(applyModulation: true));
 
             var result = schema.Evaluate(
                 JsonDocument.Parse(json).RootElement,

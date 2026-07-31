@@ -72,44 +72,43 @@ public class ResultBuilderTests : TestsFor<ResultBuilder>
             new(2, [new ProducerDetail { ProducerId = 2, SubsidiaryId = null }])
         };
 
-        var mockResultDetail = new Mock<CalcResultDetail>();
-        var mockLapcapData = new Mock<CalcResultLapcapData>();
-        var mockOtherParams = new Mock<CalcResultParameterOtherCost>();
-        var mockOnePlusFourApp = new Mock<CalcResultOnePlusFourApportionment>();
-        var mockCalcResultCommsCost = new Mock<CalcResultCommsCost>();
-        var mockCalcResultLateReportingTonnage = fixture.Create<CalcResultLateReportingTonnage>();
-        var mockCalcResultLaDisposalCostData = new Mock<CalcResultLaDisposalCostData>();
-        var mockCalcResultScaledUpProducersData = new Mock<CalcResultScaledupProducers>();
-        var mockCalcResultPartialObligationsData = new Mock<CalcResultPartialObligations>();
-        var mockCalcResultProjectedProducersData = new Mock<CalcResultProjectedProducers>();
-        var mockProducerFees = new Mock<ProducerFees>();
-        var mockCancelledProducers = new Mock<List<CalcResultCancelledProducer>>();
+        var resultDetail = fixture.Create<CalcResultDetail>();
+        var mockLapcapData = fixture.Create<CalcResultLapcapData>();
+        var mockOtherParams = fixture.Create<CalcResultParameterOtherCost>();
+        var mockOnePlusFourApp = fixture.Create<CalcResultOnePlusFourApportionment>();
+        var mockCalcResultCommsCost = fixture.Create<CalcResultCommsCost>();
+        var calcResultLateReportingTonnage = fixture.Create<CalcResultLateReportingTonnage>();
+        var mockCalcResultLaDisposalCostData = fixture.Create<CalcResultLaDisposalCostData>();
+        var calcResultScaledUpProducersData = fixture.Create<CalcResultScaledupProducers>();
+        var calcResultPartialObligationsData = fixture.Create<CalcResultPartialObligations>();
+        var calcResultProjectedProducersData = fixture.Create<CalcResultProjectedProducers>();
+        var mockProducerFees = fixture.Create<ProducerFees>();
 
         mockCalcResultDetailBuilder.Setup(m => m.ConstructAsync(runContext))
-            .ReturnsAsync(mockResultDetail.Object);
+            .ReturnsAsync(resultDetail);
         mockCalcResultCancelledProducersBuilder.Setup(m => m.ConstructAsync(runContext, It.IsAny<IReadOnlyCollection<MaterialDetail>>()))
-            .ReturnsAsync(mockCancelledProducers.Object);
+            .ReturnsAsync([]);
         mockLapcapBuilder.Setup(m => m.ConstructAsync(runContext, It.IsAny<IEnumerable<MaterialDetail>>()))
-            .ReturnsAsync(mockLapcapData.Object);
+            .ReturnsAsync(mockLapcapData);
         mockCalcResultParameterOtherCostBuilder.Setup(m => m.ConstructAsync(runContext))
-            .ReturnsAsync(mockOtherParams.Object);
+            .ReturnsAsync(mockOtherParams);
         mockOnePlusFourApportionmentBuilder.Setup(m => m.Construct(It.IsAny<CalcResultLapcapData>(), It.IsAny<CalcResultParameterOtherCost>()))
-            .Returns(mockOnePlusFourApp.Object);
+            .Returns(mockOnePlusFourApp);
         mockCommsCostReportBuilder
             .Setup(m => m.ConstructAsync(runContext, It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<CalcResultOnePlusFourApportionment>(), It.IsAny<CalcResultLateReportingTonnage>()))
-            .ReturnsAsync(mockCalcResultCommsCost.Object);
+            .ReturnsAsync(mockCalcResultCommsCost);
         mockLateReportingBuilder.Setup(m => m.ConstructAsync(runContext, It.IsAny<IImmutableList<MaterialDetail>>()))
-            .ReturnsAsync(mockCalcResultLateReportingTonnage);
+            .ReturnsAsync(calcResultLateReportingTonnage);
         mockCalcRunLaDisposalCostBuilder.Setup(m => m.ConstructAsync(runContext, It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<CalcResultLapcapData>(), It.IsAny<CalcResultLateReportingTonnage>(), It.IsAny<SelfManagedConsumerWaste>()))
-            .ReturnsAsync(mockCalcResultLaDisposalCostData.Object);
+            .ReturnsAsync(mockCalcResultLaDisposalCostData);
         mockReportedProducerService.Setup(m => m.GetProducers(runContext))
             .ReturnsAsync(mockProducers1);
         mockCalcResultScaledupProducersBuilder.Setup(m => m.ConstructAsync(runContext, It.IsAny<IImmutableList<MaterialDetail>>(), mockProducers1))
-            .ReturnsAsync((mockProducers2, mockCalcResultScaledUpProducersData.Object));
+            .ReturnsAsync((mockProducers2, calcResultScaledUpProducersData));
         mockCalcResultPartialObligationBuilder.Setup(m => m.ConstructAsync(runContext, It.IsAny<IImmutableList<MaterialDetail>>(), mockProducers2))
-            .ReturnsAsync((mockProducers2, mockCalcResultPartialObligationsData.Object));
+            .ReturnsAsync((mockProducers2, calcResultPartialObligationsData));
         mockSummaryBuilder.Setup(x => x.ConstructAsync(runContext, It.IsAny<FeesState>()))
-            .ReturnsAsync(mockProducerFees.Object);
+            .ReturnsAsync(mockProducerFees);
 
         mockSelfManagedConsumerWasteService.Setup(x => x.Calculate(
                 It.IsAny<RunContext>(),
@@ -124,31 +123,30 @@ public class ResultBuilderTests : TestsFor<ResultBuilder>
         var result = await testSubject.BuildAsync(runContext, CancellationToken.None);
 
         Assert.IsNotNull(result);
-        Assert.AreEqual(mockResultDetail.Object, result.CalcResultDetail);
-        Assert.AreEqual(mockLapcapData.Object, result.CalcResultLapcapData);
-        Assert.AreEqual(mockOtherParams.Object, result.CalcResultParameterOtherCost);
-        Assert.AreEqual(mockOnePlusFourApp.Object, result.CalcResultOnePlusFourApportionment);
-        Assert.AreEqual(mockCalcResultCommsCost.Object, result.CalcResultCommsCostReportDetail);
-        Assert.AreEqual(mockCalcResultLateReportingTonnage, result.CalcResultLateReportingTonnageData);
-        Assert.AreEqual(mockCalcResultLaDisposalCostData.Object, result.CalcResultLaDisposalCostData);
-        Assert.AreEqual(mockCalcResultScaledUpProducersData.Object, result.CalcResultScaledupProducers);
-        Assert.AreEqual(mockCalcResultPartialObligationsData.Object, result.CalcResultPartialObligations);
-        Assert.AreNotEqual(mockCalcResultProjectedProducersData.Object, result.CalcResultProjectedProducers);
-        Assert.AreEqual(mockProducerFees.Object, result.ProducerFees);
-        Assert.AreSame(mockCancelledProducers.Object, result.CalcResultCancelledProducers);
+        Assert.AreSame(resultDetail, result.CalcResultDetail);
+        Assert.AreSame(mockLapcapData, result.CalcResultLapcapData);
+        Assert.AreSame(mockOtherParams, result.CalcResultParameterOtherCost);
+        Assert.AreSame(mockOnePlusFourApp, result.CalcResultOnePlusFourApportionment);
+        Assert.AreSame(mockCalcResultCommsCost, result.CalcResultCommsCostReportDetail);
+        Assert.AreSame(calcResultLateReportingTonnage, result.CalcResultLateReportingTonnageData);
+        Assert.AreSame(mockCalcResultLaDisposalCostData, result.CalcResultLaDisposalCostData);
+        Assert.AreSame(calcResultScaledUpProducersData, result.CalcResultScaledupProducers);
+        Assert.AreSame(calcResultPartialObligationsData, result.CalcResultPartialObligations);
+        Assert.AreNotSame(calcResultProjectedProducersData, result.CalcResultProjectedProducers);
+        Assert.AreSame(mockProducerFees, result.ProducerFees);
 
         mockCalcRunLaDisposalCostBuilder.Verify(m => m.ConstructAsync(runContext, It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<CalcResultLapcapData>(), It.IsAny<CalcResultLateReportingTonnage>(), It.IsAny<SelfManagedConsumerWaste>()), Times.Once);
         mockCalcResultScaledupProducersBuilder.Verify(m => m.ConstructAsync(runContext, It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<L1Producer>>()), Times.Once);
         mockCalcResultProjectedProducersBuilder.Verify(m => m.Construct(runContext, It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<L1Producer>>()), Times.Never);
         mockCalcResultPartialObligationBuilder.Verify(m => m.ConstructAsync(runContext, It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<L1Producer>>()), Times.Once);
 
-        mockCalcResultWriter.Verify(m => m.StoreLapcapData(runContext.RunId, mockLapcapData.Object, CancellationToken.None), Times.Once);
-        mockCalcResultWriter.Verify(m => m.StoreLateReportingTonnage(runContext.RunId, mockCalcResultLateReportingTonnage, CancellationToken.None), Times.Once);
-        mockCalcResultWriter.Verify(m => m.StoreParameterOtherCost(runContext.RunId, mockOtherParams.Object, CancellationToken.None), Times.Once);
-        mockCalcResultWriter.Verify(m => m.StoreOnePlusFourApportionment(runContext.RunId, mockOnePlusFourApp.Object, CancellationToken.None), Times.Once);
-        mockCalcResultWriter.Verify(m => m.StoreLaDisposalCostData(runContext.RunId, mockCalcResultLaDisposalCostData.Object, CancellationToken.None), Times.Once);
-        mockCalcResultWriter.Verify(m => m.StoreCommsCost(runContext.RunId, mockCalcResultCommsCost.Object, CancellationToken.None), Times.Once);
-        mockCalcResultWriter.Verify(m => m.StoreCancelledProducers(runContext.RunId, mockCancelledProducers.Object, CancellationToken.None), Times.Once);
+        mockCalcResultWriter.Verify(m => m.StoreLapcapData(runContext.RunId, mockLapcapData, CancellationToken.None), Times.Once);
+        mockCalcResultWriter.Verify(m => m.StoreLateReportingTonnage(runContext.RunId, calcResultLateReportingTonnage, CancellationToken.None), Times.Once);
+        mockCalcResultWriter.Verify(m => m.StoreParameterOtherCost(runContext.RunId, mockOtherParams, CancellationToken.None), Times.Once);
+        mockCalcResultWriter.Verify(m => m.StoreOnePlusFourApportionment(runContext.RunId, mockOnePlusFourApp, CancellationToken.None), Times.Once);
+        mockCalcResultWriter.Verify(m => m.StoreLaDisposalCostData(runContext.RunId, mockCalcResultLaDisposalCostData, CancellationToken.None), Times.Once);
+        mockCalcResultWriter.Verify(m => m.StoreCommsCost(runContext.RunId, mockCalcResultCommsCost, CancellationToken.None), Times.Once);
+        mockCalcResultWriter.Verify(m => m.StoreCancelledProducers(runContext.RunId, It.IsAny<ImmutableList<CalcResultCancelledProducer>>(), CancellationToken.None), Times.Once);
     }
 
     [TestMethod]
@@ -164,22 +162,22 @@ public class ResultBuilderTests : TestsFor<ResultBuilder>
             new(2, [new ProducerDetail { ProducerId = 2, SubsidiaryId = null }])
         };
 
-        var mockCalcResultScaledUpProducersData = fixture.Freeze<Mock<CalcResultScaledupProducers>>();
-        var mockCalcResultProjectedProducersData = fixture.Freeze<Mock<CalcResultProjectedProducers>>();
-        var mockCalcResultPartialObligationsData = fixture.Freeze<Mock<CalcResultPartialObligations>>();
+        var calcResultScaledUpProducersData = fixture.Create<CalcResultScaledupProducers>();
+        var calcResultProjectedProducersData = fixture.Create<CalcResultProjectedProducers>();
+        var calcResultPartialObligationsData = fixture.Create<CalcResultPartialObligations>();
 
         mockReportedProducerService.Setup(m => m.GetProducers(runContext))
             .ReturnsAsync(mockProducers1);
         mockCalcResultProjectedProducersBuilder.Setup(m => m.Construct(runContext, It.IsAny<IImmutableList<MaterialDetail>>(), mockProducers1))
-            .Returns((mockProducers2, mockCalcResultProjectedProducersData.Object));
+            .Returns((mockProducers2, calcResultProjectedProducersData));
         mockCalcResultPartialObligationBuilder.Setup(m => m.ConstructAsync(runContext, It.IsAny<IImmutableList<MaterialDetail>>(), mockProducers2))
-            .ReturnsAsync((mockProducers2, mockCalcResultPartialObligationsData.Object));
+            .ReturnsAsync((mockProducers2, calcResultPartialObligationsData));
 
         var result = await testSubject.BuildAsync(runContext, CancellationToken.None);
 
         Assert.IsNotNull(result);
-        Assert.AreNotEqual(mockCalcResultScaledUpProducersData.Object, result.CalcResultScaledupProducers);
-        Assert.AreSame(mockCalcResultProjectedProducersData.Object, result.CalcResultProjectedProducers);
+        Assert.AreNotSame(calcResultScaledUpProducersData, result.CalcResultScaledupProducers);
+        Assert.AreSame(calcResultProjectedProducersData, result.CalcResultProjectedProducers);
 
         mockCalcResultScaledupProducersBuilder.Verify(m => m.ConstructAsync(runContext, It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<L1Producer>>()), Times.Never);
         mockCalcResultProjectedProducersBuilder.Verify(m => m.Construct(runContext, It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<L1Producer>>()), Times.Once);
@@ -202,22 +200,22 @@ public class ResultBuilderTests : TestsFor<ResultBuilder>
             new L1Producer(2, [new ProducerDetail { ProducerId = 2, SubsidiaryId = null }])
         };
 
-        var mockCalcResultScaledUpProducersData = new Mock<CalcResultScaledupProducers>();
-        var mockCalcResultProjectedProducersData = new Mock<CalcResultProjectedProducers>();
-        var mockCalcResultPartialObligationsData = new Mock<CalcResultPartialObligations>();
+        var calcResultScaledUpProducersData = fixture.Create<CalcResultScaledupProducers>();
+        var calcResultProjectedProducersData = fixture.Create<CalcResultProjectedProducers>();
+        var calcResultPartialObligationsData = fixture.Create<CalcResultPartialObligations>();
 
         mockReportedProducerService.Setup(m => m.GetProducers(runContext))
             .ReturnsAsync(mockProducers1);
         mockCalcResultScaledupProducersBuilder.Setup(m => m.ConstructAsync(runContext, It.IsAny<IImmutableList<MaterialDetail>>(), mockProducers1))
-            .ReturnsAsync((mockProducers2, mockCalcResultScaledUpProducersData.Object));
+            .ReturnsAsync((mockProducers2, calcResultScaledUpProducersData));
         mockCalcResultPartialObligationBuilder.Setup(m => m.ConstructAsync(runContext, It.IsAny<IImmutableList<MaterialDetail>>(), mockProducers2))
-            .ReturnsAsync((mockProducers2, mockCalcResultPartialObligationsData.Object));
+            .ReturnsAsync((mockProducers2, calcResultPartialObligationsData));
 
         var result = await testSubject.BuildAsync(runContext, CancellationToken.None);
 
         Assert.IsNotNull(result);
-        Assert.AreSame(mockCalcResultScaledUpProducersData.Object, result.CalcResultScaledupProducers);
-        Assert.AreNotEqual(mockCalcResultProjectedProducersData.Object, result.CalcResultProjectedProducers);
+        Assert.AreSame(calcResultScaledUpProducersData, result.CalcResultScaledupProducers);
+        Assert.AreNotSame(calcResultProjectedProducersData, result.CalcResultProjectedProducers);
 
         mockCalcResultScaledupProducersBuilder.Verify(m => m.ConstructAsync(runContext,It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<L1Producer>>()), Times.Once);
         mockCalcResultProjectedProducersBuilder.Verify(m => m.Construct(runContext,It.IsAny<IImmutableList<MaterialDetail>>(), It.IsAny<List<L1Producer>>()), Times.Never);
@@ -235,7 +233,7 @@ public class ResultBuilderTests : TestsFor<ResultBuilder>
         Assert.IsNotNull(result);
 
         mockCalcResultWriter.Verify(m => m.StoreProducerFees(runContext.RunId, result.ProducerFees, CancellationToken.None), Times.Once);
-        mockCalcResultWriter.Verify(m => m.StoreSmcw(runContext.RunId, result.Smcw!, CancellationToken.None), Times.Once);
+        mockCalcResultWriter.Verify(m => m.StoreSmcw(runContext.RunId, result.Smcw, CancellationToken.None), Times.Once);
         mockCalcResultWriter.Verify(m => m.StoreModulationResult(runContext.RunId, result.CalcResultModulation!, CancellationToken.None), Times.Once);
     }
 }

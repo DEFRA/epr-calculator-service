@@ -1,3 +1,4 @@
+using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Builder.Detail;
 using EPR.Calculator.Service.Function.Builder.RejectedProducers;
 using EPR.Calculator.Service.Function.Features.Common;
@@ -9,7 +10,7 @@ namespace EPR.Calculator.Service.Function.Builder;
 
 public interface IBillingBuilder
 {
-    Task<CalcResult> BuildAsync(RunContext runContext, CancellationToken cancellationToken);
+    Task<BillingResult> BuildAsync(RunContext runContext, CancellationToken cancellationToken);
 }
 
 public class BillingBuilder(
@@ -20,91 +21,119 @@ public class BillingBuilder(
     ILogger<BillingBuilder> logger
 )  : IBillingBuilder
 {
-    public Task<CalcResult> BuildAsync(RunContext runContext, CancellationToken cancellationToken) =>
+    public Task<BillingResult> BuildAsync(RunContext runContext, CancellationToken cancellationToken) =>
         telemetryClient.TrackDuration(nameof(BillingBuilder), () => BuildResult(runContext, cancellationToken));
 
-    private async Task<CalcResult> BuildResult(RunContext runContext, CancellationToken cancellationToken)
+    private async Task<BillingResult> BuildResult(RunContext runContext, CancellationToken cancellationToken)
     {
-        var result = CalcResult.Empty;
-
-        result.CalcResultDetail = await logger.LogDuration(
+        var details = await logger.LogDuration(
             () => calcResultDetailBuilder.ConstructAsync(runContext),
             nameof(calcResultDetailBuilder));
 
-        result.CalcResultLapcapData = await logger.LogDuration(
+        var lapcap = await logger.LogDuration(
             () => calcResultReader.ReadLapcapData(runContext.RunId, cancellationToken),
             nameof(calcResultReader.ReadLapcapData));
 
-        result.CalcResultLateReportingTonnageData = await logger.LogDuration(
+        var lateReportingTonnage = await logger.LogDuration(
             () => calcResultReader.ReadLateReportingTonnage(runContext.RunId, cancellationToken),
             nameof(calcResultReader.ReadLateReportingTonnage));
 
-        result.CalcResultParameterOtherCost = await logger.LogDuration(
+        var otherCost = await logger.LogDuration(
             () => calcResultReader.ReadParameterOtherCost(runContext.RunId, cancellationToken),
             nameof(calcResultReader.ReadParameterOtherCost));
 
-        result.CalcResultOnePlusFourApportionment = await logger.LogDuration(
+        var apportionment = await logger.LogDuration(
             () => calcResultReader.ReadOnePlusFourApportionment(runContext.RunId, cancellationToken),
             nameof(calcResultReader.ReadOnePlusFourApportionment));
 
+        CalcResultProjectedProducers? projectedProducers = null;
+
         if (runContext.RequiresModulation)
         {
-            result.CalcResultProjectedProducers.H1ProjectedProducers = (await logger.LogDuration(
-                () => calcResultReader.ReadH1ProjectedData(runContext.RunId, cancellationToken),
-                nameof(calcResultReader.ReadH1ProjectedData))).ToImmutableList();
-
-            result.CalcResultProjectedProducers.H2ProjectedProducers = (await logger.LogDuration(
-                () => calcResultReader.ReadH2ProjectedData(runContext.RunId, cancellationToken),
-                nameof(calcResultReader.ReadH2ProjectedData))).ToImmutableList();
+            await logger.LogDuration(async () =>
+            {
+                projectedProducers = new CalcResultProjectedProducers
+                {
+                    H1ProjectedProducers = await calcResultReader.ReadH1ProjectedData(runContext.RunId, cancellationToken),
+                    H2ProjectedProducers = await calcResultReader.ReadH2ProjectedData(runContext.RunId, cancellationToken)
+                };
+            }, "ReadProjectedData");
         }
+
+        CalcResultScaledupProducers? scaledUpProducers = null;
 
         if (runContext.RequiresScaling)
         {
-            result.CalcResultScaledupProducers.ScaledupProducers = (await logger.LogDuration(
-                () => calcResultReader.ReadScaledData(runContext.RunId, cancellationToken),
-                nameof(calcResultReader.ReadScaledData))).ToImmutableList();
+            await logger.LogDuration(async () =>
+            {
+                scaledUpProducers = new CalcResultScaledupProducers
+                {
+                    ScaledupProducers = await calcResultReader.ReadScaledData(runContext.RunId, cancellationToken)
+                };
+            }, nameof(calcResultReader.ReadScaledData));
         }
 
-        result.CalcResultPartialObligations.PartialObligations = (await logger.LogDuration(
+        var partialObligations = await logger.LogDuration(
             () => calcResultReader.ReadPartialData(runContext.RunId, cancellationToken),
-            nameof(calcResultReader.ReadPartialData))).ToImmutableList();
+            nameof(calcResultReader.ReadPartialData));
 
-        result.CalcResultRejectedProducers = await logger.LogDuration(
+        var rejectedProducers = await logger.LogDuration(
             () => rejectedProducersBuilder.ConstructAsync(runContext),
             nameof(rejectedProducersBuilder));
 
-
-        var rejectedProducerIds = result.CalcResultRejectedProducers.Select(r => r.ProducerId).ToHashSet();
-
-        result.CalcResultCancelledProducers = (
+        var cancelledProducers = (
             await logger.LogDuration(
-                () => calcResultReader.ReadCancelledProducers(runContext.RunId, cancellationToken),
+                async () =>
+                {
+                    var cancelledProducers = await calcResultReader.ReadCancelledProducers(runContext.RunId, cancellationToken);
+                    var rejectedProducerIds = rejectedProducers.Select(r => r.ProducerId).ToHashSet();
+                    return cancelledProducers.Where(p => !rejectedProducerIds.Contains(p.ProducerId)).ToImmutableList();
+                },
                 nameof(calcResultReader.ReadCancelledProducers))
-            ).Where(p => !rejectedProducerIds.Contains(p.ProducerId)).ToList();
+        );
 
-        result.Smcw = await logger.LogDuration(
+        var selfManagedConsumerWaste = await logger.LogDuration(
             () => calcResultReader.ReadSmcw(runContext.RunId, cancellationToken),
             nameof(calcResultReader.ReadSmcw));
 
-        result.CalcResultLaDisposalCostData = await logger.LogDuration(
+        var disposalCost = await logger.LogDuration(
             () => calcResultReader.ReadLaDisposalCostData(runContext.RunId, cancellationToken),
             nameof(calcResultReader.ReadLaDisposalCostData));
 
-        result.CalcResultCommsCostReportDetail = await logger.LogDuration(
+        var commsCost = await logger.LogDuration(
             () => calcResultReader.ReadCommsCost(runContext.RunId, cancellationToken),
             nameof(calcResultReader.ReadCommsCost));
 
+        ModulationResult? modulation = null;
+
         if (runContext.RequiresModulation)
         {
-            result.CalcResultModulation = await logger.LogDuration(
+            modulation = await logger.LogDuration(
                 () => calcResultReader.ReadModulationResult(runContext.RunId, cancellationToken),
                 nameof(calcResultReader.ReadModulationResult));
         }
 
-        result.ProducerFees = await logger.LogDuration(
+        var producerFees = await logger.LogDuration(
                 () => calcResultReader.ReadProducerFees(runContext.RunId, cancellationToken),
                 nameof(calcResultReader.ReadProducerFees));
 
-        return result;
+        return new BillingResult
+        {
+            CalcResultDetail = details,
+            CalcResultLapcapData = lapcap,
+            CalcResultLaDisposalCostData = disposalCost,
+            CalcResultCommsCostReportDetail = commsCost,
+            CalcResultParameterOtherCost = otherCost,
+            CalcResultLateReportingTonnageData = lateReportingTonnage,
+            CalcResultOnePlusFourApportionment = apportionment,
+            CalcResultPartialObligations = partialObligations,
+            CalcResultProjectedProducers = projectedProducers,
+            CalcResultScaledupProducers = scaledUpProducers,
+            CalcResultCancelledProducers = cancelledProducers,
+            CalcResultRejectedProducers = rejectedProducers,
+            CalcResultModulation = modulation,
+            Smcw = selfManagedConsumerWaste,
+            ProducerFees = producerFees
+        };
     }
 }

@@ -10,6 +10,25 @@ namespace EPR.Calculator.Service.Function.UnitTests.Exporter.CsvExporter.Validat
 [TestClass]
 public class CalcResultValidationExporterTests : TestsFor<CalcResultValidationExporter>
 {
+    private CalcResult calcResult = new()
+    {
+        CalcResultDetail = null!,
+        CalcResultLapcapData = null!,
+        CalcResultCommsCostReportDetail = null!,
+        CalcResultLateReportingTonnageData = null!,
+        CalcResultParameterOtherCost = null!,
+        CalcResultOnePlusFourApportionment = null!,
+        CalcResultLaDisposalCostData = null!,
+        CalcResultPartialObligations = null!,
+        CalcResultProjectedProducers = null,
+        CalcResultScaledupProducers = null,
+        CalcResultCancelledProducers = null!,
+        ProducerFees = null!,
+        Smcw = null!,
+        CalcResultModulation = null,
+        CalcResultErrorReports = null!
+    };
+
     private Mock<IValidator<CalcResult>> validator = null!;
 
     protected override void TestInitialize() => validator = fixture.Freeze<Mock<IValidator<CalcResult>>>();
@@ -18,7 +37,6 @@ public class CalcResultValidationExporterTests : TestsFor<CalcResultValidationEx
     public void Should_not_add_warnings()
     {
         // Arrange
-        var calcResult = CalcResult.Empty;
         var csvContent = new StringBuilder("existing content");
 
         // Act
@@ -32,7 +50,6 @@ public class CalcResultValidationExporterTests : TestsFor<CalcResultValidationEx
     public void Should_add_warnings()
     {
         // Arrange
-        var calcResult = CalcResult.Empty;
         var csvContent = new StringBuilder();
 
         validator

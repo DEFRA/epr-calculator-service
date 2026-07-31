@@ -10,7 +10,7 @@ namespace EPR.Calculator.Service.Function.Exporter.JsonExporter;
 
 public interface IBillingFileJsonWriter
 {
-    Task<string> WriteToString(BillingRunContext runContext, CalcResult calcResult);
+    Task<string> WriteToString(BillingRunContext runContext, BillingResult runResult);
 }
 
 public class BillingFileJsonWriter(IMaterialService materialService)
@@ -26,10 +26,10 @@ public class BillingFileJsonWriter(IMaterialService materialService)
         Converters = { new DecimalPrecisionConverter(DecimalPrecision) }
     };
 
-    public async Task<string> WriteToString(BillingRunContext runContext, CalcResult calcResult)
+    public async Task<string> WriteToString(BillingRunContext runContext, BillingResult runResult)
     {
         var materials = await materialService.GetMaterials();
-        var billingFileContent = BillingFileJson.From(runContext, calcResult, materials);
+        var billingFileContent = BillingFileJson.From(runContext, runResult, materials);
 
         return JsonSerializer.Serialize(billingFileContent, JsonSerializerOptions);
     }

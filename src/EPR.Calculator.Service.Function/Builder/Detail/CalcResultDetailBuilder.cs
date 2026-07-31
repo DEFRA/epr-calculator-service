@@ -2,7 +2,6 @@
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.Detail
@@ -32,24 +31,17 @@ namespace EPR.Calculator.Service.Function.Builder.Detail
                 RunDate = calculatorRun.CreatedAt,
                 RelativeYear = calculatorRun.RelativeYear,
                 CutOffDate = runContext.DefaultParameters.CutOffDate,
-                RpdFileORG = calculatorRun.CalculatorRunOrganisationDataMaster != null
-                                ? calculatorRun.CalculatorRunOrganisationDataMaster.CreatedAt.ToString(CalculationResults.DateFormat)
-                                : string.Empty,
-                RpdFilePOM = calculatorRun.CalculatorRunPomDataMaster != null
-                                ? calculatorRun.CalculatorRunPomDataMaster.CreatedAt.ToString(CalculationResults.DateFormat)
-                                : string.Empty,
-                LapcapFile = calculatorRun.LapcapDataMaster != null
-                                ? FormatFileData(
-                                    calculatorRun.LapcapDataMaster.LapcapFileName,
-                                    calculatorRun.LapcapDataMaster.CreatedAt,
-                                    calculatorRun.LapcapDataMaster.CreatedBy)
-                                : string.Empty,
-                ParametersFile = calculatorRun.DefaultParameterSettingMaster != null
-                                    ? FormatFileData(
-                                        calculatorRun.DefaultParameterSettingMaster.ParameterFileName,
-                                        calculatorRun.DefaultParameterSettingMaster.CreatedAt,
-                                        calculatorRun.DefaultParameterSettingMaster.CreatedBy)
-                                    : string.Empty
+                RpdFileORG = calculatorRun.CalculatorRunOrganisationDataMaster!.CreatedAt.ToString(CalculationResults.DateFormat),
+                RpdFilePOM = calculatorRun.CalculatorRunPomDataMaster!.CreatedAt.ToString(CalculationResults.DateFormat),
+                LapcapFile = FormatFileData(
+                        calculatorRun.LapcapDataMaster!.LapcapFileName,
+                        calculatorRun.LapcapDataMaster.CreatedAt,
+                        calculatorRun.LapcapDataMaster.CreatedBy),
+                ParametersFile = FormatFileData(
+                        calculatorRun.DefaultParameterSettingMaster!.ParameterFileName,
+                        calculatorRun.DefaultParameterSettingMaster.CreatedAt,
+                        calculatorRun.DefaultParameterSettingMaster.CreatedBy),
+                CountryApportionmentFile = string.Empty
             };
 
             return results;

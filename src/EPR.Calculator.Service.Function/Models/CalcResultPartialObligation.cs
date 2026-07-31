@@ -1,27 +1,18 @@
-﻿namespace EPR.Calculator.Service.Function.Models
+﻿namespace EPR.Calculator.Service.Function.Models;
+
+public record CalcResultPartialObligation
 {
-    public class CalcResultPartialObligation
-    {
-        public int ProducerId { get; set; }
+    public required int ProducerId { get; init; }
+    public required string? SubsidiaryId { get; init; }
+    public required string? ProducerName { get; init; }
+    public required string? TradingName { get; init; }
+    public required string Level { get; init; }
+    public required int SubmissionYear { get; init; }
+    public required int DaysInSubmissionYear { get; init; }
+    public required string? JoiningDate { get; init; }
+    public required int? DaysObligated { get; init; }
+    public required decimal ObligatedFactor { get; init; }
 
-        public string? SubsidiaryId { get; set; }
-
-        public string? ProducerName { get; set; }
-
-        public string? TradingName { get; set; }
-
-        public required string Level { get; set; }
-
-        public required int SubmissionYear { get; set; }
-
-        public required int DaysInSubmissionYear { get; set; }
-
-        public string? JoiningDate { get; set; }
-
-        public int? DaysObligated { get; set; }
-
-        public required decimal ObligatedFactor { get; set; }
-
-        public Dictionary<string, CalcResultPartialObligationTonnage> PartialObligationTonnageByMaterial { get; set; } = new Dictionary<string, CalcResultPartialObligationTonnage>();
-    }
+    // todo: should be required init
+    public IReadOnlyDictionary<string, CalcResultPartialObligationTonnage> PartialObligationTonnageByMaterial { get; set; } = ImmutableDictionary<string, CalcResultPartialObligationTonnage>.Empty;
 }

@@ -9,14 +9,14 @@ namespace EPR.Calculator.Service.Function.Builder.CancelledProducers;
 
 public interface ICalcResultCancelledProducersBuilder
 {
-    Task<IReadOnlyList<CalcResultCancelledProducer>> ConstructAsync(RunContext runContext, IReadOnlyCollection<MaterialDetail> materialDetails);
+    Task<ImmutableList<CalcResultCancelledProducer>> ConstructAsync(RunContext runContext, IReadOnlyCollection<MaterialDetail> materialDetails);
 }
 
 [ExcludeFromCodeCoverage(Justification = "Tests to be re-added within ECV-473")]
 public class CalcResultCancelledProducersBuilder(IInvoicedProducerService invoicedProducerService)
     : ICalcResultCancelledProducersBuilder
 {
-    public async Task<IReadOnlyList<CalcResultCancelledProducer>> ConstructAsync(RunContext runContext, IReadOnlyCollection<MaterialDetail> materialDetails)
+    public async Task<ImmutableList<CalcResultCancelledProducer>> ConstructAsync(RunContext runContext, IReadOnlyCollection<MaterialDetail> materialDetails)
     {
         var lookup = await GetMissingAcceptedCancelledInvoicedProducersLookup(runContext);
         var materialsByCode = materialDetails.ToImmutableDictionary(m => m.Code);
@@ -25,7 +25,12 @@ public class CalcResultCancelledProducersBuilder(IInvoicedProducerService invoic
 
         foreach (var (producerId, recordsByMaterialId) in lookup)
         {
-            var latestRecord = recordsByMaterialId.Values.OrderByDescending(r => r.CalculatorRunId).First();
+            // Tie-break on material id to keep the choice stable.
+            var latestRecord = recordsByMaterialId
+                .OrderByDescending(x => x.Value.CalculatorRunId)
+                .ThenBy(x => x.Key)
+                .First()
+                .Value;
 
             builder.Add(new CalcResultCancelledProducer
             {
@@ -58,7 +63,7 @@ public class CalcResultCancelledProducersBuilder(IInvoicedProducerService invoic
         return builder.ToImmutable();
     }
 
-    private async Task<ImmutableDictionary<int, ImmutableDictionary<int, InvoicedProducer>>> GetMissingAcceptedCancelledInvoicedProducersLookup(RunContext runContext)
+    private async Task<ImmutableSortedDictionary<int, ImmutableDictionary<int, InvoicedProducer>>> GetMissingAcceptedCancelledInvoicedProducersLookup(RunContext runContext)
     {
         var producerIdsForRun = await invoicedProducerService.GetProducerIdsForRun(runContext.RunId);
         var invoicedProducerIdsForYear = await invoicedProducerService.GetInvoicedProducerIdsForYear(runContext.RelativeYear);
@@ -84,6 +89,6 @@ public class CalcResultCancelledProducersBuilder(IInvoicedProducerService invoic
             .GroupBy(r => new { r.ProducerId, r.MaterialId })
             .Select(group => group.OrderByDescending(t => t.CalculatorRunId).First())
             .GroupBy(r => r.ProducerId)
-            .ToImmutableDictionary(g => g.Key, g => g.ToImmutableDictionary(r => r.MaterialId));
+            .ToImmutableSortedDictionary(g => g.Key, g => g.ToImmutableDictionary(r => r.MaterialId));
     }
 }

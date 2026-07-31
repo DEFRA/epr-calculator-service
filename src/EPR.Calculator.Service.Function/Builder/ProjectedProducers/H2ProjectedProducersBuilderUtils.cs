@@ -15,8 +15,10 @@ namespace EPR.Calculator.Service.Function.Builder.ProjectedProducers
                 SubmissionPeriodCode         = submissionPeriod,
                 H2ProjectedTonnageByMaterial = GetProjectedTonnages(
                     materials,
-                    pd.ProducerReportedMaterials.Where(rm => rm.SubmissionPeriod == submissionPeriod).ToList()
-                )
+                    pd.ProducerReportedMaterials.Where(rm => rm.SubmissionPeriod == submissionPeriod)
+                        .ToList()
+                ),
+                IsSubtotal = false
             }).ToList();
 
         private static Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage> GetProjectedTonnages(IImmutableList<MaterialDetail> materials, List<ProducerReportedMaterial> reportedMaterials) =>

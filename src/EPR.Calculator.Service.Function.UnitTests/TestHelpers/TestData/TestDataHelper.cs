@@ -1,13 +1,11 @@
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.API.Data.DataTypes;
-using EPR.Calculator.API.Data.Enums;
 using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Helpers;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace EPR.Calculator.Service.Function.UnitTests.TestHelpers.TestData;
 
@@ -27,9 +25,10 @@ public static partial class TestDataHelper
             CalcResultLaDisposalCostData       = GetCalcResultLaDisposalCostData(),
             CalcResultCommsCostReportDetail    = GetCalcResultCommsCostReportDetail(),
             ProducerFees                       = GetProducerFees(applyModulation),
-            CalcResultProjectedProducers       = new CalcResultProjectedProducers(){
-                H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
-                H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty,
+            CalcResultProjectedProducers       = new CalcResultProjectedProducers()
+            {
+                H1ProjectedProducers = [],
+                H2ProjectedProducers = [],
             },
             CalcResultModulation               = applyModulation
                 ? new ModulationResult
@@ -39,7 +38,50 @@ public static partial class TestDataHelper
                     RedFactor            = 2,
                     ModulationByMaterial = new Dictionary<MaterialDetail, ModulationDetail>()
                 }
-                : null
+                : null,
+            CalcResultCancelledProducers = [],
+            Smcw = null!,
+            CalcResultErrorReports = []
+        };
+    }
+
+    public static BillingResult GetBillingResult(bool applyModulation = false)
+    {
+        return new BillingResult
+        {
+            CalcResultScaledupProducers        = GetScaledupProducers(),
+            CalcResultPartialObligations       = GetPartialObligations(),
+            CalcResultParameterOtherCost       = GetCalcResultParameterOtherCost(),
+            CalcResultDetail                   = GetCalcResultDetail(),
+            CalcResultLapcapData               = GetCalcResultLapcapData(),
+            CalcResultLateReportingTonnageData = GetCalcResultLateReportingTonnage(),
+            CalcResultOnePlusFourApportionment = GetCalcResultOnePlusFourApportionment(),
+            CalcResultLaDisposalCostData       = GetCalcResultLaDisposalCostData(),
+            CalcResultCommsCostReportDetail    = GetCalcResultCommsCostReportDetail(),
+            ProducerFees                       = GetProducerFees(applyModulation),
+            CalcResultProjectedProducers       = new CalcResultProjectedProducers()
+            {
+                H1ProjectedProducers =
+                [
+                ],
+                H2ProjectedProducers =
+                [
+                ],
+            },
+            CalcResultModulation               = applyModulation
+                ? new ModulationResult
+                {
+                    CalculatorRunId      = 1,
+                    GreenFactor          = 1,
+                    RedFactor            = 2,
+                    ModulationByMaterial = new Dictionary<MaterialDetail, ModulationDetail>()
+                }
+                : null,
+            CalcResultCancelledProducers =
+            [
+            ],
+            Smcw = null!,
+            CalcResultRejectedProducers = null!
         };
     }
 
@@ -85,15 +127,17 @@ public static partial class TestDataHelper
 
     public static CalcResultDetail GetCalcResultDetail() => new()
     {
-        RunId          = 1,
-        RunDate        = DateTime.UtcNow,
-        RunName        = "CalculatorRunName",
-        RunBy          = "Test user",
-        RelativeYear   = new RelativeYear(2024),
-        RpdFileORG     = "21/07/2017 17:32",
-        RpdFilePOM     = "21/07/2017 17:32",
-        LapcapFile     = "lapcap-data.csv,24/06/2025 10:00, test",
-        ParametersFile = "parameter-data.csv,24/06/2025 10:00, test"
+        RunId                    = 1,
+        RunDate                  = DateTime.UtcNow,
+        RunName                  = "CalculatorRunName",
+        RunBy                    = "Test user",
+        RelativeYear             = new RelativeYear(2024),
+        RpdFileORG               = "21/07/2017 17:32",
+        RpdFilePOM               = "21/07/2017 17:32",
+        LapcapFile               = "lapcap-data.csv,24/06/2025 10:00, test",
+        ParametersFile           = "parameter-data.csv,24/06/2025 10:00, test",
+        CutOffDate               = null,
+        CountryApportionmentFile = null!
     };
 
     public static CalcResultLaDisposalCostData GetCalcResultLaDisposalCostData()
@@ -962,6 +1006,7 @@ public static partial class TestDataHelper
                 {
                     ProducerId = 1,
                     ProducerName = "Producer Name",
+                    TradingName = null,
                     DaysInSubmissionPeriod = 91,
                     DaysInWholePeriod = 91,
                     IsSubtotalRow = false,
@@ -1005,7 +1050,7 @@ public static partial class TestDataHelper
                                 ScaledupNetReportedTonnage = 360
                             }
                         }
-                    }
+                    }.ToImmutableDictionary()
                 }
             ]
         };
@@ -1021,6 +1066,7 @@ public static partial class TestDataHelper
                 {
                     ProducerId = 1,
                     ProducerName = "Producer Name",
+                    TradingName = null,
                     DaysObligated = 183,
                     DaysInSubmissionYear = 366,
                     Level = "1",
@@ -1039,7 +1085,9 @@ public static partial class TestDataHelper
                                 HouseholdRAMTonnage = new RamTonnage(),
                                 PublicBinTonnage = 20,
                                 PublicBinRAMTonnage = new RamTonnage(),
-                                SelfManagedConsumerWasteTonnage = 60
+                                SelfManagedConsumerWasteTonnage = 60,
+                                HouseholdDrinksContainersTonnage = null,
+                                HouseholdDrinksContainersRAMTonnage = null
                             }
                         },
                         {
@@ -1056,7 +1104,7 @@ public static partial class TestDataHelper
                                 SelfManagedConsumerWasteTonnage = 60
                             }
                         }
-                    }
+                    }.ToImmutableDictionary()
                 }
             ]
         };

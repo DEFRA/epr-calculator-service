@@ -9,10 +9,10 @@ namespace EPR.Calculator.Service.Function.Services
 {
     public interface ICalcResultReader
     {
-        Task<IReadOnlyList<CalcResultH1ProjectedProducer>> ReadH1ProjectedData(int runId, CancellationToken cancellationToken);
-        Task<IReadOnlyList<CalcResultH2ProjectedProducer>> ReadH2ProjectedData(int runId, CancellationToken cancellationToken);
-        Task<IReadOnlyList<CalcResultScaledupProducer>> ReadScaledData(int runId, CancellationToken cancellationToken);
-        Task<IReadOnlyList<CalcResultPartialObligation>> ReadPartialData(int runId, CancellationToken cancellationToken);
+        Task<ImmutableList<CalcResultH1ProjectedProducer>> ReadH1ProjectedData(int runId, CancellationToken cancellationToken);
+        Task<ImmutableList<CalcResultH2ProjectedProducer>> ReadH2ProjectedData(int runId, CancellationToken cancellationToken);
+        Task<ImmutableList<CalcResultScaledupProducer>> ReadScaledData(int runId, CancellationToken cancellationToken);
+        Task<CalcResultPartialObligations> ReadPartialData(int runId, CancellationToken cancellationToken);
         Task<ProducerFees> ReadProducerFees(int runId, CancellationToken cancellationToken);
         Task<SelfManagedConsumerWaste> ReadSmcw(int runId, CancellationToken cancellationToken);
         Task<ModulationResult> ReadModulationResult(int runId, CancellationToken cancellationToken);
@@ -22,12 +22,12 @@ namespace EPR.Calculator.Service.Function.Services
         Task<CalcResultParameterOtherCost> ReadParameterOtherCost(int runId, CancellationToken cancellationToken);
         Task<CalcResultOnePlusFourApportionment> ReadOnePlusFourApportionment(int runId, CancellationToken cancellationToken);
         Task<CalcResultLaDisposalCostData> ReadLaDisposalCostData(int runId, CancellationToken cancellationToken);
-        Task<IReadOnlyList<CalcResultCancelledProducer>> ReadCancelledProducers(int runId, CancellationToken cancellationToken);
+        Task<ImmutableList<CalcResultCancelledProducer>> ReadCancelledProducers(int runId, CancellationToken cancellationToken);
     }
 
     public class CalcResultReader(ApplicationDBContext dbContext) : ICalcResultReader
     {
-        public async Task<IReadOnlyList<CalcResultH1ProjectedProducer>> ReadH1ProjectedData(int runId, CancellationToken cancellationToken)
+        public async Task<ImmutableList<CalcResultH1ProjectedProducer>> ReadH1ProjectedData(int runId, CancellationToken cancellationToken)
         {
             return await dbContext.TransformProjectedH1
                         .Where(p => p.CalculatorRunId == runId)
@@ -38,7 +38,8 @@ namespace EPR.Calculator.Service.Function.Services
                             SubsidiaryId = g.Key.SubsidiaryId,
                             Level = g.Key.Level,
                             SubmissionPeriodCode = g.Key.SubmissionPeriodCode,
-                            H1ProjectedTonnageByMaterial = MapToH1MaterialTonnages(g.ToList())
+                            H1ProjectedTonnageByMaterial = MapToH1MaterialTonnages(g.ToList()),
+                            IsSubtotal = false
                         })
                         .OrderBy(p => p.ProducerId)
                         .ThenBy(p => p.Level)
@@ -46,7 +47,7 @@ namespace EPR.Calculator.Service.Function.Services
                         .ToImmutableListAsync(cancellationToken);
         }
 
-        public async Task<IReadOnlyList<CalcResultH2ProjectedProducer>> ReadH2ProjectedData(int runId, CancellationToken cancellationToken)
+        public async Task<ImmutableList<CalcResultH2ProjectedProducer>> ReadH2ProjectedData(int runId, CancellationToken cancellationToken)
         {
             return await dbContext.TransformProjectedH2
                         .Where(p => p.CalculatorRunId == runId)
@@ -57,7 +58,8 @@ namespace EPR.Calculator.Service.Function.Services
                             SubsidiaryId = g.Key.SubsidiaryId,
                             Level = g.Key.Level,
                             SubmissionPeriodCode = g.Key.SubmissionPeriodCode,
-                            H2ProjectedTonnageByMaterial = MapToH2MaterialTonnages(g.ToList())
+                            H2ProjectedTonnageByMaterial = MapToH2MaterialTonnages(g.ToList()),
+                            IsSubtotal = false
                         })
                         .OrderBy(p => p.ProducerId)
                         .ThenBy(p => p.Level)
@@ -65,7 +67,7 @@ namespace EPR.Calculator.Service.Function.Services
                         .ToImmutableListAsync(cancellationToken);
         }
 
-        public async Task<IReadOnlyList<CalcResultScaledupProducer>> ReadScaledData(int runId, CancellationToken cancellationToken)
+        public async Task<ImmutableList<CalcResultScaledupProducer>> ReadScaledData(int runId, CancellationToken cancellationToken)
         {
             return await dbContext.TransformScaled
                         .Where(p => p.CalculatorRunId == runId)
@@ -94,8 +96,9 @@ namespace EPR.Calculator.Service.Function.Services
                         .ToImmutableListAsync(cancellationToken);
         }
 
-        public async Task<IReadOnlyList<CalcResultPartialObligation>> ReadPartialData(int runId, CancellationToken cancellationToken){
-            return await dbContext.TransformPartial
+        public async Task<CalcResultPartialObligations> ReadPartialData(int runId, CancellationToken cancellationToken)
+        {
+            var partialObligations = await dbContext.TransformPartial
                         .Where(p => p.CalculatorRunId == runId)
                         .GroupBy(p => new { p.ProducerId, p.SubsidiaryId, p.ProducerName, p.TradingName, p.SubmissionYear, p.Level, p.DaysInSubmissionYear, p.JoiningDate, p.DaysObligated, p.ObligatedFactor })
                         .Select(g =>
@@ -118,6 +121,11 @@ namespace EPR.Calculator.Service.Function.Services
                         .ThenBy(p => p.Level)
                         .ThenBy(p => p.SubsidiaryId)
                         .ToImmutableListAsync(cancellationToken);
+
+            return new CalcResultPartialObligations
+            {
+                PartialObligations = partialObligations
+            };
         }
 
         public async Task<ProducerFees> ReadProducerFees(int runId, CancellationToken cancellationToken)
@@ -133,7 +141,7 @@ namespace EPR.Calculator.Service.Function.Services
                     .Include(s => s.ProducerTotals)
                     .Where(p => p.CalculatorRunId == runId)
                     .SingleAsync(cancellationToken);
-        
+
 
         public async Task<ModulationResult> ReadModulationResult(int runId, CancellationToken cancellationToken) =>
             await dbContext.ModulationResult
@@ -182,7 +190,7 @@ namespace EPR.Calculator.Service.Function.Services
                     .Select(x => x.LaDisposalCost)
                     .SingleAsync(cancellationToken);
 
-        public async Task<IReadOnlyList<CalcResultCancelledProducer>> ReadCancelledProducers(int runId, CancellationToken cancellationToken) =>
+        public async Task<ImmutableList<CalcResultCancelledProducer>> ReadCancelledProducers(int runId, CancellationToken cancellationToken) =>
             await dbContext.CancelledProducers
                     .AsNoTracking()
                     .Where(p => p.CalculatorRunId == runId)
@@ -356,7 +364,7 @@ namespace EPR.Calculator.Service.Function.Services
             ).ToImmutableList();
         }
 
-        private static Dictionary<string, CalcResultPartialObligationTonnage> MapToPartial(List<TransformPartial> partial)
+        private static ImmutableDictionary<string, CalcResultPartialObligationTonnage> MapToPartial(List<TransformPartial> partial)
         {
             RamTonnage? ToMaybeRamTonnage(
                 decimal? red,
@@ -379,7 +387,7 @@ namespace EPR.Calculator.Service.Function.Services
                     };
             }
 
-            return partial.ToDictionary(
+            return partial.ToImmutableDictionary(
                 t => t.MaterialCode,
                 t => new CalcResultPartialObligationTonnage
                 {

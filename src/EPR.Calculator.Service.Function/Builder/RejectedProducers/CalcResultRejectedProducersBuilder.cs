@@ -2,13 +2,14 @@
 using EPR.Calculator.Service.Function.Features.BillingRuns.Constants;
 using EPR.Calculator.Service.Function.Features.Common;
 using EPR.Calculator.Service.Function.Models;
+using EPR.Calculator.Service.Function.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
 {
     public interface ICalcResultRejectedProducersBuilder
     {
-        public Task<IEnumerable<CalcResultRejectedProducer>> ConstructAsync(RunContext runContext);
+        public Task<ImmutableList<CalcResultRejectedProducer>> ConstructAsync(RunContext runContext);
     }
 
     public class CalcResultRejectedProducersBuilder : ICalcResultRejectedProducersBuilder
@@ -20,7 +21,7 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
             this.dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<CalcResultRejectedProducer>> ConstructAsync(RunContext runContext)
+        public async Task<ImmutableList<CalcResultRejectedProducer>> ConstructAsync(RunContext runContext)
         {
             var billingInstructionsQuery =
                 from prsbi in dbContext.ProducerResultFileSuggestedBillingInstruction
@@ -78,7 +79,6 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                 where crodd.SubsidiaryId == null
                 select new CalcResultRejectedProducer
                 {
-                    RunId = cr.Id,
                     ProducerId = crodd.OrganisationId,
                     ProducerName = crodd.OrganisationName,
                     TradingName = crodd.TradingName ?? "",
@@ -91,7 +91,7 @@ namespace EPR.Calculator.Service.Function.Builder.RejectedProducers
                     ReasonForRejection = b.ReasonForRejection
                 };
 
-            return await rejectedProducersQuery.AsNoTracking().Distinct().ToListAsync();
+            return await rejectedProducersQuery.AsNoTracking().Distinct().ToImmutableListAsync();
         }
     }
 }

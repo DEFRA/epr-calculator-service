@@ -91,7 +91,7 @@ public class CalcResultsExporter(
             nameof(laDisposalCostExporter)
         );
 
-        if (calcResult.Smcw is not null && calcResult.CalcResultModulation is not null)
+        if (calcResult.CalcResultModulation is not null)
         {
             logger.LogDuration(
                 () => modulationExporter.Export(calcResult.CalcResultLaDisposalCostData, calcResult.Smcw, calcResult.CalcResultModulation, csvContent),
@@ -107,14 +107,14 @@ public class CalcResultsExporter(
         if (runContext.RequiresModulation)
         {
             logger.LogDuration(
-                () => projectedProducersExporter.Export(calcResult.CalcResultProjectedProducers, materials, csvContent),
+                () => projectedProducersExporter.Export(calcResult.CalcResultProjectedProducers!, materials, csvContent),
                 nameof(projectedProducersExporter)
             );
         }
         else
         {
             logger.LogDuration(
-                () => scaledUpProducersExporter.Export(calcResult.CalcResultScaledupProducers, materials, showTotal : true, csvContent),
+                () => scaledUpProducersExporter.Export(calcResult.CalcResultScaledupProducers!, materials, showTotal : true, csvContent),
                 nameof(scaledUpProducersExporter)
             );
         }
@@ -124,7 +124,7 @@ public class CalcResultsExporter(
             nameof(partialObligationsExporter)
         );
 
-        var scaledupIds = calcResult.CalcResultScaledupProducers.ScaledupProducers.Select(p => p.ProducerId).ToList();
+        var scaledupIds = calcResult.CalcResultScaledupProducers?.ScaledupProducers.Select(p => p.ProducerId).ToList() ?? [];
         var partialIds = calcResult.CalcResultPartialObligations.PartialObligations.Select(p => (p.ProducerId, p.SubsidiaryId)).ToList();
 
         logger.LogDuration(

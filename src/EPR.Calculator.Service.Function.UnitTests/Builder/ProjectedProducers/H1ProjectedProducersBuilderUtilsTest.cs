@@ -509,62 +509,169 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                         ["AL"] = new()
                         {
                             HouseholdTonnage = 200,
-                            HouseholdRAMTonnage = new RamTonnage { Red = 100, Amber = 100, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 },
+                            HouseholdRAMTonnage = new RamTonnage
+                            {
+                                Red = 100,
+                                Amber = 100,
+                                Green = 0,
+                                RedMedical = 0,
+                                AmberMedical = 0,
+                                GreenMedical = 0
+                            },
                             PublicBinTonnage = 0,
-                            PublicBinRAMTonnage = new RamTonnage { Red = 0, Amber = 0, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 },
+                            PublicBinRAMTonnage = new RamTonnage
+                            {
+                                Red = 0,
+                                Amber = 0,
+                                Green = 0,
+                                RedMedical = 0,
+                                AmberMedical = 0,
+                                GreenMedical = 0
+                            },
                             HouseholdTonnageWithoutRAM = 0,
                             PublicBinTonnageWithoutRAM = 0,
                             ProjectedHouseholdTonnage = 200,
-                            ProjectedHouseholdRAMTonnage = new RamTonnage { Red = 100, Amber = 100, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 },
+                            ProjectedHouseholdRAMTonnage = new RamTonnage
+                            {
+                                Red = 100,
+                                Amber = 100,
+                                Green = 0,
+                                RedMedical = 0,
+                                AmberMedical = 0,
+                                GreenMedical = 0
+                            },
                             ProjectedPublicBinTonnage = 0,
-                            ProjectedPublicBinRAMTonnage = new RamTonnage { Red = 0, Amber = 0, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 }
+                            ProjectedPublicBinRAMTonnage = new RamTonnage
+                            {
+                                Red = 0,
+                                Amber = 0,
+                                Green = 0,
+                                RedMedical = 0,
+                                AmberMedical = 0,
+                                GreenMedical = 0
+                            }
                         }
-                    }
+                    },
+                    SubsidiaryId = null
                 }
             };
             var prodGroup = new List<CalcResultH1ProjectedProducer>()
             {
-                new (){
+                new ()
+                {
                     ProducerId = 11,
                     SubsidiaryId = null,
                     SubmissionPeriodCode = "2025-H1",
                     Level = string.Empty,
-                    H1ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>() {
-                        ["AL"] = new() {
-                            HouseholdTonnage = 100,
-                            HouseholdRAMTonnage = new RamTonnage { Red = 100, Amber = 0, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 },
-                            PublicBinTonnage = 200,
-                            PublicBinRAMTonnage = new RamTonnage { Red = 0, Amber = 100, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 },
-                            HouseholdTonnageWithoutRAM = 0,
-                            PublicBinTonnageWithoutRAM = 100,
-                            H2RamProportions = expRamH2Proportions,
-                            ProjectedHouseholdTonnage = 100,
-                            ProjectedHouseholdRAMTonnage = new RamTonnage { Red = 100, Amber = 0, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 },
-                            ProjectedPublicBinTonnage = 200,
-                            ProjectedPublicBinRAMTonnage = new RamTonnage { Red = 50, Amber = 150, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 }
-                        }
-                    }
+                    H1ProjectedTonnageByMaterial =
+                        new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>()
+                        {
+                            ["AL"] = new()
+                            {
+                                HouseholdTonnage = 100,
+                                HouseholdRAMTonnage = new RamTonnage
+                                {
+                                    Red = 100,
+                                    Amber = 0,
+                                    Green = 0,
+                                    RedMedical = 0,
+                                    AmberMedical = 0,
+                                    GreenMedical = 0
+                                },
+                                PublicBinTonnage = 200,
+                                PublicBinRAMTonnage = new RamTonnage
+                                {
+                                    Red = 0,
+                                    Amber = 100,
+                                    Green = 0,
+                                    RedMedical = 0,
+                                    AmberMedical = 0,
+                                    GreenMedical = 0
+                                },
+                                HouseholdTonnageWithoutRAM = 0,
+                                PublicBinTonnageWithoutRAM = 100,
+                                H2RamProportions = expRamH2Proportions,
+                                ProjectedHouseholdTonnage = 100,
+                                ProjectedHouseholdRAMTonnage = new RamTonnage
+                                {
+                                    Red = 100,
+                                    Amber = 0,
+                                    Green = 0,
+                                    RedMedical = 0,
+                                    AmberMedical = 0,
+                                    GreenMedical = 0
+                                },
+                                ProjectedPublicBinTonnage = 200,
+                                ProjectedPublicBinRAMTonnage = new RamTonnage
+                                {
+                                    Red = 50,
+                                    Amber = 150,
+                                    Green = 0,
+                                    RedMedical = 0,
+                                    AmberMedical = 0,
+                                    GreenMedical = 0
+                                }
+                            }
+                        },
+                    IsSubtotal = false
                 },
-                new (){
+                new ()
+                {
                     ProducerId = 11,
                     SubsidiaryId = "A",
                     SubmissionPeriodCode = "2025-H1",
                     Level = string.Empty,
-                    H1ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>() {
-                        ["AL"] = new() {
-                            HouseholdTonnage = 100,
-                            HouseholdRAMTonnage = new RamTonnage { Red = 100, Amber = 0, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 },
-                            PublicBinTonnage = 200,
-                            PublicBinRAMTonnage = new RamTonnage { Red = 0, Amber = 100, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 },
-                            HouseholdTonnageWithoutRAM = 0,
-                            PublicBinTonnageWithoutRAM = 100,
-                            H2RamProportions = expRamH2Proportions,
-                            ProjectedHouseholdTonnage = 100,
-                            ProjectedHouseholdRAMTonnage = new RamTonnage { Red = 100, Amber = 0, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 },
-                            ProjectedPublicBinTonnage = 200,
-                            ProjectedPublicBinRAMTonnage = new RamTonnage { Red = 50, Amber = 150, Green = 0, RedMedical = 0, AmberMedical = 0, GreenMedical = 0 }
-                        }
-                    }
+                    H1ProjectedTonnageByMaterial =
+                        new Dictionary<string, CalcResultH1ProjectedProducerMaterialTonnage>()
+                        {
+                            ["AL"] = new()
+                            {
+                                HouseholdTonnage = 100,
+                                HouseholdRAMTonnage = new RamTonnage
+                                {
+                                    Red = 100,
+                                    Amber = 0,
+                                    Green = 0,
+                                    RedMedical = 0,
+                                    AmberMedical = 0,
+                                    GreenMedical = 0
+                                },
+                                PublicBinTonnage = 200,
+                                PublicBinRAMTonnage = new RamTonnage
+                                {
+                                    Red = 0,
+                                    Amber = 100,
+                                    Green = 0,
+                                    RedMedical = 0,
+                                    AmberMedical = 0,
+                                    GreenMedical = 0
+                                },
+                                HouseholdTonnageWithoutRAM = 0,
+                                PublicBinTonnageWithoutRAM = 100,
+                                H2RamProportions = expRamH2Proportions,
+                                ProjectedHouseholdTonnage = 100,
+                                ProjectedHouseholdRAMTonnage = new RamTonnage
+                                {
+                                    Red = 100,
+                                    Amber = 0,
+                                    Green = 0,
+                                    RedMedical = 0,
+                                    AmberMedical = 0,
+                                    GreenMedical = 0
+                                },
+                                ProjectedPublicBinTonnage = 200,
+                                ProjectedPublicBinRAMTonnage = new RamTonnage
+                                {
+                                    Red = 50,
+                                    Amber = 150,
+                                    Green = 0,
+                                    RedMedical = 0,
+                                    AmberMedical = 0,
+                                    GreenMedical = 0
+                                }
+                            }
+                        },
+                    IsSubtotal = false
                 },
             };
 
@@ -618,7 +725,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                         ProjectedPublicBinTonnage    = 0,
                         ProjectedPublicBinRAMTonnage = RamTonnage.Empty
                     }
-                }
+                },
+                IsSubtotal = false
             };
 
             var result = H1ProjectedProducersBuilderUtils.CreateParentProducer(h1Producer, h2Producers);
@@ -665,7 +773,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                         ProjectedPublicBinTonnage    = 0,
                         ProjectedPublicBinRAMTonnage = RamTonnage.Empty
                     }
-                }
+                },
+                IsSubtotal = false
             };
 
             var result = H1ProjectedProducersBuilderUtils.CreateParentProducer(h1Producer, h2Producers);
@@ -828,9 +937,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     SubmissionPeriodCode = "2026-H2",
                     H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
                     {
-                        { MaterialCodes.Aluminium, GetEmptyH2MaterialTonnage() },
-                        { MaterialCodes.Glass, GetEmptyH2MaterialTonnageWithHDC() }
-                    }
+                        {
+                            MaterialCodes.Aluminium, GetEmptyH2MaterialTonnage()
+                        },
+                        {
+                            MaterialCodes.Glass, GetEmptyH2MaterialTonnageWithHDC()
+                        }
+                    },
+                    IsSubtotal = false
                 },
                 new()
                 {
@@ -840,9 +954,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     SubmissionPeriodCode = "2026-H2",
                     H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
                     {
-                        { MaterialCodes.Aluminium, GetEmptyH2MaterialTonnage() },
-                        { MaterialCodes.Glass, GetEmptyH2MaterialTonnageWithHDC() }
-                    }
+                        {
+                            MaterialCodes.Aluminium, GetEmptyH2MaterialTonnage()
+                        },
+                        {
+                            MaterialCodes.Glass, GetEmptyH2MaterialTonnageWithHDC()
+                        }
+                    },
+                    IsSubtotal = false
                 }
             });
         }
@@ -890,9 +1009,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     SubmissionPeriodCode = "2026-H2",
                     H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
                     {
-                        { MaterialCodes.Aluminium, alm},
-                        { MaterialCodes.Glass, glass }
-                    }
+                        {
+                            MaterialCodes.Aluminium, alm
+                        },
+                        {
+                            MaterialCodes.Glass, glass
+                        }
+                    },
+                    IsSubtotal = false
                 }
             });
         }
@@ -940,9 +1064,14 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     SubmissionPeriodCode = "2026-H2",
                     H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
                     {
-                        { MaterialCodes.Aluminium, alm },
-                        { MaterialCodes.Glass, glass }
-                    }
+                        {
+                            MaterialCodes.Aluminium, alm
+                        },
+                        {
+                            MaterialCodes.Glass, glass
+                        }
+                    },
+                    IsSubtotal = false
                 }
             });
         }
@@ -995,24 +1124,62 @@ namespace EPR.Calculator.Service.Function.UnitTests.Builder.ProjectedProducers
                     SubmissionPeriodCode = "2026-H2",
                     H2ProjectedTonnageByMaterial = new Dictionary<string, CalcResultH2ProjectedProducerMaterialTonnage>
                     {
-                        { MaterialCodes.Aluminium, alm},
-                        { MaterialCodes.Glass, glass },
-                        { MaterialCodes.OtherMaterials,
-                            new CalcResultH2ProjectedProducerMaterialTonnage {
+                        {
+                            MaterialCodes.Aluminium, alm
+                        },
+                        {
+                            MaterialCodes.Glass, glass
+                        },
+                        {
+                            MaterialCodes.OtherMaterials, new CalcResultH2ProjectedProducerMaterialTonnage
+                            {
                                 HouseholdTonnage = 75,
-                                HouseholdRAMTonnage = new RamTonnage { Red = 10, Amber = 11, Green = 12, RedMedical = 13, AmberMedical = 14, GreenMedical = 15 },
+                                HouseholdRAMTonnage = new RamTonnage
+                                {
+                                    Red = 10,
+                                    Amber = 11,
+                                    Green = 12,
+                                    RedMedical = 13,
+                                    AmberMedical = 14,
+                                    GreenMedical = 15
+                                },
                                 PublicBinTonnage = 135,
-                                PublicBinRAMTonnage = new RamTonnage { Red = 20, Amber = 21, Green = 22, RedMedical = 23, AmberMedical = 24, GreenMedical = 25 },
+                                PublicBinRAMTonnage = new RamTonnage
+                                {
+                                    Red = 20,
+                                    Amber = 21,
+                                    Green = 22,
+                                    RedMedical = 23,
+                                    AmberMedical = 24,
+                                    GreenMedical = 25
+                                },
                                 HouseholdTonnageWithoutRAM = 10,
                                 PublicBinTonnageWithoutRAM = 20,
                                 ProjectedHouseholdTonnage = 75,
-                                ProjectedHouseholdRAMTonnage = new RamTonnage { Red = 20, Amber = 11, Green = 12, RedMedical = 13, AmberMedical = 14, GreenMedical = 15 },
+                                ProjectedHouseholdRAMTonnage = new RamTonnage
+                                {
+                                    Red = 20,
+                                    Amber = 11,
+                                    Green = 12,
+                                    RedMedical = 13,
+                                    AmberMedical = 14,
+                                    GreenMedical = 15
+                                },
                                 ProjectedPublicBinTonnage = 135,
-                                ProjectedPublicBinRAMTonnage = new RamTonnage { Red = 40, Amber = 21, Green = 22, RedMedical = 23, AmberMedical = 24, GreenMedical = 25 },
+                                ProjectedPublicBinRAMTonnage = new RamTonnage
+                                {
+                                    Red = 40,
+                                    Amber = 21,
+                                    Green = 22,
+                                    RedMedical = 23,
+                                    AmberMedical = 24,
+                                    GreenMedical = 25
+                                },
 
                             }
                         }
-                    }
+                    },
+                    IsSubtotal = false
                 }
             });
         }

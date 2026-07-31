@@ -21,13 +21,15 @@ public class CalcResultOnePlusFourApportionmentBuilderTest : CalcResultOnePlusFo
         var runContext = TestDataHelper.CalculatorRun2024;
         var calcResult = new CalcResult
         {
-            CalcResultDetail = new CalcResultDetail { RunId = runContext.RunId, RelativeYear = runContext.RelativeYear },
-            CalcResultScaledupProducers = new CalcResultScaledupProducers(){
-                    ScaledupProducers = ImmutableList<CalcResultScaledupProducer>.Empty
-                },
-            CalcResultPartialObligations = new CalcResultPartialObligations(){
-                    PartialObligations = ImmutableList<CalcResultPartialObligation>.Empty,
-                },
+            CalcResultDetail = null!,
+            CalcResultScaledupProducers = new CalcResultScaledupProducers()
+            {
+                ScaledupProducers = []
+            },
+            CalcResultPartialObligations = new CalcResultPartialObligations()
+            {
+                PartialObligations = []
+            },
             CalcResultLapcapData = new CalcResultLapcapData
             {
                 ByMaterial = new Dictionary<string, ByCountryCost>
@@ -53,10 +55,19 @@ public class CalcResultOnePlusFourApportionmentBuilderTest : CalcResultOnePlusFo
                 }
             },
             CalcResultLateReportingTonnageData = Fixture.Create<CalcResultLateReportingTonnage>(),
-            CalcResultProjectedProducers = new CalcResultProjectedProducers(){
-                    H1ProjectedProducers = ImmutableList<CalcResultH1ProjectedProducer>.Empty,
-                    H2ProjectedProducers = ImmutableList<CalcResultH2ProjectedProducer>.Empty,
-                },
+            CalcResultProjectedProducers = new CalcResultProjectedProducers()
+            {
+                H1ProjectedProducers = [],
+                H2ProjectedProducers = [],
+            },
+            CalcResultCommsCostReportDetail = null!,
+            CalcResultOnePlusFourApportionment = null!,
+            CalcResultLaDisposalCostData = null!,
+            CalcResultCancelledProducers = null!,
+            ProducerFees = null!,
+            Smcw = null!,
+            CalcResultModulation = null,
+            CalcResultErrorReports = null!,
         };
 
         var resultCalc = Construct(calcResult.CalcResultLapcapData, calcResult.CalcResultParameterOtherCost);

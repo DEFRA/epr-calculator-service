@@ -83,20 +83,24 @@ public record ProducerSubmission
 
     public static ProducerSubmission From(int? level, CalcResultScaledupProducer item, IImmutableList<MaterialDetail> materials)
     {
-        IEnumerable<MaterialBreakdown> GetMaterialBreakdown(Dictionary<string, CalcResultScaledupProducerTonnage> producerTonnageByMaterial, IImmutableList<MaterialDetail> materials)
+        IEnumerable<MaterialBreakdown> GetMaterialBreakdown(IReadOnlyDictionary<string, CalcResultScaledupProducerTonnage> producerTonnageByMaterial, IImmutableList<MaterialDetail> materials)
         {
             var materialBreakdown = new List<MaterialBreakdown>();
 
-            foreach (var producerTonnage in producerTonnageByMaterial)
+            // Iterate the materials rather than the dictionary, so the breakdown is always in a consistent order.
+            foreach (var material in materials)
             {
-                var material = materials.Single(m => m.Code == producerTonnage.Key);
-
-                var breakdown = MaterialBreakdown.From(material.Name, producerTonnage.Value);
-
-                if (producerTonnage.Key == MaterialCodes.Glass)
+                if (!producerTonnageByMaterial.TryGetValue(material.Code, out var producerTonnage))
                 {
-                    breakdown.HouseholdDrinksContainersTonnageGlass = producerTonnage.Value.HouseholdDrinksContainersTonnageGlass;
-                    breakdown.ScaledUpHouseholdDrinksContainersTonnageGlass = producerTonnage.Value.ScaledupHouseholdDrinksContainersTonnageGlass;
+                    continue;
+                }
+
+                var breakdown = MaterialBreakdown.From(material.Name, producerTonnage);
+
+                if (material.Code == MaterialCodes.Glass)
+                {
+                    breakdown.HouseholdDrinksContainersTonnageGlass = producerTonnage.HouseholdDrinksContainersTonnageGlass;
+                    breakdown.ScaledUpHouseholdDrinksContainersTonnageGlass = producerTonnage.ScaledupHouseholdDrinksContainersTonnageGlass;
                 }
 
                 materialBreakdown.Add(breakdown);

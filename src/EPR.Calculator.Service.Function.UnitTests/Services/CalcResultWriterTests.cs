@@ -162,16 +162,17 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             var scaled = ImmutableList.Create(
                 new CalcResultScaledupProducer
                 {
+                    IsSubtotalRow = false,
                     ProducerId = 101001,
                     SubsidiaryId = null,
                     ProducerName = "Allied Packaging",
+                    TradingName = null,
                     Level = "1",
                     SubmissionPeriodCode = "2024-P2",
                     DaysInSubmissionPeriod = 91,
                     DaysInWholePeriod = 91,
                     ScaleupFactor = 2,
-                    PomData = new List<ScaledupPomEntry>
-                    {
+                    PomData = [
                         new ScaledupPomEntry(1, PackagingTypes.Household, 1000, 2000),
                         new ScaledupPomEntry(1, PackagingTypes.PublicBin, 100, 200),
                         new ScaledupPomEntry(1, PackagingTypes.ConsumerWaste, 500, 1000),
@@ -179,7 +180,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                         new ScaledupPomEntry(2, PackagingTypes.PublicBin, 100, 200),
                         new ScaledupPomEntry(2, PackagingTypes.HouseholdDrinksContainers, 120, 240),
                         new ScaledupPomEntry(2, PackagingTypes.ConsumerWaste, 500, 1000),
-                    },
+                    ]
                 }
             );
             await _sut.StoreScaledData(1, scaled, CancellationToken.None);
@@ -200,6 +201,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                     ProducerId = 101001,
                     SubsidiaryId = null,
                     ProducerName = "Allied Packaging",
+                    TradingName = null,
                     Level = "1",
                     SubmissionYear = 2024,
                     DaysInSubmissionYear = 365,
@@ -211,7 +213,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
                         [MaterialCodes.Aluminium] = MkPartialMaterialTonnage(isModulated: true),
                         [MaterialCodes.Steel] = MkPartialMaterialTonnage(isModulated: true),
                         [MaterialCodes.Glass] = MkPartialMaterialTonnage(isModulated: true, isGlass: true),
-                    }
+                    }.ToImmutableDictionary()
                 }
             );
             await _sut.StorePartialData(1, partial, CancellationToken.None);
@@ -729,4 +731,3 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
         }
     }
 }
-

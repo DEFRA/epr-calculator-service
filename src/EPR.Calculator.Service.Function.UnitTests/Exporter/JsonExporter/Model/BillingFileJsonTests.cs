@@ -9,9 +9,9 @@ public class BillingFileJsonTests
     [TestMethod]
     public void From_MapFieldsCorrectly()
     {
-        var calcResult = TestDataHelper.GetCalcResult();
+        var runResult = TestDataHelper.GetBillingResult();
         var materials = TestDataHelper.GetMaterialDetails();
-        var result = BillingFileJson.From(TestDataHelper.BillingRun2025, calcResult, materials);
+        var result = BillingFileJson.From(TestDataHelper.BillingRun2025, runResult, materials);
 
         Assert.IsNotNull(result);
         Assert.IsNotNull(result.CalcResultDetail);

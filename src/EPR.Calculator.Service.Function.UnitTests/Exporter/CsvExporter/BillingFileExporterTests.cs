@@ -54,7 +54,7 @@ public class BillingFileExporterTests : TestsFor<BillingFileExporter>
     public async Task BillingFileExporter_CanCallExport()
     {
         // Arrange
-        var calcResult = fixture.Create<CalcResult>();
+        var calcResult = fixture.Create<BillingResult>();
         var runContext = TestDataHelper.BillingRun2025;
 
         // Act
@@ -81,7 +81,7 @@ public class BillingFileExporterTests : TestsFor<BillingFileExporter>
     public async Task BillingFileExporter_CanCallExport_Modulation()
     {
         // Arrange
-        var calcResult = fixture.Create<CalcResult>();
+        var calcResult = fixture.Create<BillingResult>();
         var runContext = TestDataHelper.BillingRun2026;
 
         // Act

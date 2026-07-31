@@ -15,7 +15,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Features.Billing.FileExports
 public class BillingFileGeneratorTests : TestsFor<BillingFileGenerator>
 {
     private Mock<IOptions<BlobStorageOptions>> blobOptions = null!;
-    private CalcResult calcResult = null!;
+    private BillingResult runResult = null!;
     private Mock<IBillingFileExporter> csvWriter = null!;
     private Mock<IBillingFileJsonWriter> jsonWriter = null!;
     private BillingRunContext runContext = null!;
@@ -32,12 +32,12 @@ public class BillingFileGeneratorTests : TestsFor<BillingFileGenerator>
 
         csvWriter = fixture.Freeze<Mock<IBillingFileExporter>>();
         csvWriter.Setup(m => m.Export(
-                It.IsAny<BillingRunContext>(), It.IsAny<CalcResult>()))
+                It.IsAny<BillingRunContext>(), It.IsAny<BillingResult>()))
             .ReturnsAsync("csv-content");
 
         jsonWriter = fixture.Freeze<Mock<IBillingFileJsonWriter>>();
         jsonWriter.Setup(m => m.WriteToString(
-                It.IsAny<BillingRunContext>(), It.IsAny<CalcResult>()))
+                It.IsAny<BillingRunContext>(), It.IsAny<BillingResult>()))
             .ReturnsAsync("json-content");
 
         storageService = fixture.Freeze<Mock<IStorageService>>();
@@ -51,14 +51,14 @@ public class BillingFileGeneratorTests : TestsFor<BillingFileGenerator>
             .ReturnsAsync("https://json.uri");
 
         runContext = fixture.Create<BillingRunContext>();
-        calcResult = fixture.Create<CalcResult>();
+        runResult = fixture.Create<BillingResult>();
     }
 
     [TestMethod]
     public async Task Should_upload_csv_to_correct_container()
     {
         // Act
-        await testSubject.SerializeAndExport(runContext, calcResult, CancellationToken.None);
+        await testSubject.SerializeAndExport(runContext, runResult, CancellationToken.None);
 
         // Assert
         storageService.Verify(x => x.UploadFileContentAsync(
@@ -74,7 +74,7 @@ public class BillingFileGeneratorTests : TestsFor<BillingFileGenerator>
     public async Task Should_upload_json_to_correct_container()
     {
         // Act
-        await testSubject.SerializeAndExport(runContext, calcResult, CancellationToken.None);
+        await testSubject.SerializeAndExport(runContext, runResult, CancellationToken.None);
 
         // Assert
         storageService.Verify(x => x.UploadFileContentAsync(
@@ -90,7 +90,7 @@ public class BillingFileGeneratorTests : TestsFor<BillingFileGenerator>
     public async Task Should_return_csv_metadata_with_correct_values()
     {
         // Act
-        var result = await testSubject.SerializeAndExport(runContext, calcResult, CancellationToken.None);
+        var result = await testSubject.SerializeAndExport(runContext, runResult, CancellationToken.None);
 
         // Assert
         result.CsvMetadata.CalculatorRunId.ShouldBe(runContext.RunId);
@@ -104,7 +104,7 @@ public class BillingFileGeneratorTests : TestsFor<BillingFileGenerator>
     public async Task Should_return_json_metadata_with_correct_values()
     {
         // Act
-        var result = await testSubject.SerializeAndExport(runContext, calcResult, CancellationToken.None);
+        var result = await testSubject.SerializeAndExport(runContext, runResult, CancellationToken.None);
 
         // Assert
         result.JsonMetadata.CalculatorRunId.ShouldBe(runContext.RunId);
