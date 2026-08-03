@@ -1,7 +1,6 @@
 ﻿using System.Globalization;
 using EPR.Calculator.API.Data;
 using EPR.Calculator.API.Data.DataModels;
-using EPR.Calculator.Service.Function.Features.Common;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Services;
@@ -11,12 +10,8 @@ public interface IParameterService
     public Task<DefaultParameters> GetDefaultParameters(int runId);
 }
 
-public class ParameterService : IParameterService
+public class ParameterService(ApplicationDBContext dbContext) : IParameterService
 {
-    private readonly ApplicationDBContext dbContext;
-
-    public ParameterService(IDbContextFactory<ApplicationDBContext> context) => dbContext = context.CreateDbContext();
-
     public async Task<DefaultParameters> GetDefaultParameters(int runId)
     {
         var values = await (

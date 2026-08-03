@@ -1,8 +1,7 @@
-﻿using EPR.Calculator.API.Data;
-using EPR.Calculator.API.Data.DataModels;
+﻿using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Services;
+using EPR.Calculator.Service.Function.UnitTests.TestHelpers;
 using EPR.Calculator.Service.Function.UnitTests.TestHelpers.Helpers;
-using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.UnitTests.Services
 {
@@ -10,34 +9,8 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
     /// Unit tests for the <see cref="ParameterService"/> class.
     /// </summary>
     [TestClass]
-    public class ParameterServiceTests
+    public class ParameterServiceTests : TestsFor<ParameterService>
     {
-        private readonly Mock<IDbContextFactory<ApplicationDBContext>> dbContextFactory;
-        private readonly ApplicationDBContext dbContext;
-        private readonly ParameterService parameterService;
-
-        public ParameterServiceTests()
-        {
-            var options = new DbContextOptionsBuilder<ApplicationDBContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            dbContextFactory = new Mock<IDbContextFactory<ApplicationDBContext>>();
-            dbContext = new ApplicationDBContext(options);
-
-            dbContextFactory
-                .Setup(factory => factory.CreateDbContext())
-                .Returns(dbContext);
-
-            parameterService = new ParameterService(dbContextFactory.Object);
-        }
-
-        [TestCleanup]
-        public void Cleanup()
-        {
-            dbContext.Dispose();
-        }
-
         [TestMethod]
         public async Task ShouldReturnDefaultParameters()
         {
@@ -94,7 +67,7 @@ namespace EPR.Calculator.Service.Function.UnitTests.Services
             await dbContext.SaveChangesAsync();
 
             // Act
-            var result = await parameterService.GetDefaultParameters(runId);
+            var result = await testSubject.GetDefaultParameters(runId);
 
             // Assert
             Assert.AreEqual(123.45m, result.CommunicationCosts.ByMaterialCode["AL"]);
