@@ -16,7 +16,6 @@ public record CalcResultScaledupProducersJson
     public IEnumerable<ProducerSubmission>? ProducerSubmissions { get; set; }
 
     public static CalcResultScaledupProducersJson From(
-        BillingRunContext runContext,
         CalcResultScaledupProducers calcResultScaledupProducers,
         IImmutableList<MaterialDetail> materials)
     {
@@ -24,9 +23,7 @@ public record CalcResultScaledupProducersJson
         {
             var producerSubmissions = new List<ProducerSubmission>();
 
-            var filteredProducers = calcResultScaledupProducers.ScaledupProducers.Where(producer => runContext.AcceptedProducerIds.Contains(producer.ProducerId));
-
-            foreach (var item in filteredProducers)
+            foreach (var item in calcResultScaledupProducers.ScaledupProducers)
             {
                 int? level = null;
                 if (!string.IsNullOrWhiteSpace(item.Level) && int.TryParse(item.Level, out int result))
