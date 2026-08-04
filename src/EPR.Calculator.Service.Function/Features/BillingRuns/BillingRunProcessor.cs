@@ -1,7 +1,10 @@
-﻿using EPR.Calculator.Service.Function.Builder;
+﻿using EPR.Calculator.API.Data.DataModels;
+using EPR.Calculator.Service.Function.Builder;
+using EPR.Calculator.Service.Function.Constants;
 using EPR.Calculator.Service.Function.Features.BillingRuns.Contexts;
 using EPR.Calculator.Service.Function.Features.BillingRuns.Outputs;
 using EPR.Calculator.Service.Function.Features.Common;
+using EPR.Calculator.Service.Function.Models;
 
 namespace EPR.Calculator.Service.Function.Features.BillingRuns;
 
@@ -25,12 +28,15 @@ public class BillingRunProcessor(
             // For BillingRunContext, it does not cause any external state mutations.
             var calcResult = await resultBuilder.BuildAsync(runContext, cancellationToken);
 
+            // Filter by accepted producer ids
+            var acceptedCalcResult = GetAcceptedCalcResult(calcResult, runContext);
+
             // This writes the CSV/JSON files to blob storage.
             // It does not mutate the database state (handled in the finalizer).
-            var exportResult = await fileGenerator.SerializeAndExport(runContext, calcResult, cancellationToken);
+            var exportResult = await fileGenerator.SerializeAndExport(runContext, acceptedCalcResult, cancellationToken);
 
             // This mutates the state of various database entities to reflect the completed run.
-            await finalizer.FinalizeAsCompleted(runContext, calcResult, exportResult, cancellationToken);
+            await finalizer.FinalizeAsCompleted(runContext, acceptedCalcResult, exportResult, cancellationToken);
 
             return new BillingRunResult
             {
@@ -52,4 +58,49 @@ public class BillingRunProcessor(
             };
         }
     }
+
+    private static CalcResult GetAcceptedCalcResult(CalcResult calcResult, BillingRunContext runContext)
+    {
+        ImmutableList<T> FilterAccepted<T>(IEnumerable<T> producers, Func<T, int> producerId) =>
+                producers.Where(producer => runContext.AcceptedProducerIds.Contains(producerId(producer))).ToImmutableList();
+
+        return calcResult with
+        {
+            CalcResultProjectedProducers = calcResult.CalcResultProjectedProducers with
+            {
+                H1ProjectedProducers = FilterAccepted(calcResult.CalcResultProjectedProducers.H1ProjectedProducers, p => p.ProducerId),
+                H2ProjectedProducers = FilterAccepted(calcResult.CalcResultProjectedProducers.H2ProjectedProducers, p => p.ProducerId)
+            },
+            CalcResultScaledupProducers = calcResult.CalcResultScaledupProducers with { ScaledupProducers = FilterAccepted(calcResult.CalcResultScaledupProducers.ScaledupProducers, p => p.ProducerId) },
+            CalcResultPartialObligations = calcResult.CalcResultPartialObligations with { PartialObligations = FilterAccepted(calcResult.CalcResultPartialObligations.PartialObligations, p => p.ProducerId) },
+            ProducerFees = new ProducerFees
+            {
+                CalculatorRunId = runContext.RunId,
+                Details         = FilterAccepted(calcResult.ProducerFees.Details, p => p.FeeDetail.ProducerId),
+                Total           = BillingTotal(calcResult.ProducerFees.Total)
+            }
+        };
+    }
+
+    private static FeeDetail BillingTotal(FeeDetail total) => new()
+    {
+        ProducerId                               = 0,
+        SubsidiaryId                             = string.Empty,
+        ProducerName                             = string.Empty,
+        TradingName                              = string.Empty,
+        StatusCode                               = string.Empty,
+        JoinerDate                               = string.Empty,
+        LeaverDate                               = CommonConstants.Totals,
+        TonnageChangeCount                       = string.Empty,
+        TonnageChangeAdvice                      = string.Empty,
+        BillingInstruction                       = new BillingInstruction { SuggestedBillingInstruction = string.Empty },
+        LADisposalCostsSection1                  = total.LADisposalCostsSection1,
+        CommsCostsSection2a                      = total.CommsCostsSection2a,
+        CommsCostsSection2b                      = total.CommsCostsSection2b,
+        CommsCostsSection2c                      = total.CommsCostsSection2c,
+        SaOperatingCostsSection3                 = total.SaOperatingCostsSection3,
+        LaDataPrepSection4                       = total.LaDataPrepSection4,
+        SaSetupCostsSection5                     = total.SaSetupCostsSection5,
+        TotalOnePlus2A2B2CWithBadDebtPercentage  = total.TotalOnePlus2A2B2CWithBadDebtPercentage
+    };
 }

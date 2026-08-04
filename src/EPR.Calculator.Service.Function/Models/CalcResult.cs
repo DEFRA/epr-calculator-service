@@ -3,7 +3,7 @@ using EPR.Calculator.API.Data.DataTypes;
 
 namespace EPR.Calculator.Service.Function.Models
 {
-    public class CalcResult
+    public record CalcResult
     {
         public required CalcResultDetail CalcResultDetail { get; set; }
 

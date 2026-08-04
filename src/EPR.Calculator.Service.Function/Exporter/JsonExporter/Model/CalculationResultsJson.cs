@@ -76,12 +76,9 @@ public class CalculationResultsJson
         IImmutableList<MaterialDetail> materials)
     {
         var results = new List<CalcSummaryProducerCalculationResults>();
-
-        var filteredProducers = calcResult.ProducerFees.Details
-            .Where(producer => runContext.AcceptedProducerIds.Contains(producer.FeeDetail.ProducerId));
-
         var scaledupProducers = calcResult.CalcResultScaledupProducers.ScaledupProducers.Select(p => p.ProducerId).ToImmutableList();
-        foreach (var producer in filteredProducers)
+        
+        foreach (var producer in calcResult.ProducerFees.Details)
         {
             results.Add(CalcSummaryProducerCalculationResults.From(producer, materials, runContext.RequiresModulation, scaledupProducers));
         }
