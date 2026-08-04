@@ -28,15 +28,15 @@ public class BillingRunProcessor(
             // For BillingRunContext, it does not cause any external state mutations.
             var calcResult = await resultBuilder.BuildAsync(runContext, cancellationToken);
 
-            // Filter by accepted producer ids
-            var acceptedCalcResult = GetAcceptedCalcResult(calcResult, runContext);
+            // Filter by accepted/rejected producer ids
+            var filteredCalcResult = GetFilteredCalcResult(calcResult, runContext);
 
             // This writes the CSV/JSON files to blob storage.
             // It does not mutate the database state (handled in the finalizer).
-            var exportResult = await fileGenerator.SerializeAndExport(runContext, acceptedCalcResult, cancellationToken);
+            var exportResult = await fileGenerator.SerializeAndExport(runContext, filteredCalcResult, cancellationToken);
 
             // This mutates the state of various database entities to reflect the completed run.
-            await finalizer.FinalizeAsCompleted(runContext, acceptedCalcResult, exportResult, cancellationToken);
+            await finalizer.FinalizeAsCompleted(runContext, filteredCalcResult, exportResult, cancellationToken);
 
             return new BillingRunResult
             {
@@ -59,10 +59,12 @@ public class BillingRunProcessor(
         }
     }
 
-    private static CalcResult GetAcceptedCalcResult(CalcResult calcResult, BillingRunContext runContext)
+    private static CalcResult GetFilteredCalcResult(CalcResult calcResult, BillingRunContext runContext)
     {
         ImmutableList<T> FilterAccepted<T>(IEnumerable<T> producers, Func<T, int> producerId) =>
                 producers.Where(producer => runContext.AcceptedProducerIds.Contains(producerId(producer))).ToImmutableList();
+
+        var rejectedProducerIds = calcResult.CalcResultRejectedProducers.Select(r => r.ProducerId).ToHashSet();
 
         return calcResult with
         {
@@ -78,7 +80,8 @@ public class BillingRunProcessor(
                 CalculatorRunId = runContext.RunId,
                 Details         = FilterAccepted(calcResult.ProducerFees.Details, p => p.FeeDetail.ProducerId),
                 Total           = BillingTotal(calcResult.ProducerFees.Total)
-            }
+            },
+            CalcResultCancelledProducers = calcResult.CalcResultCancelledProducers.Where(p => !rejectedProducerIds.Contains(p.ProducerId)).ToList()
         };
     }
 
