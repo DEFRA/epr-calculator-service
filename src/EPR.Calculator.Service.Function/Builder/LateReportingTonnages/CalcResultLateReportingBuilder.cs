@@ -1,9 +1,5 @@
-﻿using EPR.Calculator.API.Data;
-using EPR.Calculator.API.Data.DataModels;
+﻿using EPR.Calculator.API.Data.DataModels;
 using EPR.Calculator.Service.Function.Features.Common;
-using EPR.Calculator.Service.Function.Models;
-using EPR.Calculator.Service.Function.Utils;
-using Microsoft.EntityFrameworkCore;
 
 namespace EPR.Calculator.Service.Function.Builder.LateReportingTonnages
 {
@@ -12,32 +8,19 @@ namespace EPR.Calculator.Service.Function.Builder.LateReportingTonnages
         Task<CalcResultLateReportingTonnage> ConstructAsync(RunContext runContext, IImmutableList<MaterialDetail> materials);
     }
 
-    public class CalcResultLateReportingBuilder(ApplicationDBContext dbContext)
+    public class CalcResultLateReportingBuilder()
         : ICalcResultLateReportingBuilder
     {
-        private sealed record ParameterDetail(string ParameterCategory, string ParameterValue);
-
         public async Task<CalcResultLateReportingTonnage> ConstructAsync(RunContext runContext, IImmutableList<MaterialDetail> materials)
         {
-            var result = await (
-                from run in dbContext.CalculatorRuns
-                join master in dbContext.DefaultParameterSettings on run.DefaultParameterSettingMasterId equals master.Id
-                join detail in dbContext.DefaultParameterSettingDetail on master.Id equals detail.DefaultParameterSettingMasterId
-                join template in dbContext.DefaultParameterTemplateMasterList on detail.ParameterUniqueReferenceId equals template.ParameterUniqueReferenceId
-                where run.Id == runContext.RunId && template.ParameterType == "Late Reporting Tonnage"
-                select new ParameterDetail(template.ParameterCategory, detail.ParameterValue)
-            ).ToListAsync();
-
             var tonnageDetails = materials
                 .Select(material =>
                 {
-                    var group = result
-                        .Where(x => RemoveSuffix(x.ParameterCategory) == material.Name)
-                        .ToList();
+                    var lrt   = runContext.DefaultParameters.LateReportingTonnageByMaterialCode[material.Code];
 
-                    var red   = GetParameterValueBySuffix(group, "-R");
-                    var amber = GetParameterValueBySuffix(group, "-A");
-                    var green = GetParameterValueBySuffix(group, "-G");
+                    var red   = lrt.Red  !.Value; // Default params should never be null
+                    var amber = lrt.Amber!.Value;
+                    var green = lrt.Green!.Value;
 
                     return KeyValuePair.Create(
                         material.Code,
@@ -57,16 +40,5 @@ namespace EPR.Calculator.Service.Function.Builder.LateReportingTonnages
                 ByMaterial = tonnageDetails
             };
         }
-
-        private static string RemoveSuffix(string value) =>
-            (value.EndsWith("-R") || value.EndsWith("-G") || value.EndsWith("-A"))
-                ? value.Substring(0, value.Length - 2)
-                : value;
-
-        private static decimal GetParameterValueBySuffix(IEnumerable<ParameterDetail> values, string suffix) =>
-            values
-                .First(x => x.ParameterCategory.EndsWith(suffix))
-                .ParameterValue
-                .ToDecimal();
     }
 }
