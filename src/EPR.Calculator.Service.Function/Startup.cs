@@ -33,6 +33,7 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.RejectedProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.Validation;
 using EPR.Calculator.Service.Function.Exporter.JsonExporter;
 using EPR.Calculator.Service.Function.Features.BillingRuns;
 using EPR.Calculator.Service.Function.Features.BillingRuns.Contexts;
@@ -41,10 +42,12 @@ using EPR.Calculator.Service.Function.Features.CalculatorRuns;
 using EPR.Calculator.Service.Function.Features.CalculatorRuns.Contexts;
 using EPR.Calculator.Service.Function.Features.CalculatorRuns.Outputs;
 using EPR.Calculator.Service.Function.Logging;
+using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Options;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.Services.CommonDataApi;
 using EPR.Calculator.Service.Function.Services.DataLoading;
+using FluentValidation;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -118,6 +121,7 @@ internal static class ServiceRegistration
         RegisterBlobStorage(services);
         RegisterCalculatorRunDependencies(services);
         RegisterBillingRunDependencies(services);
+        RegisterValidators(services);
         RegisterCommonDependencies(services);
 
         return services;
@@ -214,6 +218,11 @@ internal static class ServiceRegistration
         services.AddTransient<IBillingFileJsonWriter, BillingFileJsonWriter>();
     }
 
+    private static void RegisterValidators(IServiceCollection services)
+    {
+        services.AddSingleton<IValidator<CalcResult>, CalcResultValidator>();
+    }
+
     private static void RegisterCommonDependencies(IServiceCollection services)
     {
         services.AddTransient<IResultBuilder, ResultBuilder>();
@@ -245,6 +254,7 @@ internal static class ServiceRegistration
         services.AddTransient<ICalcResultModulationExporter, CalcResultModulationExporter>();
         services.AddTransient<ICalcResultCommsCostExporter, CalcResultCommsCostExporter>();
         services.AddTransient<IProducerFeesExporter, ProducerFeesExporter>();
+        services.AddTransient<ICalcResultValidationExporter, CalcResultValidationExporter>();
         services.AddTransient<IBillingFileJsonWriter, BillingFileJsonWriter>();
         services.AddTransient<ICalcResultLateReportingExporter, CalcResultLateReportingExporter>();
         services.AddTransient<IMaterialService, MaterialService>();

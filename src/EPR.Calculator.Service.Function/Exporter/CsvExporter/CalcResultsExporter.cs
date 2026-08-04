@@ -12,11 +12,11 @@ using EPR.Calculator.Service.Function.Exporter.CsvExporter.PartialObligations;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ProjectedProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.ScaledupProducers;
 using EPR.Calculator.Service.Function.Exporter.CsvExporter.Summary;
+using EPR.Calculator.Service.Function.Exporter.CsvExporter.Validation;
 using EPR.Calculator.Service.Function.Features.CalculatorRuns.Contexts;
 using EPR.Calculator.Service.Function.Models;
 using EPR.Calculator.Service.Function.Logging;
 using EPR.Calculator.Service.Function.Services;
-
 
 namespace EPR.Calculator.Service.Function.Exporter.CsvExporter;
 
@@ -42,6 +42,7 @@ public class CalcResultsExporter(
     IProducerFeesExporter producerFeesExporter,
     ICalcResultCancelledProducersExporter cancelledProducersExporter,
     ICalcResultErrorReportExporter calcResultErrorReportExporter,
+    ICalcResultValidationExporter validationExporter,
     ILogger<CalcResultsExporter> logger
 )  : ICalcResultsExporter
 {
@@ -53,6 +54,11 @@ public class CalcResultsExporter(
         logger.LogDuration(
             () => resultDetailExporter.Export(calcResult.CalcResultDetail, csvContent),
             nameof(resultDetailExporter)
+        );
+
+        logger.LogDuration(
+            () => validationExporter.ExportWarnings(calcResult, csvContent),
+            nameof(validationExporter)
         );
 
         logger.LogDuration(
