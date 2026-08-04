@@ -73,7 +73,7 @@ public class BillingRunProcessorTests : TestsFor<BillingRunProcessor>
     public async Task Should_filter_accepted_producers()
     {
         builder.Setup(b => b.BuildAsync(It.IsAny<RunContext>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(BuildCalcResultWithAcceptedAndRejectedProducers());
+            .ReturnsAsync(BuildCalcResult());
 
         CalcResult? exported = null;
         fileGenerator
@@ -97,7 +97,27 @@ public class BillingRunProcessorTests : TestsFor<BillingRunProcessor>
             .ShouldBe([AcceptedProducerId]);
     }
 
-    private static CalcResult BuildCalcResultWithAcceptedAndRejectedProducers()
+    [TestMethod]
+    public async Task Should_filter_rejected_producers()
+    {
+        builder.Setup(b => b.BuildAsync(It.IsAny<RunContext>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(BuildCalcResult());
+
+        CalcResult? exported = null;
+        fileGenerator
+            .Setup(f => f.SerializeAndExport(runContext, It.IsAny<CalcResult>(), It.IsAny<CancellationToken>()))
+            .Callback<BillingRunContext, CalcResult, CancellationToken>((_, calcResult, _) => exported = calcResult)
+            .ReturnsAsync((BillingFileResult?)null!);
+
+        var result = await testSubject.Process(runContext, CancellationToken.None);
+
+        result.Succeeded.ShouldBeTrue();
+        exported.ShouldNotBeNull();
+        exported.CalcResultCancelledProducers.Select(p => p.ProducerId)
+            .ShouldBe([AcceptedProducerId]);
+    }
+
+    private static CalcResult BuildCalcResult()
     {
         var scaledupProducers = ImmutableList.Create(
             new CalcResultScaledupProducer { ProducerId = AcceptedProducerId, Level = "1", SubmissionPeriodCode = "2024-P2" },
@@ -121,6 +141,21 @@ public class BillingRunProcessorTests : TestsFor<BillingRunProcessor>
             new() { FeeDetail = new FeeDetail { ProducerId = RejectedProducerId, SubsidiaryId = string.Empty, ProducerName = "Rejected Producer" } }
         };
 
+        var cancelledProducers = ImmutableList.Create(
+            new CalcResultCancelledProducer { ProducerId = AcceptedProducerId, ProducerOrSubsidiaryName = "Accepted Producer", TradingName = "Accepted Trading" },
+            new CalcResultCancelledProducer { ProducerId = RejectedProducerId, ProducerOrSubsidiaryName = "Rejected Producer", TradingName = "Rejected Trading" });
+
+        var rejectedProducers = ImmutableList.Create(
+            new CalcResultRejectedProducer
+            {
+                ProducerId = RejectedProducerId,
+                ProducerName = "Rejected Producer",
+                TradingName = "Rejected Trading",
+                SuggestedBillingInstruction = "Invoice",
+                InstructionConfirmedBy = "Test User",
+                ReasonForRejection = "Test rejection"
+            });
+
         return TestDataHelper.GetCalcResult() with
         {
             CalcResultScaledupProducers = new CalcResultScaledupProducers { ScaledupProducers = scaledupProducers },
@@ -141,7 +176,9 @@ public class BillingRunProcessorTests : TestsFor<BillingRunProcessor>
                     ProducerName = string.Empty,
                     TotalOnePlus2A2B2CWithBadDebtPercentage = 123.45m
                 }
-            }
+            },
+            CalcResultCancelledProducers = cancelledProducers,
+            CalcResultRejectedProducers = rejectedProducers
         };
     }
 }
