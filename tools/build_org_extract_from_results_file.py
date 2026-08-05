@@ -17,11 +17,6 @@ WHAT THIS CANNOT POPULATE (left blank/'NULL' - never fabricated)
 ------------------------------------------------------------------
 The Results File is a household-packaging fee-calculation run. It has no
 concept of:
-  - Organisation registration data at all: CH_number, Nation_of_enrolment,
-    Enrolment_date_time, Nation_of_Compliance_Scheme_regulator,
-    Organisation_data_* submission metadata, Single_File_Submission_* flags,
-    fps/lps/fos/los filenames. (Enrolment_status and Organisation_soft_deleted
-    are the exceptions - see decisions 7 and 8 below.)
   - Genuine submission history: there is no "first submission" vs "latest
     submission" concept in a single run's output - each output row IS one
     submission period (H1 or H2). So the first_/latest_ pairs of metadata
@@ -115,18 +110,29 @@ KEY DESIGN DECISIONS (agreed in conversation, 2026-07-30)
    implies it isn't soft-deleted. Not derived from any per-row signal, but
    the same "presence implies status" inference as Enrolment_status.
 
-9. Nation_of_enrolment is NOT populated - it cannot be inferred from
-   anything in the Results File. The only per-nation figures in the file
-   (the "England/Wales/Scotland/Northern Ireland with Bad Debt Provision"
-   columns in Calculation Result) are each producer's disposal fee split
-   across all four nations using the SAME fixed LAPCAP apportionment
-   percentage from the "1 Country Apportionment %s" table at the top of
-   the file (verified: e.g. two different producers' Aluminium England/
-   Wales fee figures are both in exactly the 17.24%/27.59% ratio set
-   globally for Aluminium, regardless of where either producer is actually
-   registered) - i.e. it's a cost-recovery allocation, not a signal of
-   which nation the producer itself is enrolled in. There is no registered-
-   nation field anywhere in this export.
+9. Nation_of_enrolment cannot be inferred from anything in the Results
+   File. The only per-nation figures in the file (the "England/Wales/
+   Scotland/Northern Ireland with Bad Debt Provision" columns in
+   Calculation Result) are each producer's disposal fee split across all
+   four nations using the SAME fixed LAPCAP apportionment percentage from
+   the "1 Country Apportionment %s" table at the top of the file (verified:
+   e.g. two different producers' Aluminium England/Wales fee figures are
+   both in exactly the 17.24%/27.59% ratio set globally for Aluminium,
+   regardless of where either producer is actually registered) - i.e. it's
+   a cost-recovery allocation, not a signal of which nation the producer
+   itself is enrolled in. There is no registered-nation field anywhere in
+   this export. See decision 10.
+
+10. Organisation registration/submission-metadata fields that have no
+    signal anywhere in the Results File - CH_number, Nation_of_enrolment,
+    Enrolment_date_time, Nation_of_Compliance_Scheme_regulator, the
+    Organisation_data_* first/latest submission metadata columns,
+    Single_File_Submission_* flags, and the fps/lps/fos/los filename
+    columns - are hard-coded to a single fixed default value per column
+    (see the DEFAULT_* constants), not derived or fabricated per-row. Per
+    the user: downstream tooling just needs these columns non-blank: the
+    actual value doesn't matter, so a single unvarying constant is used
+    rather than inventing plausible-looking per-row data.
 
 Sections are located by marker text and header text (not hardcoded line
 numbers), so this should keep working against other Results File runs of
@@ -158,6 +164,18 @@ RAG_MEDICAL_MAP = [
     ("Green Medical Material Tonnage", "RAM-M G-M"),
     ("Amber Medical Material Tonnage", "RAM-M A-M"),
 ]
+
+# Fixed placeholder values for columns with no signal anywhere in the
+# Results File - see design decision 10. The exact value doesn't matter,
+# only that the column is non-blank, so these are single unvarying
+# constants rather than fabricated per-row data.
+DEFAULT_CH_NUMBER = "00000000"
+DEFAULT_NATION = "England"
+DEFAULT_DATETIME = "1900-01-01 00:00:00.000"
+DEFAULT_CS_OR_DIRECT = "DP"
+DEFAULT_SUBMISSION_STATUS = "GRANTED"
+DEFAULT_SINGLE_FILE_SUBMISSION = "N"
+DEFAULT_FILENAME = "N/A"
 
 
 def read_utf16_rows(path):
@@ -421,6 +439,29 @@ def main():
         row["Enrolment_status"] = "Approved"
         row["Organisation_soft_deleted"] = "0"
         row["Reporting_Year"] = reporting_year(period_code)
+
+        row["CH_number"] = DEFAULT_CH_NUMBER
+        row["Nation_of_enrolment"] = DEFAULT_NATION
+        row["Enrolment_date_time"] = DEFAULT_DATETIME
+        row["Nation_of_Compliance_Scheme_regulator"] = DEFAULT_NATION
+
+        row["Organisation_data_first_submission_datetime"] = DEFAULT_DATETIME
+        row["Organisation_data_first_submitted_CS_or_Direct"] = DEFAULT_CS_OR_DIRECT
+        row["Organisation_data_first_submitted_CS_Nation"] = DEFAULT_NATION
+        row["Organisation_data_first_submission_status"] = DEFAULT_SUBMISSION_STATUS
+        row["Organisation_data_first_submission_organisation_size"] = "L"
+        row["Organisation_data_latest_submission_datetime"] = DEFAULT_DATETIME
+        row["Organisation_data_latest_submitted_CS_or_Direct"] = DEFAULT_CS_OR_DIRECT
+        row["Organisation_data_latest_submitted_CS_Nation"] = DEFAULT_NATION
+        row["Organisation_data_latest_submission_status"] = DEFAULT_SUBMISSION_STATUS
+        row["Organisation_data_latest_submission_organisation_size"] = "L"
+
+        row["Single_File_Submission_Packaging"] = DEFAULT_SINGLE_FILE_SUBMISSION
+        row["Single_File_Submission_Orgdata"] = DEFAULT_SINGLE_FILE_SUBMISSION
+        row["fps_pm_filename"] = DEFAULT_FILENAME
+        row["lps_pm_filename"] = DEFAULT_FILENAME
+        row["fos_cd_filename"] = DEFAULT_FILENAME
+        row["los_cd_filename"] = DEFAULT_FILENAME
 
         if half == "H2":
             for src, _ in MATERIALS:
