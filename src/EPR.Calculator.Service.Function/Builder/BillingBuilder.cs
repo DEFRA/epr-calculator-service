@@ -73,14 +73,9 @@ public class BillingBuilder(
             () => rejectedProducersBuilder.ConstructAsync(runContext),
             nameof(rejectedProducersBuilder));
 
-
-        var rejectedProducerIds = result.CalcResultRejectedProducers.Select(r => r.ProducerId).ToHashSet();
-
-        result.CalcResultCancelledProducers = (
-            await logger.LogDuration(
-                () => calcResultReader.ReadCancelledProducers(runContext.RunId, cancellationToken),
-                nameof(calcResultReader.ReadCancelledProducers))
-            ).Where(p => !rejectedProducerIds.Contains(p.ProducerId)).ToList();
+        result.CalcResultCancelledProducers = (await logger.LogDuration(
+            () => calcResultReader.ReadCancelledProducers(runContext.RunId, cancellationToken),
+            nameof(calcResultReader.ReadCancelledProducers))).ToList();
 
         result.Smcw = await logger.LogDuration(
             () => calcResultReader.ReadSmcw(runContext.RunId, cancellationToken),

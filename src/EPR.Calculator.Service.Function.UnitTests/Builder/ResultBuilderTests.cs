@@ -131,8 +131,8 @@ public class ResultBuilderTests : TestsFor<ResultBuilder>
         Assert.AreEqual(mockCalcResultCommsCost.Object, result.CalcResultCommsCostReportDetail);
         Assert.AreEqual(mockCalcResultLateReportingTonnage, result.CalcResultLateReportingTonnageData);
         Assert.AreEqual(mockCalcResultLaDisposalCostData.Object, result.CalcResultLaDisposalCostData);
-        Assert.AreEqual(mockCalcResultScaledUpProducersData.Object, result.CalcResultScaledupProducers);
-        Assert.AreEqual(mockCalcResultPartialObligationsData.Object, result.CalcResultPartialObligations);
+        Assert.AreSame(mockCalcResultScaledUpProducersData.Object, result.CalcResultScaledupProducers);
+        Assert.AreSame(mockCalcResultPartialObligationsData.Object, result.CalcResultPartialObligations);
         Assert.AreNotEqual(mockCalcResultProjectedProducersData.Object, result.CalcResultProjectedProducers);
         Assert.AreEqual(mockProducerFees.Object, result.ProducerFees);
         Assert.AreSame(mockCancelledProducers.Object, result.CalcResultCancelledProducers);
