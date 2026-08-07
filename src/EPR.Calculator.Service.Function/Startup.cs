@@ -152,6 +152,8 @@ internal static class ServiceRegistration
             builder.UseSqlServer(
                 options.ConnectionString,
                 sqlOptions => { sqlOptions.CommandTimeout((int)options.CommandTimeout.TotalSeconds); });
+
+            builder.AddInterceptors(new QueryTaggingInterceptor());
         });
 
         services.AddSingleton<IBulkOperations, BulkOperationsWrapper>();

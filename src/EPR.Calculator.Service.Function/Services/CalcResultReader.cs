@@ -30,6 +30,7 @@ namespace EPR.Calculator.Service.Function.Services
         public async Task<IReadOnlyList<CalcResultH1ProjectedProducer>> ReadH1ProjectedData(int runId, CancellationToken cancellationToken)
         {
             return await dbContext.TransformProjectedH1
+                        .TagWith("CalcResultReader.ReadH1ProjectedData")
                         .Where(p => p.CalculatorRunId == runId)
                         .GroupBy(p => new { p.ProducerId, p.SubsidiaryId, p.SubmissionPeriodCode, p.Level })
                         .Select(g => new CalcResultH1ProjectedProducer
@@ -49,6 +50,7 @@ namespace EPR.Calculator.Service.Function.Services
         public async Task<IReadOnlyList<CalcResultH2ProjectedProducer>> ReadH2ProjectedData(int runId, CancellationToken cancellationToken)
         {
             return await dbContext.TransformProjectedH2
+                        .TagWith("CalcResultReader.ReadH2ProjectedData")
                         .Where(p => p.CalculatorRunId == runId)
                         .GroupBy(p => new { p.ProducerId, p.SubsidiaryId, p.SubmissionPeriodCode, p.Level })
                         .Select(g => new CalcResultH2ProjectedProducer
@@ -68,6 +70,7 @@ namespace EPR.Calculator.Service.Function.Services
         public async Task<IReadOnlyList<CalcResultScaledupProducer>> ReadScaledData(int runId, CancellationToken cancellationToken)
         {
             return await dbContext.TransformScaled
+                        .TagWith("CalcResultReader.ReadScaledData")
                         .Where(p => p.CalculatorRunId == runId)
                         .GroupBy(p => new { p.ProducerId, p.SubsidiaryId, p.ProducerName, p.TradingName, p.SubmissionPeriodCode, p.Level, p.IsSubTotal, p.DaysInSubmissionPeriod, p.DaysInWholePeriod, p.ScaleupFactor })
                         .Select(g =>
@@ -96,6 +99,7 @@ namespace EPR.Calculator.Service.Function.Services
 
         public async Task<IReadOnlyList<CalcResultPartialObligation>> ReadPartialData(int runId, CancellationToken cancellationToken){
             return await dbContext.TransformPartial
+                        .TagWith("CalcResultReader.ReadPartialData")
                         .Where(p => p.CalculatorRunId == runId)
                         .GroupBy(p => new { p.ProducerId, p.SubsidiaryId, p.ProducerName, p.TradingName, p.SubmissionYear, p.Level, p.DaysInSubmissionYear, p.JoiningDate, p.DaysObligated, p.ObligatedFactor })
                         .Select(g =>
@@ -123,6 +127,7 @@ namespace EPR.Calculator.Service.Function.Services
         public async Task<ProducerFees> ReadProducerFees(int runId, CancellationToken cancellationToken)
         {
             return await dbContext.ProducerDisposalFee
+                        .TagWith("CalcResultReader.ReadProducerFees")
                         .Include(p => p.Details)
                         .Where(p => p.CalculatorRunId == runId)
                         .SingleAsync(cancellationToken);
@@ -130,18 +135,21 @@ namespace EPR.Calculator.Service.Function.Services
 
         public async Task<SelfManagedConsumerWaste> ReadSmcw(int runId, CancellationToken cancellationToken) =>
             await dbContext.SelfManagedConsumerWaste
+                    .TagWith("CalcResultReader.ReadSmcw")
                     .Include(s => s.ProducerTotals)
                     .Where(p => p.CalculatorRunId == runId)
                     .SingleAsync(cancellationToken);
-        
+
 
         public async Task<ModulationResult> ReadModulationResult(int runId, CancellationToken cancellationToken) =>
             await dbContext.ModulationResult
+                    .TagWith("CalcResultReader.ReadModulationResult")
                     .Where(p => p.CalculatorRunId == runId)
                     .SingleAsync(cancellationToken);
 
         public async Task<CalcResultLapcapData> ReadLapcapData(int runId, CancellationToken cancellationToken) =>
             await dbContext.LapcapData
+                    .TagWith("CalcResultReader.ReadLapcapData")
                     .AsNoTracking()
                     .Where(p => p.CalculatorRunId == runId)
                     .Select(x => x.LapcapData)
@@ -149,6 +157,7 @@ namespace EPR.Calculator.Service.Function.Services
 
         public async Task<CalcResultCommsCost> ReadCommsCost(int runId, CancellationToken cancellationToken) =>
             await dbContext.CommCost
+                    .TagWith("CalcResultReader.ReadCommsCost")
                     .AsNoTracking()
                     .Where(p => p.CalculatorRunId == runId)
                     .Select(x => x.CommsCost)
@@ -156,6 +165,7 @@ namespace EPR.Calculator.Service.Function.Services
 
         public async Task<CalcResultLateReportingTonnage> ReadLateReportingTonnage(int runId, CancellationToken cancellationToken) =>
             await dbContext.LateReportingTonnage
+                    .TagWith("CalcResultReader.ReadLateReportingTonnage")
                     .AsNoTracking()
                     .Where(p => p.CalculatorRunId == runId)
                     .Select(x => x.LateReportingTonnage)
@@ -163,6 +173,7 @@ namespace EPR.Calculator.Service.Function.Services
 
         public async Task<CalcResultParameterOtherCost> ReadParameterOtherCost(int runId, CancellationToken cancellationToken) =>
             await dbContext.ParameterOtherCost
+                    .TagWith("CalcResultReader.ReadParameterOtherCost")
                     .AsNoTracking()
                     .Where(p => p.CalculatorRunId == runId)
                     .Select(x => x.ParameterOtherCost)
@@ -170,6 +181,7 @@ namespace EPR.Calculator.Service.Function.Services
 
         public async Task<CalcResultOnePlusFourApportionment> ReadOnePlusFourApportionment(int runId, CancellationToken cancellationToken) =>
             await dbContext.OnePlusFourApportionment
+                    .TagWith("CalcResultReader.ReadOnePlusFourApportionment")
                     .AsNoTracking()
                     .Where(p => p.CalculatorRunId == runId)
                     .Select(x => x.OnePlusFourApportionment)
@@ -177,6 +189,7 @@ namespace EPR.Calculator.Service.Function.Services
 
         public async Task<CalcResultLaDisposalCostData> ReadLaDisposalCostData(int runId, CancellationToken cancellationToken) =>
             await dbContext.LaDisposalCostData
+                    .TagWith("CalcResultReader.ReadLaDisposalCostData")
                     .AsNoTracking()
                     .Where(p => p.CalculatorRunId == runId)
                     .Select(x => x.LaDisposalCost)
@@ -184,6 +197,7 @@ namespace EPR.Calculator.Service.Function.Services
 
         public async Task<IReadOnlyList<CalcResultCancelledProducer>> ReadCancelledProducers(int runId, CancellationToken cancellationToken) =>
             await dbContext.CancelledProducers
+                    .TagWith("CalcResultReader.ReadCancelledProducers")
                     .AsNoTracking()
                     .Where(p => p.CalculatorRunId == runId)
                     .Select(x => x.CancelledProducer)

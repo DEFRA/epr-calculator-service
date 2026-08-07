@@ -1,4 +1,5 @@
 using EPR.Calculator.API.Data;
+using EPR.Calculator.Service.Function.Logging;
 using EPR.Calculator.Service.Function.Services;
 using EPR.Calculator.Service.Function.Services.CommonDataApi;
 using Microsoft.EntityFrameworkCore;
@@ -67,6 +68,18 @@ public abstract class BaseIntegrationTest
             {
                 x.ClearProviders();
                 x.AddSerilog(Log.Logger, true);
+            })
+            .AddDbContextFactory<ApplicationDBContext>(options =>
+            {
+                options.UseSqlServer(SqlContainer.GetConnectionString());
+            
+                options
+                    .EnableSensitiveDataLogging()
+                    .LogTo(
+                        message => Log.Logger.ForContext("SourceContext", "EPR.Calculator.Database.Command").Debug(message),
+                        new[] { DbLoggerCategory.Database.Command.Name },
+                        LogLevel.Information)
+                    .AddInterceptors(new QueryTaggingInterceptor());
             })
             .AddAppDependencies()
             .AddDbContextFactory<ApplicationDBContext>(options => { options.UseSqlServer(SqlContainer.GetConnectionString()); })
