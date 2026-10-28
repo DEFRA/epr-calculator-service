@@ -1,6 +1,12 @@
 variables:
-  azureSubscription: 'AZD-RWD-DEV2'
-  docker.imageName: 'eprcalculatorservice'
-  acr.azureContainerRegistryName: 'devrwdinfac1401'
-  acr.repositoryName: 'eprcalculatorservicerepository' 
-  serviceName: 'DEVRWDWEBFA2411'
+- group: ServiceConnections
+- name: azureSubscription
+  value: $(ServiceConnectionDEV2)
+- name: docker.imageName
+  value: 'eprcalculatorservice'
+- name: acr.azureContainerRegistryName
+  value: 'devrwdinfac1401'
+- name: acr.repositoryName
+  value: 'eprcalculatorservicerepository'
+- name: serviceName
+  value: 'DEVRWDWEBFA2411'

@@ -1,5 +1,7 @@
 variables:
-- group: ServiceConnection-DEV9
+- group: ServiceConnections
+- name: azureSubscription
+  value: $(ServiceConnectionDEV9)
 - name: docker.imageName
   value: 'eprcalculatorservice'
 - name: acr.azureContainerRegistryName
